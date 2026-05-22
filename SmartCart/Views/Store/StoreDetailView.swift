@@ -6,6 +6,7 @@ struct StoreDetailView: View {
     @Environment(\.modelContext) private var context
     @State private var showAddItem = false
     @State private var showClearConfirm = false
+    @State private var editingItem: ShoppingItem?
     @State private var completionOrder: [String] = []
 
     private var total: Double {
@@ -18,59 +19,34 @@ struct StoreDetailView: View {
 
     var body: some View {
         List {
-            // Progress + total header
             if !store.items.isEmpty {
                 Section {
-                    VStack(spacing: 12) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(String(format: String(localized: "list.progress"),
-                                           store.completedItems.count, store.items.count))
-                                    .font(.system(size: 13))
-                                    .foregroundStyle(.secondary)
-                                GeometryReader { geo in
-                                    ZStack(alignment: .leading) {
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .fill(Color(.systemGray5))
-                                            .frame(height: 6)
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .fill(LinearGradient.success)
-                                            .frame(width: geo.size.width * completionProgress, height: 6)
-                                            .animation(.spring(response: 0.4), value: completionProgress)
-                                    }
-                                }
-                                .frame(height: 6)
-                            }
-
-                            Spacer(minLength: 20)
-
-                            if total > 0 {
-                                VStack(alignment: .trailing, spacing: 2) {
-                                    Text(String(localized: "list.estimated.total"))
-                                        .font(.system(size: 11))
-                                        .foregroundStyle(.secondary)
-                                    Text(total, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
-                                        .font(.system(size: 16, weight: .semibold))
-                                        .foregroundStyle(.primary)
-                                }
-                            }
-                        }
-                    }
-                    .padding(.vertical, 4)
+                    progressHeader
                 }
                 .listRowBackground(Color.cardBackground)
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             }
 
             if !store.pendingItems.isEmpty {
                 Section(String(localized: "list.pending")) {
                     ForEach(store.pendingItems) { item in
                         ItemRow(item: item) { toggle(item: item) }
-                            .swipeActions(edge: .trailing) {
+                            .contentShape(Rectangle())
+                            .onTapGesture { editingItem = item }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
-                                    context.delete(item)
+                                    withAnimation { context.delete(item) }
                                 } label: {
                                     Label(String(localized: "action.delete"), systemImage: "trash")
                                 }
+                            }
+                            .swipeActions(edge: .leading) {
+                                Button {
+                                    toggle(item: item)
+                                } label: {
+                                    Label(String(localized: "item.action.check"), systemImage: "checkmark")
+                                }
+                                .tint(.green)
                             }
                     }
                 }
@@ -80,12 +56,22 @@ struct StoreDetailView: View {
                 Section {
                     ForEach(store.completedItems) { item in
                         ItemRow(item: item) { toggle(item: item) }
-                            .swipeActions(edge: .trailing) {
+                            .contentShape(Rectangle())
+                            .onTapGesture { editingItem = item }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
-                                    context.delete(item)
+                                    withAnimation { context.delete(item) }
                                 } label: {
                                     Label(String(localized: "action.delete"), systemImage: "trash")
                                 }
+                            }
+                            .swipeActions(edge: .leading) {
+                                Button {
+                                    toggle(item: item)
+                                } label: {
+                                    Label(String(localized: "item.action.uncheck"), systemImage: "arrow.uturn.backward")
+                                }
+                                .tint(.orange)
                             }
                     }
                 } header: {
@@ -104,20 +90,7 @@ struct StoreDetailView: View {
 
             if store.items.isEmpty {
                 Section {
-                    VStack(spacing: 14) {
-                        Image(systemName: "cart")
-                            .font(.system(size: 40))
-                            .foregroundStyle(store.color.opacity(0.4))
-                        Text(String(localized: "list.empty.title"))
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                        Text(String(localized: "list.empty.subtitle"))
-                            .font(.subheadline)
-                            .foregroundStyle(.tertiary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 40)
+                    emptyState
                 }
                 .listRowBackground(Color.clear)
             }
@@ -135,9 +108,8 @@ struct StoreDetailView: View {
                 }
             }
         }
-        .sheet(isPresented: $showAddItem) {
-            AddItemView()
-        }
+        .sheet(isPresented: $showAddItem) { AddItemView() }
+        .sheet(item: $editingItem) { item in EditItemView(item: item) }
         .confirmationDialog(
             String(localized: "list.clear.confirm"),
             isPresented: $showClearConfirm,
@@ -148,6 +120,69 @@ struct StoreDetailView: View {
             }
         }
     }
+
+    // MARK: - Progress header
+
+    private var progressHeader: some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(String(format: String(localized: "list.progress"),
+                            store.completedItems.count, store.items.count))
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color(.systemGray5))
+                            .frame(height: 6)
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(LinearGradient.success)
+                            .frame(width: geo.size.width * completionProgress, height: 6)
+                            .animation(.spring(response: 0.4), value: completionProgress)
+                    }
+                }
+                .frame(height: 6)
+            }
+
+            if total > 0 {
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(String(localized: "list.estimated.total"))
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                    Text(total, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                        .font(.system(size: 16, weight: .semibold))
+                }
+            }
+        }
+    }
+
+    // MARK: - Empty state
+
+    private var emptyState: some View {
+        VStack(spacing: 14) {
+            Image(systemName: "cart")
+                .font(.system(size: 40))
+                .foregroundStyle(store.color.opacity(0.4))
+            Text(String(localized: "list.empty.title"))
+                .font(.headline)
+                .foregroundStyle(.secondary)
+            Text(String(localized: "list.empty.subtitle"))
+                .font(.subheadline)
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+            Button {
+                showAddItem = true
+            } label: {
+                Label(String(localized: "action.add"), systemImage: "plus")
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(store.color)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
+    }
+
+    // MARK: - Actions
 
     private func toggle(item: ShoppingItem) {
         withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0614C48D34DF2EBE3B029C8C /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BA313610B6903F788B3D1B /* OnboardingView.swift */; };
+		07C6DACB1748CA164C7E39B9 /* EditItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28094C6B2161D39A55624F68 /* EditItemView.swift */; };
 		0B64D059E2535909BBC07B1B /* AssignmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE9FEE09743093F7E668D5E /* AssignmentService.swift */; };
 		11B1C5980F8E6058CDAE01B8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B385C380FF5123526F6E56 /* SettingsView.swift */; };
 		1EEFDCF2812D084BA0E49570 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7378581EFFCC02A1BF2FD3A3 /* HomeView.swift */; };
@@ -20,10 +21,12 @@
 		99C1C04FD88022B0F3E9A1E2 /* RecipeImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A802E16773399D7FEE19D68 /* RecipeImportView.swift */; };
 		9AC5CF73301BBC2A06342131 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EB342AC7EE894C9C2B7A34 /* ItemRow.swift */; };
 		9B4FFFAEAC238BFC6CEDCF83 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = D267DA892CBED0BC9B534966 /* Color+Hex.swift */; };
+		9D0E42859AFB4024C1CA85F5 /* QuickAddParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 427C78F11F632892DD9E807F /* QuickAddParser.swift */; };
 		9ECE3DCC45AE32CCEAA8981D /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A49612BE198AF3B48211B62 /* Store.swift */; };
 		A21EA866AA3A88E3DF1D7EF9 /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1791AA94F3726B793EB09F74 /* ShoppingItem.swift */; };
 		ACAA0ED3F8C4A30CB3B60F17 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 55FFB2C5C2C97A02689A1FB6 /* Localizable.strings */; };
 		C9139F3211CC76DF720FB66C /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A4065E868200E2B3A0F02D /* FeedbackView.swift */; };
+		CE780CEB38E00FF824BE132F /* BrowseStoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5239F35789D83F615154249B /* BrowseStoresView.swift */; };
 		CF2E2F0FE6EDD8C5B29CD22E /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47184F36A40105B9BDD79C7B /* NotificationService.swift */; };
 		D0518513ABE97A21C14A74C3 /* StoreDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C3233FB5722D2CF4BE2B3A /* StoreDetailView.swift */; };
 		DDE7767C2A2E25E83FA6CFC8 /* PurchaseRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34C5D25C3945D6153A049B /* PurchaseRecord.swift */; };
@@ -37,10 +40,13 @@
 		16B385C380FF5123526F6E56 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		1791AA94F3726B793EB09F74 /* ShoppingItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItem.swift; sourceTree = "<group>"; };
 		19A4065E868200E2B3A0F02D /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
+		28094C6B2161D39A55624F68 /* EditItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditItemView.swift; sourceTree = "<group>"; };
 		2A802E16773399D7FEE19D68 /* RecipeImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportView.swift; sourceTree = "<group>"; };
 		3A49612BE198AF3B48211B62 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		3D46E9154361B0400E35C6B6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		427C78F11F632892DD9E807F /* QuickAddParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddParser.swift; sourceTree = "<group>"; };
 		47184F36A40105B9BDD79C7B /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		5239F35789D83F615154249B /* BrowseStoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseStoresView.swift; sourceTree = "<group>"; };
 		6CC5E77213853CDEEA9A76D3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7378581EFFCC02A1BF2FD3A3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		7766D5E81D983AD2334B6011 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -90,6 +96,7 @@
 		438E279559440C7CC053BDF0 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				5239F35789D83F615154249B /* BrowseStoresView.swift */,
 				77BA313610B6903F788B3D1B /* OnboardingView.swift */,
 				16B385C380FF5123526F6E56 /* SettingsView.swift */,
 				9AB228D171BFA424F8AFC0CD /* StoreSetupView.swift */,
@@ -132,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				C362CB3A6517D504DCBC7D3E /* AddItemView.swift */,
+				28094C6B2161D39A55624F68 /* EditItemView.swift */,
 				88C3233FB5722D2CF4BE2B3A /* StoreDetailView.swift */,
 			);
 			path = Store;
@@ -184,6 +192,7 @@
 				FFE9FEE09743093F7E668D5E /* AssignmentService.swift */,
 				838409C378288CFA57B42809 /* HabitService.swift */,
 				47184F36A40105B9BDD79C7B /* NotificationService.swift */,
+				427C78F11F632892DD9E807F /* QuickAddParser.swift */,
 				C8B6F1B6E82484B41C0A48AD /* RecipeRecognitionService.swift */,
 			);
 			path = Services;
@@ -278,9 +287,11 @@
 			files = (
 				DEBF56414AA7F6AF04B254E2 /* AddItemView.swift in Sources */,
 				0B64D059E2535909BBC07B1B /* AssignmentService.swift in Sources */,
+				CE780CEB38E00FF824BE132F /* BrowseStoresView.swift in Sources */,
 				9B4FFFAEAC238BFC6CEDCF83 /* Color+Hex.swift in Sources */,
 				62F62920AC736E7DAF25E422 /* ContentView.swift in Sources */,
 				468A61978094AF399D7F1A36 /* DesignSystem.swift in Sources */,
+				07C6DACB1748CA164C7E39B9 /* EditItemView.swift in Sources */,
 				C9139F3211CC76DF720FB66C /* FeedbackView.swift in Sources */,
 				FF43B1B80F202D6734200639 /* HabitService.swift in Sources */,
 				1EEFDCF2812D084BA0E49570 /* HomeView.swift in Sources */,
@@ -288,6 +299,7 @@
 				CF2E2F0FE6EDD8C5B29CD22E /* NotificationService.swift in Sources */,
 				0614C48D34DF2EBE3B029C8C /* OnboardingView.swift in Sources */,
 				DDE7767C2A2E25E83FA6CFC8 /* PurchaseRecord.swift in Sources */,
+				9D0E42859AFB4024C1CA85F5 /* QuickAddParser.swift in Sources */,
 				99C1C04FD88022B0F3E9A1E2 /* RecipeImportView.swift in Sources */,
 				856A7E292BA26C783B908D38 /* RecipeRecognitionService.swift in Sources */,
 				11B1C5980F8E6058CDAE01B8 /* SettingsView.swift in Sources */,

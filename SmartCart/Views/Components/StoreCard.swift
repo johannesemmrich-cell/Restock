@@ -2,7 +2,6 @@ import SwiftUI
 
 struct StoreCard: View {
     let store: Store
-    var onTap: () -> Void = {}
 
     private var pendingCount: Int { store.pendingItems.count }
     private var freq: VisitFrequency { VisitFrequency.closest(to: store.visitsPerWeek) }
@@ -13,12 +12,12 @@ struct StoreCard: View {
             ZStack(alignment: .topTrailing) {
                 HStack(alignment: .center) {
                     Text(store.emoji)
-                        .font(.system(size: 36))
+                        .font(.system(size: 34))
                     Spacer()
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 14)
-                .background(store.color.gradient.opacity(0.18))
+                .background(store.color.gradient.opacity(0.15))
 
                 if pendingCount > 0 {
                     Text("\(pendingCount)")
@@ -32,10 +31,16 @@ struct StoreCard: View {
             }
 
             // Info section
-            VStack(alignment: .leading, spacing: 6) {
-                Text(store.name)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.primary)
+            VStack(alignment: .leading, spacing: 5) {
+                HStack(alignment: .top) {
+                    Text(store.name)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(.primary)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(Color(.systemGray3))
+                }
 
                 Text(freq.label)
                     .font(.system(size: 12))
@@ -54,14 +59,15 @@ struct StoreCard: View {
                 }
             }
             .padding(.horizontal, 14)
-            .padding(.vertical, 12)
+            .padding(.vertical, 10)
         }
         .background(Color.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(store.color.opacity(pendingCount > 0 ? 0.35 : 0.15), lineWidth: 1.5)
+                .stroke(store.color.opacity(pendingCount > 0 ? 0.3 : 0.12), lineWidth: 1.5)
         )
-        .shadow(color: store.color.opacity(pendingCount > 0 ? 0.14 : 0.05), radius: 10, x: 0, y: 4)
+        .shadow(color: store.color.opacity(pendingCount > 0 ? 0.12 : 0.04), radius: 10, x: 0, y: 4)
+        .contentShape(RoundedRectangle(cornerRadius: 16))
     }
 }

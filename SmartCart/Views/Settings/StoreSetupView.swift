@@ -21,6 +21,12 @@ struct StoreSetupView: View {
                 }
             }
             Section {
+                NavigationLink {
+                    BrowseStoresView()
+                } label: {
+                    Label(String(localized: "stores.browse.other"), systemImage: "globe")
+                }
+
                 Button {
                     showAddCustomStore = true
                 } label: {

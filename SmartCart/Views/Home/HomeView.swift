@@ -82,42 +82,62 @@ struct HomeView: View {
 
     // MARK: - Quick add
 
+    private var parsedHint: String? { QuickAddParser.hint(for: addItemText) }
+
     private var quickAddBar: some View {
-        HStack(spacing: 10) {
+        VStack(spacing: 6) {
             HStack(spacing: 10) {
-                Image(systemName: "plus.circle.fill")
-                    .foregroundStyle(.blue)
-                    .font(.system(size: 18))
+                HStack(spacing: 10) {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundStyle(.blue)
+                        .font(.system(size: 18))
 
-                TextField(String(localized: "home.quickadd.placeholder"), text: $addItemText)
-                    .submitLabel(.done)
-                    .onSubmit { quickAdd() }
+                    TextField(String(localized: "home.quickadd.placeholder"), text: $addItemText)
+                        .submitLabel(.done)
+                        .onSubmit { quickAdd() }
 
-                if !addItemText.isEmpty {
-                    Button { addItemText = "" } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(Color(.systemGray3))
+                    if !addItemText.isEmpty {
+                        Button { addItemText = "" } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(Color(.systemGray3))
+                        }
                     }
                 }
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
-            .background(Color(.systemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
 
-            Button {
-                Haptics.impact(.light)
-                showRecipeImport = true
-            } label: {
-                Image(systemName: "camera.viewfinder")
-                    .font(.system(size: 18))
-                    .foregroundStyle(.white)
-                    .frame(width: 46, height: 46)
-                    .background(LinearGradient.brand)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                Button {
+                    Haptics.impact(.light)
+                    showRecipeImport = true
+                } label: {
+                    Image(systemName: "camera.viewfinder")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.white)
+                        .frame(width: 46, height: 46)
+                        .background(LinearGradient.brand)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
+            }
+
+            // Smart parsing hint
+            if let hint = parsedHint {
+                HStack(spacing: 4) {
+                    Image(systemName: "wand.and.stars")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.purple)
+                    Text(hint)
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+                .padding(.horizontal, 4)
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
+        .animation(.easeInOut(duration: 0.18), value: parsedHint)
     }
 
     // MARK: - Replenishment banner
@@ -238,9 +258,17 @@ struct HomeView: View {
         let trimmed = addItemText.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
         Haptics.impact(.light)
-        let category = AssignmentService.category(for: trimmed)
-        let store = AssignmentService.assign(itemName: trimmed, to: activeStores)
-        context.insert(ShoppingItem(name: trimmed, category: category, store: store))
+        let parsed = QuickAddParser.parse(trimmed)
+        let category = AssignmentService.category(for: parsed.name)
+        let store = AssignmentService.assign(itemName: parsed.name, to: activeStores)
+        context.insert(ShoppingItem(
+            name: parsed.name,
+            category: category,
+            quantity: parsed.quantity,
+            quantityAmount: parsed.quantityAmount,
+            unit: parsed.unit,
+            store: store
+        ))
         addItemText = ""
     }
 

@@ -115,8 +115,57 @@ extension Store {
                 Store(name: "Tesco", emoji: "🛒", colorHex: "#005DA0", visitsPerWeek: 2, categories: Category.grocery, countryCode: "GB"),
                 Store(name: "Sainsbury's", emoji: "🛒", colorHex: "#FF7B00", visitsPerWeek: 1, categories: Category.grocery, countryCode: "GB"),
                 Store(name: "Asda", emoji: "🛒", colorHex: "#7DC241", visitsPerWeek: 1, categories: Category.grocery, countryCode: "GB"),
+                Store(name: "Morrisons", emoji: "🛒", colorHex: "#009BDE", visitsPerWeek: 1, categories: Category.grocery, countryCode: "GB"),
                 Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 1, categories: Category.grocery, countryCode: "GB"),
                 Store(name: "Boots", emoji: "💊", colorHex: "#003B71", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "GB"),
+            ]
+        case "BE":
+            return [
+                Store(name: "Carrefour", emoji: "🛒", colorHex: "#003D8F", visitsPerWeek: 2, categories: Category.grocery, countryCode: "BE"),
+                Store(name: "Delhaize", emoji: "🦁", colorHex: "#E2001A", visitsPerWeek: 1, categories: Category.grocery, countryCode: "BE"),
+                Store(name: "Colruyt", emoji: "🛒", colorHex: "#E2001A", visitsPerWeek: 1, categories: Category.grocery, countryCode: "BE"),
+                Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 1, categories: Category.grocery, countryCode: "BE"),
+                Store(name: "Aldi", emoji: "🛒", colorHex: "#005CA9", visitsPerWeek: 1, categories: Category.grocery, countryCode: "BE"),
+                Store(name: "Okay", emoji: "🛒", colorHex: "#FF6600", visitsPerWeek: 1, categories: Category.grocery, countryCode: "BE"),
+                Store(name: "DM", emoji: "🧴", colorHex: "#CC1033", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "BE"),
+            ]
+        case "NL":
+            return [
+                Store(name: "Albert Heijn", emoji: "🛒", colorHex: "#0072CE", visitsPerWeek: 2, categories: Category.grocery, countryCode: "NL"),
+                Store(name: "Jumbo", emoji: "🛒", colorHex: "#FFD700", visitsPerWeek: 1, categories: Category.grocery, countryCode: "NL"),
+                Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 1, categories: Category.grocery, countryCode: "NL"),
+                Store(name: "Aldi", emoji: "🛒", colorHex: "#005CA9", visitsPerWeek: 1, categories: Category.grocery, countryCode: "NL"),
+                Store(name: "Plus", emoji: "🛒", colorHex: "#FF6600", visitsPerWeek: 1, categories: Category.grocery, countryCode: "NL"),
+                Store(name: "Kruidvat", emoji: "🧴", colorHex: "#6B2D8B", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "NL"),
+                Store(name: "Etos", emoji: "🧴", colorHex: "#0072CE", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "NL"),
+            ]
+        case "FR":
+            return [
+                Store(name: "Carrefour", emoji: "🛒", colorHex: "#003D8F", visitsPerWeek: 2, categories: Category.grocery, countryCode: "FR"),
+                Store(name: "E.Leclerc", emoji: "🛒", colorHex: "#0057A8", visitsPerWeek: 1, categories: Category.grocery, countryCode: "FR"),
+                Store(name: "Intermarché", emoji: "🛒", colorHex: "#E2001A", visitsPerWeek: 1, categories: Category.grocery, countryCode: "FR"),
+                Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 1, categories: Category.grocery, countryCode: "FR"),
+                Store(name: "Aldi", emoji: "🛒", colorHex: "#005CA9", visitsPerWeek: 1, categories: Category.grocery, countryCode: "FR"),
+                Store(name: "Monoprix", emoji: "🛒", colorHex: "#E2001A", visitsPerWeek: 1, categories: Category.grocery + Category.drugstore, countryCode: "FR"),
+                Store(name: "Pharmacie", emoji: "💊", colorHex: "#009F6B", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "FR"),
+            ]
+        case "IT":
+            return [
+                Store(name: "Esselunga", emoji: "🛒", colorHex: "#E2001A", visitsPerWeek: 2, categories: Category.grocery, countryCode: "IT"),
+                Store(name: "Conad", emoji: "🛒", colorHex: "#E2001A", visitsPerWeek: 1, categories: Category.grocery, countryCode: "IT"),
+                Store(name: "Coop", emoji: "🛒", colorHex: "#E2001A", visitsPerWeek: 1, categories: Category.grocery, countryCode: "IT"),
+                Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 1, categories: Category.grocery, countryCode: "IT"),
+                Store(name: "Aldi", emoji: "🛒", colorHex: "#005CA9", visitsPerWeek: 1, categories: Category.grocery, countryCode: "IT"),
+                Store(name: "Farmacia", emoji: "💊", colorHex: "#009F6B", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "IT"),
+            ]
+        case "ES":
+            return [
+                Store(name: "Mercadona", emoji: "🛒", colorHex: "#00843D", visitsPerWeek: 2, categories: Category.grocery, countryCode: "ES"),
+                Store(name: "Carrefour", emoji: "🛒", colorHex: "#003D8F", visitsPerWeek: 1, categories: Category.grocery, countryCode: "ES"),
+                Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 1, categories: Category.grocery, countryCode: "ES"),
+                Store(name: "Aldi", emoji: "🛒", colorHex: "#005CA9", visitsPerWeek: 1, categories: Category.grocery, countryCode: "ES"),
+                Store(name: "El Corte Inglés", emoji: "🏬", colorHex: "#006633", visitsPerWeek: 1, categories: Category.grocery + Category.drugstore, countryCode: "ES"),
+                Store(name: "Farmacia", emoji: "💊", colorHex: "#009F6B", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "ES"),
             ]
         default:
             return []
@@ -124,11 +173,16 @@ extension Store {
     }
 
     static let availableCountries: [(code: String, name: String, flag: String)] = [
-        ("DE", "Deutschland", "🇩🇪"),
-        ("AT", "Österreich", "🇦🇹"),
-        ("CH", "Schweiz", "🇨🇭"),
-        ("US", "United States", "🇺🇸"),
-        ("GB", "United Kingdom", "🇬🇧"),
+        ("DE", "Deutschland",      "🇩🇪"),
+        ("AT", "Österreich",       "🇦🇹"),
+        ("CH", "Schweiz",          "🇨🇭"),
+        ("BE", "Belgique / België","🇧🇪"),
+        ("NL", "Nederland",        "🇳🇱"),
+        ("FR", "France",           "🇫🇷"),
+        ("IT", "Italia",           "🇮🇹"),
+        ("ES", "España",           "🇪🇸"),
+        ("GB", "United Kingdom",   "🇬🇧"),
+        ("US", "United States",    "🇺🇸"),
     ]
 }
 
