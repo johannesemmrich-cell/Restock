@@ -1,14 +1,3 @@
+// Entry point is SmartCartApp.swift → OnboardingGate → HomeView
+// This file is intentionally empty.
 import SwiftUI
-
-struct ContentView: View {
-    var body: some View {
-        NavigationStack {
-            Text("SmartCart")
-                .navigationTitle("SmartCart")
-        }
-    }
-}
-
-#Preview {
-    ContentView()
-}

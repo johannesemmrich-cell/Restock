@@ -1,0 +1,111 @@
+// MARK: - General actions
+"action.cancel" = "Cancel";
+"action.add" = "Add";
+"action.done" = "Done";
+"action.delete" = "Delete";
+
+// MARK: - Home
+"home.quickadd.placeholder" = "Quick add item…";
+"home.stores.title" = "My Stores";
+"home.stores.empty.title" = "No stores yet";
+"home.stores.setup" = "Set up stores";
+"home.replenish.title" = "Time to restock";
+"home.replenish.addall" = "Add all";
+
+// MARK: - Store
+"store.empty" = "List is empty";
+"store.visits.perweek" = "%dx/week";
+"store.visits.biweekly" = "Every 2 weeks";
+"store.visits.rarely" = "Rarely";
+"stores.title" = "Stores";
+"stores.active" = "Active";
+"stores.inactive" = "Inactive";
+"stores.add.custom" = "Add custom store";
+"stores.add.details" = "Details";
+"stores.name.placeholder" = "Store name";
+"stores.visits.label" = "Visits per week";
+"stores.categories" = "Categories";
+"week" = "week";
+
+// MARK: - Shopping list
+"list.pending" = "Shopping list";
+"list.completed" = "Completed";
+"list.clear.completed" = "Clear completed";
+"list.clear.confirm" = "Remove all completed items?";
+"list.empty.title" = "Nothing on the list";
+"list.empty.subtitle" = "Tap + to add your first item";
+
+// MARK: - Item
+"item.add.title" = "Add Item";
+"item.name.placeholder" = "Item name";
+"item.quantity.placeholder" = "Qty";
+"item.unit.placeholder" = "Unit";
+"item.note.placeholder" = "Note (optional)";
+"item.store.section" = "Store";
+"item.store.auto" = "Auto-assigned by SmartCart";
+"item.store.none" = "No specific store";
+
+// MARK: - Replenishment
+"replenish.overdue" = "Overdue";
+"replenish.in.days" = "In %d days";
+
+// MARK: - Recipe import
+"recipe.title" = "Import Recipe";
+"recipe.prompt.title" = "Scan a Recipe";
+"recipe.prompt.subtitle" = "Take a photo of a recipe or import from your library — SmartCart will extract the ingredients automatically.";
+"recipe.source.camera" = "Take Photo";
+"recipe.source.library" = "Choose from Library";
+"recipe.recognizing" = "Recognizing ingredients…";
+"recipe.ingredients.section" = "Recognized Ingredients";
+"recipe.select.all" = "Select all";
+"recipe.deselect.all" = "Deselect all";
+"recipe.add.selected" = "Add selected";
+"recipe.scan.again" = "Scan another recipe";
+"recipe.error.none_found" = "No ingredients could be recognized. Try a clearer photo.";
+
+// MARK: - Settings
+"settings.title" = "Settings";
+"settings.region" = "Region";
+"settings.country" = "Country";
+"settings.language" = "Language";
+"settings.language.system" = "System default";
+"settings.stores" = "Stores";
+"settings.notifications" = "Notifications";
+"settings.notifications.replenish" = "Restock reminders";
+"settings.feedback.section" = "Feedback";
+"settings.feedback.button" = "Send feedback";
+"settings.about" = "About";
+"settings.version" = "Version";
+"settings.build" = "Build";
+"settings.coming.sync" = "List sharing & sync — coming soon";
+"settings.coming.prices" = "Live price lookup — coming soon";
+
+// MARK: - Feedback
+"feedback.title" = "Feedback";
+"feedback.category.section" = "Category";
+"feedback.category.label" = "Type";
+"feedback.category.general" = "General";
+"feedback.category.bug" = "Bug report";
+"feedback.category.feature" = "Feature request";
+"feedback.category.design" = "Design";
+"feedback.message.section" = "Your feedback";
+"feedback.history.section" = "Previous feedback";
+"feedback.submit" = "Submit";
+"feedback.thankyou.title" = "Thanks for your feedback!";
+"feedback.thankyou.message" = "Your input helps make SmartCart better.";
+
+// MARK: - Onboarding
+"onboarding.welcome.subtitle" = "The smart shopping list that learns where you buy what.";
+"onboarding.welcome.cta" = "Get started";
+"onboarding.country.title" = "Where do you shop?";
+"onboarding.country.subtitle" = "Select your country to see the right stores.";
+"onboarding.country.cta" = "Continue";
+"onboarding.stores.title" = "Your stores";
+"onboarding.stores.subtitle" = "Select the stores you shop at. You can always add more later.";
+"onboarding.stores.cta" = "Start shopping";
+
+// MARK: - Notifications
+"notification.replenish.title" = "Time to restock";
+"notification.replenish.body" = "It's time to add %@ to your shopping list again.";
+"notification.overdue.title" = "Overdue restock";
+"notification.overdue.body" = "%@ should already be on your list.";

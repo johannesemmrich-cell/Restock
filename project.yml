@@ -2,13 +2,13 @@ name: SmartCart
 options:
   bundleIdPrefix: com.johannesemmrich
   deploymentTarget:
-    iOS: "17.0"
+    iOS: "18.0"
 
 targets:
   SmartCart:
     type: application
     platform: iOS
-    deploymentTarget: "17.0"
+    deploymentTarget: "18.0"
     sources:
       - path: SmartCart
     settings:
@@ -25,3 +25,5 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_NSCameraUsageDescription: "SmartCart needs camera access to scan recipe photos."
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "SmartCart needs photo library access to import recipe photos."

@@ -1,0 +1,111 @@
+// MARK: - Allgemeine Aktionen
+"action.cancel" = "Abbrechen";
+"action.add" = "Hinzufügen";
+"action.done" = "Fertig";
+"action.delete" = "Löschen";
+
+// MARK: - Home
+"home.quickadd.placeholder" = "Schnell hinzufügen…";
+"home.stores.title" = "Meine Läden";
+"home.stores.empty.title" = "Noch keine Läden";
+"home.stores.setup" = "Läden einrichten";
+"home.replenish.title" = "Zeit zum Nachkaufen";
+"home.replenish.addall" = "Alle hinzufügen";
+
+// MARK: - Laden
+"store.empty" = "Liste ist leer";
+"store.visits.perweek" = "%dx/Woche";
+"store.visits.biweekly" = "Alle 2 Wochen";
+"store.visits.rarely" = "Selten";
+"stores.title" = "Läden";
+"stores.active" = "Aktiv";
+"stores.inactive" = "Inaktiv";
+"stores.add.custom" = "Eigenen Laden hinzufügen";
+"stores.add.details" = "Details";
+"stores.name.placeholder" = "Name des Ladens";
+"stores.visits.label" = "Besuche pro Woche";
+"stores.categories" = "Kategorien";
+"week" = "Woche";
+
+// MARK: - Einkaufsliste
+"list.pending" = "Einkaufsliste";
+"list.completed" = "Erledigt";
+"list.clear.completed" = "Erledigte löschen";
+"list.clear.confirm" = "Alle erledigten Artikel entfernen?";
+"list.empty.title" = "Noch nichts auf der Liste";
+"list.empty.subtitle" = "Tippe auf + um den ersten Artikel hinzuzufügen";
+
+// MARK: - Artikel
+"item.add.title" = "Artikel hinzufügen";
+"item.name.placeholder" = "Artikelname";
+"item.quantity.placeholder" = "Menge";
+"item.unit.placeholder" = "Einheit";
+"item.note.placeholder" = "Notiz (optional)";
+"item.store.section" = "Laden";
+"item.store.auto" = "Automatisch von SmartCart zugewiesen";
+"item.store.none" = "Kein bestimmter Laden";
+
+// MARK: - Nachkaufen
+"replenish.overdue" = "Überfällig";
+"replenish.in.days" = "In %d Tagen";
+
+// MARK: - Rezeptimport
+"recipe.title" = "Rezept importieren";
+"recipe.prompt.title" = "Rezept scannen";
+"recipe.prompt.subtitle" = "Fotografiere ein Rezept oder importiere es aus deiner Bibliothek – SmartCart erkennt die Zutaten automatisch.";
+"recipe.source.camera" = "Foto aufnehmen";
+"recipe.source.library" = "Aus Bibliothek wählen";
+"recipe.recognizing" = "Zutaten werden erkannt…";
+"recipe.ingredients.section" = "Erkannte Zutaten";
+"recipe.select.all" = "Alle auswählen";
+"recipe.deselect.all" = "Alle abwählen";
+"recipe.add.selected" = "Ausgewählte hinzufügen";
+"recipe.scan.again" = "Weiteres Rezept scannen";
+"recipe.error.none_found" = "Keine Zutaten erkannt. Versuche es mit einem deutlicheren Foto.";
+
+// MARK: - Einstellungen
+"settings.title" = "Einstellungen";
+"settings.region" = "Region";
+"settings.country" = "Land";
+"settings.language" = "Sprache";
+"settings.language.system" = "Systemstandard";
+"settings.stores" = "Läden";
+"settings.notifications" = "Benachrichtigungen";
+"settings.notifications.replenish" = "Nachkauf-Erinnerungen";
+"settings.feedback.section" = "Feedback";
+"settings.feedback.button" = "Feedback senden";
+"settings.about" = "Über SmartCart";
+"settings.version" = "Version";
+"settings.build" = "Build";
+"settings.coming.sync" = "Listen teilen & synchronisieren – demnächst";
+"settings.coming.prices" = "Live-Preisabfrage – demnächst";
+
+// MARK: - Feedback
+"feedback.title" = "Feedback";
+"feedback.category.section" = "Kategorie";
+"feedback.category.label" = "Typ";
+"feedback.category.general" = "Allgemein";
+"feedback.category.bug" = "Fehlerbericht";
+"feedback.category.feature" = "Feature-Wunsch";
+"feedback.category.design" = "Design";
+"feedback.message.section" = "Dein Feedback";
+"feedback.history.section" = "Früheres Feedback";
+"feedback.submit" = "Absenden";
+"feedback.thankyou.title" = "Danke für dein Feedback!";
+"feedback.thankyou.message" = "Dein Input hilft SmartCart besser zu machen.";
+
+// MARK: - Onboarding
+"onboarding.welcome.subtitle" = "Die smarte Einkaufsliste, die lernt wo du was kaufst.";
+"onboarding.welcome.cta" = "Loslegen";
+"onboarding.country.title" = "Wo kaufst du ein?";
+"onboarding.country.subtitle" = "Wähle dein Land um die passenden Läden zu sehen.";
+"onboarding.country.cta" = "Weiter";
+"onboarding.stores.title" = "Deine Läden";
+"onboarding.stores.subtitle" = "Wähle die Läden aus, bei denen du einkaufst. Du kannst später jederzeit mehr hinzufügen.";
+"onboarding.stores.cta" = "Einkaufen starten";
+
+// MARK: - Benachrichtigungen
+"notification.replenish.title" = "Zeit zum Nachkaufen";
+"notification.replenish.body" = "Es ist wieder Zeit, %@ auf die Einkaufsliste zu setzen.";
+"notification.overdue.title" = "Überfälliger Nachkauf";
+"notification.overdue.body" = "%@ sollte bereits auf deiner Liste stehen.";
