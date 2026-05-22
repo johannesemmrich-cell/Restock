@@ -12,6 +12,7 @@
 		11B1C5980F8E6058CDAE01B8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B385C380FF5123526F6E56 /* SettingsView.swift */; };
 		1EEFDCF2812D084BA0E49570 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7378581EFFCC02A1BF2FD3A3 /* HomeView.swift */; };
 		429C369375554B2060939718 /* StoreSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB228D171BFA424F8AFC0CD /* StoreSetupView.swift */; };
+		468A61978094AF399D7F1A36 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2167065308D2C0091FD60DC /* DesignSystem.swift */; };
 		62F62920AC736E7DAF25E422 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CC5E77213853CDEEA9A76D3 /* ContentView.swift */; };
 		78F5AF4484B268BB933F98AA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D46E9154361B0400E35C6B6 /* Preview Assets.xcassets */; };
 		856A7E292BA26C783B908D38 /* RecipeRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B6F1B6E82484B41C0A48AD /* RecipeRecognitionService.swift */; };
@@ -56,6 +57,7 @@
 		C8B6F1B6E82484B41C0A48AD /* RecipeRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRecognitionService.swift; sourceTree = "<group>"; };
 		D267DA892CBED0BC9B534966 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
 		DD34C5D25C3945D6153A049B /* PurchaseRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseRecord.swift; sourceTree = "<group>"; };
+		F2167065308D2C0091FD60DC /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		F2EE7B78F5DF69328D2EF6C4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FFE9FEE09743093F7E668D5E /* AssignmentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -163,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				D267DA892CBED0BC9B534966 /* Color+Hex.swift */,
+				F2167065308D2C0091FD60DC /* DesignSystem.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				0B64D059E2535909BBC07B1B /* AssignmentService.swift in Sources */,
 				9B4FFFAEAC238BFC6CEDCF83 /* Color+Hex.swift in Sources */,
 				62F62920AC736E7DAF25E422 /* ContentView.swift in Sources */,
+				468A61978094AF399D7F1A36 /* DesignSystem.swift in Sources */,
 				C9139F3211CC76DF720FB66C /* FeedbackView.swift in Sources */,
 				FF43B1B80F202D6734200639 /* HabitService.swift in Sources */,
 				1EEFDCF2812D084BA0E49570 /* HomeView.swift in Sources */,
@@ -322,6 +326,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "SmartCart needs camera access to scan recipe photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SmartCart needs photo library access to import recipe photos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -468,6 +473,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "SmartCart needs camera access to scan recipe photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SmartCart needs photo library access to import recipe photos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

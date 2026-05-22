@@ -2,43 +2,50 @@ import SwiftUI
 
 struct StoreCard: View {
     let store: Store
-    var onTap: () -> Void
+    var onTap: () -> Void = {}
 
     private var pendingCount: Int { store.pendingItems.count }
+    private var freq: VisitFrequency { VisitFrequency.closest(to: store.visitsPerWeek) }
 
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
+        VStack(alignment: .leading, spacing: 0) {
+            // Colored header band
+            ZStack(alignment: .topTrailing) {
+                HStack(alignment: .center) {
                     Text(store.emoji)
-                        .font(.system(size: 32))
+                        .font(.system(size: 36))
                     Spacer()
-                    if pendingCount > 0 {
-                        Text("\(pendingCount)")
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(store.color, in: Capsule())
-                    }
                 }
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(store.name)
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(.primary)
-
-                    Text(visitLabel)
-                        .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
-                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 14)
+                .background(store.color.gradient.opacity(0.18))
 
                 if pendingCount > 0 {
-                    Divider()
+                    Text("\(pendingCount)")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(store.color, in: Capsule())
+                        .padding(10)
+                }
+            }
+
+            // Info section
+            VStack(alignment: .leading, spacing: 6) {
+                Text(store.name)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.primary)
+
+                Text(freq.label)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+
+                if pendingCount > 0 {
                     let preview = store.pendingItems.prefix(2).map { $0.name }.joined(separator: ", ")
                     Text(preview + (pendingCount > 2 ? " +\(pendingCount - 2)" : ""))
                         .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(store.color)
                         .lineLimit(1)
                 } else {
                     Text(String(localized: "store.empty"))
@@ -46,24 +53,15 @@ struct StoreCard: View {
                         .foregroundStyle(.tertiary)
                 }
             }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(store.color.opacity(0.25), lineWidth: 1.5)
-            )
-            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
         }
-        .buttonStyle(.plain)
-    }
-
-    private var visitLabel: String {
-        let v = store.visitsPerWeek
-        if v <= 0 { return String(localized: "store.visits.rarely") }
-        if v < 1 { return String(localized: "store.visits.biweekly") }
-        let count = Int(v.rounded())
-        return String(format: String(localized: "store.visits.perweek"), count)
+        .background(Color.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(store.color.opacity(pendingCount > 0 ? 0.35 : 0.15), lineWidth: 1.5)
+        )
+        .shadow(color: store.color.opacity(pendingCount > 0 ? 0.14 : 0.05), radius: 10, x: 0, y: 4)
     }
 }

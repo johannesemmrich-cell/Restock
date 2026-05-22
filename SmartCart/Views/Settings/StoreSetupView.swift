@@ -5,7 +5,6 @@ struct StoreSetupView: View {
     @Environment(\.modelContext) private var context
     @Query private var allStores: [Store]
     @State private var showAddCustomStore = false
-    @State private var selectedCountry = Locale.current.region?.identifier ?? "DE"
 
     var body: some View {
         List {
@@ -14,7 +13,6 @@ struct StoreSetupView: View {
                     StoreRow(store: store)
                 }
             }
-
             if !allStores.filter({ !$0.isActive }).isEmpty {
                 Section(String(localized: "stores.inactive")) {
                     ForEach(allStores.filter { !$0.isActive }) { store in
@@ -22,12 +20,12 @@ struct StoreSetupView: View {
                     }
                 }
             }
-
             Section {
                 Button {
                     showAddCustomStore = true
                 } label: {
-                    Label(String(localized: "stores.add.custom"), systemImage: "plus")
+                    Label(String(localized: "stores.add.custom"), systemImage: "plus.circle.fill")
+                        .foregroundStyle(.blue)
                 }
             }
         }
@@ -41,43 +39,41 @@ struct StoreSetupView: View {
 struct StoreRow: View {
     @Bindable var store: Store
 
+    private var freq: Binding<VisitFrequency> {
+        Binding(
+            get: { VisitFrequency.closest(to: store.visitsPerWeek) },
+            set: { store.visitsPerWeek = $0.rawValue }
+        )
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(store.emoji)
-                    .font(.system(size: 20))
-                Text(store.name)
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.system(size: 22))
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(store.name)
+                        .font(.system(size: 16, weight: .medium))
+                    Text(freq.wrappedValue.label)
+                        .font(.system(size: 12))
+                        .foregroundStyle(store.color)
+                }
                 Spacer()
                 Toggle("", isOn: $store.isActive)
                     .labelsHidden()
             }
 
             if store.isActive {
-                HStack {
-                    Text(String(localized: "stores.visits.label"))
-                        .font(.system(size: 13))
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Stepper(
-                        value: $store.visitsPerWeek,
-                        in: 0.5...14,
-                        step: 0.5
-                    ) {
-                        Text(visitsLabel(store.visitsPerWeek))
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(.primary)
+                Picker(String(localized: "stores.visits.label"), selection: freq) {
+                    ForEach(VisitFrequency.allCases) { option in
+                        Text(option.label).tag(option)
                     }
                 }
+                .pickerStyle(.menu)
+                .tint(store.color)
             }
         }
         .padding(.vertical, 4)
-    }
-
-    private func visitsLabel(_ v: Double) -> String {
-        if v < 1 { return String(localized: "store.visits.biweekly") }
-        let count = Int(v.rounded())
-        return String(format: String(localized: "store.visits.perweek"), count)
     }
 }
 
@@ -87,8 +83,8 @@ struct AddCustomStoreView: View {
 
     @State private var name = ""
     @State private var emoji = "🛒"
-    @State private var colorHex = "#0050AA"
-    @State private var visitsPerWeek = 1.0
+    @State private var selectedColor = Color.brand
+    @State private var selectedFreq = VisitFrequency.weekly
     @State private var selectedCategories: Set<String> = Set(Category.grocery)
 
     private let allCategories = Category.grocery + Category.drugstore
@@ -103,14 +99,12 @@ struct AddCustomStoreView: View {
                             .multilineTextAlignment(.center)
                         TextField(String(localized: "stores.name.placeholder"), text: $name)
                     }
-                    Stepper(
-                        value: $visitsPerWeek,
-                        in: 0.5...14,
-                        step: 0.5
-                    ) {
-                        Text("\(String(localized: "stores.visits.label")): \(Int(visitsPerWeek))x/\(String(localized: "week"))")
-                            .font(.system(size: 14))
+                    Picker(String(localized: "stores.visits.label"), selection: $selectedFreq) {
+                        ForEach(VisitFrequency.allCases) { option in
+                            Text(option.label).tag(option)
+                        }
                     }
+                    ColorPicker(String(localized: "stores.color"), selection: $selectedColor, supportsOpacity: false)
                 }
 
                 Section(String(localized: "stores.categories")) {
@@ -119,8 +113,7 @@ struct AddCustomStoreView: View {
                             Text(category)
                             Spacer()
                             if selectedCategories.contains(category) {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(.blue)
+                                Image(systemName: "checkmark").foregroundStyle(.blue)
                             }
                         }
                         .contentShape(Rectangle())
@@ -153,8 +146,8 @@ struct AddCustomStoreView: View {
         let store = Store(
             name: name.trimmingCharacters(in: .whitespaces),
             emoji: emoji.isEmpty ? "🛒" : String(emoji.prefix(2)),
-            colorHex: colorHex,
-            visitsPerWeek: visitsPerWeek,
+            colorHex: selectedColor.toHex(),
+            visitsPerWeek: selectedFreq.rawValue,
             categories: Array(selectedCategories),
             isCustom: true
         )
