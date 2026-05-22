@@ -144,6 +144,17 @@ struct FeedbackView: View {
 struct FeedbackEntry: Codable, Identifiable {
     var id: String
     var message: String
-    var category: FeedbackView.FeedbackCategory
+    var categoryRaw: String
     var date: Date
+
+    var category: FeedbackView.FeedbackCategory {
+        FeedbackView.FeedbackCategory(rawValue: categoryRaw) ?? .general
+    }
+
+    init(id: String, message: String, category: FeedbackView.FeedbackCategory, date: Date) {
+        self.id = id
+        self.message = message
+        self.categoryRaw = category.rawValue
+        self.date = date
+    }
 }
