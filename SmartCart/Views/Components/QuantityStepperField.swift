@@ -70,11 +70,18 @@ struct QuantityStepperField: View {
                 .multilineTextAlignment(.center)
                 .frame(minWidth: 44, maxWidth: 80)
                 .focused($isFocused)
-                // Normalize comma → dot on every edit so parsing stays robust
                 .onChange(of: quantity) { _, newValue in
                     let normalized = newValue.replacingOccurrences(of: ",", with: ".")
                     if normalized != newValue {
                         quantity = normalized
+                    }
+                }
+                .onChange(of: isFocused) { _, focused in
+                    if !focused {
+                        let val = currentValue
+                        if val.isNaN || val.isInfinite || val < step {
+                            quantity = formatted(step)
+                        }
                     }
                 }
 

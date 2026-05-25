@@ -6,6 +6,7 @@ struct StoreDetailView: View {
     @Environment(\.modelContext) private var context
     @State private var showAddItem = false
     @State private var showClearConfirm = false
+    @State private var showReceiptScanner = false
     @State private var editingItem: ShoppingItem?
     @State private var completionOrder: [String] = []
 
@@ -99,16 +100,29 @@ struct StoreDetailView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    showAddItem = true
-                    Haptics.impact(.light)
-                } label: {
-                    Image(systemName: "plus")
-                        .fontWeight(.semibold)
+                HStack(spacing: 16) {
+                    if !store.completedItems.isEmpty {
+                        Button {
+                            showReceiptScanner = true
+                            Haptics.impact(.light)
+                        } label: {
+                            Image(systemName: "doc.text.viewfinder")
+                        }
+                    }
+                    Button {
+                        showAddItem = true
+                        Haptics.impact(.light)
+                    } label: {
+                        Image(systemName: "plus")
+                            .fontWeight(.semibold)
+                    }
                 }
             }
         }
         .sheet(isPresented: $showAddItem) { AddItemView() }
+        .sheet(isPresented: $showReceiptScanner) {
+            ReceiptScannerView(storeName: store.name)
+        }
         .sheet(item: $editingItem) { item in EditItemView(item: item) }
         .confirmationDialog(
             String(localized: "list.clear.confirm"),

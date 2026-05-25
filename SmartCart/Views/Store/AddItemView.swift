@@ -34,12 +34,14 @@ struct AddItemView: View {
 
                     HStack(spacing: 6) {
                         QuantityStepperField(quantity: $quantity, unit: $unit)
+                            .fixedSize()
                         TextField(String(localized: "item.unit.placeholder"), text: $unit)
                             .multilineTextAlignment(.center)
                             .frame(width: 72)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 8))
+                        Spacer()
                     }
 
                     TextField(String(localized: "item.note.placeholder"), text: $note)
@@ -128,7 +130,8 @@ struct AddItemView: View {
         guard !trimmedName.isEmpty else { return }
 
         let category = AssignmentService.category(for: trimmedName)
-        let qtyAmount = Double(quantity.replacingOccurrences(of: ",", with: ".")) ?? 1
+        let rawQty = Double(quantity.replacingOccurrences(of: ",", with: ".")) ?? 1
+        let qtyAmount = (rawQty > 0 && !rawQty.isNaN) ? rawQty : 1
         let item = ShoppingItem(
             name: trimmedName,
             category: category,

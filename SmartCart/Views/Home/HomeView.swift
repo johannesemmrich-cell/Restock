@@ -10,6 +10,7 @@ struct HomeView: View {
     @State private var showRecipeImport = false
     @State private var showSettings = false
     @State private var showMenuPlan = false
+    @State private var showPriceOverview = false
     @State private var addItemText = ""
     @State private var dueSoonItems: [ConsumptionPattern] = []
     @State private var headerScale: CGFloat = 1.0
@@ -41,10 +42,11 @@ struct HomeView: View {
             .background(Color(.systemGroupedBackground))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarContent }
-            .sheet(isPresented: $showAddItem)       { AddItemView() }
+            .sheet(isPresented: $showAddItem)        { AddItemView() }
             .sheet(isPresented: $showRecipeImport)  { RecipeImportView() }
             .sheet(isPresented: $showSettings)      { SettingsView() }
             .sheet(isPresented: $showMenuPlan)      { MenuPlanView() }
+            .sheet(isPresented: $showPriceOverview) { PriceOverviewView() }
             .onAppear { refreshDueSoon() }
         }
         .devFeedback(context: "Startseite")
@@ -348,6 +350,9 @@ struct HomeView: View {
                 }
                 Button { showMenuPlan = true } label: {
                     Image(systemName: "fork.knife").foregroundStyle(.primary)
+                }
+                Button { showPriceOverview = true } label: {
+                    Image(systemName: "chart.line.uptrend.xyaxis").foregroundStyle(.primary)
                 }
             }
         }

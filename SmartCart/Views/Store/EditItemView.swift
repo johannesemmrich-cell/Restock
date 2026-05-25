@@ -11,6 +11,7 @@ struct EditItemView: View {
     @State private var quantity: String
     @State private var unit: String
     @State private var note: String
+    @State private var priceText: String
     @State private var selectedStore: Store?
     @State private var showDeleteConfirm = false
 
@@ -21,6 +22,11 @@ struct EditItemView: View {
         _unit = State(initialValue: item.unit)
         _note = State(initialValue: item.note)
         _selectedStore = State(initialValue: item.store)
+        if let price = item.estimatedPrice {
+            _priceText = State(initialValue: String(format: "%.2f", price).replacingOccurrences(of: ".", with: ","))
+        } else {
+            _priceText = State(initialValue: "")
+        }
     }
 
     var body: some View {
@@ -37,12 +43,21 @@ struct EditItemView: View {
                         Image(systemName: "number")
                             .foregroundStyle(.secondary)
                         QuantityStepperField(quantity: $quantity, unit: $unit)
+                            .fixedSize()
                         TextField(String(localized: "item.unit.placeholder"), text: $unit)
                             .multilineTextAlignment(.center)
                             .frame(width: 72)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 8))
+                        Spacer()
+                    }
+
+                    HStack {
+                        Image(systemName: "eurosign.circle")
+                            .foregroundStyle(.secondary)
+                        TextField("Preis (optional)", text: $priceText)
+                            .keyboardType(.decimalPad)
                     }
 
                     HStack {
@@ -136,11 +151,19 @@ struct EditItemView: View {
     private func save() {
         item.name = name.trimmingCharacters(in: .whitespaces)
         item.quantity = quantity.isEmpty ? "1" : quantity
-        item.quantityAmount = Double(quantity.replacingOccurrences(of: ",", with: ".")) ?? 1
+        let rawQty = Double(quantity.replacingOccurrences(of: ",", with: ".")) ?? 1
+        item.quantityAmount = (rawQty > 0 && !rawQty.isNaN) ? rawQty : 1
         item.unit = unit
         item.note = note
         item.store = selectedStore
-        item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category)
+
+        let rawPrice = priceText.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)
+        if let p = Double(rawPrice), p > 0 {
+            item.estimatedPrice = p
+        } else if rawPrice.isEmpty {
+            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category)
+        }
+
         Haptics.success()
         dismiss()
     }

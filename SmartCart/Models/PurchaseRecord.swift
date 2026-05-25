@@ -9,16 +9,18 @@ class PurchaseRecord {
     var date: Date
     var quantityAmount: Double
     var unit: String
+    var actualPrice: Double?
 
     var item: ShoppingItem?
 
-    init(itemName: String, storeName: String, quantityAmount: Double = 1, unit: String = "") {
+    init(itemName: String, storeName: String, quantityAmount: Double = 1, unit: String = "", actualPrice: Double? = nil) {
         self.id = UUID()
         self.itemName = itemName
         self.storeName = storeName
         self.date = Date()
         self.quantityAmount = quantityAmount
         self.unit = unit
+        self.actualPrice = actualPrice
     }
 }
 

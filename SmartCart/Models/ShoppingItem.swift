@@ -49,7 +49,8 @@ class ShoppingItem {
             itemName: name,
             storeName: store?.name ?? "",
             quantityAmount: quantityAmount,
-            unit: unit
+            unit: unit,
+            actualPrice: estimatedPrice
         )
         record.item = self
         purchaseRecords.append(record)

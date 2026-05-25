@@ -44,6 +44,9 @@
 		BB33CC44DD55EE66FF7788AA /* FeedbackItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */; };
 		DD55EE66FF7788AABB33CC44 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC44DD55EE66FF7788AABB33 /* TodoItem.swift */; };
 		FF7788AABB33CC44DD55EE66 /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE66FF7788AABB33CC44DD55 /* TodoListView.swift */; };
+		B2C3D4E5F6A7B8C9D0E1F2A3 /* ReceiptParserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* ReceiptParserService.swift */; };
+		D4E5F6A7B8C9D0E1F2A3B4C5 /* ReceiptScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6A7B8C9D0E1F2A3B4 /* ReceiptScannerView.swift */; };
+		F6A7B8C9D0E1F2A3B4C5D6E7 /* PriceOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F6A7B8C9D0E1F2A3B4C5D6 /* PriceOverviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,6 +89,9 @@
 		AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackItem.swift; sourceTree = "<group>"; };
 		CC44DD55EE66FF7788AABB33 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
 		EE66FF7788AABB33CC44DD55 /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7B8C9D0E1F2 /* ReceiptParserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserService.swift; sourceTree = "<group>"; };
+		C3D4E5F6A7B8C9D0E1F2A3B4 /* ReceiptScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScannerView.swift; sourceTree = "<group>"; };
+		E5F6A7B8C9D0E1F2A3B4C5D6 /* PriceOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceOverviewView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -161,11 +167,21 @@
 				DD44494B202C9F8E903DA0B0 /* Components */,
 				52731D201DA8C4A63BCE29D3 /* Feedback */,
 				F3E28CEEE4F8CA4471B65303 /* Home */,
+				A7B8C9D0E1F2A3B4C5D6E7F8 /* Prices */,
 				BB6E9AA7318D66AE1F2DF3DE /* Recipe */,
 				438E279559440C7CC053BDF0 /* Settings */,
 				8C6C80A648AD9F536197C568 /* Store */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		A7B8C9D0E1F2A3B4C5D6E7F8 /* Prices */ = {
+			isa = PBXGroup;
+			children = (
+				C3D4E5F6A7B8C9D0E1F2A3B4 /* ReceiptScannerView.swift */,
+				E5F6A7B8C9D0E1F2A3B4C5D6 /* PriceOverviewView.swift */,
+			);
+			path = Prices;
 			sourceTree = "<group>";
 		};
 		8C6C80A648AD9F536197C568 /* Store */ = {
@@ -227,6 +243,7 @@
 				47184F36A40105B9BDD79C7B /* NotificationService.swift */,
 				427C78F11F632892DD9E807F /* QuickAddParser.swift */,
 				C8B6F1B6E82484B41C0A48AD /* RecipeRecognitionService.swift */,
+				A1B2C3D4E5F6A7B8C9D0E1F2 /* ReceiptParserService.swift */,
 				FF6677AABB11CC22DD33EE44 /* SeasonalService.swift */,
 			);
 			path = Services;
@@ -357,6 +374,9 @@
 				FF7788AABB33CC44DD55EE66 /* TodoListView.swift in Sources */,
 				D0518513ABE97A21C14A74C3 /* StoreDetailView.swift in Sources */,
 				429C369375554B2060939718 /* StoreSetupView.swift in Sources */,
+				B2C3D4E5F6A7B8C9D0E1F2A3 /* ReceiptParserService.swift in Sources */,
+				D4E5F6A7B8C9D0E1F2A3B4C5 /* ReceiptScannerView.swift in Sources */,
+				F6A7B8C9D0E1F2A3B4C5D6E7 /* PriceOverviewView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
