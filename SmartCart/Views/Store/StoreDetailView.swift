@@ -119,7 +119,7 @@ struct StoreDetailView: View {
                 clearCompleted()
             }
         }
-        .devFeedback(context: "Store-Detail")
+        .devFeedback(context: "Liste: \(store.name)")
     }
 
     // MARK: - Progress header

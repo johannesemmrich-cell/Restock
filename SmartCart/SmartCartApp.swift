@@ -72,42 +72,41 @@ private struct DevModeIndicator: View {
     let onDeactivate: () -> Void
 
     var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "hammer.fill")
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.black.opacity(0.8))
-            Text("DEVELOPER MODE")
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.black.opacity(0.8))
-
+        HStack(spacing: 0) {
             Spacer()
-
-            if openCount > 0 {
-                Text("\(openCount)")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color.red, in: Capsule())
-            }
-
-            Button {
-                onDeactivate()
-            } label: {
-                Text("✕")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.black.opacity(0.8))
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(.black.opacity(0.15), in: Capsule())
+            Button(action: onTap) {
+                HStack(spacing: 5) {
+                    Image(systemName: "hammer.fill")
+                        .font(.system(size: 10, weight: .bold))
+                    Text("DEV")
+                        .font(.system(size: 10, weight: .bold))
+                    if openCount > 0 {
+                        Text("\(openCount)")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 1)
+                            .background(Color.red, in: Capsule())
+                    }
+                }
+                .foregroundStyle(.black.opacity(0.75))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(Color.orange, in: Capsule())
             }
             .buttonStyle(.plain)
+
+            Button(action: onDeactivate) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.black.opacity(0.6))
+                    .padding(6)
+                    .background(Color.orange.opacity(0.7), in: Circle())
+            }
+            .buttonStyle(.plain)
+            .padding(.leading, 4)
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .frame(maxWidth: .infinity)
-        .background(Color.orange)
-        .contentShape(Rectangle())
-        .onTapGesture { onTap() }
+        .padding(.vertical, 4)
     }
 }

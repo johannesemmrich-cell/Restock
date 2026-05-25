@@ -10,8 +10,9 @@ struct QuickAddResult {
 enum QuickAddParser {
     private static let knownUnits: [String] = [
         "kg", "g", "mg", "ml", "l", "cl", "dl",
-        "el", "tl", "tbsp", "tsp",          // spoons
-        "stk", "stück", "pck", "pkg", "pkt", // pieces/packs
+        "kilogramm", "gramm", "milligramm", "liter", "milliliter", "zentiliter", "deziliter",
+        "el", "tl", "tbsp", "tsp",
+        "stk", "stück", "stücke", "pck", "pkg", "pkt",
         "dose", "dosen", "flasche", "flaschen", "glas", "gläser",
         "bund", "bündel", "prise", "priesen",
         "can", "bottle", "box", "bag", "pack", "piece", "pieces",
