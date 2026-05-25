@@ -11,6 +11,7 @@ struct SettingsView: View {
     @AppStorage("selectedCountry") private var selectedCountry = Locale.current.region?.identifier ?? "DE"
     @AppStorage("currencyCode") private var currencyCode = Locale.current.currency?.identifier ?? "EUR"
     @AppStorage("developerMode") private var developerMode = false
+    @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
 
     @State private var showFeedback = false
     @State private var notificationsEnabled = false
@@ -59,6 +60,7 @@ struct SettingsView: View {
                                 NotificationService.shared.cancelAll()
                             }
                         }
+                    Toggle("Saisonale Vorschläge", isOn: $seasonalSuggestionsEnabled)
                 }
 
                 Section(String(localized: "settings.feedback.section")) {

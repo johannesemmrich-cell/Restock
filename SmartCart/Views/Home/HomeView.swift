@@ -14,8 +14,10 @@ struct HomeView: View {
     @State private var dueSoonItems: [ConsumptionPattern] = []
     @State private var headerScale: CGFloat = 1.0
 
+    @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
+
     private var seasonalSuggestions: [SeasonalService.Suggestion] {
-        SeasonalService.currentSuggestions()
+        seasonalSuggestionsEnabled ? SeasonalService.currentSuggestions() : []
     }
 
     private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
