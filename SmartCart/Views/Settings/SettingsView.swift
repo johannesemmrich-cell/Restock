@@ -20,7 +20,7 @@ struct SettingsView: View {
     @State private var devPasswordInput = ""
     @State private var devPasswordError = false
 
-    private let devPasswordHash = "959276dcc2b5b3f0741df56dc2eed4a9f5dd1ad5a4daf82eb718066cde53b5d5"
+    private let devPasswordHash = "5636a8a19206c71e37f9c7ae5a1b9f241f6f303a6e9fb78b93732d4f84b36def"
 
     var body: some View {
         NavigationStack {
@@ -145,31 +145,17 @@ struct SettingsView: View {
             .sheet(isPresented: $showFeedback) {
                 FeedbackView()
             }
-            .alert("Developer Mode", isPresented: $showDevPasswordPrompt) {
-                SecureField("Passwort", text: $devPasswordInput)
-                Button("Abbrechen", role: .cancel) {
-                    devPasswordInput = ""
-                    devPasswordError = false
-                }
-                Button("Entsperren") {
-                    let inputHash = SHA256.hash(data: Data(devPasswordInput.utf8))
-                        .map { String(format: "%02x", $0) }
-                        .joined()
-                    if inputHash == devPasswordHash {
+            .sheet(isPresented: $showDevPasswordPrompt) {
+                DevPasswordSheet(
+                    passwordHash: devPasswordHash,
+                    onUnlock: {
                         developerMode = true
-                        devPasswordError = false
+                        showDevPasswordPrompt = false
                         Haptics.impact(.heavy)
-                    } else {
-                        devPasswordError = true
-                    }
-                    devPasswordInput = ""
-                }
-            } message: {
-                if devPasswordError {
-                    Text("Falsches Passwort. Versuche es erneut.")
-                } else {
-                    Text("Passwort eingeben, um den Developer Mode zu aktivieren.")
-                }
+                    },
+                    onCancel: { showDevPasswordPrompt = false }
+                )
+                .presentationDetents([.height(220)])
             }
         }
         .devFeedback(context: "Einstellungen")
@@ -179,6 +165,56 @@ struct SettingsView: View {
         guard allStores.filter({ $0.countryCode == countryCode }).isEmpty else { return }
         for store in Store.presets(for: countryCode) {
             context.insert(store)
+        }
+    }
+}
+
+private struct DevPasswordSheet: View {
+    let passwordHash: String
+    let onUnlock: () -> Void
+    let onCancel: () -> Void
+
+    @State private var input = ""
+    @State private var showError = false
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Developer Mode")
+                .font(.headline)
+            if showError {
+                Text("Falsches Passwort")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+            SecureField("Passwort", text: $input)
+                .textFieldStyle(.roundedBorder)
+                .focused($focused)
+                .onSubmit { verify() }
+                .padding(.horizontal)
+            HStack(spacing: 16) {
+                Button("Abbrechen", role: .cancel) { onCancel() }
+                    .frame(maxWidth: .infinity)
+                Button("Entsperren") { verify() }
+                    .frame(maxWidth: .infinity)
+                    .fontWeight(.semibold)
+                    .disabled(input.isEmpty)
+            }
+            .padding(.horizontal)
+        }
+        .padding()
+        .onAppear { focused = true }
+    }
+
+    private func verify() {
+        let hash = SHA256.hash(data: Data(input.utf8))
+            .map { String(format: "%02x", $0) }
+            .joined()
+        if hash == passwordHash {
+            onUnlock()
+        } else {
+            showError = true
+            input = ""
         }
     }
 }
