@@ -43,16 +43,17 @@ extension Array where Element == PurchaseRecord {
     func consumptionPattern(totalQuantityPerPurchase: Double = 1) -> ConsumptionPattern? {
         guard count >= 2 else { return nil }
         let sorted = sorted { $0.date < $1.date }
+
         var intervals: [Double] = []
         for i in 1..<sorted.count {
-            let days = sorted[i].date.timeIntervalSince(sorted[i - 1].date) / 86400
-            intervals.append(days)
+            intervals.append(sorted[i].date.timeIntervalSince(sorted[i - 1].date) / 86400)
         }
-        let avgInterval = intervals.reduce(0, +) / Double(intervals.count)
+
+        // IQR outlier removal: ignores vacation gaps and double-purchases
+        let cleaned = intervals.count >= 4 ? intervals.removingOutliers() : intervals
+        let avgInterval = cleaned.reduce(0, +) / Double(cleaned.count)
         let avgQty = sorted.map { $0.quantityAmount }.reduce(0, +) / Double(sorted.count)
         let last = sorted.last!.date
-
-        // If multiple units bought at once, scale interval
         let scaledInterval = avgQty > 1 ? avgInterval * avgQty / totalQuantityPerPurchase : avgInterval
         let nextDate = last.addingTimeInterval(scaledInterval * 86400)
 
@@ -63,5 +64,15 @@ extension Array where Element == PurchaseRecord {
             lastPurchaseDate: last,
             estimatedNextPurchaseDate: nextDate
         )
+    }
+}
+
+private extension Array where Element == Double {
+    func removingOutliers() -> [Double] {
+        let s = sorted()
+        let q1 = s[s.count / 4], q3 = s[3 * s.count / 4]
+        let iqr = q3 - q1
+        let filtered = filter { $0 >= q1 - 1.5 * iqr && $0 <= q3 + 1.5 * iqr }
+        return filtered.isEmpty ? self : filtered
     }
 }

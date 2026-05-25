@@ -9,9 +9,14 @@ struct HomeView: View {
     @State private var showAddItem = false
     @State private var showRecipeImport = false
     @State private var showSettings = false
+    @State private var showMenuPlan = false
     @State private var addItemText = ""
     @State private var dueSoonItems: [ConsumptionPattern] = []
     @State private var headerScale: CGFloat = 1.0
+
+    private var seasonalSuggestions: [SeasonalService.Suggestion] {
+        SeasonalService.currentSuggestions()
+    }
 
     private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
 
@@ -24,6 +29,7 @@ struct HomeView: View {
                     headerCard
                     quickAddBar
                     if !dueSoonItems.isEmpty { replenishmentBanner }
+                    if !seasonalSuggestions.isEmpty { seasonalBanner }
                     storeSection
                 }
                 .padding(.horizontal, 16)
@@ -36,6 +42,7 @@ struct HomeView: View {
             .sheet(isPresented: $showAddItem)       { AddItemView() }
             .sheet(isPresented: $showRecipeImport)  { RecipeImportView() }
             .sheet(isPresented: $showSettings)      { SettingsView() }
+            .sheet(isPresented: $showMenuPlan)      { MenuPlanView() }
             .onAppear { refreshDueSoon() }
         }
         .devFeedback(context: "Startseite")
@@ -185,6 +192,58 @@ struct HomeView: View {
         .animation(.easeInOut(duration: 0.18), value: parsedHint?.name)
     }
 
+    // MARK: - Seasonal banner
+
+    private var seasonalBanner: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Label("\(SeasonalService.currentSeason)stipps", systemImage: SeasonalService.seasonIcon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.green)
+                Spacer()
+                Button("Alle hinzufügen") {
+                    for s in seasonalSuggestions {
+                        let category = AssignmentService.category(for: s.name)
+                        let store = AssignmentService.assign(itemName: s.name, to: activeStores, purchaseRecords: allRecords)
+                        context.insert(ShoppingItem(name: s.name, category: category, store: store))
+                    }
+                    Haptics.success()
+                }
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.green)
+            }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(seasonalSuggestions) { s in
+                        Button {
+                            let category = AssignmentService.category(for: s.name)
+                            let store = AssignmentService.assign(itemName: s.name, to: activeStores, purchaseRecords: allRecords)
+                            context.insert(ShoppingItem(name: s.name, category: category, store: store))
+                            Haptics.impact(.light)
+                        } label: {
+                            VStack(spacing: 2) {
+                                Text(s.name)
+                                    .font(.system(size: 13, weight: .medium))
+                                Text(s.reason)
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Color.green.opacity(0.1), in: RoundedRectangle(cornerRadius: 10))
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.green.opacity(0.25), lineWidth: 1))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .background(Color.green.opacity(0.07))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.green.opacity(0.2), lineWidth: 1))
+    }
+
     // MARK: - Replenishment banner
 
     private var replenishmentBanner: some View {
@@ -281,9 +340,13 @@ struct HomeView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
-            Button { showSettings = true } label: {
-                Image(systemName: "gear")
-                    .foregroundStyle(.primary)
+            HStack(spacing: 16) {
+                Button { showSettings = true } label: {
+                    Image(systemName: "gear").foregroundStyle(.primary)
+                }
+                Button { showMenuPlan = true } label: {
+                    Image(systemName: "fork.knife").foregroundStyle(.primary)
+                }
             }
         }
         ToolbarItem(placement: .navigationBarTrailing) {

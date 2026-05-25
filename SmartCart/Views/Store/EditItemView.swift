@@ -33,14 +33,16 @@ struct EditItemView: View {
                         TextField(String(localized: "item.name.placeholder"), text: $name)
                     }
 
-                    HStack {
+                    HStack(spacing: 6) {
                         Image(systemName: "number")
                             .foregroundStyle(.secondary)
                         QuantityStepperField(quantity: $quantity, unit: $unit)
-                        Spacer()
                         TextField(String(localized: "item.unit.placeholder"), text: $unit)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
+                            .multilineTextAlignment(.center)
+                            .frame(width: 72)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 8))
                     }
 
                     HStack {

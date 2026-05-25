@@ -12,24 +12,34 @@ struct AddItemView: View {
     @State private var selectedStore: Store?
     @State private var autoAssigned = false
     @State private var note = ""
+    @State private var showScanner = false
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    TextField(String(localized: "item.name.placeholder"), text: $name)
-                        .onChange(of: name) { _, newValue in
-                            if !newValue.isEmpty {
-                                autoAssign(name: newValue)
-                            }
-                        }
-
                     HStack {
+                        TextField(String(localized: "item.name.placeholder"), text: $name)
+                            .onChange(of: name) { _, newValue in
+                                if !newValue.isEmpty { autoAssign(name: newValue) }
+                            }
+                        Button {
+                            showScanner = true
+                        } label: {
+                            Image(systemName: "barcode.viewfinder")
+                                .foregroundStyle(.blue)
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    HStack(spacing: 6) {
                         QuantityStepperField(quantity: $quantity, unit: $unit)
-                        Spacer()
                         TextField(String(localized: "item.unit.placeholder"), text: $unit)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
+                            .multilineTextAlignment(.center)
+                            .frame(width: 72)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 8))
                     }
 
                     TextField(String(localized: "item.note.placeholder"), text: $note)
@@ -91,6 +101,14 @@ struct AddItemView: View {
                     Button(String(localized: "action.add")) { addItem() }
                         .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                         .fontWeight(.semibold)
+                }
+            }
+        }
+        .sheet(isPresented: $showScanner) {
+            BarcodeScannerSheet { _, productName in
+                if let productName {
+                    name = productName
+                    autoAssign(name: productName)
                 }
             }
         }

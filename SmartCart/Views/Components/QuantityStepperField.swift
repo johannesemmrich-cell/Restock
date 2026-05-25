@@ -41,7 +41,7 @@ struct QuantityStepperField: View {
 
     private func decrement() {
         isFocused = false
-        let newValue = max(0, currentValue - step)
+        let newValue = max(step, currentValue - step)
         quantity = formatted(newValue)
     }
 
@@ -63,7 +63,7 @@ struct QuantityStepperField: View {
                     .foregroundStyle(.tint)
             }
             .buttonStyle(.plain)
-            .disabled(currentValue <= 0)
+            .disabled(currentValue <= step)
 
             TextField("1", text: $quantity)
                 .keyboardType(.decimalPad)
