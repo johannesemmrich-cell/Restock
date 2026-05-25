@@ -120,6 +120,12 @@ struct SettingsView: View {
                             Label("Feedback", systemImage: "hand.thumbsdown")
                         }
 
+                        NavigationLink {
+                            TodoListView()
+                        } label: {
+                            Label("Todos & Ideen", systemImage: "checklist")
+                        }
+
                         Button(role: .destructive) {
                             developerMode = false
                             Haptics.impact(.medium)

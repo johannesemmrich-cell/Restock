@@ -6,20 +6,13 @@ struct SmartCartApp: App {
     let container: ModelContainer
 
     @AppStorage("developerMode") private var developerMode = false
-    @AppStorage("devFeedbackItems") private var storedData = Data()
-    @State private var showDevFeedbackList = false
 
     init() {
         do {
-            container = try ModelContainer(for: Store.self, ShoppingItem.self, PurchaseRecord.self)
+            container = try ModelContainer(for: Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
-    }
-
-    private var openFeedbackCount: Int {
-        let items = (try? JSONDecoder().decode([DevFeedbackItem].self, from: storedData)) ?? []
-        return items.filter { !$0.isResolved }.count
     }
 
     var body: some Scene {
@@ -28,21 +21,7 @@ struct SmartCartApp: App {
                 .modelContainer(container)
                 .safeAreaInset(edge: .top) {
                     if developerMode {
-                        DevModeIndicator(
-                            openCount: openFeedbackCount,
-                            onTap: { showDevFeedbackList = true },
-                            onDeactivate: { developerMode = false }
-                        )
-                    }
-                }
-                .sheet(isPresented: $showDevFeedbackList) {
-                    NavigationStack {
-                        FeedbackListView()
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    Button("Fertig") { showDevFeedbackList = false }
-                                }
-                            }
+                        DevModeIndicator()
                     }
                 }
         }
@@ -51,7 +30,6 @@ struct SmartCartApp: App {
 
 // MARK: - Onboarding Gate
 
-// Shows country picker on first launch, then HomeView
 struct OnboardingGate: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
@@ -67,21 +45,22 @@ struct OnboardingGate: View {
 // MARK: - Dev Mode Indicator
 
 private struct DevModeIndicator: View {
-    let openCount: Int
-    let onTap: () -> Void
-    let onDeactivate: () -> Void
+    @AppStorage("developerMode") private var developerMode = false
+    @Query(filter: #Predicate<FeedbackItem> { !$0.isResolved })
+    private var openFeedback: [FeedbackItem]
+    @State private var showFeedback = false
 
     var body: some View {
         HStack(spacing: 0) {
             Spacer()
-            Button(action: onTap) {
+            Button { showFeedback = true } label: {
                 HStack(spacing: 5) {
                     Image(systemName: "hammer.fill")
                         .font(.system(size: 10, weight: .bold))
                     Text("DEV")
                         .font(.system(size: 10, weight: .bold))
-                    if openCount > 0 {
-                        Text("\(openCount)")
+                    if !openFeedback.isEmpty {
+                        Text("\(openFeedback.count)")
                             .font(.system(size: 9, weight: .bold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 5)
@@ -96,7 +75,7 @@ private struct DevModeIndicator: View {
             }
             .buttonStyle(.plain)
 
-            Button(action: onDeactivate) {
+            Button { developerMode = false } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 9, weight: .bold))
                     .foregroundStyle(.black.opacity(0.6))
@@ -108,5 +87,8 @@ private struct DevModeIndicator: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 4)
+        .sheet(isPresented: $showFeedback) {
+            NavigationStack { FeedbackListView() }
+        }
     }
 }

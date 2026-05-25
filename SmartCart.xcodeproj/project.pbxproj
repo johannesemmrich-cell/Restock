@@ -41,6 +41,9 @@
 		CC33DD44EE55FF6677AABB11 /* AddItemIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD44EE55FF6677AABB11CC22 /* AddItemIntent.swift */; };
 		EE55FF6677AABB11CC22DD33 /* SeasonalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6677AABB11CC22DD33EE44 /* SeasonalService.swift */; };
 		1122334455667788990AABB1 /* MenuPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2233445566778899AA0BBB11 /* MenuPlanView.swift */; };
+		BB33CC44DD55EE66FF7788AA /* FeedbackItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */; };
+		DD55EE66FF7788AABB33CC44 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC44DD55EE66FF7788AABB33 /* TodoItem.swift */; };
+		FF7788AABB33CC44DD55EE66 /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE66FF7788AABB33CC44DD55 /* TodoListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +83,9 @@
 		DD44EE55FF6677AABB11CC22 /* AddItemIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemIntent.swift; sourceTree = "<group>"; };
 		FF6677AABB11CC22DD33EE44 /* SeasonalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonalService.swift; sourceTree = "<group>"; };
 		2233445566778899AA0BBB11 /* MenuPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPlanView.swift; sourceTree = "<group>"; };
+		AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackItem.swift; sourceTree = "<group>"; };
+		CC44DD55EE66FF7788AABB33 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
+		EE66FF7788AABB33CC44DD55 /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -115,6 +121,7 @@
 				77BA313610B6903F788B3D1B /* OnboardingView.swift */,
 				16B385C380FF5123526F6E56 /* SettingsView.swift */,
 				9AB228D171BFA424F8AFC0CD /* StoreSetupView.swift */,
+				EE66FF7788AABB33CC44DD55 /* TodoListView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -130,9 +137,11 @@
 		4DEFE8F3862D961AE9F4396B /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */,
 				DD34C5D25C3945D6153A049B /* PurchaseRecord.swift */,
 				1791AA94F3726B793EB09F74 /* ShoppingItem.swift */,
 				3A49612BE198AF3B48211B62 /* Store.swift */,
+				CC44DD55EE66FF7788AABB33 /* TodoItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -324,6 +333,7 @@
 				468A61978094AF399D7F1A36 /* DesignSystem.swift in Sources */,
 				BEA22437C49C7A0CEC5786AE /* DevFeedbackButton.swift in Sources */,
 				07C6DACB1748CA164C7E39B9 /* EditItemView.swift in Sources */,
+				BB33CC44DD55EE66FF7788AA /* FeedbackItem.swift in Sources */,
 				4AE5CAE2FF18BC98E813B9B3 /* FeedbackListView.swift in Sources */,
 				C9139F3211CC76DF720FB66C /* FeedbackView.swift in Sources */,
 				FF43B1B80F202D6734200639 /* HabitService.swift in Sources */,
@@ -343,6 +353,8 @@
 				8F90D434BA1046F149A56C75 /* SmartCartApp.swift in Sources */,
 				9ECE3DCC45AE32CCEAA8981D /* Store.swift in Sources */,
 				F7EA55CF68EF8E5935FE983A /* StoreCard.swift in Sources */,
+				DD55EE66FF7788AABB33CC44 /* TodoItem.swift in Sources */,
+				FF7788AABB33CC44DD55EE66 /* TodoListView.swift in Sources */,
 				D0518513ABE97A21C14A74C3 /* StoreDetailView.swift in Sources */,
 				429C369375554B2060939718 /* StoreSetupView.swift in Sources */,
 			);
