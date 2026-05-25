@@ -119,6 +119,7 @@ struct StoreDetailView: View {
                 clearCompleted()
             }
         }
+        .devFeedback(context: "Store-Detail")
     }
 
     // MARK: - Progress header

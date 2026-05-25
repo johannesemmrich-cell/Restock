@@ -64,6 +64,7 @@ struct RecipeImportView: View {
                 }
             }
         }
+        .devFeedback(context: "Rezept-Import")
     }
 
     // MARK: - Import prompt

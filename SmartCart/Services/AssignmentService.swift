@@ -38,10 +38,33 @@ struct AssignmentService {
 
     // MARK: - Assign store
 
-    static func assign(itemName: String, to activeStores: [Store]) -> Store? {
+    static func dominantStore(for itemName: String, in stores: [Store], purchaseRecords: [PurchaseRecord]) -> Store? {
+        let relevant = purchaseRecords.filter {
+            $0.itemName.lowercased() == itemName.lowercased()
+        }
+        guard relevant.count >= 2 else { return nil }
+
+        var counts: [String: Int] = [:]
+        for record in relevant {
+            counts[record.storeName, default: 0] += 1
+        }
+
+        let total = relevant.count
+        guard let (dominantName, dominantCount) = counts.max(by: { $0.value < $1.value }),
+              Double(dominantCount) / Double(total) > 0.5 else { return nil }
+
+        return stores.first { $0.name.lowercased() == dominantName.lowercased() }
+    }
+
+    static func assign(itemName: String, to activeStores: [Store], purchaseRecords: [PurchaseRecord] = []) -> Store? {
         guard !activeStores.isEmpty else { return nil }
 
         let nameLower = itemName.lowercased()
+
+        // 0. History-based: if a dominant store is found, use it
+        if let dominant = dominantStore(for: itemName, in: activeStores, purchaseRecords: purchaseRecords) {
+            return dominant
+        }
 
         // 1. Check history: if this item was always bought at one store, prefer it
         // (handled externally via HabitService — here we rely on category logic)

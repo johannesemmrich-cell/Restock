@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import CryptoKit
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
@@ -9,9 +10,17 @@ struct SettingsView: View {
     @AppStorage("selectedLanguage") private var selectedLanguage = "system"
     @AppStorage("selectedCountry") private var selectedCountry = Locale.current.region?.identifier ?? "DE"
     @AppStorage("currencyCode") private var currencyCode = Locale.current.currency?.identifier ?? "EUR"
+    @AppStorage("developerMode") private var developerMode = false
 
     @State private var showFeedback = false
     @State private var notificationsEnabled = false
+    @State private var versionTapCount = 0
+    @State private var lastTapTime: Date = .distantPast
+    @State private var showDevPasswordPrompt = false
+    @State private var devPasswordInput = ""
+    @State private var devPasswordError = false
+
+    private let devPasswordHash = "959276dcc2b5b3f0741df56dc2eed4a9f5dd1ad5a4daf82eb718066cde53b5d5"
 
     var body: some View {
         NavigationStack {
@@ -67,6 +76,21 @@ struct SettingsView: View {
                         Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
                             .foregroundStyle(.secondary)
                     }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        let now = Date()
+                        if now.timeIntervalSince(lastTapTime) > 2 {
+                            versionTapCount = 1
+                        } else {
+                            versionTapCount += 1
+                        }
+                        lastTapTime = now
+                        Haptics.impact(.light)
+                        if versionTapCount >= 5 {
+                            versionTapCount = 0
+                            showDevPasswordPrompt = true
+                        }
+                    }
                     HStack {
                         Text(String(localized: "settings.build"))
                         Spacer()
@@ -85,6 +109,30 @@ struct SettingsView: View {
                     }
                     .padding(.vertical, 4)
                 }
+
+                if developerMode {
+                    Section {
+                        NavigationLink {
+                            FeedbackListView()
+                        } label: {
+                            Label("Feedback", systemImage: "hand.thumbsdown")
+                        }
+
+                        Button(role: .destructive) {
+                            developerMode = false
+                            Haptics.impact(.medium)
+                        } label: {
+                            Label("Developer Mode deaktivieren", systemImage: "xmark.circle")
+                        }
+                    } header: {
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(.green)
+                                .frame(width: 8, height: 8)
+                            Text("Entwickler")
+                        }
+                    }
+                }
             }
             .navigationTitle(String(localized: "settings.title"))
             .navigationBarTitleDisplayMode(.inline)
@@ -97,7 +145,34 @@ struct SettingsView: View {
             .sheet(isPresented: $showFeedback) {
                 FeedbackView()
             }
+            .alert("Developer Mode", isPresented: $showDevPasswordPrompt) {
+                SecureField("Passwort", text: $devPasswordInput)
+                Button("Abbrechen", role: .cancel) {
+                    devPasswordInput = ""
+                    devPasswordError = false
+                }
+                Button("Entsperren") {
+                    let inputHash = SHA256.hash(data: Data(devPasswordInput.utf8))
+                        .map { String(format: "%02x", $0) }
+                        .joined()
+                    if inputHash == devPasswordHash {
+                        developerMode = true
+                        devPasswordError = false
+                        Haptics.impact(.heavy)
+                    } else {
+                        devPasswordError = true
+                    }
+                    devPasswordInput = ""
+                }
+            } message: {
+                if devPasswordError {
+                    Text("Falsches Passwort. Versuche es erneut.")
+                } else {
+                    Text("Passwort eingeben, um den Developer Mode zu aktivieren.")
+                }
+            }
         }
+        .devFeedback(context: "Einstellungen")
     }
 
     private func seedStores(for countryCode: String) {

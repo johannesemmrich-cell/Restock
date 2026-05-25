@@ -25,10 +25,11 @@ struct AddItemView: View {
                         }
 
                     HStack {
-                        TextField(String(localized: "item.quantity.placeholder"), text: $quantity)
-                            .keyboardType(.decimalPad)
-                            .frame(width: 80)
+                        QuantityStepperField(quantity: $quantity, unit: $unit)
+                        Spacer()
                         TextField(String(localized: "item.unit.placeholder"), text: $unit)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 80)
                     }
 
                     TextField(String(localized: "item.note.placeholder"), text: $note)
@@ -93,6 +94,7 @@ struct AddItemView: View {
                 }
             }
         }
+        .devFeedback(context: "Artikel hinzufügen")
     }
 
     private func autoAssign(name: String) {

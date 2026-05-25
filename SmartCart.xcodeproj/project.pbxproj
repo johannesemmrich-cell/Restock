@@ -14,6 +14,7 @@
 		1EEFDCF2812D084BA0E49570 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7378581EFFCC02A1BF2FD3A3 /* HomeView.swift */; };
 		429C369375554B2060939718 /* StoreSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB228D171BFA424F8AFC0CD /* StoreSetupView.swift */; };
 		468A61978094AF399D7F1A36 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2167065308D2C0091FD60DC /* DesignSystem.swift */; };
+		4AE5CAE2FF18BC98E813B9B3 /* FeedbackListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCFCCBF3718D159EE3EBA05D /* FeedbackListView.swift */; };
 		62F62920AC736E7DAF25E422 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CC5E77213853CDEEA9A76D3 /* ContentView.swift */; };
 		78F5AF4484B268BB933F98AA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D46E9154361B0400E35C6B6 /* Preview Assets.xcassets */; };
 		856A7E292BA26C783B908D38 /* RecipeRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B6F1B6E82484B41C0A48AD /* RecipeRecognitionService.swift */; };
@@ -25,6 +26,7 @@
 		9ECE3DCC45AE32CCEAA8981D /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A49612BE198AF3B48211B62 /* Store.swift */; };
 		A21EA866AA3A88E3DF1D7EF9 /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1791AA94F3726B793EB09F74 /* ShoppingItem.swift */; };
 		ACAA0ED3F8C4A30CB3B60F17 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 55FFB2C5C2C97A02689A1FB6 /* Localizable.strings */; };
+		BEA22437C49C7A0CEC5786AE /* DevFeedbackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F251AAC3AEE858B76DCF7E8 /* DevFeedbackButton.swift */; };
 		C9139F3211CC76DF720FB66C /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A4065E868200E2B3A0F02D /* FeedbackView.swift */; };
 		CE780CEB38E00FF824BE132F /* BrowseStoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5239F35789D83F615154249B /* BrowseStoresView.swift */; };
 		CF2E2F0FE6EDD8C5B29CD22E /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47184F36A40105B9BDD79C7B /* NotificationService.swift */; };
@@ -33,6 +35,7 @@
 		DEBF56414AA7F6AF04B254E2 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C362CB3A6517D504DCBC7D3E /* AddItemView.swift */; };
 		F1F4216C977DED9D403293FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D6DDDDC065602308F0A3A52 /* Assets.xcassets */; };
 		F7EA55CF68EF8E5935FE983A /* StoreCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83130764D304E50CAB3E2DD7 /* StoreCard.swift */; };
+		F9AC89E9E28CA2F005490D40 /* QuantityStepperField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375D6F2D2F8E5E3333A4A5CE /* QuantityStepperField.swift */; };
 		FF43B1B80F202D6734200639 /* HabitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838409C378288CFA57B42809 /* HabitService.swift */; };
 /* End PBXBuildFile section */
 
@@ -40,8 +43,10 @@
 		16B385C380FF5123526F6E56 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		1791AA94F3726B793EB09F74 /* ShoppingItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItem.swift; sourceTree = "<group>"; };
 		19A4065E868200E2B3A0F02D /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
+		1F251AAC3AEE858B76DCF7E8 /* DevFeedbackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevFeedbackButton.swift; sourceTree = "<group>"; };
 		28094C6B2161D39A55624F68 /* EditItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditItemView.swift; sourceTree = "<group>"; };
 		2A802E16773399D7FEE19D68 /* RecipeImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportView.swift; sourceTree = "<group>"; };
+		375D6F2D2F8E5E3333A4A5CE /* QuantityStepperField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuantityStepperField.swift; sourceTree = "<group>"; };
 		3A49612BE198AF3B48211B62 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		3D46E9154361B0400E35C6B6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		427C78F11F632892DD9E807F /* QuickAddParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddParser.swift; sourceTree = "<group>"; };
@@ -61,6 +66,7 @@
 		9E1FEF9707C7C16B4D0F2CF5 /* SmartCartApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCartApp.swift; sourceTree = "<group>"; };
 		C362CB3A6517D504DCBC7D3E /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
 		C8B6F1B6E82484B41C0A48AD /* RecipeRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRecognitionService.swift; sourceTree = "<group>"; };
+		CCFCCBF3718D159EE3EBA05D /* FeedbackListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackListView.swift; sourceTree = "<group>"; };
 		D267DA892CBED0BC9B534966 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
 		DD34C5D25C3945D6153A049B /* PurchaseRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseRecord.swift; sourceTree = "<group>"; };
 		F2167065308D2C0091FD60DC /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
@@ -117,6 +123,7 @@
 		52731D201DA8C4A63BCE29D3 /* Feedback */ = {
 			isa = PBXGroup;
 			children = (
+				CCFCCBF3718D159EE3EBA05D /* FeedbackListView.swift */,
 				19A4065E868200E2B3A0F02D /* FeedbackView.swift */,
 			);
 			path = Feedback;
@@ -201,7 +208,9 @@
 		DD44494B202C9F8E903DA0B0 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				1F251AAC3AEE858B76DCF7E8 /* DevFeedbackButton.swift */,
 				98EB342AC7EE894C9C2B7A34 /* ItemRow.swift */,
+				375D6F2D2F8E5E3333A4A5CE /* QuantityStepperField.swift */,
 				83130764D304E50CAB3E2DD7 /* StoreCard.swift */,
 			);
 			path = Components;
@@ -291,7 +300,9 @@
 				9B4FFFAEAC238BFC6CEDCF83 /* Color+Hex.swift in Sources */,
 				62F62920AC736E7DAF25E422 /* ContentView.swift in Sources */,
 				468A61978094AF399D7F1A36 /* DesignSystem.swift in Sources */,
+				BEA22437C49C7A0CEC5786AE /* DevFeedbackButton.swift in Sources */,
 				07C6DACB1748CA164C7E39B9 /* EditItemView.swift in Sources */,
+				4AE5CAE2FF18BC98E813B9B3 /* FeedbackListView.swift in Sources */,
 				C9139F3211CC76DF720FB66C /* FeedbackView.swift in Sources */,
 				FF43B1B80F202D6734200639 /* HabitService.swift in Sources */,
 				1EEFDCF2812D084BA0E49570 /* HomeView.swift in Sources */,
@@ -299,6 +310,7 @@
 				CF2E2F0FE6EDD8C5B29CD22E /* NotificationService.swift in Sources */,
 				0614C48D34DF2EBE3B029C8C /* OnboardingView.swift in Sources */,
 				DDE7767C2A2E25E83FA6CFC8 /* PurchaseRecord.swift in Sources */,
+				F9AC89E9E28CA2F005490D40 /* QuantityStepperField.swift in Sources */,
 				9D0E42859AFB4024C1CA85F5 /* QuickAddParser.swift in Sources */,
 				99C1C04FD88022B0F3E9A1E2 /* RecipeImportView.swift in Sources */,
 				856A7E292BA26C783B908D38 /* RecipeRecognitionService.swift in Sources */,

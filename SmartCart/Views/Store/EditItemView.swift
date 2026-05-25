@@ -36,11 +36,11 @@ struct EditItemView: View {
                     HStack {
                         Image(systemName: "number")
                             .foregroundStyle(.secondary)
-                        TextField(String(localized: "item.quantity.placeholder"), text: $quantity)
-                            .keyboardType(.decimalPad)
-                            .frame(width: 70)
-                        Divider().frame(height: 20)
+                        QuantityStepperField(quantity: $quantity, unit: $unit)
+                        Spacer()
                         TextField(String(localized: "item.unit.placeholder"), text: $unit)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 80)
                     }
 
                     HStack {
@@ -128,6 +128,7 @@ struct EditItemView: View {
                 }
             }
         }
+        .devFeedback(context: "Artikel bearbeiten")
     }
 
     private func save() {

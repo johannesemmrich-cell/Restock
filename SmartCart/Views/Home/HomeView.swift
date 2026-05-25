@@ -38,6 +38,7 @@ struct HomeView: View {
             .sheet(isPresented: $showSettings)      { SettingsView() }
             .onAppear { refreshDueSoon() }
         }
+        .devFeedback(context: "Startseite")
     }
 
     // MARK: - Header
@@ -82,7 +83,19 @@ struct HomeView: View {
 
     // MARK: - Quick add
 
-    private var parsedHint: String? { QuickAddParser.hint(for: addItemText) }
+    private var parsedHint: QuickAddResult? {
+        guard !addItemText.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
+        let r = QuickAddParser.parse(addItemText)
+        // Only show chip when something meaningful was parsed (name differs or unit present)
+        guard r.name != addItemText.trimmingCharacters(in: .whitespaces) || !r.unit.isEmpty else { return nil }
+        return r
+    }
+
+    private var suggestedStore: Store? {
+        guard !addItemText.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
+        let parsed = QuickAddParser.parse(addItemText)
+        return AssignmentService.assign(itemName: parsed.name, to: activeStores, purchaseRecords: allRecords)
+    }
 
     private var quickAddBar: some View {
         VStack(spacing: 6) {
@@ -122,22 +135,54 @@ struct HomeView: View {
                 }
             }
 
-            // Smart parsing hint
-            if let hint = parsedHint {
-                HStack(spacing: 4) {
-                    Image(systemName: "wand.and.stars")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.purple)
-                    Text(hint)
-                        .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
+            // Smart parsing preview chip
+            if let parsed = parsedHint {
+                HStack(spacing: 8) {
+                    // Quantity + unit pill (only when qty ≠ 1 or unit is present)
+                    if parsed.quantityAmount != 1 || !parsed.unit.isEmpty {
+                        Text(
+                            parsed.unit.isEmpty
+                                ? "\(parsed.quantity)×"
+                                : (parsed.quantityAmount != 1 ? "\(parsed.quantity) \(parsed.unit)" : parsed.unit)
+                        )
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Color.blue, in: Capsule())
+                    }
+
+                    // Item name
+                    Text(parsed.name)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+
                     Spacer()
+
+                    // Store suggestion
+                    if let store = suggestedStore {
+                        HStack(spacing: 3) {
+                            Image(systemName: "arrow.right")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text(store.name)
+                                .font(.system(size: 12, weight: .medium))
+                        }
+                        .foregroundStyle(store.color)
+                    }
                 }
-                .padding(.horizontal, 4)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 7)
+                .background(Color.blue.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.blue.opacity(0.18), lineWidth: 1)
+                )
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .animation(.easeInOut(duration: 0.18), value: parsedHint)
+        .animation(.easeInOut(duration: 0.18), value: parsedHint?.name)
     }
 
     // MARK: - Replenishment banner
@@ -260,7 +305,7 @@ struct HomeView: View {
         Haptics.impact(.light)
         let parsed = QuickAddParser.parse(trimmed)
         let category = AssignmentService.category(for: parsed.name)
-        let store = AssignmentService.assign(itemName: parsed.name, to: activeStores)
+        let store = AssignmentService.assign(itemName: parsed.name, to: activeStores, purchaseRecords: allRecords)
         context.insert(ShoppingItem(
             name: parsed.name,
             category: category,
@@ -279,7 +324,7 @@ struct HomeView: View {
 
     private func addDueSoonToList() {
         for pattern in dueSoonItems {
-            let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores)
+            let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
             context.insert(ShoppingItem(name: pattern.itemName, store: store))
         }
         dueSoonItems = []
