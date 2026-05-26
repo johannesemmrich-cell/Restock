@@ -9,6 +9,8 @@ struct StoreDetailView: View {
     @State private var showReceiptScanner = false
     @State private var editingItem: ShoppingItem?
     @State private var completionOrder: [String] = []
+    @State private var quickAddText: String = ""
+    @Query private var allRecords: [PurchaseRecord]
 
     private var total: Double {
         store.pendingItems.compactMap { $0.estimatedPrice }.reduce(0, +)
@@ -20,6 +22,52 @@ struct StoreDetailView: View {
 
     var body: some View {
         List {
+            Section {
+                HStack(spacing: 10) {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundStyle(store.color)
+                        .font(.system(size: 18))
+                    TextField(String(localized: "home.quickadd.placeholder"), text: $quickAddText)
+                        .submitLabel(.done)
+                        .onSubmit { quickAdd() }
+                    if !quickAddText.isEmpty {
+                        Button { quickAddText = "" } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(Color(.systemGray3))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                if let parsed = quickAddParsed {
+                    HStack(spacing: 8) {
+                        if parsed.quantityAmount != 1 || !parsed.unit.isEmpty {
+                            Text(parsed.unit.isEmpty ? "\(parsed.quantity)×"
+                                 : (parsed.quantityAmount != 1 ? "\(parsed.quantity) \(parsed.unit)" : parsed.unit))
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 8).padding(.vertical, 3)
+                                .background(store.color, in: Capsule())
+                        }
+                        Text(parsed.name)
+                            .font(.system(size: 13, weight: .medium))
+                        Spacer()
+                        Image(systemName: "return")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.horizontal, 6).padding(.vertical, 5)
+                    .background(store.color.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(store.color.opacity(0.2), lineWidth: 1))
+                    .contentShape(Rectangle())
+                    .onTapGesture { quickAdd() }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 6, trailing: 16))
+                    .listRowBackground(Color.clear)
+                }
+            }
+            .animation(.easeInOut(duration: 0.15), value: quickAddParsed?.name)
+
             Section {
                 if !store.items.isEmpty {
                     progressHeader
@@ -196,6 +244,32 @@ struct StoreDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
+    }
+
+    // MARK: - Quick add
+
+    private var quickAddParsed: QuickAddResult? {
+        guard !quickAddText.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
+        let r = QuickAddParser.parse(quickAddText)
+        guard r.name != quickAddText.trimmingCharacters(in: .whitespaces) || !r.unit.isEmpty else { return nil }
+        return r
+    }
+
+    private func quickAdd() {
+        let trimmed = quickAddText.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        Haptics.impact(.light)
+        let parsed = QuickAddParser.parse(trimmed)
+        let category = AssignmentService.category(for: parsed.name)
+        context.insert(ShoppingItem(
+            name: parsed.name,
+            category: category,
+            quantity: parsed.quantity,
+            quantityAmount: parsed.quantityAmount,
+            unit: parsed.unit,
+            store: store
+        ))
+        quickAddText = ""
     }
 
     // MARK: - Frequency row

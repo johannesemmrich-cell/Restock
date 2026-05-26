@@ -172,6 +172,10 @@ extension Store {
         }
     }
 
+    static var allPresets: [Store] {
+        availableCountries.flatMap { presets(for: $0.code) }
+    }
+
     static let availableCountries: [(code: String, name: String, flag: String)] = [
         ("DE", "Deutschland",      "🇩🇪"),
         ("AT", "Österreich",       "🇦🇹"),

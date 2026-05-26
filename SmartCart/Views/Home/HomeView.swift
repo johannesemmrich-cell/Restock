@@ -50,8 +50,8 @@ struct HomeView: View {
             .sheet(isPresented: $showPriceOverview) { PriceOverviewView() }
             .sheet(isPresented: $showAddStore) { AddCustomStoreView() }
             .onAppear { refreshDueSoon() }
+            .devFeedback(context: "Startseite")
         }
-        .devFeedback(context: "Startseite")
     }
 
     // MARK: - Header
