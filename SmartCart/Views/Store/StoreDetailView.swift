@@ -20,13 +20,14 @@ struct StoreDetailView: View {
 
     var body: some View {
         List {
-            if !store.items.isEmpty {
-                Section {
+            Section {
+                if !store.items.isEmpty {
                     progressHeader
                 }
-                .listRowBackground(Color.cardBackground)
-                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                frequencyRow
             }
+            .listRowBackground(Color.cardBackground)
+            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
 
             if !store.pendingItems.isEmpty {
                 Section(String(localized: "list.pending")) {
@@ -195,6 +196,39 @@ struct StoreDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
+    }
+
+    // MARK: - Frequency row
+
+    private var frequencyRow: some View {
+        let current = VisitFrequency.closest(to: store.visitsPerWeek)
+        return HStack {
+            Image(systemName: "calendar")
+                .foregroundStyle(.secondary)
+                .frame(width: 20)
+            Text(String(localized: "store.frequency.label"))
+                .foregroundStyle(.secondary)
+            Spacer()
+            Menu {
+                ForEach(VisitFrequency.allCases) { option in
+                    Button {
+                        store.visitsPerWeek = option.rawValue
+                    } label: {
+                        if option == current {
+                            Label(option.label, systemImage: "checkmark")
+                        } else {
+                            Text(option.label)
+                        }
+                    }
+                }
+            } label: {
+                Text(current.label)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(store.color)
+            }
+        }
+        .font(.system(size: 14))
+        .padding(.vertical, 2)
     }
 
     // MARK: - Actions

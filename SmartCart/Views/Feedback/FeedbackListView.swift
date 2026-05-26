@@ -2,12 +2,15 @@ import SwiftUI
 import SwiftData
 
 struct FeedbackListView: View {
+    var contextForNew: String = "Allgemein"
+
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \FeedbackItem.createdAt, order: .reverse)
     private var allFeedback: [FeedbackItem]
 
     @State private var statusFilter: StatusFilter = .offen
     @State private var priorityFilter: String = "Alle"
+    @State private var showSubmitForm = false
 
     private enum StatusFilter: String, CaseIterable {
         case alle   = "Alle"
@@ -77,11 +80,22 @@ struct FeedbackListView: View {
         .navigationTitle("Feedback")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    showSubmitForm = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 if allFeedback.contains(where: { $0.isResolved }) {
                     Button("Gelöste löschen", role: .destructive) { deleteResolved() }
                 }
             }
+        }
+        .sheet(isPresented: $showSubmitForm) {
+            DevFeedbackSheet(context: contextForNew)
+                .presentationDetents([.medium])
         }
     }
 

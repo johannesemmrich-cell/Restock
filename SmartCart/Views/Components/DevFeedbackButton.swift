@@ -23,15 +23,17 @@ struct DevFeedbackOverlay: ViewModifier {
                 }
             }
             .sheet(isPresented: $showSheet) {
-                DevFeedbackSheet(context: context)
-                    .presentationDetents([.medium])
+                NavigationStack {
+                    FeedbackListView(contextForNew: context)
+                }
+                .presentationDetents([.medium, .large])
             }
     }
 }
 
 // MARK: - Feedback Sheet
 
-private struct DevFeedbackSheet: View {
+struct DevFeedbackSheet: View {
     let context: String
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss

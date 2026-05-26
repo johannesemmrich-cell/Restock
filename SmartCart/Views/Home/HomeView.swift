@@ -11,6 +11,7 @@ struct HomeView: View {
     @State private var showSettings = false
     @State private var showMenuPlan = false
     @State private var showPriceOverview = false
+    @State private var showAddStore = false
     @State private var addItemText = ""
     @State private var dueSoonItems: [ConsumptionPattern] = []
     @State private var headerScale: CGFloat = 1.0
@@ -47,6 +48,7 @@ struct HomeView: View {
             .sheet(isPresented: $showSettings)      { SettingsView() }
             .sheet(isPresented: $showMenuPlan)      { MenuPlanView() }
             .sheet(isPresented: $showPriceOverview) { PriceOverviewView() }
+            .sheet(isPresented: $showAddStore) { AddCustomStoreView() }
             .onAppear { refreshDueSoon() }
         }
         .devFeedback(context: "Startseite")
@@ -295,6 +297,14 @@ struct HomeView: View {
                 Text(String(localized: "home.stores.title"))
                     .font(.system(size: 18, weight: .bold))
                 Spacer()
+                Button {
+                    showAddStore = true
+                    Haptics.impact(.light)
+                } label: {
+                    Image(systemName: "plus.circle")
+                        .font(.system(size: 16))
+                        .foregroundStyle(.secondary)
+                }
                 Button {
                     showSettings = true
                 } label: {
