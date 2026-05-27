@@ -11,18 +11,31 @@ struct AssignmentService {
     // MARK: - Category to store-type mapping
 
     private static let drugstoreKeywords: Set<String> = [
+        // Körperpflege
         "shampoo", "conditioner", "duschgel", "seife", "deo", "deodorant",
         "zahnbürste", "zahnpasta", "mundwasser", "rasierer", "rasierklinge",
         "creme", "lotion", "sonnencreme", "lippenpflege", "mascara",
         "wattepads", "wattestäbchen", "pflaster", "paracetamol", "ibuprofen",
         "vitamine", "vitamin", "windeln", "babynahrung", "babyöl",
         "haarspray", "haargel", "parfum", "nagellack", "make-up", "foundation",
-        "lippenstift", "waschmittel", "spülmittel", "allzweckreiniger",
-        "toilettenpapier", "papiertücher", "tampons", "binden", "kondome",
-        "zahnbürstenköpfe", "oral", "elektrische zahnbürste", "mundpflege",
+        "lippenstift", "zahnbürstenköpfe", "oral", "elektrische zahnbürste", "mundpflege",
         "shower gel", "soap", "toothbrush", "toothpaste", "shaving",
-        "sunscreen", "plaster", "vitamins", "diapers", "detergent",
-        "cleaning", "toilet paper", "tissues", "cotton pads",
+        "sunscreen", "plaster", "vitamins", "diapers",
+        // Haar & Körper
+        "kamm", "haarbürste", "bürste", "haarband", "haarnadel", "haargummi",
+        "rasierapparat", "rasierschaum", "aftershave", "bartpflege",
+        "comb", "hair brush", "hair tie",
+        // Haushalt & Reinigung
+        "waschmittel", "spülmittel", "allzweckreiniger", "detergent", "cleaning",
+        "toilettenpapier", "küchenrolle", "papiertücher", "tissues", "toilet paper",
+        "müllbeutel", "gefrierbeutel", "frischhaltefolie", "alufolie",
+        "schwamm", "spülbürste", "scheuertuch", "putztuch",
+        "garbage bag", "bin bag", "sponge",
+        // Hygiene
+        "tampons", "binden", "kondome", "cotton pads", "zahnseide",
+        // Haushaltswaren (gehen zu Action/Drogerie)
+        "kerzen", "kerze", "teelicht", "wäscheklammer", "kleiderbügel",
+        "einwegbecher", "plastikbecher", "servietten", "napkin",
     ]
 
     private static let highFrequencyFoodKeywords: Set<String> = [

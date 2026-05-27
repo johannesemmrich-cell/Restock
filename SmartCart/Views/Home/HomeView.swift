@@ -476,6 +476,20 @@ struct HomeView: View {
                             StoreCard(store: store)
                         }
                         .buttonStyle(.plain)
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                context.delete(store)
+                                Haptics.impact(.medium)
+                            } label: {
+                                Label("Löschen", systemImage: "trash")
+                            }
+                            Button {
+                                store.isActive = false
+                                Haptics.impact(.light)
+                            } label: {
+                                Label("Archivieren", systemImage: "archivebox")
+                            }
+                        }
                     }
                 }
             }

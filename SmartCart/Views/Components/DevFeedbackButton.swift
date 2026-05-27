@@ -23,10 +23,8 @@ struct DevFeedbackOverlay: ViewModifier {
                 }
             }
             .sheet(isPresented: $showSheet) {
-                NavigationStack {
-                    FeedbackListView(contextForNew: context)
-                }
-                .presentationDetents([.medium, .large])
+                DevFeedbackSheet(context: context)
+                    .presentationDetents([.height(340)])
             }
     }
 }
