@@ -13,6 +13,7 @@ struct HomeView: View {
     @State private var showPriceOverview = false
     @State private var showAddStore = false
     @State private var showAllItems = false
+    @State private var bannerExpanded = false
     @State private var addItemText = ""
     @State private var dueSoonItems: [ConsumptionPattern] = []
     @State private var headerScale: CGFloat = 1.0
@@ -49,7 +50,7 @@ struct HomeView: View {
             .sheet(isPresented: $showSettings)      { SettingsView() }
             .sheet(isPresented: $showMenuPlan)      { MenuPlanView() }
             .sheet(isPresented: $showPriceOverview) { PriceOverviewView() }
-            .sheet(isPresented: $showAddStore) { AddCustomStoreView() }
+            .sheet(isPresented: $showAddStore) { NavigationStack { BrowseStoresView() } }
             .sheet(isPresented: $showAllItems) { AllItemsView() }
             .onAppear { refreshDueSoon() }
             .devFeedback(context: "Startseite")
@@ -59,51 +60,162 @@ struct HomeView: View {
     // MARK: - Header
 
     private var headerCard: some View {
-        ZStack(alignment: .bottomLeading) {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(LinearGradient.brand)
-                .frame(maxWidth: .infinity)
-                .frame(height: 130)
+        VStack(spacing: 0) {
+            // Compact header (always visible)
+            ZStack(alignment: .bottomLeading) {
+                Circle()
+                    .fill(.white.opacity(0.07))
+                    .frame(width: 140, height: 140)
+                    .offset(x: 210, y: -30)
+                Circle()
+                    .fill(.white.opacity(0.05))
+                    .frame(width: 90, height: 90)
+                    .offset(x: 260, y: 20)
 
-            // Decorative circles
-            Circle()
-                .fill(.white.opacity(0.07))
-                .frame(width: 140, height: 140)
-                .offset(x: 210, y: -30)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("SmartCart")
+                        .font(.system(size: 26, weight: .bold))
+                        .foregroundStyle(.white)
 
-            Circle()
-                .fill(.white.opacity(0.05))
-                .frame(width: 90, height: 90)
-                .offset(x: 260, y: 20)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("SmartCart")
-                    .font(.system(size: 26, weight: .bold))
-                    .foregroundStyle(.white)
-
-                if totalPending > 0 {
-                    HStack(spacing: 6) {
-                        Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
+                    if totalPending > 0 {
+                        HStack(spacing: 6) {
+                            Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
+                                .font(.system(size: 14))
+                                .foregroundStyle(.white.opacity(0.8))
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundStyle(.white.opacity(0.6))
+                                .rotationEffect(bannerExpanded ? .degrees(180) : .zero)
+                                .animation(.spring(response: 0.3), value: bannerExpanded)
+                        }
+                    } else {
+                        Text(String(localized: "home.header.empty"))
                             .font(.system(size: 14))
                             .foregroundStyle(.white.opacity(0.8))
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.5))
                     }
-                } else {
-                    Text(String(localized: "home.header.empty"))
-                        .font(.system(size: 14))
-                        .foregroundStyle(.white.opacity(0.8))
+                }
+                .padding(20)
+            }
+            .frame(height: 130)
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                guard totalPending > 0 else { return }
+                Haptics.impact(.medium)
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.82)) {
+                    bannerExpanded.toggle()
                 }
             }
-            .padding(20)
+
+            // Expandable items list
+            if bannerExpanded {
+                bannerItemsList
+                    .transition(.opacity)
+            }
         }
-        .shadow(color: Color.brand.opacity(0.4), radius: 16, x: 0, y: 6)
-        .contentShape(RoundedRectangle(cornerRadius: 20))
-        .onTapGesture {
-            guard totalPending > 0 else { return }
-            Haptics.impact(.light)
-            showAllItems = true
+        .background(LinearGradient.brand)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .shadow(
+            color: Color.brand.opacity(bannerExpanded ? 0.6 : 0.4),
+            radius: bannerExpanded ? 28 : 16,
+            x: 0,
+            y: bannerExpanded ? 14 : 6
+        )
+        .animation(.spring(response: 0.45, dampingFraction: 0.82), value: bannerExpanded)
+        .onChange(of: totalPending) { _, newValue in
+            if newValue == 0 {
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.82)) { bannerExpanded = false }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var bannerItemsList: some View {
+        let storesWithItems = activeStores.filter { !$0.pendingItems.isEmpty }
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(.white.opacity(0.18))
+                .frame(height: 0.5)
+
+            ForEach(storesWithItems) { store in
+                // Store header
+                HStack(spacing: 6) {
+                    Text(store.emoji).font(.system(size: 13))
+                    Text(store.name)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.85))
+                    Spacer()
+                    Text("\(store.pendingItems.count)")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.white.opacity(0.5))
+                }
+                .padding(.horizontal, 18)
+                .padding(.top, 12)
+                .padding(.bottom, 2)
+
+                ForEach(store.pendingItems) { item in
+                    Button {
+                        withAnimation(.spring(response: 0.3)) { item.markCompleted() }
+                        Haptics.success()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "circle")
+                                .font(.system(size: 22))
+                                .foregroundStyle(.white.opacity(0.65))
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(item.name)
+                                    .font(.system(size: 14))
+                                    .foregroundStyle(.white)
+                                if !item.unit.isEmpty || item.quantityAmount != 1 {
+                                    Text(item.quantity + (!item.unit.isEmpty ? " \(item.unit)" : ""))
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(.white.opacity(0.55))
+                                }
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 7)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            // Footer: full list link + collapse
+            HStack {
+                Button {
+                    withAnimation(.spring(response: 0.45, dampingFraction: 0.82)) { bannerExpanded = false }
+                    showAllItems = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("Vollständige Liste")
+                            .font(.system(size: 12, weight: .medium))
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 10, weight: .semibold))
+                    }
+                    .foregroundStyle(.white.opacity(0.6))
+                }
+                .buttonStyle(.plain)
+
+                Spacer()
+
+                Button {
+                    withAnimation(.spring(response: 0.45, dampingFraction: 0.82)) { bannerExpanded = false }
+                } label: {
+                    HStack(spacing: 3) {
+                        Image(systemName: "chevron.up")
+                            .font(.system(size: 10, weight: .semibold))
+                        Text("Einklappen")
+                            .font(.system(size: 12))
+                    }
+                    .foregroundStyle(.white.opacity(0.45))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 18)
+            .padding(.top, 12)
+            .padding(.bottom, 16)
         }
     }
 
@@ -380,12 +492,20 @@ struct HomeView: View {
             }
         }
         ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                Haptics.impact(.light)
-                showAddItem = true
-            } label: {
-                Image(systemName: "plus")
-                    .fontWeight(.semibold)
+            HStack(spacing: 16) {
+                Button {
+                    showAllItems = true
+                } label: {
+                    Image(systemName: "list.bullet")
+                        .foregroundStyle(.primary)
+                }
+                Button {
+                    Haptics.impact(.light)
+                    showAddItem = true
+                } label: {
+                    Image(systemName: "plus")
+                        .fontWeight(.semibold)
+                }
             }
         }
     }

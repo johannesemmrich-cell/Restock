@@ -3,10 +3,12 @@ import SwiftData
 
 struct BrowseStoresView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
     @Query private var existingStores: [Store]
     @State private var selectedCountry: String = ""
     @State private var addedNames: Set<String> = []
     @State private var searchText: String = ""
+    @State private var showCustom = false
 
     private var isSearching: Bool { !searchText.trimmingCharacters(in: .whitespaces).isEmpty }
 
@@ -111,20 +113,51 @@ struct BrowseStoresView: View {
                 Spacer()
             } else {
                 List {
-                    Section {
-                        ForEach(presetsForCountry) { preset in
-                            presetRow(preset, subtitle: preset.categories.prefix(2).joined(separator: ", "))
+                    if !selectedCountry.isEmpty {
+                        Section {
+                            ForEach(presetsForCountry) { preset in
+                                presetRow(preset, subtitle: preset.categories.prefix(2).joined(separator: ", "))
+                            }
+                        } header: {
+                            if let country = Store.availableCountries.first(where: { $0.code == selectedCountry }) {
+                                Text("\(country.flag) \(country.name)")
+                            }
                         }
-                    } header: {
-                        if let country = Store.availableCountries.first(where: { $0.code == selectedCountry }) {
-                            Text("\(country.flag) \(country.name)")
+                    }
+                    Section("Eigener Laden") {
+                        Button {
+                            showCustom = true
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundStyle(Color.brand)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Eigenen Laden erstellen")
+                                        .font(.system(size: 16))
+                                        .foregroundStyle(.primary)
+                                    Text("Name, Emoji, Farbe & Häufigkeit")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(.vertical, 2)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
             }
         }
         .navigationTitle(String(localized: "browse.title"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Fertig") { dismiss() }
+                    .fontWeight(.semibold)
+            }
+        }
+        .sheet(isPresented: $showCustom) { AddCustomStoreView() }
         .onAppear {
             if selectedCountry.isEmpty {
                 selectedCountry = Store.availableCountries.first?.code ?? "DE"

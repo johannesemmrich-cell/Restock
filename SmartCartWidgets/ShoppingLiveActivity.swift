@@ -58,7 +58,6 @@ struct ShoppingLiveActivity: Widget {
                                     .foregroundStyle(.green)
                                     .symbolEffect(.bounce, value: next)
                             }
-                            .buttonStyle(.plain)
                         }
                         .padding(.top, 6)
                         .padding(.bottom, 2)
@@ -136,7 +135,6 @@ private struct LockScreenView: View {
                         .font(.system(size: 30))
                         .foregroundStyle(.green)
                 }
-                .buttonStyle(.plain)
             }
         }
         .padding(16)
