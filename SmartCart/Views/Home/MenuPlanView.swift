@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+#if canImport(FoundationModels)
+import FoundationModels
+#endif
 
 struct MenuPlanView: View {
     @Environment(\.modelContext) private var context
@@ -8,82 +11,60 @@ struct MenuPlanView: View {
     @Query private var allRecords: [PurchaseRecord]
 
     @AppStorage("menuPlanJSON") private var planJSON = ""
+    @AppStorage("menuIngredientsJSON") private var ingredientsJSON = ""
+
     @State private var meals: [String]
+    @State private var ingredientsMap: [String: [String]]   // "0"…"6" → ingredient list
+    @State private var loadingDays: Set<Int> = []
     @State private var addedCount = 0
     @State private var showConfirm = false
     @State private var showAddDay = false
 
-    private let dayNames = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+    private let dayNames     = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
     private let dayNamesFull = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
     init() {
-        let stored = UserDefaults.standard.string(forKey: "menuPlanJSON") ?? ""
-        if let data = stored.data(using: .utf8),
+        let mealStored = UserDefaults.standard.string(forKey: "menuPlanJSON") ?? ""
+        if let data = mealStored.data(using: .utf8),
            let arr = try? JSONDecoder().decode([String].self, from: data), arr.count == 7 {
             _meals = State(initialValue: arr)
         } else {
             _meals = State(initialValue: Array(repeating: "", count: 7))
         }
+
+        let ingStored = UserDefaults.standard.string(forKey: "menuIngredientsJSON") ?? ""
+        if let data = ingStored.data(using: .utf8),
+           let map = try? JSONDecoder().decode([String: [String]].self, from: data) {
+            _ingredientsMap = State(initialValue: map)
+        } else {
+            _ingredientsMap = State(initialValue: [:])
+        }
     }
+
+    // MARK: - Computed
 
     private var plannedIndices: [Int] {
         (0..<7).filter { !meals[$0].trimmingCharacters(in: .whitespaces).isEmpty }
     }
 
+    private var allIngredients: [String] {
+        var result: [String] = []
+        var seen = Set<String>()
+        for i in plannedIndices {
+            for ing in ingredientsMap["\(i)"] ?? [] {
+                if seen.insert(ing.lowercased()).inserted { result.append(ing) }
+            }
+        }
+        return result
+    }
+
+    // MARK: - Body
+
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    if plannedIndices.isEmpty {
-                        Label("Noch keine Tage geplant.", systemImage: "fork.knife")
-                            .font(.system(size: 14))
-                            .foregroundStyle(.secondary)
-                            .listRowBackground(Color.clear)
-                    } else {
-                        ForEach(plannedIndices, id: \.self) { i in
-                            HStack(spacing: 12) {
-                                Text(dayNames[i])
-                                    .font(.system(size: 13, weight: .semibold))
-                                    .foregroundStyle(.secondary)
-                                    .frame(width: 28, alignment: .leading)
-                                Text(meals[i])
-                                    .font(.system(size: 15))
-                            }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    withAnimation { meals[i] = "" }
-                                    savePlan()
-                                } label: {
-                                    Label("Löschen", systemImage: "trash")
-                                }
-                            }
-                        }
-                    }
-
-                    if plannedIndices.count < 7 {
-                        Button {
-                            showAddDay = true
-                        } label: {
-                            Label("Tag hinzufügen", systemImage: "plus.circle.fill")
-                                .foregroundStyle(.blue)
-                        }
-                    }
-                } header: {
-                    Text("Diese Woche")
-                } footer: {
-                    Text("Bekannte Gerichte → Zutaten werden automatisch erkannt und zur Einkaufsliste hinzugefügt.")
-                        .font(.caption)
-                }
-
-                let ingredients = allIngredients()
-                if !ingredients.isEmpty {
-                    Section("Erkannte Zutaten (\(ingredients.count))") {
-                        ForEach(ingredients, id: \.self) { name in
-                            Label(name, systemImage: "cart")
-                                .font(.system(size: 14))
-                        }
-                    }
-                }
+                mealsSection
+                if !allIngredients.isEmpty { ingredientsSection }
             }
             .navigationTitle("Menüplan")
             .navigationBarTitleDisplayMode(.inline)
@@ -92,12 +73,9 @@ struct MenuPlanView: View {
                     Button("Schließen") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Zur Liste") {
-                        addToList()
-                        showConfirm = true
-                    }
-                    .fontWeight(.semibold)
-                    .disabled(allIngredients().isEmpty)
+                    Button("Zur Liste") { addToList() }
+                        .fontWeight(.semibold)
+                        .disabled(allIngredients.isEmpty && loadingDays.isEmpty)
                 }
             }
             .alert("Hinzugefügt", isPresented: $showConfirm) {
@@ -106,26 +84,137 @@ struct MenuPlanView: View {
                 Text("\(addedCount) Zutaten wurden zur Einkaufsliste hinzugefügt.")
             }
             .sheet(isPresented: $showAddDay) {
-                AddDaySheet(meals: $meals, dayNames: dayNamesFull, onSave: savePlan)
+                AddDaySheet(meals: $meals, dayNames: dayNamesFull) { dayIndex, meal, manual in
+                    meals[dayIndex] = meal
+                    savePlan()
+                    if !manual.isEmpty {
+                        ingredientsMap["\(dayIndex)"] = manual
+                        saveIngredients()
+                    } else {
+                        fetchIngredients(for: dayIndex, meal: meal)
+                    }
+                }
             }
         }
         .devFeedback(context: "Menüplan")
     }
 
-    private func allIngredients() -> [String] {
-        var result: [String] = []
-        var seen = Set<String>()
-        for meal in meals where !meal.trimmingCharacters(in: .whitespaces).isEmpty {
-            for ingredient in MealDatabase.ingredients(for: meal) {
-                let key = ingredient.lowercased()
-                if seen.insert(key).inserted { result.append(ingredient) }
+    // MARK: - Meals section
+
+    private var mealsSection: some View {
+        Section {
+            if plannedIndices.isEmpty {
+                Label("Noch keine Tage geplant.", systemImage: "fork.knife")
+                    .font(.system(size: 14))
+                    .foregroundStyle(.secondary)
+                    .listRowBackground(Color.clear)
+            } else {
+                ForEach(plannedIndices, id: \.self) { i in
+                    dayRow(i)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                withAnimation {
+                                    meals[i] = ""
+                                    ingredientsMap.removeValue(forKey: "\(i)")
+                                    loadingDays.remove(i)
+                                }
+                                savePlan()
+                                saveIngredients()
+                            } label: {
+                                Label("Löschen", systemImage: "trash")
+                            }
+                        }
+                }
+            }
+
+            if plannedIndices.count < 7 {
+                Button {
+                    showAddDay = true
+                } label: {
+                    Label("Tag hinzufügen", systemImage: "plus.circle.fill")
+                        .foregroundStyle(.blue)
+                }
+            }
+        } header: {
+            Text("Diese Woche")
+        } footer: {
+            Text("Erkannte Zutaten können direkt zur Einkaufsliste hinzugefügt werden.")
+                .font(.caption)
+        }
+    }
+
+    @ViewBuilder
+    private func dayRow(_ i: Int) -> some View {
+        HStack(spacing: 12) {
+            Text(dayNames[i])
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .frame(width: 28, alignment: .leading)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(meals[i])
+                    .font(.system(size: 15))
+
+                if loadingDays.contains(i) {
+                    HStack(spacing: 5) {
+                        ProgressView().scaleEffect(0.65)
+                        Text("Zutaten werden erkannt…")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                    }
+                } else if let ings = ingredientsMap["\(i)"], !ings.isEmpty {
+                    Text(ings.prefix(4).joined(separator: ", ") + (ings.count > 4 ? "…" : ""))
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                } else {
+                    Text("Keine Zutaten erkannt")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.tertiary)
+                }
+            }
+
+            Spacer()
+
+            if let ings = ingredientsMap["\(i)"], !ings.isEmpty {
+                Text("\(ings.count)")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 6).padding(.vertical, 2)
+                    .background(Color.brand, in: Capsule())
             }
         }
-        return result
+    }
+
+    // MARK: - Ingredients section
+
+    private var ingredientsSection: some View {
+        Section("Erkannte Zutaten (\(allIngredients.count))") {
+            ForEach(allIngredients, id: \.self) { name in
+                Label(name, systemImage: "cart")
+                    .font(.system(size: 14))
+            }
+        }
+    }
+
+    // MARK: - Actions
+
+    private func fetchIngredients(for dayIndex: Int, meal: String) {
+        loadingDays.insert(dayIndex)
+        Task {
+            let result = await MealIngredientService.shared.ingredients(for: meal)
+            await MainActor.run {
+                loadingDays.remove(dayIndex)
+                if !result.names.isEmpty {
+                    ingredientsMap["\(dayIndex)"] = result.names
+                    saveIngredients()
+                }
+            }
+        }
     }
 
     private func addToList() {
-        let ingredients = allIngredients()
+        let ingredients = allIngredients
         for name in ingredients {
             let category = AssignmentService.category(for: name)
             let store = AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords)
@@ -133,12 +222,20 @@ struct MenuPlanView: View {
         }
         addedCount = ingredients.count
         Haptics.success()
+        showConfirm = true
     }
 
     private func savePlan() {
         if let data = try? JSONEncoder().encode(meals),
            let str = String(data: data, encoding: .utf8) {
             planJSON = str
+        }
+    }
+
+    private func saveIngredients() {
+        if let data = try? JSONEncoder().encode(ingredientsMap),
+           let str = String(data: data, encoding: .utf8) {
+            ingredientsJSON = str
         }
     }
 }
@@ -148,28 +245,45 @@ struct MenuPlanView: View {
 private struct AddDaySheet: View {
     @Binding var meals: [String]
     let dayNames: [String]
-    let onSave: () -> Void
+    let onSave: (_ dayIndex: Int, _ meal: String, _ manualIngredients: [String]) -> Void
     @Environment(\.dismiss) private var dismiss
 
     @State private var selectedDay: Int = 0
     @State private var mealText = ""
+    @State private var manualText = ""
 
     private var availableDays: [(index: Int, name: String)] {
         (0..<7).filter { meals[$0].trimmingCharacters(in: .whitespaces).isEmpty }
             .map { (index: $0, name: dayNames[$0]) }
     }
 
+    private var manualIngredients: [String] {
+        manualText.components(separatedBy: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+    }
+
     var body: some View {
         NavigationStack {
             Form {
-                Picker("Tag", selection: $selectedDay) {
-                    ForEach(availableDays, id: \.index) { day in
-                        Text(day.name).tag(day.index)
+                Section("Tag & Mahlzeit") {
+                    Picker("Tag", selection: $selectedDay) {
+                        ForEach(availableDays, id: \.index) { day in
+                            Text(day.name).tag(day.index)
+                        }
                     }
+                    TextField("Gericht eingeben…", text: $mealText)
+                        .autocorrectionDisabled()
                 }
 
-                TextField("Gericht eingeben…", text: $mealText)
-                    .autocorrectionDisabled()
+                Section {
+                    TextField("Mehl, Eier, Milch…", text: $manualText)
+                        .autocorrectionDisabled()
+                } header: {
+                    Text("Zutaten (optional)")
+                } footer: {
+                    aiFootnote
+                }
             }
             .navigationTitle("Tag hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
@@ -179,8 +293,7 @@ private struct AddDaySheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Hinzufügen") {
-                        meals[selectedDay] = mealText.trimmingCharacters(in: .whitespaces)
-                        onSave()
+                        onSave(selectedDay, mealText.trimmingCharacters(in: .whitespaces), manualIngredients)
                         dismiss()
                     }
                     .fontWeight(.semibold)
@@ -192,6 +305,19 @@ private struct AddDaySheet: View {
             }
         }
         .presentationDetents([.medium])
+    }
+
+    @ViewBuilder
+    private var aiFootnote: some View {
+        if MealIngredientService.isAIAvailable() {
+            Label("Leer lassen — Apple Intelligence erkennt Zutaten automatisch.", systemImage: "apple.intelligence")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } else {
+            Text("Optional: Zutaten kommagetrennt eingeben (Apple Intelligence nicht verfügbar).")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
     }
 }
 

@@ -15,6 +15,66 @@ struct RecognizedIngredient: Identifiable {
     var unit: String
 }
 
+// MARK: - Meal Ingredient Service
+
+actor MealIngredientService {
+    static let shared = MealIngredientService()
+
+    enum Source { case ai, database, none }
+
+    func ingredients(for mealName: String) async -> (names: [String], source: Source) {
+        let trimmed = mealName.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return ([], .none) }
+
+        if #available(iOS 26, *) {
+            if let result = try? await aiIngredients(for: trimmed), !result.isEmpty {
+                return (result, .ai)
+            }
+        }
+
+        let db = MealDatabase.ingredients(for: trimmed)
+        return db.isEmpty ? ([], .none) : (db, .database)
+    }
+
+    static func isAIAvailable() -> Bool {
+        #if canImport(FoundationModels)
+        guard #available(iOS 26, *) else { return false }
+        if case .available = SystemLanguageModel.default.availability { return true }
+        #endif
+        return false
+    }
+
+    @available(iOS 26, *)
+    private func aiIngredients(for mealName: String) async throws -> [String]? {
+        #if canImport(FoundationModels)
+        let model = SystemLanguageModel.default
+        guard case .available = model.availability else { return nil }
+        let session = LanguageModelSession()
+        let prompt = """
+        Gib mir die Hauptzutaten für das Gericht "\(mealName)" als JSON-Array von Strings auf Deutsch.
+        Nur Zutatennamen, keine Mengen, keine Einheiten, 4–8 Zutaten.
+        Antworte NUR mit dem JSON-Array, z.B.: ["Mehl","Eier","Milch"]
+        """
+        let response = try await session.respond(to: prompt)
+        return parseStringArray(from: response.content)
+        #else
+        return nil
+        #endif
+    }
+
+    private func parseStringArray(from text: String) -> [String]? {
+        guard let start = text.range(of: "["),
+              let end = text.range(of: "]", options: .backwards),
+              start.lowerBound <= end.lowerBound else { return nil }
+        let jsonStr = String(text[start.lowerBound...end.upperBound])
+        guard let data = jsonStr.data(using: .utf8),
+              let arr = try? JSONSerialization.jsonObject(with: data) as? [String] else { return nil }
+        return arr.filter { !$0.isEmpty }
+    }
+}
+
+// MARK: - Recipe Recognition Service
+
 actor RecipeRecognitionService {
     static let shared = RecipeRecognitionService()
 
