@@ -183,6 +183,15 @@ struct StoreDetailView: View {
             }
         }
         .devFeedback(context: "Liste: \(store.name)")
+        .onAppear {
+            LiveActivityService.shared.start(for: store)
+        }
+        .onDisappear {
+            LiveActivityService.shared.end(for: store)
+        }
+        .onChange(of: store.pendingItems.count) {
+            LiveActivityService.shared.update(for: store)
+        }
     }
 
     // MARK: - Progress header

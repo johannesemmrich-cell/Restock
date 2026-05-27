@@ -12,6 +12,7 @@ struct HomeView: View {
     @State private var showMenuPlan = false
     @State private var showPriceOverview = false
     @State private var showAddStore = false
+    @State private var showAllItems = false
     @State private var addItemText = ""
     @State private var dueSoonItems: [ConsumptionPattern] = []
     @State private var headerScale: CGFloat = 1.0
@@ -49,6 +50,7 @@ struct HomeView: View {
             .sheet(isPresented: $showMenuPlan)      { MenuPlanView() }
             .sheet(isPresented: $showPriceOverview) { PriceOverviewView() }
             .sheet(isPresented: $showAddStore) { AddCustomStoreView() }
+            .sheet(isPresented: $showAllItems) { AllItemsView() }
             .onAppear { refreshDueSoon() }
             .devFeedback(context: "Startseite")
         }
@@ -80,9 +82,14 @@ struct HomeView: View {
                     .foregroundStyle(.white)
 
                 if totalPending > 0 {
-                    Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
-                        .font(.system(size: 14))
-                        .foregroundStyle(.white.opacity(0.8))
+                    HStack(spacing: 6) {
+                        Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
+                            .font(.system(size: 14))
+                            .foregroundStyle(.white.opacity(0.8))
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
                 } else {
                     Text(String(localized: "home.header.empty"))
                         .font(.system(size: 14))
@@ -92,6 +99,12 @@ struct HomeView: View {
             .padding(20)
         }
         .shadow(color: Color.brand.opacity(0.4), radius: 16, x: 0, y: 6)
+        .contentShape(RoundedRectangle(cornerRadius: 20))
+        .onTapGesture {
+            guard totalPending > 0 else { return }
+            Haptics.impact(.light)
+            showAllItems = true
+        }
     }
 
     // MARK: - Quick add

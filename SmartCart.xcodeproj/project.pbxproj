@@ -9,6 +9,15 @@
 /* Begin PBXBuildFile section */
 		0614C48D34DF2EBE3B029C8C /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BA313610B6903F788B3D1B /* OnboardingView.swift */; };
 		07C6DACB1748CA164C7E39B9 /* EditItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28094C6B2161D39A55624F68 /* EditItemView.swift */; };
+		A001B2C3D4E5F6A7B8C9D001 /* ShoppingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A002B3C4D5E6F7A8B9C0D002 /* ShoppingActivityAttributes.swift */; };
+		A003C4D5E6F7A8B9C0D1E003 /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A004D5E6F7A8B9C0D1E2F004 /* LiveActivityService.swift */; };
+		A005E6F7A8B9C0D1E2F3A005 /* AllItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A006F7A8B9C0D1E2F3A4B006 /* AllItemsView.swift */; };
+		WD01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = WF01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift */; };
+		WD02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = WF02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift */; };
+		WD03D4E5F6A7B8C9D0E1F003 /* ShoppingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A002B3C4D5E6F7A8B9C0D002 /* ShoppingActivityAttributes.swift */; };
+		WD04E5F6A7B8C9D0E1F2A004 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = WF04E5F6A7B8C9D0E1F2A004 /* WidgetKit.framework */; };
+		WD05F6A7B8C9D0E1F2A3B005 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = WF05F6A7B8C9D0E1F2A3B005 /* SwiftUI.framework */; };
+		WD06A7B8C9D0E1F2A3B4C006 /* SmartCartWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = WF06A7B8C9D0E1F2A3B4C006 /* SmartCartWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0B64D059E2535909BBC07B1B /* AssignmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE9FEE09743093F7E668D5E /* AssignmentService.swift */; };
 		1122334455667788990AABB1 /* MenuPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2233445566778899AA0BBB11 /* MenuPlanView.swift */; };
 		11B1C5980F8E6058CDAE01B8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B385C380FF5123526F6E56 /* SettingsView.swift */; };
@@ -48,6 +57,20 @@
 		FF43B1B80F202D6734200639 /* HabitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838409C378288CFA57B42809 /* HabitService.swift */; };
 		FF7788AABB33CC44DD55EE66 /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE66FF7788AABB33CC44DD55 /* TodoListView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		WD07B8C9D0E1F2A3B4C5D007 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				WD06A7B8C9D0E1F2A3B4C006 /* SmartCartWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		16B385C380FF5123526F6E56 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -92,6 +115,14 @@
 		F2EE7B78F5DF69328D2EF6C4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FF6677AABB11CC22DD33EE44 /* SeasonalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonalService.swift; sourceTree = "<group>"; };
 		FFE9FEE09743093F7E668D5E /* AssignmentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentService.swift; sourceTree = "<group>"; };
+		A002B3C4D5E6F7A8B9C0D002 /* ShoppingActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingActivityAttributes.swift; sourceTree = "<group>"; };
+		A004D5E6F7A8B9C0D1E2F004 /* LiveActivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityService.swift; sourceTree = "<group>"; };
+		A006F7A8B9C0D1E2F3A4B006 /* AllItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllItemsView.swift; sourceTree = "<group>"; };
+		WF01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCartWidgetsBundle.swift; sourceTree = "<group>"; };
+		WF02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingLiveActivity.swift; sourceTree = "<group>"; };
+		WF04E5F6A7B8C9D0E1F2A004 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		WF05F6A7B8C9D0E1F2A3B005 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		WF06A7B8C9D0E1F2A3B4C006 /* SmartCartWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SmartCartWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -124,8 +155,18 @@
 			isa = PBXGroup;
 			children = (
 				0630F8F8C67403AA0F3A36B7 /* SmartCart */,
+				WG01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgets */,
 				AE714AD5A44F548B65398F30 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		WG01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				WF01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift */,
+				WF02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift */,
+			);
+			path = SmartCartWidgets;
 			sourceTree = "<group>";
 		};
 		438E279559440C7CC053BDF0 /* Settings */ = {
@@ -145,6 +186,7 @@
 			children = (
 				AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */,
 				DD34C5D25C3945D6153A049B /* PurchaseRecord.swift */,
+				A002B3C4D5E6F7A8B9C0D002 /* ShoppingActivityAttributes.swift */,
 				1791AA94F3726B793EB09F74 /* ShoppingItem.swift */,
 				3A49612BE198AF3B48211B62 /* Store.swift */,
 				CC44DD55EE66FF7788AABB33 /* TodoItem.swift */,
@@ -206,6 +248,7 @@
 			isa = PBXGroup;
 			children = (
 				871EE15339EEC6D5F40AC259 /* SmartCart.app */,
+				WF06A7B8C9D0E1F2A3B4C006 /* SmartCartWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -240,6 +283,7 @@
 			children = (
 				FFE9FEE09743093F7E668D5E /* AssignmentService.swift */,
 				838409C378288CFA57B42809 /* HabitService.swift */,
+				A004D5E6F7A8B9C0D1E2F004 /* LiveActivityService.swift */,
 				47184F36A40105B9BDD79C7B /* NotificationService.swift */,
 				427C78F11F632892DD9E807F /* QuickAddParser.swift */,
 				C8B6F1B6E82484B41C0A48AD /* RecipeRecognitionService.swift */,
@@ -264,6 +308,7 @@
 		F3E28CEEE4F8CA4471B65303 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				A006F7A8B9C0D1E2F3A4B006 /* AllItemsView.swift */,
 				7378581EFFCC02A1BF2FD3A3 /* HomeView.swift */,
 				2233445566778899AA0BBB11 /* MenuPlanView.swift */,
 			);
@@ -272,6 +317,16 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXContainerItemProxy section */
+		WP01B2C3D4E5F6A7B8C9D001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 40A120AFCD25C1BB508B1946 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = WT01B2C3D4E5F6A7B8C9D001;
+			remoteInfo = SmartCartWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXNativeTarget section */
 		5EBD46E01B8EEC0BEA111929 /* SmartCart */ = {
 			isa = PBXNativeTarget;
@@ -279,10 +334,12 @@
 			buildPhases = (
 				0065FDF133D608FEC5BE4F32 /* Sources */,
 				95C9FAF60054B0410E586FD7 /* Resources */,
+				WD07B8C9D0E1F2A3B4C5D007 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				WTD1B2C3D4E5F6A7B8C9D001 /* PBXTargetDependency */,
 			);
 			name = SmartCart;
 			packageProductDependencies = (
@@ -291,7 +348,32 @@
 			productReference = 871EE15339EEC6D5F40AC259 /* SmartCart.app */;
 			productType = "com.apple.product-type.application";
 		};
+		WT01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = WCL1B2C3D4E5F6A7B8C9D001 /* Build configuration list for PBXNativeTarget "SmartCartWidgets" */;
+			buildPhases = (
+				WSP1B2C3D4E5F6A7B8C9D001 /* Sources */,
+				WFP1B2C3D4E5F6A7B8C9D001 /* Frameworks */,
+				WRP1B2C3D4E5F6A7B8C9D001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SmartCartWidgets;
+			productName = SmartCartWidgets;
+			productReference = WF06A7B8C9D0E1F2A3B4C006 /* SmartCartWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
+
+/* Begin PBXTargetDependency section */
+		WTD1B2C3D4E5F6A7B8C9D001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = WT01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgets */;
+			targetProxy = WP01B2C3D4E5F6A7B8C9D001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXProject section */
 		40A120AFCD25C1BB508B1946 /* Project object */ = {
@@ -316,9 +398,22 @@
 			projectRoot = "";
 			targets = (
 				5EBD46E01B8EEC0BEA111929 /* SmartCart */,
+				WT01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgets */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		WFP1B2C3D4E5F6A7B8C9D001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				WD04E5F6A7B8C9D0E1F2A004 /* WidgetKit.framework in Frameworks */,
+				WD05F6A7B8C9D0E1F2A3B005 /* SwiftUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXResourcesBuildPhase section */
 		95C9FAF60054B0410E586FD7 /* Resources */ = {
@@ -331,15 +426,33 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		WRP1B2C3D4E5F6A7B8C9D001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		WSP1B2C3D4E5F6A7B8C9D001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				WD01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift in Sources */,
+				WD02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift in Sources */,
+				WD03D4E5F6A7B8C9D0E1F003 /* ShoppingActivityAttributes.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0065FDF133D608FEC5BE4F32 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				CC33DD44EE55FF6677AABB11 /* AddItemIntent.swift in Sources */,
 				DEBF56414AA7F6AF04B254E2 /* AddItemView.swift in Sources */,
+				A005E6F7A8B9C0D1E2F3A005 /* AllItemsView.swift in Sources */,
 				0B64D059E2535909BBC07B1B /* AssignmentService.swift in Sources */,
 				AA11BB22CC33DD44EE55FF66 /* BarcodeScannerView.swift in Sources */,
 				CE780CEB38E00FF824BE132F /* BrowseStoresView.swift in Sources */,
@@ -353,6 +466,7 @@
 				C9139F3211CC76DF720FB66C /* FeedbackView.swift in Sources */,
 				FF43B1B80F202D6734200639 /* HabitService.swift in Sources */,
 				1EEFDCF2812D084BA0E49570 /* HomeView.swift in Sources */,
+				A003C4D5E6F7A8B9C0D1E003 /* LiveActivityService.swift in Sources */,
 				9AC5CF73301BBC2A06342131 /* ItemRow.swift in Sources */,
 				1122334455667788990AABB1 /* MenuPlanView.swift in Sources */,
 				CF2E2F0FE6EDD8C5B29CD22E /* NotificationService.swift in Sources */,
@@ -364,6 +478,7 @@
 				856A7E292BA26C783B908D38 /* RecipeRecognitionService.swift in Sources */,
 				EE55FF6677AABB11CC22DD33 /* SeasonalService.swift in Sources */,
 				11B1C5980F8E6058CDAE01B8 /* SettingsView.swift in Sources */,
+				A001B2C3D4E5F6A7B8C9D001 /* ShoppingActivityAttributes.swift in Sources */,
 				A21EA866AA3A88E3DF1D7EF9 /* ShoppingItem.swift in Sources */,
 				8F90D434BA1046F149A56C75 /* SmartCartApp.swift in Sources */,
 				9ECE3DCC45AE32CCEAA8981D /* Store.swift in Sources */,
@@ -404,6 +519,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "SmartCart needs camera access to scan recipe photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SmartCart needs photo library access to import recipe photos.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -552,6 +668,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "SmartCart needs camera access to scan recipe photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SmartCart needs photo library access to import recipe photos.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -570,6 +687,60 @@
 			};
 			name = Debug;
 		};
+		WBC1B2C3D4E5F6A7B8C9D001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XK87E2B3VR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.SmartCart.SmartCartWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		WBC2B3C4D5E6F7A8B9C0D002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XK87E2B3VR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.SmartCart.SmartCartWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -587,6 +758,15 @@
 			buildConfigurations = (
 				F60F9E1551D0D1BC48665596 /* Debug */,
 				5174F1A6A19B74292D87FAB1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		WCL1B2C3D4E5F6A7B8C9D001 /* Build configuration list for PBXNativeTarget "SmartCartWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				WBC1B2C3D4E5F6A7B8C9D001 /* Debug */,
+				WBC2B3C4D5E6F7A8B9C0D002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

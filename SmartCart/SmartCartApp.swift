@@ -24,6 +24,31 @@ struct SmartCartApp: App {
                         DevModeIndicator()
                     }
                 }
+                .onOpenURL { url in
+                    handleURL(url)
+                }
+        }
+    }
+
+    // MARK: - URL handling (smartcart://checkoff?store=Lidl)
+
+    private func handleURL(_ url: URL) {
+        guard url.scheme == "smartcart",
+              url.host == "checkoff",
+              let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let storeName = components.queryItems?.first(where: { $0.name == "store" })?.value
+        else { return }
+
+        Task { @MainActor in
+            let ctx = ModelContext(container)
+            let stores = try? ctx.fetch(FetchDescriptor<Store>())
+            guard let store = stores?.first(where: { $0.name == storeName }),
+                  let item = store.pendingItems.first else { return }
+            item.markCompleted()
+            store.recordCompletionOrder([item.name])
+            try? ctx.save()
+            Haptics.success()
+            LiveActivityService.shared.update(for: store)
         }
     }
 }
