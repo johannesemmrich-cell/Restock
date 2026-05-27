@@ -14,6 +14,7 @@ struct HomeView: View {
     @State private var showAddStore = false
     @State private var showAllItems = false
     @State private var bannerExpanded = false
+    @Namespace private var bannerNamespace
     @State private var addItemText = ""
     @State private var dueSoonItems: [ConsumptionPattern] = []
     @State private var headerScale: CGFloat = 1.0
@@ -55,168 +56,193 @@ struct HomeView: View {
             .onAppear { refreshDueSoon() }
             .devFeedback(context: "Startseite")
         }
+        .overlay {
+            if bannerExpanded {
+                ZStack {
+                    Color.black.opacity(0.45)
+                        .ignoresSafeArea()
+                        .onTapGesture { closeBanner() }
+                    VStack {
+                        Spacer(minLength: 55)
+                        expandedBannerCard
+                            .matchedGeometryEffect(id: "heroBanner", in: bannerNamespace, isSource: bannerExpanded)
+                            .padding(.horizontal, 16)
+                        Spacer(minLength: 55)
+                    }
+                }
+                .transition(.opacity)
+            }
+        }
+        .onChange(of: totalPending) { _, newValue in
+            if newValue == 0 && bannerExpanded { closeBanner() }
+        }
     }
 
     // MARK: - Header
 
+    private var storesWithPendingItems: [Store] {
+        activeStores.filter { !$0.pendingItems.isEmpty }
+    }
+
+    private func openBanner() {
+        guard totalPending > 0 else { return }
+        Haptics.impact(.medium)
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { bannerExpanded = true }
+    }
+
+    private func closeBanner() {
+        withAnimation(.spring(response: 0.48, dampingFraction: 0.82)) { bannerExpanded = false }
+    }
+
     private var headerCard: some View {
+        ZStack(alignment: .bottomLeading) {
+            Circle()
+                .fill(.white.opacity(0.07))
+                .frame(width: 140, height: 140)
+                .offset(x: 210, y: -30)
+            Circle()
+                .fill(.white.opacity(0.05))
+                .frame(width: 90, height: 90)
+                .offset(x: 260, y: 20)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("SmartCart")
+                    .font(.system(size: 26, weight: .bold))
+                    .foregroundStyle(.white)
+                if totalPending > 0 {
+                    HStack(spacing: 6) {
+                        Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
+                            .font(.system(size: 14))
+                            .foregroundStyle(.white.opacity(0.8))
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
+                } else {
+                    Text(String(localized: "home.header.empty"))
+                        .font(.system(size: 14))
+                        .foregroundStyle(.white.opacity(0.8))
+                }
+            }
+            .padding(20)
+        }
+        .frame(height: 130)
+        .frame(maxWidth: .infinity)
+        .background(LinearGradient.brand)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .shadow(color: Color.brand.opacity(0.4), radius: 16, x: 0, y: 6)
+        .matchedGeometryEffect(id: "heroBanner", in: bannerNamespace, isSource: !bannerExpanded)
+        .opacity(bannerExpanded ? 0 : 1)
+        .contentShape(RoundedRectangle(cornerRadius: 20))
+        .onTapGesture { openBanner() }
+    }
+
+    private var expandedBannerCard: some View {
         VStack(spacing: 0) {
-            // Compact header (always visible)
+            // Header section
             ZStack(alignment: .bottomLeading) {
                 Circle()
                     .fill(.white.opacity(0.07))
-                    .frame(width: 140, height: 140)
-                    .offset(x: 210, y: -30)
+                    .frame(width: 130, height: 130)
+                    .offset(x: 230, y: -15)
                 Circle()
                     .fill(.white.opacity(0.05))
-                    .frame(width: 90, height: 90)
-                    .offset(x: 260, y: 20)
-
+                    .frame(width: 85, height: 85)
+                    .offset(x: 275, y: 20)
                 VStack(alignment: .leading, spacing: 4) {
                     Text("SmartCart")
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(.white)
-
-                    if totalPending > 0 {
-                        HStack(spacing: 6) {
-                            Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
-                                .font(.system(size: 14))
-                                .foregroundStyle(.white.opacity(0.8))
-                            Image(systemName: "chevron.down")
-                                .font(.system(size: 11, weight: .semibold))
-                                .foregroundStyle(.white.opacity(0.6))
-                                .rotationEffect(bannerExpanded ? .degrees(180) : .zero)
-                                .animation(.spring(response: 0.3), value: bannerExpanded)
-                        }
-                    } else {
-                        Text(String(localized: "home.header.empty"))
-                            .font(.system(size: 14))
-                            .foregroundStyle(.white.opacity(0.8))
-                    }
+                    Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
+                        .font(.system(size: 13))
+                        .foregroundStyle(.white.opacity(0.8))
                 }
                 .padding(20)
+                Button { closeBanner() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 26))
+                        .foregroundStyle(.white.opacity(0.7))
+                        .symbolRenderingMode(.hierarchical)
+                }
+                .buttonStyle(.plain)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .padding(14)
             }
-            .frame(height: 130)
+            .frame(height: 110)
             .frame(maxWidth: .infinity)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                guard totalPending > 0 else { return }
-                Haptics.impact(.medium)
-                withAnimation(.spring(response: 0.45, dampingFraction: 0.82)) {
-                    bannerExpanded.toggle()
-                }
-            }
 
-            // Expandable items list
-            if bannerExpanded {
-                bannerItemsList
-                    .transition(.opacity)
-            }
-        }
-        .background(LinearGradient.brand)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(
-            color: Color.brand.opacity(bannerExpanded ? 0.6 : 0.4),
-            radius: bannerExpanded ? 28 : 16,
-            x: 0,
-            y: bannerExpanded ? 14 : 6
-        )
-        .animation(.spring(response: 0.45, dampingFraction: 0.82), value: bannerExpanded)
-        .onChange(of: totalPending) { _, newValue in
-            if newValue == 0 {
-                withAnimation(.spring(response: 0.45, dampingFraction: 0.82)) { bannerExpanded = false }
-            }
-        }
-    }
+            Rectangle().fill(.white.opacity(0.2)).frame(height: 0.5)
 
-    @ViewBuilder
-    private var bannerItemsList: some View {
-        let storesWithItems = activeStores.filter { !$0.pendingItems.isEmpty }
-        VStack(spacing: 0) {
-            Rectangle()
-                .fill(.white.opacity(0.18))
-                .frame(height: 0.5)
-
-            ForEach(storesWithItems) { store in
-                // Store header
-                HStack(spacing: 6) {
-                    Text(store.emoji).font(.system(size: 13))
-                    Text(store.name)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.85))
-                    Spacer()
-                    Text("\(store.pendingItems.count)")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.white.opacity(0.5))
-                }
-                .padding(.horizontal, 18)
-                .padding(.top, 12)
-                .padding(.bottom, 2)
-
-                ForEach(store.pendingItems) { item in
-                    Button {
-                        withAnimation(.spring(response: 0.3)) { item.markCompleted() }
-                        Haptics.success()
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "circle")
-                                .font(.system(size: 22))
-                                .foregroundStyle(.white.opacity(0.65))
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text(item.name)
-                                    .font(.system(size: 14))
-                                    .foregroundStyle(.white)
-                                if !item.unit.isEmpty || item.quantityAmount != 1 {
-                                    Text(item.quantity + (!item.unit.isEmpty ? " \(item.unit)" : ""))
-                                        .font(.system(size: 11))
-                                        .foregroundStyle(.white.opacity(0.55))
-                                }
-                            }
+            // Items list
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    ForEach(storesWithPendingItems) { store in
+                        HStack(spacing: 6) {
+                            Text(store.emoji).font(.system(size: 13))
+                            Text(store.name)
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.white.opacity(0.85))
                             Spacer()
+                            Text("\(store.pendingItems.count)")
+                                .font(.system(size: 11))
+                                .foregroundStyle(.white.opacity(0.5))
                         }
                         .padding(.horizontal, 18)
-                        .padding(.vertical, 7)
-                        .contentShape(Rectangle())
+                        .padding(.top, 12)
+                        .padding(.bottom, 2)
+                        ForEach(store.pendingItems) { item in
+                            Button {
+                                withAnimation(.spring(response: 0.3)) { item.markCompleted() }
+                                Haptics.success()
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "circle")
+                                        .font(.system(size: 22))
+                                        .foregroundStyle(.white.opacity(0.65))
+                                    VStack(alignment: .leading, spacing: 1) {
+                                        Text(item.name)
+                                            .font(.system(size: 14))
+                                            .foregroundStyle(.white)
+                                        if !item.unit.isEmpty || item.quantityAmount != 1 {
+                                            Text(item.quantity + (!item.unit.isEmpty ? " \(item.unit)" : ""))
+                                                .font(.system(size: 11))
+                                                .foregroundStyle(.white.opacity(0.55))
+                                        }
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 18)
+                                .padding(.vertical, 7)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
-                    .buttonStyle(.plain)
                 }
             }
+            .frame(maxHeight: 300)
 
-            // Footer: full list link + collapse
-            HStack {
-                Button {
-                    withAnimation(.spring(response: 0.45, dampingFraction: 0.82)) { bannerExpanded = false }
-                    showAllItems = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Text("Vollständige Liste")
-                            .font(.system(size: 12, weight: .medium))
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 10, weight: .semibold))
-                    }
-                    .foregroundStyle(.white.opacity(0.6))
+            Rectangle().fill(.white.opacity(0.15)).frame(height: 0.5)
+
+            // Footer
+            Button {
+                closeBanner()
+                showAllItems = true
+            } label: {
+                HStack(spacing: 4) {
+                    Text("Vollständige Liste")
+                        .font(.system(size: 13, weight: .medium))
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 11, weight: .semibold))
                 }
-                .buttonStyle(.plain)
-
-                Spacer()
-
-                Button {
-                    withAnimation(.spring(response: 0.45, dampingFraction: 0.82)) { bannerExpanded = false }
-                } label: {
-                    HStack(spacing: 3) {
-                        Image(systemName: "chevron.up")
-                            .font(.system(size: 10, weight: .semibold))
-                        Text("Einklappen")
-                            .font(.system(size: 12))
-                    }
-                    .foregroundStyle(.white.opacity(0.45))
-                }
-                .buttonStyle(.plain)
+                .foregroundStyle(.white.opacity(0.7))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
             }
-            .padding(.horizontal, 18)
-            .padding(.top, 12)
-            .padding(.bottom, 16)
+            .buttonStyle(.plain)
         }
+        .background(LinearGradient.brand)
+        .clipShape(RoundedRectangle(cornerRadius: 24))
+        .shadow(color: Color.brand.opacity(0.55), radius: 28, x: 0, y: 14)
     }
 
     // MARK: - Quick add

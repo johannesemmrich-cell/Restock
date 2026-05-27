@@ -13,7 +13,7 @@ struct CheckOffItemIntent: AppIntent {
     init(storeName: String) { self.storeName = storeName }
 
     func perform() async throws -> some IntentResult {
-        let container = try ModelContainer(for: Store.self, ShoppingItem.self, PurchaseRecord.self)
+        let container = try ModelContainer(for: Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self)
         let ctx = ModelContext(container)
 
         let stores = try ctx.fetch(FetchDescriptor<Store>())
