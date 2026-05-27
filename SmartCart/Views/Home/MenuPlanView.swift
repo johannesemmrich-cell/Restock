@@ -11,8 +11,10 @@ struct MenuPlanView: View {
     @State private var meals: [String]
     @State private var addedCount = 0
     @State private var showConfirm = false
+    @State private var showAddDay = false
 
     private let dayNames = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+    private let dayNamesFull = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
     init() {
         let stored = UserDefaults.standard.string(forKey: "menuPlanJSON") ?? ""
@@ -24,18 +26,46 @@ struct MenuPlanView: View {
         }
     }
 
+    private var plannedIndices: [Int] {
+        (0..<7).filter { !meals[$0].trimmingCharacters(in: .whitespaces).isEmpty }
+    }
+
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    ForEach(0..<7, id: \.self) { i in
-                        HStack(spacing: 12) {
-                            Text(dayNames[i])
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(.secondary)
-                                .frame(width: 28, alignment: .leading)
-                            TextField("Mahlzeit eingeben…", text: $meals[i])
-                                .onChange(of: meals[i]) { _, _ in savePlan() }
+                    if plannedIndices.isEmpty {
+                        Label("Noch keine Tage geplant.", systemImage: "fork.knife")
+                            .font(.system(size: 14))
+                            .foregroundStyle(.secondary)
+                            .listRowBackground(Color.clear)
+                    } else {
+                        ForEach(plannedIndices, id: \.self) { i in
+                            HStack(spacing: 12) {
+                                Text(dayNames[i])
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 28, alignment: .leading)
+                                Text(meals[i])
+                                    .font(.system(size: 15))
+                            }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    withAnimation { meals[i] = "" }
+                                    savePlan()
+                                } label: {
+                                    Label("Löschen", systemImage: "trash")
+                                }
+                            }
+                        }
+                    }
+
+                    if plannedIndices.count < 7 {
+                        Button {
+                            showAddDay = true
+                        } label: {
+                            Label("Tag hinzufügen", systemImage: "plus.circle.fill")
+                                .foregroundStyle(.blue)
                         }
                     }
                 } header: {
@@ -75,6 +105,9 @@ struct MenuPlanView: View {
             } message: {
                 Text("\(addedCount) Zutaten wurden zur Einkaufsliste hinzugefügt.")
             }
+            .sheet(isPresented: $showAddDay) {
+                AddDaySheet(meals: $meals, dayNames: dayNamesFull, onSave: savePlan)
+            }
         }
         .devFeedback(context: "Menüplan")
     }
@@ -85,9 +118,7 @@ struct MenuPlanView: View {
         for meal in meals where !meal.trimmingCharacters(in: .whitespaces).isEmpty {
             for ingredient in MealDatabase.ingredients(for: meal) {
                 let key = ingredient.lowercased()
-                if seen.insert(key).inserted {
-                    result.append(ingredient)
-                }
+                if seen.insert(key).inserted { result.append(ingredient) }
             }
         }
         return result
@@ -109,6 +140,58 @@ struct MenuPlanView: View {
            let str = String(data: data, encoding: .utf8) {
             planJSON = str
         }
+    }
+}
+
+// MARK: - Add Day Sheet
+
+private struct AddDaySheet: View {
+    @Binding var meals: [String]
+    let dayNames: [String]
+    let onSave: () -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var selectedDay: Int = 0
+    @State private var mealText = ""
+
+    private var availableDays: [(index: Int, name: String)] {
+        (0..<7).filter { meals[$0].trimmingCharacters(in: .whitespaces).isEmpty }
+            .map { (index: $0, name: dayNames[$0]) }
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Picker("Tag", selection: $selectedDay) {
+                    ForEach(availableDays, id: \.index) { day in
+                        Text(day.name).tag(day.index)
+                    }
+                }
+
+                TextField("Gericht eingeben…", text: $mealText)
+                    .autocorrectionDisabled()
+            }
+            .navigationTitle("Tag hinzufügen")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Abbrechen") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Hinzufügen") {
+                        meals[selectedDay] = mealText.trimmingCharacters(in: .whitespaces)
+                        onSave()
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
+                    .disabled(mealText.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+            .onAppear {
+                if let first = availableDays.first { selectedDay = first.index }
+            }
+        }
+        .presentationDetents([.medium])
     }
 }
 
@@ -166,7 +249,6 @@ enum MealDatabase {
     static func ingredients(for meal: String) -> [String] {
         let key = meal.trimmingCharacters(in: .whitespaces).lowercased()
         if let exact = db[key] { return exact }
-        // Partial match
         for (dbKey, value) in db where key.contains(dbKey) || dbKey.contains(key) {
             return value
         }

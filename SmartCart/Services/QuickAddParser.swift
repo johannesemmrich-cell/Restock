@@ -15,7 +15,17 @@ enum QuickAddParser {
         "stk", "stück", "stücke", "pck", "pkg", "pkt",
         "dose", "dosen", "flasche", "flaschen", "glas", "gläser",
         "bund", "bündel", "prise", "priesen",
+        "päckchen", "packung", "packungen",
+        "becher", "tube", "tuben", "karton", "kartons",
+        "portion", "portionen", "würfel", "rolle", "rollen", "blatt", "blätter",
         "can", "bottle", "box", "bag", "pack", "piece", "pieces",
+    ]
+
+    private static let wordNumbers: [String: Double] = [
+        "ein": 1, "eine": 1, "einen": 1, "einem": 1, "einer": 1,
+        "zwei": 2, "drei": 3, "vier": 4, "fünf": 5,
+        "sechs": 6, "sieben": 7, "acht": 8, "neun": 9, "zehn": 10,
+        "half": 0.5, "halbe": 0.5, "halber": 0.5, "halbes": 0.5,
     ]
 
     /// Parses smart quick-add input.
@@ -38,7 +48,7 @@ enum QuickAddParser {
             return QuickAddResult(name: trimmed, quantity: "1", quantityAmount: 1, unit: "")
         }
 
-        // Try to parse leading number from first token (handles "200g", "2x", "1,5")
+        // Try to parse leading number from first token (handles "200g", "2x", "1,5", "ein", "zwei"…)
         var qty: Double? = nil
         var unit: String = ""
         var consumed = 0
@@ -49,22 +59,27 @@ enum QuickAddParser {
             ? String(first.dropLast())
             : first
 
-        // Check if first token starts with a number (possibly glued to unit: "200g")
-        let numPattern = #"^(\d+[\.,]?\d*)"#
-        if let numRange = firstClean.range(of: numPattern, options: .regularExpression) {
-            let numStr = String(firstClean[numRange])
-                .replacingOccurrences(of: ",", with: ".")
-            if let parsed = Double(numStr) {
-                qty = parsed
-                consumed = 1
+        // Check word-numbers first ("ein", "zwei", "halbe"…)
+        if let wordQty = wordNumbers[firstClean.lowercased()] {
+            qty = wordQty
+            consumed = 1
+        }
 
-                // Remainder of first token could be a unit: "200g" → unit "g"
-                let remainder = String(firstClean[numRange.upperBound...]).lowercased()
-                if !remainder.isEmpty && knownUnits.contains(remainder) {
-                    unit = String(firstClean[numRange.upperBound...]) // preserve case
-                } else if !remainder.isEmpty {
-                    // Unknown trailing chars — treat as part of name by not consuming
-                    // Actually treat as is and fall through to check next token for unit
+        // Check if first token starts with a digit (possibly glued to unit: "200g")
+        if qty == nil {
+            let numPattern = #"^(\d+[\.,]?\d*)"#
+            if let numRange = firstClean.range(of: numPattern, options: .regularExpression) {
+                let numStr = String(firstClean[numRange])
+                    .replacingOccurrences(of: ",", with: ".")
+                if let parsed = Double(numStr) {
+                    qty = parsed
+                    consumed = 1
+
+                    // Remainder of first token could be a unit: "200g" → unit "g"
+                    let remainder = String(firstClean[numRange.upperBound...]).lowercased()
+                    if !remainder.isEmpty && knownUnits.contains(remainder) {
+                        unit = String(firstClean[numRange.upperBound...]) // preserve case
+                    }
                 }
             }
         }
