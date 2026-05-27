@@ -34,6 +34,7 @@ struct ShoppingLiveActivity: Widget {
                             .trim(from: 0, to: progress)
                             .stroke(Color.green, style: StrokeStyle(lineWidth: 4, lineCap: .round))
                             .rotationEffect(.degrees(-90))
+                            .animation(.easeInOut, value: progress)
                     }
                     .frame(width: 38, height: 38)
                     .padding(.trailing, 4)
@@ -51,12 +52,13 @@ struct ShoppingLiveActivity: Widget {
                                     .lineLimit(1)
                             }
                             Spacer()
-                            checkoffLink(storeName: context.attributes.storeName) {
+                            Button(intent: CheckOffItemIntent(storeName: context.attributes.storeName)) {
                                 Image(systemName: "checkmark.circle.fill")
                                     .font(.system(size: 36))
                                     .foregroundStyle(.green)
                                     .symbolEffect(.bounce, value: next)
                             }
+                            .buttonStyle(.plain)
                         }
                         .padding(.top, 6)
                         .padding(.bottom, 2)
@@ -78,16 +80,6 @@ struct ShoppingLiveActivity: Widget {
                 Text(context.attributes.storeEmoji)
             }
             .keylineTint(.green)
-        }
-    }
-
-    @ViewBuilder
-    private func checkoffLink<Content: View>(storeName: String, @ViewBuilder label: () -> Content) -> some View {
-        let encoded = storeName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? storeName
-        if let url = URL(string: "smartcart://checkoff?store=\(encoded)") {
-            Link(destination: url) { label() }
-        } else {
-            label()
         }
     }
 }
@@ -132,22 +124,19 @@ private struct LockScreenView: View {
                         RoundedRectangle(cornerRadius: 3)
                             .fill(Color.green)
                             .frame(width: geo.size.width * progress, height: 4)
+                            .animation(.easeInOut, value: progress)
                     }
                 }
                 .frame(height: 4)
             }
 
-            if let next = context.state.nextItemName {
-                let encoded = next.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? next
-                let storeName = context.attributes.storeName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? context.attributes.storeName
-                if let url = URL(string: "smartcart://checkoff?store=\(storeName)") {
-                    Link(destination: url) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 30))
-                            .foregroundStyle(.green)
-                    }
+            if context.state.nextItemName != nil {
+                Button(intent: CheckOffItemIntent(storeName: context.attributes.storeName)) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 30))
+                        .foregroundStyle(.green)
                 }
-                let _ = encoded // suppress warning
+                .buttonStyle(.plain)
             }
         }
         .padding(16)

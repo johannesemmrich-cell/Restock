@@ -42,6 +42,12 @@
 		BEA22437C49C7A0CEC5786AE /* DevFeedbackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F251AAC3AEE858B76DCF7E8 /* DevFeedbackButton.swift */; };
 		C9139F3211CC76DF720FB66C /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A4065E868200E2B3A0F02D /* FeedbackView.swift */; };
 		CC33DD44EE55FF6677AABB11 /* AddItemIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD44EE55FF6677AABB11CC22 /* AddItemIntent.swift */; };
+		CC44DD55EE66FF7799AABB22 /* CheckOffItemIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE77FF8899AABB33CC44DD55 /* CheckOffItemIntent.swift */; };
+		WD08C9D0E1F2A3B4C5D6E008 /* CheckOffItemIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE77FF8899AABB33CC44DD55 /* CheckOffItemIntent.swift */; };
+		WD09D0E1F2A3B4C5D6E7F009 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A49612BE198AF3B48211B62 /* Store.swift */; };
+		WD10E1F2A3B4C5D6E7F8A010 /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1791AA94F3726B793EB09F74 /* ShoppingItem.swift */; };
+		WD11F2A3B4C5D6E7F8A9B011 /* PurchaseRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34C5D25C3945D6153A049B /* PurchaseRecord.swift */; };
+		WD12A3B4C5D6E7F8A9B0C012 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = D267DA892CBED0BC9B534966 /* Color+Hex.swift */; };
 		CE780CEB38E00FF824BE132F /* BrowseStoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5239F35789D83F615154249B /* BrowseStoresView.swift */; };
 		CF2E2F0FE6EDD8C5B29CD22E /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47184F36A40105B9BDD79C7B /* NotificationService.swift */; };
 		D0518513ABE97A21C14A74C3 /* StoreDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C3233FB5722D2CF4BE2B3A /* StoreDetailView.swift */; };
@@ -109,6 +115,7 @@
 		D267DA892CBED0BC9B534966 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
 		DD34C5D25C3945D6153A049B /* PurchaseRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseRecord.swift; sourceTree = "<group>"; };
 		DD44EE55FF6677AABB11CC22 /* AddItemIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemIntent.swift; sourceTree = "<group>"; };
+		EE77FF8899AABB33CC44DD55 /* CheckOffItemIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckOffItemIntent.swift; sourceTree = "<group>"; };
 		E5F6A7B8C9D0E1F2A3B4C5D6 /* PriceOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceOverviewView.swift; sourceTree = "<group>"; };
 		EE66FF7788AABB33CC44DD55 /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListView.swift; sourceTree = "<group>"; };
 		F2167065308D2C0091FD60DC /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
@@ -147,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				DD44EE55FF6677AABB11CC22 /* AddItemIntent.swift */,
+				EE77FF8899AABB33CC44DD55 /* CheckOffItemIntent.swift */,
 			);
 			path = Intents;
 			sourceTree = "<group>";
@@ -443,6 +451,11 @@
 				WD01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift in Sources */,
 				WD02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift in Sources */,
 				WD03D4E5F6A7B8C9D0E1F003 /* ShoppingActivityAttributes.swift in Sources */,
+				WD08C9D0E1F2A3B4C5D6E008 /* CheckOffItemIntent.swift in Sources */,
+				WD09D0E1F2A3B4C5D6E7F009 /* Store.swift in Sources */,
+				WD10E1F2A3B4C5D6E7F8A010 /* ShoppingItem.swift in Sources */,
+				WD11F2A3B4C5D6E7F8A9B011 /* PurchaseRecord.swift in Sources */,
+				WD12A3B4C5D6E7F8A9B0C012 /* Color+Hex.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -451,6 +464,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC33DD44EE55FF6677AABB11 /* AddItemIntent.swift in Sources */,
+				CC44DD55EE66FF7799AABB22 /* CheckOffItemIntent.swift in Sources */,
 				DEBF56414AA7F6AF04B254E2 /* AddItemView.swift in Sources */,
 				A005E6F7A8B9C0D1E2F3A005 /* AllItemsView.swift in Sources */,
 				0B64D059E2535909BBC07B1B /* AssignmentService.swift in Sources */,
