@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import CryptoKit
 import UIKit
+import AppIntents
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
@@ -128,7 +129,7 @@ struct SettingsView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Homescreen-Kurzbefehl")
                                 .font(.system(size: 15, weight: .medium))
-                            Text("Artikel hinzufügen ohne die App zu öffnen")
+                            Text("Kurzbefehl einrichten → in Kurzbefehle zum Homescreen hinzufügen")
                                 .font(.system(size: 12))
                                 .foregroundStyle(.secondary)
                         }
@@ -139,10 +140,11 @@ struct SettingsView: View {
                     }
                     .padding(.vertical, 2)
                     .contentShape(Rectangle())
-                    .onTapGesture {
-                        if let url = URL(string: "shortcuts://") {
-                            UIApplication.shared.open(url)
-                        }
+                    .overlay {
+                        ShortcutsLink()
+                            .shortcutsLinkStyle(.automatic)
+                            .opacity(0.011)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
 

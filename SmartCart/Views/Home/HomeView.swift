@@ -75,6 +75,10 @@ struct HomeView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active {
                     checkPendingQuickAdd()
+                    if QuickActionState.shared.triggerQuickAdd {
+                        QuickActionState.shared.triggerQuickAdd = false
+                        activateQuickAdd()
+                    }
                 }
             }
             .devFeedback(context: "Startseite")
