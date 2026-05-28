@@ -167,7 +167,7 @@ struct BrowseStoresView: View {
 
     @ViewBuilder
     private func presetRow(_ preset: Store, subtitle: String) -> some View {
-        let alreadyAdded = existingStores.contains(where: { $0.name == preset.name })
+        let alreadyAdded = existingStores.contains(where: { $0.name == preset.name && $0.isActive })
             || addedNames.contains(preset.name)
         HStack {
             Text(preset.emoji)
@@ -198,16 +198,20 @@ struct BrowseStoresView: View {
     }
 
     private func addStore(_ preset: Store) {
-        let newStore = Store(
-            name: preset.name,
-            emoji: preset.emoji,
-            colorHex: preset.colorHex,
-            visitsPerWeek: preset.visitsPerWeek,
-            categories: preset.categories,
-            countryCode: preset.countryCode
-        )
-        newStore.isActive = true
-        context.insert(newStore)
+        if let existing = existingStores.first(where: { $0.name == preset.name && !$0.isActive }) {
+            existing.isActive = true
+        } else {
+            let newStore = Store(
+                name: preset.name,
+                emoji: preset.emoji,
+                colorHex: preset.colorHex,
+                visitsPerWeek: preset.visitsPerWeek,
+                categories: preset.categories,
+                countryCode: preset.countryCode
+            )
+            newStore.isActive = true
+            context.insert(newStore)
+        }
         addedNames.insert(preset.name)
         Haptics.success()
     }

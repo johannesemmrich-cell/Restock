@@ -3,6 +3,7 @@ import SwiftData
 
 struct PriceOverviewView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
     @Query(sort: \PurchaseRecord.date, order: .reverse) private var allRecords: [PurchaseRecord]
 
     @State private var selectedTab = 0  // 0 = Vergleich, 1 = Prognosen, 2 = Kassenbons, 3 = Ausgaben
@@ -278,6 +279,19 @@ struct PriceOverviewView: View {
         .sorted { $0.id > $1.id }
     }
 
+    private func deleteRecords(storeName: String, monthKey: String) {
+        let parts = monthKey.split(separator: "-")
+        guard parts.count == 2, let year = Int(parts[0]), let month = Int(parts[1]) else { return }
+        let calendar = Calendar.current
+        allRecords
+            .filter { r in
+                let c = calendar.dateComponents([.year, .month], from: r.date)
+                return r.storeName == storeName && c.year == year && c.month == month
+            }
+            .forEach { context.delete($0) }
+        Haptics.impact(.medium)
+    }
+
     @ViewBuilder
     private var spendingHistorySections: some View {
         if spendingByMonth.isEmpty {
@@ -299,6 +313,11 @@ struct PriceOverviewView: View {
                             Spacer()
                             Text(entry.total, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
                                 .font(.system(size: 13, weight: .medium))
+                        }
+                    }
+                    .onDelete { indexSet in
+                        for idx in indexSet {
+                            deleteRecords(storeName: month.byStore[idx].name, monthKey: month.id)
                         }
                     }
                 } header: {
