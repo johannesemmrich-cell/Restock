@@ -17,6 +17,7 @@ struct HomeView: View {
     @State private var bannerExpanded = false
     @Namespace private var bannerNamespace
     @State private var addItemText = ""
+    @State private var quickAddSucceeded = false
     @State private var dueSoonItems: [ConsumptionPattern] = []
     @State private var headerScale: CGFloat = 1.0
 
@@ -279,9 +280,10 @@ struct HomeView: View {
         VStack(spacing: 6) {
             HStack(spacing: 10) {
                 HStack(spacing: 10) {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundStyle(.blue)
+                    Image(systemName: quickAddSucceeded ? "checkmark.circle.fill" : "plus.circle.fill")
+                        .foregroundStyle(quickAddSucceeded ? .green : .blue)
                         .font(.system(size: 18))
+                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: quickAddSucceeded)
 
                     TextField(String(localized: "home.quickadd.placeholder"), text: $addItemText)
                         .submitLabel(.done)
@@ -569,7 +571,6 @@ struct HomeView: View {
     private func quickAdd() {
         let trimmed = addItemText.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
-        Haptics.impact(.light)
         let parsed = QuickAddParser.parse(trimmed)
         let category = AssignmentService.category(for: parsed.name)
         let store = AssignmentService.assign(itemName: parsed.name, to: activeStores, purchaseRecords: allRecords)
@@ -582,6 +583,11 @@ struct HomeView: View {
             store: store
         ))
         addItemText = ""
+        Haptics.success()
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { quickAddSucceeded = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
+            withAnimation(.spring(response: 0.4)) { quickAddSucceeded = false }
+        }
     }
 
     private func refreshDueSoon() {
