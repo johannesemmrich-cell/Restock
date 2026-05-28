@@ -87,11 +87,11 @@ struct HomeView: View {
     private func openBanner() {
         guard totalPending > 0 else { return }
         Haptics.impact(.medium)
-        withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { bannerExpanded = true }
+        withAnimation(.spring(response: 0.82, dampingFraction: 0.78)) { bannerExpanded = true }
     }
 
     private func closeBanner() {
-        withAnimation(.spring(response: 0.48, dampingFraction: 0.82)) { bannerExpanded = false }
+        withAnimation(.spring(response: 0.68, dampingFraction: 0.88)) { bannerExpanded = false }
     }
 
     private var headerCard: some View {

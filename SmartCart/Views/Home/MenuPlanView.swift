@@ -19,6 +19,7 @@ struct MenuPlanView: View {
     @State private var addedCount = 0
     @State private var showConfirm = false
     @State private var showAddDay = false
+    @State private var checkedIngredients: Set<String> = []
 
     private let dayNames     = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
     private let dayNamesFull = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
@@ -75,7 +76,7 @@ struct MenuPlanView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Zur Liste") { addToList() }
                         .fontWeight(.semibold)
-                        .disabled(allIngredients.isEmpty && loadingDays.isEmpty)
+                        .disabled((allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }.isEmpty) && loadingDays.isEmpty)
                 }
             }
             .alert("Hinzugefügt", isPresented: $showConfirm) {
@@ -189,10 +190,39 @@ struct MenuPlanView: View {
     // MARK: - Ingredients section
 
     private var ingredientsSection: some View {
-        Section("Erkannte Zutaten (\(allIngredients.count))") {
+        let unchecked = allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }.count
+        return Section {
             ForEach(allIngredients, id: \.self) { name in
-                Label(name, systemImage: "cart")
-                    .font(.system(size: 14))
+                let isChecked = checkedIngredients.contains(name.lowercased())
+                HStack(spacing: 12) {
+                    Button {
+                        if isChecked {
+                            checkedIngredients.remove(name.lowercased())
+                        } else {
+                            checkedIngredients.insert(name.lowercased())
+                        }
+                        Haptics.impact(.light)
+                    } label: {
+                        Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                            .font(.system(size: 20))
+                            .foregroundStyle(isChecked ? .green : Color(.systemGray3))
+                    }
+                    .buttonStyle(.plain)
+
+                    Text(name)
+                        .font(.system(size: 14))
+                        .foregroundStyle(isChecked ? .secondary : .primary)
+                        .strikethrough(isChecked, color: .secondary)
+                }
+            }
+        } header: {
+            HStack {
+                Text("Erkannte Zutaten")
+                Spacer()
+                Text("\(unchecked) zur Liste")
+                    .textCase(nil)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -214,13 +244,14 @@ struct MenuPlanView: View {
     }
 
     private func addToList() {
-        let ingredients = allIngredients
+        let ingredients = allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }
         for name in ingredients {
             let category = AssignmentService.category(for: name)
             let store = AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords)
             context.insert(ShoppingItem(name: name, category: category, store: store))
         }
         addedCount = ingredients.count
+        checkedIngredients.removeAll()
         Haptics.success()
         showConfirm = true
     }

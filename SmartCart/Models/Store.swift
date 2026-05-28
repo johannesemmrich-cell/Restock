@@ -131,8 +131,10 @@ extension Store {
                 Store(name: "Lidl",      emoji: "🛒", colorHex: "#2563EB", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "BE"), // Blau
                 Store(name: "Aldi",      emoji: "🛒", colorHex: "#1E40AF", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "BE"), // Dunkelblau
                 Store(name: "Okay",      emoji: "🛒", colorHex: "#EA580C", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "BE"), // Orange
-                Store(name: "Action",    emoji: "🏷️", colorHex: "#E53935", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "BE"), // Rot
-                Store(name: "DM",        emoji: "🧴", colorHex: "#DB2777", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "BE"), // Pink
+                Store(name: "Action",          emoji: "🏷️", colorHex: "#E53935", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "BE"), // Rot
+                Store(name: "DM",             emoji: "🧴", colorHex: "#DB2777", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "BE"), // Pink
+                Store(name: "Di",             emoji: "🧴", colorHex: "#00A651", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "BE"), // Grün
+                Store(name: "Carrefour Express", emoji: "🛒", colorHex: "#0050C8", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "BE"), // Blau
             ]
         case "NL":
             return [

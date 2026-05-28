@@ -5,25 +5,28 @@ struct PriceOverviewView: View {
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \PurchaseRecord.date, order: .reverse) private var allRecords: [PurchaseRecord]
 
-    @State private var selectedTab = 0  // 0 = Preisvergleich, 1 = Ausgaben
+    @State private var selectedTab = 0  // 0 = Vergleich, 1 = Prognosen, 2 = Kassenbons, 3 = Ausgaben
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     Picker("", selection: $selectedTab) {
-                        Text("Preisvergleich").tag(0)
-                        Text("Ausgaben").tag(1)
+                        Text("Vergleich").tag(0)
+                        Text("Prognosen").tag(1)
+                        Text("Kassenbons").tag(2)
+                        Text("Ausgaben").tag(3)
                     }
                     .pickerStyle(.segmented)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                 }
 
-                if selectedTab == 0 {
-                    priceComparisonSections
-                } else {
-                    spendingHistorySections
+                switch selectedTab {
+                case 0: priceComparisonSections
+                case 1: forecastSections
+                case 2: receiptsSections
+                default: spendingHistorySections
                 }
             }
             .navigationTitle("Preise")
@@ -135,6 +138,105 @@ struct PriceOverviewView: View {
                     .padding(.vertical, 4)
                 }
             }
+        }
+    }
+
+    // MARK: - Forecast (Prognosen)
+
+    private struct ForecastItem: Identifiable {
+        let id: String
+        let name: String
+        let avgIntervalDays: Double
+        let lastDate: Date
+        let avgPrice: Double?
+
+        var nextExpected: Date { lastDate.addingTimeInterval(avgIntervalDays * 86_400) }
+        var daysUntil: Int { Calendar.current.dateComponents([.day], from: Date(), to: nextExpected).day ?? 0 }
+    }
+
+    private var forecastItems: [ForecastItem] {
+        var byItem: [String: [PurchaseRecord]] = [:]
+        for r in allRecords where !r.itemName.trimmingCharacters(in: .whitespaces).isEmpty {
+            byItem[r.itemName.lowercased(), default: []].append(r)
+        }
+        return byItem.compactMap { key, recs -> ForecastItem? in
+            guard recs.count >= 2 else { return nil }
+            let sorted = recs.sorted { $0.date < $1.date }
+            var intervals: [Double] = []
+            for i in 1..<sorted.count {
+                intervals.append(sorted[i].date.timeIntervalSince(sorted[i-1].date) / 86_400)
+            }
+            let avgInterval = intervals.reduce(0, +) / Double(intervals.count)
+            let prices = recs.compactMap { $0.actualPrice }.filter { $0 > 0 }
+            let avgPrice = prices.isEmpty ? nil : prices.reduce(0, +) / Double(prices.count)
+            return ForecastItem(
+                id: key,
+                name: sorted.last!.itemName,
+                avgIntervalDays: avgInterval,
+                lastDate: sorted.last!.date,
+                avgPrice: avgPrice
+            )
+        }
+        .filter { $0.daysUntil <= 30 }
+        .sorted { $0.daysUntil < $1.daysUntil }
+    }
+
+    @ViewBuilder
+    private var forecastSections: some View {
+        if forecastItems.isEmpty {
+            Section {
+                ContentUnavailableView(
+                    "Keine Prognosen",
+                    systemImage: "chart.line.uptrend.xyaxis",
+                    description: Text("Sobald du Artikel mehrmals eingekauft hast, erscheinen hier Vorhersagen für deinen nächsten Einkauf.")
+                )
+                .listRowBackground(Color.clear)
+            }
+        } else {
+            Section("Bald fällig (\(forecastItems.count))") {
+                ForEach(forecastItems) { item in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.name)
+                                .font(.system(size: 15))
+                            Group {
+                                if item.daysUntil <= 0 {
+                                    Text("Überfällig")
+                                        .foregroundStyle(.red)
+                                } else if item.daysUntil == 1 {
+                                    Text("Morgen")
+                                        .foregroundStyle(.orange)
+                                } else {
+                                    Text("In \(item.daysUntil) Tagen")
+                                        .foregroundStyle(item.daysUntil <= 5 ? .orange : .secondary)
+                                }
+                            }
+                            .font(.system(size: 12))
+                        }
+                        Spacer()
+                        if let price = item.avgPrice {
+                            Text(price, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+        }
+    }
+
+    // MARK: - Receipts (Kassenbons)
+
+    @ViewBuilder
+    private var receiptsSections: some View {
+        Section {
+            ContentUnavailableView(
+                "Kassenbons",
+                systemImage: "doc.text.viewfinder",
+                description: Text("Scanne Kassenbons direkt in der Einkaufsliste eines Ladens (Kamera-Symbol oben rechts).")
+            )
+            .listRowBackground(Color.clear)
         }
     }
 

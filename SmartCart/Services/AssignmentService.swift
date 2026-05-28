@@ -36,6 +36,13 @@ struct AssignmentService {
         // Haushaltswaren (gehen zu Action/Drogerie)
         "kerzen", "kerze", "teelicht", "wäscheklammer", "kleiderbügel",
         "einwegbecher", "plastikbecher", "servietten", "napkin",
+        "küchentuch", "haushaltsbeutel", "plastikdose", "vorratsdose",
+        "frischhaltedose", "plastiktüte", "beutel",
+        // Apotheke / Medizin
+        "nasenspray", "nasentropfen", "nasengel", "nasenöl", "nasenpflege",
+        "augentropfen", "augensalbe", "ohrentropfen",
+        "hustensaft", "hustenbonbons", "halstabletten",
+        "nasal spray", "eye drops", "nose drops",
     ]
 
     private static let highFrequencyFoodKeywords: Set<String> = [
@@ -123,7 +130,9 @@ struct AssignmentService {
 
         let categoryMap: [(keywords: [String], category: String)] = [
             (["obst", "gemüse", "salat", "fruit", "vegetable", "apple", "banana", "tomato", "potato", "äpfel", "bananen", "kartoffel"], "Obst & Gemüse"),
-            (["fleisch", "wurst", "hähnchen", "rind", "schwein", "fisch", "meat", "chicken", "beef", "pork", "fish", "lachs", "thunfisch"], "Fleisch & Wurst"),
+            (["fleisch", "wurst", "hähnchen", "rind", "schwein", "fisch", "meat", "chicken", "beef", "pork", "fish", "lachs", "thunfisch",
+              "leberkäse", "leberkas", "leberkässemmel", "aufschnitt", "mortadella", "salami", "leberwurst",
+              "würstchen", "bratwurst", "currywurst", "blutwurst", "speck", "schinken"], "Fleisch & Wurst"),
             (["milch", "käse", "joghurt", "butter", "sahne", "quark", "milk", "cheese", "yogurt", "cream"], "Milchprodukte"),
             (["brot", "brötchen", "toast", "croissant", "bread", "roll", "backware", "kuchen", "cake"], "Backwaren"),
             (["tiefkühl", "frozen", "eis", "ice cream", "pizza", "pommes"], "Tiefkühlkost"),

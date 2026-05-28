@@ -102,7 +102,37 @@ enum QuickAddParser {
             name = trimmed
             qty = nil
         } else {
-            name = trimmed
+            // No leading quantity — try trailing: "Hackfleisch 3kg" or "Hackfleisch 3 kg"
+            var trailingName = trimmed
+            if tokens.count >= 2 {
+                let last = tokens[tokens.count - 1]
+                let numPat = #"^(\d+[\.,]?\d*)"#
+                // Try "3kg" glued pattern
+                if let numRange = last.range(of: numPat, options: .regularExpression) {
+                    let numStr = String(last[numRange]).replacingOccurrences(of: ",", with: ".")
+                    if let parsed = Double(numStr) {
+                        let unitPart = String(last[numRange.upperBound...]).lowercased()
+                        if !unitPart.isEmpty && knownUnits.contains(unitPart) {
+                            qty = parsed
+                            unit = String(last[numRange.upperBound...])
+                            trailingName = tokens.dropLast().joined(separator: " ")
+                        }
+                    }
+                }
+                // Try "3 kg" separated pattern
+                if qty == nil && tokens.count >= 3 {
+                    let lastLower = tokens[tokens.count - 1].lowercased()
+                    if knownUnits.contains(lastLower) {
+                        let numStr = tokens[tokens.count - 2].replacingOccurrences(of: ",", with: ".")
+                        if let parsed = Double(numStr) {
+                            qty = parsed
+                            unit = tokens[tokens.count - 1]
+                            trailingName = tokens.dropLast(2).joined(separator: " ")
+                        }
+                    }
+                }
+            }
+            name = trailingName
         }
 
         let finalQty = qty ?? 1.0
