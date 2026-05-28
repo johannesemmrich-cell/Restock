@@ -50,6 +50,9 @@
 		WD12A3B4C5D6E7F8A9B0C012 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = D267DA892CBED0BC9B534966 /* Color+Hex.swift */; };
 		WD13B4C5D6E7F8A9B0C1D013 /* FeedbackItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */; };
 		WD14C5D6E7F8A9B0C1D2E014 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC44DD55EE66FF7788AABB33 /* TodoItem.swift */; };
+		WD15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = WF15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift */; };
+		A102C3D4E5F6A7B8C9D0E102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A101B2C3D4E5F6A7B8C9D101 /* AppDelegate.swift */; };
+		A104E5F6A7B8C9D0E1F2A104 /* QuickActionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A103D4E5F6A7B8C9D0E1F103 /* QuickActionState.swift */; };
 		CE780CEB38E00FF824BE132F /* BrowseStoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5239F35789D83F615154249B /* BrowseStoresView.swift */; };
 		CF2E2F0FE6EDD8C5B29CD22E /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47184F36A40105B9BDD79C7B /* NotificationService.swift */; };
 		D0518513ABE97A21C14A74C3 /* StoreDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C3233FB5722D2CF4BE2B3A /* StoreDetailView.swift */; };
@@ -129,6 +132,9 @@
 		A006F7A8B9C0D1E2F3A4B006 /* AllItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllItemsView.swift; sourceTree = "<group>"; };
 		WF01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCartWidgetsBundle.swift; sourceTree = "<group>"; };
 		WF02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingLiveActivity.swift; sourceTree = "<group>"; };
+		WF15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddControl.swift; sourceTree = "<group>"; };
+		A101B2C3D4E5F6A7B8C9D101 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A103D4E5F6A7B8C9D0E1F103 /* QuickActionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionState.swift; sourceTree = "<group>"; };
 		WF04E5F6A7B8C9D0E1F2A004 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		WF05F6A7B8C9D0E1F2A3B005 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		WF06A7B8C9D0E1F2A3B4C006 /* SmartCartWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SmartCartWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,6 +148,8 @@
 				9D6DDDDC065602308F0A3A52 /* Assets.xcassets */,
 				6CC5E77213853CDEEA9A76D3 /* ContentView.swift */,
 				9E1FEF9707C7C16B4D0F2CF5 /* SmartCartApp.swift */,
+				A101B2C3D4E5F6A7B8C9D101 /* AppDelegate.swift */,
+				A103D4E5F6A7B8C9D0E1F103 /* QuickActionState.swift */,
 				B92FD36FDF65C0E9FF2C5F14 /* Extensions */,
 				3344556677889900AABB1122 /* Intents */,
 				4DEFE8F3862D961AE9F4396B /* Models */,
@@ -176,6 +184,7 @@
 			children = (
 				WF01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift */,
 				WF02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift */,
+				WF15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift */,
 				WF07B8C9D0E1F2A3B4C5D007 /* Info.plist */,
 			);
 			path = SmartCartWidgets;
@@ -462,6 +471,7 @@
 				WD12A3B4C5D6E7F8A9B0C012 /* Color+Hex.swift in Sources */,
 				WD13B4C5D6E7F8A9B0C1D013 /* FeedbackItem.swift in Sources */,
 				WD14C5D6E7F8A9B0C1D2E014 /* TodoItem.swift in Sources */,
+				WD15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,6 +520,8 @@
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* ReceiptParserService.swift in Sources */,
 				D4E5F6A7B8C9D0E1F2A3B4C5 /* ReceiptScannerView.swift in Sources */,
 				F6A7B8C9D0E1F2A3B4C5D6E7 /* PriceOverviewView.swift in Sources */,
+				A102C3D4E5F6A7B8C9D0E102 /* AppDelegate.swift in Sources */,
+				A104E5F6A7B8C9D0E1F2A104 /* QuickActionState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

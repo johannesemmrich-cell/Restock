@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct HomeView: View {
     @Query(filter: #Predicate<Store> { $0.isActive }) private var activeStores: [Store]
@@ -53,7 +54,20 @@ struct HomeView: View {
             .sheet(isPresented: $showPriceOverview) { PriceOverviewView() }
             .sheet(isPresented: $showAddStore) { NavigationStack { BrowseStoresView() } }
             .sheet(isPresented: $showAllItems) { AllItemsView() }
-            .onAppear { refreshDueSoon() }
+            .onAppear {
+                refreshDueSoon()
+                registerShortcutItems()
+                if QuickActionState.shared.triggerQuickAdd {
+                    showAddItem = true
+                    QuickActionState.shared.triggerQuickAdd = false
+                }
+            }
+            .onChange(of: QuickActionState.shared.triggerQuickAdd) { _, triggered in
+                if triggered {
+                    showAddItem = true
+                    QuickActionState.shared.triggerQuickAdd = false
+                }
+            }
             .devFeedback(context: "Startseite")
         }
         .overlay {
@@ -573,6 +587,18 @@ struct HomeView: View {
     private func refreshDueSoon() {
         dueSoonItems = HabitService.dueSoonItems(allRecords: allRecords)
         HabitService.scheduleReplenishmentNotifications(patterns: dueSoonItems)
+    }
+
+    private func registerShortcutItems() {
+        UIApplication.shared.shortcutItems = [
+            UIApplicationShortcutItem(
+                type: "com.smartcart.quickadd",
+                localizedTitle: String(localized: "Artikel hinzufügen"),
+                localizedSubtitle: String(localized: "Zur Einkaufsliste hinzufügen"),
+                icon: UIApplicationShortcutIcon(systemImageName: "cart.badge.plus"),
+                userInfo: nil
+            )
+        ]
     }
 
     private func addDueSoonToList() {

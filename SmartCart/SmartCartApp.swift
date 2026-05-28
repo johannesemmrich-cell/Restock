@@ -1,8 +1,10 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 @main
 struct SmartCartApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     let container: ModelContainer
 
     @AppStorage("developerMode") private var developerMode = false

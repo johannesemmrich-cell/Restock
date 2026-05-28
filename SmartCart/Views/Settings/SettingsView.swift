@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import CryptoKit
+import UIKit
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
@@ -61,6 +62,63 @@ struct SettingsView: View {
                             }
                         }
                     Toggle("Saisonale Vorschläge", isOn: $seasonalSuggestionsEnabled)
+                }
+
+                Section("Siri & Schnellzugriff") {
+                    HStack(spacing: 12) {
+                        Image(systemName: "mic.fill")
+                            .font(.system(size: 18))
+                            .foregroundStyle(.purple)
+                            .frame(width: 28)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Siri")
+                                .font(.system(size: 15, weight: .medium))
+                            Text("\"Hey Siri, füge Milch zu SmartCart hinzu\"")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 2)
+
+                    HStack(spacing: 12) {
+                        Image(systemName: "switch.2")
+                            .font(.system(size: 18))
+                            .foregroundStyle(.blue)
+                            .frame(width: 28)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Kontrollzentrum")
+                                .font(.system(size: 15, weight: .medium))
+                            Text("Widget hinzufügen: Einstellungen > Kontrollzentrum")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "arrow.up.right")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 2)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+
+                    HStack(spacing: 12) {
+                        Image(systemName: "hand.tap.fill")
+                            .font(.system(size: 18))
+                            .foregroundStyle(.orange)
+                            .frame(width: 28)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("App-Icon lange drücken")
+                                .font(.system(size: 15, weight: .medium))
+                            Text("Direkt zur Schnelleingabe ohne App zu oeffnen")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 2)
                 }
 
                 Section(String(localized: "settings.feedback.section")) {
