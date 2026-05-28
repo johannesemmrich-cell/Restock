@@ -113,12 +113,37 @@ struct SettingsView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("App-Icon lange drücken")
                                 .font(.system(size: 15, weight: .medium))
-                            Text("Direkt zur Schnelleingabe ohne App zu oeffnen")
+                            Text("Öffnet die App direkt zur Schnelleingabe")
                                 .font(.system(size: 12))
                                 .foregroundStyle(.secondary)
                         }
                     }
                     .padding(.vertical, 2)
+
+                    HStack(spacing: 12) {
+                        Image(systemName: "square.grid.2x2.fill")
+                            .font(.system(size: 18))
+                            .foregroundStyle(Color(red: 0.7, green: 0.2, blue: 1.0))
+                            .frame(width: 28)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Homescreen-Kurzbefehl")
+                                .font(.system(size: 15, weight: .medium))
+                            Text("Artikel hinzufügen ohne die App zu öffnen")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "arrow.up.right")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 2)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if let url = URL(string: "shortcuts://") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
                 }
 
                 Section(String(localized: "settings.feedback.section")) {

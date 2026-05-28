@@ -139,12 +139,15 @@
 		WF05F6A7B8C9D0E1F2A3B005 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		WF06A7B8C9D0E1F2A3B4C006 /* SmartCartWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SmartCartWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		WF07B8C9D0E1F2A3B4C5D007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA01BB02CC03DD04EE05FF06 /* SmartCart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCart.entitlements; sourceTree = "<group>"; };
+		AA02BB03CC04DD05EE06FF07 /* SmartCartWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCartWidgets.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		0630F8F8C67403AA0F3A36B7 /* SmartCart */ = {
 			isa = PBXGroup;
 			children = (
+				AA01BB02CC03DD04EE05FF06 /* SmartCart.entitlements */,
 				9D6DDDDC065602308F0A3A52 /* Assets.xcassets */,
 				6CC5E77213853CDEEA9A76D3 /* ContentView.swift */,
 				9E1FEF9707C7C16B4D0F2CF5 /* SmartCartApp.swift */,
@@ -182,6 +185,7 @@
 		WG01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgets */ = {
 			isa = PBXGroup;
 			children = (
+				AA02BB03CC04DD05EE06FF07 /* SmartCartWidgets.entitlements */,
 				WF01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift */,
 				WF02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift */,
 				WF15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift */,
@@ -545,6 +549,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SmartCart/SmartCart.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
@@ -694,6 +699,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SmartCart/SmartCart.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
@@ -722,6 +728,7 @@
 		WBC1B2C3D4E5F6A7B8C9D001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SmartCartWidgets/SmartCartWidgets.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -749,6 +756,7 @@
 		WBC2B3C4D5E6F7A8B9C0D002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SmartCartWidgets/SmartCartWidgets.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

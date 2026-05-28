@@ -18,6 +18,8 @@ struct HomeView: View {
     @Namespace private var bannerNamespace
     @State private var addItemText = ""
     @State private var quickAddSucceeded = false
+    @FocusState private var isQuickAddFocused: Bool
+    @Environment(\.scenePhase) private var scenePhase
     @State private var dueSoonItems: [ConsumptionPattern] = []
     @State private var headerScale: CGFloat = 1.0
 
@@ -59,14 +61,20 @@ struct HomeView: View {
                 refreshDueSoon()
                 registerShortcutItems()
                 if QuickActionState.shared.triggerQuickAdd {
-                    showAddItem = true
                     QuickActionState.shared.triggerQuickAdd = false
+                    activateQuickAdd()
                 }
+                checkPendingQuickAdd()
             }
             .onChange(of: QuickActionState.shared.triggerQuickAdd) { _, triggered in
                 if triggered {
-                    showAddItem = true
                     QuickActionState.shared.triggerQuickAdd = false
+                    activateQuickAdd()
+                }
+            }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active {
+                    checkPendingQuickAdd()
                 }
             }
             .devFeedback(context: "Startseite")
@@ -286,6 +294,7 @@ struct HomeView: View {
                         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: quickAddSucceeded)
 
                     TextField(String(localized: "home.quickadd.placeholder"), text: $addItemText)
+                        .focused($isQuickAddFocused)
                         .submitLabel(.done)
                         .onSubmit { quickAdd() }
 
@@ -588,6 +597,26 @@ struct HomeView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
             withAnimation(.spring(response: 0.4)) { quickAddSucceeded = false }
         }
+    }
+
+    private func activateQuickAdd() {
+        showSettings = false
+        showAddItem = false
+        showMenuPlan = false
+        showAllItems = false
+        showRecipeImport = false
+        showPriceOverview = false
+        showAddStore = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+            isQuickAddFocused = true
+        }
+    }
+
+    private func checkPendingQuickAdd() {
+        let defaults = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart")
+        guard defaults?.bool(forKey: "pendingQuickAdd") == true else { return }
+        defaults?.removeObject(forKey: "pendingQuickAdd")
+        activateQuickAdd()
     }
 
     private func refreshDueSoon() {
