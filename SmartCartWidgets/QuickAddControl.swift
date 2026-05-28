@@ -2,22 +2,6 @@ import WidgetKit
 import AppIntents
 import SwiftUI
 
-// MARK: - Intent
-
-private let appGroupID = "group.com.johannesemmrich.SmartCart"
-private let pendingQuickAddKey = "pendingQuickAdd"
-
-struct QuickAddControlIntent: AppIntent {
-    static var title: LocalizedStringResource = "Schnell hinzufügen"
-    static var description = IntentDescription("Öffnet SmartCart direkt zur schnellen Artikeleingabe.")
-    static var openAppWhenRun = true
-
-    func perform() async throws -> some IntentResult {
-        UserDefaults(suiteName: appGroupID)?.set(true, forKey: pendingQuickAddKey)
-        return .result()
-    }
-}
-
 // MARK: - Control Widget
 
 @available(iOS 18.0, *)

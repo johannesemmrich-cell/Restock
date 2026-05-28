@@ -1,5 +1,9 @@
 import UIKit
 
+extension Notification.Name {
+    static let quickAddRequested = Notification.Name("com.smartcart.quickAddRequested")
+}
+
 final class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
@@ -19,7 +23,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         completionHandler: @escaping (Bool) -> Void
     ) {
         if shortcutItem.type == "com.smartcart.quickadd" {
-            QuickActionState.shared.triggerQuickAdd = true
+            NotificationCenter.default.post(name: .quickAddRequested, object: nil)
         }
         completionHandler(true)
     }

@@ -51,6 +51,8 @@
 		WD13B4C5D6E7F8A9B0C1D013 /* FeedbackItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */; };
 		WD14C5D6E7F8A9B0C1D2E014 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC44DD55EE66FF7788AABB33 /* TodoItem.swift */; };
 		WD15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = WF15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift */; };
+		FF20C1D2E3F4A5B6C7D8E020 /* QuickAddControlIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF19B0C1D2E3F4A5B6C7D019 /* QuickAddControlIntent.swift */; };
+		FF21D2E3F4A5B6C7D8E9F021 /* QuickAddControlIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF19B0C1D2E3F4A5B6C7D019 /* QuickAddControlIntent.swift */; };
 		A102C3D4E5F6A7B8C9D0E102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A101B2C3D4E5F6A7B8C9D101 /* AppDelegate.swift */; };
 		A104E5F6A7B8C9D0E1F2A104 /* QuickActionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A103D4E5F6A7B8C9D0E1F103 /* QuickActionState.swift */; };
 		CE780CEB38E00FF824BE132F /* BrowseStoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5239F35789D83F615154249B /* BrowseStoresView.swift */; };
@@ -121,6 +123,7 @@
 		DD34C5D25C3945D6153A049B /* PurchaseRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseRecord.swift; sourceTree = "<group>"; };
 		DD44EE55FF6677AABB11CC22 /* AddItemIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemIntent.swift; sourceTree = "<group>"; };
 		EE77FF8899AABB33CC44DD55 /* CheckOffItemIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckOffItemIntent.swift; sourceTree = "<group>"; };
+		FF19B0C1D2E3F4A5B6C7D019 /* QuickAddControlIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddControlIntent.swift; sourceTree = "<group>"; };
 		E5F6A7B8C9D0E1F2A3B4C5D6 /* PriceOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceOverviewView.swift; sourceTree = "<group>"; };
 		EE66FF7788AABB33CC44DD55 /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListView.swift; sourceTree = "<group>"; };
 		F2167065308D2C0091FD60DC /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
@@ -169,6 +172,7 @@
 			children = (
 				DD44EE55FF6677AABB11CC22 /* AddItemIntent.swift */,
 				EE77FF8899AABB33CC44DD55 /* CheckOffItemIntent.swift */,
+				FF19B0C1D2E3F4A5B6C7D019 /* QuickAddControlIntent.swift */,
 			);
 			path = Intents;
 			sourceTree = "<group>";
@@ -476,6 +480,7 @@
 				WD13B4C5D6E7F8A9B0C1D013 /* FeedbackItem.swift in Sources */,
 				WD14C5D6E7F8A9B0C1D2E014 /* TodoItem.swift in Sources */,
 				WD15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift in Sources */,
+				FF21D2E3F4A5B6C7D8E9F021 /* QuickAddControlIntent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,6 +490,7 @@
 			files = (
 				CC33DD44EE55FF6677AABB11 /* AddItemIntent.swift in Sources */,
 				CC44DD55EE66FF7799AABB22 /* CheckOffItemIntent.swift in Sources */,
+				FF20C1D2E3F4A5B6C7D8E020 /* QuickAddControlIntent.swift in Sources */,
 				DEBF56414AA7F6AF04B254E2 /* AddItemView.swift in Sources */,
 				A005E6F7A8B9C0D1E2F3A005 /* AllItemsView.swift in Sources */,
 				0B64D059E2535909BBC07B1B /* AssignmentService.swift in Sources */,

@@ -66,19 +66,12 @@ struct HomeView: View {
                 }
                 checkPendingQuickAdd()
             }
-            .onChange(of: QuickActionState.shared.triggerQuickAdd) { _, triggered in
-                if triggered {
-                    QuickActionState.shared.triggerQuickAdd = false
-                    activateQuickAdd()
-                }
+            .onReceive(NotificationCenter.default.publisher(for: .quickAddRequested)) { _ in
+                activateQuickAdd()
             }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active {
                     checkPendingQuickAdd()
-                    if QuickActionState.shared.triggerQuickAdd {
-                        QuickActionState.shared.triggerQuickAdd = false
-                        activateQuickAdd()
-                    }
                 }
             }
             .devFeedback(context: "Startseite")
