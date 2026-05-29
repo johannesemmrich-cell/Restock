@@ -10,7 +10,7 @@ class ShoppingItem {
     var quantityAmount: Double
     var unit: String
     var isCompleted: Bool
-    var isUrgent: Bool
+    var isUrgent: Bool = false
     var addedDate: Date
     var completedDate: Date?
     var note: String
