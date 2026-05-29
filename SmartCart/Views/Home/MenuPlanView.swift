@@ -12,14 +12,16 @@ struct MenuPlanView: View {
 
     @AppStorage("menuPlanJSON") private var planJSON = ""
     @AppStorage("menuIngredientsJSON") private var ingredientsJSON = ""
+    @AppStorage("savedRecipesJSON") private var savedRecipesJSON = ""
 
     @State private var meals: [String]
-    @State private var ingredientsMap: [String: [String]]   // "0"…"6" → ingredient list
+    @State private var ingredientsMap: [String: [String]]
     @State private var loadingDays: Set<Int> = []
     @State private var addedCount = 0
     @State private var showConfirm = false
     @State private var showAddDay = false
     @State private var checkedIngredients: Set<String> = []
+    @State private var savedRecipeToast: String? = nil
 
     private let dayNames     = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
     private let dayNamesFull = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
@@ -39,6 +41,55 @@ struct MenuPlanView: View {
             _ingredientsMap = State(initialValue: map)
         } else {
             _ingredientsMap = State(initialValue: [:])
+        }
+    }
+
+    // MARK: - Saved recipes helpers
+
+    private var savedRecipes: [SavedRecipe] {
+        guard let data = savedRecipesJSON.data(using: .utf8),
+              let recipes = try? JSONDecoder().decode([SavedRecipe].self, from: data)
+        else { return [] }
+        return recipes.sorted {
+            if $0.usageCount != $1.usageCount { return $0.usageCount > $1.usageCount }
+            return ($0.lastUsed ?? .distantPast) > ($1.lastUsed ?? .distantPast)
+        }
+    }
+
+    private func persistSavedRecipes(_ recipes: [SavedRecipe]) {
+        if let data = try? JSONEncoder().encode(recipes),
+           let str = String(data: data, encoding: .utf8) {
+            savedRecipesJSON = str
+        }
+    }
+
+    private func saveRecipe(dayIndex: Int) {
+        let meal = meals[dayIndex].trimmingCharacters(in: .whitespaces)
+        let ings = ingredientsMap["\(dayIndex)"] ?? []
+        guard !meal.isEmpty, !ings.isEmpty else { return }
+        var recipes = savedRecipes
+        guard !recipes.contains(where: { $0.name.lowercased() == meal.lowercased() }) else {
+            savedRecipeToast = "Bereits gespeichert"
+            return
+        }
+        recipes.append(SavedRecipe(name: meal, ingredients: ings))
+        persistSavedRecipes(recipes)
+        Haptics.success()
+        savedRecipeToast = "\"\(meal)\" gespeichert"
+    }
+
+    private func deleteSavedRecipe(_ recipe: SavedRecipe) {
+        var recipes = savedRecipes
+        recipes.removeAll { $0.id == recipe.id }
+        persistSavedRecipes(recipes)
+    }
+
+    private func recordUsage(_ recipe: SavedRecipe) {
+        var recipes = savedRecipes
+        if let idx = recipes.firstIndex(where: { $0.id == recipe.id }) {
+            recipes[idx].usageCount += 1
+            recipes[idx].lastUsed = Date()
+            persistSavedRecipes(recipes)
         }
     }
 
@@ -66,6 +117,7 @@ struct MenuPlanView: View {
             List {
                 mealsSection
                 if !allIngredients.isEmpty { ingredientsSection }
+                savedRecipesSection
             }
             .navigationTitle("Menüplan")
             .navigationBarTitleDisplayMode(.inline)
@@ -76,7 +128,7 @@ struct MenuPlanView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Zur Liste") { addToList() }
                         .fontWeight(.semibold)
-                        .disabled((allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }.isEmpty) && loadingDays.isEmpty)
+                        .disabled(allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }.isEmpty && loadingDays.isEmpty)
                 }
             }
             .alert("Hinzugefügt", isPresented: $showConfirm) {
@@ -85,10 +137,18 @@ struct MenuPlanView: View {
                 Text("\(addedCount) Zutaten wurden zur Einkaufsliste hinzugefügt.")
             }
             .sheet(isPresented: $showAddDay) {
-                AddDaySheet(meals: $meals, dayNames: dayNamesFull) { dayIndex, meal, manual in
+                AddDaySheet(
+                    meals: $meals,
+                    dayNames: dayNamesFull,
+                    savedRecipes: savedRecipes
+                ) { dayIndex, meal, manual, usedRecipe in
                     meals[dayIndex] = meal
                     savePlan()
-                    if !manual.isEmpty {
+                    if let recipe = usedRecipe {
+                        ingredientsMap["\(dayIndex)"] = recipe.ingredients
+                        saveIngredients()
+                        recordUsage(recipe)
+                    } else if !manual.isEmpty {
                         ingredientsMap["\(dayIndex)"] = manual
                         saveIngredients()
                     } else {
@@ -96,6 +156,24 @@ struct MenuPlanView: View {
                     }
                 }
             }
+            .overlay(alignment: .bottom) {
+                if let toast = savedRecipeToast {
+                    Text(toast)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(.black.opacity(0.75), in: Capsule())
+                        .padding(.bottom, 20)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                withAnimation { savedRecipeToast = nil }
+                            }
+                        }
+                }
+            }
+            .animation(.easeInOut(duration: 0.25), value: savedRecipeToast)
         }
         .devFeedback(context: "Menüplan")
     }
@@ -125,6 +203,14 @@ struct MenuPlanView: View {
                                 Label("Löschen", systemImage: "trash")
                             }
                         }
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                withAnimation { saveRecipe(dayIndex: i) }
+                            } label: {
+                                Label("Speichern", systemImage: "bookmark.fill")
+                            }
+                            .tint(.blue)
+                        }
                 }
             }
 
@@ -139,7 +225,7 @@ struct MenuPlanView: View {
         } header: {
             Text("Diese Woche")
         } footer: {
-            Text("Erkannte Zutaten können direkt zur Einkaufsliste hinzugefügt werden.")
+            Text("Nach links wischen → löschen. Nach rechts wischen → Rezept speichern.")
                 .font(.caption)
         }
     }
@@ -227,6 +313,82 @@ struct MenuPlanView: View {
         }
     }
 
+    // MARK: - Saved recipes section
+
+    private var savedRecipesSection: some View {
+        Section {
+            if savedRecipes.isEmpty {
+                Text("Noch keine Rezepte gespeichert. Gericht im Wochenplan nach rechts wischen \u{2192} \"Speichern\".")
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .listRowBackground(Color.clear)
+            } else {
+                ForEach(savedRecipes) { recipe in
+                    savedRecipeRow(recipe)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                deleteSavedRecipe(recipe)
+                            } label: {
+                                Label("Löschen", systemImage: "trash")
+                            }
+                        }
+                }
+            }
+        } header: {
+            HStack {
+                Text("Gespeicherte Rezepte")
+                Spacer()
+                if !savedRecipes.isEmpty {
+                    Text("\(savedRecipes.count)")
+                        .textCase(nil)
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } footer: {
+            if !savedRecipes.isEmpty {
+                Text("Tippe auf \"+ Liste\" um alle Zutaten direkt einzukaufen. Nach links wischen zum L\u{00F6}schen.")
+                    .font(.caption)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func savedRecipeRow(_ recipe: SavedRecipe) -> some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text(recipe.name)
+                        .font(.system(size: 15, weight: .medium))
+                    if recipe.usageCount > 0 {
+                        Text("\(recipe.usageCount)×")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 5).padding(.vertical, 1)
+                            .background(Color.brand.opacity(0.7), in: Capsule())
+                    }
+                }
+                Text(recipe.ingredients.prefix(4).joined(separator: ", ") + (recipe.ingredients.count > 4 ? "…" : ""))
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            Spacer()
+            Button {
+                addRecipeToList(recipe)
+            } label: {
+                Text("+ Liste")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.brand, in: Capsule())
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.vertical, 2)
+    }
+
     // MARK: - Actions
 
     private func fetchIngredients(for dayIndex: Int, meal: String) {
@@ -256,6 +418,18 @@ struct MenuPlanView: View {
         showConfirm = true
     }
 
+    private func addRecipeToList(_ recipe: SavedRecipe) {
+        for name in recipe.ingredients {
+            let category = AssignmentService.category(for: name)
+            let store = AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords)
+            context.insert(ShoppingItem(name: name, category: category, store: store))
+        }
+        recordUsage(recipe)
+        addedCount = recipe.ingredients.count
+        Haptics.success()
+        showConfirm = true
+    }
+
     private func savePlan() {
         if let data = try? JSONEncoder().encode(meals),
            let str = String(data: data, encoding: .utf8) {
@@ -271,17 +445,38 @@ struct MenuPlanView: View {
     }
 }
 
+// MARK: - Saved Recipe Model
+
+struct SavedRecipe: Codable, Identifiable, Equatable {
+    var id: UUID
+    var name: String
+    var ingredients: [String]
+    var usageCount: Int
+    var lastUsed: Date?
+
+    init(name: String, ingredients: [String]) {
+        self.id = UUID()
+        self.name = name
+        self.ingredients = ingredients
+        self.usageCount = 0
+        self.lastUsed = nil
+    }
+}
+
 // MARK: - Add Day Sheet
 
 private struct AddDaySheet: View {
     @Binding var meals: [String]
     let dayNames: [String]
-    let onSave: (_ dayIndex: Int, _ meal: String, _ manualIngredients: [String]) -> Void
+    let savedRecipes: [SavedRecipe]
+    let onSave: (_ dayIndex: Int, _ meal: String, _ manualIngredients: [String], _ recipe: SavedRecipe?) -> Void
     @Environment(\.dismiss) private var dismiss
 
     @State private var selectedDay: Int = 0
     @State private var mealText = ""
     @State private var manualText = ""
+    @State private var selectedRecipe: SavedRecipe? = nil
+    @State private var showRecipePicker = false
 
     private var availableDays: [(index: Int, name: String)] {
         (0..<7).filter { meals[$0].trimmingCharacters(in: .whitespaces).isEmpty }
@@ -305,15 +500,74 @@ private struct AddDaySheet: View {
                     }
                     TextField("Gericht eingeben…", text: $mealText)
                         .autocorrectionDisabled()
+                        .onChange(of: mealText) { _, _ in
+                            // Clear recipe selection if user types a different name
+                            if let r = selectedRecipe, mealText != r.name {
+                                selectedRecipe = nil
+                            }
+                        }
                 }
 
-                Section {
-                    TextField("Mehl, Eier, Milch…", text: $manualText)
-                        .autocorrectionDisabled()
-                } header: {
-                    Text("Zutaten (optional)")
-                } footer: {
-                    aiFootnote
+                if !savedRecipes.isEmpty {
+                    Section {
+                        Button {
+                            showRecipePicker = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "bookmark.fill")
+                                    .foregroundStyle(.blue)
+                                if let recipe = selectedRecipe {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(recipe.name)
+                                            .foregroundStyle(.primary)
+                                        Text("\(recipe.ingredients.count) Zutaten")
+                                            .font(.system(size: 12))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                } else {
+                                    Text("Aus gespeichertem Rezept…")
+                                        .foregroundStyle(.blue)
+                                }
+                                Spacer()
+                                if selectedRecipe != nil {
+                                    Button {
+                                        selectedRecipe = nil
+                                        manualText = ""
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(Color(.systemGray3))
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                        .foregroundStyle(.primary)
+                    } header: {
+                        Text("Gespeicherte Rezepte")
+                    }
+                }
+
+                if selectedRecipe == nil {
+                    Section {
+                        TextField("Mehl, Eier, Milch…", text: $manualText)
+                            .autocorrectionDisabled()
+                    } header: {
+                        Text("Zutaten (optional)")
+                    } footer: {
+                        aiFootnote
+                    }
+                } else if let recipe = selectedRecipe {
+                    Section {
+                        ForEach(recipe.ingredients.prefix(6), id: \.self) { ing in
+                            Text(ing).font(.system(size: 14)).foregroundStyle(.secondary)
+                        }
+                        if recipe.ingredients.count > 6 {
+                            Text("+ \(recipe.ingredients.count - 6) weitere")
+                                .font(.system(size: 13)).foregroundStyle(.tertiary)
+                        }
+                    } header: {
+                        Text("Zutaten aus Rezept")
+                    }
                 }
             }
             .navigationTitle("Tag hinzufügen")
@@ -324,7 +578,7 @@ private struct AddDaySheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Hinzufügen") {
-                        onSave(selectedDay, mealText.trimmingCharacters(in: .whitespaces), manualIngredients)
+                        onSave(selectedDay, mealText.trimmingCharacters(in: .whitespaces), manualIngredients, selectedRecipe)
                         dismiss()
                     }
                     .fontWeight(.semibold)
@@ -334,8 +588,15 @@ private struct AddDaySheet: View {
             .onAppear {
                 if let first = availableDays.first { selectedDay = first.index }
             }
+            .sheet(isPresented: $showRecipePicker) {
+                RecipePickerSheet(recipes: savedRecipes) { recipe in
+                    selectedRecipe = recipe
+                    mealText = recipe.name
+                    showRecipePicker = false
+                }
+            }
         }
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
     }
 
     @ViewBuilder
@@ -349,6 +610,51 @@ private struct AddDaySheet: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+    }
+}
+
+// MARK: - Recipe Picker Sheet
+
+private struct RecipePickerSheet: View {
+    let recipes: [SavedRecipe]
+    let onSelect: (SavedRecipe) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List(recipes) { recipe in
+                Button {
+                    Haptics.impact(.light)
+                    onSelect(recipe)
+                } label: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text(recipe.name)
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            if recipe.usageCount > 0 {
+                                Text("\(recipe.usageCount)× verwendet")
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        Text(recipe.ingredients.prefix(5).joined(separator: ", ") + (recipe.ingredients.count > 5 ? "…" : ""))
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+            }
+            .navigationTitle("Rezept auswählen")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Abbrechen") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
     }
 }
 

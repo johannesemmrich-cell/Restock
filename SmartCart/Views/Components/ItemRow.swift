@@ -34,10 +34,20 @@ struct ItemRow: View {
             .buttonStyle(.plain)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(item.name)
-                    .font(.system(size: 16))
-                    .foregroundStyle(item.isCompleted ? .tertiary : .primary)
-                    .strikethrough(item.isCompleted, color: Color(.tertiaryLabel))
+                HStack(spacing: 6) {
+                    if item.isUrgent && !item.isCompleted {
+                        Image(systemName: "exclamationmark")
+                            .font(.system(size: 11, weight: .black))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(Color.orange, in: Capsule())
+                    }
+                    Text(item.name)
+                        .font(.system(size: 16))
+                        .foregroundStyle(item.isCompleted ? .tertiary : .primary)
+                        .strikethrough(item.isCompleted, color: Color(.tertiaryLabel))
+                }
 
                 HStack(spacing: 6) {
                     if item.quantity != "1" || !item.unit.isEmpty {

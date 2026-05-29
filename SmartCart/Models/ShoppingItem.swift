@@ -10,6 +10,7 @@ class ShoppingItem {
     var quantityAmount: Double
     var unit: String
     var isCompleted: Bool
+    var isUrgent: Bool
     var addedDate: Date
     var completedDate: Date?
     var note: String
@@ -36,6 +37,7 @@ class ShoppingItem {
         self.quantityAmount = quantityAmount
         self.unit = unit
         self.isCompleted = false
+        self.isUrgent = false
         self.addedDate = Date()
         self.note = note
         self.store = store

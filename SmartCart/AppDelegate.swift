@@ -12,13 +12,46 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         if let item = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
            item.type == "com.smartcart.quickadd" {
             QuickActionState.shared.triggerQuickAdd = true
+            // Return false to prevent performActionFor from being called again
             return false
         }
         return true
     }
 
+    // Fallback for older iOS / non-scene paths
     func application(
         _ application: UIApplication,
+        performActionFor shortcutItem: UIApplicationShortcutItem,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        if shortcutItem.type == "com.smartcart.quickadd" {
+            NotificationCenter.default.post(name: .quickAddRequested, object: nil)
+        }
+        completionHandler(true)
+    }
+
+    // iOS 13+ scene lifecycle: route shortcut items to SceneDelegate
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        // Handle shortcut items that trigger a new scene connection
+        if let item = options.shortcutItem, item.type == "com.smartcart.quickadd" {
+            QuickActionState.shared.triggerQuickAdd = true
+        }
+        let config = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+        config.delegateClass = SceneDelegate.self
+        return config
+    }
+}
+
+// Handles warm-launch shortcut items in the iOS 13+ scene-based lifecycle.
+// UIApplicationDelegate.performActionFor is not reliably called in SwiftUI lifecycle apps;
+// the scene delegate method is the authoritative path for foreground/background app state.
+final class SceneDelegate: NSObject, UIWindowSceneDelegate {
+    func windowScene(
+        _ windowScene: UIWindowScene,
         performActionFor shortcutItem: UIApplicationShortcutItem,
         completionHandler: @escaping (Bool) -> Void
     ) {

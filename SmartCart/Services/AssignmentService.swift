@@ -22,10 +22,10 @@ struct AssignmentService {
         "shower gel", "soap", "toothbrush", "toothpaste", "shaving",
         "sunscreen", "plaster", "vitamins", "diapers",
         // Haar & Körper
-        "kamm", "haarbürste", "bürste", "haarband", "haarnadel", "haargummi",
+        "kamm", "haarbürste", "haarband", "haarnadel", "haargummi",
         "rasierapparat", "rasierschaum", "aftershave", "bartpflege",
         "comb", "hair brush", "hair tie",
-        // Haushalt & Reinigung
+        // Haushalt & Reinigung (DM/Rossmann)
         "waschmittel", "spülmittel", "allzweckreiniger", "detergent", "cleaning",
         "toilettenpapier", "küchenrolle", "papiertücher", "tissues", "toilet paper",
         "müllbeutel", "gefrierbeutel", "frischhaltefolie", "alufolie",
@@ -33,16 +33,124 @@ struct AssignmentService {
         "garbage bag", "bin bag", "sponge",
         // Hygiene
         "tampons", "binden", "kondome", "cotton pads", "zahnseide",
-        // Haushaltswaren (gehen zu Action/Drogerie)
-        "kerzen", "kerze", "teelicht", "wäscheklammer", "kleiderbügel",
-        "einwegbecher", "plastikbecher", "servietten", "napkin",
-        "küchentuch", "haushaltsbeutel", "plastikdose", "vorratsdose",
-        "frischhaltedose", "plastiktüte", "beutel",
         // Apotheke / Medizin
         "nasenspray", "nasentropfen", "nasengel", "nasenöl", "nasenpflege",
         "augentropfen", "augensalbe", "ohrentropfen",
         "hustensaft", "hustenbonbons", "halstabletten",
         "nasal spray", "eye drops", "nose drops",
+    ]
+
+    // Items typically bought at variety/discount stores (Action, Woolworth, etc.)
+    private static let varietyStoreKeywords: Set<String> = [
+        // Elektro & Beleuchtung
+        "ventilator", "lüfter", "heizlüfter", "heizung", "heizgerät", "elektroheizung",
+        "lampe", "tischlampe", "stehlampe", "wandlampe", "deckenlampe", "leselampe",
+        "nachtlicht", "glühbirne", "leuchtmittel", "led", "led-streifen", "ledstreifen",
+        "steckdose", "mehrfachsteckdose", "verlängerungskabel", "steckleiste",
+        "stecker", "adapter", "verteiler",
+        "batterien", "batterie", "akku", "ladekabel", "ladegerät", "powerbank",
+        "kopfhörer", "lautsprecher", "kabel", "timer", "zeitschaltuhr",
+        "fan", "heater", "lamp", "bulb", "socket", "extension cord",
+        "cable", "batteries", "charger", "headphones", "speaker",
+        // Saisonales & Dekoration
+        "kerze", "kerzen", "teelicht", "teelichter", "stumpenkerze",
+        "lichterkette", "lichterketten", "lichtvorhang",
+        "weihnacht", "advent", "adventsdeko", "adventskranz", "adventskalender",
+        "halloween", "ostern", "osterdeko", "silvester", "karneval",
+        "deko", "dekoration", "girlande", "christbaumkugel", "weihnachtsbaum",
+        "ballon", "luftballon", "wimpelkette", "partydeko",
+        "bilderrahmen", "wandbild", "poster", "bilderleiste",
+        "vase", "schale", "figur", "skulptur", "statue",
+        "wanduhr", "wecker", "uhr",
+        "candle", "tealight", "christmas", "decoration", "garland",
+        // Garten & Pflanzen
+        "gießkanne", "blumentopf", "pflanzgefäß", "pflanzkübel",
+        "blumenerde", "pflanzerde", "erde", "kompost",
+        "gartenwerkzeug", "rechen", "spaten", "harke", "hacke", "schaufel",
+        "pflanzenstab", "rankgitter", "blumenstab",
+        "insektenschutz", "fliegengitter", "mückenschutz",
+        "watering can", "flower pot", "garden tool",
+        // Schreibwaren & Büro
+        "notizbuch", "heft", "schreibheft", "collegeblock", "ringbuch",
+        "ordner", "aktenordner", "hängeregister",
+        "kugelschreiber", "stift", "bleistift", "buntstift",
+        "filzstift", "marker", "textmarker",
+        "klebeband", "tesa", "schere", "lineal", "zirkel",
+        "heftklammer", "büroklammer", "locher", "tacker",
+        "briefumschlag", "briefpapier",
+        "notebook", "pen", "pencil", "scissors", "tape",
+        // Werkzeug & DIY
+        "schraubenzieher", "schrauber", "hammer", "zange",
+        "bohrer", "bohrmaschine", "akkuschrauber",
+        "schrauben", "dübel", "nägel", "nagel",
+        "kleber", "sekundenkleber", "pattex", "silikon",
+        "malerrolle", "malerpinsel", "pinsel", "spachtel",
+        "malerband", "abdeckband", "abklebeband",
+        "maßband", "zollstock", "wasserwaage", "cutter",
+        "screwdriver", "drill", "hammer", "glue",
+        // Aufbewahrung & Organisation
+        "aufbewahrungsbox", "aufbewahrungskiste", "aufbewahrungskorb",
+        "kiste", "truhe", "organizer", "einsatz",
+        "regal", "wandregal", "steckregal", "ablage",
+        "hakenleiste", "haken", "wandhaken",
+        "wäschekorb", "wäscheständer", "trockenständer",
+        "storage box", "basket", "shelf", "hook",
+        // Textilien (Haushalt, keine Kleidung)
+        "tischdecke", "tischläufer", "tischset", "untersetzer",
+        "geschirrtuch", "küchentuch", "wischlappen",
+        "kissen", "kissenbezug", "kissenhülle",
+        "bettwäsche", "bettbezug", "bettlaken", "kopfkissenbezug",
+        "handtuch", "badetuch", "gästehandtuch", "waschlappen",
+        "vorhang", "gardine", "scheibengardine", "jalousie",
+        "tablecloth", "tea towel", "cushion", "pillow", "towel", "curtain",
+        // Spielzeug & Spiele
+        "spielzeug", "spielzeuge", "puzzle", "brettspiel",
+        "spielkarten", "kartenspiel", "würfelspiel",
+        "lego", "playmobil", "baustein",
+        "toy", "board game", "playing cards",
+        // Küchenausstattung (keine Lebensmittel)
+        "kochtopf", "suppentopf", "pfanne", "wok",
+        "schüssel", "rührschüssel", "salatschüssel",
+        "sieb", "abtropfsieb", "schneebesen", "küchenhelfer",
+        "schneidebrett", "reibe", "sparschäler", "dosenöffner",
+        "küchenwaage", "messbecher", "backform", "kuchenform",
+        "tortenplatte", "auflaufform", "bratpfanne",
+        "pot", "pan", "bowl", "chopping board", "whisk", "grater",
+        // Haushaltswaren (Einweg/Plastik/Verbrauch)
+        "servietten", "einwegbecher", "plastikbecher", "pappteller",
+        "einwegteller", "einwegbesteck",
+        "haushaltsbeutel", "plastikdose", "vorratsdose", "frischhaltedose",
+        "wäscheklammer", "kleiderbügel", "wäschenetz",
+        // Bad & Haushalt (nicht Körperpflege)
+        "badezimmer", "toilettenbürste", "klobürste", "wc-bürste",
+        "seifenspender", "seifenschale", "zahnputzbecher",
+        "handtuchhalter", "toilettenpapierhalter", "klopapierhalter",
+        "duschvorhang", "duschvorhangstange",
+        "badteppich", "badeteppich", "wc-matte",
+        // Reinigungsgeräte (nicht Reinigungsmittel)
+        "besen", "kehrbesen", "kehrschaufel", "handfeger",
+        "wischmopp", "mopp", "bodenwischer", "staubtuch",
+        "staubsauger", "eimer", "putzeimer",
+        "broom", "mop", "dustpan", "bucket",
+        // Auto & Fahrrad (Kleinartikel)
+        "autohalterung", "handyhalterung", "autoladekabel", "kfz",
+        "fahrradschloss", "fahrradkorb", "fahrradpumpe",
+        // Sonstiges Haushalt
+        "spiegel", "wandspiegel", "badespiegel",
+        "türstopper", "türkeil", "türschild",
+        "briefkasten", "namensschild",
+        "mülleimer", "abfalleimer", "abfallbehälter",
+        "schirmständer", "regenschirmständer",
+    ]
+
+    // German compound word endings that almost always indicate non-food variety items
+    private static let nonFoodCompoundEndings: [String] = [
+        "gerät", "apparat", "maschine", "automat",
+        "leuchte", "lampe", "licht", "birne",
+        "kabel", "stecker", "schalter", "halter", "ständer",
+        "rahmen", "korb", "eimer", "kiste", "behälter",
+        "werkzeug", "schneider", "zange", "messer",
+        "bürste",
     ]
 
     private static let highFrequencyFoodKeywords: Set<String> = [
@@ -86,10 +194,19 @@ struct AssignmentService {
             return dominant
         }
 
-        // 1. Check history: if this item was always bought at one store, prefer it
-        // (handled externally via HabitService — here we rely on category logic)
+        // 1. Variety/discount store items (fans, tools, seasonal, stationery, etc.) → variety store
+        let isVariety = varietyStoreKeywords.contains(where: { nameLower.contains($0) })
+            || nonFoodCompoundEndings.contains(where: { nameLower.hasSuffix($0) })
+        if isVariety {
+            let varietyStores = activeStores.filter { store in
+                store.categories.contains(where: { Category.variety.contains($0) })
+            }
+            if let best = varietyStores.max(by: { $0.visitsPerWeek < $1.visitsPerWeek }) {
+                return best
+            }
+        }
 
-        // 2. Category-based: drugstore items → drugstore-type store
+        // 2. Drugstore items → drugstore-type store (DM, Rossmann, etc.)
         let isDrugstore = drugstoreKeywords.contains(where: { nameLower.contains($0) })
         if isDrugstore {
             let drugstores = activeStores.filter { store in
@@ -124,6 +241,11 @@ struct AssignmentService {
     static func category(for itemName: String) -> String {
         let nameLower = itemName.lowercased()
 
+        if varietyStoreKeywords.contains(where: { nameLower.contains($0) })
+            || nonFoodCompoundEndings.contains(where: { nameLower.hasSuffix($0) }) {
+            return detectVarietyCategory(nameLower)
+        }
+
         if drugstoreKeywords.contains(where: { nameLower.contains($0) }) {
             return detectDrugstoreCategory(nameLower)
         }
@@ -148,6 +270,36 @@ struct AssignmentService {
         }
 
         return "Lebensmittel"
+    }
+
+    private static func detectVarietyCategory(_ nameLower: String) -> String {
+        if ["ventilator", "lüfter", "heizlüfter", "lampe", "glühbirne", "led", "steckdose",
+            "verlängerungskabel", "batterien", "batterie", "akku", "ladekabel", "ladegerät",
+            "kopfhörer", "lautsprecher", "fan", "heater", "lamp", "bulb", "batteries"].contains(where: { nameLower.contains($0) }) {
+            return "Elektronik"
+        }
+        if ["kerze", "teelicht", "lichterkette", "deko", "dekoration", "girlande",
+            "weihnacht", "advent", "halloween", "ballon", "candle", "decoration"].contains(where: { nameLower.contains($0) }) {
+            return "Dekoration"
+        }
+        if ["schraubenzieher", "hammer", "zange", "bohrer", "schrauben", "dübel",
+            "kleber", "screwdriver", "drill"].contains(where: { nameLower.contains($0) }) {
+            return "Werkzeug"
+        }
+        if ["notizbuch", "ordner", "kugelschreiber", "stift", "bleistift", "klebeband",
+            "schere", "notebook", "pen", "pencil", "scissors", "tape"].contains(where: { nameLower.contains($0) }) {
+            return "Schreibwaren"
+        }
+        if ["spielzeug", "puzzle", "brettspiel", "spielkarten", "toy", "board game"].contains(where: { nameLower.contains($0) }) {
+            return "Spielzeug"
+        }
+        if ["tischdecke", "kissen", "kissenbezug", "bettwäsche", "handtuch", "geschirrtuch"].contains(where: { nameLower.contains($0) }) {
+            return "Textilien"
+        }
+        if ["topf", "pfanne", "kochtopf", "schüssel", "schneidebrett", "pot", "pan", "bowl"].contains(where: { nameLower.contains($0) }) {
+            return "Küchenausstattung"
+        }
+        return "Haushaltswaren"
     }
 
     private static func detectDrugstoreCategory(_ nameLower: String) -> String {

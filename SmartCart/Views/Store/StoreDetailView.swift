@@ -89,6 +89,14 @@ struct StoreDetailView: View {
                                 } label: {
                                     Label(String(localized: "action.delete"), systemImage: "trash")
                                 }
+                                Button {
+                                    withAnimation { item.isUrgent.toggle() }
+                                    Haptics.impact(item.isUrgent ? .medium : .light)
+                                } label: {
+                                    Label(item.isUrgent ? "Normal" : "Dringend",
+                                          systemImage: item.isUrgent ? "exclamationmark.circle" : "exclamationmark.circle.fill")
+                                }
+                                .tint(.orange)
                             }
                             .swipeActions(edge: .leading) {
                                 Button {

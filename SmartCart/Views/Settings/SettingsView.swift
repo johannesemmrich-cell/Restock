@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 import CryptoKit
 import UIKit
-import AppIntents
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
@@ -121,31 +120,32 @@ struct SettingsView: View {
                     }
                     .padding(.vertical, 2)
 
-                    HStack(spacing: 12) {
-                        Image(systemName: "square.grid.2x2.fill")
-                            .font(.system(size: 18))
-                            .foregroundStyle(Color(red: 0.7, green: 0.2, blue: 1.0))
-                            .frame(width: 28)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Homescreen-Kurzbefehl")
-                                .font(.system(size: 15, weight: .medium))
-                            Text("Kurzbefehl einrichten → in Kurzbefehle zum Homescreen hinzufügen")
+                    Button {
+                        if let url = URL(string: "shortcuts://") {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "square.grid.2x2.fill")
+                                .font(.system(size: 18))
+                                .foregroundStyle(Color(red: 0.7, green: 0.2, blue: 1.0))
+                                .frame(width: 28)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Homescreen-Kurzbefehl")
+                                    .font(.system(size: 15, weight: .medium))
+                                Text("Kurzbefehle-App öffnen → SmartCart-Kurzbefehl zum Homescreen hinzufügen")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
                                 .font(.system(size: 12))
                                 .foregroundStyle(.secondary)
                         }
-                        Spacer()
-                        Image(systemName: "arrow.up.right")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.secondary)
+                        .padding(.vertical, 2)
+                        .contentShape(Rectangle())
                     }
-                    .padding(.vertical, 2)
-                    .contentShape(Rectangle())
-                    .overlay {
-                        ShortcutsLink()
-                            .shortcutsLinkStyle(.automatic)
-                            .opacity(0.011)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
+                    .buttonStyle(.plain)
                 }
 
                 Section(String(localized: "settings.feedback.section")) {
