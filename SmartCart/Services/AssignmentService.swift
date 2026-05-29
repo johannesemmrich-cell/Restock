@@ -66,7 +66,7 @@ struct AssignmentService {
         // Garten & Pflanzen
         "gießkanne", "blumentopf", "pflanzgefäß", "pflanzkübel",
         "blumenerde", "pflanzerde", "erde", "kompost",
-        "gartenwerkzeug", "rechen", "spaten", "harke", "hacke", "schaufel",
+        "gartenwerkzeug",
         "pflanzenstab", "rankgitter", "blumenstab",
         "insektenschutz", "fliegengitter", "mückenschutz",
         "watering can", "flower pot", "garden tool",
@@ -79,15 +79,10 @@ struct AssignmentService {
         "heftklammer", "büroklammer", "locher", "tacker",
         "briefumschlag", "briefpapier",
         "notebook", "pen", "pencil", "scissors", "tape",
-        // Werkzeug & DIY
-        "schraubenzieher", "schrauber", "hammer", "zange",
-        "bohrer", "bohrmaschine", "akkuschrauber",
-        "schrauben", "dübel", "nägel", "nagel",
-        "kleber", "sekundenkleber", "pattex", "silikon",
-        "malerrolle", "malerpinsel", "pinsel", "spachtel",
-        "malerband", "abdeckband", "abklebeband",
-        "maßband", "zollstock", "wasserwaage", "cutter",
-        "screwdriver", "drill", "hammer", "glue",
+        // Werkzeug & DIY (Kleinartikel, nicht Baumarkt)
+        "kleber", "sekundenkleber", "pattex",
+        "abklebeband",
+        "screwdriver", "glue",
         // Aufbewahrung & Organisation
         "aufbewahrungsbox", "aufbewahrungskiste", "aufbewahrungskorb",
         "kiste", "truhe", "organizer", "einsatz",
@@ -143,6 +138,56 @@ struct AssignmentService {
         "schirmständer", "regenschirmständer",
     ]
 
+    private static let hardwareStoreKeywords: Set<String> = [
+        // Handwerkzeug
+        "hammer", "zange", "schraubenzieher", "schrauber", "akkuschrauber",
+        "meißel", "stemmeisen", "feile", "raspel", "säge", "stichsäge",
+        "kreissäge", "handsäge", "laubsäge", "fuchsschwanz",
+        "winkelschleifer", "bandschleifer", "schwingschleifer", "schleifer",
+        "bohrmaschine", "bohrschrauber", "schlagbohrmaschine",
+        "wasserwaage", "zollstock", "massband", "maßband", "winkelmesser",
+        "cutter", "teppichmesser", "abbrechmesser",
+        "spachtel", "fugenspachtel", "glattspachtel",
+        // Gartengeräte (groß / professionell)
+        "schaufel", "spaten", "harke", "rechen", "hacke", "grabegabel",
+        "rasenmäher", "heckenschere", "astschere", "gartenschere",
+        "motorsäge", "kettensäge", "freischneider", "rasentrimmer",
+        "gartenschlauch", "bewässerungsschlauch", "sprinkler", "tropfschlauch",
+        "hochdruckreiniger", "gartenpumpe",
+        "komposttonne", "regentonne", "regentonnen",
+        // Baumaterial
+        "schrauben", "schraube", "dübel", "nägel", "nagel", "bolzen", "anker",
+        "fliese", "fliesen", "klinker", "pflasterstein", "terrassenplatte",
+        "laminat", "parkett", "dielenboden", "vinylboden", "teppichboden",
+        "gips", "zement", "mörtel", "beton", "betonmix",
+        "dämmung", "isolierung", "styropor", "glaswolle", "steinwolle",
+        "rigipsplatte", "gipskarton", "spanplatte", "mdf", "sperrholz",
+        "dachpappe", "bitumen", "fugenmasse", "silikon",
+        "mauerfarbe", "dispersionsfarbe", "wandfarbe", "deckenfarbe",
+        "lack", "lasur", "holzschutz", "holzöl", "beize",
+        "grundierung", "voranstrich", "klarlack",
+        "tapete", "tapetenkleister", "vliestapete", "raufasertapete",
+        "malerrolle", "lackrolle", "malerpinsel", "pinsel",
+        "malerband", "abdeckband", "malerfolie",
+        // Sanitär & Elektroinstallation
+        "rohr", "abflussrohr", "abfluss", "siphon",
+        "dichtung", "o-ring", "fitting", "muffe", "kupplung",
+        "absperrventil", "eckventil", "armatur",
+        "lichtschalter", "steckdosenrahmen", "unterputzdose", "hohlwanddose",
+        "kabelkanal", "installationsrohr", "wellrohr",
+        // Sicherheit & Schutz
+        "schutzbrille", "arbeitsbrille", "gehörschutz",
+        "schutzhandschuhe", "arbeitshandschuhe", "arbeitskleidung",
+        "atemschutz", "staubmaske", "atemschutzmaske",
+        "sicherheitsschuhe", "stahlkappe",
+        // Englisch
+        "drill", "saw", "pliers",
+        "shovel", "spade", "rake", "hoe", "lawnmower",
+        "paint", "varnish", "lacquer", "plaster", "cement",
+        "screw", "nail", "bolt", "anchor", "rawlplug",
+        "pipe", "fitting", "sealant",
+    ]
+
     // German compound word endings that almost always indicate non-food variety items
     private static let nonFoodCompoundEndings: [String] = [
         "gerät", "apparat", "maschine", "automat",
@@ -194,7 +239,21 @@ struct AssignmentService {
             return dominant
         }
 
-        // 1. Variety/discount store items (fans, tools, seasonal, stationery, etc.) → variety store
+        // 1. Hardware/DIY items → hardware store, variety store as fallback
+        let isHardware = hardwareStoreKeywords.contains(where: { nameLower.contains($0) })
+        if isHardware {
+            let hardwareStores = activeStores.filter { $0.categories.contains(where: { Category.hardware.contains($0) }) }
+            if let best = hardwareStores.max(by: { $0.visitsPerWeek < $1.visitsPerWeek }) {
+                return best
+            }
+            // No hardware store → fall through to variety
+            let varietyFallback = activeStores.filter { $0.categories.contains(where: { Category.variety.contains($0) }) }
+            if let best = varietyFallback.max(by: { $0.visitsPerWeek < $1.visitsPerWeek }) {
+                return best
+            }
+        }
+
+        // 2. Variety/discount store items → variety store
         let isVariety = varietyStoreKeywords.contains(where: { nameLower.contains($0) })
             || nonFoodCompoundEndings.contains(where: { nameLower.hasSuffix($0) })
         if isVariety {
@@ -206,7 +265,7 @@ struct AssignmentService {
             }
         }
 
-        // 2. Drugstore items → drugstore-type store (DM, Rossmann, etc.)
+        // 3. Drugstore items → drugstore-type store (DM, Rossmann, etc.)
         let isDrugstore = drugstoreKeywords.contains(where: { nameLower.contains($0) })
         if isDrugstore {
             let drugstores = activeStores.filter { store in
@@ -241,6 +300,9 @@ struct AssignmentService {
     static func category(for itemName: String) -> String {
         let nameLower = itemName.lowercased()
 
+        if hardwareStoreKeywords.contains(where: { nameLower.contains($0) }) {
+            return detectHardwareCategory(nameLower)
+        }
         if varietyStoreKeywords.contains(where: { nameLower.contains($0) })
             || nonFoodCompoundEndings.contains(where: { nameLower.hasSuffix($0) }) {
             return detectVarietyCategory(nameLower)
@@ -270,6 +332,32 @@ struct AssignmentService {
         }
 
         return "Lebensmittel"
+    }
+
+    private static func detectHardwareCategory(_ nameLower: String) -> String {
+        if ["bohrmaschine", "schrauber", "akkuschrauber", "säge", "schleifer",
+            "hammer", "zange", "schraubenzieher", "cutter", "feile"].contains(where: { nameLower.contains($0) }) {
+            return "Werkzeug"
+        }
+        if ["schaufel", "spaten", "harke", "rechen", "hacke", "rasenmäher",
+            "heckenschere", "gartenschlauch", "bewässer", "gartenpumpe",
+            "komposttonne", "regentonne"].contains(where: { nameLower.contains($0) }) {
+            return "Garten"
+        }
+        if ["farbe", "lack", "lasur", "tapete", "malerrolle", "pinsel",
+            "malerband", "spachtel", "grundierung", "klarlack"].contains(where: { nameLower.contains($0) }) {
+            return "Farbe & Lack"
+        }
+        if ["rohr", "siphon", "abfluss", "dichtung", "fitting",
+            "ventil", "armatur", "lichtschalter", "kabelkanal"].contains(where: { nameLower.contains($0) }) {
+            return "Sanitär"
+        }
+        if ["schrauben", "schraube", "dübel", "nagel", "bolzen",
+            "fliese", "zement", "gips", "mörtel", "laminat",
+            "parkett", "dämmung", "isolierung", "silikon"].contains(where: { nameLower.contains($0) }) {
+            return "Baumaterial"
+        }
+        return "Werkzeug"
     }
 
     private static func detectVarietyCategory(_ nameLower: String) -> String {

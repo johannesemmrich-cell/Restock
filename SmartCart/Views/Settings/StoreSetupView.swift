@@ -5,18 +5,42 @@ struct StoreSetupView: View {
     @Environment(\.modelContext) private var context
     @Query private var allStores: [Store]
     @State private var showAddCustomStore = false
+    @State private var storeToDelete: Store? = nil
 
     var body: some View {
         List {
             Section(String(localized: "stores.active")) {
                 ForEach(allStores.filter { $0.isActive }) { store in
                     StoreRow(store: store)
+                        .swipeActions(edge: .trailing) {
+                            Button {
+                                withAnimation { store.isActive = false }
+                                Haptics.impact(.medium)
+                            } label: {
+                                Label("Deaktivieren", systemImage: "pause.circle")
+                            }
+                            .tint(.orange)
+                        }
                 }
             }
             if !allStores.filter({ !$0.isActive }).isEmpty {
                 Section(String(localized: "stores.inactive")) {
                     ForEach(allStores.filter { !$0.isActive }) { store in
                         StoreRow(store: store)
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive) {
+                                    storeToDelete = store
+                                } label: {
+                                    Label("Löschen", systemImage: "trash")
+                                }
+                                Button {
+                                    withAnimation { store.isActive = true }
+                                    Haptics.impact(.medium)
+                                } label: {
+                                    Label("Aktivieren", systemImage: "play.circle")
+                                }
+                                .tint(.green)
+                            }
                     }
                 }
             }
@@ -38,6 +62,23 @@ struct StoreSetupView: View {
         .navigationTitle(String(localized: "stores.title"))
         .sheet(isPresented: $showAddCustomStore) {
             AddCustomStoreView()
+        }
+        .confirmationDialog(
+            "Markt löschen?",
+            isPresented: Binding(get: { storeToDelete != nil }, set: { if !$0 { storeToDelete = nil } }),
+            titleVisibility: .visible
+        ) {
+            if let store = storeToDelete {
+                Button("Löschen", role: .destructive) {
+                    context.delete(store)
+                    storeToDelete = nil
+                }
+            }
+            Button("Abbrechen", role: .cancel) { storeToDelete = nil }
+        } message: {
+            if let store = storeToDelete {
+                Text("\"\\(store.name)\" und alle zugehörigen Artikel werden dauerhaft gelöscht.")
+            }
         }
     }
 }
@@ -93,7 +134,7 @@ struct AddCustomStoreView: View {
     @State private var selectedFreq = VisitFrequency.weekly
     @State private var selectedCategories: Set<String> = Set(Category.grocery)
 
-    private let allCategories = Category.grocery + Category.drugstore
+    private let allCategories = Category.grocery + Category.drugstore + Category.variety + Category.hardware
 
     var body: some View {
         NavigationStack {
