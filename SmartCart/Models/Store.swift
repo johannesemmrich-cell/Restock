@@ -9,6 +9,7 @@ class Store {
     var colorHex: String
     var visitsPerWeek: Double
     var isActive: Bool
+    var isPaused: Bool = false
     var categories: [String]
     var countryCode: String
     var isCustom: Bool
@@ -33,6 +34,7 @@ class Store {
         self.colorHex = colorHex
         self.visitsPerWeek = visitsPerWeek
         self.isActive = true
+        self.isPaused = false
         self.categories = categories
         self.countryCode = countryCode
         self.isCustom = isCustom

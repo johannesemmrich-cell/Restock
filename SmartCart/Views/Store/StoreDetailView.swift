@@ -77,35 +77,26 @@ struct StoreDetailView: View {
             .listRowBackground(Color.cardBackground)
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
 
-            if !store.pendingItems.isEmpty {
+            let urgentItems = store.pendingItems.filter { $0.isUrgent }
+            let regularItems = store.pendingItems.filter { !$0.isUrgent }
+
+            if !urgentItems.isEmpty {
+                Section {
+                    ForEach(urgentItems) { item in
+                        pendingRow(item)
+                    }
+                } header: {
+                    Label("Dringend", systemImage: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                        .font(.system(size: 12, weight: .semibold))
+                        .textCase(nil)
+                }
+            }
+
+            if !regularItems.isEmpty {
                 Section(String(localized: "list.pending")) {
-                    ForEach(store.pendingItems) { item in
-                        ItemRow(item: item) { toggle(item: item) }
-                            .contentShape(Rectangle())
-                            .onTapGesture { editingItem = item }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    withAnimation { context.delete(item) }
-                                } label: {
-                                    Label(String(localized: "action.delete"), systemImage: "trash")
-                                }
-                                Button {
-                                    withAnimation { item.isUrgent.toggle() }
-                                    Haptics.impact(item.isUrgent ? .medium : .light)
-                                } label: {
-                                    Label(item.isUrgent ? "Normal" : "Dringend",
-                                          systemImage: item.isUrgent ? "exclamationmark.circle" : "exclamationmark.circle.fill")
-                                }
-                                .tint(.orange)
-                            }
-                            .swipeActions(edge: .leading) {
-                                Button {
-                                    toggle(item: item)
-                                } label: {
-                                    Label(String(localized: "item.action.check"), systemImage: "checkmark")
-                                }
-                                .tint(.green)
-                            }
+                    ForEach(regularItems) { item in
+                        pendingRow(item)
                     }
                 }
             }
@@ -200,6 +191,36 @@ struct StoreDetailView: View {
         .onChange(of: store.pendingItems.count) {
             LiveActivityService.shared.update(for: store)
         }
+    }
+
+    // MARK: - Pending row
+
+    @ViewBuilder
+    private func pendingRow(_ item: ShoppingItem) -> some View {
+        ItemRow(item: item) { toggle(item: item) }
+            .contentShape(Rectangle())
+            .onTapGesture { editingItem = item }
+            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                Button(role: .destructive) {
+                    withAnimation { context.delete(item) }
+                } label: {
+                    Label(String(localized: "action.delete"), systemImage: "trash")
+                }
+                Button {
+                    withAnimation { item.isUrgent.toggle() }
+                    Haptics.impact(item.isUrgent ? .medium : .light)
+                } label: {
+                    Label(item.isUrgent ? "Normal" : "Dringend",
+                          systemImage: item.isUrgent ? "exclamationmark.circle" : "exclamationmark.circle.fill")
+                }
+                .tint(.orange)
+            }
+            .swipeActions(edge: .leading) {
+                Button { toggle(item: item) } label: {
+                    Label(String(localized: "item.action.check"), systemImage: "checkmark")
+                }
+                .tint(.green)
+            }
     }
 
     // MARK: - Progress header

@@ -31,7 +31,7 @@ struct HomeView: View {
 
     private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
 
-    private var totalPending: Int { activeStores.reduce(0) { $0 + $1.pendingItems.count } }
+    private var totalPending: Int { activeStores.filter { !$0.isPaused }.reduce(0) { $0 + $1.pendingItems.count } }
 
     var body: some View {
         NavigationStack {
@@ -499,6 +499,13 @@ struct HomeView: View {
                         }
                         .buttonStyle(.plain)
                         .contextMenu {
+                            Button {
+                                withAnimation { store.isPaused.toggle() }
+                                Haptics.impact(.light)
+                            } label: {
+                                Label(store.isPaused ? "Fortsetzen" : "Pausieren",
+                                      systemImage: store.isPaused ? "play.circle" : "moon.circle")
+                            }
                             Button(role: .destructive) {
                                 context.delete(store)
                                 Haptics.impact(.medium)

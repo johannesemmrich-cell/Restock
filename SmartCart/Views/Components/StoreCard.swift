@@ -19,7 +19,14 @@ struct StoreCard: View {
                 .padding(.vertical, 14)
                 .background(store.color.gradient.opacity(0.15))
 
-                if pendingCount > 0 {
+                if store.isPaused {
+                    Image(systemName: "moon.fill")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .padding(6)
+                        .background(Color(.systemGray3), in: Circle())
+                        .padding(10)
+                } else if pendingCount > 0 {
                     Text("\(pendingCount)")
                         .font(.system(size: 12, weight: .bold))
                         .foregroundStyle(.white)
@@ -65,9 +72,10 @@ struct StoreCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(store.color.opacity(pendingCount > 0 ? 0.3 : 0.12), lineWidth: 1.5)
+                .stroke(store.isPaused ? Color(.systemGray4) : store.color.opacity(pendingCount > 0 ? 0.3 : 0.12), lineWidth: 1.5)
         )
-        .shadow(color: store.color.opacity(pendingCount > 0 ? 0.12 : 0.04), radius: 10, x: 0, y: 4)
+        .shadow(color: store.color.opacity(store.isPaused ? 0 : (pendingCount > 0 ? 0.12 : 0.04)), radius: 10, x: 0, y: 4)
+        .opacity(store.isPaused ? 0.45 : 1.0)
         .contentShape(RoundedRectangle(cornerRadius: 16))
     }
 }

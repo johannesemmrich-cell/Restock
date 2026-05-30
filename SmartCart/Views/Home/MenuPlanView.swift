@@ -22,6 +22,7 @@ struct MenuPlanView: View {
     @State private var showAddDay = false
     @State private var checkedIngredients: Set<String> = []
     @State private var savedRecipeToast: String? = nil
+    @State private var ingredientsExpanded = false
 
     private let dayNames     = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
     private let dayNamesFull = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
@@ -278,38 +279,44 @@ struct MenuPlanView: View {
     private var ingredientsSection: some View {
         let unchecked = allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }.count
         return Section {
-            ForEach(allIngredients, id: \.self) { name in
-                let isChecked = checkedIngredients.contains(name.lowercased())
-                HStack(spacing: 12) {
-                    Button {
-                        if isChecked {
-                            checkedIngredients.remove(name.lowercased())
-                        } else {
-                            checkedIngredients.insert(name.lowercased())
+            DisclosureGroup(isExpanded: $ingredientsExpanded) {
+                ForEach(allIngredients, id: \.self) { name in
+                    let isChecked = checkedIngredients.contains(name.lowercased())
+                    HStack(spacing: 12) {
+                        Button {
+                            if isChecked {
+                                checkedIngredients.remove(name.lowercased())
+                            } else {
+                                checkedIngredients.insert(name.lowercased())
+                            }
+                            Haptics.impact(.light)
+                        } label: {
+                            Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                                .font(.system(size: 20))
+                                .foregroundStyle(isChecked ? .green : Color(.systemGray3))
                         }
-                        Haptics.impact(.light)
-                    } label: {
-                        Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 20))
-                            .foregroundStyle(isChecked ? .green : Color(.systemGray3))
-                    }
-                    .buttonStyle(.plain)
+                        .buttonStyle(.plain)
 
-                    Text(name)
-                        .font(.system(size: 14))
-                        .foregroundStyle(isChecked ? .secondary : .primary)
-                        .strikethrough(isChecked, color: .secondary)
+                        Text(name)
+                            .font(.system(size: 14))
+                            .foregroundStyle(isChecked ? .secondary : .primary)
+                            .strikethrough(isChecked, color: .secondary)
+                    }
+                }
+            } label: {
+                HStack {
+                    Text("Erkannte Zutaten")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.primary)
+                    Spacer()
+                    Text("\(unchecked) zur Liste")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
                 }
             }
-        } header: {
-            HStack {
-                Text("Erkannte Zutaten")
-                Spacer()
-                Text("\(unchecked) zur Liste")
-                    .textCase(nil)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-            }
+        }
+        .onChange(of: allIngredients.count) { _, count in
+            if count > 0 { ingredientsExpanded = true }
         }
     }
 
