@@ -104,6 +104,50 @@ struct HomeView: View {
         activeStores.filter { !$0.pendingItems.isEmpty }
     }
 
+    @ViewBuilder
+    private func bannerItemButton(_ item: ShoppingItem, storeEmoji: String?) -> some View {
+        Button {
+            withAnimation(.spring(response: 0.3)) { item.markCompleted() }
+            Haptics.success()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "circle")
+                    .font(.system(size: 22))
+                    .foregroundStyle(.white.opacity(0.65))
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack(spacing: 5) {
+                        if item.isUrgent {
+                            Image(systemName: "exclamationmark")
+                                .font(.system(size: 10, weight: .black))
+                                .foregroundStyle(.orange)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 2)
+                                .background(.white.opacity(0.25), in: Capsule())
+                        }
+                        Text(item.name)
+                            .font(.system(size: 14))
+                            .foregroundStyle(.white)
+                        if let emoji = storeEmoji {
+                            Text(emoji)
+                                .font(.system(size: 11))
+                                .foregroundStyle(.white.opacity(0.6))
+                        }
+                    }
+                    if !item.unit.isEmpty || item.quantityAmount != 1 {
+                        Text(item.quantity + (!item.unit.isEmpty ? " \(item.unit)" : ""))
+                            .font(.system(size: 11))
+                            .foregroundStyle(.white.opacity(0.55))
+                    }
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 7)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
     private func openBanner() {
         guard totalPending > 0 else { return }
         Haptics.impact(.medium)
@@ -195,56 +239,52 @@ struct HomeView: View {
             // Items list
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    ForEach(storesWithPendingItems) { store in
-                        HStack(spacing: 6) {
-                            Text(store.emoji).font(.system(size: 13))
-                            Text(store.name)
+                    let allUrgent = storesWithPendingItems.flatMap { store in
+                        store.pendingItems.filter { $0.isUrgent }.map { (item: $0, store: store) }
+                    }
+                    if !allUrgent.isEmpty {
+                        HStack(spacing: 5) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundStyle(.orange)
+                            Text("Dringend")
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(.white.opacity(0.85))
+                                .foregroundStyle(.orange)
                             Spacer()
-                            Text("\(store.pendingItems.count)")
+                            Text("\(allUrgent.count)")
                                 .font(.system(size: 11))
                                 .foregroundStyle(.white.opacity(0.5))
                         }
                         .padding(.horizontal, 18)
                         .padding(.top, 12)
                         .padding(.bottom, 2)
-                        ForEach(store.pendingItems) { item in
-                            Button {
-                                withAnimation(.spring(response: 0.3)) { item.markCompleted() }
-                                Haptics.success()
-                            } label: {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "circle")
-                                        .font(.system(size: 22))
-                                        .foregroundStyle(.white.opacity(0.65))
-                                    VStack(alignment: .leading, spacing: 1) {
-                                        HStack(spacing: 5) {
-                                            if item.isUrgent {
-                                                Image(systemName: "exclamationmark")
-                                                    .font(.system(size: 10, weight: .black))
-                                                    .foregroundStyle(.orange)
-                                                    .padding(.horizontal, 4)
-                                                    .padding(.vertical, 2)
-                                                    .background(.white.opacity(0.25), in: Capsule())
-                                            }
-                                            Text(item.name)
-                                                .font(.system(size: 14))
-                                                .foregroundStyle(.white)
-                                        }
-                                        if !item.unit.isEmpty || item.quantityAmount != 1 {
-                                            Text(item.quantity + (!item.unit.isEmpty ? " \(item.unit)" : ""))
-                                                .font(.system(size: 11))
-                                                .foregroundStyle(.white.opacity(0.55))
-                                        }
-                                    }
-                                    Spacer()
-                                }
-                                .padding(.horizontal, 18)
-                                .padding(.vertical, 7)
-                                .contentShape(Rectangle())
+                        ForEach(allUrgent, id: \.item.id) { entry in
+                            bannerItemButton(entry.item, storeEmoji: entry.store.emoji)
+                        }
+                        Rectangle().fill(.white.opacity(0.1)).frame(height: 0.5)
+                            .padding(.horizontal, 18)
+                            .padding(.top, 4)
+                    }
+
+                    ForEach(storesWithPendingItems) { store in
+                        let nonUrgent = store.pendingItems.filter { !$0.isUrgent }
+                        if !nonUrgent.isEmpty {
+                            HStack(spacing: 6) {
+                                Text(store.emoji).font(.system(size: 13))
+                                Text(store.name)
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(.white.opacity(0.85))
+                                Spacer()
+                                Text("\(nonUrgent.count)")
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(.white.opacity(0.5))
                             }
-                            .buttonStyle(.plain)
+                            .padding(.horizontal, 18)
+                            .padding(.top, 12)
+                            .padding(.bottom, 2)
+                            ForEach(nonUrgent) { item in
+                                bannerItemButton(item, storeEmoji: nil)
+                            }
                         }
                     }
                 }
