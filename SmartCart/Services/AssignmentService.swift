@@ -215,7 +215,7 @@ struct AssignmentService {
         let relevant = purchaseRecords.filter {
             $0.itemName.lowercased() == itemName.lowercased()
         }
-        guard relevant.count >= 2 else { return nil }
+        guard relevant.count >= 1 else { return nil }
 
         var counts: [String: Int] = [:]
         for record in relevant {

@@ -13,11 +13,15 @@ struct CheckOffItemIntent: AppIntent {
     init(storeName: String) { self.storeName = storeName }
 
     func perform() async throws -> some IntentResult {
-        let container = try ModelContainer(for: Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self)
+        let schema = Schema([Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self])
+        let config = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
+        let container = try ModelContainer(for: schema, configurations: config)
         let ctx = ModelContext(container)
 
-        let stores = try ctx.fetch(FetchDescriptor<Store>())
-        guard let store = stores.first(where: { $0.name == storeName }),
+        var descriptor = FetchDescriptor<Store>(predicate: #Predicate<Store> { $0.name == storeName })
+        descriptor.fetchLimit = 1
+        let stores = try ctx.fetch(descriptor)
+        guard let store = stores.first,
               let item = store.pendingItems.first else {
             return .result()
         }

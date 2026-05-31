@@ -22,7 +22,7 @@ struct MenuPlanView: View {
     @State private var showAddDay = false
     @State private var checkedIngredients: Set<String> = []
     @State private var savedRecipeToast: String? = nil
-    @State private var ingredientsExpanded = false
+    @State private var expandedDays: Set<Int> = []
 
     private let dayNames     = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
     private let dayNamesFull = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
@@ -117,7 +117,6 @@ struct MenuPlanView: View {
         NavigationStack {
             List {
                 mealsSection
-                if !allIngredients.isEmpty { ingredientsSection }
                 savedRecipesSection
             }
             .navigationTitle("Menüplan")
@@ -149,9 +148,11 @@ struct MenuPlanView: View {
                         ingredientsMap["\(dayIndex)"] = recipe.ingredients
                         saveIngredients()
                         recordUsage(recipe)
+                        expandedDays.insert(dayIndex)
                     } else if !manual.isEmpty {
                         ingredientsMap["\(dayIndex)"] = manual
                         saveIngredients()
+                        expandedDays.insert(dayIndex)
                     } else {
                         fetchIngredients(for: dayIndex, meal: meal)
                     }
@@ -233,92 +234,78 @@ struct MenuPlanView: View {
 
     @ViewBuilder
     private func dayRow(_ i: Int) -> some View {
-        HStack(spacing: 12) {
-            Text(dayNames[i])
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.secondary)
-                .frame(width: 28, alignment: .leading)
-
-            VStack(alignment: .leading, spacing: 3) {
+        let ings = ingredientsMap["\(i)"] ?? []
+        let isLoading = loadingDays.contains(i)
+        DisclosureGroup(
+            isExpanded: Binding(
+                get: { expandedDays.contains(i) },
+                set: { if $0 { expandedDays.insert(i) } else { expandedDays.remove(i) } }
+            )
+        ) {
+            if isLoading {
+                HStack(spacing: 5) {
+                    ProgressView().scaleEffect(0.65)
+                    Text("Zutaten werden erkannt…")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 4)
+            } else if ings.isEmpty {
+                Text("Keine Zutaten erkannt")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.tertiary)
+                    .padding(.vertical, 4)
+            } else {
+                ForEach(ings, id: \.self) { name in
+                    ingredientRow(name)
+                }
+            }
+        } label: {
+            HStack(spacing: 12) {
+                Text(dayNames[i])
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 28, alignment: .leading)
                 Text(meals[i])
                     .font(.system(size: 15))
+                Spacer()
+                if !ings.isEmpty {
+                    Text("\(ings.count)")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 6).padding(.vertical, 2)
+                        .background(Color.brand, in: Capsule())
+                } else if isLoading {
+                    ProgressView().scaleEffect(0.65)
+                }
+            }
+        }
+    }
 
-                if loadingDays.contains(i) {
-                    HStack(spacing: 5) {
-                        ProgressView().scaleEffect(0.65)
-                        Text("Zutaten werden erkannt…")
-                            .font(.system(size: 11))
-                            .foregroundStyle(.secondary)
-                    }
-                } else if let ings = ingredientsMap["\(i)"], !ings.isEmpty {
-                    Text(ings.prefix(4).joined(separator: ", ") + (ings.count > 4 ? "…" : ""))
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
+    @ViewBuilder
+    private func ingredientRow(_ name: String) -> some View {
+        let isChecked = checkedIngredients.contains(name.lowercased())
+        HStack(spacing: 12) {
+            Button {
+                if isChecked {
+                    checkedIngredients.remove(name.lowercased())
                 } else {
-                    Text("Keine Zutaten erkannt")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.tertiary)
+                    checkedIngredients.insert(name.lowercased())
                 }
-            }
-
-            Spacer()
-
-            if let ings = ingredientsMap["\(i)"], !ings.isEmpty {
-                Text("\(ings.count)")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 6).padding(.vertical, 2)
-                    .background(Color.brand, in: Capsule())
-            }
-        }
-    }
-
-    // MARK: - Ingredients section
-
-    private var ingredientsSection: some View {
-        let unchecked = allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }.count
-        return Section {
-            DisclosureGroup(isExpanded: $ingredientsExpanded) {
-                ForEach(allIngredients, id: \.self) { name in
-                    let isChecked = checkedIngredients.contains(name.lowercased())
-                    HStack(spacing: 12) {
-                        Button {
-                            if isChecked {
-                                checkedIngredients.remove(name.lowercased())
-                            } else {
-                                checkedIngredients.insert(name.lowercased())
-                            }
-                            Haptics.impact(.light)
-                        } label: {
-                            Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                                .font(.system(size: 20))
-                                .foregroundStyle(isChecked ? .green : Color(.systemGray3))
-                        }
-                        .buttonStyle(.plain)
-
-                        Text(name)
-                            .font(.system(size: 14))
-                            .foregroundStyle(isChecked ? .secondary : .primary)
-                            .strikethrough(isChecked, color: .secondary)
-                    }
-                }
+                Haptics.impact(.light)
             } label: {
-                HStack {
-                    Text("Erkannte Zutaten")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    Text("\(unchecked) zur Liste")
-                        .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
-                }
+                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 20))
+                    .foregroundStyle(isChecked ? .green : Color(.systemGray3))
             }
-        }
-        .onChange(of: allIngredients.count) { _, count in
-            if count > 0 { ingredientsExpanded = true }
+            .buttonStyle(.plain)
+            Text(name)
+                .font(.system(size: 14))
+                .foregroundStyle(isChecked ? .secondary : .primary)
+                .strikethrough(isChecked, color: .secondary)
         }
     }
+
 
     // MARK: - Saved recipes section
 
@@ -400,6 +387,7 @@ struct MenuPlanView: View {
 
     private func fetchIngredients(for dayIndex: Int, meal: String) {
         loadingDays.insert(dayIndex)
+        expandedDays.insert(dayIndex)
         Task {
             let result = await MealIngredientService.shared.ingredients(for: meal)
             await MainActor.run {
