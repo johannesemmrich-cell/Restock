@@ -10,10 +10,26 @@ struct SmartCartApp: App {
     @AppStorage("developerMode") private var developerMode = false
 
     init() {
+        let schema = Schema([Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self])
+        let localConfig = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
         do {
-            container = try ModelContainer(for: Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self)
+            container = try ModelContainer(for: schema, configurations: localConfig)
         } catch {
-            fatalError("Failed to create ModelContainer: \(error)")
+            Self.deleteStoreFiles()
+            do {
+                container = try ModelContainer(for: schema, configurations: localConfig)
+            } catch {
+                fatalError("Failed to create ModelContainer: \(error)")
+            }
+        }
+    }
+
+    private static func deleteStoreFiles() {
+        guard let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return }
+        for name in ["default", "SmartCartCloud"] {
+            for ext in ["store", "store-shm", "store-wal"] {
+                try? FileManager.default.removeItem(at: appSupport.appendingPathComponent("\(name).\(ext)"))
+            }
         }
     }
 

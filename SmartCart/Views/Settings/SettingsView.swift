@@ -15,6 +15,7 @@ struct SettingsView: View {
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
 
     @State private var showFeedback = false
+    @State private var showJoinStore = false
     @State private var notificationsEnabled = false
     @State private var versionTapCount = 0
     @State private var lastTapTime: Date = .distantPast
@@ -47,6 +48,14 @@ struct SettingsView: View {
                 Section(String(localized: "settings.stores")) {
                     NavigationLink(String(localized: "stores.title")) {
                         StoreSetupView()
+                    }
+                }
+
+                Section("Teilen & Zusammenarbeit") {
+                    Button {
+                        showJoinStore = true
+                    } label: {
+                        Label("Geteiltem Store beitreten", systemImage: "person.badge.plus")
                     }
                 }
 
@@ -235,6 +244,7 @@ struct SettingsView: View {
                         .fontWeight(.semibold)
                 }
             }
+            .sheet(isPresented: $showJoinStore) { JoinStoreSheet() }
             .sheet(isPresented: $showFeedback) {
                 FeedbackView()
             }

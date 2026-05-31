@@ -219,9 +219,19 @@ struct HomeView: View {
                                         .font(.system(size: 22))
                                         .foregroundStyle(.white.opacity(0.65))
                                     VStack(alignment: .leading, spacing: 1) {
-                                        Text(item.name)
-                                            .font(.system(size: 14))
-                                            .foregroundStyle(.white)
+                                        HStack(spacing: 5) {
+                                            if item.isUrgent {
+                                                Image(systemName: "exclamationmark")
+                                                    .font(.system(size: 10, weight: .black))
+                                                    .foregroundStyle(.orange)
+                                                    .padding(.horizontal, 4)
+                                                    .padding(.vertical, 2)
+                                                    .background(.white.opacity(0.25), in: Capsule())
+                                            }
+                                            Text(item.name)
+                                                .font(.system(size: 14))
+                                                .foregroundStyle(.white)
+                                        }
                                         if !item.unit.isEmpty || item.quantityAmount != 1 {
                                             Text(item.quantity + (!item.unit.isEmpty ? " \(item.unit)" : ""))
                                                 .font(.system(size: 11))

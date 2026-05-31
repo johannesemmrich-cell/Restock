@@ -21,7 +21,9 @@ struct AddShoppingItemIntent: AppIntent {
     var unit: String?
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let container = try ModelContainer(for: Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self)
+        let schema = Schema([Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self])
+        let config = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
+        let container = try ModelContainer(for: schema, configurations: config)
         let context = ModelContext(container)
 
         let stores = try context.fetch(FetchDescriptor<Store>(predicate: #Predicate { $0.isActive }))

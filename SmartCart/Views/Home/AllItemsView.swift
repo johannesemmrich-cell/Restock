@@ -30,8 +30,18 @@ struct AllItemsView: View {
                             ForEach(store.pendingItems) { item in
                                 HStack(spacing: 12) {
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(item.name)
-                                            .font(.system(size: 15))
+                                        HStack(spacing: 6) {
+                                            if item.isUrgent {
+                                                Image(systemName: "exclamationmark")
+                                                    .font(.system(size: 11, weight: .black))
+                                                    .foregroundStyle(.white)
+                                                    .padding(.horizontal, 5)
+                                                    .padding(.vertical, 2)
+                                                    .background(Color.orange, in: Capsule())
+                                            }
+                                            Text(item.name)
+                                                .font(.system(size: 15))
+                                        }
                                         if !item.unit.isEmpty || item.quantityAmount != 1 {
                                             Text("\(item.quantity)\(!item.unit.isEmpty ? " \(item.unit)" : "")")
                                                 .font(.system(size: 12))

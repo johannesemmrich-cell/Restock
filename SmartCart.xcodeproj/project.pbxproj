@@ -69,6 +69,8 @@
 		F9AC89E9E28CA2F005490D40 /* QuantityStepperField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375D6F2D2F8E5E3333A4A5CE /* QuantityStepperField.swift */; };
 		FF43B1B80F202D6734200639 /* HabitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838409C378288CFA57B42809 /* HabitService.swift */; };
 		FF7788AABB33CC44DD55EE66 /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE66FF7788AABB33CC44DD55 /* TodoListView.swift */; };
+		AB11CD23EF45AB67CD89EF11 /* SharedStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10CD23EF45AB67CD89EF10 /* SharedStoreService.swift */; };
+		AB13CD23EF45AB67CD89EF13 /* StoreShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD23EF45AB67CD89EF12 /* StoreShareSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -144,6 +146,8 @@
 		WF07B8C9D0E1F2A3B4C5D007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA01BB02CC03DD04EE05FF06 /* SmartCart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCart.entitlements; sourceTree = "<group>"; };
 		AA02BB03CC04DD05EE06FF07 /* SmartCartWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCartWidgets.entitlements; sourceTree = "<group>"; };
+		AB10CD23EF45AB67CD89EF10 /* SharedStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStoreService.swift; sourceTree = "<group>"; };
+		AB12CD23EF45AB67CD89EF12 /* StoreShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreShareSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -252,6 +256,7 @@
 				C362CB3A6517D504DCBC7D3E /* AddItemView.swift */,
 				28094C6B2161D39A55624F68 /* EditItemView.swift */,
 				88C3233FB5722D2CF4BE2B3A /* StoreDetailView.swift */,
+				AB12CD23EF45AB67CD89EF12 /* StoreShareSheet.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -318,6 +323,7 @@
 				C8B6F1B6E82484B41C0A48AD /* RecipeRecognitionService.swift */,
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* ReceiptParserService.swift */,
 				FF6677AABB11CC22DD33EE44 /* SeasonalService.swift */,
+				AB10CD23EF45AB67CD89EF10 /* SharedStoreService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -532,6 +538,8 @@
 				F6A7B8C9D0E1F2A3B4C5D6E7 /* PriceOverviewView.swift in Sources */,
 				A102C3D4E5F6A7B8C9D0E102 /* AppDelegate.swift in Sources */,
 				A104E5F6A7B8C9D0E1F2A104 /* QuickActionState.swift in Sources */,
+				AB11CD23EF45AB67CD89EF11 /* SharedStoreService.swift in Sources */,
+				AB13CD23EF45AB67CD89EF13 /* StoreShareSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

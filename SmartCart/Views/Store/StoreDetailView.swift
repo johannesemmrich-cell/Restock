@@ -7,9 +7,11 @@ struct StoreDetailView: View {
     @State private var showAddItem = false
     @State private var showClearConfirm = false
     @State private var showReceiptScanner = false
+    @State private var showShareSheet = false
     @State private var editingItem: ShoppingItem?
     @State private var completionOrder: [String] = []
     @State private var quickAddText: String = ""
+    @State private var isSyncing = false
     @Query private var allRecords: [PurchaseRecord]
 
     private var total: Double {
@@ -149,6 +151,16 @@ struct StoreDetailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 16) {
+                    if isSyncing {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                    }
+                    Button {
+                        showShareSheet = true
+                        Haptics.impact(.light)
+                    } label: {
+                        Image(systemName: store.shareID != nil ? "person.2.fill" : "person.2")
+                    }
                     if !store.completedItems.isEmpty {
                         Button {
                             showReceiptScanner = true
@@ -168,6 +180,7 @@ struct StoreDetailView: View {
             }
         }
         .sheet(isPresented: $showAddItem) { AddItemView() }
+        .sheet(isPresented: $showShareSheet) { StoreShareSheet(store: store) }
         .sheet(isPresented: $showReceiptScanner) {
             ReceiptScannerView(storeName: store.name)
         }
@@ -184,9 +197,15 @@ struct StoreDetailView: View {
         .devFeedback(context: "Liste: \(store.name)")
         .onAppear {
             LiveActivityService.shared.start(for: store)
+            if store.shareID != nil {
+                Task { await syncSharedStore() }
+            }
         }
         .onDisappear {
             LiveActivityService.shared.end(for: store)
+            if store.shareID != nil {
+                Task { try? await SharedStoreService.shared.push(store: store) }
+            }
         }
         .onChange(of: store.pendingItems.count) {
             LiveActivityService.shared.update(for: store)
@@ -364,5 +383,50 @@ struct StoreDetailView: View {
             for item in store.completedItems { context.delete(item) }
             completionOrder.removeAll()
         }
+    }
+
+    private func syncSharedStore() async {
+        guard let shareID = store.shareID else { return }
+        isSyncing = true
+        defer { Task { @MainActor in isSyncing = false } }
+
+        guard let (remoteItems, _) = try? await SharedStoreService.shared.pull(shareID: shareID) else { return }
+
+        await MainActor.run {
+            let localByID = Dictionary(uniqueKeysWithValues: store.items.map { ($0.id, $0) })
+            let remoteByID = Dictionary(uniqueKeysWithValues: remoteItems.map { ($0.id, $0) })
+
+            // Remove items deleted remotely
+            for item in store.items where remoteByID[item.id] == nil {
+                context.delete(item)
+            }
+
+            // Add or update remote items
+            for remote in remoteItems {
+                if let local = localByID[remote.id] {
+                    local.name = remote.name
+                    local.isCompleted = remote.isCompleted
+                    local.isUrgent = remote.isUrgent
+                    local.quantity = remote.quantity
+                    local.quantityAmount = remote.quantityAmount
+                    local.unit = remote.unit
+                    local.note = remote.note
+                    local.category = remote.category
+                } else {
+                    let item = ShoppingItem(
+                        name: remote.name, category: remote.category,
+                        quantity: remote.quantity, quantityAmount: remote.quantityAmount,
+                        unit: remote.unit, note: remote.note, store: store
+                    )
+                    item.id = remote.id
+                    item.isCompleted = remote.isCompleted
+                    item.isUrgent = remote.isUrgent
+                    context.insert(item)
+                }
+            }
+
+            try? context.save()
+        }
+        await SharedStoreService.shared.markSynced(shareID: shareID)
     }
 }

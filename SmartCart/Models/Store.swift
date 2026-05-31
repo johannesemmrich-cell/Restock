@@ -19,6 +19,19 @@ class Store {
     @Relationship(deleteRule: .cascade, inverse: \ShoppingItem.store)
     var items: [ShoppingItem] = []
 
+    var shareID: String? {
+        get { UserDefaults.standard.string(forKey: "shareID_\(id.uuidString)") }
+        set {
+            if let v = newValue { UserDefaults.standard.set(v, forKey: "shareID_\(id.uuidString)") }
+            else { UserDefaults.standard.removeObject(forKey: "shareID_\(id.uuidString)") }
+        }
+    }
+
+    var isSharedByMe: Bool {
+        get { UserDefaults.standard.bool(forKey: "isSharedByMe_\(id.uuidString)") }
+        set { UserDefaults.standard.set(newValue, forKey: "isSharedByMe_\(id.uuidString)") }
+    }
+
     init(
         name: String,
         emoji: String,
