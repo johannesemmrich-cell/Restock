@@ -10,20 +10,22 @@ struct SmartCartApp: App {
     @AppStorage("developerMode") private var developerMode = false
 
     init() {
-        let schema = Schema([Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self])
+        CloudPreferencesSync.shared.start()
+
+        let schema = Schema(versionedSchema: SchemaV1.self)
         let cloudConfig = ModelConfiguration(schema: schema, cloudKitDatabase: .private("iCloud.com.johannesemmrich.SmartCart"))
         let localConfig = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
         do {
-            container = try ModelContainer(for: schema, configurations: cloudConfig)
+            container = try ModelContainer(for: schema, migrationPlan: SmartCartMigrationPlan.self, configurations: cloudConfig)
         } catch {
-            // CloudKit-Migration fehlgeschlagen — lokaler Fallback, Daten bleiben erhalten
+            // CloudKit nicht verfügbar — lokaler Fallback
             do {
-                container = try ModelContainer(for: schema, configurations: localConfig)
+                container = try ModelContainer(for: schema, migrationPlan: SmartCartMigrationPlan.self, configurations: localConfig)
             } catch {
                 // Store-Korruption — löschen und neu anlegen
                 Self.deleteStoreFiles()
                 do {
-                    container = try ModelContainer(for: schema, configurations: localConfig)
+                    container = try ModelContainer(for: schema, migrationPlan: SmartCartMigrationPlan.self, configurations: localConfig)
                 } catch {
                     fatalError("Failed to create ModelContainer: \(error)")
                 }

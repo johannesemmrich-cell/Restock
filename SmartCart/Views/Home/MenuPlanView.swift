@@ -23,6 +23,7 @@ struct MenuPlanView: View {
     @State private var checkedIngredients: Set<String> = []
     @State private var savedRecipeToast: String? = nil
     @State private var expandedDays: Set<Int> = []
+    @State private var fetchTasks: [Int: Task<Void, Never>] = [:]
 
     private let dayNames     = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
     private let dayNamesFull = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
@@ -176,6 +177,10 @@ struct MenuPlanView: View {
                 }
             }
             .animation(.easeInOut(duration: 0.25), value: savedRecipeToast)
+            .onDisappear {
+                for task in fetchTasks.values { task.cancel() }
+                fetchTasks.removeAll()
+            }
         }
         .devFeedback(context: "Menüplan")
     }
@@ -386,12 +391,15 @@ struct MenuPlanView: View {
     // MARK: - Actions
 
     private func fetchIngredients(for dayIndex: Int, meal: String) {
+        fetchTasks[dayIndex]?.cancel()
         loadingDays.insert(dayIndex)
         expandedDays.insert(dayIndex)
-        Task {
+        fetchTasks[dayIndex] = Task {
             let result = await MealIngredientService.shared.ingredients(for: meal)
+            guard !Task.isCancelled else { return }
             await MainActor.run {
                 loadingDays.remove(dayIndex)
+                fetchTasks.removeValue(forKey: dayIndex)
                 if !result.names.isEmpty {
                     ingredientsMap["\(dayIndex)"] = result.names
                     saveIngredients()

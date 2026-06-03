@@ -63,6 +63,7 @@
 		DDE7767C2A2E25E83FA6CFC8 /* PurchaseRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34C5D25C3945D6153A049B /* PurchaseRecord.swift */; };
 		DEBF56414AA7F6AF04B254E2 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C362CB3A6517D504DCBC7D3E /* AddItemView.swift */; };
 		EE55FF6677AABB11CC22DD33 /* SeasonalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6677AABB11CC22DD33EE44 /* SeasonalService.swift */; };
+		D0E2F3A4B5C6D7E8F9A0B1C2 /* CloudPreferencesSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF91A23B4D5E6F7A8B9C0D1E /* CloudPreferencesSync.swift */; };
 		F1F4216C977DED9D403293FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D6DDDDC065602308F0A3A52 /* Assets.xcassets */; };
 		F6A7B8C9D0E1F2A3B4C5D6E7 /* PriceOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F6A7B8C9D0E1F2A3B4C5D6 /* PriceOverviewView.swift */; };
 		F7EA55CF68EF8E5935FE983A /* StoreCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83130764D304E50CAB3E2DD7 /* StoreCard.swift */; };
@@ -71,6 +72,8 @@
 		FF7788AABB33CC44DD55EE66 /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE66FF7788AABB33CC44DD55 /* TodoListView.swift */; };
 		AB11CD23EF45AB67CD89EF11 /* SharedStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10CD23EF45AB67CD89EF10 /* SharedStoreService.swift */; };
 		AB13CD23EF45AB67CD89EF13 /* StoreShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD23EF45AB67CD89EF12 /* StoreShareSheet.swift */; };
+		BC11EF34AB67CD89EF01AB11 /* SchemaVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10DE23FA56BC78DE90FA10 /* SchemaVersions.swift */; };
+		BC13AB56CD89EF01AB23CD13 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = BC12FA45BC78DE90FA12BC12 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -131,6 +134,7 @@
 		F2167065308D2C0091FD60DC /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		F2EE7B78F5DF69328D2EF6C4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FF6677AABB11CC22DD33EE44 /* SeasonalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonalService.swift; sourceTree = "<group>"; };
+		CF91A23B4D5E6F7A8B9C0D1E /* CloudPreferencesSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudPreferencesSync.swift; sourceTree = "<group>"; };
 		FFE9FEE09743093F7E668D5E /* AssignmentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentService.swift; sourceTree = "<group>"; };
 		A002B3C4D5E6F7A8B9C0D002 /* ShoppingActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingActivityAttributes.swift; sourceTree = "<group>"; };
 		A004D5E6F7A8B9C0D1E2F004 /* LiveActivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityService.swift; sourceTree = "<group>"; };
@@ -148,6 +152,8 @@
 		AA02BB03CC04DD05EE06FF07 /* SmartCartWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCartWidgets.entitlements; sourceTree = "<group>"; };
 		AB10CD23EF45AB67CD89EF10 /* SharedStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStoreService.swift; sourceTree = "<group>"; };
 		AB12CD23EF45AB67CD89EF12 /* StoreShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreShareSheet.swift; sourceTree = "<group>"; };
+		BC10DE23FA56BC78DE90FA10 /* SchemaVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaVersions.swift; sourceTree = "<group>"; };
+		BC12FA45BC78DE90FA12BC12 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = "com.apple.privacy-manifest"; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -156,6 +162,7 @@
 			children = (
 				AA01BB02CC03DD04EE05FF06 /* SmartCart.entitlements */,
 				9D6DDDDC065602308F0A3A52 /* Assets.xcassets */,
+				BC12FA45BC78DE90FA12BC12 /* PrivacyInfo.xcprivacy */,
 				6CC5E77213853CDEEA9A76D3 /* ContentView.swift */,
 				9E1FEF9707C7C16B4D0F2CF5 /* SmartCartApp.swift */,
 				A101B2C3D4E5F6A7B8C9D101 /* AppDelegate.swift */,
@@ -323,6 +330,8 @@
 				C8B6F1B6E82484B41C0A48AD /* RecipeRecognitionService.swift */,
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* ReceiptParserService.swift */,
 				FF6677AABB11CC22DD33EE44 /* SeasonalService.swift */,
+				BC10DE23FA56BC78DE90FA10 /* SchemaVersions.swift */,
+				CF91A23B4D5E6F7A8B9C0D1E /* CloudPreferencesSync.swift */,
 				AB10CD23EF45AB67CD89EF10 /* SharedStoreService.swift */,
 			);
 			path = Services;
@@ -458,6 +467,7 @@
 				F1F4216C977DED9D403293FE /* Assets.xcassets in Resources */,
 				ACAA0ED3F8C4A30CB3B60F17 /* Localizable.strings in Resources */,
 				78F5AF4484B268BB933F98AA /* Preview Assets.xcassets in Resources */,
+				BC13AB56CD89EF01AB23CD13 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,6 +533,8 @@
 				99C1C04FD88022B0F3E9A1E2 /* RecipeImportView.swift in Sources */,
 				856A7E292BA26C783B908D38 /* RecipeRecognitionService.swift in Sources */,
 				EE55FF6677AABB11CC22DD33 /* SeasonalService.swift in Sources */,
+				BC11EF34AB67CD89EF01AB11 /* SchemaVersions.swift in Sources */,
+				D0E2F3A4B5C6D7E8F9A0B1C2 /* CloudPreferencesSync.swift in Sources */,
 				11B1C5980F8E6058CDAE01B8 /* SettingsView.swift in Sources */,
 				A001B2C3D4E5F6A7B8C9D001 /* ShoppingActivityAttributes.swift in Sources */,
 				A21EA866AA3A88E3DF1D7EF9 /* ShoppingItem.swift in Sources */,
@@ -568,6 +580,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "SmartCart needs camera access to scan recipe photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SmartCart needs photo library access to import recipe photos.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
@@ -718,6 +731,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "SmartCart needs camera access to scan recipe photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SmartCart needs photo library access to import recipe photos.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;

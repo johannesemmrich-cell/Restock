@@ -136,6 +136,15 @@ struct AssignmentService {
         "briefkasten", "namensschild",
         "mülleimer", "abfalleimer", "abfallbehälter",
         "schirmständer", "regenschirmständer",
+        // Grill & Outdoor
+        "grillkohle", "grillbriketts", "briketts", "holzkohle",
+        "grillanzünder", "anzünder", "feueranzünder",
+        "grillrost", "grillzange", "grillhandschuh",
+        "grillschale", "grillschalen", "aluschale",
+        "grillspiess", "grillspieß", "grillbesteck",
+        "grillthermometer", "grillabdeckung",
+        "campingkocher", "campinggas", "gaskartusche",
+        "feuerschale", "grill",
     ]
 
     private static let hardwareStoreKeywords: Set<String> = [

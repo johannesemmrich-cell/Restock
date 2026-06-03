@@ -7,6 +7,7 @@ struct PriceOverviewView: View {
     @Query(sort: \PurchaseRecord.date, order: .reverse) private var allRecords: [PurchaseRecord]
 
     @State private var selectedTab = 0  // 0 = Vergleich, 1 = Prognosen, 2 = Kassenbons, 3 = Ausgaben
+    @State private var expandedStoreKeys: Set<String> = []
 
     var body: some View {
         NavigationStack {
@@ -243,11 +244,25 @@ struct PriceOverviewView: View {
 
     // MARK: - Spending History
 
+    private struct EntryDetail: Identifiable {
+        let id: UUID
+        let itemName: String
+        let price: Double
+        let qty: Double
+        let unit: String
+    }
+
+    private struct StoreDetail {
+        let name: String
+        let total: Double
+        let entries: [EntryDetail]
+    }
+
     private struct MonthData: Identifiable {
         let id: String  // "2026-05"
         let label: String
         let total: Double
-        let byStore: [(name: String, total: Double)]
+        let byStore: [StoreDetail]
     }
 
     private var spendingByMonth: [MonthData] {
@@ -257,24 +272,30 @@ struct PriceOverviewView: View {
         formatter.locale = Locale(identifier: "de_DE")
         formatter.dateFormat = "MMMM yyyy"
 
-        var grouped: [String: (label: String, byStore: [String: Double])] = [:]
+        var grouped: [String: (label: String, byStore: [String: [PurchaseRecord]])] = [:]
 
         for record in withPrice {
             let comps = calendar.dateComponents([.year, .month], from: record.date)
             guard let year = comps.year, let month = comps.month else { continue }
             let key = "\(year)-\(String(format: "%02d", month))"
             let label = formatter.string(from: record.date)
+            let storeName = record.storeName.isEmpty ? "Unbekannt" : record.storeName
 
             if grouped[key] == nil { grouped[key] = (label: label, byStore: [:]) }
-            let storeName = record.storeName.isEmpty ? "Unbekannt" : record.storeName
-            grouped[key]!.byStore[storeName, default: 0] += record.actualPrice!
+            grouped[key]!.byStore[storeName, default: []].append(record)
         }
 
         return grouped.map { (key, data) -> MonthData in
-            let byStore = data.byStore.map { (name: $0.key, total: $0.value) }
-                .sorted { $0.total > $1.total }
-            let total = byStore.reduce(0.0) { $0 + $1.total }
-            return MonthData(id: key, label: data.label, total: total, byStore: byStore)
+            let stores = data.byStore.map { (storeName, records) -> StoreDetail in
+                let entries = records
+                    .sorted { $0.date > $1.date }
+                    .map { EntryDetail(id: $0.id, itemName: $0.itemName, price: $0.actualPrice!, qty: $0.quantityAmount, unit: $0.unit) }
+                let total = records.reduce(0.0) { $0 + ($1.actualPrice ?? 0) }
+                return StoreDetail(name: storeName, total: total, entries: entries)
+            }
+            .sorted { $0.total > $1.total }
+            let total = stores.reduce(0.0) { $0 + $1.total }
+            return MonthData(id: key, label: data.label, total: total, byStore: stores)
         }
         .sorted { $0.id > $1.id }
     }
@@ -289,6 +310,7 @@ struct PriceOverviewView: View {
                 return r.storeName == storeName && c.year == year && c.month == month
             }
             .forEach { context.delete($0) }
+        expandedStoreKeys.remove("\(monthKey)-\(storeName)")
         Haptics.impact(.medium)
     }
 
@@ -306,18 +328,53 @@ struct PriceOverviewView: View {
         } else {
             ForEach(spendingByMonth) { month in
                 Section {
-                    ForEach(month.byStore, id: \.name) { entry in
-                        HStack {
-                            Text(entry.name)
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                            Text(entry.total, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
-                                .font(.system(size: 13, weight: .medium))
+                    ForEach(month.byStore, id: \.name) { store in
+                        let storeKey = "\(month.id)-\(store.name)"
+                        DisclosureGroup(
+                            isExpanded: Binding(
+                                get: { expandedStoreKeys.contains(storeKey) },
+                                set: {
+                                    if $0 { expandedStoreKeys.insert(storeKey) }
+                                    else { expandedStoreKeys.remove(storeKey) }
+                                    Haptics.impact(.light)
+                                }
+                            )
+                        ) {
+                            ForEach(store.entries) { entry in
+                                HStack(spacing: 6) {
+                                    Text(entry.itemName)
+                                        .font(.system(size: 13))
+                                        .foregroundStyle(.primary)
+                                    if entry.qty != 1 || !entry.unit.isEmpty {
+                                        let qtyStr = entry.qty == entry.qty.rounded() ? "\(Int(entry.qty))" : String(format: "%.1f", entry.qty)
+                                        Text(entry.unit.isEmpty ? qtyStr : "\(qtyStr) \(entry.unit)")
+                                            .font(.system(size: 11))
+                                            .foregroundStyle(.tertiary)
+                                    }
+                                    Spacer()
+                                    Text(entry.price, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                                        .font(.system(size: 13))
+                                        .foregroundStyle(.secondary)
+                                }
+                                .padding(.vertical, 1)
+                            }
+                        } label: {
+                            HStack {
+                                Text(store.name)
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                Text(store.total, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.primary)
+                            }
                         }
-                    }
-                    .onDelete { indexSet in
-                        for idx in indexSet {
-                            deleteRecords(storeName: month.byStore[idx].name, monthKey: month.id)
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                deleteRecords(storeName: store.name, monthKey: month.id)
+                            } label: {
+                                Label("Löschen", systemImage: "trash")
+                            }
                         }
                     }
                 } header: {

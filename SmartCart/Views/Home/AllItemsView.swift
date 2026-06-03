@@ -2,34 +2,27 @@ import SwiftUI
 import SwiftData
 
 struct AllItemsView: View {
-    @Query(filter: #Predicate<Store> { $0.isActive }) private var stores: [Store]
+    @Query(filter: #Predicate<ShoppingItem> { $0.isCompleted == false }) private var pendingItems: [ShoppingItem]
+    @Query(filter: #Predicate<Store> { $0.isActive }) private var activeStores: [Store]
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
-    private var storesWithItems: [Store] {
-        stores.filter { !$0.pendingItems.isEmpty }
+    private var urgentItems: [ShoppingItem] {
+        pendingItems.filter { $0.isUrgent }
     }
 
-    private var totalPending: Int {
-        stores.reduce(0) { $0 + $1.pendingItems.count }
-    }
-
-    private var allUrgentItems: [(item: ShoppingItem, store: Store)] {
-        storesWithItems.flatMap { store in
-            store.pendingItems.filter { $0.isUrgent }.map { (item: $0, store: store) }
-        }
-    }
-
-    private var storesWithNonUrgentItems: [Store] {
-        storesWithItems.filter { store in
-            store.pendingItems.contains { !$0.isUrgent }
+    private var nonUrgentByStore: [(store: Store, items: [ShoppingItem])] {
+        let grouped = Dictionary(grouping: pendingItems.filter { !$0.isUrgent }) { $0.store?.persistentModelID }
+        return activeStores.compactMap { store in
+            guard let items = grouped[store.persistentModelID], !items.isEmpty else { return nil }
+            return (store, items)
         }
     }
 
     var body: some View {
         NavigationStack {
             List {
-                if storesWithItems.isEmpty {
+                if pendingItems.isEmpty {
                     ContentUnavailableView(
                         "Alles erledigt",
                         systemImage: "checkmark.circle",
@@ -37,10 +30,10 @@ struct AllItemsView: View {
                     )
                     .listRowBackground(Color.clear)
                 } else {
-                    if !allUrgentItems.isEmpty {
+                    if !urgentItems.isEmpty {
                         Section {
-                            ForEach(allUrgentItems, id: \.item.id) { entry in
-                                itemRow(entry.item, storeColor: entry.store.color, storeEmoji: entry.store.emoji)
+                            ForEach(urgentItems) { item in
+                                itemRow(item, storeColor: item.store?.color ?? .gray, storeEmoji: item.store?.emoji)
                             }
                         } header: {
                             Label("Dringend", systemImage: "exclamationmark.circle.fill")
@@ -50,27 +43,27 @@ struct AllItemsView: View {
                         }
                     }
 
-                    ForEach(storesWithNonUrgentItems) { store in
+                    ForEach(nonUrgentByStore, id: \.store.persistentModelID) { entry in
                         Section {
-                            ForEach(store.pendingItems.filter { !$0.isUrgent }) { item in
-                                itemRow(item, storeColor: store.color, storeEmoji: nil)
+                            ForEach(entry.items) { item in
+                                itemRow(item, storeColor: entry.store.color, storeEmoji: nil)
                             }
                         } header: {
                             HStack(spacing: 6) {
-                                Text(store.emoji)
-                                Text(store.name)
+                                Text(entry.store.emoji)
+                                Text(entry.store.name)
                                     .font(.system(size: 13, weight: .semibold))
-                                    .foregroundStyle(store.color)
+                                    .foregroundStyle(entry.store.color)
                                 Spacer()
-                                Text("\(store.pendingItems.filter { !$0.isUrgent }.count) Artikel")
+                                Text("\(entry.items.count) Artikel")
                                     .font(.system(size: 11))
-                                    .foregroundStyle(store.color.opacity(0.7))
+                                    .foregroundStyle(entry.store.color.opacity(0.7))
                             }
                         }
                     }
                 }
             }
-            .navigationTitle("Alle Artikel (\(totalPending))")
+            .navigationTitle("Alle Artikel (\(pendingItems.count))")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

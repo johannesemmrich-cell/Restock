@@ -49,20 +49,32 @@ actor MealIngredientService {
         #if canImport(FoundationModels)
         let model = SystemLanguageModel.default
         guard case .available = model.availability else { return nil }
-        let session = LanguageModelSession()
         let prompt = """
         Gib mir die Hauptzutaten für das Gericht "\(mealName)" als JSON-Array von Strings auf Deutsch.
         Nur Zutatennamen, keine Mengen, keine Einheiten, 4–8 Zutaten.
         Antworte NUR mit dem JSON-Array, z.B.: ["Mehl","Eier","Milch"]
         """
-        let response = try await session.respond(to: prompt)
-        return parseStringArray(from: response.content)
+        // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen
+        return try await withThrowingTaskGroup(of: [String]?.self) { group in
+            group.addTask {
+                let session = LanguageModelSession()
+                let response = try await session.respond(to: prompt)
+                return self.parseStringArray(from: response.content)
+            }
+            group.addTask {
+                try await Task.sleep(for: .seconds(25))
+                return nil
+            }
+            defer { group.cancelAll() }
+            for try await result in group { return result }
+            return nil
+        }
         #else
         return nil
         #endif
     }
 
-    private func parseStringArray(from text: String) -> [String]? {
+    nonisolated private func parseStringArray(from text: String) -> [String]? {
         guard let start = text.range(of: "["),
               let end = text.range(of: "]", options: .backwards),
               start.lowerBound <= end.lowerBound else { return nil }
