@@ -74,6 +74,7 @@ struct HomeView: View {
                     checkPendingQuickAdd()
                 }
             }
+            .onChange(of: allRecords.count) { refreshDueSoon() }
             .devFeedback(context: "Startseite")
         }
         .overlay {
@@ -503,6 +504,14 @@ struct HomeView: View {
                          : String(format: String(localized: "replenish.in.days"), pattern.daysUntilNeeded))
                         .font(.system(size: 12))
                         .foregroundStyle(.secondary)
+                    Button {
+                        addSingleDueItem(pattern)
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(.orange)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -651,6 +660,8 @@ struct HomeView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
             withAnimation(.spring(response: 0.4)) { quickAddSucceeded = false }
         }
+        // Tastatur offen lassen — Nutzer kann direkt weitertippen
+        DispatchQueue.main.async { isQuickAddFocused = true }
     }
 
     private func activateQuickAdd() {
@@ -696,5 +707,12 @@ struct HomeView: View {
             context.insert(ShoppingItem(name: pattern.itemName, store: store))
         }
         dueSoonItems = []
+    }
+
+    private func addSingleDueItem(_ pattern: ConsumptionPattern) {
+        let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
+        context.insert(ShoppingItem(name: pattern.itemName, store: store))
+        dueSoonItems.removeAll { $0.itemName == pattern.itemName }
+        Haptics.impact(.light)
     }
 }

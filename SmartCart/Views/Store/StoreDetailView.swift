@@ -12,6 +12,7 @@ struct StoreDetailView: View {
     @State private var completionOrder: [String] = []
     @State private var quickAddText: String = ""
     @State private var isSyncing = false
+    @FocusState private var isQuickAddFocused: Bool
     @Query private var allRecords: [PurchaseRecord]
 
     private var total: Double {
@@ -30,7 +31,8 @@ struct StoreDetailView: View {
                         .foregroundStyle(store.color)
                         .font(.system(size: 18))
                     TextField(String(localized: "home.quickadd.placeholder"), text: $quickAddText)
-                        .submitLabel(.done)
+                        .focused($isQuickAddFocused)
+                        .submitLabel(.continue)
                         .onSubmit { quickAdd() }
                     if !quickAddText.isEmpty {
                         Button { quickAddText = "" } label: {
@@ -182,7 +184,7 @@ struct StoreDetailView: View {
         .sheet(isPresented: $showAddItem) { AddItemView() }
         .sheet(isPresented: $showShareSheet) { StoreShareSheet(store: store) }
         .sheet(isPresented: $showReceiptScanner) {
-            ReceiptScannerView(storeName: store.name)
+            ReceiptScannerView(store: store)
         }
         .sheet(item: $editingItem) { item in EditItemView(item: item) }
         .confirmationDialog(
@@ -327,6 +329,8 @@ struct StoreDetailView: View {
             store: store
         ))
         quickAddText = ""
+        // Tastatur offen lassen — Nutzer kann direkt den nächsten Artikel tippen
+        DispatchQueue.main.async { isQuickAddFocused = true }
     }
 
     // MARK: - Frequency row
@@ -376,6 +380,7 @@ struct StoreDetailView: View {
                 Haptics.success()
             }
         }
+        LiveActivityService.shared.update(for: store)
     }
 
     private func clearCompleted() {

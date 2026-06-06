@@ -15,7 +15,7 @@ struct EditableReceiptLine: Identifiable {
 // MARK: - Main Scanner View
 
 struct ReceiptScannerView: View {
-    let storeName: String
+    @Bindable var store: Store
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -41,7 +41,7 @@ struct ReceiptScannerView: View {
                 case .review:     reviewView
                 }
             }
-            .navigationTitle("Bon scannen — \(storeName)")
+            .navigationTitle("Bon scannen — \(store.name)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -203,13 +203,17 @@ struct ReceiptScannerView: View {
     private func save() {
         let included = parsedLines.filter { $0.isIncluded && $0.price > 0 }
         let cutoff = Date().addingTimeInterval(-7 * 24 * 3600)
+        let storeNameLower = store.name.lowercased()
 
         for line in included {
             let lineLower = line.name.lowercased()
 
+            // Learn price for this store — overwrites previous learned price for this item
+            store.learnedPrices[lineLower] = line.price
+
             // Try to update an existing recent record for this store rather than creating a duplicate.
             let match = allRecords.first { record in
-                record.storeName.lowercased() == storeName.lowercased() &&
+                record.storeName.lowercased() == storeNameLower &&
                 record.date >= cutoff &&
                 (record.itemName.lowercased().contains(lineLower) ||
                  lineLower.contains(record.itemName.lowercased()))
@@ -220,7 +224,7 @@ struct ReceiptScannerView: View {
             } else {
                 modelContext.insert(PurchaseRecord(
                     itemName: line.name,
-                    storeName: storeName,
+                    storeName: store.name,
                     quantityAmount: 1,
                     unit: "",
                     actualPrice: line.price

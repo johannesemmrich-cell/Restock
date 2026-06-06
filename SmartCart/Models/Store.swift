@@ -15,6 +15,8 @@ class Store {
     var isCustom: Bool
     // Learned aisle order: item name -> average completion position
     var itemOrderMap: [String: Double]
+    // Learned prices per store: item name (lowercased) -> last confirmed price from receipt
+    var learnedPrices: [String: Double]
 
     @Relationship(deleteRule: .cascade, inverse: \ShoppingItem.store)
     var items: [ShoppingItem] = []
@@ -52,6 +54,7 @@ class Store {
         self.countryCode = countryCode
         self.isCustom = isCustom
         self.itemOrderMap = [:]
+        self.learnedPrices = [:]
     }
 
     var color: Color {

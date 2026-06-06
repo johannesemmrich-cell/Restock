@@ -11,8 +11,14 @@ enum ReceiptParserService {
         "datum", "uhrzeit", "tel", "www", "danke", "tschüss", "zahlung",
         "kreditkarte", "ec-karte", "gegeben", "rückgeld", "zwischensumme",
         "pfand", "leergut", "steuer", "netto", "brutto", "kundenquittung",
-        "filiale", "öffnungszeiten", "kassierer", "kassenbon"
+        "filiale", "öffnungszeiten", "kassierer", "kassenbon",
+        // Währungscodes und -symbole
+        "eur", "euro", "chf", "gbp", "usd", "dkk", "sek", "nok", "pln", "czk",
+        "tva", "tasa", "tax", "vat"
     ]
+
+    // Regex zum Entfernen führender Artikelnummern (5+ Ziffern gefolgt von Leerzeichen)
+    private static let articleNumberRegex = try? NSRegularExpression(pattern: #"^\d{5,}\s+"#)
 
     static func parse(_ lines: [String]) -> [ReceiptLine] {
         // Match: any leading text, then whitespace, then a German/English price (e.g. 1,99 or 1.99),
@@ -45,10 +51,18 @@ enum ReceiptParserService {
                   let nameRange = Range(match.range(at: 1), in: trimmed),
                   let priceRange = Range(match.range(at: 2), in: trimmed) else { continue }
 
-            let rawName = String(trimmed[nameRange]).trimmingCharacters(in: .whitespaces)
+            var rawName = String(trimmed[nameRange]).trimmingCharacters(in: .whitespaces)
+
+            // Strip leading article numbers (e.g. "123456 HACKFLEISCH" → "HACKFLEISCH")
+            if let regex = articleNumberRegex {
+                let nsRange = NSRange(rawName.startIndex..., in: rawName)
+                rawName = regex.stringByReplacingMatches(in: rawName, range: nsRange, withTemplate: "")
+                    .trimmingCharacters(in: .whitespaces)
+            }
+
             let rawPrice = String(trimmed[priceRange]).replacingOccurrences(of: ",", with: ".")
 
-            // Name must be at least 2 chars and not start with a digit (avoid pure number lines).
+            // Name must be at least 2 chars and not start with a digit.
             guard rawName.count >= 2,
                   !(rawName.first?.isNumber ?? true),
                   let price = Double(rawPrice),

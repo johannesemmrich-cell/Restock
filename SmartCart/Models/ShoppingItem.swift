@@ -41,18 +41,26 @@ class ShoppingItem {
         self.addedDate = Date()
         self.note = note
         self.store = store
-        self.estimatedPrice = PriceEstimator.estimate(for: name, category: category)
+        // Use store-specific learned price first (fuzzy: "Hackfleisch" matches "Hackfleisch Gemischt 500g"),
+        // then fall back to generic estimator
+        let itemLower = name.lowercased()
+        let learnedPrice = store?.learnedPrices.first { key, _ in
+            key.count >= 3 && itemLower.count >= 3 &&
+            (key.contains(itemLower) || itemLower.contains(key))
+        }?.value
+        self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category)
     }
 
     func markCompleted() {
         isCompleted = true
         completedDate = Date()
+        // actualPrice left nil — real prices come from receipt scanning only, not estimates
         let record = PurchaseRecord(
             itemName: name,
             storeName: store?.name ?? "",
             quantityAmount: quantityAmount,
             unit: unit,
-            actualPrice: estimatedPrice
+            actualPrice: nil
         )
         record.item = self
         purchaseRecords.append(record)
