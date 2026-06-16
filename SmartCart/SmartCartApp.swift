@@ -12,32 +12,66 @@ struct SmartCartApp: App {
     init() {
         CloudPreferencesSync.shared.start()
 
-        let schema = Schema(versionedSchema: SchemaV1.self)
-        let cloudConfig = ModelConfiguration(schema: schema, cloudKitDatabase: .private("iCloud.com.johannesemmrich.SmartCart"))
-        let localConfig = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
-        do {
-            container = try ModelContainer(for: schema, migrationPlan: SmartCartMigrationPlan.self, configurations: cloudConfig)
-        } catch {
-            // CloudKit nicht verfügbar — lokaler Fallback
-            do {
-                container = try ModelContainer(for: schema, migrationPlan: SmartCartMigrationPlan.self, configurations: localConfig)
-            } catch {
-                // Store-Korruption — löschen und neu anlegen
-                Self.deleteStoreFiles()
-                do {
-                    container = try ModelContainer(for: schema, migrationPlan: SmartCartMigrationPlan.self, configurations: localConfig)
-                } catch {
-                    fatalError("Failed to create ModelContainer: \(error)")
-                }
-            }
+        let schema = Schema([Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self])
+        // iOS 26: Defaults für groupContainer und cloudKitDatabase sind jetzt .automatic statt .none.
+        // Lokale Konfigurationen müssen .none explizit setzen, sonst greift SwiftData automatisch
+        // auf die App-Group und CloudKit zu — was im Simulator ohne iCloud-Login fehlschlägt.
+        let localConfig = ModelConfiguration(
+            groupContainer: .none,
+            cloudKitDatabase: .none
+        )
+
+        // 1. CloudKit
+        if let c = try? ModelContainer(
+            for: schema,
+            configurations: ModelConfiguration(
+                groupContainer: .none,
+                cloudKitDatabase: .private("iCloud.com.johannesemmrich.SmartCart")
+            )
+        ) {
+            container = c
+            return
         }
+
+        // 2. Lokaler Store (explizit kein CloudKit, kein Group-Container)
+        if let c = try? ModelContainer(for: schema, configurations: localConfig) {
+            container = c
+            return
+        }
+
+        // 3. Store-Dateien löschen + nochmal
+        Self.deleteStoreFiles()
+        if let c = try? ModelContainer(for: schema, configurations: localConfig) {
+            container = c
+            return
+        }
+
+        // 4. In-Memory — kann nie fehlschlagen
+        container = try! ModelContainer(
+            for: schema,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true, groupContainer: .none, cloudKitDatabase: .none)
+        )
     }
 
     private static func deleteStoreFiles() {
-        guard let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return }
-        for name in ["default", "SmartCartCloud"] {
-            for ext in ["store", "store-shm", "store-wal"] {
-                try? FileManager.default.removeItem(at: appSupport.appendingPathComponent("\(name).\(ext)"))
+        // Normaler App-Container
+        if let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            if let contents = try? FileManager.default.contentsOfDirectory(at: appSupport, includingPropertiesForKeys: nil) {
+                for url in contents where url.pathExtension == "store"
+                    || url.lastPathComponent.hasSuffix(".store-shm")
+                    || url.lastPathComponent.hasSuffix(".store-wal") {
+                    try? FileManager.default.removeItem(at: url)
+                }
+            }
+        }
+        // iOS 26: Group-Container (falls SwiftData dort gespeichert hat)
+        if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.johannesemmrich.SmartCart") {
+            if let contents = try? FileManager.default.contentsOfDirectory(at: groupURL, includingPropertiesForKeys: nil) {
+                for url in contents where url.pathExtension == "store"
+                    || url.lastPathComponent.hasSuffix(".store-shm")
+                    || url.lastPathComponent.hasSuffix(".store-wal") {
+                    try? FileManager.default.removeItem(at: url)
+                }
             }
         }
     }
