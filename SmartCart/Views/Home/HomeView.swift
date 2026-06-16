@@ -3,7 +3,7 @@ import SwiftData
 import UIKit
 
 struct HomeView: View {
-    @Query(filter: #Predicate<Store> { $0.isActive }) private var activeStores: [Store]
+    @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
     @Query private var allRecords: [PurchaseRecord]
     @Environment(\.modelContext) private var context
 
@@ -96,6 +96,7 @@ struct HomeView: View {
         }
         .onChange(of: totalPending) { _, newValue in
             if newValue == 0 && bannerExpanded { closeBanner() }
+            refreshDueSoon()
         }
     }
 
@@ -512,6 +513,14 @@ struct HomeView: View {
                             .foregroundStyle(.orange)
                     }
                     .buttonStyle(.plain)
+                    Button {
+                        dismissDueItem(pattern)
+                    } label: {
+                        Image(systemName: "xmark.circle")
+                            .font(.system(size: 18))
+                            .foregroundStyle(.secondary.opacity(0.7))
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -685,8 +694,15 @@ struct HomeView: View {
     }
 
     private func refreshDueSoon() {
-        dueSoonItems = HabitService.dueSoonItems(allRecords: allRecords)
+        let allPatterns = HabitService.dueSoonItems(allRecords: allRecords)
+        let pendingNames = Set(activeStores.flatMap { $0.pendingItems.map { $0.name.lowercased() } })
+        dueSoonItems = allPatterns.filter { !pendingNames.contains($0.itemName.lowercased()) }
         HabitService.scheduleReplenishmentNotifications(patterns: dueSoonItems)
+    }
+
+    private func dismissDueItem(_ pattern: ConsumptionPattern) {
+        dueSoonItems.removeAll { $0.itemName == pattern.itemName }
+        Haptics.impact(.light)
     }
 
     private func registerShortcutItems() {

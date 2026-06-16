@@ -6,11 +6,16 @@ struct StoreSetupView: View {
     @Query private var allStores: [Store]
     @State private var showAddCustomStore = false
     @State private var storeToDelete: Store? = nil
+    @State private var editMode: EditMode = .inactive
+
+    private var sortedActiveStores: [Store] {
+        allStores.filter { $0.isActive }.sorted { $0.sortIndex < $1.sortIndex }
+    }
 
     var body: some View {
         List {
             Section(String(localized: "stores.active")) {
-                ForEach(allStores.filter { $0.isActive }) { store in
+                ForEach(sortedActiveStores) { store in
                     StoreRow(store: store)
                         .swipeActions(edge: .trailing) {
                             Button {
@@ -21,6 +26,13 @@ struct StoreSetupView: View {
                             }
                             .tint(.orange)
                         }
+                }
+                .onMove { from, to in
+                    var arr = sortedActiveStores
+                    arr.move(fromOffsets: from, toOffset: to)
+                    for (i, s) in arr.enumerated() {
+                        s.sortIndex = i
+                    }
                 }
             }
             if !allStores.filter({ !$0.isActive }).isEmpty {
@@ -60,6 +72,12 @@ struct StoreSetupView: View {
             }
         }
         .navigationTitle(String(localized: "stores.title"))
+        .environment(\.editMode, $editMode)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                EditButton()
+            }
+        }
         .sheet(isPresented: $showAddCustomStore) {
             AddCustomStoreView()
         }
@@ -85,6 +103,8 @@ struct StoreSetupView: View {
 
 struct StoreRow: View {
     @Bindable var store: Store
+    @State private var showEmojiEdit = false
+    @State private var emojiDraft = ""
 
     private var freq: Binding<VisitFrequency> {
         Binding(
@@ -96,8 +116,22 @@ struct StoreRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(store.emoji)
-                    .font(.system(size: 22))
+                Button {
+                    emojiDraft = store.emoji
+                    showEmojiEdit = true
+                    Haptics.impact(.light)
+                } label: {
+                    ZStack(alignment: .bottomTrailing) {
+                        Text(store.emoji)
+                            .font(.system(size: 22))
+                        Image(systemName: "pencil.circle.fill")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.blue)
+                            .background(Color(.systemBackground), in: Circle())
+                    }
+                }
+                .buttonStyle(.plain)
+
                 VStack(alignment: .leading, spacing: 1) {
                     Text(store.name)
                         .font(.system(size: 16, weight: .medium))
@@ -121,6 +155,42 @@ struct StoreRow: View {
             }
         }
         .padding(.vertical, 4)
+        .sheet(isPresented: $showEmojiEdit) {
+            NavigationStack {
+                VStack(spacing: 20) {
+                    Text(emojiDraft.isEmpty ? "🛒" : String(emojiDraft.prefix(2)))
+                        .font(.system(size: 64))
+                        .padding(.top, 24)
+                    TextField("🛒", text: $emojiDraft)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 32))
+                        .frame(width: 80)
+                        .padding(12)
+                        .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 12))
+                    Text("Emoji-Taste auf der Tastatur tippen")
+                        .font(.system(size: 13))
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+                .navigationTitle("Emoji ändern")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Abbrechen") { showEmojiEdit = false }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Speichern") {
+                            let e = emojiDraft.trimmingCharacters(in: .whitespaces)
+                            if !e.isEmpty { store.emoji = String(e.prefix(2)) }
+                            showEmojiEdit = false
+                            Haptics.success()
+                        }
+                        .fontWeight(.semibold)
+                    }
+                }
+            }
+            .presentationDetents([.height(300)])
+        }
     }
 }
 

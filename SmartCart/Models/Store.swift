@@ -17,6 +17,7 @@ class Store {
     var itemOrderMap: [String: Double]
     // Learned prices per store: item name (lowercased) -> last confirmed price from receipt
     var learnedPrices: [String: Double]
+    var sortIndex: Int = 0
 
     @Relationship(deleteRule: .cascade, inverse: \ShoppingItem.store)
     var items: [ShoppingItem] = []
