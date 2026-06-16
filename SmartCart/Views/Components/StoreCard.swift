@@ -2,6 +2,7 @@ import SwiftUI
 
 struct StoreCard: View {
     let store: Store
+    @Environment(\.colorScheme) private var colorScheme
 
     private var pendingCount: Int { store.pendingItems.count }
     private var freq: VisitFrequency { VisitFrequency.closest(to: store.visitsPerWeek) }
@@ -17,7 +18,7 @@ struct StoreCard: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 14)
-                .background(store.color.gradient.opacity(0.15))
+                .background(store.color.gradient.opacity(colorScheme == .dark ? 0.25 : 0.15))
 
                 if store.isPaused {
                     Image(systemName: "moon.fill")
@@ -72,9 +73,18 @@ struct StoreCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(store.isPaused ? Color(.systemGray4) : store.color.opacity(pendingCount > 0 ? 0.3 : 0.12), lineWidth: 1.5)
+                .stroke(
+                    store.isPaused ? Color(.systemGray4)
+                        : store.color.opacity(colorScheme == .dark
+                            ? (pendingCount > 0 ? 0.5 : 0.25)
+                            : (pendingCount > 0 ? 0.3 : 0.12)),
+                    lineWidth: 1.5
+                )
         )
-        .shadow(color: store.color.opacity(store.isPaused ? 0 : (pendingCount > 0 ? 0.12 : 0.04)), radius: 10, x: 0, y: 4)
+        .shadow(
+            color: store.color.opacity(store.isPaused || colorScheme == .dark ? 0 : (pendingCount > 0 ? 0.12 : 0.04)),
+            radius: 10, x: 0, y: 4
+        )
         .opacity(store.isPaused ? 0.45 : 1.0)
         .contentShape(RoundedRectangle(cornerRadius: 16))
     }

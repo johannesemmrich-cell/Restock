@@ -12,6 +12,7 @@ struct RecipeImportView: View {
     @State private var isRecognizing = false
     @State private var recognizedIngredients: [RecognizedIngredient] = []
     @State private var selectedIngredients: Set<String> = []
+    @State private var ingredientsExpanded = true
     @State private var error: String?
 
     var body: some View {
@@ -128,49 +129,60 @@ struct RecipeImportView: View {
     private var ingredientList: some View {
         List {
             Section {
-                HStack {
-                    Button(String(localized: "recipe.select.all")) {
-                        selectedIngredients = Set(recognizedIngredients.map { $0.id.uuidString })
+                DisclosureGroup(isExpanded: $ingredientsExpanded) {
+                    HStack {
+                        Button(String(localized: "recipe.select.all")) {
+                            selectedIngredients = Set(recognizedIngredients.map { $0.id.uuidString })
+                        }
+                        Spacer()
+                        Button(String(localized: "recipe.deselect.all")) {
+                            selectedIngredients.removeAll()
+                        }
                     }
-                    Spacer()
-                    Button(String(localized: "recipe.deselect.all")) {
-                        selectedIngredients.removeAll()
-                    }
-                }
-                .font(.system(size: 14))
-            }
+                    .font(.system(size: 14))
 
-            Section(String(localized: "recipe.ingredients.section")) {
-                ForEach(recognizedIngredients) { ingredient in
-                    let selected = selectedIngredients.contains(ingredient.id.uuidString)
-                    HStack(spacing: 12) {
-                        Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 20))
-                            .foregroundStyle(selected ? .blue : Color(.systemGray3))
+                    ForEach(recognizedIngredients) { ingredient in
+                        let selected = selectedIngredients.contains(ingredient.id.uuidString)
+                        HStack(spacing: 12) {
+                            Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                                .font(.system(size: 20))
+                                .foregroundStyle(selected ? .blue : Color(.systemGray3))
 
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(ingredient.name)
-                                .font(.system(size: 15))
-                            if !ingredient.quantity.isEmpty && ingredient.quantity != "1" || !ingredient.unit.isEmpty {
-                                Text("\(ingredient.quantity) \(ingredient.unit)".trimmingCharacters(in: .whitespaces))
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(.secondary)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(ingredient.name)
+                                    .font(.system(size: 15))
+                                if !ingredient.quantity.isEmpty && ingredient.quantity != "1" || !ingredient.unit.isEmpty {
+                                    Text("\(ingredient.quantity) \(ingredient.unit)".trimmingCharacters(in: .whitespaces))
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+
+                            Spacer()
+
+                            if let store = AssignmentService.assign(itemName: ingredient.name, to: activeStores) {
+                                Text(store.emoji)
                             }
                         }
-
-                        Spacer()
-
-                        if let store = AssignmentService.assign(itemName: ingredient.name, to: activeStores) {
-                            Text(store.emoji)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if selected {
+                                selectedIngredients.remove(ingredient.id.uuidString)
+                            } else {
+                                selectedIngredients.insert(ingredient.id.uuidString)
+                            }
                         }
                     }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        if selected {
-                            selectedIngredients.remove(ingredient.id.uuidString)
-                        } else {
-                            selectedIngredients.insert(ingredient.id.uuidString)
-                        }
+                } label: {
+                    HStack {
+                        Text(String(localized: "recipe.ingredients.section"))
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        Text("\(recognizedIngredients.count)")
+                            .font(.system(size: 13))
+                            .foregroundStyle(.secondary)
+                            .padding(.trailing, 4)
                     }
                 }
             }

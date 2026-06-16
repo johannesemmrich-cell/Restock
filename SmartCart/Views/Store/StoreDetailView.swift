@@ -12,6 +12,7 @@ struct StoreDetailView: View {
     @State private var completionOrder: [String] = []
     @State private var quickAddText: String = ""
     @State private var isSyncing = false
+    @State private var showConfetti = false
     @FocusState private var isQuickAddFocused: Bool
     @Query private var allRecords: [PurchaseRecord]
 
@@ -211,6 +212,21 @@ struct StoreDetailView: View {
         }
         .onChange(of: store.pendingItems.count) {
             LiveActivityService.shared.update(for: store)
+        }
+        .onChange(of: store.pendingItems.count) { oldCount, newCount in
+            if newCount == 0, oldCount > 0, !store.completedItems.isEmpty {
+                showConfetti = true
+                Task {
+                    try? await Task.sleep(for: .seconds(3.5))
+                    await MainActor.run { showConfetti = false }
+                }
+            }
+        }
+        .overlay {
+            if showConfetti {
+                ConfettiView()
+                    .transition(.opacity)
+            }
         }
     }
 
@@ -433,5 +449,63 @@ struct StoreDetailView: View {
             try? context.save()
         }
         await SharedStoreService.shared.markSynced(shareID: shareID)
+    }
+}
+
+// MARK: - Confetti
+
+private struct ConfettiView: View {
+    private struct Particle: Identifiable {
+        let id: Int
+        let color: Color
+        let x: CGFloat
+        let width: CGFloat
+        let height: CGFloat
+        let duration: Double
+        let delay: Double
+        let startAngle: Double
+        let endAngle: Double
+    }
+
+    private let particles: [Particle]
+    @State private var isDropping = false
+
+    init() {
+        let palette: [Color] = [.red, .orange, .yellow, .green, .blue, .purple, .pink, .cyan, .mint, .teal]
+        particles = (0..<100).map { i in
+            Particle(
+                id: i,
+                color: palette[i % palette.count],
+                x: CGFloat.random(in: 0.02...0.98),
+                width: CGFloat.random(in: 7...14),
+                height: CGFloat.random(in: 4...8),
+                duration: Double.random(in: 1.8...3.2),
+                delay: Double.random(in: 0...0.9),
+                startAngle: Double.random(in: -30...30),
+                endAngle: Double.random(in: 180...540)
+            )
+        }
+    }
+
+    var body: some View {
+        GeometryReader { geo in
+            ForEach(particles) { p in
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(p.color)
+                    .frame(width: p.width, height: p.height)
+                    .rotationEffect(.degrees(isDropping ? p.endAngle : p.startAngle))
+                    .offset(
+                        x: geo.size.width * (p.x - 0.5),
+                        y: isDropping ? geo.size.height * 0.5 + 40 : -geo.size.height * 0.5 - 30
+                    )
+                    .animation(
+                        .easeIn(duration: p.duration).delay(p.delay),
+                        value: isDropping
+                    )
+            }
+        }
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+        .onAppear { isDropping = true }
     }
 }

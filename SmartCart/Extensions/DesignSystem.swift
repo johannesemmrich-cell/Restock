@@ -60,6 +60,7 @@ enum VisitFrequency: Double, CaseIterable, Identifiable {
 // MARK: - Card style
 
 struct CardModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
     var padding: CGFloat = 16
 
     func body(content: Content) -> some View {
@@ -67,7 +68,7 @@ struct CardModifier: ViewModifier {
             .padding(padding)
             .background(Color.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.07), radius: 10, x: 0, y: 3)
+            .shadow(color: Color(.label).opacity(colorScheme == .dark ? 0.12 : 0.07), radius: 10, x: 0, y: 3)
     }
 }
 
