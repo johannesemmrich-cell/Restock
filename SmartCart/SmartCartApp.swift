@@ -12,10 +12,12 @@ struct SmartCartApp: App {
     init() {
         CloudPreferencesSync.shared.start()
 
-        let schema = Schema([Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self])
-        // iOS 26: Defaults für groupContainer und cloudKitDatabase sind jetzt .automatic statt .none.
-        // Lokale Konfigurationen müssen .none explizit setzen, sonst greift SwiftData automatisch
-        // auf die App-Group und CloudKit zu — was im Simulator ohne iCloud-Login fehlschlägt.
+        let schema = Schema(versionedSchema: SchemaV1.self)
+        // iOS 26 änderte die Defaults von ModelConfiguration:
+        //   vorher (iOS 18): groupContainer = .none, cloudKitDatabase = .none
+        //   jetzt  (iOS 26): groupContainer = .automatic, cloudKitDatabase = .automatic
+        // .automatic greift auf App-Group und CloudKit zu — schlägt fehl wenn iCloud
+        // nicht verfügbar ist. Deshalb immer explizit .none für lokale Configs setzen.
         let localConfig = ModelConfiguration(
             groupContainer: .none,
             cloudKitDatabase: .none
