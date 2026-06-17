@@ -17,8 +17,10 @@ struct OnboardingView: View {
                     welcomeStep
                 } else if step == 1 {
                     countryStep
-                } else {
+                } else if step == 2 {
                     storeStep
+                } else {
+                    tutorialStep
                 }
             }
             .animation(.easeInOut, value: step)
@@ -156,7 +158,7 @@ struct OnboardingView: View {
             }
 
             Button {
-                finishOnboarding()
+                step = 3
             } label: {
                 Text(String(localized: "onboarding.stores.cta"))
                     .frame(maxWidth: .infinity)
@@ -164,6 +166,55 @@ struct OnboardingView: View {
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
             .disabled(selectedStores.isEmpty)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 48)
+        }
+    }
+
+    // MARK: - Tutorial
+
+    private var tutorialStep: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 28) {
+                    VStack(spacing: 8) {
+                        Text("So funktioniert SmartCart")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Text("Zwei Funktionen, die dir am meisten Zeit sparen")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.top, 24)
+
+                    TutorialCard(
+                        icon: "plus.circle.fill",
+                        iconColor: .blue,
+                        title: "Schnell hinzufügen",
+                        description: "Tippe einfach ein, was du brauchst — SmartCart erkennt Menge und Einheit automatisch.\n\nBeispiele: \"500g Hackfleisch\", \"2 Liter Milch\", \"3 Äpfel\""
+                    )
+
+                    TutorialCard(
+                        icon: "camera.viewfinder",
+                        iconColor: .purple,
+                        title: "Kassenbon scannen",
+                        description: "Fotografiere deinen Kassenbon in der Einkaufsliste. SmartCart liest die Artikel und Preise automatisch aus und lernt damit, was welches Produkt kostet."
+                    )
+
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 24)
+            }
+
+            Button {
+                finishOnboarding()
+            } label: {
+                Text("Los geht's!")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
             .padding(.horizontal, 24)
             .padding(.bottom, 48)
         }
@@ -178,6 +229,33 @@ struct OnboardingView: View {
             _ = await NotificationService.shared.requestPermission()
         }
         hasCompletedOnboarding = true
+    }
+}
+
+private struct TutorialCard: View {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    let description: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 32))
+                .foregroundStyle(iconColor)
+                .frame(width: 44)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .font(.system(size: 16, weight: .semibold))
+                Text(description)
+                    .font(.system(size: 14))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(16)
+        .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 14))
     }
 }
 

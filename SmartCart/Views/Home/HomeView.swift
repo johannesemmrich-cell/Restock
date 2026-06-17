@@ -373,6 +373,30 @@ struct HomeView: View {
                 }
             }
 
+            // Unit chips (shown while keyboard is open)
+            if isQuickAddFocused {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(["100g", "200g", "500g", "1kg", "1l", "500ml", "1 Stk.", "2 Stk.", "1 Pkg."], id: \.self) { chip in
+                            Button {
+                                let current = addItemText.trimmingCharacters(in: .whitespaces)
+                                addItemText = current.isEmpty ? chip + " " : chip + " " + current
+                                Haptics.impact(.light)
+                            } label: {
+                                Text(chip)
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundStyle(.blue)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(Color.blue.opacity(0.1), in: Capsule())
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+
             // Smart parsing preview chip
             if let parsed = parsedHint {
                 HStack(spacing: 8) {

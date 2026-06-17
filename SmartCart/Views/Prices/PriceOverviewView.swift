@@ -1,10 +1,12 @@
 import SwiftUI
 import SwiftData
+import Charts
 
 struct PriceOverviewView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @Query(sort: \PurchaseRecord.date, order: .reverse) private var allRecords: [PurchaseRecord]
+    @Query(filter: #Predicate<ShoppingItem> { !$0.isCompleted }) private var pendingItems: [ShoppingItem]
 
     @State private var selectedTab = 0  // 0 = Vergleich, 1 = Prognosen, 2 = Kassenbons, 3 = Ausgaben
     @State private var expandedStoreKeys: Set<String> = []
@@ -314,8 +316,126 @@ struct PriceOverviewView: View {
         Haptics.impact(.medium)
     }
 
+    // MARK: - Budget estimate
+
+    private var budgetEstimate: Double {
+        pendingItems.compactMap { $0.estimatedPrice }.reduce(0, +)
+    }
+
+    private var budgetItemCount: Int {
+        pendingItems.filter { $0.estimatedPrice != nil }.count
+    }
+
+    // MARK: - Trend chart data (last 6 months)
+
+    private var trendData: [MonthData] {
+        Array(spendingByMonth.prefix(6).reversed())
+    }
+
+    // MARK: - Forgotten items (≥2 purchases, last > 60 days ago)
+
+    private struct ForgottenItem: Identifiable {
+        let id: String
+        let name: String
+        let daysSince: Int
+        let avgPrice: Double?
+    }
+
+    private var forgottenItems: [ForgottenItem] {
+        let cutoff = Date().addingTimeInterval(-60 * 86_400)
+        var byItem: [String: [PurchaseRecord]] = [:]
+        for r in allRecords where !r.itemName.trimmingCharacters(in: .whitespaces).isEmpty {
+            byItem[r.itemName.lowercased(), default: []].append(r)
+        }
+        return byItem.compactMap { key, recs -> ForgottenItem? in
+            guard recs.count >= 2 else { return nil }
+            let last = recs.max(by: { $0.date < $1.date })!
+            guard last.date < cutoff else { return nil }
+            let days = Calendar.current.dateComponents([.day], from: last.date, to: Date()).day ?? 0
+            let prices = recs.compactMap { $0.actualPrice }.filter { $0 > 0 }
+            let avgPrice = prices.isEmpty ? nil : prices.reduce(0, +) / Double(prices.count)
+            return ForgottenItem(id: key, name: last.itemName, daysSince: days, avgPrice: avgPrice)
+        }
+        .sorted { $0.daysSince > $1.daysSince }
+        .prefix(10)
+        .map { $0 }
+    }
+
     @ViewBuilder
     private var spendingHistorySections: some View {
+        // Budget estimate card
+        if budgetItemCount > 0 {
+            Section("Budgetschätzung") {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Aktueller Einkauf")
+                            .font(.system(size: 14, weight: .medium))
+                        Text("\(budgetItemCount) Artikel mit bekannten Preisen")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Text(budgetEstimate, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundStyle(.blue)
+                }
+                .padding(.vertical, 6)
+            }
+        }
+
+        // 6-month spending trend chart
+        if !trendData.isEmpty {
+            Section("Ausgaben (letzte 6 Monate)") {
+                Chart(trendData) { month in
+                    BarMark(
+                        x: .value("Monat", month.label.components(separatedBy: " ").first ?? month.label),
+                        y: .value("Ausgaben", month.total)
+                    )
+                    .foregroundStyle(LinearGradient.brand)
+                    .cornerRadius(4)
+                }
+                .frame(height: 140)
+                .chartYAxis {
+                    AxisMarks(position: .trailing) { value in
+                        AxisGridLine()
+                        AxisValueLabel {
+                            if let d = value.as(Double.self) {
+                                Text(d, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                                    .font(.system(size: 10))
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            }
+        }
+
+        // Vergessene Artikel
+        if !forgottenItems.isEmpty {
+            Section("Schon länger nicht gekauft") {
+                ForEach(forgottenItems) { item in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.name)
+                                .font(.system(size: 14))
+                            Text("Vor \(item.daysSince) Tagen zuletzt gekauft")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        if let price = item.avgPrice {
+                            Text(price, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                                .font(.system(size: 13))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+        }
+
+        // Monthly breakdown
         if spendingByMonth.isEmpty {
             Section {
                 ContentUnavailableView(
