@@ -15,6 +15,7 @@ class ShoppingItem {
     var completedDate: Date?
     var note: String
     var estimatedPrice: Double?
+    var assignedTo: String = ""
 
     var store: Store?
 

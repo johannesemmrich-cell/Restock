@@ -5,6 +5,7 @@ struct AddItemView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Query(filter: #Predicate<Store> { $0.isActive }) private var activeStores: [Store]
+    @Query private var allRecords: [PurchaseRecord]
 
     @State private var name = ""
     @State private var quantity = ""
@@ -13,6 +14,17 @@ struct AddItemView: View {
     @State private var autoAssigned = false
     @State private var note = ""
     @State private var showScanner = false
+
+    private var duplicateWarning: String? {
+        guard let store = selectedStore, !name.isEmpty else { return nil }
+        let nameLower = name.lowercased()
+        guard nameLower.count >= 3 else { return nil }
+        let match = store.pendingItems.first { item in
+            let n = item.name.lowercased()
+            return n == nameLower || (n.count >= 3 && (n.contains(nameLower) || nameLower.contains(n)))
+        }
+        return match.map { "'\($0.name)' ist bereits in der Liste" }
+    }
 
     var body: some View {
         NavigationStack {
@@ -46,6 +58,15 @@ struct AddItemView: View {
 
                     TextField(String(localized: "item.note.placeholder"), text: $note)
                         .foregroundStyle(.secondary)
+                }
+
+                if let warning = duplicateWarning {
+                    Section {
+                        Label(warning, systemImage: "exclamationmark.triangle.fill")
+                            .font(.system(size: 13))
+                            .foregroundStyle(.orange)
+                    }
+                    .listRowBackground(Color.orange.opacity(0.08))
                 }
 
                 Section(header: Text(String(localized: "item.store.section"))) {
@@ -123,6 +144,25 @@ struct AddItemView: View {
             selectedStore = store
             autoAssigned = true
         }
+        applySuggestedQuantity(for: name)
+    }
+
+    private func applySuggestedQuantity(for name: String) {
+        guard quantity.isEmpty else { return }
+        let nameLower = name.lowercased()
+        guard nameLower.count >= 3 else { return }
+        let matching = allRecords.filter { record in
+            let rn = record.itemName.lowercased()
+            return rn == nameLower || (rn.count >= 3 && (rn.contains(nameLower) || nameLower.contains(rn)))
+        }
+        guard !matching.isEmpty else { return }
+        let recent = Array(matching.sorted { $0.date > $1.date }.prefix(5))
+        let avgAmount = recent.map { $0.quantityAmount }.reduce(0, +) / Double(recent.count)
+        guard avgAmount > 0, !(avgAmount == 1 && recent.allSatisfy { $0.unit.isEmpty }) else { return }
+        let lastUnit = recent.compactMap { $0.unit.isEmpty ? nil : $0.unit }.first ?? ""
+        let qtyStr = avgAmount == Double(Int(avgAmount)) ? "\(Int(avgAmount))" : String(format: "%.1f", avgAmount)
+        quantity = qtyStr
+        if !lastUnit.isEmpty && unit.isEmpty { unit = lastUnit }
     }
 
     private func addItem() {

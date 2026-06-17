@@ -8,13 +8,18 @@ struct StoreDetailView: View {
     @State private var showClearConfirm = false
     @State private var showReceiptScanner = false
     @State private var showShareSheet = false
+    @State private var showTemplatePicker = false
+    @State private var showSaveTemplateAlert = false
+    @State private var templateName = ""
     @State private var editingItem: ShoppingItem?
     @State private var completionOrder: [String] = []
     @State private var quickAddText: String = ""
     @State private var isSyncing = false
     @State private var showConfetti = false
+    @State private var periodicSyncTask: Task<Void, Never>?
     @FocusState private var isQuickAddFocused: Bool
     @Query private var allRecords: [PurchaseRecord]
+    @ObservedObject private var templateService = TemplateService.shared
 
     private var total: Double {
         store.pendingItems.compactMap { $0.estimatedPrice }.reduce(0, +)
@@ -44,21 +49,39 @@ struct StoreDetailView: View {
                     }
                 }
                 if let parsed = quickAddParsed {
-                    HStack(spacing: 8) {
-                        if parsed.quantityAmount != 1 || !parsed.unit.isEmpty {
-                            Text(parsed.unit.isEmpty ? "\(parsed.quantity)×"
-                                 : (parsed.quantityAmount != 1 ? "\(parsed.quantity) \(parsed.unit)" : parsed.unit))
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 8).padding(.vertical, 3)
-                                .background(store.color, in: Capsule())
+                    VStack(spacing: 4) {
+                        HStack(spacing: 8) {
+                            if parsed.quantityAmount != 1 || !parsed.unit.isEmpty {
+                                Text(parsed.unit.isEmpty ? "\(parsed.quantity)×"
+                                     : (parsed.quantityAmount != 1 ? "\(parsed.quantity) \(parsed.unit)" : parsed.unit))
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8).padding(.vertical, 3)
+                                    .background(store.color, in: Capsule())
+                            } else if let hint = historicQuantityHint(for: parsed.name) {
+                                Text(hint)
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8).padding(.vertical, 3)
+                                    .background(store.color.opacity(0.7), in: Capsule())
+                            }
+                            Text(parsed.name)
+                                .font(.system(size: 13, weight: .medium))
+                            Spacer()
+                            Image(systemName: "return")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
                         }
-                        Text(parsed.name)
-                            .font(.system(size: 13, weight: .medium))
-                        Spacer()
-                        Image(systemName: "return")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.secondary)
+                        if let dup = quickAddDuplicate(for: parsed.name) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .font(.system(size: 11))
+                                Text("'\(dup.name)' bereits in der Liste")
+                                    .font(.system(size: 12))
+                                Spacer()
+                            }
+                            .foregroundStyle(.orange)
+                        }
                     }
                     .padding(.horizontal, 6).padding(.vertical, 5)
                     .background(store.color.opacity(0.08))
@@ -164,13 +187,27 @@ struct StoreDetailView: View {
                     } label: {
                         Image(systemName: store.shareID != nil ? "person.2.fill" : "person.2")
                     }
-                    if !store.completedItems.isEmpty {
-                        Button {
-                            showReceiptScanner = true
-                            Haptics.impact(.light)
-                        } label: {
-                            Image(systemName: "doc.text.viewfinder")
+                    Menu {
+                        if !store.completedItems.isEmpty {
+                            Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
+                                showReceiptScanner = true
+                                Haptics.impact(.light)
+                            }
                         }
+                        Button("Als Vorlage speichern", systemImage: "plus.rectangle.on.folder") {
+                            templateName = store.name
+                            showSaveTemplateAlert = true
+                            Haptics.impact(.light)
+                        }
+                        .disabled(store.pendingItems.isEmpty)
+                        if !templateService.templates.isEmpty {
+                            Button("Vorlage laden", systemImage: "folder") {
+                                showTemplatePicker = true
+                                Haptics.impact(.light)
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
                     }
                     Button {
                         showAddItem = true
@@ -184,10 +221,20 @@ struct StoreDetailView: View {
         }
         .sheet(isPresented: $showAddItem) { AddItemView() }
         .sheet(isPresented: $showShareSheet) { StoreShareSheet(store: store) }
-        .sheet(isPresented: $showReceiptScanner) {
-            ReceiptScannerView(store: store)
-        }
+        .sheet(isPresented: $showReceiptScanner) { ReceiptScannerView(store: store) }
         .sheet(item: $editingItem) { item in EditItemView(item: item) }
+        .sheet(isPresented: $showTemplatePicker) {
+            TemplatePickerSheet(service: templateService) { template in
+                loadTemplate(template)
+            }
+        }
+        .alert("Vorlage speichern", isPresented: $showSaveTemplateAlert) {
+            TextField("Name", text: $templateName)
+            Button("Speichern") { saveAsTemplate() }
+            Button("Abbrechen", role: .cancel) { templateName = "" }
+        } message: {
+            Text("\(store.pendingItems.count) Artikel werden gespeichert")
+        }
         .confirmationDialog(
             String(localized: "list.clear.confirm"),
             isPresented: $showClearConfirm,
@@ -202,9 +249,17 @@ struct StoreDetailView: View {
             LiveActivityService.shared.start(for: store)
             if store.shareID != nil {
                 Task { await syncSharedStore() }
+                periodicSyncTask = Task {
+                    while !Task.isCancelled {
+                        try? await Task.sleep(for: .seconds(30))
+                        if !Task.isCancelled { await syncSharedStore() }
+                    }
+                }
             }
         }
         .onDisappear {
+            periodicSyncTask?.cancel()
+            periodicSyncTask = nil
             LiveActivityService.shared.end(for: store)
             if store.shareID != nil {
                 Task { try? await SharedStoreService.shared.push(store: store) }
@@ -257,6 +312,15 @@ struct StoreDetailView: View {
                     Label(String(localized: "item.action.check"), systemImage: "checkmark")
                 }
                 .tint(.green)
+                Button {
+                    let myDevice = UIDevice.current.name
+                    withAnimation { item.assignedTo = item.assignedTo == myDevice ? "" : myDevice }
+                    Haptics.impact(.light)
+                } label: {
+                    Label(item.assignedTo.isEmpty ? "Mir zuweisen" : "Freigeben",
+                          systemImage: item.assignedTo.isEmpty ? "person.badge.plus" : "person.badge.minus")
+                }
+                .tint(.indigo)
             }
     }
 
@@ -336,16 +400,38 @@ struct StoreDetailView: View {
         Haptics.impact(.light)
         let parsed = QuickAddParser.parse(trimmed)
         let category = AssignmentService.category(for: parsed.name)
+
+        // Apply historic quantity when user didn't specify one
+        var finalQty = parsed.quantity
+        var finalAmount = parsed.quantityAmount
+        var finalUnit = parsed.unit
+        if parsed.quantityAmount == 1 && parsed.unit.isEmpty,
+           let nameLower = Optional(parsed.name.lowercased()), nameLower.count >= 3 {
+            let matching = allRecords.filter { record in
+                let rn = record.itemName.lowercased()
+                return rn == nameLower || (rn.count >= 3 && (rn.contains(nameLower) || nameLower.contains(rn)))
+            }
+            if !matching.isEmpty {
+                let recent = Array(matching.sorted { $0.date > $1.date }.prefix(5))
+                let avg = recent.map { $0.quantityAmount }.reduce(0, +) / Double(recent.count)
+                let histUnit = recent.compactMap { $0.unit.isEmpty ? nil : $0.unit }.first ?? ""
+                if avg > 0 && !(avg == 1 && histUnit.isEmpty) {
+                    finalAmount = avg
+                    finalQty = avg == Double(Int(avg)) ? "\(Int(avg))" : String(format: "%.1f", avg)
+                    finalUnit = histUnit
+                }
+            }
+        }
+
         context.insert(ShoppingItem(
             name: parsed.name,
             category: category,
-            quantity: parsed.quantity,
-            quantityAmount: parsed.quantityAmount,
-            unit: parsed.unit,
+            quantity: finalQty,
+            quantityAmount: finalAmount,
+            unit: finalUnit,
             store: store
         ))
         quickAddText = ""
-        // Tastatur offen lassen — Nutzer kann direkt den nächsten Artikel tippen
         DispatchQueue.main.async { isQuickAddFocused = true }
     }
 
@@ -406,6 +492,58 @@ struct StoreDetailView: View {
         }
     }
 
+    // MARK: - QuickAdd helpers
+
+    private func quickAddDuplicate(for name: String) -> ShoppingItem? {
+        let nameLower = name.lowercased()
+        guard nameLower.count >= 3 else { return nil }
+        return store.pendingItems.first { item in
+            let n = item.name.lowercased()
+            return n == nameLower || (n.count >= 3 && (n.contains(nameLower) || nameLower.contains(n)))
+        }
+    }
+
+    private func historicQuantityHint(for name: String) -> String? {
+        let nameLower = name.lowercased()
+        guard nameLower.count >= 3 else { return nil }
+        let matching = allRecords.filter { record in
+            let rn = record.itemName.lowercased()
+            return rn == nameLower || (rn.count >= 3 && (rn.contains(nameLower) || nameLower.contains(rn)))
+        }
+        guard !matching.isEmpty else { return nil }
+        let recent = Array(matching.sorted { $0.date > $1.date }.prefix(5))
+        let avgAmount = recent.map { $0.quantityAmount }.reduce(0, +) / Double(recent.count)
+        guard avgAmount > 0 else { return nil }
+        let lastUnit = recent.compactMap { $0.unit.isEmpty ? nil : $0.unit }.first ?? ""
+        guard !(avgAmount == 1 && lastUnit.isEmpty) else { return nil }
+        let qtyStr = avgAmount == Double(Int(avgAmount)) ? "\(Int(avgAmount))" : String(format: "%.1f", avgAmount)
+        return lastUnit.isEmpty ? "\(qtyStr)×" : "\(qtyStr) \(lastUnit)"
+    }
+
+    // MARK: - Templates
+
+    private func saveAsTemplate() {
+        let name = templateName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+        templateService.saveTemplate(name: name, from: store)
+        templateName = ""
+        Haptics.success()
+    }
+
+    private func loadTemplate(_ template: ListTemplate) {
+        for item in template.items {
+            context.insert(ShoppingItem(
+                name: item.name,
+                category: item.category,
+                quantity: item.quantity,
+                quantityAmount: item.quantityAmount,
+                unit: item.unit,
+                store: store
+            ))
+        }
+        Haptics.success()
+    }
+
     private func syncSharedStore() async {
         guard let shareID = store.shareID else { return }
         isSyncing = true
@@ -433,6 +571,7 @@ struct StoreDetailView: View {
                     local.unit = remote.unit
                     local.note = remote.note
                     local.category = remote.category
+                    local.assignedTo = remote.assignedTo
                 } else {
                     let item = ShoppingItem(
                         name: remote.name, category: remote.category,
@@ -442,6 +581,7 @@ struct StoreDetailView: View {
                     item.id = remote.id
                     item.isCompleted = remote.isCompleted
                     item.isUrgent = remote.isUrgent
+                    item.assignedTo = remote.assignedTo
                     context.insert(item)
                 }
             }
@@ -507,5 +647,50 @@ private struct ConfettiView: View {
         .ignoresSafeArea()
         .allowsHitTesting(false)
         .onAppear { isDropping = true }
+    }
+}
+
+// MARK: - Template Picker Sheet
+
+private struct TemplatePickerSheet: View {
+    @ObservedObject var service: TemplateService
+    let onSelect: (ListTemplate) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(service.templates.sorted { $0.createdAt > $1.createdAt }) { template in
+                    Button {
+                        onSelect(template)
+                        dismiss()
+                    } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(template.name)
+                                .font(.headline)
+                                .foregroundStyle(.primary)
+                            Text("\(template.storeEmoji) \(template.storeName) · \(template.items.count) Artikel")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 2)
+                    }
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            service.delete(id: template.id)
+                        } label: {
+                            Label("Löschen", systemImage: "trash")
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Vorlage laden")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Abbrechen") { dismiss() }
+                }
+            }
+        }
     }
 }

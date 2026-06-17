@@ -63,6 +63,19 @@ struct ItemRow: View {
                             .font(.system(size: 12))
                             .foregroundStyle(.tertiary)
                     }
+                    if !item.assignedTo.isEmpty && !item.isCompleted {
+                        Text("·")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.quaternary)
+                        HStack(spacing: 3) {
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 9))
+                            Text(item.assignedTo)
+                                .lineLimit(1)
+                        }
+                        .font(.system(size: 11))
+                        .foregroundStyle(.indigo.opacity(0.85))
+                    }
                 }
             }
 

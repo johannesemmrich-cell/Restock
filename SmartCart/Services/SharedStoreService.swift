@@ -98,7 +98,8 @@ actor SharedStoreService {
             "unit": item.unit,
             "isCompleted": item.isCompleted,
             "isUrgent": item.isUrgent,
-            "note": item.note
+            "note": item.note,
+            "assignedTo": item.assignedTo
         ]}
         guard let data = try? JSONSerialization.data(withJSONObject: dicts),
               let str = String(data: data, encoding: .utf8) else { return "[]" }
@@ -119,7 +120,8 @@ actor SharedStoreService {
                 unit: dict["unit"] as? String ?? "",
                 isCompleted: dict["isCompleted"] as? Bool ?? false,
                 isUrgent: dict["isUrgent"] as? Bool ?? false,
-                note: dict["note"] as? String ?? ""
+                note: dict["note"] as? String ?? "",
+                assignedTo: dict["assignedTo"] as? String ?? ""
             )
         }
     }
@@ -146,4 +148,5 @@ struct SharedItemData {
     let isCompleted: Bool
     let isUrgent: Bool
     let note: String
+    let assignedTo: String
 }
