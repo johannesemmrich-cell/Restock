@@ -7,15 +7,13 @@ struct StoreSetupView: View {
     @State private var showAddCustomStore = false
     @State private var storeToDelete: Store? = nil
     @State private var editMode: EditMode = .inactive
-
-    private var sortedActiveStores: [Store] {
-        allStores.filter { $0.isActive }.sorted { $0.sortIndex < $1.sortIndex }
-    }
+    // Lokale Kopie für ForEach — verhindert dass @Query-Re-Sort die Drag-Animation abbricht
+    @State private var orderedActiveStores: [Store] = []
 
     var body: some View {
         List {
             Section(String(localized: "stores.active")) {
-                ForEach(sortedActiveStores) { store in
+                ForEach(orderedActiveStores) { store in
                     StoreRow(store: store)
                         .swipeActions(edge: .trailing) {
                             Button {
@@ -28,9 +26,8 @@ struct StoreSetupView: View {
                         }
                 }
                 .onMove { from, to in
-                    var arr = sortedActiveStores
-                    arr.move(fromOffsets: from, toOffset: to)
-                    for (i, s) in arr.enumerated() {
+                    orderedActiveStores.move(fromOffsets: from, toOffset: to)
+                    for (i, s) in orderedActiveStores.enumerated() {
                         s.sortIndex = i
                     }
                 }
@@ -71,6 +68,11 @@ struct StoreSetupView: View {
                 }
             }
         }
+        .onAppear { syncOrder() }
+        .onChange(of: allStores) {
+            // Nur außerhalb von EditMode synchronisieren — während Drag nicht unterbrechen
+            if editMode == .inactive { syncOrder() }
+        }
         .navigationTitle(String(localized: "stores.title"))
         .environment(\.editMode, $editMode)
         .toolbar {
@@ -98,6 +100,10 @@ struct StoreSetupView: View {
                 Text("\"\\(store.name)\" und alle zugehörigen Artikel werden dauerhaft gelöscht.")
             }
         }
+    }
+
+    private func syncOrder() {
+        orderedActiveStores = allStores.filter { $0.isActive }.sorted { $0.sortIndex < $1.sortIndex }
     }
 }
 
