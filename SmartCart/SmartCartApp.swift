@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import UIKit
+import AppIntents
 
 @main
 struct SmartCartApp: App {
@@ -10,6 +11,7 @@ struct SmartCartApp: App {
     @AppStorage("developerMode") private var developerMode = false
 
     init() {
+        SmartCartShortcuts.updateAppShortcutParameters()
         CloudPreferencesSync.shared.start()
 
         let schema = Schema(versionedSchema: SchemaV1.self)

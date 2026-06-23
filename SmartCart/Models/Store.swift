@@ -105,6 +105,7 @@ extension Store {
                 Store(name: "Netto",    emoji: "🛒", colorHex: "#F59E0B", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "DE"), // Amber
                 Store(name: "Action",      emoji: "🏷️", colorHex: "#E53935", visitsPerWeek: 1,   categories: Category.variety,   countryCode: "DE"), // Rot
                 Store(name: "Müller",     emoji: "🧴", colorHex: "#5B21B6", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "DE"), // Violett
+                Store(name: "Decathlon",  emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,    countryCode: "DE"), // Blau
                 Store(name: "Hornbach",   emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "DE"),
                 Store(name: "OBI",        emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "DE"),
                 Store(name: "Bauhaus",    emoji: "🔧", colorHex: "#1565C0", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "DE"),
@@ -118,20 +119,22 @@ extension Store {
                 Store(name: "Lidl",   emoji: "🛒", colorHex: "#2563EB", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "AT"), // Blau
                 Store(name: "DM",     emoji: "🧴", colorHex: "#DB2777", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "AT"), // Pink
                 Store(name: "Müller", emoji: "🧴", colorHex: "#EA580C", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "AT"), // Orange
-                Store(name: "Action",  emoji: "🏷️", colorHex: "#E53935", visitsPerWeek: 1,   categories: Category.variety,  countryCode: "AT"), // Rot
-                Store(name: "Hornbach", emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "AT"),
-                Store(name: "OBI",      emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "AT"),
+                Store(name: "Action",    emoji: "🏷️", colorHex: "#E53935", visitsPerWeek: 1,   categories: Category.variety,  countryCode: "AT"), // Rot
+                Store(name: "Decathlon", emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,   countryCode: "AT"),
+                Store(name: "Hornbach",  emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "AT"),
+                Store(name: "OBI",       emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "AT"),
             ]
         case "CH":
             return [
-                Store(name: "Migros", emoji: "🛒", colorHex: "#FF6600", visitsPerWeek: 2, categories: Category.grocery, countryCode: "CH"),
-                Store(name: "Coop", emoji: "🛒", colorHex: "#E2001A", visitsPerWeek: 1, categories: Category.grocery, countryCode: "CH"),
-                Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 1, categories: Category.grocery, countryCode: "CH"),
-                Store(name: "Aldi", emoji: "🛒", colorHex: "#005CA9", visitsPerWeek: 1, categories: Category.grocery, countryCode: "CH"),
-                Store(name: "Denner", emoji: "🛒", colorHex: "#E2001A", visitsPerWeek: 1, categories: Category.grocery, countryCode: "CH"),
-                Store(name: "DM",       emoji: "🧴", colorHex: "#CC1033", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "CH"),
-                Store(name: "Hornbach", emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "CH"),
-                Store(name: "OBI",      emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "CH"),
+                Store(name: "Migros",    emoji: "🛒", colorHex: "#FF6600", visitsPerWeek: 2, categories: Category.grocery,   countryCode: "CH"),
+                Store(name: "Coop",      emoji: "🛒", colorHex: "#E2001A", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "CH"),
+                Store(name: "Lidl",      emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "CH"),
+                Store(name: "Aldi",      emoji: "🛒", colorHex: "#005CA9", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "CH"),
+                Store(name: "Denner",    emoji: "🛒", colorHex: "#E2001A", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "CH"),
+                Store(name: "DM",        emoji: "🧴", colorHex: "#CC1033", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "CH"),
+                Store(name: "Decathlon", emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,   countryCode: "CH"),
+                Store(name: "Hornbach",  emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "CH"),
+                Store(name: "OBI",       emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "CH"),
             ]
         case "US":
             return [
@@ -162,9 +165,10 @@ extension Store {
                 Store(name: "Lidl",      emoji: "🛒", colorHex: "#2563EB", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "BE"), // Blau
                 Store(name: "Aldi",      emoji: "🛒", colorHex: "#1E40AF", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "BE"), // Dunkelblau
                 Store(name: "Okay",      emoji: "🛒", colorHex: "#EA580C", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "BE"), // Orange
-                Store(name: "Action",          emoji: "🏷️", colorHex: "#E53935", visitsPerWeek: 1, categories: Category.variety,   countryCode: "BE"), // Rot
-                Store(name: "DM",             emoji: "🧴", colorHex: "#DB2777", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "BE"), // Pink
-                Store(name: "Di",             emoji: "🧴", colorHex: "#00A651", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "BE"), // Grün
+                Store(name: "Action",          emoji: "🏷️", colorHex: "#E53935", visitsPerWeek: 1,   categories: Category.variety,   countryCode: "BE"), // Rot
+                Store(name: "DM",              emoji: "🧴", colorHex: "#DB2777", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "BE"), // Pink
+                Store(name: "Di",              emoji: "🧴", colorHex: "#00A651", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "BE"), // Grün
+                Store(name: "Decathlon",       emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,    countryCode: "BE"),
                 Store(name: "Carrefour Express", emoji: "🛒", colorHex: "#0050C8", visitsPerWeek: 1,   categories: Category.grocery,  countryCode: "BE"), // Blau
                 Store(name: "Brico",    emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "BE"),
                 Store(name: "Hornbach", emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "BE"),
@@ -175,12 +179,13 @@ extension Store {
                 Store(name: "Jumbo",        emoji: "🛒", colorHex: "#D97706", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "NL"), // Gelb/Amber
                 Store(name: "Lidl",         emoji: "🛒", colorHex: "#2563EB", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "NL"), // Blau
                 Store(name: "Aldi",         emoji: "🛒", colorHex: "#1E40AF", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "NL"), // Dunkelblau
-                Store(name: "Action",       emoji: "🏷️", colorHex: "#E53935", visitsPerWeek: 1, categories: Category.variety,   countryCode: "NL"), // Rot (niederländische Kette)
-                Store(name: "Plus",         emoji: "🛒", colorHex: "#16A34A", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "NL"), // Grün
-                Store(name: "Kruidvat",     emoji: "🧴", colorHex: "#7C3AED", visitsPerWeek: 1, categories: Category.drugstore, countryCode: "NL"), // Lila
-                Store(name: "Etos",     emoji: "🧴", colorHex: "#DB2777", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "NL"), // Pink
-                Store(name: "Gamma",    emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "NL"),
-                Store(name: "Hornbach", emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "NL"),
+                Store(name: "Action",       emoji: "🏷️", colorHex: "#E53935", visitsPerWeek: 1,   categories: Category.variety,   countryCode: "NL"), // Rot (niederländische Kette)
+                Store(name: "Plus",         emoji: "🛒", colorHex: "#16A34A", visitsPerWeek: 1,   categories: Category.grocery,   countryCode: "NL"), // Grün
+                Store(name: "Kruidvat",     emoji: "🧴", colorHex: "#7C3AED", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "NL"), // Lila
+                Store(name: "Etos",         emoji: "🧴", colorHex: "#DB2777", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "NL"), // Pink
+                Store(name: "Decathlon",    emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,    countryCode: "NL"),
+                Store(name: "Gamma",        emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "NL"),
+                Store(name: "Hornbach",     emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "NL"),
             ]
         case "FR":
             return [
@@ -191,8 +196,9 @@ extension Store {
                 Store(name: "Aldi",         emoji: "🛒", colorHex: "#1E40AF", visitsPerWeek: 1, categories: Category.grocery,                    countryCode: "FR"), // Dunkelblau
                 Store(name: "Monoprix",     emoji: "🛒", colorHex: "#7C3AED", visitsPerWeek: 1, categories: Category.grocery + Category.drugstore, countryCode: "FR"), // Lila
                 Store(name: "Pharmacie",    emoji: "💊", colorHex: "#16A34A", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "FR"), // Grün
-                Store(name: "Leroy Merlin", emoji: "🏗️", colorHex: "#4CAF50", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "FR"),
-                Store(name: "Castorama",    emoji: "🔨", colorHex: "#1565C0", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "FR"),
+                Store(name: "Decathlon",    emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,   countryCode: "FR"),
+                Store(name: "Leroy Merlin", emoji: "🏗️", colorHex: "#4CAF50", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "FR"),
+                Store(name: "Castorama",    emoji: "🔨", colorHex: "#1565C0", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "FR"),
             ]
         case "IT":
             return [
@@ -202,7 +208,8 @@ extension Store {
                 Store(name: "Lidl",      emoji: "🛒", colorHex: "#2563EB", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "IT"), // Blau
                 Store(name: "Aldi",      emoji: "🛒", colorHex: "#1E40AF", visitsPerWeek: 1, categories: Category.grocery,   countryCode: "IT"), // Dunkelblau
                 Store(name: "Farmacia",     emoji: "💊", colorHex: "#16A34A", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "IT"), // Grün
-                Store(name: "Leroy Merlin", emoji: "🏗️", colorHex: "#4CAF50", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "IT"),
+                Store(name: "Decathlon",    emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,   countryCode: "IT"),
+                Store(name: "Leroy Merlin", emoji: "🏗️", colorHex: "#4CAF50", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "IT"),
             ]
         case "ES":
             return [
@@ -212,7 +219,8 @@ extension Store {
                 Store(name: "Aldi",          emoji: "🛒", colorHex: "#1E40AF", visitsPerWeek: 1, categories: Category.grocery,                    countryCode: "ES"), // Dunkelblau
                 Store(name: "El Corte Inglés", emoji: "🏬", colorHex: "#0F766E", visitsPerWeek: 1, categories: Category.grocery + Category.drugstore, countryCode: "ES"), // Teal
                 Store(name: "Farmacia",      emoji: "💊", colorHex: "#16A34A", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "ES"), // Grün
-                Store(name: "Leroy Merlin", emoji: "🏗️", colorHex: "#4CAF50", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "ES"),
+                Store(name: "Decathlon",     emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,   countryCode: "ES"),
+                Store(name: "Leroy Merlin",  emoji: "🏗️", colorHex: "#4CAF50", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "ES"),
             ]
         default:
             return []
@@ -243,4 +251,5 @@ enum Category {
     /// Variety / discount stores (Action, Woolworth, etc.) — general merchandise, small appliances, seasonal, stationery
     static let variety   = ["Haushaltswaren", "Elektronik", "Saisonales", "Schreibwaren", "Werkzeug", "Spielzeug", "Dekoration"]
     static let hardware  = ["Werkzeug", "Baumaterial", "Garten", "Farbe & Lack", "Sanitär"]
+    static let sports    = ["Sport & Outdoor", "Fitness", "Fahrrad", "Camping", "Schwimmen", "Bekleidung"]
 }

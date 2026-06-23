@@ -6,24 +6,39 @@ struct ReceiptLine {
 }
 
 enum ReceiptParserService {
-    private static let skipKeywords = [
+    // Words that identify administrative lines when matched as whole words.
+    // Whole-word matching avoids false positives:
+    //   "NUTELLA" contains "tel", "FEUERWERK" contains "eur", "BONBON" contains "bon"
+    private static let skipWordSet: Set<String> = [
         "summe", "gesamt", "total", "mwst", "ust", "rabatt", "bon", "kasse",
-        "datum", "uhrzeit", "tel", "www.", "danke", "tschüss", "zahlung",
+        "datum", "uhrzeit", "danke", "tschüss", "zahlung",
         "kreditkarte", "ec-karte", "gegeben", "rückgeld", "zwischensumme",
         "pfand", "leergut", "steuer", "netto", "brutto", "kundenquittung",
         "filiale", "öffnungszeiten", "kassierer", "kassenbon", "quittung",
-        "vielen dank", "auf wiedersehen", "ihre einkäufe",
         "eur", "euro", "chf", "gbp", "usd",
         "tva", "tasa", "tax", "vat", "mws",
         "payback", "bonuspunkte", "treuepunkte",
         "mastercard", "visa", "girocard", "pin", "autorisierung",
         "transaktions", "terminal", "belegnr",
-        "kundenkarte", "mitglied",
-        "ihr kassier", "bediener",
+        "kundenkarte", "mitglied", "bediener",
         "retoure", "gutschrift", "sofortrabatt",
-        "inkl. mwst", "inkl mwst",
-        "7,00 %", "19,00 %", "7 %", "19 %"
     ]
+    // Multi-word phrases that always indicate an administrative line (substring match).
+    private static let skipPhrases = [
+        "vielen dank", "auf wiedersehen", "ihre einkäufe",
+        "ihr kassier",
+        "inkl. mwst", "inkl mwst",
+        "7,00 %", "19,00 %", "7 %", "19 %",
+        "www.", "tel:", "fon:", "fax:",
+    ]
+
+    private static func isAdminLine(_ lower: String) -> Bool {
+        for phrase in skipPhrases where lower.contains(phrase) { return true }
+        let words = lower.components(separatedBy: .whitespaces).map {
+            $0.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        }
+        return words.contains(where: { skipWordSet.contains($0) })
+    }
 
     // Führende Artikelnummern (5+ Ziffern)
     private static let articleNumberRegex = try? NSRegularExpression(pattern: #"^\d{5,}\s+"#)
@@ -54,7 +69,7 @@ enum ReceiptParserService {
             let lower = trimmed.lowercased()
 
             // Administrative Zeilen überspringen
-            if skipKeywords.contains(where: { lower.contains($0) }) {
+            if isAdminLine(lower) {
                 pendingName = nil; continue
             }
             // Reine Zahlenzeilen (EAN, Artikelnr.) überspringen
@@ -115,8 +130,10 @@ enum ReceiptParserService {
 
                 let rawPrice = String(trimmed[priceRange]).replacingOccurrences(of: ",", with: ".")
 
+                // Allow names starting with numbers ("2er Pack", "3M") —
+                // only reject names that are entirely digits/spaces (article codes).
                 guard rawName.count >= 2,
-                      !(rawName.first?.isNumber ?? true),
+                      !rawName.allSatisfy({ $0.isNumber || $0 == " " }),
                       let price = Double(rawPrice),
                       price > 0.05,
                       price < 999 else { continue }
@@ -134,7 +151,7 @@ enum ReceiptParserService {
                         candidate = rx.stringByReplacingMatches(in: candidate, range: r, withTemplate: "")
                             .trimmingCharacters(in: .whitespaces)
                     }
-                    if candidate.count >= 2 && !(candidate.first?.isNumber ?? true) {
+                    if candidate.count >= 2 {
                         pendingName = smartCapitalize(candidate)
                     }
                 }

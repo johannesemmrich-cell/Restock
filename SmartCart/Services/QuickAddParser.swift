@@ -102,19 +102,26 @@ enum QuickAddParser {
             name = trimmed
             qty = nil
         } else {
-            // No leading quantity — try trailing: "Hackfleisch 3kg" or "Hackfleisch 3 kg"
+            // No leading quantity — try trailing: "Hackfleisch 3kg", "Hackfleisch 3 kg", "Milch 2", "Milch 4x"
             var trailingName = trimmed
             if tokens.count >= 2 {
                 let last = tokens[tokens.count - 1]
+                // Strip trailing 'x'/'X' multiplier suffix: "4x" → "4"
+                let lastClean = (last.hasSuffix("x") || last.hasSuffix("X")) ? String(last.dropLast()) : last
                 let numPat = #"^(\d+[\.,]?\d*)"#
-                // Try "3kg" glued pattern
-                if let numRange = last.range(of: numPat, options: .regularExpression) {
-                    let numStr = String(last[numRange]).replacingOccurrences(of: ",", with: ".")
+                // Try "3kg" glued or plain-number/Nx pattern
+                if let numRange = lastClean.range(of: numPat, options: .regularExpression) {
+                    let numStr = String(lastClean[numRange]).replacingOccurrences(of: ",", with: ".")
                     if let parsed = Double(numStr) {
-                        let unitPart = String(last[numRange.upperBound...]).lowercased()
+                        let unitPart = String(lastClean[numRange.upperBound...]).lowercased()
                         if !unitPart.isEmpty && knownUnits.contains(unitPart) {
+                            // "3kg" glued: has unit
                             qty = parsed
-                            unit = String(last[numRange.upperBound...])
+                            unit = String(lastClean[numRange.upperBound...])
+                            trailingName = tokens.dropLast().joined(separator: " ")
+                        } else if unitPart.isEmpty {
+                            // Plain number "Milch 2" or "x"-stripped "Milch 4x"
+                            qty = parsed
                             trailingName = tokens.dropLast().joined(separator: " ")
                         }
                     }

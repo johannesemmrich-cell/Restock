@@ -482,6 +482,8 @@ struct StoreDetailView: View {
                 Haptics.success()
             }
         }
+        // Flush immediately so HomeView's @Query sees the change without delay
+        try? context.save()
         LiveActivityService.shared.update(for: store)
     }
 
