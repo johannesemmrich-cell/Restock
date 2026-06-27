@@ -147,10 +147,14 @@ struct ReceiptScannerView: View {
                     }
                 }
             } else {
-                Section("Gefunden: \(parsedLines.count) Positionen") {
+                Section {
                     ForEach($parsedLines) { $line in
                         ReceiptLineRow(line: $line)
                     }
+                } header: {
+                    Text("Gefunden: \(parsedLines.count) Positionen")
+                } footer: {
+                    Text("Tippe auf einen Namen um ihn zu korrigieren – z. B. \"MDHSZ\" → \"Mozzarella\".")
                 }
 
                 Section {
@@ -246,9 +250,14 @@ private struct ReceiptLineRow: View {
             Toggle("", isOn: $line.isIncluded)
                 .labelsHidden()
 
-            TextField("Artikel", text: $line.name)
-                .font(.system(size: 15))
-                .opacity(line.isIncluded ? 1 : 0.4)
+            HStack(spacing: 4) {
+                TextField("Artikelname", text: $line.name)
+                    .font(.system(size: 15))
+                Image(systemName: "pencil")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.tertiary)
+            }
+            .opacity(line.isIncluded ? 1 : 0.4)
 
             Spacer()
 
