@@ -122,7 +122,7 @@ struct PaywallView: View {
         case PremiumService.monthlyID:     return "1,99 €"
         case PremiumService.yearlyID:      return "9,99 €"
         case PremiumService.lifetimeID:    return "4,99 €"
-        case PremiumService.sharedListsID: return "4,99 €"
+        case PremiumService.sharedListsID: return "3,99 €"
         default: return "–"
         }
     }
@@ -168,9 +168,9 @@ struct PaywallView: View {
             VStack(spacing: 10) {
                 addOnCard(
                     id: PremiumService.sharedListsID,
-                    title: "Geteilte Listen Add-on",
+                    title: "Geteilte Listen",
                     price: productPrice(for: PremiumService.sharedListsID),
-                    detail: "nur geteilte Listen",
+                    detail: "einmaliger Kauf · nur geteilte Listen",
                     isRecommended: false
                 )
 
