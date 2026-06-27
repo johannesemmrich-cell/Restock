@@ -20,6 +20,9 @@ struct StoreDetailView: View {
     @FocusState private var isQuickAddFocused: Bool
     @Query private var allRecords: [PurchaseRecord]
     @ObservedObject private var templateService = TemplateService.shared
+    @EnvironmentObject private var premium: PremiumService
+    @State private var showPaywall = false
+    @State private var paywallContext: PaywallContext = .premium(feature: "dieses Feature")
 
     private var total: Double {
         store.pendingItems.compactMap { $0.estimatedPrice }.reduce(0, +)
@@ -182,7 +185,12 @@ struct StoreDetailView: View {
                             .scaleEffect(0.8)
                     }
                     Button {
-                        showShareSheet = true
+                        if premium.isSharedListsUnlocked {
+                            showShareSheet = true
+                        } else {
+                            paywallContext = .sharedLists
+                            showPaywall = true
+                        }
                         Haptics.impact(.light)
                     } label: {
                         Image(systemName: store.shareID != nil ? "person.2.fill" : "person.2")
@@ -190,19 +198,34 @@ struct StoreDetailView: View {
                     Menu {
                         if !store.completedItems.isEmpty {
                             Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
-                                showReceiptScanner = true
+                                if premium.isPremiumUnlocked {
+                                    showReceiptScanner = true
+                                } else {
+                                    paywallContext = .premium(feature: "den Kassenbon-Scan")
+                                    showPaywall = true
+                                }
                                 Haptics.impact(.light)
                             }
                         }
                         Button("Als Vorlage speichern", systemImage: "plus.rectangle.on.folder") {
-                            templateName = store.name
-                            showSaveTemplateAlert = true
+                            if premium.isPremiumUnlocked {
+                                templateName = store.name
+                                showSaveTemplateAlert = true
+                            } else {
+                                paywallContext = .premium(feature: "Vorlagen")
+                                showPaywall = true
+                            }
                             Haptics.impact(.light)
                         }
                         .disabled(store.pendingItems.isEmpty)
                         if !templateService.templates.isEmpty {
                             Button("Vorlage laden", systemImage: "folder") {
-                                showTemplatePicker = true
+                                if premium.isPremiumUnlocked {
+                                    showTemplatePicker = true
+                                } else {
+                                    paywallContext = .premium(feature: "Vorlagen")
+                                    showPaywall = true
+                                }
                                 Haptics.impact(.light)
                             }
                         }
@@ -222,6 +245,7 @@ struct StoreDetailView: View {
         .sheet(isPresented: $showAddItem) { AddItemView() }
         .sheet(isPresented: $showShareSheet) { StoreShareSheet(store: store) }
         .sheet(isPresented: $showReceiptScanner) { ReceiptScannerView(store: store) }
+        .sheet(isPresented: $showPaywall) { PaywallView(context: paywallContext) }
         .sheet(item: $editingItem) { item in EditItemView(item: item) }
         .sheet(isPresented: $showTemplatePicker) {
             TemplatePickerSheet(service: templateService) { template in

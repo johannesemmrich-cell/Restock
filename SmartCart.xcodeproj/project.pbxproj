@@ -75,6 +75,9 @@
 		AB13CD23EF45AB67CD89EF13 /* StoreShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD23EF45AB67CD89EF12 /* StoreShareSheet.swift */; };
 		BC11EF34AB67CD89EF01AB11 /* SchemaVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10DE23FA56BC78DE90FA10 /* SchemaVersions.swift */; };
 		BC13AB56CD89EF01AB23CD13 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = BC12FA45BC78DE90FA12BC12 /* PrivacyInfo.xcprivacy */; };
+		PS02C3D4E5F6A7B8C9D0E002 /* PremiumService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PS01B2C3D4E5F6A7B8C9D001 /* PremiumService.swift */; };
+		PW02C3D4E5F6A7B8C9D0E002 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PW01B2C3D4E5F6A7B8C9D001 /* PaywallView.swift */; };
+		LV02C3D4E5F6A7B8C9D0E002 /* LegalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = LV01B2C3D4E5F6A7B8C9D001 /* LegalView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -153,6 +156,10 @@
 		AA02BB03CC04DD05EE06FF07 /* SmartCartWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCartWidgets.entitlements; sourceTree = "<group>"; };
 		AB10CD23EF45AB67CD89EF10 /* SharedStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStoreService.swift; sourceTree = "<group>"; };
 		TE01B2C3D4E5F6A7B8C9D001 /* TemplateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateService.swift; sourceTree = "<group>"; };
+		PS01B2C3D4E5F6A7B8C9D001 /* PremiumService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumService.swift; sourceTree = "<group>"; };
+		PW01B2C3D4E5F6A7B8C9D001 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		LV01B2C3D4E5F6A7B8C9D001 /* LegalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalView.swift; sourceTree = "<group>"; };
+		SK01B2C3D4E5F6A7B8C9D001 /* SmartCart.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = SmartCart.storekit; path = SmartCart.storekit; sourceTree = "<group>"; };
 		AB12CD23EF45AB67CD89EF12 /* StoreShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreShareSheet.swift; sourceTree = "<group>"; };
 		BC10DE23FA56BC78DE90FA10 /* SchemaVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaVersions.swift; sourceTree = "<group>"; };
 		BC12FA45BC78DE90FA12BC12 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = "com.apple.privacy-manifest"; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -196,6 +203,7 @@
 				0630F8F8C67403AA0F3A36B7 /* SmartCart */,
 				WG01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgets */,
 				AE714AD5A44F548B65398F30 /* Products */,
+				SK01B2C3D4E5F6A7B8C9D001 /* SmartCart.storekit */,
 			);
 			sourceTree = "<group>";
 		};
@@ -215,6 +223,7 @@
 			isa = PBXGroup;
 			children = (
 				5239F35789D83F615154249B /* BrowseStoresView.swift */,
+				LV01B2C3D4E5F6A7B8C9D001 /* LegalView.swift */,
 				77BA313610B6903F788B3D1B /* OnboardingView.swift */,
 				16B385C380FF5123526F6E56 /* SettingsView.swift */,
 				9AB228D171BFA424F8AFC0CD /* StoreSetupView.swift */,
@@ -252,11 +261,20 @@
 				52731D201DA8C4A63BCE29D3 /* Feedback */,
 				F3E28CEEE4F8CA4471B65303 /* Home */,
 				A7B8C9D0E1F2A3B4C5D6E7F8 /* Prices */,
+				PG01B2C3D4E5F6A7B8C9D001 /* Premium */,
 				BB6E9AA7318D66AE1F2DF3DE /* Recipe */,
 				438E279559440C7CC053BDF0 /* Settings */,
 				8C6C80A648AD9F536197C568 /* Store */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		PG01B2C3D4E5F6A7B8C9D001 /* Premium */ = {
+			isa = PBXGroup;
+			children = (
+				PW01B2C3D4E5F6A7B8C9D001 /* PaywallView.swift */,
+			);
+			path = Premium;
 			sourceTree = "<group>";
 		};
 		8C6C80A648AD9F536197C568 /* Store */ = {
@@ -336,6 +354,7 @@
 				CF91A23B4D5E6F7A8B9C0D1E /* CloudPreferencesSync.swift */,
 				AB10CD23EF45AB67CD89EF10 /* SharedStoreService.swift */,
 				TE01B2C3D4E5F6A7B8C9D001 /* TemplateService.swift */,
+				PS01B2C3D4E5F6A7B8C9D001 /* PremiumService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -556,6 +575,9 @@
 				AB11CD23EF45AB67CD89EF11 /* SharedStoreService.swift in Sources */,
 				AB13CD23EF45AB67CD89EF13 /* StoreShareSheet.swift in Sources */,
 				TE02C3D4E5F6A7B8C9D0E002 /* TemplateService.swift in Sources */,
+				PS02C3D4E5F6A7B8C9D0E002 /* PremiumService.swift in Sources */,
+				PW02C3D4E5F6A7B8C9D0E002 /* PaywallView.swift in Sources */,
+				LV02C3D4E5F6A7B8C9D0E002 /* LegalView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -45,12 +45,6 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(String(localized: "settings.stores")) {
-                    NavigationLink(String(localized: "stores.title")) {
-                        StoreSetupView()
-                    }
-                }
-
                 Section("Teilen & Zusammenarbeit") {
                     Button {
                         showJoinStore = true
@@ -165,7 +159,7 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(String(localized: "settings.about")) {
+                Section("Über SmartCart") {
                     HStack {
                         Text(String(localized: "settings.version"))
                         Spacer()
@@ -187,23 +181,21 @@ struct SettingsView: View {
                             showDevPasswordPrompt = true
                         }
                     }
-                    HStack {
-                        Text(String(localized: "settings.build"))
-                        Spacer()
-                        Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
-                            .foregroundStyle(.secondary)
+
+                    NavigationLink {
+                        LegalOverviewView()
+                    } label: {
+                        Label("Rechtliches", systemImage: "doc.plaintext")
                     }
 
-                    // Roadmap items surfaced from feedback
-                    VStack(alignment: .leading, spacing: 6) {
-                        Label(String(localized: "settings.coming.sync"), systemImage: "clock")
-                            .font(.system(size: 13))
-                            .foregroundStyle(.secondary)
-                        Label(String(localized: "settings.coming.prices"), systemImage: "clock")
-                            .font(.system(size: 13))
-                            .foregroundStyle(.secondary)
+                    Button {
+                        if let url = URL(string: "mailto:j.emmrich@icloud.com?subject=SmartCart%20Support") {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        Label("Support kontaktieren", systemImage: "envelope")
+                            .foregroundStyle(.primary)
                     }
-                    .padding(.vertical, 4)
                 }
 
                 if developerMode {

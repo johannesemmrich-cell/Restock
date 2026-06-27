@@ -7,6 +7,7 @@ import AppIntents
 struct SmartCartApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     let container: ModelContainer
+    @StateObject private var premium = PremiumService.shared
 
     @AppStorage("developerMode") private var developerMode = false
 
@@ -84,6 +85,7 @@ struct SmartCartApp: App {
         WindowGroup {
             OnboardingGate()
                 .modelContainer(container)
+                .environmentObject(premium)
                 .safeAreaInset(edge: .top) {
                     if developerMode {
                         DevModeIndicator()

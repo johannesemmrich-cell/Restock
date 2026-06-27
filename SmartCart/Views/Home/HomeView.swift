@@ -24,6 +24,10 @@ struct HomeView: View {
     @State private var headerScale: CGFloat = 1.0
 
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
+    @EnvironmentObject private var premium: PremiumService
+    @State private var showPaywall = false
+    @State private var paywallContext: PaywallContext = .premium(feature: "dieses Feature")
+    @State private var showStoreSetup = false
 
     private var seasonalSuggestions: [SeasonalService.Suggestion] {
         seasonalSuggestionsEnabled ? SeasonalService.currentSuggestions() : []
@@ -39,8 +43,32 @@ struct HomeView: View {
                 VStack(spacing: 20) {
                     headerCard
                     quickAddBar
-                    if !dueSoonItems.isEmpty { replenishmentBanner }
-                    if !seasonalSuggestions.isEmpty { seasonalBanner }
+                    if !dueSoonItems.isEmpty {
+                        if premium.isPremiumUnlocked {
+                            replenishmentBanner
+                        } else {
+                            premiumTeaser(
+                                icon: "arrow.clockwise.circle.fill",
+                                color: .orange,
+                                title: "\(dueSoonItems.count) Artikel bald fällig",
+                                subtitle: "Nachkauf-Erinnerungen mit SmartCart Pro",
+                                feature: "Nachkauf-Erinnerungen"
+                            )
+                        }
+                    }
+                    if !seasonalSuggestions.isEmpty {
+                        if premium.isPremiumUnlocked {
+                            seasonalBanner
+                        } else {
+                            premiumTeaser(
+                                icon: SeasonalService.seasonIcon,
+                                color: .green,
+                                title: "\(seasonalSuggestions.count) saisonale Vorschläge",
+                                subtitle: "Saisonale Ideen mit SmartCart Pro",
+                                feature: "saisonale Vorschläge"
+                            )
+                        }
+                    }
                     storeSection
                 }
                 .padding(.horizontal, 16)
@@ -57,6 +85,8 @@ struct HomeView: View {
             .sheet(isPresented: $showPriceOverview) { PriceOverviewView() }
             .sheet(isPresented: $showAddStore) { NavigationStack { BrowseStoresView() } }
             .sheet(isPresented: $showAllItems) { AllItemsView() }
+            .sheet(isPresented: $showStoreSetup) { NavigationStack { StoreSetupView() } }
+            .sheet(isPresented: $showPaywall) { PaywallView(context: paywallContext) }
             .onAppear {
                 refreshDueSoon()
                 registerShortcutItems()
@@ -499,6 +529,46 @@ struct HomeView: View {
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.green.opacity(0.2), lineWidth: 1))
     }
 
+    // MARK: - Premium teaser
+
+    private func premiumTeaser(icon: String, color: Color, title: String, subtitle: String, feature: String) -> some View {
+        Button {
+            paywallContext = .premium(feature: feature)
+            showPaywall = true
+            Haptics.impact(.light)
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(color)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.primary)
+                    Text(subtitle)
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                HStack(spacing: 4) {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 10, weight: .semibold))
+                    Text("Pro")
+                        .font(.system(size: 12, weight: .bold))
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(LinearGradient.brand, in: Capsule())
+            }
+            .padding(14)
+            .background(color.opacity(0.07))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(color.opacity(0.2), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+    }
+
     // MARK: - Replenishment banner
 
     private var replenishmentBanner: some View {
@@ -563,18 +633,10 @@ struct HomeView: View {
                     .font(.system(size: 18, weight: .bold))
                 Spacer()
                 Button {
-                    showAddStore = true
-                    Haptics.impact(.light)
+                    showStoreSetup = true
                 } label: {
-                    Image(systemName: "plus.circle")
-                        .font(.system(size: 16))
-                        .foregroundStyle(.secondary)
-                }
-                Button {
-                    showSettings = true
-                } label: {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.system(size: 16))
+                    Text("Verwalten")
+                        .font(.system(size: 14))
                         .foregroundStyle(.secondary)
                 }
             }
@@ -612,9 +674,37 @@ struct HomeView: View {
                             }
                         }
                     }
+                    addStoreCard
                 }
             }
         }
+    }
+
+    private var addStoreCard: some View {
+        Button {
+            showAddStore = true
+            Haptics.impact(.light)
+        } label: {
+            VStack(spacing: 8) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 28, weight: .medium))
+                    .foregroundStyle(Color.brand.opacity(0.6))
+                Text("Laden hinzufügen")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color.brand.opacity(0.7))
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 90)
+            .background(Color.brand.opacity(0.06))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
+                    .foregroundStyle(Color.brand.opacity(0.25))
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     private var emptyStoresView: some View {
@@ -644,29 +734,35 @@ struct HomeView: View {
                 Button { showSettings = true } label: {
                     Image(systemName: "gear").foregroundStyle(.primary)
                 }
-                Button { showMenuPlan = true } label: {
+                Button {
+                    if premium.isPremiumUnlocked {
+                        showMenuPlan = true
+                    } else {
+                        paywallContext = .premium(feature: "den Menüplan")
+                        showPaywall = true
+                    }
+                } label: {
                     Image(systemName: "fork.knife").foregroundStyle(.primary)
                 }
-                Button { showPriceOverview = true } label: {
+                Button {
+                    if premium.isPremiumUnlocked {
+                        showPriceOverview = true
+                    } else {
+                        paywallContext = .premium(feature: "die Ausgaben-Analyse")
+                        showPaywall = true
+                    }
+                } label: {
                     Image(systemName: "chart.line.uptrend.xyaxis").foregroundStyle(.primary)
                 }
             }
         }
         ToolbarItem(placement: .navigationBarTrailing) {
-            HStack(spacing: 16) {
-                Button {
-                    showAllItems = true
-                } label: {
-                    Image(systemName: "list.bullet")
-                        .foregroundStyle(.primary)
-                }
-                Button {
-                    Haptics.impact(.light)
-                    showAddItem = true
-                } label: {
-                    Image(systemName: "plus")
-                        .fontWeight(.semibold)
-                }
+            Button {
+                Haptics.impact(.light)
+                showAddItem = true
+            } label: {
+                Image(systemName: "plus")
+                    .fontWeight(.semibold)
             }
         }
     }
