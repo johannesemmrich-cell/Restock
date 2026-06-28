@@ -22,7 +22,8 @@ struct AddShoppingItemIntent: AppIntent {
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let schema = Schema([Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self])
-        let config = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
+        // groupContainer: .none required — iOS 26 changed default to .automatic which breaks out-of-process intents
+        let config = ModelConfiguration(schema: schema, groupContainer: .none, cloudKitDatabase: .none)
         let container = try ModelContainer(for: schema, configurations: config)
         let context = ModelContext(container)
 
@@ -56,9 +57,13 @@ struct SmartCartShortcuts: AppShortcutsProvider {
             intent: AddShoppingItemIntent(),
             phrases: [
                 "Artikel zu \(.applicationName) hinzufügen",
+                "Etwas zu \(.applicationName) hinzufügen",
                 "Zur Einkaufsliste in \(.applicationName) hinzufügen",
+                "Zur \(.applicationName) Einkaufsliste hinzufügen",
+                "Einkaufsliste in \(.applicationName) ergänzen",
+                "Neuer Artikel bei \(.applicationName)",
                 "Add item to \(.applicationName)",
-                "\(.applicationName) Einkaufsliste",
+                "Add to \(.applicationName) shopping list",
             ],
             shortTitle: "Artikel hinzufügen",
             systemImageName: "cart.badge.plus"

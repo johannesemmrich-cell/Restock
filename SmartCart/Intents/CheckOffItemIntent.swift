@@ -14,7 +14,8 @@ struct CheckOffItemIntent: AppIntent {
 
     func perform() async throws -> some IntentResult {
         let schema = Schema([Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self])
-        let config = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
+        // groupContainer: .none required — iOS 26 changed default to .automatic which breaks out-of-process intents
+        let config = ModelConfiguration(schema: schema, groupContainer: .none, cloudKitDatabase: .none)
         let container = try ModelContainer(for: schema, configurations: config)
         let ctx = ModelContext(container)
 
