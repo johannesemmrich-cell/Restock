@@ -270,8 +270,8 @@ struct StoreDetailView: View {
         }
         .devFeedback(context: "Liste: \(store.name)")
         .onAppear {
-            applyPendingCheckoffs()
             LiveActivityService.shared.start(for: store)
+            applyPendingCheckoffs()
             if store.shareID != nil {
                 Task { await syncSharedStore() }
                 periodicSyncTask = Task {
