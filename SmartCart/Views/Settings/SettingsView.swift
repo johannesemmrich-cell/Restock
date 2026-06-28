@@ -222,6 +222,7 @@ struct SettingsView: View {
                     } else {
                         Button {
                             Haptics.impact(.light)
+                            paywallContext = .premium(feature: "alle Pro-Features")
                             showPaywall = true
                         } label: {
                             HStack(spacing: 12) {
