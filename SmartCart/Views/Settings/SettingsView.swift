@@ -16,6 +16,7 @@ struct SettingsView: View {
 
     @EnvironmentObject private var premium: PremiumService
     @State private var showPaywall = false
+    @State private var paywallContext: PaywallContext = .premium(feature: "alle Pro-Features")
     @State private var showFeedback = false
     @State private var showJoinStore = false
     @State private var notificationsEnabled = false
@@ -48,6 +49,48 @@ struct SettingsView: View {
                 }
 
                 Section("Teilen & Zusammenarbeit") {
+                    if premium.isSharedListsUnlocked {
+                        HStack(spacing: 12) {
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.green)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Geteilte Listen aktiv")
+                                    .font(.system(size: 15, weight: .medium))
+                                Text("Echtzeit-Sync mit anderen Personen")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 2)
+                    } else {
+                        Button {
+                            Haptics.impact(.light)
+                            paywallContext = .sharedLists
+                            showPaywall = true
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "person.2.fill")
+                                    .font(.system(size: 18))
+                                    .foregroundStyle(LinearGradient.brand)
+                                    .frame(width: 28)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Geteilte Listen freischalten")
+                                        .font(.system(size: 15, weight: .medium))
+                                        .foregroundStyle(.primary)
+                                    Text("Einmaliger Kauf · 3,99 €")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 2)
+                        }
+                        .buttonStyle(.plain)
+                    }
                     Button {
                         showJoinStore = true
                     } label: {
@@ -291,7 +334,7 @@ struct SettingsView: View {
                 }
             }
             .sheet(isPresented: $showJoinStore) { JoinStoreSheet() }
-            .sheet(isPresented: $showPaywall) { PaywallView(context: .premium(feature: "alle Pro-Features")) }
+            .sheet(isPresented: $showPaywall) { PaywallView(context: paywallContext) }
             .sheet(isPresented: $showFeedback) {
                 FeedbackView()
             }
