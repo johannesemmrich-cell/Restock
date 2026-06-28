@@ -716,7 +716,7 @@ struct HomeView: View {
                 .font(.headline)
                 .foregroundStyle(.secondary)
             Button(String(localized: "home.stores.setup")) {
-                showSettings = true
+                showStoreSetup = true
             }
             .buttonStyle(.borderedProminent)
         }
