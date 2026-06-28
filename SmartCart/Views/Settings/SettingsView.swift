@@ -48,6 +48,59 @@ struct SettingsView: View {
                     }
                 }
 
+                Section("SmartCart Pro") {
+                    if premium.isPremiumUnlocked {
+                        HStack(spacing: 12) {
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.green)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Pro aktiv")
+                                    .font(.system(size: 15, weight: .medium))
+                                Text("Alle Features freigeschaltet")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Button("Verwalten") {
+                                if let url = URL(string: "itms-apps://apps.apple.com/account/subscriptions") {
+                                    UIApplication.shared.open(url)
+                                }
+                            }
+                            .font(.system(size: 14))
+                            .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 2)
+                    } else {
+                        Button {
+                            Haptics.impact(.light)
+                            paywallContext = .premium(feature: "alle Pro-Features")
+                            showPaywall = true
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "star.fill")
+                                    .font(.system(size: 18))
+                                    .foregroundStyle(LinearGradient.brand)
+                                    .frame(width: 28)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("SmartCart Pro freischalten")
+                                        .font(.system(size: 15, weight: .medium))
+                                        .foregroundStyle(.primary)
+                                    Text("Kassenbon-Scan, Menüplan, Ausgaben & mehr")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 2)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
                 Section("Teilen & Zusammenarbeit") {
                     if premium.isSharedListsUnlocked {
                         HStack(spacing: 12) {
@@ -194,59 +247,6 @@ struct SettingsView: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                }
-
-                Section("SmartCart Pro") {
-                    if premium.isPremiumUnlocked {
-                        HStack(spacing: 12) {
-                            Image(systemName: "checkmark.seal.fill")
-                                .font(.system(size: 20))
-                                .foregroundStyle(.green)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Pro aktiv")
-                                    .font(.system(size: 15, weight: .medium))
-                                Text("Alle Features freigeschaltet")
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            Button("Verwalten") {
-                                if let url = URL(string: "itms-apps://apps.apple.com/account/subscriptions") {
-                                    UIApplication.shared.open(url)
-                                }
-                            }
-                            .font(.system(size: 14))
-                            .foregroundStyle(.secondary)
-                        }
-                        .padding(.vertical, 2)
-                    } else {
-                        Button {
-                            Haptics.impact(.light)
-                            paywallContext = .premium(feature: "alle Pro-Features")
-                            showPaywall = true
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "star.fill")
-                                    .font(.system(size: 18))
-                                    .foregroundStyle(LinearGradient.brand)
-                                    .frame(width: 28)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("SmartCart Pro freischalten")
-                                        .font(.system(size: 15, weight: .medium))
-                                        .foregroundStyle(.primary)
-                                    Text("Kassenbon-Scan, Menüplan, Ausgaben & mehr")
-                                        .font(.system(size: 12))
-                                        .foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 13, weight: .semibold))
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding(.vertical, 2)
-                        }
-                        .buttonStyle(.plain)
-                    }
                 }
 
                 Section(String(localized: "settings.feedback.section")) {
