@@ -11,26 +11,28 @@ struct SmartCartApp: App {
 
     @AppStorage("developerMode") private var developerMode = false
 
+    private static let appGroupID = "group.com.johannesemmrich.SmartCart"
+
     init() {
         SmartCartShortcuts.updateAppShortcutParameters()
         CloudPreferencesSync.shared.start()
 
+        // Einmalige Migration: alte Daten aus dem App-Container in den App-Group-Container kopieren.
+        // Nötig weil App-Intents (Dynamic Island, Siri) in einem anderen Prozess laufen und
+        // nur auf den App-Group-Container zugreifen können, nicht auf den App-eigenen Container.
+        Self.migrateStoreToAppGroupIfNeeded()
+
         let schema = Schema(versionedSchema: SchemaV1.self)
-        // iOS 26 änderte die Defaults von ModelConfiguration:
-        //   vorher (iOS 18): groupContainer = .none, cloudKitDatabase = .none
-        //   jetzt  (iOS 26): groupContainer = .automatic, cloudKitDatabase = .automatic
-        // .automatic greift auf App-Group und CloudKit zu — schlägt fehl wenn iCloud
-        // nicht verfügbar ist. Deshalb immer explizit .none für lokale Configs setzen.
-        let localConfig = ModelConfiguration(
-            groupContainer: .none,
+        let groupConfig = ModelConfiguration(
+            groupContainer: .identifier(Self.appGroupID),
             cloudKitDatabase: .none
         )
 
-        // 1. CloudKit
+        // 1. CloudKit mit App-Group
         if let c = try? ModelContainer(
             for: schema,
             configurations: ModelConfiguration(
-                groupContainer: .none,
+                groupContainer: .identifier(Self.appGroupID),
                 cloudKitDatabase: .private("iCloud.com.johannesemmrich.SmartCart")
             )
         ) {
@@ -38,15 +40,15 @@ struct SmartCartApp: App {
             return
         }
 
-        // 2. Lokaler Store (explizit kein CloudKit, kein Group-Container)
-        if let c = try? ModelContainer(for: schema, configurations: localConfig) {
+        // 2. Lokaler Store in App-Group (kein CloudKit)
+        if let c = try? ModelContainer(for: schema, configurations: groupConfig) {
             container = c
             return
         }
 
         // 3. Store-Dateien löschen + nochmal
         Self.deleteStoreFiles()
-        if let c = try? ModelContainer(for: schema, configurations: localConfig) {
+        if let c = try? ModelContainer(for: schema, configurations: groupConfig) {
             container = c
             return
         }
@@ -58,24 +60,55 @@ struct SmartCartApp: App {
         )
     }
 
+    // Kopiert vorhandene Store-Dateien aus dem alten App-Container in den App-Group-Container.
+    // Läuft nur einmal (wenn der Group-Container noch keine .store-Dateien hat).
+    private static func migrateStoreToAppGroupIfNeeded() {
+        let fm = FileManager.default
+        guard
+            let groupURL = fm.containerURL(forSecurityApplicationGroupIdentifier: appGroupID),
+            let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+        else { return }
+
+        let groupAppSupport = groupURL.appendingPathComponent("Library/Application Support")
+
+        // Bereits migriert wenn im Group-Container schon .store-Dateien existieren
+        if let existing = try? fm.contentsOfDirectory(at: groupAppSupport, includingPropertiesForKeys: nil),
+           existing.contains(where: { $0.pathExtension == "store" }) { return }
+
+        guard let oldFiles = try? fm.contentsOfDirectory(at: appSupport, includingPropertiesForKeys: nil) else { return }
+        let storeFiles = oldFiles.filter {
+            $0.pathExtension == "store" ||
+            $0.lastPathComponent.hasSuffix(".store-wal") ||
+            $0.lastPathComponent.hasSuffix(".store-shm")
+        }
+        guard !storeFiles.isEmpty else { return }
+
+        try? fm.createDirectory(at: groupAppSupport, withIntermediateDirectories: true)
+        for file in storeFiles {
+            try? fm.copyItem(at: file, to: groupAppSupport.appendingPathComponent(file.lastPathComponent))
+        }
+    }
+
     private static func deleteStoreFiles() {
-        // Normaler App-Container
-        if let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-            if let contents = try? FileManager.default.contentsOfDirectory(at: appSupport, includingPropertiesForKeys: nil) {
+        let fm = FileManager.default
+        // App-Group-Container (primärer Store-Speicherort)
+        if let groupURL = fm.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
+            let groupAppSupport = groupURL.appendingPathComponent("Library/Application Support")
+            if let contents = try? fm.contentsOfDirectory(at: groupAppSupport, includingPropertiesForKeys: nil) {
                 for url in contents where url.pathExtension == "store"
                     || url.lastPathComponent.hasSuffix(".store-shm")
                     || url.lastPathComponent.hasSuffix(".store-wal") {
-                    try? FileManager.default.removeItem(at: url)
+                    try? fm.removeItem(at: url)
                 }
             }
         }
-        // iOS 26: Group-Container (falls SwiftData dort gespeichert hat)
-        if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.johannesemmrich.SmartCart") {
-            if let contents = try? FileManager.default.contentsOfDirectory(at: groupURL, includingPropertiesForKeys: nil) {
+        // Alter App-Container (Fallback-Cleanup)
+        if let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            if let contents = try? fm.contentsOfDirectory(at: appSupport, includingPropertiesForKeys: nil) {
                 for url in contents where url.pathExtension == "store"
                     || url.lastPathComponent.hasSuffix(".store-shm")
                     || url.lastPathComponent.hasSuffix(".store-wal") {
-                    try? FileManager.default.removeItem(at: url)
+                    try? fm.removeItem(at: url)
                 }
             }
         }
