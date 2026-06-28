@@ -28,10 +28,12 @@ final class LiveActivityService {
     }
 
     private func makeState(for store: Store) -> ShoppingActivityAttributes.ContentState {
-        .init(
+        let pending = store.pendingItems
+        return .init(
             completedCount: store.completedItems.count,
             totalCount: store.items.count,
-            nextItemName: store.pendingItems.first?.name,
+            nextItemName: pending.first?.name,
+            pendingItemNames: pending.map { $0.name },
             storeColorHex: store.colorHex
         )
     }

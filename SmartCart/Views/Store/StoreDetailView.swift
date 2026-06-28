@@ -270,6 +270,7 @@ struct StoreDetailView: View {
         }
         .devFeedback(context: "Liste: \(store.name)")
         .onAppear {
+            applyPendingCheckoffs()
             LiveActivityService.shared.start(for: store)
             if store.shareID != nil {
                 Task { await syncSharedStore() }
@@ -516,6 +517,24 @@ struct StoreDetailView: View {
             for item in store.completedItems { context.delete(item) }
             completionOrder.removeAll()
         }
+    }
+
+    private func applyPendingCheckoffs() {
+        let defaults = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart")
+        let key = "pendingCheckoffs_\(store.name)"
+        let count = defaults?.integer(forKey: key) ?? 0
+        guard count > 0 else { return }
+        defaults?.removeObject(forKey: key)
+        var applied = 0
+        for _ in 0..<count {
+            guard let item = store.pendingItems.first else { break }
+            item.markCompleted()
+            store.recordCompletionOrder([item.name])
+            applied += 1
+        }
+        guard applied > 0 else { return }
+        try? context.save()
+        LiveActivityService.shared.update(for: store)
     }
 
     // MARK: - QuickAdd helpers

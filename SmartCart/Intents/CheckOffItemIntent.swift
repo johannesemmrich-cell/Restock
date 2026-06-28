@@ -1,5 +1,4 @@
 import AppIntents
-import SwiftData
 import ActivityKit
 
 struct CheckOffItemIntent: AppIntent {
@@ -13,34 +12,30 @@ struct CheckOffItemIntent: AppIntent {
     init(storeName: String) { self.storeName = storeName }
 
     func perform() async throws -> some IntentResult {
-        let schema = Schema([Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self])
-        let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.johannesemmrich.SmartCart"), cloudKitDatabase: .none)
-        let container = try ModelContainer(for: schema, configurations: config)
-        let ctx = ModelContext(container)
+        // Finde die aktive Live Activity für diesen Store
+        guard let activity = Activity<ShoppingActivityAttributes>.activities
+            .first(where: { $0.attributes.storeName == storeName }),
+              !activity.content.state.pendingItemNames.isEmpty
+        else { return .result() }
 
-        var descriptor = FetchDescriptor<Store>(predicate: #Predicate<Store> { $0.name == storeName })
-        descriptor.fetchLimit = 1
-        let stores = try ctx.fetch(descriptor)
-        guard let store = stores.first,
-              let item = store.pendingItems.first else {
-            return .result()
-        }
+        let current = activity.content.state
+        var remaining = current.pendingItemNames
+        remaining.removeFirst()
 
-        item.markCompleted()
-        store.recordCompletionOrder([item.name])
-        try ctx.save()
-
+        // Live Activity sofort optimistisch aktualisieren — kein SwiftData nötig
         let newState = ShoppingActivityAttributes.ContentState(
-            completedCount: store.completedItems.count,
-            totalCount: store.items.count,
-            nextItemName: store.pendingItems.first?.name,
-            storeColorHex: store.colorHex
+            completedCount: current.completedCount + 1,
+            totalCount: current.totalCount,
+            nextItemName: remaining.first,
+            pendingItemNames: remaining,
+            storeColorHex: current.storeColorHex
         )
+        await activity.update(ActivityContent(state: newState, staleDate: nil))
 
-        for activity in Activity<ShoppingActivityAttributes>.activities
-            where activity.attributes.storeName == storeName {
-            await activity.update(ActivityContent(state: newState, staleDate: nil))
-        }
+        // Persistierung wird von der Hauptapp beim nächsten Öffnen des Stores erledigt
+        let defaults = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart")
+        let key = "pendingCheckoffs_\(storeName)"
+        defaults?.set((defaults?.integer(forKey: key) ?? 0) + 1, forKey: key)
 
         return .result()
     }
