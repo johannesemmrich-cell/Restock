@@ -15,7 +15,18 @@ struct PaywallView: View {
 
     @Environment(\.dismiss) private var dismiss
     @StateObject private var premium = PremiumService.shared
-    @State private var selectedPlanID = PremiumService.yearlyID
+    @State private var selectedPlanID: String
+
+    init(context: PaywallContext) {
+        self.context = context
+        switch context {
+        case .sharedLists:
+            _selectedPlanID = State(initialValue: PremiumService.sharedListsID)
+        case .premium:
+            _selectedPlanID = State(initialValue: PremiumService.yearlyID)
+        }
+    }
+
     @State private var isRestoring = false
     @State private var errorMessage: String?
 
@@ -355,7 +366,8 @@ struct PaywallView: View {
     private struct Benefit { let icon: String; let title: String; let description: String }
 
     private let premiumBenefits: [Benefit] = [
-        Benefit(icon: "doc.text.viewfinder",   title: "Kassenbon-Scan",        description: "Preise automatisch aus Kassenbon einlesen"),
+        Benefit(icon: "person.2.fill",          title: "Geteilte Listen",       description: "Echtzeit-Sync mit Partner, Familie oder Mitbewohnern"),
+        Benefit(icon: "doc.text.viewfinder",    title: "Kassenbon-Scan",        description: "Preise automatisch aus Kassenbon einlesen"),
         Benefit(icon: "fork.knife",             title: "Menüplan",              description: "Wochenspeiseplan & Zutaten automatisch hinzufügen"),
         Benefit(icon: "chart.bar.fill",         title: "Ausgaben-Analyse",      description: "Monatliche Ausgaben & Budgetschätzung"),
         Benefit(icon: "arrow.clockwise",        title: "Nachkauf-Erinnerungen", description: "Intelligente Hinweise, wenn ein Artikel fällig ist"),
