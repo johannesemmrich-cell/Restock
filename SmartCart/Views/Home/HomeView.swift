@@ -24,6 +24,7 @@ struct HomeView: View {
     @State private var headerScale: CGFloat = 1.0
 
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
+    @AppStorage("homeListMode") private var listMode = false
     @EnvironmentObject private var premium: PremiumService
     @State private var showPaywall = false
     @State private var paywallContext: PaywallContext = .premium(feature: "dieses Feature")
@@ -624,24 +625,37 @@ struct HomeView: View {
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.warning.opacity(0.3), lineWidth: 1))
     }
 
-    // MARK: - Store grid
+    // MARK: - Store grid / Category list
 
     private var storeSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(String(localized: "home.stores.title"))
+            HStack(spacing: 12) {
+                Text(listMode ? "Alle Artikel" : String(localized: "home.stores.title"))
                     .font(.system(size: 18, weight: .bold))
                 Spacer()
                 Button {
-                    showStoreSetup = true
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { listMode.toggle() }
+                    Haptics.impact(.light)
                 } label: {
-                    Text("Verwalten")
-                        .font(.system(size: 14))
+                    Image(systemName: listMode ? "rectangle.grid.2x2" : "list.bullet")
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(.secondary)
+                        .frame(width: 32, height: 32)
+                        .background(Color(.systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                if !listMode {
+                    Button { showStoreSetup = true } label: {
+                        Text("Verwalten")
+                            .font(.system(size: 14))
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
 
-            if activeStores.isEmpty {
+            if listMode {
+                categoryListView
+            } else if activeStores.isEmpty {
                 emptyStoresView
             } else {
                 LazyVGrid(columns: columns, spacing: 12) {
@@ -678,6 +692,137 @@ struct HomeView: View {
                 }
             }
         }
+    }
+
+    // MARK: - Category list
+
+    private var allPendingItems: [ShoppingItem] {
+        activeStores.filter { !$0.isPaused }.flatMap { $0.pendingItems }
+    }
+
+    private var groupedByCategory: [(category: String, emoji: String, items: [ShoppingItem])] {
+        let grouped = Dictionary(grouping: allPendingItems) { $0.category }
+        let knownOrder = [
+            "Obst & Gemüse", "Milchprodukte", "Backwaren", "Tiefkühlkost", "Lebensmittel",
+            "Körperpflege", "Reinigung", "Medikamente", "Babybedarf", "Haushaltswaren",
+            "Küchenausstattung", "Elektronik", "Textilien", "Schreibwaren", "Spielzeug",
+            "Dekoration", "Werkzeug", "Garten", "Farbe & Lack", "Sanitär", "Baumaterial"
+        ]
+        var result: [(category: String, emoji: String, items: [ShoppingItem])] = []
+        for cat in knownOrder {
+            if let items = grouped[cat], !items.isEmpty {
+                result.append((category: cat, emoji: categoryEmoji(cat), items: items))
+            }
+        }
+        for key in grouped.keys.sorted() where !knownOrder.contains(key) {
+            if let items = grouped[key], !items.isEmpty {
+                result.append((category: key, emoji: categoryEmoji(key), items: items))
+            }
+        }
+        return result
+    }
+
+    private func categoryEmoji(_ category: String) -> String {
+        switch category {
+        case "Obst & Gemüse":     return "🥦"
+        case "Milchprodukte":     return "🥛"
+        case "Backwaren":         return "🍞"
+        case "Tiefkühlkost":      return "❄️"
+        case "Lebensmittel":      return "🛒"
+        case "Körperpflege":      return "🧴"
+        case "Reinigung":         return "🧹"
+        case "Medikamente":       return "💊"
+        case "Babybedarf":        return "🍼"
+        case "Haushaltswaren":    return "🏠"
+        case "Küchenausstattung": return "🍳"
+        case "Elektronik":        return "⚡️"
+        case "Textilien":         return "👕"
+        case "Schreibwaren":      return "✏️"
+        case "Spielzeug":         return "🎮"
+        case "Dekoration":        return "🪴"
+        case "Werkzeug":          return "🔧"
+        case "Garten":            return "🌱"
+        case "Farbe & Lack":      return "🎨"
+        case "Sanitär":           return "🚿"
+        case "Baumaterial":       return "🏗️"
+        default:                  return "🏷️"
+        }
+    }
+
+    @ViewBuilder
+    private var categoryListView: some View {
+        if allPendingItems.isEmpty {
+            VStack(spacing: 12) {
+                Image(systemName: "checkmark.circle")
+                    .font(.system(size: 44))
+                    .foregroundStyle(Color.brand.opacity(0.5))
+                Text("Keine offenen Artikel")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 48)
+            .cardStyle()
+        } else {
+            VStack(spacing: 10) {
+                ForEach(groupedByCategory, id: \.category) { group in
+                    VStack(spacing: 0) {
+                        HStack(spacing: 8) {
+                            Text(group.emoji)
+                                .font(.system(size: 15))
+                            Text(group.category)
+                                .font(.system(size: 15, weight: .semibold))
+                            Spacer()
+                            Text("\(group.items.count)")
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        ForEach(group.items) { item in
+                            Divider().padding(.leading, 14)
+                            categoryItemRow(item)
+                        }
+                    }
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func categoryItemRow(_ item: ShoppingItem) -> some View {
+        Button {
+            withAnimation(.spring(response: 0.3)) { item.markCompleted() }
+            Haptics.success()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "circle")
+                    .font(.system(size: 20))
+                    .foregroundStyle(Color.brand.opacity(0.45))
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(item.name)
+                        .font(.system(size: 15))
+                        .foregroundStyle(.primary)
+                    if !item.unit.isEmpty || item.quantityAmount != 1 {
+                        Text(item.quantity + (item.unit.isEmpty ? "" : " \(item.unit)"))
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Spacer()
+                if let emoji = item.store?.emoji {
+                    Text(emoji)
+                        .font(.system(size: 17))
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     private var addStoreCard: some View {
