@@ -701,9 +701,11 @@ struct HomeView: View {
     }
 
     private var groupedByCategory: [(category: String, emoji: String, items: [ShoppingItem])] {
-        let grouped = Dictionary(grouping: allPendingItems) { $0.category }
+        // Always compute category from current name so stale stored values and rule updates apply immediately
+        let grouped = Dictionary(grouping: allPendingItems) { AssignmentService.category(for: $0.name) }
         let knownOrder = [
-            "Obst & Gemüse", "Milchprodukte", "Backwaren", "Tiefkühlkost", "Lebensmittel",
+            "Obst & Gemüse", "Fleisch & Wurst", "Milchprodukte", "Backwaren",
+            "Getränke", "Tiefkühlkost", "Snacks", "Gewürze & Backen", "Konserven", "Lebensmittel",
             "Körperpflege", "Reinigung", "Medikamente", "Babybedarf", "Haushaltswaren",
             "Küchenausstattung", "Elektronik", "Textilien", "Schreibwaren", "Spielzeug",
             "Dekoration", "Werkzeug", "Garten", "Farbe & Lack", "Sanitär", "Baumaterial"
@@ -725,9 +727,14 @@ struct HomeView: View {
     private func categoryEmoji(_ category: String) -> String {
         switch category {
         case "Obst & Gemüse":     return "🥦"
+        case "Fleisch & Wurst":   return "🥩"
         case "Milchprodukte":     return "🥛"
         case "Backwaren":         return "🍞"
+        case "Getränke":          return "🥤"
         case "Tiefkühlkost":      return "❄️"
+        case "Snacks":            return "🍿"
+        case "Gewürze & Backen":  return "🧂"
+        case "Konserven":         return "🍝"
         case "Lebensmittel":      return "🛒"
         case "Körperpflege":      return "🧴"
         case "Reinigung":         return "🧹"
