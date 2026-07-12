@@ -306,6 +306,46 @@ struct AssignmentService {
         return activeStores.first
     }
 
+    static let categoryOrder = [
+        "Obst & Gemüse", "Fleisch & Wurst", "Milchprodukte", "Backwaren",
+        "Getränke", "Tiefkühlkost", "Snacks", "Gewürze & Backen", "Konserven", "Lebensmittel",
+        "Körperpflege", "Reinigung", "Medikamente", "Babybedarf", "Haushaltswaren",
+        "Küchenausstattung", "Elektronik", "Textilien", "Schreibwaren", "Spielzeug",
+        "Dekoration", "Werkzeug", "Garten", "Farbe & Lack", "Sanitär", "Baumaterial"
+    ]
+
+    static func categoryEmoji(_ category: String) -> String {
+        switch category {
+        case "Obst & Gemüse":     return "🥦"
+        case "Fleisch & Wurst":   return "🥩"
+        case "Milchprodukte":     return "🥛"
+        case "Backwaren":         return "🍞"
+        case "Getränke":          return "🥤"
+        case "Tiefkühlkost":      return "❄️"
+        case "Snacks":            return "🍿"
+        case "Gewürze & Backen":  return "🧂"
+        case "Konserven":         return "🍝"
+        case "Lebensmittel":      return "🛒"
+        case "Körperpflege":      return "🧴"
+        case "Reinigung":         return "🧹"
+        case "Medikamente":       return "💊"
+        case "Babybedarf":        return "🍼"
+        case "Haushaltswaren":    return "🏠"
+        case "Küchenausstattung": return "🍳"
+        case "Elektronik":        return "⚡️"
+        case "Textilien":         return "👕"
+        case "Schreibwaren":      return "✏️"
+        case "Spielzeug":         return "🎮"
+        case "Dekoration":        return "🪴"
+        case "Werkzeug":          return "🔧"
+        case "Garten":            return "🌱"
+        case "Farbe & Lack":      return "🎨"
+        case "Sanitär":           return "🚿"
+        case "Baumaterial":       return "🏗️"
+        default:                  return "🏷️"
+        }
+    }
+
     static func category(for itemName: String) -> String {
         let nameLower = itemName.lowercased()
 

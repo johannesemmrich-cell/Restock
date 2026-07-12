@@ -703,57 +703,18 @@ struct HomeView: View {
     private var groupedByCategory: [(category: String, emoji: String, items: [ShoppingItem])] {
         // Always compute category from current name so stale stored values and rule updates apply immediately
         let grouped = Dictionary(grouping: allPendingItems) { AssignmentService.category(for: $0.name) }
-        let knownOrder = [
-            "Obst & Gemüse", "Fleisch & Wurst", "Milchprodukte", "Backwaren",
-            "Getränke", "Tiefkühlkost", "Snacks", "Gewürze & Backen", "Konserven", "Lebensmittel",
-            "Körperpflege", "Reinigung", "Medikamente", "Babybedarf", "Haushaltswaren",
-            "Küchenausstattung", "Elektronik", "Textilien", "Schreibwaren", "Spielzeug",
-            "Dekoration", "Werkzeug", "Garten", "Farbe & Lack", "Sanitär", "Baumaterial"
-        ]
         var result: [(category: String, emoji: String, items: [ShoppingItem])] = []
-        for cat in knownOrder {
+        for cat in AssignmentService.categoryOrder {
             if let items = grouped[cat], !items.isEmpty {
-                result.append((category: cat, emoji: categoryEmoji(cat), items: items))
+                result.append((category: cat, emoji: AssignmentService.categoryEmoji(cat), items: items))
             }
         }
-        for key in grouped.keys.sorted() where !knownOrder.contains(key) {
+        for key in grouped.keys.sorted() where !AssignmentService.categoryOrder.contains(key) {
             if let items = grouped[key], !items.isEmpty {
-                result.append((category: key, emoji: categoryEmoji(key), items: items))
+                result.append((category: key, emoji: AssignmentService.categoryEmoji(key), items: items))
             }
         }
         return result
-    }
-
-    private func categoryEmoji(_ category: String) -> String {
-        switch category {
-        case "Obst & Gemüse":     return "🥦"
-        case "Fleisch & Wurst":   return "🥩"
-        case "Milchprodukte":     return "🥛"
-        case "Backwaren":         return "🍞"
-        case "Getränke":          return "🥤"
-        case "Tiefkühlkost":      return "❄️"
-        case "Snacks":            return "🍿"
-        case "Gewürze & Backen":  return "🧂"
-        case "Konserven":         return "🍝"
-        case "Lebensmittel":      return "🛒"
-        case "Körperpflege":      return "🧴"
-        case "Reinigung":         return "🧹"
-        case "Medikamente":       return "💊"
-        case "Babybedarf":        return "🍼"
-        case "Haushaltswaren":    return "🏠"
-        case "Küchenausstattung": return "🍳"
-        case "Elektronik":        return "⚡️"
-        case "Textilien":         return "👕"
-        case "Schreibwaren":      return "✏️"
-        case "Spielzeug":         return "🎮"
-        case "Dekoration":        return "🪴"
-        case "Werkzeug":          return "🔧"
-        case "Garten":            return "🌱"
-        case "Farbe & Lack":      return "🎨"
-        case "Sanitär":           return "🚿"
-        case "Baumaterial":       return "🏗️"
-        default:                  return "🏷️"
-        }
     }
 
     @ViewBuilder
@@ -909,12 +870,21 @@ struct HomeView: View {
             }
         }
         ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                Haptics.impact(.light)
-                showAddItem = true
-            } label: {
-                Image(systemName: "plus")
-                    .fontWeight(.semibold)
+            HStack(spacing: 16) {
+                Button {
+                    Haptics.impact(.light)
+                    showAllItems = true
+                } label: {
+                    Image(systemName: "list.bullet.rectangle")
+                        .foregroundStyle(.primary)
+                }
+                Button {
+                    Haptics.impact(.light)
+                    showAddItem = true
+                } label: {
+                    Image(systemName: "plus")
+                        .fontWeight(.semibold)
+                }
             }
         }
     }
