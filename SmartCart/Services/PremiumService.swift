@@ -17,7 +17,13 @@ final class PremiumService: ObservableObject {
     @AppStorage("developerMode") private var developerMode = false
 
     var isPremiumUnlocked: Bool {
-        developerMode
+        #if DEBUG
+        // Für Screenshot-Automation: Premium ohne Developer-Mode-UI freischalten.
+        if ProcessInfo.processInfo.arguments.contains("-premiumForScreenshots") {
+            return true
+        }
+        #endif
+        return developerMode
             || purchasedProductIDs.contains(Self.lifetimeID)
             || purchasedProductIDs.contains(Self.monthlyID)
             || purchasedProductIDs.contains(Self.yearlyID)

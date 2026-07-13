@@ -115,6 +115,19 @@ struct StoreShareSheet: View {
     private func startSharing() async {
         isPublishing = true
         error = nil
+        #if DEBUG
+        // Für Screenshot-Automation: Code lokal generieren statt über CloudKit zu
+        // veröffentlichen (Simulator hat i.d.R. keinen angemeldeten iCloud-Account).
+        if ProcessInfo.processInfo.arguments.contains("-skipCloudKitForScreenshots") {
+            await MainActor.run {
+                store.shareID = SharedStoreService.generateCode()
+                store.isSharedByMe = true
+                try? context.save()
+                isPublishing = false
+            }
+            return
+        }
+        #endif
         do {
             let code = try await SharedStoreService.shared.publish(store: store)
             await MainActor.run {
