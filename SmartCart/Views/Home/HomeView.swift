@@ -45,7 +45,7 @@ struct HomeView: View {
                     headerCard
                     quickAddBar
                     if !dueSoonItems.isEmpty {
-                        if premium.isPremiumUnlocked {
+                        if premium.hasPremiumAccess {
                             replenishmentBanner
                         } else {
                             premiumTeaser(
@@ -58,7 +58,7 @@ struct HomeView: View {
                         }
                     }
                     if !seasonalSuggestions.isEmpty {
-                        if premium.isPremiumUnlocked {
+                        if premium.hasPremiumAccess {
                             seasonalBanner
                         } else {
                             premiumTeaser(
@@ -848,7 +848,7 @@ struct HomeView: View {
                     Image(systemName: "gear").foregroundStyle(.primary)
                 }
                 Button {
-                    if premium.isPremiumUnlocked {
+                    if premium.hasPremiumAccess {
                         showMenuPlan = true
                     } else {
                         paywallContext = .premium(feature: "den Menüplan")
@@ -858,7 +858,7 @@ struct HomeView: View {
                     Image(systemName: "fork.knife").foregroundStyle(.primary)
                 }
                 Button {
-                    if premium.isPremiumUnlocked {
+                    if premium.hasPremiumAccess {
                         showPriceOverview = true
                     } else {
                         paywallContext = .premium(feature: "die Ausgaben-Analyse")

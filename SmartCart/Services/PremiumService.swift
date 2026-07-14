@@ -33,6 +33,21 @@ final class PremiumService: ObservableObject {
         isPremiumUnlocked || purchasedProductIDs.contains(Self.sharedListsID)
     }
 
+    // TEMPORÄR: schaltet alle Pro-Features für alle Nutzer frei, ohne den angezeigten
+    // Plan-Status (Settings, Paywall) zu verändern — der bleibt "Basic"/"nicht gekauft".
+    // Auf "false" setzen (oder die beiden Properties entfernen und die Call-Sites wieder
+    // auf isPremiumUnlocked/isSharedListsUnlocked zeigen lassen), um die Pro-Sperre
+    // wieder zu aktivieren. Siehe Backlog-Memory "Pro-Sperre temporär deaktiviert".
+    static let debugAllFeaturesUnlocked = true
+
+    var hasPremiumAccess: Bool {
+        Self.debugAllFeaturesUnlocked || isPremiumUnlocked
+    }
+
+    var hasSharedListsAccess: Bool {
+        Self.debugAllFeaturesUnlocked || isSharedListsUnlocked
+    }
+
     func product(for id: String) -> Product? {
         products.first { $0.id == id }
     }

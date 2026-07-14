@@ -185,7 +185,7 @@ struct StoreDetailView: View {
                             .scaleEffect(0.8)
                     }
                     Button {
-                        if premium.isSharedListsUnlocked {
+                        if premium.hasSharedListsAccess {
                             showShareSheet = true
                         } else {
                             paywallContext = .sharedLists
@@ -198,7 +198,7 @@ struct StoreDetailView: View {
                     Menu {
                         if !store.completedItems.isEmpty {
                             Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
-                                if premium.isPremiumUnlocked {
+                                if premium.hasPremiumAccess {
                                     showReceiptScanner = true
                                 } else {
                                     paywallContext = .premium(feature: "den Kassenbon-Scan")
@@ -208,7 +208,7 @@ struct StoreDetailView: View {
                             }
                         }
                         Button("Als Vorlage speichern", systemImage: "plus.rectangle.on.folder") {
-                            if premium.isPremiumUnlocked {
+                            if premium.hasPremiumAccess {
                                 templateName = store.name
                                 showSaveTemplateAlert = true
                             } else {
@@ -220,7 +220,7 @@ struct StoreDetailView: View {
                         .disabled(store.pendingItems.isEmpty)
                         if !templateService.templates.isEmpty {
                             Button("Vorlage laden", systemImage: "folder") {
-                                if premium.isPremiumUnlocked {
+                                if premium.hasPremiumAccess {
                                     showTemplatePicker = true
                                 } else {
                                     paywallContext = .premium(feature: "Vorlagen")
