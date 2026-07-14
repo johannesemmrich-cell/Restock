@@ -138,7 +138,16 @@ struct StoreShareSheet: View {
             }
         } catch {
             await MainActor.run {
-                self.error = "Fehler: \(error.localizedDescription)"
+                let ns = error as NSError
+                var detail = "Fehler: \(ns.localizedDescription) (domain: \(ns.domain), code: \(ns.code))"
+                if let underlying = ns.userInfo[NSUnderlyingErrorKey] as? NSError {
+                    detail += " | underlying: \(underlying.domain) \(underlying.code) \(underlying.localizedDescription)"
+                }
+                if let ckPartial = ns.userInfo[CKPartialErrorsByItemIDKey] {
+                    detail += " | partial: \(ckPartial)"
+                }
+                self.error = detail
+                print("[SharedStoreService] publish failed: \(ns) userInfo: \(ns.userInfo)")
                 isPublishing = false
             }
         }
