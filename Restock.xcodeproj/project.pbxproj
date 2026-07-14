@@ -114,7 +114,7 @@
 		77BA313610B6903F788B3D1B /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		83130764D304E50CAB3E2DD7 /* StoreCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCard.swift; sourceTree = "<group>"; };
 		838409C378288CFA57B42809 /* HabitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitService.swift; sourceTree = "<group>"; };
-		871EE15339EEC6D5F40AC259 /* SmartCart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartCart.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		871EE15339EEC6D5F40AC259 /* Restock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Restock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88C3233FB5722D2CF4BE2B3A /* StoreDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreDetailView.swift; sourceTree = "<group>"; };
 		98EB342AC7EE894C9C2B7A34 /* ItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
 		9AB228D171BFA424F8AFC0CD /* StoreSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSetupView.swift; sourceTree = "<group>"; };
@@ -159,7 +159,7 @@
 		PS01B2C3D4E5F6A7B8C9D001 /* PremiumService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumService.swift; sourceTree = "<group>"; };
 		PW01B2C3D4E5F6A7B8C9D001 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		LV01B2C3D4E5F6A7B8C9D001 /* LegalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalView.swift; sourceTree = "<group>"; };
-		SK01B2C3D4E5F6A7B8C9D001 /* SmartCart.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = SmartCart.storekit; path = SmartCart.storekit; sourceTree = "<group>"; };
+		SK01B2C3D4E5F6A7B8C9D001 /* Restock.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Restock.storekit; path = Restock.storekit; sourceTree = "<group>"; };
 		AB12CD23EF45AB67CD89EF12 /* StoreShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreShareSheet.swift; sourceTree = "<group>"; };
 		BC10DE23FA56BC78DE90FA10 /* SchemaVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaVersions.swift; sourceTree = "<group>"; };
 		BC12FA45BC78DE90FA12BC12 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = "com.apple.privacy-manifest"; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -203,7 +203,7 @@
 				0630F8F8C67403AA0F3A36B7 /* SmartCart */,
 				WG01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgets */,
 				AE714AD5A44F548B65398F30 /* Products */,
-				SK01B2C3D4E5F6A7B8C9D001 /* SmartCart.storekit */,
+				SK01B2C3D4E5F6A7B8C9D001 /* Restock.storekit */,
 			);
 			sourceTree = "<group>";
 		};
@@ -308,7 +308,7 @@
 		AE714AD5A44F548B65398F30 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				871EE15339EEC6D5F40AC259 /* SmartCart.app */,
+				871EE15339EEC6D5F40AC259 /* Restock.app */,
 				WF06A7B8C9D0E1F2A3B4C006 /* SmartCartWidgets.appex */,
 			);
 			name = Products;
@@ -394,7 +394,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXNativeTarget section */
-		5EBD46E01B8EEC0BEA111929 /* SmartCart */ = {
+		5EBD46E01B8EEC0BEA111929 /* Restock */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B0D3249617C99934BD7C6211 /* Build configuration list for PBXNativeTarget "SmartCart" */;
 			buildPhases = (
@@ -407,11 +407,11 @@
 			dependencies = (
 				WTD1B2C3D4E5F6A7B8C9D001 /* PBXTargetDependency */,
 			);
-			name = SmartCart;
+			name = Restock;
 			packageProductDependencies = (
 			);
-			productName = SmartCart;
-			productReference = 871EE15339EEC6D5F40AC259 /* SmartCart.app */;
+			productName = Restock;
+			productReference = 871EE15339EEC6D5F40AC259 /* Restock.app */;
 			productType = "com.apple.product-type.application";
 		};
 		WT01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgets */ = {
@@ -463,7 +463,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5EBD46E01B8EEC0BEA111929 /* SmartCart */,
+				5EBD46E01B8EEC0BEA111929 /* Restock */,
 				WT01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgets */,
 			);
 		};
@@ -621,7 +621,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.SmartCart;
+				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.Restock;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -772,7 +772,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.SmartCart;
+				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.Restock;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -796,7 +796,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.SmartCart.SmartCartWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.Restock.SmartCartWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -824,7 +824,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.SmartCart.SmartCartWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.Restock.SmartCartWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

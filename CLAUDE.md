@@ -7,8 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 # Build for simulator (no sudo needed after first setup)
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
-  xcodebuild -scheme SmartCart \
-             -project SmartCart.xcodeproj \
+  xcodebuild -scheme Restock \
+             -project Restock.xcodeproj \
              -destination 'generic/platform=iOS Simulator' \
              build 2>&1 | grep -E "error:|BUILD SUCCEEDED|BUILD FAILED"
 ```
@@ -17,7 +17,7 @@ There are no automated tests. UI verification requires running in Xcode or Simul
 
 ## Adding new Swift files
 
-Xcode does **not** auto-discover files on disk. Every new `.swift` file must be manually registered in `SmartCart.xcodeproj/project.pbxproj` in three places:
+Xcode does **not** auto-discover files on disk. Every new `.swift` file must be manually registered in `Restock.xcodeproj/project.pbxproj` in three places:
 
 1. `PBXBuildFile` — links build UUID → file reference UUID
 2. `PBXFileReference` — declares the file path
