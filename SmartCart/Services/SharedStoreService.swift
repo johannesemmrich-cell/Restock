@@ -16,28 +16,106 @@ actor SharedStoreService {
         return String((0..<6).map { _ in chars.randomElement()! })
     }
 
-    // MARK: - Publish (owner creates / updates)
+    // MARK: - Publish / push (owner or member uploads local state)
+    //
+    // Both the initial "create share" and every subsequent upload go through `syncToCloud`,
+    // which always pulls the current remote record first and merges it with the local snapshot
+    // (per-item last-write-wins by `lastModified`, tombstone-aware) before saving. This prevents
+    // one device's stale local snapshot from clobbering an addition another device already synced.
+    // A save can still lose that race against a *third* device that saves in between our fetch and
+    // our save; CloudKit detects that itself (default save policy is `.ifServerRecordUnchanged`)
+    // and throws `.serverRecordChanged` with the record that won, so we re-merge against that and
+    // retry exactly once instead of silently overwriting it.
 
+    @discardableResult
     func publish(store: Store) async throws -> String {
+        let (code, _, _) = try await syncToCloud(store: store)
+        return code
+    }
+
+    @discardableResult
+    func push(store: Store) async throws -> (items: [SharedItemData], members: [String])? {
+        guard store.shareID != nil else { return nil }
+        let (_, items, members) = try await syncToCloud(store: store)
+        return (items, members)
+    }
+
+    private func syncToCloud(store: Store) async throws -> (code: String, items: [SharedItemData], members: [String]) {
         let code = store.shareID ?? Self.generateCode()
         let recordID = CKRecord.ID(recordName: code)
 
-        let record: CKRecord
+        var record: CKRecord
+        var isNewRecord: Bool
         do {
             record = try await db.record(for: recordID)
+            isNewRecord = false
         } catch {
             record = CKRecord(recordType: Self.recordType, recordID: recordID)
+            isNewRecord = true
         }
+
+        var attempt = 0
+        while true {
+            let (mergedItems, mergedMembers) = mergeIntoRecord(record, store: store, code: code, isNewRecord: isNewRecord)
+            do {
+                try await db.save(record)
+                markSynced(shareID: code)
+                pruneDeletions(shareID: code, stillPresent: Set(mergedItems.map(\.id)))
+                return (code, mergedItems, mergedMembers)
+            } catch let error as CKError where error.code == .serverRecordChanged && attempt == 0 {
+                // Another device saved between our fetch and our save. Re-merge against the
+                // record that actually won instead of blindly overwriting it a second time.
+                guard let serverRecord = error.serverRecord else { throw error }
+                record = serverRecord
+                isNewRecord = false
+                attempt += 1
+            }
+        }
+    }
+
+    /// Merges local store state into `record` in place and returns the merged items/members.
+    private func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool) -> (items: [SharedItemData], members: [String]) {
+        let remoteItems = decodeItems(record["itemsJSON"] as? String ?? "[]")
+        let remoteMembers = decodeMembers(record["membersJSON"] as? String ?? "[]")
+        let remoteDeletedIDs = decodeIDs(record["deletedJSON"] as? String ?? "[]")
+
+        let localTombstones = pendingDeletions(shareID: code)
+        let allTombstones = localTombstones.union(remoteDeletedIDs)
+        let localItems = sharedItemData(from: store.items)
+        let mergedItems = merge(local: localItems, remote: remoteItems, tombstones: allTombstones)
+        let mergedMembers = Array(Set(remoteMembers + store.members)).sorted()
+        // Tombstones only grow (a UUID string is ~36 bytes; even thousands of deletions over the
+        // list's lifetime stay trivially small), so any device's deletion is visible to every
+        // other device's next pull, not just this device's own future syncs.
+        let mergedDeletedIDs = remoteDeletedIDs.union(localTombstones)
 
         record["storeName"] = store.name as CKRecordValue
         record["storeEmoji"] = store.emoji as CKRecordValue
         record["storeColorHex"] = store.colorHex as CKRecordValue
-        record["ownerDevice"] = UIDevice.current.name as CKRecordValue
-        record["itemsJSON"] = encodeItems(store.items) as CKRecordValue
+        // Don't stomp the original owner's name every time some other member pushes an edit.
+        if isNewRecord {
+            record["ownerDevice"] = UserIdentity.displayName as CKRecordValue
+        }
+        record["itemsJSON"] = encodeItems(mergedItems) as CKRecordValue
+        record["membersJSON"] = encodeMembers(mergedMembers) as CKRecordValue
+        record["deletedJSON"] = encodeIDs(mergedDeletedIDs) as CKRecordValue
+        return (mergedItems, mergedMembers)
+    }
 
-        try await db.save(record)
-        markSynced(shareID: code)
-        return code
+    /// Per-item last-write-wins merge: an id present in both is resolved by the newer `lastModified`.
+    /// Ids the caller has tombstoned (deleted locally or by another device) are dropped entirely.
+    private func merge(local: [SharedItemData], remote: [SharedItemData], tombstones: Set<UUID>) -> [SharedItemData] {
+        var byID: [UUID: SharedItemData] = [:]
+        for item in remote where !tombstones.contains(item.id) {
+            byID[item.id] = item
+        }
+        for item in local where !tombstones.contains(item.id) {
+            if let existing = byID[item.id], existing.lastModified > item.lastModified {
+                continue
+            }
+            byID[item.id] = item
+        }
+        return Array(byID.values)
     }
 
     // MARK: - Fetch preview (before joining)
@@ -57,7 +135,7 @@ actor SharedStoreService {
 
     // MARK: - Pull (download remote items if newer)
 
-    func pull(shareID: String) async throws -> (items: [SharedItemData], modifiedAt: Date)? {
+    func pull(shareID: String) async throws -> (items: [SharedItemData], members: [String], modifiedAt: Date)? {
         let recordID = CKRecord.ID(recordName: shareID)
         let record = try await db.record(for: recordID)
         let remoteModified = record.modificationDate ?? .distantPast
@@ -65,15 +143,63 @@ actor SharedStoreService {
 
         guard remoteModified > lastSync else { return nil }
 
-        let items = decodeItems(record["itemsJSON"] as? String ?? "[]")
-        return (items, remoteModified)
+        let localTombstones = pendingDeletions(shareID: shareID)
+        let remoteDeletedIDs = decodeIDs(record["deletedJSON"] as? String ?? "[]")
+        let allTombstones = localTombstones.union(remoteDeletedIDs)
+        let allRemoteItems = decodeItems(record["itemsJSON"] as? String ?? "[]")
+        let items = allRemoteItems.filter { !allTombstones.contains($0.id) }
+        let members = decodeMembers(record["membersJSON"] as? String ?? "[]")
+        pruneDeletions(shareID: shareID, stillPresent: Set(allRemoteItems.map(\.id)))
+        // Not marked synced here: the caller (SyncCoordinator) only advances the watermark once
+        // this result has actually been applied and saved into the local SwiftData store, so a
+        // failed/interrupted apply doesn't permanently skip the merge that would have fixed it.
+        return (items, members, remoteModified)
     }
 
-    // MARK: - Push (upload local items)
+    // MARK: - Members
 
-    func push(store: Store) async throws {
-        guard store.shareID != nil else { return }
-        _ = try await publish(store: store)
+    /// Adds the local user's display name to the shared store's remote member list (owner or joiner).
+    func addSelfAsMember(shareID: String) async throws -> [String] {
+        let recordID = CKRecord.ID(recordName: shareID)
+        let record: CKRecord
+        do {
+            record = try await db.record(for: recordID)
+        } catch {
+            return []
+        }
+        var members = decodeMembers(record["membersJSON"] as? String ?? "[]")
+        let name = UserIdentity.displayName
+        if !name.isEmpty, !members.contains(name) {
+            members.append(name)
+            record["membersJSON"] = encodeMembers(members) as CKRecordValue
+            try await db.save(record)
+        }
+        return members
+    }
+
+    // MARK: - Push subscriptions (real-time updates)
+
+    /// Creates (or idempotently updates) a silent-push subscription so other members of this
+    /// shared store are notified immediately when the record changes, instead of waiting for
+    /// the next poll. Requires the Push Notifications + Background Modes (remote-notification)
+    /// capabilities and can only be verified on a real device via a signed build.
+    func subscribe(shareID: String) async throws {
+        let subscriptionID = "sub-\(shareID)"
+        let predicate = NSPredicate(format: "recordID = %@", CKRecord.ID(recordName: shareID))
+        let subscription = CKQuerySubscription(
+            recordType: Self.recordType,
+            predicate: predicate,
+            subscriptionID: subscriptionID,
+            options: [.firesOnRecordUpdate]
+        )
+        let info = CKSubscription.NotificationInfo()
+        info.shouldSendContentAvailable = true
+        subscription.notificationInfo = info
+        _ = try await db.save(subscription)
+    }
+
+    func unsubscribe(shareID: String) async {
+        try? await db.deleteSubscription(withID: "sub-\(shareID)")
     }
 
     // MARK: - Last sync tracking
@@ -86,9 +212,56 @@ actor SharedStoreService {
         UserDefaults.standard.object(forKey: "lastSync_\(shareID)") as? Date ?? .distantPast
     }
 
+    // MARK: - Local deletion tombstones
+    //
+    // When an item is deleted from a shared store, the deleting device records it here so that
+    // a pull-before-push merge (or a plain pull) doesn't resurrect it from the still-stale remote
+    // copy before the deletion itself has been pushed. The confirmed set is also merged into the
+    // CKRecord's `deletedJSON` on every push, so other devices learn about the deletion even if
+    // they never overlap with this device's own local tombstone state.
+
+    func recordLocalDeletion(shareID: String, itemID: UUID) {
+        var ids = pendingDeletions(shareID: shareID)
+        ids.insert(itemID)
+        persistDeletions(shareID: shareID, ids: ids)
+    }
+
+    func pendingDeletions(shareID: String) -> Set<UUID> {
+        guard let strings = UserDefaults.standard.array(forKey: "deletedTombstones_\(shareID)") as? [String] else { return [] }
+        return Set(strings.compactMap(UUID.init))
+    }
+
+    private func pruneDeletions(shareID: String, stillPresent: Set<UUID>) {
+        let remaining = pendingDeletions(shareID: shareID).intersection(stillPresent)
+        persistDeletions(shareID: shareID, ids: remaining)
+    }
+
+    private func persistDeletions(shareID: String, ids: Set<UUID>) {
+        UserDefaults.standard.set(ids.map(\.uuidString), forKey: "deletedTombstones_\(shareID)")
+    }
+
     // MARK: - Encode / decode
 
-    func encodeItems(_ items: [ShoppingItem]) -> String {
+    private func sharedItemData(from items: [ShoppingItem]) -> [SharedItemData] {
+        items.map { item in
+            SharedItemData(
+                id: item.id,
+                name: item.name,
+                category: item.category,
+                quantity: item.quantity,
+                quantityAmount: item.quantityAmount,
+                unit: item.unit,
+                isCompleted: item.isCompleted,
+                isUrgent: item.isUrgent,
+                note: item.note,
+                assignedTo: item.assignedTo,
+                addedBy: item.addedBy,
+                lastModified: item.lastModified
+            )
+        }
+    }
+
+    func encodeItems(_ items: [SharedItemData]) -> String {
         let dicts: [[String: Any]] = items.map { item in [
             "id": item.id.uuidString,
             "name": item.name,
@@ -99,7 +272,9 @@ actor SharedStoreService {
             "isCompleted": item.isCompleted,
             "isUrgent": item.isUrgent,
             "note": item.note,
-            "assignedTo": item.assignedTo
+            "assignedTo": item.assignedTo,
+            "addedBy": item.addedBy,
+            "lastModified": item.lastModified.timeIntervalSince1970
         ]}
         guard let data = try? JSONSerialization.data(withJSONObject: dicts),
               let str = String(data: data, encoding: .utf8) else { return "[]" }
@@ -121,9 +296,35 @@ actor SharedStoreService {
                 isCompleted: dict["isCompleted"] as? Bool ?? false,
                 isUrgent: dict["isUrgent"] as? Bool ?? false,
                 note: dict["note"] as? String ?? "",
-                assignedTo: dict["assignedTo"] as? String ?? ""
+                assignedTo: dict["assignedTo"] as? String ?? "",
+                addedBy: dict["addedBy"] as? String ?? "",
+                lastModified: (dict["lastModified"] as? TimeInterval).map(Date.init(timeIntervalSince1970:)) ?? .distantPast
             )
         }
+    }
+
+    func encodeMembers(_ members: [String]) -> String {
+        guard let data = try? JSONSerialization.data(withJSONObject: members),
+              let str = String(data: data, encoding: .utf8) else { return "[]" }
+        return str
+    }
+
+    func decodeMembers(_ json: String) -> [String] {
+        guard let data = json.data(using: .utf8),
+              let arr = try? JSONSerialization.jsonObject(with: data) as? [String] else { return [] }
+        return arr
+    }
+
+    private func encodeIDs(_ ids: Set<UUID>) -> String {
+        guard let data = try? JSONSerialization.data(withJSONObject: ids.map(\.uuidString)),
+              let str = String(data: data, encoding: .utf8) else { return "[]" }
+        return str
+    }
+
+    private func decodeIDs(_ json: String) -> Set<UUID> {
+        guard let data = json.data(using: .utf8),
+              let arr = try? JSONSerialization.jsonObject(with: data) as? [String] else { return [] }
+        return Set(arr.compactMap(UUID.init))
     }
 }
 
@@ -149,4 +350,6 @@ struct SharedItemData {
     let isUrgent: Bool
     let note: String
     let assignedTo: String
+    let addedBy: String
+    let lastModified: Date
 }

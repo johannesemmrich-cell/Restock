@@ -1,5 +1,23 @@
 import SwiftData
 import Foundation
+import UIKit
+
+/// Resolves "who is using this device" consistently everywhere identity is shown or recorded
+/// (item attribution, assignment, member lists). Backed by the app-group UserDefaults suite —
+/// not `.standard` — so out-of-process code (e.g. `AddItemIntent`, which runs in a separate
+/// process per the project's Siri/App Intents architecture) sees the same name the main app does.
+/// Lives here (Models) rather than in Services because this file is also compiled into the
+/// SmartCartWidgets extension target, which doesn't include the Services group.
+enum UserIdentity {
+    private static let suite = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart") ?? .standard
+    static let storageKey = "userDisplayName"
+
+    /// The user's chosen display name, falling back to the device name if none was set.
+    static var displayName: String {
+        let name = suite.string(forKey: storageKey) ?? ""
+        return name.isEmpty ? UIDevice.current.name : name
+    }
+}
 
 @Model
 class ShoppingItem {
@@ -16,6 +34,8 @@ class ShoppingItem {
     var note: String
     var estimatedPrice: Double?
     var assignedTo: String = ""
+    var addedBy: String = ""
+    var lastModified: Date = Date()
 
     var store: Store?
 
@@ -42,6 +62,8 @@ class ShoppingItem {
         self.addedDate = Date()
         self.note = note
         self.store = store
+        self.addedBy = UserIdentity.displayName
+        self.lastModified = Date()
         // Use store-specific learned price first (fuzzy: "Hackfleisch" matches "Hackfleisch Gemischt 500g"),
         // then fall back to generic estimator
         let itemLower = name.lowercased()
@@ -55,6 +77,7 @@ class ShoppingItem {
     func markCompleted() {
         isCompleted = true
         completedDate = Date()
+        lastModified = Date()
         // actualPrice left nil — real prices come from receipt scanning only, not estimates
         let record = PurchaseRecord(
             itemName: name,
@@ -70,6 +93,7 @@ class ShoppingItem {
     func markPending() {
         isCompleted = false
         completedDate = nil
+        lastModified = Date()
     }
 }
 

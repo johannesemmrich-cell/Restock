@@ -5,10 +5,14 @@ struct OnboardingView: View {
     @Environment(\.modelContext) private var context
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("selectedCountry") private var selectedCountry = Locale.current.region?.identifier ?? "DE"
+    @AppStorage(UserIdentity.storageKey, store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
+    private var userDisplayName = ""
 
     @State private var selectedStores: Set<String> = []
     @State private var presetStores: [Store] = []
     @State private var step = 0
+    @State private var nameInput = ""
+    @FocusState private var isNameFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -16,8 +20,10 @@ struct OnboardingView: View {
                 if step == 0 {
                     welcomeStep
                 } else if step == 1 {
-                    countryStep
+                    nameStep
                 } else if step == 2 {
+                    countryStep
+                } else if step == 3 {
                     storeStep
                 } else {
                     tutorialStep
@@ -25,6 +31,64 @@ struct OnboardingView: View {
             }
             .animation(.easeInOut, value: step)
         }
+    }
+
+    // MARK: - Name
+
+    private var nameStep: some View {
+        VStack(spacing: 32) {
+            Spacer()
+            VStack(spacing: 16) {
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.system(size: 72))
+                    .foregroundStyle(.blue)
+
+                VStack(spacing: 8) {
+                    Text(String(localized: "onboarding.name.title"))
+                        .font(.title2.bold())
+                    Text(String(localized: "onboarding.name.subtitle"))
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                }
+
+                TextField(String(localized: "onboarding.name.placeholder"), text: $nameInput)
+                    .textInputAutocapitalization(.words)
+                    .autocorrectionDisabled()
+                    .focused($isNameFocused)
+                    .font(.system(size: 20, weight: .medium))
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal, 32)
+                    .submitLabel(.done)
+                    .onSubmit { confirmName() }
+            }
+            Spacer()
+            Button {
+                confirmName()
+            } label: {
+                Text(String(localized: "onboarding.name.cta"))
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .disabled(nameInput.trimmingCharacters(in: .whitespaces).isEmpty)
+            .padding(.horizontal, 32)
+            .padding(.bottom, 48)
+        }
+        .onAppear {
+            nameInput = userDisplayName
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { isNameFocused = true }
+        }
+    }
+
+    private func confirmName() {
+        let trimmed = nameInput.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        userDisplayName = trimmed
+        step = 2
     }
 
     // MARK: - Welcome
@@ -103,7 +167,7 @@ struct OnboardingView: View {
                     presetStores = Store.presets(for: selectedCountry)
                     selectedStores = Set(presetStores.map { $0.name })
                 }
-                step = 2
+                step = 3
             } label: {
                 Text(String(localized: "onboarding.country.cta"))
                     .frame(maxWidth: .infinity)
@@ -158,7 +222,7 @@ struct OnboardingView: View {
             }
 
             Button {
-                step = 3
+                step = 4
             } label: {
                 Text(String(localized: "onboarding.stores.cta"))
                     .frame(maxWidth: .infinity)

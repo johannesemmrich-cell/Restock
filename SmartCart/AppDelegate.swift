@@ -1,4 +1,5 @@
 import UIKit
+import CloudKit
 
 extension Notification.Name {
     static let quickAddRequested = Notification.Name("com.smartcart.quickAddRequested")
@@ -9,6 +10,10 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // Silent push only (content-available) — no user-facing permission prompt needed,
+        // used exclusively to know when a shared list changed on another member's device.
+        application.registerForRemoteNotifications()
+
         if let item = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
            item.type == "com.smartcart.quickadd" {
             QuickActionState.shared.triggerQuickAdd = true
@@ -16,6 +21,22 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
             return false
         }
         return true
+    }
+
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo) as? CKQueryNotification,
+              let recordID = notification.recordID else {
+            completionHandler(.noData)
+            return
+        }
+        Task {
+            await SyncCoordinator.shared.pullStore(shareID: recordID.recordName)
+            completionHandler(.newData)
+        }
     }
 
     // Fallback for older iOS / non-scene paths

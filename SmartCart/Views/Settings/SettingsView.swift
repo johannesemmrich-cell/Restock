@@ -8,6 +8,8 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Query private var allStores: [Store]
 
+    @AppStorage(UserIdentity.storageKey, store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
+    private var userDisplayName = ""
     @AppStorage("selectedLanguage") private var selectedLanguage = "system"
     @AppStorage("selectedCountry") private var selectedCountry = Locale.current.region?.identifier ?? "DE"
     @AppStorage("currencyCode") private var currencyCode = Locale.current.currency?.identifier ?? "EUR"
@@ -31,6 +33,21 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section(String(localized: "settings.profile.section")) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "person.crop.circle.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(.secondary)
+                        TextField(String(localized: "settings.profile.name.placeholder"), text: $userDisplayName)
+                            .textInputAutocapitalization(.words)
+                            .autocorrectionDisabled()
+                            .onChange(of: userDisplayName) { _, new in
+                                let trimmed = new.trimmingCharacters(in: .whitespaces)
+                                if trimmed != new { userDisplayName = trimmed }
+                            }
+                    }
+                }
+
                 Section(String(localized: "settings.region")) {
                     Picker(String(localized: "settings.country"), selection: $selectedCountry) {
                         ForEach(Store.availableCountries, id: \.code) { country in

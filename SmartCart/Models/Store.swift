@@ -35,6 +35,25 @@ class Store {
         set { UserDefaults.standard.set(newValue, forKey: "isSharedByMe_\(id.uuidString)") }
     }
 
+    /// Display names of everyone who has joined/published this shared store, synced via SharedStoreService.
+    var members: [String] {
+        get {
+            guard let data = UserDefaults.standard.data(forKey: "members_\(id.uuidString)"),
+                  let arr = try? JSONDecoder().decode([String].self, from: data) else { return [] }
+            return arr
+        }
+        set {
+            guard let data = try? JSONEncoder().encode(newValue) else { return }
+            UserDefaults.standard.set(data, forKey: "members_\(id.uuidString)")
+        }
+    }
+
+    func addMember(_ name: String) {
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, !members.contains(trimmed) else { return }
+        members.append(trimmed)
+    }
+
     init(
         name: String,
         emoji: String,

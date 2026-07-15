@@ -6,6 +6,14 @@ struct ItemRow: View {
 
     @State private var isAnimating = false
 
+    private var addedByLabel: String? {
+        guard item.store?.shareID != nil, !item.addedBy.isEmpty else { return nil }
+        if item.addedBy == UserIdentity.displayName {
+            return String(localized: "item.addedby.you")
+        }
+        return String(format: String(localized: "item.addedby.format"), item.addedBy)
+    }
+
     var body: some View {
         HStack(spacing: 14) {
             Button(action: {
@@ -75,6 +83,15 @@ struct ItemRow: View {
                         }
                         .font(.system(size: 11))
                         .foregroundStyle(.indigo.opacity(0.85))
+                    }
+                    if let addedByLabel, !item.isCompleted {
+                        Text("·")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.quaternary)
+                        Text(addedByLabel)
+                            .font(.system(size: 11))
+                            .foregroundStyle(.tertiary)
+                            .lineLimit(1)
                     }
                 }
             }

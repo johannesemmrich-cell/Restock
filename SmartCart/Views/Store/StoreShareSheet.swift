@@ -63,7 +63,31 @@ struct StoreShareSheet: View {
                         }
                         .padding(.horizontal, 32)
 
+                        if !store.members.isEmpty {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text(String(localized: "sharing.members.title"))
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.secondary)
+                                VStack(spacing: 8) {
+                                    ForEach(store.members, id: \.self) { member in
+                                        HStack(spacing: 10) {
+                                            Image(systemName: "person.crop.circle.fill")
+                                                .font(.system(size: 22))
+                                                .foregroundStyle(.blue)
+                                            Text(member)
+                                                .font(.system(size: 15))
+                                            Spacer()
+                                        }
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 32)
+                        }
+
                         Button(role: .destructive) {
+                            if let shareID = store.shareID {
+                                Task { await SharedStoreService.shared.unsubscribe(shareID: shareID) }
+                            }
                             store.shareID = nil
                             store.isSharedByMe = false
                             try? context.save()
@@ -130,9 +154,12 @@ struct StoreShareSheet: View {
         #endif
         do {
             let code = try await SharedStoreService.shared.publish(store: store)
+            let members = try? await SharedStoreService.shared.addSelfAsMember(shareID: code)
+            try? await SharedStoreService.shared.subscribe(shareID: code)
             await MainActor.run {
                 store.shareID = code
                 store.isSharedByMe = true
+                for name in members ?? [] { store.addMember(name) }
                 try? context.save()
                 isPublishing = false
             }
@@ -280,38 +307,30 @@ struct JoinStoreSheet: View {
         isJoining = true
         do {
             let result = try await SharedStoreService.shared.pull(shareID: preview.shareID)
-            let items = result?.items ?? []
+
+            let store = Store(
+                name: preview.storeName,
+                emoji: preview.storeEmoji,
+                colorHex: preview.storeColorHex
+            )
+            store.shareID = preview.shareID
+            store.isSharedByMe = false
+
+            await MainActor.run { context.insert(store) }
+            // Reuses the same merge logic as the periodic sync, so joining is exactly
+            // equivalent to a first pull — no separate item-copying path to maintain.
+            if let result {
+                await SyncCoordinator.shared.apply(items: result.items, members: result.members, to: store)
+            }
+
+            let members = try? await SharedStoreService.shared.addSelfAsMember(shareID: preview.shareID)
+            try? await SharedStoreService.shared.subscribe(shareID: preview.shareID)
 
             await MainActor.run {
-                let store = Store(
-                    name: preview.storeName,
-                    emoji: preview.storeEmoji,
-                    colorHex: preview.storeColorHex
-                )
-                store.shareID = preview.shareID
-                store.isSharedByMe = false
-                context.insert(store)
-
-                for remote in items {
-                    let item = ShoppingItem(
-                        name: remote.name,
-                        category: remote.category,
-                        quantity: remote.quantity,
-                        quantityAmount: remote.quantityAmount,
-                        unit: remote.unit,
-                        note: remote.note,
-                        store: store
-                    )
-                    item.id = remote.id
-                    item.isCompleted = remote.isCompleted
-                    item.isUrgent = remote.isUrgent
-                    context.insert(item)
-                }
-
+                for name in members ?? [] { store.addMember(name) }
                 try? context.save()
                 isJoining = false
                 dismiss()
-                Task { await SharedStoreService.shared.markSynced(shareID: preview.shareID) }
             }
         } catch {
             await MainActor.run {

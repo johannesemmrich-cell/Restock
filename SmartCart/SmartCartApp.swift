@@ -14,6 +14,11 @@ struct SmartCartApp: App {
     private static let appGroupID = "group.com.johannesemmrich.SmartCart"
 
     init() {
+        // Runs regardless of which branch below sets `container`, and before any push
+        // notification can arrive — a silent push can wake the app in the background without
+        // ever presenting the WindowGroup, so this can't wait for a view's `.task` to run.
+        defer { SyncCoordinator.shared.modelContext = container.mainContext }
+
         SmartCartShortcuts.updateAppShortcutParameters()
         CloudPreferencesSync.shared.start()
 
@@ -123,6 +128,9 @@ struct SmartCartApp: App {
                     if developerMode {
                         DevModeIndicator()
                     }
+                }
+                .task {
+                    await SyncCoordinator.shared.resubscribeAll()
                 }
         }
     }

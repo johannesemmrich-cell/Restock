@@ -140,7 +140,7 @@ struct StoreDetailView: View {
                             .onTapGesture { editingItem = item }
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
-                                    withAnimation { context.delete(item) }
+                                    withAnimation { deleteItem(item) }
                                 } label: {
                                     Label(String(localized: "action.delete"), systemImage: "trash")
                                 }
@@ -273,11 +273,15 @@ struct StoreDetailView: View {
             LiveActivityService.shared.start(for: store)
             applyPendingCheckoffs()
             if store.shareID != nil {
-                Task { await syncSharedStore() }
+                Task {
+                    await MainActor.run { isSyncing = true }
+                    await SyncCoordinator.shared.pull(store: store)
+                    await MainActor.run { isSyncing = false }
+                }
                 periodicSyncTask = Task {
                     while !Task.isCancelled {
-                        try? await Task.sleep(for: .seconds(30))
-                        if !Task.isCancelled { await syncSharedStore() }
+                        try? await Task.sleep(for: .seconds(10))
+                        if !Task.isCancelled { await SyncCoordinator.shared.pull(store: store) }
                     }
                 }
             }
@@ -287,7 +291,7 @@ struct StoreDetailView: View {
             periodicSyncTask = nil
             LiveActivityService.shared.end(for: store)
             if store.shareID != nil {
-                Task { try? await SharedStoreService.shared.push(store: store) }
+                Task { await SyncCoordinator.shared.push(store: store) }
             }
         }
         .onChange(of: store.pendingItems.count) {
@@ -319,13 +323,15 @@ struct StoreDetailView: View {
             .onTapGesture { editingItem = item }
             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                 Button(role: .destructive) {
-                    withAnimation { context.delete(item) }
+                    withAnimation { deleteItem(item) }
                 } label: {
                     Label(String(localized: "action.delete"), systemImage: "trash")
                 }
                 Button {
                     withAnimation { item.isUrgent.toggle() }
+                    item.lastModified = Date()
                     Haptics.impact(item.isUrgent ? .medium : .light)
+                    syncPush()
                 } label: {
                     Label(item.isUrgent ? "Normal" : "Dringend",
                           systemImage: item.isUrgent ? "exclamationmark.circle" : "exclamationmark.circle.fill")
@@ -338,9 +344,11 @@ struct StoreDetailView: View {
                 }
                 .tint(.green)
                 Button {
-                    let myDevice = UIDevice.current.name
-                    withAnimation { item.assignedTo = item.assignedTo == myDevice ? "" : myDevice }
+                    let me = UserIdentity.displayName
+                    withAnimation { item.assignedTo = item.assignedTo == me ? "" : me }
+                    item.lastModified = Date()
                     Haptics.impact(.light)
+                    syncPush()
                 } label: {
                     Label(item.assignedTo.isEmpty ? "Mir zuweisen" : "Freigeben",
                           systemImage: item.assignedTo.isEmpty ? "person.badge.plus" : "person.badge.minus")
@@ -458,6 +466,29 @@ struct StoreDetailView: View {
         ))
         quickAddText = ""
         DispatchQueue.main.async { isQuickAddFocused = true }
+        syncPush()
+    }
+
+    /// Uploads the current list right after a local edit instead of waiting for the user to
+    /// leave the screen, so changes show up on other members' devices within seconds.
+    private func syncPush() {
+        guard store.shareID != nil else { return }
+        Task { await SyncCoordinator.shared.push(store: store) }
+    }
+
+    /// Deletes an item, tombstoning it first if the store is shared so a periodic pull racing
+    /// in between can't see "gone locally, still present remotely" and resurrect it as new.
+    private func deleteItem(_ item: ShoppingItem) {
+        let itemID = item.id
+        guard let shareID = store.shareID else {
+            context.delete(item)
+            return
+        }
+        Task {
+            await SharedStoreService.shared.recordLocalDeletion(shareID: shareID, itemID: itemID)
+            await MainActor.run { withAnimation { context.delete(item) } }
+            await SyncCoordinator.shared.push(store: store)
+        }
     }
 
     // MARK: - Frequency row
@@ -510,12 +541,31 @@ struct StoreDetailView: View {
         // Flush immediately so HomeView's @Query sees the change without delay
         try? context.save()
         LiveActivityService.shared.update(for: store)
+        syncPush()
     }
 
     private func clearCompleted() {
-        withAnimation {
-            for item in store.completedItems { context.delete(item) }
-            completionOrder.removeAll()
+        guard let shareID = store.shareID else {
+            withAnimation {
+                for item in store.completedItems { context.delete(item) }
+                completionOrder.removeAll()
+            }
+            return
+        }
+        let deletedIDs = store.completedItems.map(\.id)
+        Task {
+            // Tombstone every id before any of them is actually deleted locally, so a periodic
+            // pull racing in the middle of this batch can't resurrect the ones not yet tombstoned.
+            for itemID in deletedIDs {
+                await SharedStoreService.shared.recordLocalDeletion(shareID: shareID, itemID: itemID)
+            }
+            await MainActor.run {
+                withAnimation {
+                    for item in store.completedItems where deletedIDs.contains(item.id) { context.delete(item) }
+                    completionOrder.removeAll()
+                }
+            }
+            await SyncCoordinator.shared.push(store: store)
         }
     }
 
@@ -589,52 +639,6 @@ struct StoreDetailView: View {
         Haptics.success()
     }
 
-    private func syncSharedStore() async {
-        guard let shareID = store.shareID else { return }
-        isSyncing = true
-        defer { Task { @MainActor in isSyncing = false } }
-
-        guard let (remoteItems, _) = try? await SharedStoreService.shared.pull(shareID: shareID) else { return }
-
-        await MainActor.run {
-            let localByID = Dictionary(uniqueKeysWithValues: store.items.map { ($0.id, $0) })
-            let remoteByID = Dictionary(uniqueKeysWithValues: remoteItems.map { ($0.id, $0) })
-
-            // Remove items deleted remotely
-            for item in store.items where remoteByID[item.id] == nil {
-                context.delete(item)
-            }
-
-            // Add or update remote items
-            for remote in remoteItems {
-                if let local = localByID[remote.id] {
-                    local.name = remote.name
-                    local.isCompleted = remote.isCompleted
-                    local.isUrgent = remote.isUrgent
-                    local.quantity = remote.quantity
-                    local.quantityAmount = remote.quantityAmount
-                    local.unit = remote.unit
-                    local.note = remote.note
-                    local.category = remote.category
-                    local.assignedTo = remote.assignedTo
-                } else {
-                    let item = ShoppingItem(
-                        name: remote.name, category: remote.category,
-                        quantity: remote.quantity, quantityAmount: remote.quantityAmount,
-                        unit: remote.unit, note: remote.note, store: store
-                    )
-                    item.id = remote.id
-                    item.isCompleted = remote.isCompleted
-                    item.isUrgent = remote.isUrgent
-                    item.assignedTo = remote.assignedTo
-                    context.insert(item)
-                }
-            }
-
-            try? context.save()
-        }
-        await SharedStoreService.shared.markSynced(shareID: shareID)
-    }
 }
 
 // MARK: - Confetti
