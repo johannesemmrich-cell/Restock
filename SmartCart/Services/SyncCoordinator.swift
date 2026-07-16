@@ -14,18 +14,37 @@ final class SyncCoordinator {
     var modelContext: ModelContext?
 
     /// Pulls remote state for a shared store (if newer) and merges it into the local store.
-    func pull(store: Store) async {
-        guard let shareID = store.shareID else { return }
-        guard let result = try? await SharedStoreService.shared.pull(shareID: shareID) else { return }
-        await apply(items: result.items, members: result.members, to: store)
+    ///
+    /// Returns `true` if the pull succeeded or there was legitimately nothing new to fetch,
+    /// and `false` only if `SharedStoreService` actually threw (e.g. a CKError) — callers use
+    /// this to surface sync failures in the UI without treating "nothing changed" as one.
+    @discardableResult
+    func pull(store: Store) async -> Bool {
+        guard let shareID = store.shareID else { return true }
+        do {
+            guard let result = try await SharedStoreService.shared.pull(shareID: shareID) else { return true }
+            await apply(items: result.items, members: result.members, to: store)
+            return true
+        } catch {
+            return false
+        }
     }
 
     /// Pulls+merges remote state, pushes the merged result back so no other device's addition
     /// gets clobbered, then applies that same merged result locally — all in one round trip.
-    func push(store: Store) async {
-        guard let shareID = store.shareID, !shareID.isEmpty else { return }
-        guard let result = try? await SharedStoreService.shared.push(store: store) else { return }
-        await apply(items: result.items, members: result.members, to: store)
+    ///
+    /// Returns `true` if the push succeeded or there was nothing to push, `false` only if
+    /// `SharedStoreService` actually threw.
+    @discardableResult
+    func push(store: Store) async -> Bool {
+        guard let shareID = store.shareID, !shareID.isEmpty else { return true }
+        do {
+            guard let result = try await SharedStoreService.shared.push(store: store) else { return true }
+            await apply(items: result.items, members: result.members, to: store)
+            return true
+        } catch {
+            return false
+        }
     }
 
     /// Looks up a locally known store by its CloudKit shareID and pulls its latest state.

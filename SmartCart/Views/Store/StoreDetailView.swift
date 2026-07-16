@@ -15,6 +15,8 @@ struct StoreDetailView: View {
     @State private var completionOrder: [String] = []
     @State private var quickAddText: String = ""
     @State private var isSyncing = false
+    @State private var syncFailed = false
+    @State private var syncGeneration = 0
     @State private var showConfetti = false
     @State private var periodicSyncTask: Task<Void, Never>?
     @FocusState private var isQuickAddFocused: Bool
@@ -34,6 +36,31 @@ struct StoreDetailView: View {
 
     var body: some View {
         List {
+            if syncFailed && store.shareID != nil {
+                Section {
+                    Button {
+                        let generation = nextSyncGeneration()
+                        Task {
+                            let ok = await SyncCoordinator.shared.pull(store: store)
+                            await MainActor.run { applySyncResult(ok, generation: generation) }
+                        }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 13))
+                            Text("Sync fehlgeschlagen — Änderungen werden möglicherweise nicht mit anderen geteilt")
+                                .font(.system(size: 13))
+                            Spacer()
+                            Image(systemName: "arrow.clockwise")
+                                .font(.system(size: 13))
+                        }
+                        .foregroundStyle(.orange)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .listRowBackground(Color.orange.opacity(0.1))
+            }
+
             Section {
                 HStack(spacing: 10) {
                     Image(systemName: "plus.circle.fill")
@@ -273,15 +300,23 @@ struct StoreDetailView: View {
             LiveActivityService.shared.start(for: store)
             applyPendingCheckoffs()
             if store.shareID != nil {
+                let generation = nextSyncGeneration()
                 Task {
                     await MainActor.run { isSyncing = true }
-                    await SyncCoordinator.shared.pull(store: store)
-                    await MainActor.run { isSyncing = false }
+                    let ok = await SyncCoordinator.shared.pull(store: store)
+                    await MainActor.run {
+                        isSyncing = false
+                        applySyncResult(ok, generation: generation)
+                    }
                 }
                 periodicSyncTask = Task {
                     while !Task.isCancelled {
                         try? await Task.sleep(for: .seconds(10))
-                        if !Task.isCancelled { await SyncCoordinator.shared.pull(store: store) }
+                        if !Task.isCancelled {
+                            let generation = await MainActor.run { nextSyncGeneration() }
+                            let ok = await SyncCoordinator.shared.pull(store: store)
+                            await MainActor.run { applySyncResult(ok, generation: generation) }
+                        }
                     }
                 }
             }
@@ -291,7 +326,11 @@ struct StoreDetailView: View {
             periodicSyncTask = nil
             LiveActivityService.shared.end(for: store)
             if store.shareID != nil {
-                Task { await SyncCoordinator.shared.push(store: store) }
+                let generation = nextSyncGeneration()
+                Task {
+                    let ok = await SyncCoordinator.shared.push(store: store)
+                    await MainActor.run { applySyncResult(ok, generation: generation) }
+                }
             }
         }
         .onChange(of: store.pendingItems.count) {
@@ -469,11 +508,33 @@ struct StoreDetailView: View {
         syncPush()
     }
 
+    /// Bumps and returns the current sync generation. Call this synchronously on the main actor
+    /// right before kicking off an async sync call so the result can later be matched against
+    /// whatever the *latest* generation is when it completes.
+    @MainActor
+    private func nextSyncGeneration() -> Int {
+        syncGeneration += 1
+        return syncGeneration
+    }
+
+    /// Applies a sync result only if it's still the most recent attempt in flight. Because
+    /// CloudKit round-trip latency varies, an older/slower call can complete after a newer one —
+    /// without this guard its stale result could stomp the newer one's `syncFailed` state.
+    @MainActor
+    private func applySyncResult(_ ok: Bool, generation: Int) {
+        guard generation == syncGeneration else { return }
+        syncFailed = !ok
+    }
+
     /// Uploads the current list right after a local edit instead of waiting for the user to
     /// leave the screen, so changes show up on other members' devices within seconds.
     private func syncPush() {
         guard store.shareID != nil else { return }
-        Task { await SyncCoordinator.shared.push(store: store) }
+        let generation = nextSyncGeneration()
+        Task {
+            let ok = await SyncCoordinator.shared.push(store: store)
+            await MainActor.run { applySyncResult(ok, generation: generation) }
+        }
     }
 
     /// Deletes an item, tombstoning it first if the store is shared so a periodic pull racing
@@ -484,10 +545,12 @@ struct StoreDetailView: View {
             context.delete(item)
             return
         }
+        let generation = nextSyncGeneration()
         Task {
             await SharedStoreService.shared.recordLocalDeletion(shareID: shareID, itemID: itemID)
             await MainActor.run { withAnimation { context.delete(item) } }
-            await SyncCoordinator.shared.push(store: store)
+            let ok = await SyncCoordinator.shared.push(store: store)
+            await MainActor.run { applySyncResult(ok, generation: generation) }
         }
     }
 
@@ -553,6 +616,7 @@ struct StoreDetailView: View {
             return
         }
         let deletedIDs = store.completedItems.map(\.id)
+        let generation = nextSyncGeneration()
         Task {
             // Tombstone every id before any of them is actually deleted locally, so a periodic
             // pull racing in the middle of this batch can't resurrect the ones not yet tombstoned.
@@ -565,7 +629,8 @@ struct StoreDetailView: View {
                     completionOrder.removeAll()
                 }
             }
-            await SyncCoordinator.shared.push(store: store)
+            let ok = await SyncCoordinator.shared.push(store: store)
+            await MainActor.run { applySyncResult(ok, generation: generation) }
         }
     }
 
