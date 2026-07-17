@@ -14,6 +14,25 @@ struct ItemRow: View {
         return String(format: String(localized: "item.addedby.format"), item.addedBy)
     }
 
+    /// "✓ von <Name>" for completed items in shared lists. Reuses the addedBy strings
+    /// ("von dir" / "von %@") so no new localization keys are needed. Takes the place of the
+    /// addedBy label, which is already hidden once an item is completed — for a checked-off
+    /// item, who completed it matters more than who added it.
+    private var completedByLabel: String? {
+        guard item.store?.shareID != nil, item.isCompleted, !item.completedBy.isEmpty else { return nil }
+        if item.completedBy == UserIdentity.displayName {
+            return "✓ " + String(localized: "item.addedby.you")
+        }
+        return "✓ " + String(format: String(localized: "item.addedby.format"), item.completedBy)
+    }
+
+    /// Mirrors the grouping logic in `HomeView`/`AllItemsView`: a manually-set category sticks,
+    /// otherwise re-derive from the current name so this caption never shows a stale category
+    /// left over from before a keyword-rule update.
+    private var displayCategory: String {
+        item.categoryManuallySet ? item.category : AssignmentService.category(for: item.name)
+    }
+
     var body: some View {
         HStack(spacing: 14) {
             Button(action: {
@@ -63,11 +82,11 @@ struct ItemRow: View {
                             .font(.system(size: 12))
                             .foregroundStyle(.secondary)
                     }
-                    if !item.category.isEmpty {
+                    if !displayCategory.isEmpty {
                         Text("·")
                             .font(.system(size: 12))
                             .foregroundStyle(.quaternary)
-                        Text(item.category)
+                        Text(displayCategory)
                             .font(.system(size: 12))
                             .foregroundStyle(.tertiary)
                     }
@@ -93,12 +112,21 @@ struct ItemRow: View {
                             .foregroundStyle(.tertiary)
                             .lineLimit(1)
                     }
+                    if let completedByLabel {
+                        Text("·")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.quaternary)
+                        Text(completedByLabel)
+                            .font(.system(size: 11))
+                            .foregroundStyle(.tertiary)
+                            .lineLimit(1)
+                    }
                 }
             }
 
             Spacer()
 
-            if let price = item.estimatedPrice, !item.isCompleted {
+            if let price = item.estimatedLineTotal, !item.isCompleted {
                 Text(price, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.secondary)

@@ -15,6 +15,8 @@ struct SettingsView: View {
     @AppStorage("currencyCode") private var currencyCode = Locale.current.currency?.identifier ?? "EUR"
     @AppStorage("developerMode") private var developerMode = false
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
+    @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
+    private var autoSortByLearnedOrder = true
 
     @EnvironmentObject private var premium: PremiumService
     @State private var showPaywall = false
@@ -180,6 +182,13 @@ struct SettingsView: View {
                             }
                         }
                     Toggle("Saisonale Vorschläge", isOn: $seasonalSuggestionsEnabled)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Toggle("Automatisch nach Einkaufsreihenfolge sortieren", isOn: $autoSortByLearnedOrder)
+                        Text("Restock merkt sich, in welcher Reihenfolge du Artikel abhakst, und sortiert die Liste beim nächsten Mal entsprechend.")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 2)
                 }
 
                 Section("Siri & Schnellzugriff") {

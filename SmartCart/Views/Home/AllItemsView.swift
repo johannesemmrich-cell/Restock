@@ -28,7 +28,11 @@ struct AllItemsView: View {
     }
 
     private var nonUrgentByCategory: [(category: String, emoji: String, items: [ShoppingItem])] {
-        let grouped = Dictionary(grouping: pendingItems.filter { !$0.isUrgent }) { AssignmentService.category(for: $0.name) }
+        // Manually-set categories stick as the user chose them; everything else keeps re-deriving
+        // from the current name so stale stored values and rule updates apply immediately.
+        let grouped = Dictionary(grouping: pendingItems.filter { !$0.isUrgent }) {
+            $0.categoryManuallySet ? $0.category : AssignmentService.category(for: $0.name)
+        }
         var result: [(category: String, emoji: String, items: [ShoppingItem])] = []
         for cat in AssignmentService.categoryOrder {
             if let items = grouped[cat], !items.isEmpty {

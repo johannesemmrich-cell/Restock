@@ -219,9 +219,6 @@ struct ReceiptScannerView: View {
         for line in included {
             let lineLower = line.name.lowercased()
 
-            // Learn price for this store — overwrites previous learned price for this item
-            store.learnedPrices[lineLower] = line.price
-
             // Try to update an existing recent record for this store rather than creating a duplicate.
             let match = allRecords.first { record in
                 record.storeName.lowercased() == storeNameLower &&
@@ -229,6 +226,15 @@ struct ReceiptScannerView: View {
                 (record.itemName.lowercased().contains(lineLower) ||
                  lineLower.contains(record.itemName.lowercased()))
             }
+
+            // Learn price for this store — overwrites previous learned price for this item.
+            // `learnedPrices` must stay per-unit (it seeds `ShoppingItem.estimatedPrice`, which
+            // is canonically per-unit), but a receipt line's price covers `match.quantityAmount`
+            // units of that purchase (e.g. a 6-pack), so divide it back out. An orphan line with
+            // no match defaults to an implicit quantity of 1 (matching the fallback `PurchaseRecord`
+            // below), so the raw price is already per-unit in that case.
+            let matchedQuantity = match?.quantityAmount ?? 1
+            store.learnedPrices[lineLower] = matchedQuantity > 0 ? line.price / matchedQuantity : line.price
 
             if let match {
                 match.actualPrice = line.price

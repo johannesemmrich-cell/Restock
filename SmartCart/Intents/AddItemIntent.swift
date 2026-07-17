@@ -21,9 +21,30 @@ struct AddShoppingItemIntent: AppIntent {
     var unit: String?
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let schema = Schema([Store.self, ShoppingItem.self, PurchaseRecord.self, FeedbackItem.self, TodoItem.self])
-        let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.johannesemmrich.SmartCart"), cloudKitDatabase: .none)
-        let container = try ModelContainer(for: schema, configurations: config)
+        // Must mirror SmartCartApp's container setup exactly — this intent runs out-of-process and
+        // opens the SAME app-group store file. Two things have to match what the main app actually
+        // ended up using: (1) the schema representation (versioned, not a plain array — a mismatch
+        // here has already once caused SwiftData to treat this app's store as incompatible and wipe
+        // it, see SmartCartApp.swift's migration comments), and (2) whether the store is CloudKit-
+        // mirrored — SmartCartApp tries CloudKit first and only falls back to a local-only store if
+        // that fails, so this intent must attempt the same CloudKit configuration first rather than
+        // always opening with `cloudKitDatabase: .none`, or it could fail (or silently desync) against
+        // a store the main app actually opened with CloudKit mirroring enabled.
+        let schema = Schema(versionedSchema: SchemaV1.self)
+        let groupContainerID = "group.com.johannesemmrich.SmartCart"
+        let container: ModelContainer
+        if let cloudKitContainer = try? ModelContainer(
+            for: schema,
+            configurations: ModelConfiguration(
+                groupContainer: .identifier(groupContainerID),
+                cloudKitDatabase: .private("iCloud.com.johannesemmrich.SmartCart")
+            )
+        ) {
+            container = cloudKitContainer
+        } else {
+            let localConfig = ModelConfiguration(groupContainer: .identifier(groupContainerID), cloudKitDatabase: .none)
+            container = try ModelContainer(for: schema, configurations: localConfig)
+        }
         let context = ModelContext(container)
 
         let stores = try context.fetch(FetchDescriptor<Store>(predicate: #Predicate { $0.isActive }))

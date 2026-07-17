@@ -158,7 +158,7 @@ struct OnboardingView: View {
                     .onTapGesture {
                         selectedCountry = country.code
                         presetStores = Store.presets(for: country.code)
-                        selectedStores = Set(presetStores.map { $0.name })
+                        selectedStores = []
                     }
                 }
             }
@@ -166,7 +166,7 @@ struct OnboardingView: View {
             Button {
                 if presetStores.isEmpty {
                     presetStores = Store.presets(for: selectedCountry)
-                    selectedStores = Set(presetStores.map { $0.name })
+                    selectedStores = []
                 }
                 step = 3
             } label: {
@@ -180,7 +180,7 @@ struct OnboardingView: View {
         }
         .onAppear {
             presetStores = Store.presets(for: selectedCountry)
-            selectedStores = Set(presetStores.map { $0.name })
+            selectedStores = []
         }
     }
 
@@ -197,6 +197,23 @@ struct OnboardingView: View {
                     .foregroundStyle(.secondary)
             }
             .padding(.vertical, 24)
+
+            if !presetStores.isEmpty {
+                HStack {
+                    Spacer()
+                    Button {
+                        if selectedStores.count == presetStores.count {
+                            selectedStores = []
+                        } else {
+                            selectedStores = Set(presetStores.map { $0.name })
+                        }
+                    } label: {
+                        Text(selectedStores.count == presetStores.count ? "Auswahl aufheben" : "Alle auswählen")
+                            .font(.subheadline)
+                    }
+                }
+                .padding(.horizontal, 24)
+            }
 
             List {
                 ForEach(presetStores) { store in
@@ -230,7 +247,6 @@ struct OnboardingView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-            .disabled(selectedStores.isEmpty)
             .padding(.horizontal, 24)
             .padding(.bottom, 48)
         }

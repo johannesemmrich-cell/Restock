@@ -157,8 +157,10 @@ final class SyncCoordinator {
                 local.unit = remote.unit
                 local.note = remote.note
                 local.category = remote.category
+                local.categoryManuallySet = remote.categoryManuallySet
                 local.assignedTo = remote.assignedTo
                 local.addedBy = remote.addedBy
+                local.completedBy = remote.completedBy
                 local.lastModified = remote.lastModified
             } else {
                 let item = ShoppingItem(
@@ -167,10 +169,12 @@ final class SyncCoordinator {
                     unit: remote.unit, note: remote.note, store: store
                 )
                 item.id = remote.id
+                item.categoryManuallySet = remote.categoryManuallySet
                 item.isCompleted = remote.isCompleted
                 item.isUrgent = remote.isUrgent
                 item.assignedTo = remote.assignedTo
                 item.addedBy = remote.addedBy
+                item.completedBy = remote.completedBy
                 item.lastModified = remote.lastModified
                 context.insert(item)
             }

@@ -22,6 +22,12 @@ final class LiveActivityService {
     func start(for store: Store) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
 
+        // Leere Pending-Liste: keine Activity starten, evtl. verwaiste beenden
+        guard !store.pendingItems.isEmpty else {
+            end(for: store)
+            return
+        }
+
         // Nach App-Neustart: vorhandene Live Activity wiederfinden statt neue starten
         if currentActivity == nil {
             currentActivity = Activity<ShoppingActivityAttributes>.activities
@@ -42,9 +48,22 @@ final class LiveActivityService {
     }
 
     func update(for store: Store) {
+        // Alles abgehakt → Activity beenden statt mit leerem State weiterlaufen zu lassen
+        guard !store.pendingItems.isEmpty else {
+            end(for: store)
+            return
+        }
         let state = makeState(for: store)
         lastState = state
-        guard let activity = currentActivity else { return }
+        guard let activity = currentActivity else {
+            // Kein laufendes Tracking, aber wieder offene Artikel: passiert, wenn die Activity nach
+            // "alles abgehakt" beendet+genillt wurde und der Nutzer dann ein Item ENThakt. Eine
+            // beendete ActivityKit-Activity ist nicht wiederbelebbar — also neu starten statt den
+            // Update still zu verschlucken (sonst bleibt die Dynamic Island bis zum nächsten
+            // View-Wechsel leer).
+            start(for: store)
+            return
+        }
         let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(7200))
         Task { await activity.update(content) }
     }
@@ -72,6 +91,15 @@ final class LiveActivityService {
         state.completedCount += 1
         state.nextItemName = state.pendingItemNames.first
         lastState = state
+        // Letztes Item abgehakt → Activity mit finalem State beenden
+        // (4s Verzögerung, damit der letzte Haken kurz sichtbar bleibt)
+        if state.pendingItemNames.isEmpty {
+            let content = ActivityContent(state: state, staleDate: nil)
+            Task { await activity.end(content, dismissalPolicy: .after(Date().addingTimeInterval(4))) }
+            currentActivity = nil
+            lastState = nil
+            return
+        }
         let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(7200))
         Task { await activity.update(content) }
     }

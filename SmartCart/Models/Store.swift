@@ -35,6 +35,15 @@ class Store {
         set { UserDefaults.standard.set(newValue, forKey: "isSharedByMe_\(id.uuidString)") }
     }
 
+    /// Per-store view preference (StoreDetailView's "···" menu): show pending items grouped into
+    /// category sections instead of one flat list. UserDefaults-backed like `shareID`/`isSharedByMe`
+    /// above — deliberately NOT a SwiftData schema field, so no schema migration is needed.
+    /// Defaults to `false` (flat list, i.e. the previous behavior).
+    var groupByCategory: Bool {
+        get { UserDefaults.standard.bool(forKey: "groupByCategory_\(id.uuidString)") }
+        set { UserDefaults.standard.set(newValue, forKey: "groupByCategory_\(id.uuidString)") }
+    }
+
     /// Display names of everyone who has joined/published this shared store, synced via SharedStoreService.
     var members: [String] {
         get {
@@ -81,12 +90,29 @@ class Store {
         Color(hex: colorHex) ?? .blue
     }
 
+    /// User-facing toggle (Settings) — when off, falls back to insertion order instead of the
+    /// learned aisle order. Read directly from UserDefaults rather than via `@AppStorage` since
+    /// this is a model class, not a View. Uses the app-group suite (matching `UserIdentity` in
+    /// ShoppingItem.swift) rather than `.standard` since this file is also compiled into the
+    /// SmartCartWidgets extension target, which runs in a different process/sandbox and would
+    /// otherwise never see the value the user set in the main app's Settings.
+    /// `object(forKey:) as? Bool ?? true` (rather than `bool(forKey:)`) keeps the default `true`
+    /// even before the user ever touches the Settings toggle, regardless of which process reads it first.
+    private var autoSortByLearnedOrderEnabled: Bool {
+        let suite = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart") ?? .standard
+        return suite.object(forKey: "autoSortByLearnedOrder") as? Bool ?? true
+    }
+
     var pendingItems: [ShoppingItem] {
-        items.filter { !$0.isCompleted }.sorted { a, b in
+        let sortByLearnedOrder = autoSortByLearnedOrderEnabled
+        return items.filter { !$0.isCompleted }.sorted { a, b in
             if a.isUrgent != b.isUrgent { return a.isUrgent }
-            let posA = itemOrderMap[a.name.lowercased()] ?? 999
-            let posB = itemOrderMap[b.name.lowercased()] ?? 999
-            return posA < posB
+            if sortByLearnedOrder {
+                let posA = itemOrderMap[a.name.lowercased()] ?? 999
+                let posB = itemOrderMap[b.name.lowercased()] ?? 999
+                if posA != posB { return posA < posB }
+            }
+            return a.addedDate < b.addedDate
         }
     }
 

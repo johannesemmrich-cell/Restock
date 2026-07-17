@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import UIKit
+import UniformTypeIdentifiers
 
 struct HomeView: View {
     @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
@@ -30,6 +31,11 @@ struct HomeView: View {
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
     @AppStorage("homeListMode") private var listMode = false
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
+    // Not read directly — its only job is to make SwiftUI re-invoke `body` (and thus the store
+    // cards' pending-item preview text, which depends on `Store.pendingItems`' order) when the
+    // user flips the setting in SettingsView. Store-scoped, matching the key the Toggle writes to.
+    @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
+    private var autoSortByLearnedOrder = true
     // Persisted map itemName(lowercased) → dismissed estimatedNextPurchaseDate. A dismissal
     // hides the suggestion for its current purchase cycle only: the next real purchase shifts
     // the estimated date, which makes the item eligible for the banner again.
@@ -40,6 +46,10 @@ struct HomeView: View {
     @State private var showStoreSetup = false
     @State private var storeToDelete: Store?
     @State private var showJoinStore = false
+    // Lokale Kopie für ForEach — verhindert dass @Query-Re-Sort die Drag-Animation im Grid abbricht
+    // (gleiches Muster wie StoreSetupView.orderedActiveStores)
+    @State private var orderedStores: [Store] = []
+    @State private var draggingStoreID: UUID?
 
     private var seasonalSuggestions: [SeasonalService.Suggestion] {
         seasonalSuggestionsEnabled ? SeasonalService.currentSuggestions() : []
@@ -49,6 +59,29 @@ struct HomeView: View {
 
     private var totalPending: Int {
         activeStores.filter { !$0.isPaused }.reduce(0) { $0 + $1.pendingItems.count } + storelessPending.count
+    }
+
+    private func syncStoreOrder() {
+        orderedStores = activeStores
+    }
+
+    /// Reorders `orderedStores` by moving `draggedID` next to `targetID` and persists the
+    /// new order into `Store.sortIndex`, mirroring `StoreSetupView.onMove`.
+    private func moveStore(draggedID: UUID, before targetID: UUID) {
+        guard draggedID != targetID,
+              let fromIndex = orderedStores.firstIndex(where: { $0.id == draggedID }),
+              let toIndex = orderedStores.firstIndex(where: { $0.id == targetID }) else { return }
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            let store = orderedStores.remove(at: fromIndex)
+            // Removing the dragged store shifts everything after `fromIndex` left by one, so if
+            // the target was further down the list its own index moves down by one too.
+            let insertIndex = fromIndex < toIndex ? toIndex - 1 : toIndex
+            orderedStores.insert(store, at: min(max(insertIndex, 0), orderedStores.count))
+            for (i, s) in orderedStores.enumerated() {
+                s.sortIndex = i
+            }
+        }
+        Haptics.impact(.light)
     }
 
     var body: some View {
@@ -110,6 +143,7 @@ struct HomeView: View {
                     activateQuickAdd()
                 }
                 checkPendingQuickAdd()
+                syncStoreOrder()
             }
             .onReceive(NotificationCenter.default.publisher(for: .quickAddRequested)) { _ in
                 activateQuickAdd()
@@ -117,9 +151,20 @@ struct HomeView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active {
                     checkPendingQuickAdd()
+                } else {
+                    // Safety net: a drag interrupted by the app backgrounding (incoming call,
+                    // Control Center, etc.) may leave `draggingStoreID` set if the drag preview's
+                    // .onDisappear doesn't fire in time — don't let that permanently freeze the
+                    // orderedStores/activeStores sync in `.onChange(of: activeStores)` below.
+                    draggingStoreID = nil
                 }
             }
             .onChange(of: allRecords.count) { refreshDueSoon() }
+            .onChange(of: activeStores) {
+                // Nur synchronisieren, wenn gerade nicht gedraggt wird — sonst würde das
+                // @Query-Re-Sort die laufende Drag-Animation im Grid unterbrechen/flackern lassen.
+                if draggingStoreID == nil { syncStoreOrder() }
+            }
             .devFeedback(context: "Startseite")
             .confirmationDialog(
                 "Laden löschen?",
@@ -128,6 +173,10 @@ struct HomeView: View {
             ) {
                 if let store = storeToDelete {
                     Button("Löschen", role: .destructive) {
+                        // Remove from the local drag-reorder mirror immediately — don't rely on
+                        // the async `.onChange(of: activeStores)` resync (which is skipped mid-drag
+                        // and could otherwise leave a deleted Store referenced in `orderedStores`).
+                        orderedStores.removeAll { $0.id == store.id }
                         context.delete(store)
                         Haptics.impact(.medium)
                         storeToDelete = nil
@@ -234,7 +283,7 @@ struct HomeView: View {
                 .fill(.white.opacity(0.05))
                 .frame(width: 90, height: 90)
                 .offset(x: 260, y: 20)
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .center, spacing: 4) {
                 Text("Restock")
                     .font(.system(size: 26, weight: .bold))
                     .foregroundStyle(.white)
@@ -253,6 +302,8 @@ struct HomeView: View {
                         .foregroundStyle(.white.opacity(0.8))
                 }
             }
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
             .padding(20)
         }
         .frame(height: 130)
@@ -278,7 +329,7 @@ struct HomeView: View {
                     .fill(.white.opacity(0.05))
                     .frame(width: 85, height: 85)
                     .offset(x: 275, y: 20)
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .center, spacing: 4) {
                     Text("Restock")
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(.white)
@@ -286,6 +337,8 @@ struct HomeView: View {
                         .font(.system(size: 13))
                         .foregroundStyle(.white.opacity(0.8))
                 }
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
                 .padding(20)
                 Button { closeBanner() } label: {
                     Image(systemName: "xmark.circle.fill")
@@ -722,11 +775,13 @@ struct HomeView: View {
                 emptyStoresView
             } else {
                 LazyVGrid(columns: columns, spacing: 12) {
-                    ForEach(activeStores) { store in
+                    ForEach(orderedStores) { store in
                         NavigationLink {
                             StoreDetailView(store: store)
                         } label: {
                             StoreCard(store: store)
+                                .opacity(draggingStoreID == store.id ? 0.4 : 1.0)
+                                .scaleEffect(draggingStoreID == store.id ? 0.96 : 1.0)
                         }
                         .buttonStyle(.plain)
                         .contextMenu {
@@ -749,10 +804,33 @@ struct HomeView: View {
                                 Label("Archivieren", systemImage: "archivebox")
                             }
                         }
+                        .draggable(StoreDragPayload(storeID: store.id)) {
+                            StoreCard(store: store)
+                                .frame(width: 160)
+                                .onAppear { draggingStoreID = store.id }
+                                // The drag preview is torn down whether the drag ends in a
+                                // successful drop or is cancelled/interrupted (dropped outside any
+                                // registered target, app backgrounded mid-drag, system interruption,
+                                // etc.) — this is the only reset path that fires unconditionally, so
+                                // it's the safety net against `draggingStoreID` getting stuck forever.
+                                .onDisappear { draggingStoreID = nil }
+                        }
+                        .dropDestination(for: StoreDragPayload.self) { items, _ in
+                            defer { draggingStoreID = nil }
+                            guard let payload = items.first else { return false }
+                            moveStore(draggedID: payload.storeID, before: store.id)
+                            return true
+                        } isTargeted: { _ in }
                     }
                     addStoreCard
                     joinListCard
                 }
+                // Fallback so `draggingStoreID` is reset even if the drag ends over the trailing
+                // static cards or empty grid space, which aren't valid per-card drop targets.
+                .dropDestination(for: StoreDragPayload.self) { _, _ in
+                    draggingStoreID = nil
+                    return false
+                } isTargeted: { _ in }
             }
         }
     }
@@ -764,8 +842,11 @@ struct HomeView: View {
     }
 
     private var groupedByCategory: [(category: String, emoji: String, items: [ShoppingItem])] {
-        // Always compute category from current name so stale stored values and rule updates apply immediately
-        let grouped = Dictionary(grouping: allPendingItems) { AssignmentService.category(for: $0.name) }
+        // Manually-set categories stick as the user chose them; everything else keeps re-deriving
+        // from the current name so stale stored values and rule updates apply immediately.
+        let grouped = Dictionary(grouping: allPendingItems) {
+            $0.categoryManuallySet ? $0.category : AssignmentService.category(for: $0.name)
+        }
         var result: [(category: String, emoji: String, items: [ShoppingItem])] = []
         for cat in AssignmentService.categoryOrder {
             if let items = grouped[cat], !items.isEmpty {
@@ -1105,4 +1186,24 @@ struct HomeView: View {
         Haptics.impact(.light)
         SyncCoordinator.shared.pushInBackground(store)
     }
+}
+
+/// Drag payload identifying which `Store` is being reordered on the home screen grid.
+/// Wraps the store's stable `UUID` rather than the SwiftData model itself, since `Transferable`
+/// requires a `Codable`/plain-data representation for drag-and-drop.
+struct StoreDragPayload: Codable, Transferable {
+    let storeID: UUID
+
+    static var transferRepresentation: some TransferRepresentation {
+        CodableRepresentation(contentType: .storeReorder)
+    }
+}
+
+extension UTType {
+    // Only used for in-process drag-and-drop reordering. MUST be `exportedAs:` (non-failable,
+    // declares the type at runtime) — the lookup initializer `UTType("…")` returns nil for a type
+    // that isn't declared in the Info.plist, and force-unwrapping it crashed the app on launch for
+    // every user with at least one store (the grid's `.draggable` evaluates this eagerly on render;
+    // the empty-store simulator smoke test never rendered the grid, which is why it slipped through).
+    static let storeReorder = UTType(exportedAs: "com.johannesemmrich.restock.storeReorder")
 }

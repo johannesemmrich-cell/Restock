@@ -40,7 +40,16 @@ struct CheckOffItemIntent: AppIntent {
                 pendingItemNames: remaining,
                 storeColorHex: current.storeColorHex
             )
-            await activity.update(ActivityContent(state: newState, staleDate: Date().addingTimeInterval(7200)))
+            if remaining.isEmpty {
+                // Letztes Item abgehakt → Activity beenden (4s Verzögerung,
+                // damit der letzte Haken kurz sichtbar bleibt)
+                await activity.end(
+                    ActivityContent(state: newState, staleDate: nil),
+                    dismissalPolicy: .after(Date().addingTimeInterval(4))
+                )
+            } else {
+                await activity.update(ActivityContent(state: newState, staleDate: Date().addingTimeInterval(7200)))
+            }
         }
 
         return .result()

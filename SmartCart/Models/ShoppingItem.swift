@@ -24,6 +24,12 @@ class ShoppingItem {
     var id: UUID
     var name: String
     var category: String
+    /// True once the user has explicitly picked a category in `EditItemView` that differs from
+    /// what `AssignmentService.category(for:)` would auto-detect from the name. Views that group
+    /// items by category should respect this: keep re-deriving the category from the name for
+    /// everything else (so keyword-rule improvements apply immediately), but never overwrite a
+    /// category the user manually chose.
+    var categoryManuallySet: Bool = false
     var quantity: String
     var quantityAmount: Double
     var unit: String
@@ -35,6 +41,10 @@ class ShoppingItem {
     var estimatedPrice: Double?
     var assignedTo: String = ""
     var addedBy: String = ""
+    /// Display name of whoever checked the item off (empty while pending). Additive field with a
+    /// default, like `categoryManuallySet`, so SwiftData lightweight migration handles it without
+    /// a schema-version bump. Shown in shared lists ("✓ von X"), synced via `SharedItemData`.
+    var completedBy: String = ""
     var lastModified: Date = Date()
 
     var store: Store?
@@ -74,11 +84,25 @@ class ShoppingItem {
         self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category)
     }
 
+    /// `estimatedPrice` is always a PER-UNIT rate (see the fuzzy `learnedPrices` lookup and
+    /// `PriceEstimator` fallback in `init` above — both represent a single-unit price). Every
+    /// display or budget-sum site must use this line TOTAL instead of the raw per-unit value,
+    /// so e.g. "6 Bier" shows 6× the price of "1 Bier" rather than an identical number.
+    /// `quantityAmount` should always be > 0 (see `QuantityStepperField`/`EditItemView.save()`,
+    /// which normalize to 1 if parsing yields 0 or less), but guard defensively anyway: a
+    /// non-positive quantity falls back to treating the line as a single unit rather than
+    /// zeroing out or negating the estimate.
+    var estimatedLineTotal: Double? {
+        estimatedPrice.map { $0 * (quantityAmount > 0 ? quantityAmount : 1) }
+    }
+
     func markCompleted() {
         isCompleted = true
         completedDate = Date()
+        completedBy = UserIdentity.displayName
         lastModified = Date()
-        // actualPrice left nil — real prices come from receipt scanning only, not estimates
+        // actualPrice left nil — real prices come from receipt scanning or the manual
+        // "Preis eintragen" flow (ActualPriceEntryView) later on, not from estimates
         let record = PurchaseRecord(
             itemName: name,
             storeName: store?.name ?? "",
@@ -93,6 +117,7 @@ class ShoppingItem {
     func markPending() {
         isCompleted = false
         completedDate = nil
+        completedBy = ""
         lastModified = Date()
     }
 }

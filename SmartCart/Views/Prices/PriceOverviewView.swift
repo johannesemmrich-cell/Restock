@@ -117,7 +117,7 @@ struct PriceOverviewView: View {
     // MARK: - Budget estimate
 
     private var budgetEstimate: Double {
-        pendingItems.compactMap { $0.estimatedPrice }.reduce(0, +)
+        pendingItems.compactMap { $0.estimatedLineTotal }.reduce(0, +)
     }
 
     private var budgetItemCount: Int {

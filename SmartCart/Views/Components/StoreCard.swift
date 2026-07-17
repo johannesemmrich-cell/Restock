@@ -7,6 +7,8 @@ struct StoreCard: View {
     private var pendingCount: Int { store.pendingItems.count }
     private var freq: VisitFrequency { VisitFrequency.closest(to: store.visitsPerWeek) }
 
+    private var isShared: Bool { store.shareID != nil }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Colored header band
@@ -44,6 +46,11 @@ struct StoreCard: View {
                     Text(store.name)
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(.primary)
+                    if isShared {
+                        Image(systemName: "person.2.fill")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(store.color)
+                    }
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(.system(size: 11, weight: .semibold))

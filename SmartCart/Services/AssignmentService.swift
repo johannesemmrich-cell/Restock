@@ -519,10 +519,22 @@ struct AssignmentService {
              "Konserven"),
         ]
 
+        // Pick the category whose matched keyword is the longest (most specific),
+        // scanning across ALL entries rather than stopping at the first array match.
+        // This avoids false positives from short/bare substrings (e.g. "wein" inside
+        // "weingummi", "bier" inside "bierschinken", "tee" inside "teewurst") beating
+        // a longer, more specific keyword listed under the correct category, purely
+        // because that category happens to come first in `categoryMap`.
+        var bestMatch: (keyword: String, category: String)?
         for entry in categoryMap {
-            if entry.keywords.contains(where: { nameLower.contains($0) }) {
-                return entry.category
+            for keyword in entry.keywords where nameLower.contains(keyword) {
+                if bestMatch == nil || keyword.count > bestMatch!.keyword.count {
+                    bestMatch = (keyword, entry.category)
+                }
             }
+        }
+        if let bestMatch {
+            return bestMatch.category
         }
 
         return "Lebensmittel"

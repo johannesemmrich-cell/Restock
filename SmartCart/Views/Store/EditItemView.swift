@@ -14,7 +14,25 @@ struct EditItemView: View {
     @State private var priceText: String
     @State private var selectedStore: Store?
     @State private var assignedTo: String
+    @State private var category: String
     @State private var showDeleteConfirm = false
+
+    /// The exact string `priceText` was seeded with in `init`, so `save()` can tell whether the
+    /// user actually edited the price field (vs. just changing quantity elsewhere in the sheet,
+    /// which must not cause the still-correct per-unit `estimatedPrice` to be recomputed from a
+    /// now-stale displayed total).
+    private let initialPriceText: String
+
+    /// The canonical category list, plus the item's current category if it's a stale/legacy
+    /// value not present in `AssignmentService.categoryOrder` — so the Picker always has a
+    /// matching option for `category` and never falls back to an unselected/blank state.
+    private var availableCategories: [String] {
+        var categories = AssignmentService.categoryOrder
+        if !category.isEmpty, !categories.contains(category) {
+            categories.append(category)
+        }
+        return categories
+    }
 
     init(item: ShoppingItem) {
         self.item = item
@@ -24,10 +42,17 @@ struct EditItemView: View {
         _note = State(initialValue: item.note)
         _selectedStore = State(initialValue: item.store)
         _assignedTo = State(initialValue: item.assignedTo)
-        if let price = item.estimatedPrice {
-            _priceText = State(initialValue: String(format: "%.2f", price).replacingOccurrences(of: ".", with: ","))
+        _category = State(initialValue: item.category)
+        // `item.estimatedPrice` is stored per-unit, but the field here shows/accepts the TOTAL
+        // for this line (matching what a user would read off a receipt for e.g. a 6-pack),
+        // so scale by quantity for display and divide back out again in `save()`.
+        if let total = item.estimatedLineTotal {
+            let text = String(format: "%.2f", total).replacingOccurrences(of: ".", with: ",")
+            _priceText = State(initialValue: text)
+            initialPriceText = text
         } else {
             _priceText = State(initialValue: "")
+            initialPriceText = ""
         }
     }
 
@@ -55,17 +80,31 @@ struct EditItemView: View {
                         Spacer()
                     }
 
-                    HStack {
-                        Image(systemName: "eurosign.circle")
-                            .foregroundStyle(.secondary)
-                        TextField("Preis (optional)", text: $priceText)
-                            .keyboardType(.decimalPad)
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack {
+                            Image(systemName: "eurosign.circle")
+                                .foregroundStyle(.secondary)
+                            TextField("Preis (optional)", text: $priceText)
+                                .keyboardType(.decimalPad)
+                        }
+                        Text("Gesamtpreis für die angegebene Menge")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.tertiary)
+                            .padding(.leading, 28)
                     }
 
                     HStack {
                         Image(systemName: "note.text")
                             .foregroundStyle(.secondary)
                         TextField(String(localized: "item.note.placeholder"), text: $note)
+                    }
+                }
+
+                Section("Kategorie") {
+                    Picker("Kategorie", selection: $category) {
+                        ForEach(availableCategories, id: \.self) { cat in
+                            Text("\(AssignmentService.categoryEmoji(cat)) \(cat)").tag(cat)
+                        }
                     }
                 }
 
@@ -198,6 +237,11 @@ struct EditItemView: View {
         item.quantityAmount = (rawQty > 0 && !rawQty.isNaN) ? rawQty : 1
         item.unit = unit
         item.note = note
+        item.category = category
+        // Only lock the category in as a manual override if the user actually picked something
+        // different from what the name-based heuristic would auto-detect. If they left it on
+        // the auto-detected value, keep it free to re-derive so future keyword-rule tweaks apply.
+        item.categoryManuallySet = category != AssignmentService.category(for: item.name)
         let oldStore = item.store
         let itemID = item.id
         let movedToAnotherStore = oldStore?.id != selectedStore?.id
@@ -205,11 +249,20 @@ struct EditItemView: View {
         item.assignedTo = selectedStore?.shareID != nil ? assignedTo : ""
         item.lastModified = Date()
 
-        let rawPrice = priceText.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)
-        if let p = Double(rawPrice), p > 0 {
-            item.estimatedPrice = p
-        } else if rawPrice.isEmpty {
-            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category)
+        // If the user never touched the price field — even if they changed the quantity elsewhere
+        // in this same sheet — `priceText` is still showing the OLD total for the OLD quantity.
+        // Re-deriving from it here would silently corrupt the still-correct per-unit
+        // `estimatedPrice` (see bug: quantity 2→3 with an untouched "7,00" total must NOT turn
+        // 3.50/unit into 2.33/unit). Only recompute when the displayed text actually changed.
+        if priceText != initialPriceText {
+            let rawPrice = priceText.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)
+            if let p = Double(rawPrice), p > 0 {
+                // The field holds the TOTAL for this line (see init/UI hint above); `estimatedPrice`
+                // is stored canonically per-unit, so divide the quantity back out before saving.
+                item.estimatedPrice = item.quantityAmount > 0 ? p / item.quantityAmount : p
+            } else if rawPrice.isEmpty {
+                item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category)
+            }
         }
 
         Haptics.success()

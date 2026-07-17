@@ -255,6 +255,7 @@ actor SharedStoreService {
                 id: item.id,
                 name: item.name,
                 category: item.category,
+                categoryManuallySet: item.categoryManuallySet,
                 quantity: item.quantity,
                 quantityAmount: item.quantityAmount,
                 unit: item.unit,
@@ -263,6 +264,7 @@ actor SharedStoreService {
                 note: item.note,
                 assignedTo: item.assignedTo,
                 addedBy: item.addedBy,
+                completedBy: item.completedBy,
                 lastModified: item.lastModified
             )
         }
@@ -273,6 +275,7 @@ actor SharedStoreService {
             "id": item.id.uuidString,
             "name": item.name,
             "category": item.category,
+            "categoryManuallySet": item.categoryManuallySet,
             "quantity": item.quantity,
             "quantityAmount": item.quantityAmount,
             "unit": item.unit,
@@ -281,6 +284,7 @@ actor SharedStoreService {
             "note": item.note,
             "assignedTo": item.assignedTo,
             "addedBy": item.addedBy,
+            "completedBy": item.completedBy,
             "lastModified": item.lastModified.timeIntervalSince1970
         ]}
         guard let data = try? JSONSerialization.data(withJSONObject: dicts),
@@ -297,6 +301,7 @@ actor SharedStoreService {
                 id: UUID(uuidString: dict["id"] as? String ?? "") ?? UUID(),
                 name: name,
                 category: dict["category"] as? String ?? "",
+                categoryManuallySet: dict["categoryManuallySet"] as? Bool ?? false,
                 quantity: dict["quantity"] as? String ?? "1",
                 quantityAmount: dict["quantityAmount"] as? Double ?? 1.0,
                 unit: dict["unit"] as? String ?? "",
@@ -305,6 +310,9 @@ actor SharedStoreService {
                 note: dict["note"] as? String ?? "",
                 assignedTo: dict["assignedTo"] as? String ?? "",
                 addedBy: dict["addedBy"] as? String ?? "",
+                // Optional-with-default like every other field: payloads written before this
+                // field existed simply decode as "" instead of failing.
+                completedBy: dict["completedBy"] as? String ?? "",
                 lastModified: (dict["lastModified"] as? TimeInterval).map(Date.init(timeIntervalSince1970:)) ?? .distantPast
             )
         }
@@ -350,6 +358,9 @@ struct SharedItemData {
     let id: UUID
     let name: String
     let category: String
+    // Muss mitreisen: sonst kommt eine manuell gewählte Kategorie beim Partner als "automatisch"
+    // an und dessen gruppierte Ansichten leiten sie wieder aus dem Namen ab (andere Sektion!).
+    let categoryManuallySet: Bool
     let quantity: String
     let quantityAmount: Double
     let unit: String
@@ -358,5 +369,6 @@ struct SharedItemData {
     let note: String
     let assignedTo: String
     let addedBy: String
+    let completedBy: String
     let lastModified: Date
 }

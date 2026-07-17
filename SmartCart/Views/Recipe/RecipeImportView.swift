@@ -4,7 +4,7 @@ import SwiftData
 struct RecipeImportView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
-    @Query(filter: #Predicate<Store> { $0.isActive }) private var activeStores: [Store]
+    @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
 
     @State private var selectedImage: UIImage?
     @State private var showImagePicker = false
@@ -14,6 +14,8 @@ struct RecipeImportView: View {
     @State private var selectedIngredients: Set<String> = []
     @State private var ingredientsExpanded = true
     @State private var error: String?
+    /// Explizit gewählte Ziel-Liste; `nil` = "Automatisch zuordnen" (bisheriges Verhalten).
+    @State private var targetStore: Store?
 
     var body: some View {
         NavigationStack {
@@ -129,6 +131,19 @@ struct RecipeImportView: View {
     private var ingredientList: some View {
         List {
             Section {
+                Picker(selection: $targetStore) {
+                    Text("Automatisch zuordnen").tag(nil as Store?)
+                    ForEach(activeStores) { store in
+                        Text("\(store.emoji) \(store.name)").tag(store as Store?)
+                    }
+                } label: {
+                    Label("Ziel-Liste", systemImage: "list.bullet")
+                        .font(.system(size: 15))
+                }
+                .pickerStyle(.menu)
+            }
+
+            Section {
                 DisclosureGroup(isExpanded: $ingredientsExpanded) {
                     HStack {
                         Button(String(localized: "recipe.select.all")) {
@@ -160,7 +175,7 @@ struct RecipeImportView: View {
 
                             Spacer()
 
-                            if let store = AssignmentService.assign(itemName: ingredient.name, to: activeStores) {
+                            if let store = resolvedStore(for: ingredient) {
                                 Text(store.emoji)
                             }
                         }
@@ -224,12 +239,20 @@ struct RecipeImportView: View {
         }
     }
 
+    /// Laden, den eine Zutat beim Import bekommt (auch für die Emoji-Vorschau):
+    /// explizit gewählte Ziel-Liste, sonst Auto-Zuordnung mit Fallback auf den
+    /// ersten aktiven Laden, damit keine Zutat ohne Liste angelegt wird.
+    private func resolvedStore(for ingredient: RecognizedIngredient) -> Store? {
+        if let targetStore { return targetStore }
+        return AssignmentService.assign(itemName: ingredient.name, to: activeStores) ?? activeStores.first
+    }
+
     private func addSelected() {
         let toAdd = recognizedIngredients.filter { selectedIngredients.contains($0.id.uuidString) }
         var touchedStores: [Store?] = []
         for ingredient in toAdd {
             let category = AssignmentService.category(for: ingredient.name)
-            let store = AssignmentService.assign(itemName: ingredient.name, to: activeStores)
+            let store = resolvedStore(for: ingredient)
             let item = ShoppingItem(
                 name: ingredient.name,
                 category: category,

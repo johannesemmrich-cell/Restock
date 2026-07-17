@@ -4,9 +4,18 @@ import SwiftData
 struct StoreDetailView: View {
     @Bindable var store: Store
     @Environment(\.modelContext) private var context
+
+    // Not read directly — its only job is to make SwiftUI re-invoke `body` (and thus re-derive
+    // `store.pendingItems`, which internally consults this same key) the moment the user flips
+    // the setting in SettingsView, instead of waiting for some unrelated state change to force a
+    // redraw. Store-scoped, matching the key SettingsView's Toggle actually writes to.
+    @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
+    private var autoSortByLearnedOrder = true
+
     @State private var showAddItem = false
     @State private var showClearConfirm = false
     @State private var showReceiptScanner = false
+    @State private var showActualPriceEntry = false
     @State private var showShareSheet = false
     @State private var showTemplatePicker = false
     @State private var showSaveTemplateAlert = false
@@ -26,8 +35,20 @@ struct StoreDetailView: View {
     @State private var showPaywall = false
     @State private var paywallContext: PaywallContext = .premium(feature: "dieses Feature")
 
+    // Local mirror of `store.groupByCategory` (which is UserDefaults-backed, so writing it alone
+    // would never invalidate this view). The "···" menu toggle writes both: the Store property
+    // for persistence, and this @State so SwiftUI re-renders immediately.
+    @State private var groupByCategory: Bool
+
+    init(store: Store) {
+        self.store = store
+        // Seed the mirror from the persisted per-store preference so even the very first
+        // render already uses the layout the user chose last time.
+        _groupByCategory = State(initialValue: store.groupByCategory)
+    }
+
     private var total: Double {
-        store.pendingItems.compactMap { $0.estimatedPrice }.reduce(0, +)
+        store.pendingItems.compactMap { $0.estimatedLineTotal }.reduce(0, +)
     }
     private var completionProgress: Double {
         guard !store.items.isEmpty else { return 0 }
@@ -152,9 +173,23 @@ struct StoreDetailView: View {
             }
 
             if !regularItems.isEmpty {
-                Section(String(localized: "list.pending")) {
-                    ForEach(regularItems) { item in
-                        pendingRow(item)
+                if groupByCategory {
+                    ForEach(groupedRegularItems(regularItems), id: \.category) { group in
+                        Section {
+                            ForEach(group.items) { item in
+                                pendingRow(item)
+                            }
+                        } header: {
+                            Text("\(group.emoji) \(group.category)")
+                                .font(.system(size: 12, weight: .semibold))
+                                .textCase(nil)
+                        }
+                    }
+                } else {
+                    Section(String(localized: "list.pending")) {
+                        ForEach(regularItems) { item in
+                            pendingRow(item)
+                        }
                     }
                 }
             }
@@ -179,6 +214,11 @@ struct StoreDetailView: View {
                                     Label(String(localized: "item.action.uncheck"), systemImage: "arrow.uturn.backward")
                                 }
                                 .tint(.orange)
+                            }
+                            .contextMenu {
+                                if store.shareID != nil {
+                                    assignMenuItems(for: item)
+                                }
                             }
                     }
                 } header: {
@@ -223,12 +263,32 @@ struct StoreDetailView: View {
                         Image(systemName: store.shareID != nil ? "person.2.fill" : "person.2")
                     }
                     Menu {
+                        Toggle(isOn: Binding(
+                            get: { groupByCategory },
+                            set: { newValue in
+                                withAnimation { groupByCategory = newValue }
+                                store.groupByCategory = newValue
+                                Haptics.impact(.light)
+                            }
+                        )) {
+                            Label("Nach Kategorie gruppieren", systemImage: "square.grid.3x1.below.line.grid.1x2")
+                        }
+                        Divider()
                         if !store.completedItems.isEmpty {
                             Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
                                 if premium.hasPremiumAccess {
                                     showReceiptScanner = true
                                 } else {
                                     paywallContext = .premium(feature: "den Kassenbon-Scan")
+                                    showPaywall = true
+                                }
+                                Haptics.impact(.light)
+                            }
+                            Button("Preis eintragen", systemImage: "eurosign.circle") {
+                                if premium.hasPremiumAccess {
+                                    showActualPriceEntry = true
+                                } else {
+                                    paywallContext = .premium(feature: "das manuelle Eintragen von Preisen")
                                     showPaywall = true
                                 }
                                 Haptics.impact(.light)
@@ -272,6 +332,7 @@ struct StoreDetailView: View {
         .sheet(isPresented: $showAddItem) { AddItemView() }
         .sheet(isPresented: $showShareSheet) { StoreShareSheet(store: store) }
         .sheet(isPresented: $showReceiptScanner) { ReceiptScannerView(store: store) }
+        .sheet(isPresented: $showActualPriceEntry) { ActualPriceEntryView(store: store) }
         .sheet(isPresented: $showPaywall) { PaywallView(context: paywallContext) }
         .sheet(item: $editingItem) { item in EditItemView(item: item) }
         .sheet(isPresented: $showTemplatePicker) {
@@ -297,8 +358,11 @@ struct StoreDetailView: View {
         }
         .devFeedback(context: "Liste: \(store.name)")
         .onAppear {
-            LiveActivityService.shared.start(for: store)
+            // Erst die aus der Dynamic Island gequeueten Haken persistieren, DANN die Activity
+            // starten — sonst startet start(for:) für eine per Island komplett abgehakte Liste
+            // kurz eine neue Activity, die der Drain eine Zeile später sofort wieder beendet (Flash).
             applyPendingCheckoffs()
+            LiveActivityService.shared.start(for: store)
             if store.shareID != nil {
                 let generation = nextSyncGeneration()
                 Task {
@@ -353,6 +417,32 @@ struct StoreDetailView: View {
         }
     }
 
+    // MARK: - Category grouping
+
+    /// Splits the (already sorted) non-urgent pending items into category sections for the
+    /// optional grouped view. Same derivation as `HomeView.groupedByCategory`: manually-set
+    /// categories stick as the user chose them, everything else keeps re-deriving from the
+    /// current name so stale stored values and keyword-rule updates apply immediately.
+    /// `Dictionary(grouping:)` preserves encounter order within each group, so inside a section
+    /// the items keep the exact `store.pendingItems` order (learned aisle / insertion order).
+    private func groupedRegularItems(_ items: [ShoppingItem]) -> [(category: String, emoji: String, items: [ShoppingItem])] {
+        let grouped = Dictionary(grouping: items) {
+            $0.categoryManuallySet ? $0.category : AssignmentService.category(for: $0.name)
+        }
+        var result: [(category: String, emoji: String, items: [ShoppingItem])] = []
+        for cat in AssignmentService.categoryOrder {
+            if let items = grouped[cat], !items.isEmpty {
+                result.append((category: cat, emoji: AssignmentService.categoryEmoji(cat), items: items))
+            }
+        }
+        for key in grouped.keys.sorted() where !AssignmentService.categoryOrder.contains(key) {
+            if let items = grouped[key], !items.isEmpty {
+                result.append((category: key, emoji: AssignmentService.categoryEmoji(key), items: items))
+            }
+        }
+        return result
+    }
+
     // MARK: - Pending row
 
     @ViewBuilder
@@ -394,6 +484,41 @@ struct StoreDetailView: View {
                 }
                 .tint(.indigo)
             }
+            .contextMenu {
+                if store.shareID != nil {
+                    assignMenuItems(for: item)
+                }
+            }
+    }
+
+    /// Shared context-menu content for assigning `item` to any member of `store` (not just
+    /// yourself). Only meaningful for shared lists — callers must gate on `store.shareID != nil`
+    /// before showing this, mirroring `EditItemView`'s "Zugewiesen an" picker gating exactly.
+    @ViewBuilder
+    private func assignMenuItems(for item: ShoppingItem) -> some View {
+        ForEach(store.members, id: \.self) { member in
+            Button {
+                assign(item, to: item.assignedTo == member ? "" : member)
+            } label: {
+                Label(member, systemImage: item.assignedTo == member ? "checkmark.circle.fill" : "person.circle")
+            }
+        }
+        if !item.assignedTo.isEmpty {
+            Button {
+                assign(item, to: "")
+            } label: {
+                Label("Niemandem zuweisen", systemImage: "person.crop.circle.badge.xmark")
+            }
+        }
+    }
+
+    /// Assigns `item` to `member` (or unassigns it if `member` is empty), mirroring exactly what
+    /// the "Mir zuweisen" swipe action already does so shared-list sync sees a normal edit.
+    private func assign(_ item: ShoppingItem, to member: String) {
+        withAnimation { item.assignedTo = member }
+        item.lastModified = Date()
+        Haptics.impact(.light)
+        syncPush()
     }
 
     // MARK: - Progress header
