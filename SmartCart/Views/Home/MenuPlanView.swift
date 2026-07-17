@@ -410,26 +410,32 @@ struct MenuPlanView: View {
 
     private func addToList() {
         let ingredients = allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }
+        var touchedStores: [Store?] = []
         for name in ingredients {
             let category = AssignmentService.category(for: name)
             let store = AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords)
             context.insert(ShoppingItem(name: name, category: category, store: store))
+            touchedStores.append(store)
         }
         addedCount = ingredients.count
         checkedIngredients.removeAll()
         Haptics.success()
+        SyncCoordinator.shared.pushInBackground(touchedStores)
         showConfirm = true
     }
 
     private func addRecipeToList(_ recipe: SavedRecipe) {
+        var touchedStores: [Store?] = []
         for name in recipe.ingredients {
             let category = AssignmentService.category(for: name)
             let store = AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords)
             context.insert(ShoppingItem(name: name, category: category, store: store))
+            touchedStores.append(store)
         }
         recordUsage(recipe)
         addedCount = recipe.ingredients.count
         Haptics.success()
+        SyncCoordinator.shared.pushInBackground(touchedStores)
         showConfirm = true
     }
 
@@ -801,9 +807,15 @@ enum MealDatabase {
     static func ingredients(for meal: String) -> [String] {
         let key = meal.trimmingCharacters(in: .whitespaces).lowercased()
         if let exact = db[key] { return exact }
-        for (dbKey, value) in db where key.contains(dbKey) || dbKey.contains(key) {
-            return value
-        }
-        return []
+        // Multiple keys can match a given input (e.g. "hähnchen curry" contains both "hähnchen"
+        // and "curry"). Dictionary iteration order is randomized per launch, so picking the first
+        // match during a plain iteration would make the result non-deterministic across app
+        // launches. Instead, deterministically prefer the longest (most specific) matching key,
+        // breaking ties alphabetically.
+        let match = db
+            .filter { key.contains($0.key) || $0.key.contains(key) }
+            .sorted { $0.key.count != $1.key.count ? $0.key.count > $1.key.count : $0.key < $1.key }
+            .first
+        return match?.value ?? []
     }
 }

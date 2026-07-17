@@ -182,6 +182,7 @@ struct AddItemView: View {
             store: selectedStore
         )
         context.insert(item)
+        SyncCoordinator.shared.pushInBackground(selectedStore)
         dismiss()
     }
 }

@@ -111,7 +111,7 @@ struct PaywallView: View {
     private var headerTitle: String {
         switch context {
         case .sharedLists: return "Geteilte Listen"
-        case .premium: return "SmartCart Pro"
+        case .premium: return "Restock Pro"
         }
     }
 
@@ -133,7 +133,7 @@ struct PaywallView: View {
         case PremiumService.monthlyID:     return "1,99 €"
         case PremiumService.yearlyID:      return "9,99 €"
         case PremiumService.lifetimeID:    return "4,99 €"
-        case PremiumService.sharedListsID: return "3,99 €"
+        case PremiumService.sharedListsID: return "4,99 €"
         default: return "–"
         }
     }
@@ -196,7 +196,7 @@ struct PaywallView: View {
 
                 addOnCard(
                     id: PremiumService.yearlyID,
-                    title: "SmartCart Pro",
+                    title: "Restock Pro",
                     price: "\(productPrice(for: PremiumService.yearlyID))/Jahr",
                     detail: "alle Features inklusive",
                     isRecommended: true
@@ -459,8 +459,15 @@ struct PaywallView: View {
     private func purchase() async {
         errorMessage = nil
         guard let product = premium.product(for: selectedPlanID) else {
-            // Fallback for testing without App Store Connect products
+            #if DEBUG
+            // Fallback for local testing without App Store Connect products configured.
             dismiss()
+            #else
+            // In a real build, a missing product means StoreKit failed to load it (e.g. no
+            // network, or the product isn't live in App Store Connect yet) — tell the user
+            // instead of silently closing the paywall as if nothing happened.
+            errorMessage = "Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."
+            #endif
             return
         }
         do {

@@ -9,6 +9,7 @@ struct BrowseStoresView: View {
     @State private var addedNames: Set<String> = []
     @State private var searchText: String = ""
     @State private var showCustom = false
+    @State private var showJoin = false
 
     private var isSearching: Bool { !searchText.trimmingCharacters(in: .whitespaces).isEmpty }
 
@@ -146,6 +147,28 @@ struct BrowseStoresView: View {
                         }
                         .buttonStyle(.plain)
                     }
+                    Section("Geteilte Liste") {
+                        Button {
+                            showJoin = true
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "person.badge.plus")
+                                    .font(.system(size: 22))
+                                    .foregroundStyle(.indigo)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Geteilter Liste beitreten")
+                                        .font(.system(size: 16))
+                                        .foregroundStyle(.primary)
+                                    Text("6-stelligen Code eingeben, den dir jemand geschickt hat")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(.vertical, 2)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
         }
@@ -158,6 +181,7 @@ struct BrowseStoresView: View {
             }
         }
         .sheet(isPresented: $showCustom) { AddCustomStoreView() }
+        .sheet(isPresented: $showJoin) { JoinStoreSheet() }
         .onAppear {
             if selectedCountry.isEmpty {
                 selectedCountry = Store.availableCountries.first?.code ?? "DE"

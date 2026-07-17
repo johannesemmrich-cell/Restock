@@ -7,6 +7,7 @@ struct OnboardingView: View {
     @AppStorage("selectedCountry") private var selectedCountry = Locale.current.region?.identifier ?? "DE"
     @AppStorage(UserIdentity.storageKey, store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
     private var userDisplayName = ""
+    @AppStorage("notificationsEnabled") private var notificationsEnabled = true
 
     @State private var selectedStores: Set<String> = []
     @State private var presetStores: [Store] = []
@@ -102,7 +103,7 @@ struct OnboardingView: View {
                     .foregroundStyle(.blue)
                     .symbolEffect(.bounce, options: .repeating.speed(0.3))
 
-                Text("SmartCart")
+                Text("Restock")
                     .font(.system(size: 36, weight: .bold))
 
                 Text(String(localized: "onboarding.welcome.subtitle"))
@@ -242,7 +243,7 @@ struct OnboardingView: View {
             ScrollView {
                 VStack(spacing: 28) {
                     VStack(spacing: 8) {
-                        Text("So funktioniert SmartCart")
+                        Text("So funktioniert Restock")
                             .font(.title2)
                             .fontWeight(.bold)
                         Text("Zwei Funktionen, die dir am meisten Zeit sparen")
@@ -256,14 +257,14 @@ struct OnboardingView: View {
                         icon: "plus.circle.fill",
                         iconColor: .blue,
                         title: "Schnell hinzufügen",
-                        description: "Tippe einfach ein, was du brauchst — SmartCart erkennt Menge und Einheit automatisch.\n\nBeispiele: \"500g Hackfleisch\", \"2 Liter Milch\", \"3 Äpfel\""
+                        description: "Tippe einfach ein, was du brauchst — Restock erkennt Menge und Einheit automatisch.\n\nBeispiele: \"500g Hackfleisch\", \"2 Liter Milch\", \"3 Äpfel\""
                     )
 
                     TutorialCard(
                         icon: "camera.viewfinder",
                         iconColor: .purple,
                         title: "Kassenbon scannen",
-                        description: "Fotografiere deinen Kassenbon in der Einkaufsliste. SmartCart liest die Artikel und Preise automatisch aus und lernt damit, was welches Produkt kostet."
+                        description: "Fotografiere deinen Kassenbon in der Einkaufsliste. Restock liest die Artikel und Preise automatisch aus und lernt damit, was welches Produkt kostet."
                     )
 
                     Spacer(minLength: 0)
@@ -290,7 +291,7 @@ struct OnboardingView: View {
             context.insert(store)
         }
         Task {
-            _ = await NotificationService.shared.requestPermission()
+            notificationsEnabled = await NotificationService.shared.requestPermission()
         }
         hasCompletedOnboarding = true
     }

@@ -226,6 +226,7 @@ struct RecipeImportView: View {
 
     private func addSelected() {
         let toAdd = recognizedIngredients.filter { selectedIngredients.contains($0.id.uuidString) }
+        var touchedStores: [Store?] = []
         for ingredient in toAdd {
             let category = AssignmentService.category(for: ingredient.name)
             let store = AssignmentService.assign(itemName: ingredient.name, to: activeStores)
@@ -233,12 +234,14 @@ struct RecipeImportView: View {
                 name: ingredient.name,
                 category: category,
                 quantity: ingredient.quantity,
-                quantityAmount: Double(ingredient.quantity) ?? 1,
+                quantityAmount: Double(ingredient.quantity.replacingOccurrences(of: ",", with: ".")) ?? 1,
                 unit: ingredient.unit,
                 store: store
             )
             context.insert(item)
+            touchedStores.append(store)
         }
+        SyncCoordinator.shared.pushInBackground(touchedStores)
         dismiss()
     }
 }

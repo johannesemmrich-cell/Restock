@@ -48,7 +48,7 @@ struct StoreDetailView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .font(.system(size: 13))
-                            Text("Sync fehlgeschlagen — Änderungen werden möglicherweise nicht mit anderen geteilt")
+                            Text(syncFailureText)
                                 .font(.system(size: 13))
                             Spacer()
                             Image(systemName: "arrow.clockwise")
@@ -508,6 +508,20 @@ struct StoreDetailView: View {
         syncPush()
     }
 
+    /// Names the concrete failure instead of a generic "sync broken": a permanent server-side
+    /// write rejection (CloudKit security roles) and a missing iCloud login need completely
+    /// different reactions than a flaky network, but they'd all look identical otherwise.
+    private var syncFailureText: String {
+        switch SyncCoordinator.shared.lastFailureKind {
+        case .permissionDenied:
+            return "Keine Schreibberechtigung für diese geteilte Liste — deine Änderungen erreichen die anderen Mitglieder nicht"
+        case .notAuthenticated:
+            return "Nicht bei iCloud angemeldet — Änderungen werden nicht geteilt (Einstellungen → beim iPhone anmelden)"
+        case .other:
+            return "Sync fehlgeschlagen — Änderungen werden möglicherweise nicht mit anderen geteilt"
+        }
+    }
+
     /// Bumps and returns the current sync generation. Call this synchronously on the main actor
     /// right before kicking off an async sync call so the result can later be matched against
     /// whatever the *latest* generation is when it completes.
@@ -702,6 +716,7 @@ struct StoreDetailView: View {
             ))
         }
         Haptics.success()
+        syncPush()
     }
 
 }

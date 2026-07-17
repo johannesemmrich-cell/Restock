@@ -121,7 +121,14 @@ actor RecipeRecognitionService {
             request.recognitionLevel = .accurate
             request.recognitionLanguages = ["de-DE", "en-US"]
             request.usesLanguageCorrection = true
-            try? VNImageRequestHandler(cgImage: cgImage, options: [:]).perform([request])
+            do {
+                try VNImageRequestHandler(cgImage: cgImage, options: [:]).perform([request])
+            } catch {
+                // perform() can throw synchronously (before the request's own completion handler
+                // ever runs) — without catching this, the continuation above would never resume
+                // and the caller would hang forever on this await.
+                continuation.resume(throwing: error)
+            }
         }
     }
 

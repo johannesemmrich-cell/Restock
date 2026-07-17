@@ -21,8 +21,12 @@ final class CloudPreferencesSync {
         "hasCompletedOnboarding",
     ]
 
-    // Dynamic-key prefixes — e.g. "shareID_<uuid>", "isSharedByMe_<uuid>", "lastSync_<shareID>"
-    private let syncedPrefixes = ["shareID_", "isSharedByMe_", "lastSync_"]
+    // Dynamic-key prefixes — e.g. "shareID_<uuid>", "isSharedByMe_<uuid>".
+    // Deliberately excludes "lastSync_<shareID>": that watermark only means "this device has
+    // actually applied remote state up to this point in SwiftData". Mirroring it via iCloud KV
+    // would let a sibling device (same Apple ID, e.g. iPhone + iPad) inherit a watermark for
+    // data it never itself pulled and applied, making it silently skip a pull it still needs.
+    private let syncedPrefixes = ["shareID_", "isSharedByMe_"]
 
     private var ignoreUD = false
     private var pendingPush: DispatchWorkItem?

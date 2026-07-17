@@ -97,7 +97,7 @@ struct StoreSetupView: View {
             Button("Abbrechen", role: .cancel) { storeToDelete = nil }
         } message: {
             if let store = storeToDelete {
-                Text("\"\\(store.name)\" und alle zugehörigen Artikel werden dauerhaft gelöscht.")
+                Text("\"\(store.name)\" und alle zugehörigen Artikel werden dauerhaft gelöscht.")
             }
         }
     }

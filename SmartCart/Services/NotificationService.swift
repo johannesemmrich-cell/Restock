@@ -14,6 +14,14 @@ class NotificationService {
         }
     }
 
+    /// Reads the *actual* current authorization status without prompting — used to keep a
+    /// settings toggle honest, since the user can revoke notification permission from the
+    /// system Settings app at any time without the app ever finding out otherwise.
+    func isAuthorized() async -> Bool {
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+        return settings.authorizationStatus == .authorized
+    }
+
     func scheduleReplenishment(patterns: [ConsumptionPattern]) async {
         let center = UNUserNotificationCenter.current()
 
@@ -57,6 +65,13 @@ class NotificationService {
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         try? await UNUserNotificationCenter.current().add(request)
+    }
+
+    /// Cancels the pending replenishment reminder for one item (e.g. after the user dismissed
+    /// its suggestion in the banner) without touching other scheduled reminders.
+    func cancelReplenishment(itemName: String) {
+        let identifier = "replenish-\(itemName.lowercased().replacingOccurrences(of: " ", with: "-"))"
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
     }
 
     func cancelAll() {

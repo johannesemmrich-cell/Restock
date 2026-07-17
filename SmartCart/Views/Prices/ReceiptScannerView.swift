@@ -194,7 +194,14 @@ struct ReceiptScannerView: View {
                 }
                 request.recognitionLevel = .accurate
                 request.recognitionLanguages = ["de-DE", "en-US"]
-                try? VNImageRequestHandler(cgImage: cgImage, options: [:]).perform([request])
+                do {
+                    try VNImageRequestHandler(cgImage: cgImage, options: [:]).perform([request])
+                } catch {
+                    // perform() can throw synchronously before the request's completion handler
+                    // ever runs — without this, the continuation would never resume and the
+                    // "Bon wird ausgelesen…" spinner would spin forever.
+                    continuation.resume(returning: [])
+                }
             }
             let parsed = ReceiptParserService.parse(lines)
             await MainActor.run {

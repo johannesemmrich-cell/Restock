@@ -6,7 +6,7 @@ import SwiftData
 struct AddShoppingItemIntent: AppIntent {
     static var title: LocalizedStringResource = "Artikel hinzufügen"
     static var description = IntentDescription(
-        "Fügt einen Artikel zur SmartCart Einkaufsliste hinzu.",
+        "Fügt einen Artikel zur Restock Einkaufsliste hinzu.",
         categoryName: "Einkaufsliste"
     )
     static var openAppWhenRun = false

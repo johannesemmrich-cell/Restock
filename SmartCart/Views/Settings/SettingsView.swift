@@ -21,7 +21,7 @@ struct SettingsView: View {
     @State private var paywallContext: PaywallContext = .premium(feature: "alle Pro-Features")
     @State private var showFeedback = false
     @State private var showJoinStore = false
-    @State private var notificationsEnabled = false
+    @AppStorage("notificationsEnabled") private var notificationsEnabled = true
     @State private var versionTapCount = 0
     @State private var lastTapTime: Date = .distantPast
     @State private var showDevPasswordPrompt = false
@@ -65,7 +65,7 @@ struct SettingsView: View {
                     }
                 }
 
-                Section("SmartCart Pro") {
+                Section("Restock Pro") {
                     if premium.isPremiumUnlocked {
                         HStack(spacing: 12) {
                             Image(systemName: "checkmark.seal.fill")
@@ -100,7 +100,7 @@ struct SettingsView: View {
                                     .foregroundStyle(LinearGradient.brand)
                                     .frame(width: 28)
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("SmartCart Pro freischalten")
+                                    Text("Restock Pro freischalten")
                                         .font(.system(size: 15, weight: .medium))
                                         .foregroundStyle(.primary)
                                     Text("Kassenbon-Scan, Menüplan, Ausgaben & mehr")
@@ -148,7 +148,7 @@ struct SettingsView: View {
                                     Text("Geteilte Listen freischalten")
                                         .font(.system(size: 15, weight: .medium))
                                         .foregroundStyle(.primary)
-                                    Text("Einmaliger Kauf · 3,99 €")
+                                    Text("Einmaliger Kauf · 4,99 €")
                                         .font(.system(size: 12))
                                         .foregroundStyle(.secondary)
                                 }
@@ -191,7 +191,7 @@ struct SettingsView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Siri")
                                 .font(.system(size: 15, weight: .medium))
-                            Text("\"Hey Siri, füge Milch zu SmartCart hinzu\"")
+                            Text("\"Hey Siri, füge Milch zu Restock hinzu\"")
                                 .font(.system(size: 12))
                                 .foregroundStyle(.secondary)
                         }
@@ -251,7 +251,7 @@ struct SettingsView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Homescreen-Kurzbefehl")
                                     .font(.system(size: 15, weight: .medium))
-                                Text("Kurzbefehle-App öffnen → SmartCart-Kurzbefehl zum Homescreen hinzufügen")
+                                Text("Kurzbefehle-App öffnen → Restock-Kurzbefehl zum Homescreen hinzufügen")
                                     .font(.system(size: 12))
                                     .foregroundStyle(.secondary)
                             }
@@ -274,7 +274,7 @@ struct SettingsView: View {
                     }
                 }
 
-                Section("Über SmartCart") {
+                Section("Über Restock") {
                     HStack {
                         Text(String(localized: "settings.version"))
                         Spacer()
@@ -304,7 +304,7 @@ struct SettingsView: View {
                     }
 
                     Button {
-                        if let url = URL(string: "mailto:j.emmrich@icloud.com?subject=SmartCart%20Support") {
+                        if let url = URL(string: "mailto:j.emmrich@icloud.com?subject=Restock%20Support") {
                             UIApplication.shared.open(url)
                         }
                     } label: {
@@ -367,6 +367,14 @@ struct SettingsView: View {
                     onCancel: { showDevPasswordPrompt = false }
                 )
                 .presentationDetents([.height(220)])
+            }
+            .task {
+                // Downgrade the stored preference if system permission was revoked in the
+                // meantime (system Settings app) — but never auto-enable against the user's
+                // explicit choice to keep the toggle off.
+                if notificationsEnabled, await NotificationService.shared.isAuthorized() == false {
+                    notificationsEnabled = false
+                }
             }
         }
         .devFeedback(context: "Einstellungen")

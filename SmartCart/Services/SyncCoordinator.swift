@@ -1,3 +1,4 @@
+import CloudKit
 import Foundation
 import SwiftData
 
@@ -13,6 +14,32 @@ final class SyncCoordinator {
     /// which has no view hierarchy, can still look up and update SwiftData stores.
     var modelContext: ModelContext?
 
+    enum SyncFailureKind {
+        case permissionDenied   // CKError.permissionFailure: server rejected the write (schema security roles)
+        case notAuthenticated   // no iCloud account signed in on this device
+        case other
+    }
+
+    /// Why the most recent `pull`/`push` returned `false`. Purely diagnostic — lets the sync
+    /// banner distinguish "no network right now" from "the server permanently rejects writes
+    /// from this account", which would otherwise look identical and be nearly undebuggable
+    /// from a TestFlight report.
+    private(set) var lastFailureKind: SyncFailureKind = .other
+
+    private func classify(_ error: Error) -> SyncFailureKind {
+        guard let ck = error as? CKError else { return .other }
+        switch ck.code {
+        case .permissionFailure: return .permissionDenied
+        case .notAuthenticated:  return .notAuthenticated
+        case .partialFailure:
+            let partial = ck.partialErrorsByItemID?.values.compactMap { $0 as? CKError } ?? []
+            if partial.contains(where: { $0.code == .permissionFailure }) { return .permissionDenied }
+            if partial.contains(where: { $0.code == .notAuthenticated }) { return .notAuthenticated }
+            return .other
+        default: return .other
+        }
+    }
+
     /// Pulls remote state for a shared store (if newer) and merges it into the local store.
     ///
     /// Returns `true` if the pull succeeded or there was legitimately nothing new to fetch,
@@ -23,9 +50,10 @@ final class SyncCoordinator {
         guard let shareID = store.shareID else { return true }
         do {
             guard let result = try await SharedStoreService.shared.pull(shareID: shareID) else { return true }
-            await apply(items: result.items, members: result.members, to: store)
+            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, modifiedAt: result.modifiedAt, to: store)
             return true
         } catch {
+            lastFailureKind = classify(error)
             return false
         }
     }
@@ -40,11 +68,35 @@ final class SyncCoordinator {
         guard let shareID = store.shareID, !shareID.isEmpty else { return true }
         do {
             guard let result = try await SharedStoreService.shared.push(store: store) else { return true }
-            await apply(items: result.items, members: result.members, to: store)
+            // syncToCloud's save already advanced the watermark to the server's modificationDate
+            // (see SharedStoreService.markSynced), so apply() shouldn't override it here.
+            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, modifiedAt: nil, to: store)
             return true
         } catch {
+            lastFailureKind = classify(error)
             return false
         }
+    }
+
+    /// Fire-and-forget push for call sites that mutate shared-store items without an existing
+    /// sync-failure UI (e.g. HomeView's quick-add, "Alle Artikel", Menüplan, recipe import) —
+    /// unlike StoreDetailView, which tracks and surfaces push failures via a banner. No-ops for
+    /// stores that aren't shared. Errors are swallowed: the mutation is already saved locally and
+    /// will be included in whatever push happens next (an explicit push elsewhere, or the next
+    /// periodic pull-triggered merge), so a failed opportunistic push here only delays
+    /// propagation to other members — it doesn't lose data.
+    func pushInBackground(_ stores: [Store?]) {
+        let sharedStores = Set(stores.compactMap { $0 }).filter { $0.shareID != nil }
+        guard !sharedStores.isEmpty else { return }
+        Task {
+            for store in sharedStores {
+                await push(store: store)
+            }
+        }
+    }
+
+    func pushInBackground(_ store: Store?) {
+        pushInBackground([store])
     }
 
     /// Looks up a locally known store by its CloudKit shareID and pulls its latest state.
@@ -72,15 +124,24 @@ final class SyncCoordinator {
     /// advances the sync watermark — so a save failure or a killed app doesn't leave the
     /// watermark ahead of what was really applied (which would make the next pull skip the
     /// merge that was supposed to fix things).
-    func apply(items remoteItems: [SharedItemData], members: [String], to store: Store) async {
+    ///
+    /// `deletedIDs` must be an explicit tombstone set, not "everything absent from `remoteItems`".
+    /// A local item can legitimately be absent from a given remote snapshot simply because this
+    /// device hasn't pushed it yet (e.g. a periodic pull racing ahead of an in-flight push) —
+    /// deleting on mere absence would destroy that not-yet-synced item. Only delete what's
+    /// explicitly confirmed deleted (locally or by another device) via the tombstone list.
+    ///
+    /// `modifiedAt` is the server's `modificationDate` for this remote state, used to advance the
+    /// sync watermark to server time rather than this device's local clock. Pass `nil` when the
+    /// caller (e.g. a push) already advanced the watermark itself via `SharedStoreService.markSynced`.
+    func apply(items remoteItems: [SharedItemData], members: [String], deletedIDs: Set<UUID> = [], modifiedAt: Date?, to store: Store) async {
         guard let context = modelContext ?? store.modelContext else { return }
 
         for name in members { store.addMember(name) }
 
         let localByID = Dictionary(uniqueKeysWithValues: store.items.map { ($0.id, $0) })
-        let remoteByID = Dictionary(uniqueKeysWithValues: remoteItems.map { ($0.id, $0) })
 
-        for item in store.items where remoteByID[item.id] == nil {
+        for item in store.items where deletedIDs.contains(item.id) {
             context.delete(item)
         }
 
@@ -117,8 +178,8 @@ final class SyncCoordinator {
 
         do {
             try context.save()
-            if let shareID = store.shareID {
-                await SharedStoreService.shared.markSynced(shareID: shareID)
+            if let shareID = store.shareID, let modifiedAt {
+                await SharedStoreService.shared.markSynced(shareID: shareID, at: modifiedAt)
             }
         } catch {
             // Leave the watermark where it was so the next pull retries this merge.

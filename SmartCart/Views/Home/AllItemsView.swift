@@ -21,6 +21,12 @@ struct AllItemsView: View {
         }
     }
 
+    /// Items with no assigned store — otherwise invisible in the by-store grouping, since it
+    /// only ever iterates `activeStores`.
+    private var noStoreItems: [ShoppingItem] {
+        pendingItems.filter { !$0.isUrgent && $0.store == nil }
+    }
+
     private var nonUrgentByCategory: [(category: String, emoji: String, items: [ShoppingItem])] {
         let grouped = Dictionary(grouping: pendingItems.filter { !$0.isUrgent }) { AssignmentService.category(for: $0.name) }
         var result: [(category: String, emoji: String, items: [ShoppingItem])] = []
@@ -98,6 +104,24 @@ struct AllItemsView: View {
                                 }
                             }
                         }
+
+                        if !noStoreItems.isEmpty {
+                            Section {
+                                ForEach(noStoreItems) { item in
+                                    itemRow(item, storeColor: .secondary, storeEmoji: nil)
+                                }
+                            } header: {
+                                HStack(spacing: 6) {
+                                    Text("Ohne Laden")
+                                        .font(.system(size: 13, weight: .semibold))
+                                        .foregroundStyle(.secondary)
+                                    Spacer()
+                                    Text("\(noStoreItems.count) Artikel")
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -155,6 +179,7 @@ struct AllItemsView: View {
             Button {
                 withAnimation(.spring(response: 0.3)) { item.markCompleted() }
                 Haptics.success()
+                SyncCoordinator.shared.pushInBackground(item.store)
             } label: {
                 Image(systemName: "circle")
                     .font(.system(size: 24))

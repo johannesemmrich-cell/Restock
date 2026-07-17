@@ -29,18 +29,18 @@ actor SharedStoreService {
 
     @discardableResult
     func publish(store: Store) async throws -> String {
-        let (code, _, _) = try await syncToCloud(store: store)
+        let (code, _, _, _) = try await syncToCloud(store: store)
         return code
     }
 
     @discardableResult
-    func push(store: Store) async throws -> (items: [SharedItemData], members: [String])? {
+    func push(store: Store) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>)? {
         guard store.shareID != nil else { return nil }
-        let (_, items, members) = try await syncToCloud(store: store)
-        return (items, members)
+        let (_, items, members, deletedIDs) = try await syncToCloud(store: store)
+        return (items, members, deletedIDs)
     }
 
-    private func syncToCloud(store: Store) async throws -> (code: String, items: [SharedItemData], members: [String]) {
+    private func syncToCloud(store: Store) async throws -> (code: String, items: [SharedItemData], members: [String], deletedIDs: Set<UUID>) {
         let code = store.shareID ?? Self.generateCode()
         let recordID = CKRecord.ID(recordName: code)
 
@@ -56,12 +56,12 @@ actor SharedStoreService {
 
         var attempt = 0
         while true {
-            let (mergedItems, mergedMembers) = mergeIntoRecord(record, store: store, code: code, isNewRecord: isNewRecord)
+            let (mergedItems, mergedMembers, mergedDeletedIDs) = mergeIntoRecord(record, store: store, code: code, isNewRecord: isNewRecord)
             do {
-                try await db.save(record)
-                markSynced(shareID: code)
+                let saved = try await db.save(record)
+                markSynced(shareID: code, at: saved.modificationDate ?? Date())
                 pruneDeletions(shareID: code, stillPresent: Set(mergedItems.map(\.id)))
-                return (code, mergedItems, mergedMembers)
+                return (code, mergedItems, mergedMembers, mergedDeletedIDs)
             } catch let error as CKError where error.code == .serverRecordChanged && attempt == 0 {
                 // Another device saved between our fetch and our save. Re-merge against the
                 // record that actually won instead of blindly overwriting it a second time.
@@ -73,8 +73,8 @@ actor SharedStoreService {
         }
     }
 
-    /// Merges local store state into `record` in place and returns the merged items/members.
-    private func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool) -> (items: [SharedItemData], members: [String]) {
+    /// Merges local store state into `record` in place and returns the merged items/members/tombstones.
+    private func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool) -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>) {
         let remoteItems = decodeItems(record["itemsJSON"] as? String ?? "[]")
         let remoteMembers = decodeMembers(record["membersJSON"] as? String ?? "[]")
         let remoteDeletedIDs = decodeIDs(record["deletedJSON"] as? String ?? "[]")
@@ -83,7 +83,11 @@ actor SharedStoreService {
         let allTombstones = localTombstones.union(remoteDeletedIDs)
         let localItems = sharedItemData(from: store.items)
         let mergedItems = merge(local: localItems, remote: remoteItems, tombstones: allTombstones)
-        let mergedMembers = Array(Set(remoteMembers + store.members)).sorted()
+        // Always include this device's own display name: whoever pushes is by definition a
+        // member. This also self-heals lists whose join-time `addSelfAsMember` write failed
+        // (e.g. rejected by CloudKit permissions) — the member appears with their next push.
+        let selfName = UserIdentity.displayName
+        let mergedMembers = Array(Set(remoteMembers + store.members + [selfName]).filter { !$0.isEmpty }).sorted()
         // Tombstones only grow (a UUID string is ~36 bytes; even thousands of deletions over the
         // list's lifetime stay trivially small), so any device's deletion is visible to every
         // other device's next pull, not just this device's own future syncs.
@@ -99,7 +103,7 @@ actor SharedStoreService {
         record["itemsJSON"] = encodeItems(mergedItems) as CKRecordValue
         record["membersJSON"] = encodeMembers(mergedMembers) as CKRecordValue
         record["deletedJSON"] = encodeIDs(mergedDeletedIDs) as CKRecordValue
-        return (mergedItems, mergedMembers)
+        return (mergedItems, mergedMembers, mergedDeletedIDs)
     }
 
     /// Per-item last-write-wins merge: an id present in both is resolved by the newer `lastModified`.
@@ -135,7 +139,7 @@ actor SharedStoreService {
 
     // MARK: - Pull (download remote items if newer)
 
-    func pull(shareID: String) async throws -> (items: [SharedItemData], members: [String], modifiedAt: Date)? {
+    func pull(shareID: String) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, modifiedAt: Date)? {
         let recordID = CKRecord.ID(recordName: shareID)
         let record = try await db.record(for: recordID)
         let remoteModified = record.modificationDate ?? .distantPast
@@ -153,7 +157,7 @@ actor SharedStoreService {
         // Not marked synced here: the caller (SyncCoordinator) only advances the watermark once
         // this result has actually been applied and saved into the local SwiftData store, so a
         // failed/interrupted apply doesn't permanently skip the merge that would have fixed it.
-        return (items, members, remoteModified)
+        return (items, members, allTombstones, remoteModified)
     }
 
     // MARK: - Members
@@ -204,8 +208,11 @@ actor SharedStoreService {
 
     // MARK: - Last sync tracking
 
-    func markSynced(shareID: String) {
-        UserDefaults.standard.set(Date(), forKey: "lastSync_\(shareID)")
+    /// `at` should be the CKRecord's server `modificationDate` whenever available, not this
+    /// device's local clock — a locally-skewed clock could set a watermark ahead of the server's
+    /// actual timestamp and cause a later, legitimate update from another device to be skipped.
+    func markSynced(shareID: String, at date: Date = Date()) {
+        UserDefaults.standard.set(date, forKey: "lastSync_\(shareID)")
     }
 
     func lastSyncDate(shareID: String) -> Date {

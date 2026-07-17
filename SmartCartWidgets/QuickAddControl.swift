@@ -14,6 +14,6 @@ struct QuickAddControl: ControlWidget {
             .tint(.blue)
         }
         .displayName("Artikel hinzufügen")
-        .description("Öffnet SmartCart direkt zur schnellen Artikeleingabe.")
+        .description("Öffnet Restock direkt zur schnellen Artikeleingabe.")
     }
 }

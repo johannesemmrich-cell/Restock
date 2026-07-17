@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import CloudKit
 
 // MARK: - Share Sheet (owner shares a store)
@@ -29,7 +30,7 @@ struct StoreShareSheet: View {
                 VStack(spacing: 8) {
                     Text("\(store.emoji) \(store.name) teilen")
                         .font(.title2.bold())
-                    Text("Schick den Code per iMessage oder WhatsApp. Die andere Person gibt ihn in SmartCart ein.")
+                    Text("Schick den Code per iMessage oder WhatsApp. Die andere Person gibt ihn in Restock ein.")
                         .font(.body)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -55,7 +56,7 @@ struct StoreShareSheet: View {
                             .buttonStyle(.bordered)
                             .animation(.easeInOut, value: copied)
 
-                            ShareLink(item: "Ich teile meinen SmartCart-Einkauf mit dir!\nCode: \(displayCode)") {
+                            ShareLink(item: "Ich teile meine Restock-Einkaufsliste mit dir!\nCode: \(displayCode)") {
                                 Label("Teilen", systemImage: "square.and.arrow.up")
                                     .frame(maxWidth: .infinity)
                             }
@@ -160,6 +161,7 @@ struct StoreShareSheet: View {
                 store.shareID = code
                 store.isSharedByMe = true
                 for name in members ?? [] { store.addMember(name) }
+                store.addMember(UserIdentity.displayName)
                 try? context.save()
                 isPublishing = false
             }
@@ -305,6 +307,21 @@ struct JoinStoreSheet: View {
 
     private func join(_ preview: SharedStorePreview) async {
         isJoining = true
+
+        // Joining the same code twice would create a second local store with the same shareID;
+        // both would then poll and push the same CKRecord and show up as confusing duplicates.
+        let alreadyJoinedName: String? = await MainActor.run {
+            let stores = (try? context.fetch(FetchDescriptor<Store>())) ?? []
+            return stores.first(where: { $0.shareID == preview.shareID })?.name
+        }
+        if let name = alreadyJoinedName {
+            await MainActor.run {
+                self.error = "Du bist \"\(name)\" bereits beigetreten."
+                isJoining = false
+            }
+            return
+        }
+
         do {
             let result = try await SharedStoreService.shared.pull(shareID: preview.shareID)
 
@@ -320,7 +337,7 @@ struct JoinStoreSheet: View {
             // Reuses the same merge logic as the periodic sync, so joining is exactly
             // equivalent to a first pull — no separate item-copying path to maintain.
             if let result {
-                await SyncCoordinator.shared.apply(items: result.items, members: result.members, to: store)
+                await SyncCoordinator.shared.apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, modifiedAt: result.modifiedAt, to: store)
             }
 
             let members = try? await SharedStoreService.shared.addSelfAsMember(shareID: preview.shareID)
@@ -328,6 +345,9 @@ struct JoinStoreSheet: View {
 
             await MainActor.run {
                 for name in members ?? [] { store.addMember(name) }
+                // Always list ourselves locally, even if the remote member write above failed —
+                // the next successful push merges local members into the record anyway.
+                store.addMember(UserIdentity.displayName)
                 try? context.save()
                 isJoining = false
                 dismiss()

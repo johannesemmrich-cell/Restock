@@ -5,6 +5,10 @@ import UIKit
 struct HomeView: View {
     @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
     @Query private var allRecords: [PurchaseRecord]
+    // Items with no assigned store would otherwise be invisible everywhere on the home screen
+    // (the grid, banner, counts and category list all iterate `activeStores`).
+    @Query(filter: #Predicate<ShoppingItem> { !$0.isCompleted && $0.store == nil })
+    private var storelessPending: [ShoppingItem]
     @Environment(\.modelContext) private var context
 
     @State private var showAddItem = false
@@ -25,10 +29,17 @@ struct HomeView: View {
 
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
     @AppStorage("homeListMode") private var listMode = false
+    @AppStorage("notificationsEnabled") private var notificationsEnabled = true
+    // Persisted map itemName(lowercased) → dismissed estimatedNextPurchaseDate. A dismissal
+    // hides the suggestion for its current purchase cycle only: the next real purchase shifts
+    // the estimated date, which makes the item eligible for the banner again.
+    @AppStorage("dismissedReplenishments") private var dismissedReplenishmentsData = Data()
     @EnvironmentObject private var premium: PremiumService
     @State private var showPaywall = false
     @State private var paywallContext: PaywallContext = .premium(feature: "dieses Feature")
     @State private var showStoreSetup = false
+    @State private var storeToDelete: Store?
+    @State private var showJoinStore = false
 
     private var seasonalSuggestions: [SeasonalService.Suggestion] {
         seasonalSuggestionsEnabled ? SeasonalService.currentSuggestions() : []
@@ -36,7 +47,9 @@ struct HomeView: View {
 
     private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
 
-    private var totalPending: Int { activeStores.filter { !$0.isPaused }.reduce(0) { $0 + $1.pendingItems.count } }
+    private var totalPending: Int {
+        activeStores.filter { !$0.isPaused }.reduce(0) { $0 + $1.pendingItems.count } + storelessPending.count
+    }
 
     var body: some View {
         NavigationStack {
@@ -52,7 +65,7 @@ struct HomeView: View {
                                 icon: "arrow.clockwise.circle.fill",
                                 color: .orange,
                                 title: "\(dueSoonItems.count) Artikel bald fällig",
-                                subtitle: "Nachkauf-Erinnerungen mit SmartCart Pro",
+                                subtitle: "Nachkauf-Erinnerungen mit Restock Pro",
                                 feature: "Nachkauf-Erinnerungen"
                             )
                         }
@@ -65,7 +78,7 @@ struct HomeView: View {
                                 icon: SeasonalService.seasonIcon,
                                 color: .green,
                                 title: "\(seasonalSuggestions.count) saisonale Vorschläge",
-                                subtitle: "Saisonale Ideen mit SmartCart Pro",
+                                subtitle: "Saisonale Ideen mit Restock Pro",
                                 feature: "saisonale Vorschläge"
                             )
                         }
@@ -87,6 +100,7 @@ struct HomeView: View {
             .sheet(isPresented: $showAddStore) { NavigationStack { BrowseStoresView() } }
             .sheet(isPresented: $showAllItems) { AllItemsView() }
             .sheet(isPresented: $showStoreSetup) { NavigationStack { StoreSetupView() } }
+            .sheet(isPresented: $showJoinStore) { JoinStoreSheet() }
             .sheet(isPresented: $showPaywall) { PaywallView(context: paywallContext) }
             .onAppear {
                 refreshDueSoon()
@@ -107,6 +121,24 @@ struct HomeView: View {
             }
             .onChange(of: allRecords.count) { refreshDueSoon() }
             .devFeedback(context: "Startseite")
+            .confirmationDialog(
+                "Laden löschen?",
+                isPresented: Binding(get: { storeToDelete != nil }, set: { if !$0 { storeToDelete = nil } }),
+                titleVisibility: .visible
+            ) {
+                if let store = storeToDelete {
+                    Button("Löschen", role: .destructive) {
+                        context.delete(store)
+                        Haptics.impact(.medium)
+                        storeToDelete = nil
+                    }
+                }
+                Button("Abbrechen", role: .cancel) { storeToDelete = nil }
+            } message: {
+                if let store = storeToDelete {
+                    Text("\"\(store.name)\" und alle zugehörigen Artikel werden dauerhaft gelöscht.")
+                }
+            }
         }
         .overlay {
             if bannerExpanded {
@@ -142,6 +174,7 @@ struct HomeView: View {
         Button {
             withAnimation(.spring(response: 0.3)) { item.markCompleted() }
             Haptics.success()
+            SyncCoordinator.shared.pushInBackground(item.store)
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "circle")
@@ -202,7 +235,7 @@ struct HomeView: View {
                 .frame(width: 90, height: 90)
                 .offset(x: 260, y: 20)
             VStack(alignment: .leading, spacing: 4) {
-                Text("SmartCart")
+                Text("Restock")
                     .font(.system(size: 26, weight: .bold))
                     .foregroundStyle(.white)
                 if totalPending > 0 {
@@ -246,7 +279,7 @@ struct HomeView: View {
                     .frame(width: 85, height: 85)
                     .offset(x: 275, y: 20)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("SmartCart")
+                    Text("Restock")
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(.white)
                     Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
@@ -272,9 +305,13 @@ struct HomeView: View {
             // Items list
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    let allUrgent = storesWithPendingItems.flatMap { store in
-                        store.pendingItems.filter { $0.isUrgent }.map { (item: $0, store: store) }
+                    let urgentFromStores: [(item: ShoppingItem, emoji: String?)] = storesWithPendingItems.flatMap { store in
+                        store.pendingItems.filter { $0.isUrgent }.map { (item: $0, emoji: store.emoji) }
                     }
+                    let urgentStoreless: [(item: ShoppingItem, emoji: String?)] = storelessPending
+                        .filter { $0.isUrgent }
+                        .map { (item: $0, emoji: nil) }
+                    let allUrgent = urgentFromStores + urgentStoreless
                     if !allUrgent.isEmpty {
                         HStack(spacing: 5) {
                             Image(systemName: "exclamationmark.circle.fill")
@@ -292,7 +329,7 @@ struct HomeView: View {
                         .padding(.top, 12)
                         .padding(.bottom, 2)
                         ForEach(allUrgent, id: \.item.id) { entry in
-                            bannerItemButton(entry.item, storeEmoji: entry.store.emoji)
+                            bannerItemButton(entry.item, storeEmoji: entry.emoji)
                         }
                         Rectangle().fill(.white.opacity(0.1)).frame(height: 0.5)
                             .padding(.horizontal, 18)
@@ -318,6 +355,28 @@ struct HomeView: View {
                             ForEach(nonUrgent) { item in
                                 bannerItemButton(item, storeEmoji: nil)
                             }
+                        }
+                    }
+
+                    let storelessRegular = storelessPending.filter { !$0.isUrgent }
+                    if !storelessRegular.isEmpty {
+                        HStack(spacing: 6) {
+                            Image(systemName: "tray")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.white.opacity(0.85))
+                            Text("Ohne Laden")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.white.opacity(0.85))
+                            Spacer()
+                            Text("\(storelessRegular.count)")
+                                .font(.system(size: 11))
+                                .foregroundStyle(.white.opacity(0.5))
+                        }
+                        .padding(.horizontal, 18)
+                        .padding(.top, 12)
+                        .padding(.bottom, 2)
+                        ForEach(storelessRegular) { item in
+                            bannerItemButton(item, storeEmoji: nil)
                         }
                     }
                 }
@@ -488,12 +547,15 @@ struct HomeView: View {
                     .foregroundStyle(.green)
                 Spacer()
                 Button("Alle hinzufügen") {
+                    var touchedStores: [Store?] = []
                     for s in seasonalSuggestions {
                         let category = AssignmentService.category(for: s.name)
                         let store = AssignmentService.assign(itemName: s.name, to: activeStores, purchaseRecords: allRecords)
                         context.insert(ShoppingItem(name: s.name, category: category, store: store))
+                        touchedStores.append(store)
                     }
                     Haptics.success()
+                    SyncCoordinator.shared.pushInBackground(touchedStores)
                 }
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(.green)
@@ -506,6 +568,7 @@ struct HomeView: View {
                             let store = AssignmentService.assign(itemName: s.name, to: activeStores, purchaseRecords: allRecords)
                             context.insert(ShoppingItem(name: s.name, category: category, store: store))
                             Haptics.impact(.light)
+                            SyncCoordinator.shared.pushInBackground(store)
                         } label: {
                             VStack(spacing: 2) {
                                 Text(s.name)
@@ -675,8 +738,7 @@ struct HomeView: View {
                                       systemImage: store.isPaused ? "play.circle" : "moon.circle")
                             }
                             Button(role: .destructive) {
-                                context.delete(store)
-                                Haptics.impact(.medium)
+                                storeToDelete = store
                             } label: {
                                 Label("Löschen", systemImage: "trash")
                             }
@@ -689,6 +751,7 @@ struct HomeView: View {
                         }
                     }
                     addStoreCard
+                    joinListCard
                 }
             }
         }
@@ -697,7 +760,7 @@ struct HomeView: View {
     // MARK: - Category list
 
     private var allPendingItems: [ShoppingItem] {
-        activeStores.filter { !$0.isPaused }.flatMap { $0.pendingItems }
+        activeStores.filter { !$0.isPaused }.flatMap { $0.pendingItems } + storelessPending
     }
 
     private var groupedByCategory: [(category: String, emoji: String, items: [ShoppingItem])] {
@@ -765,6 +828,7 @@ struct HomeView: View {
         Button {
             withAnimation(.spring(response: 0.3)) { item.markCompleted() }
             Haptics.success()
+            SyncCoordinator.shared.pushInBackground(item.store)
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "circle")
@@ -820,6 +884,33 @@ struct HomeView: View {
         .buttonStyle(.plain)
     }
 
+    private var joinListCard: some View {
+        Button {
+            showJoinStore = true
+            Haptics.impact(.light)
+        } label: {
+            VStack(spacing: 8) {
+                Image(systemName: "person.badge.plus")
+                    .font(.system(size: 28, weight: .medium))
+                    .foregroundStyle(Color.indigo.opacity(0.7))
+                Text("Geteilter Liste beitreten")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color.indigo.opacity(0.8))
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 90)
+            .background(Color.indigo.opacity(0.06))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
+                    .foregroundStyle(Color.indigo.opacity(0.25))
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
     private var emptyStoresView: some View {
         VStack(spacing: 16) {
             Image(systemName: "storefront")
@@ -832,6 +923,12 @@ struct HomeView: View {
                 showStoreSetup = true
             }
             .buttonStyle(.borderedProminent)
+            Button {
+                showJoinStore = true
+            } label: {
+                Label("Geteilter Liste beitreten", systemImage: "person.badge.plus")
+            }
+            .buttonStyle(.bordered)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 48)
@@ -905,6 +1002,7 @@ struct HomeView: View {
             unit: parsed.unit,
             store: store
         ))
+        SyncCoordinator.shared.pushInBackground(store)
         addItemText = ""
         Haptics.success()
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { quickAddSucceeded = true }
@@ -937,14 +1035,44 @@ struct HomeView: View {
 
     private func refreshDueSoon() {
         let allPatterns = HabitService.dueSoonItems(allRecords: allRecords)
-        let pendingNames = Set(activeStores.flatMap { $0.pendingItems.map { $0.name.lowercased() } })
-        dueSoonItems = allPatterns.filter { !pendingNames.contains($0.itemName.lowercased()) }
-        HabitService.scheduleReplenishmentNotifications(patterns: dueSoonItems)
+        let pendingNames = Set(
+            activeStores.flatMap { $0.pendingItems.map { $0.name.lowercased() } }
+                + storelessPending.map { $0.name.lowercased() }
+        )
+        let dismissed = dismissedReplenishments()
+        dueSoonItems = allPatterns.filter { pattern in
+            guard !pendingNames.contains(pattern.itemName.lowercased()) else { return false }
+            return dismissed[pattern.itemName.lowercased()] != pattern.estimatedNextPurchaseDate.timeIntervalSince1970
+        }
+        pruneDismissedReplenishments(keeping: allPatterns)
+        if notificationsEnabled {
+            HabitService.scheduleReplenishmentNotifications(patterns: dueSoonItems)
+        }
     }
 
     private func dismissDueItem(_ pattern: ConsumptionPattern) {
+        var dismissed = dismissedReplenishments()
+        dismissed[pattern.itemName.lowercased()] = pattern.estimatedNextPurchaseDate.timeIntervalSince1970
+        persistDismissedReplenishments(dismissed)
+        NotificationService.shared.cancelReplenishment(itemName: pattern.itemName)
         dueSoonItems.removeAll { $0.itemName == pattern.itemName }
         Haptics.impact(.light)
+    }
+
+    private func dismissedReplenishments() -> [String: TimeInterval] {
+        (try? JSONDecoder().decode([String: TimeInterval].self, from: dismissedReplenishmentsData)) ?? [:]
+    }
+
+    private func persistDismissedReplenishments(_ map: [String: TimeInterval]) {
+        dismissedReplenishmentsData = (try? JSONEncoder().encode(map)) ?? Data()
+    }
+
+    /// Drops dismissal entries for items that no longer produce a pattern at all, so the map
+    /// can't grow unboundedly over years of use.
+    private func pruneDismissedReplenishments(keeping patterns: [ConsumptionPattern]) {
+        let valid = Set(patterns.map { $0.itemName.lowercased() })
+        let map = dismissedReplenishments().filter { valid.contains($0.key) }
+        persistDismissedReplenishments(map)
     }
 
     private func registerShortcutItems() {
@@ -960,11 +1088,14 @@ struct HomeView: View {
     }
 
     private func addDueSoonToList() {
+        var touchedStores: [Store?] = []
         for pattern in dueSoonItems {
             let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
             context.insert(ShoppingItem(name: pattern.itemName, store: store))
+            touchedStores.append(store)
         }
         dueSoonItems = []
+        SyncCoordinator.shared.pushInBackground(touchedStores)
     }
 
     private func addSingleDueItem(_ pattern: ConsumptionPattern) {
@@ -972,5 +1103,6 @@ struct HomeView: View {
         context.insert(ShoppingItem(name: pattern.itemName, store: store))
         dueSoonItems.removeAll { $0.itemName == pattern.itemName }
         Haptics.impact(.light)
+        SyncCoordinator.shared.pushInBackground(store)
     }
 }
