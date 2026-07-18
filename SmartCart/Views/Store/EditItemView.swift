@@ -237,6 +237,7 @@ struct EditItemView: View {
         item.quantity = quantity.isEmpty ? "1" : quantity
         let rawQty = Double(quantity.replacingOccurrences(of: ",", with: ".")) ?? 1
         item.quantityAmount = (rawQty > 0 && !rawQty.isNaN) ? rawQty : 1
+        let oldUnit = item.unit
         item.unit = unit
         item.note = note
         item.category = category
@@ -262,9 +263,19 @@ struct EditItemView: View {
                 // The field holds the TOTAL for this line (see init/UI hint above); `estimatedPrice`
                 // is stored canonically per-unit, so divide the quantity back out before saving.
                 item.estimatedPrice = item.quantityAmount > 0 ? p / item.quantityAmount : p
+                // A manual entry gives the price a real-world origin — never auto-recompute it again.
+                item.estimatedPriceIsAutoDerived = false
             } else if rawPrice.isEmpty {
                 item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit)
+                item.estimatedPriceIsAutoDerived = true
             }
+        } else if oldUnit != unit, item.estimatedPriceIsAutoDerived {
+            // The price field itself wasn't touched, but the unit was — and this price is still
+            // just the catalog/category estimate, so it's safe to recompute for the new unit
+            // (e.g. "" → "g" needs the per-gram rate, not the per-package rate). A learned or
+            // manually-entered price (estimatedPriceIsAutoDerived == false) is left untouched here,
+            // even if it would numerically collide with the old-unit formula.
+            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit)
         }
 
         Haptics.success()

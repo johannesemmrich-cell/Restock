@@ -40,6 +40,13 @@ class ShoppingItem {
     var completedDate: Date?
     var note: String
     var estimatedPrice: Double?
+    /// `true` when `estimatedPrice` came purely from `PriceEstimator` (catalog/category flat
+    /// rate) and can therefore be safely recomputed at any time (unit changes, migrations).
+    /// `false` once the price has a real-world origin — a learned receipt price or a manual
+    /// entry in `EditItemView` — and must never be silently overwritten again. Additive field
+    /// with a default, like `categoryManuallySet`/`completedBy` above, so SwiftData lightweight
+    /// migration handles it without a schema-version bump.
+    var estimatedPriceIsAutoDerived: Bool = true
     var assignedTo: String = ""
     var addedBy: String = ""
     /// Display name of whoever checked the item off (empty while pending). Additive field with a
@@ -83,6 +90,7 @@ class ShoppingItem {
             (key.contains(itemLower) || itemLower.contains(key))
         }?.value
         self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category, unit: unit)
+        self.estimatedPriceIsAutoDerived = (learnedPrice == nil)
     }
 
     /// `estimatedPrice` is always a PER-UNIT rate (see the fuzzy `learnedPrices` lookup and
@@ -210,5 +218,59 @@ enum PriceEstimator {
         case "Haushalt": return 5.00 / divisor
         default: return nil
         }
+    }
+}
+
+// MARK: - One-time price provenance migration
+
+/// Fixes existing items created before the `PriceEstimator` unit-divisor fix, where a flat
+/// "per kg/liter" price was multiplied directly by a raw sub-unit quantity (e.g. "750g" →
+/// 750 × 1.50€ = 1125€ instead of ~1.13€). Runs once per install.
+///
+/// The tricky part: we must NOT touch prices with a real-world origin (a receipt-learned
+/// price or a manual entry), even if that value happens to numerically collide with one of
+/// the ~15-20 hardcoded catalog constants (e.g. a genuine 2.50€ receipt price for 400g
+/// tomatoes must not be reinterpreted as the buggy "Obst & Gemüse" flat rate and divided
+/// down to 1.00€). So provenance (Phase A) is always reconstructed first, using the exact
+/// same fuzzy `learnedPrices` match as `ShoppingItem.init`, independent of the numeric value.
+/// Only items that come out of Phase A as auto-derived AND match the old bug's exact
+/// fingerprint (sub-unit, large quantity, value equals the undivided catalog constant) get
+/// rewritten in Phase B.
+enum PriceProvenanceMigration {
+    static let flagKey = "priceProvenanceMigrationV2Applied"
+    static let minQuantityForSafeRewrite = 10.0
+    private static let subUnits: Set<String> = ["g", "gramm", "mg", "milligramm", "ml", "milliliter", "cl", "zentiliter", "dl", "deziliter"]
+
+    @MainActor
+    static func runIfNeeded(context: ModelContext) {
+        guard !UserDefaults.standard.bool(forKey: flagKey) else { return }
+        guard let items = try? context.fetch(FetchDescriptor<ShoppingItem>()) else { return }
+        for item in items {
+            // Phase A: reconstruct provenance as best we can — same fuzzy search as
+            // ShoppingItem.init. A matching learned price means the origin is NOT
+            // auto-derived, regardless of whether the value happens to collide with a
+            // catalog constant.
+            let itemLower = item.name.lowercased()
+            let hasLearnedMatch = item.store?.learnedPrices.contains { key, _ in
+                key.count >= 3 && itemLower.count >= 3 &&
+                (key.contains(itemLower) || itemLower.contains(key))
+            } ?? false
+            item.estimatedPriceIsAutoDerived = !hasLearnedMatch
+
+            // Phase B: only rewrite when (per Phase A) the item is auto-derived AND the old
+            // fingerprint conditions (sub-unit, quantity above threshold, value equals the
+            // undivided catalog constant) are met.
+            let unitKey = item.unit.trimmingCharacters(in: .whitespaces).lowercased()
+            guard item.estimatedPriceIsAutoDerived,
+                  subUnits.contains(unitKey),
+                  item.quantityAmount > minQuantityForSafeRewrite,
+                  let current = item.estimatedPrice,
+                  let buggyValue = PriceEstimator.estimate(for: item.name, category: item.category, unit: ""),
+                  current == buggyValue
+            else { continue }
+            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit)
+        }
+        try? context.save()
+        UserDefaults.standard.set(true, forKey: flagKey)
     }
 }
