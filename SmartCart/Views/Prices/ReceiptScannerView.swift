@@ -192,6 +192,7 @@ struct ReceiptScannerView: View {
                 await MainActor.run { parsedLines = []; phase = .review }
                 return
             }
+            let orientation = CGImagePropertyOrientation(image.imageOrientation)
             let lines: [String] = await withCheckedContinuation { continuation in
                 let request = VNRecognizeTextRequest { req, _ in
                     let obs = req.results as? [VNRecognizedTextObservation] ?? []
@@ -210,7 +211,15 @@ struct ReceiptScannerView: View {
                 // würde sie zu Wörterbuch-Wörtern "verbessern" und damit verfälschen.
                 request.usesLanguageCorrection = false
                 do {
-                    try VNImageRequestHandler(cgImage: cgImage, options: [:]).perform([request])
+                    // WICHTIG: orientation muss mitgegeben werden — sonst verwirft Vision die
+                    // UIImage.imageOrientation-Metadaten und interpretiert Hochkant-Fotos (der
+                    // Sensor liefert die Pixel meist quer, iOS taggt nur die Rotation) als quer
+                    // liegenden Text. Ergebnis: "Keine Positionen erkannt" trotz gutem Foto.
+                    try VNImageRequestHandler(
+                        cgImage: cgImage,
+                        orientation: orientation,
+                        options: [:]
+                    ).perform([request])
                 } catch {
                     // perform() can throw synchronously before the request's completion handler
                     // ever runs — without this, the continuation would never resume and the

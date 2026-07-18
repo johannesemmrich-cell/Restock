@@ -82,7 +82,7 @@ class ShoppingItem {
             key.count >= 3 && itemLower.count >= 3 &&
             (key.contains(itemLower) || itemLower.contains(key))
         }?.value
-        self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category)
+        self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category, unit: unit)
     }
 
     /// `estimatedPrice` is always a PER-UNIT rate (see the fuzzy `learnedPrices` lookup and
@@ -132,7 +132,27 @@ class ShoppingItem {
 // MARK: - Price estimation
 
 enum PriceEstimator {
-    static func estimate(for name: String, category: String) -> Double? {
+    /// The flat prices below (`specificPrices` and the `category` fallback) represent a
+    /// "typical package"/kilo/liter price — NOT a per-raw-unit price. For weight/volume units
+    /// where `quantityAmount` is a raw small-unit figure (e.g. "750g" → quantityAmount=750,
+    /// unit="g"), multiplying the flat price directly by `quantityAmount` in
+    /// `ShoppingItem.estimatedLineTotal` would produce an absurd total (750 × 1.50 = 1125€).
+    /// So here we convert the flat "per kg/liter" price down to "per raw unit" before returning,
+    /// by dividing by how many raw units make up a kilo/liter. Count-based units (kg, l, stk,
+    /// "", ...) get divisor 1 — unchanged behavior, since `quantityAmount` there already IS the
+    /// count the flat price is meant to multiply against (see the "1 Bier vs 6 Bier" fix).
+    private static func unitDivisor(for unit: String) -> Double {
+        switch unit.trimmingCharacters(in: .whitespaces).lowercased() {
+        case "g", "gramm": return 1000
+        case "mg", "milligramm": return 1_000_000
+        case "ml", "milliliter": return 1000
+        case "cl", "zentiliter": return 100
+        case "dl", "deziliter": return 10
+        default: return 1
+        }
+    }
+
+    static func estimate(for name: String, category: String, unit: String) -> Double? {
         let nameLower = name.lowercased()
 
         // Specific product matches
@@ -167,25 +187,27 @@ enum PriceEstimator {
             (["reis", "rice"], 2.00),
         ]
 
+        let divisor = unitDivisor(for: unit)
+
         for entry in specificPrices {
             if entry.keywords.contains(where: { nameLower.contains($0) }) {
-                return entry.price
+                return entry.price / divisor
             }
         }
 
         // Category fallback
         switch category {
-        case "Obst & Gemüse": return 2.50
-        case "Fleisch & Wurst": return 4.50
-        case "Milchprodukte": return 2.00
-        case "Backwaren": return 2.00
-        case "Tiefkühlkost": return 3.50
-        case "Getränke": return 1.50
-        case "Snacks": return 1.80
-        case "Körperpflege": return 4.00
-        case "Kosmetik": return 6.00
-        case "Reinigung": return 3.50
-        case "Haushalt": return 5.00
+        case "Obst & Gemüse": return 2.50 / divisor
+        case "Fleisch & Wurst": return 4.50 / divisor
+        case "Milchprodukte": return 2.00 / divisor
+        case "Backwaren": return 2.00 / divisor
+        case "Tiefkühlkost": return 3.50 / divisor
+        case "Getränke": return 1.50 / divisor
+        case "Snacks": return 1.80 / divisor
+        case "Körperpflege": return 4.00 / divisor
+        case "Kosmetik": return 6.00 / divisor
+        case "Reinigung": return 3.50 / divisor
+        case "Haushalt": return 5.00 / divisor
         default: return nil
         }
     }

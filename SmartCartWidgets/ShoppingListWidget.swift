@@ -327,7 +327,6 @@ struct ShoppingListProvider: AppIntentTimelineProvider {
 private let widgetCurrencyCode = Locale.current.currency?.identifier ?? "EUR"
 
 struct ShoppingListWidgetView: View {
-    @Environment(\.widgetFamily) private var family
     let entry: ShoppingListEntry
 
     var body: some View {
@@ -340,28 +339,17 @@ struct ShoppingListWidgetView: View {
             }
         }
         .containerBackground(for: .widget) {
-            if let snapshot = entry.snapshot, family == .systemSmall {
-                // Small: kräftige Ladenfarbe wie die Header-Bänder der App —
-                // weißer Text darauf bleibt auch im Dark Mode/StandBy lesbar.
-                Rectangle().fill(storeColor(for: snapshot).gradient)
-            } else {
-                Color(.systemBackground)
-            }
+            // Nur noch .systemMedium unterstützt (Small entfernt) — immer der
+            // bestehende Medium-Hintergrund.
+            Color(.systemBackground)
         }
     }
 
-    private func storeColor(for snapshot: WidgetStoreSnapshot) -> Color {
-        Color(hex: snapshot.colorHex) ?? .blue
-    }
-
+    // Nur noch eine Familie (.systemMedium) unterstützt — kein switch über
+    // widgetFamily mehr nötig, direkter Aufruf.
     @ViewBuilder
     private func content(for snapshot: WidgetStoreSnapshot) -> some View {
-        switch family {
-        case .systemSmall:
-            SmallShoppingListView(snapshot: snapshot)
-        default:
-            MediumShoppingListView(snapshot: snapshot)
-        }
+        MediumShoppingListView(snapshot: snapshot)
     }
 
     private var emptyState: some View {
@@ -373,55 +361,6 @@ struct ShoppingListWidgetView: View {
                 .font(.system(size: 12))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-        }
-    }
-}
-
-// MARK: Small — Zusammenfassung
-
-private struct SmallShoppingListView: View {
-    let snapshot: WidgetStoreSnapshot
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text(snapshot.emoji)
-                    .font(.system(size: 26))
-                Spacer()
-                if snapshot.pendingCount > 0 {
-                    Text("\(snapshot.pendingCount)")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .monospacedDigit()
-                }
-            }
-
-            Spacer(minLength: 4)
-
-            Text(snapshot.name)
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(.white)
-                .lineLimit(1)
-
-            if snapshot.pendingCount == 0 {
-                Text("Alles erledigt ✓")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.85))
-            } else {
-                Text(snapshot.items.prefix(2).map(\.name).joined(separator: ", "))
-                    .font(.system(size: 12))
-                    .foregroundStyle(.white.opacity(0.85))
-                    .lineLimit(1)
-                HStack(spacing: 4) {
-                    Text(snapshot.pendingCount == 1 ? "1 Artikel offen" : "\(snapshot.pendingCount) Artikel offen")
-                    if let total = snapshot.estimatedTotal {
-                        Text("· ≈\(total.formatted(.currency(code: widgetCurrencyCode).precision(.fractionLength(0...2))))")
-                    }
-                }
-                .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(.white.opacity(0.7))
-                .lineLimit(1)
-            }
         }
     }
 }
@@ -524,6 +463,6 @@ struct ShoppingListWidget: Widget {
         }
         .configurationDisplayName("Einkaufsliste")
         .description("Zeigt die offenen Artikel eines Ladens — direkt abhakbar.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemMedium])
     }
 }

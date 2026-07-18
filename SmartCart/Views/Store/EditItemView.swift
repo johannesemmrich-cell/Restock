@@ -263,7 +263,7 @@ struct EditItemView: View {
                 // is stored canonically per-unit, so divide the quantity back out before saving.
                 item.estimatedPrice = item.quantityAmount > 0 ? p / item.quantityAmount : p
             } else if rawPrice.isEmpty {
-                item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category)
+                item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit)
             }
         }
 

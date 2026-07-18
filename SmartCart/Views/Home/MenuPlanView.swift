@@ -24,6 +24,7 @@ struct MenuPlanView: View {
     @State private var savedRecipeToast: String? = nil
     @State private var expandedDays: Set<Int> = []
     @State private var fetchTasks: [Int: Task<Void, Never>] = [:]
+    @State private var targetStore: Store?
 
     private let dayNames     = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
     private let dayNamesFull = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
@@ -117,6 +118,7 @@ struct MenuPlanView: View {
     var body: some View {
         NavigationStack {
             List {
+                targetStoreSection
                 mealsSection
                 savedRecipesSection
             }
@@ -183,6 +185,23 @@ struct MenuPlanView: View {
             }
         }
         .devFeedback(context: "Menüplan")
+    }
+
+    // MARK: - Target store section
+
+    private var targetStoreSection: some View {
+        Section {
+            Picker(selection: $targetStore) {
+                Text("Automatisch zuordnen").tag(nil as Store?)
+                ForEach(activeStores) { store in
+                    Text("\(store.emoji) \(store.name)").tag(store as Store?)
+                }
+            } label: {
+                Label("Ziel-Liste", systemImage: "list.bullet")
+                    .font(.system(size: 15))
+            }
+            .pickerStyle(.menu)
+        }
     }
 
     // MARK: - Meals section
@@ -308,6 +327,11 @@ struct MenuPlanView: View {
                 .font(.system(size: 14))
                 .foregroundStyle(isChecked ? .secondary : .primary)
                 .strikethrough(isChecked, color: .secondary)
+            Spacer()
+            if let store = resolvedStore(for: name) {
+                Text(store.emoji)
+                    .font(.system(size: 13))
+            }
         }
     }
 
@@ -408,12 +432,17 @@ struct MenuPlanView: View {
         }
     }
 
+    private func resolvedStore(for name: String) -> Store? {
+        if let targetStore { return targetStore }
+        return AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords) ?? activeStores.first
+    }
+
     private func addToList() {
         let ingredients = allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }
         var touchedStores: [Store?] = []
         for name in ingredients {
             let category = AssignmentService.category(for: name)
-            let store = AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords)
+            let store = resolvedStore(for: name)
             context.insert(ShoppingItem(name: name, category: category, store: store))
             touchedStores.append(store)
         }
@@ -428,7 +457,7 @@ struct MenuPlanView: View {
         var touchedStores: [Store?] = []
         for name in recipe.ingredients {
             let category = AssignmentService.category(for: name)
-            let store = AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords)
+            let store = resolvedStore(for: name)
             context.insert(ShoppingItem(name: name, category: category, store: store))
             touchedStores.append(store)
         }

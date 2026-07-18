@@ -8,6 +8,29 @@ import FoundationModels
 // Apple Intelligence (FoundationModels, iOS 26+) as primary engine.
 // Vision OCR + rule-based parsing as fallback.
 
+// Vision (VNImageRequestHandler) works on raw pixel buffers and knows nothing about
+// UIImage.imageOrientation — without telling it the orientation explicitly, a portrait
+// photo (whose pixels are usually stored landscape-rotated by the camera sensor, with
+// iOS only tagging the rotation instead of physically rotating the pixels) gets read as
+// sideways text and OCR fails silently. This mapping is Apple's standard sample-code
+// pattern (there is no built-in UIImage.Orientation -> CGImagePropertyOrientation
+// converter in the SDK); used by both ReceiptScannerView and RecipeRecognitionService.
+extension CGImagePropertyOrientation {
+    init(_ uiOrientation: UIImage.Orientation) {
+        switch uiOrientation {
+        case .up: self = .up
+        case .upMirrored: self = .upMirrored
+        case .down: self = .down
+        case .downMirrored: self = .downMirrored
+        case .left: self = .left
+        case .leftMirrored: self = .leftMirrored
+        case .right: self = .right
+        case .rightMirrored: self = .rightMirrored
+        @unknown default: self = .up
+        }
+    }
+}
+
 struct RecognizedIngredient: Identifiable {
     let id = UUID()
     var name: String
@@ -110,6 +133,7 @@ actor RecipeRecognitionService {
 
     private func extractText(from image: UIImage) async throws -> String {
         guard let cgImage = image.cgImage else { return "" }
+        let orientation = CGImagePropertyOrientation(image.imageOrientation)
 
         return try await withCheckedThrowingContinuation { continuation in
             let request = VNRecognizeTextRequest { req, error in
@@ -122,7 +146,15 @@ actor RecipeRecognitionService {
             request.recognitionLanguages = ["de-DE", "en-US"]
             request.usesLanguageCorrection = true
             do {
-                try VNImageRequestHandler(cgImage: cgImage, options: [:]).perform([request])
+                // WICHTIG: orientation muss mitgegeben werden — sonst verwirft Vision die
+                // UIImage.imageOrientation-Metadaten und interpretiert Hochkant-Fotos (der
+                // Sensor liefert die Pixel meist quer, iOS taggt nur die Rotation) als quer
+                // liegenden Text, was die Ingredient-Erkennung scheitern lässt.
+                try VNImageRequestHandler(
+                    cgImage: cgImage,
+                    orientation: orientation,
+                    options: [:]
+                ).perform([request])
             } catch {
                 // perform() can throw synchronously (before the request's own completion handler
                 // ever runs) — without catching this, the continuation above would never resume
