@@ -1,6 +1,7 @@
 import SwiftData
 import Foundation
 import UIKit
+import WidgetKit
 
 /// Resolves "who is using this device" consistently everywhere identity is shown or recorded
 /// (item attribution, assignment, member lists). Backed by the app-group UserDefaults suite —
@@ -112,6 +113,11 @@ class ShoppingItem {
         )
         record.item = self
         purchaseRecords.append(record)
+        // Central widget-reload hook: every check-off path in every process funnels through
+        // here (StoreDetailView, AllItemsView, pending-checkoff drain, the widget's own
+        // intent), so the homescreen widget refreshes no matter who completed the item.
+        // The system coalesces repeated calls, so loops over many items are fine.
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     func markPending() {
@@ -119,6 +125,7 @@ class ShoppingItem {
         completedDate = nil
         completedBy = ""
         lastModified = Date()
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 

@@ -50,6 +50,9 @@ struct HomeView: View {
     // (gleiches Muster wie StoreSetupView.orderedActiveStores)
     @State private var orderedStores: [Store] = []
     @State private var draggingStoreID: UUID?
+    // Deep-Link-Ziel vom Homescreen-Widget (restock://store/<uuid> via widgetURL) —
+    // navigationDestination(item:) pusht die passende StoreDetailView.
+    @State private var deepLinkStore: Store?
 
     private var seasonalSuggestions: [SeasonalService.Suggestion] {
         seasonalSuggestionsEnabled ? SeasonalService.currentSuggestions() : []
@@ -85,6 +88,10 @@ struct HomeView: View {
     }
 
     var body: some View {
+        // Re-runs body whenever a sync merge lands in SwiftData, so the category list mode
+        // (`groupedByCategory`) regroups immediately — its section derivation lives up here in
+        // the parent body, not in the item rows. Same pattern as StoreDetailView/AllItemsView.
+        let _ = SyncCoordinator.shared.applyGeneration
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
@@ -135,6 +142,19 @@ struct HomeView: View {
             .sheet(isPresented: $showStoreSetup) { NavigationStack { StoreSetupView() } }
             .sheet(isPresented: $showJoinStore) { JoinStoreSheet() }
             .sheet(isPresented: $showPaywall) { PaywallView(context: paywallContext) }
+            .navigationDestination(item: $deepLinkStore) { store in
+                StoreDetailView(store: store)
+            }
+            // Tap auf das Homescreen-Widget (außerhalb der Abhak-Buttons): öffnet die App
+            // direkt beim angezeigten Laden. widgetURL-Links werden vom System immer an die
+            // eigene App zugestellt — ein registriertes URL-Scheme ist dafür nicht nötig.
+            .onOpenURL { url in
+                guard url.scheme == "restock", url.host == "store",
+                      let id = UUID(uuidString: url.lastPathComponent),
+                      let store = activeStores.first(where: { $0.id == id })
+                else { return }
+                deepLinkStore = store
+            }
             .onAppear {
                 refreshDueSoon()
                 registerShortcutItems()

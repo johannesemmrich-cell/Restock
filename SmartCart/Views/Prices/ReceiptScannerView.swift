@@ -8,8 +8,13 @@ import UIKit
 struct EditableReceiptLine: Identifiable {
     let id = UUID()
     var name: String
-    var price: Double
+    var price: Double        // Zeilen-GESAMTpreis
     var isIncluded = true
+    /// Roher Bon-Text vor Anwendung gelernter Kürzel-Zuordnungen — Schlüssel für
+    /// `ReceiptAliasService.learn(...)`, wenn der User den Namen im Review korrigiert.
+    var originalName: String = ""
+    var quantity: Double = 1 // Stückzahl (Mengenzeile "2 x 1.25€" / Multipack "6X1.5L")
+    var unit: String = ""    // Größe aus dem Namen, z. B. "1,5l", "400g"
 }
 
 // MARK: - Main Scanner View
@@ -190,10 +195,20 @@ struct ReceiptScannerView: View {
             let lines: [String] = await withCheckedContinuation { continuation in
                 let request = VNRecognizeTextRequest { req, _ in
                     let obs = req.results as? [VNRecognizedTextObservation] ?? []
-                    continuation.resume(returning: obs.compactMap { $0.topCandidates(1).first?.string })
+                    // Vision liefert bei Spaltenlayout (Name links, Preis rechts) getrennte
+                    // Blöcke statt fertiger Zeilen — anhand der BoundingBoxen zu physischen
+                    // Bon-Zeilen zusammensetzen, sonst findet der Parser keine Name+Preis-Paare.
+                    let blocks: [(text: String, box: CGRect)] = obs.compactMap { o in
+                        guard let candidate = o.topCandidates(1).first else { return nil }
+                        return (text: candidate.string, box: o.boundingBox)
+                    }
+                    continuation.resume(returning: ReceiptParserService.reconstructLines(blocks))
                 }
                 request.recognitionLevel = .accurate
-                request.recognitionLanguages = ["de-DE", "en-US"]
+                request.recognitionLanguages = ["de-DE", "fr-FR", "en-US"]
+                // Bons bestehen aus Abkürzungen ("SHAK.MOUTARDE", "DBLE CCTRE") — Sprachkorrektur
+                // würde sie zu Wörterbuch-Wörtern "verbessern" und damit verfälschen.
+                request.usesLanguageCorrection = false
                 do {
                     try VNImageRequestHandler(cgImage: cgImage, options: [:]).perform([request])
                 } catch {
@@ -205,7 +220,18 @@ struct ReceiptScannerView: View {
             }
             let parsed = ReceiptParserService.parse(lines)
             await MainActor.run {
-                parsedLines = parsed.map { EditableReceiptLine(name: $0.name, price: $0.price) }
+                parsedLines = parsed.map { line in
+                    // Gelernte Kürzel-Zuordnung anwenden: "Beurrier ext" → "Butter", wenn der
+                    // User das bei einem früheren Scan so korrigiert hat.
+                    let learnedName = ReceiptAliasService.shared.resolve(line.name)
+                    return EditableReceiptLine(
+                        name: learnedName ?? line.name,
+                        price: line.price,
+                        originalName: line.name,
+                        quantity: line.quantity,
+                        unit: line.unit
+                    )
+                }
                 phase = .review
             }
         }
@@ -219,6 +245,13 @@ struct ReceiptScannerView: View {
         for line in included {
             let lineLower = line.name.lowercased()
 
+            // Kürzel-Lernen: weicht der finale Name vom rohen Bon-Text ab (User hat die Position
+            // umbenannt oder eine früher gelernte Zuordnung bestätigt), Mapping für künftige
+            // Scans merken — beim nächsten Bon erscheint das Kürzel direkt als richtiger Artikel.
+            if !line.originalName.isEmpty {
+                ReceiptAliasService.shared.learn(receiptText: line.originalName, itemName: line.name)
+            }
+
             // Try to update an existing recent record for this store rather than creating a duplicate.
             let match = allRecords.first { record in
                 record.storeName.lowercased() == storeNameLower &&
@@ -229,12 +262,12 @@ struct ReceiptScannerView: View {
 
             // Learn price for this store — overwrites previous learned price for this item.
             // `learnedPrices` must stay per-unit (it seeds `ShoppingItem.estimatedPrice`, which
-            // is canonically per-unit), but a receipt line's price covers `match.quantityAmount`
-            // units of that purchase (e.g. a 6-pack), so divide it back out. An orphan line with
-            // no match defaults to an implicit quantity of 1 (matching the fallback `PurchaseRecord`
-            // below), so the raw price is already per-unit in that case.
-            let matchedQuantity = match?.quantityAmount ?? 1
-            store.learnedPrices[lineLower] = matchedQuantity > 0 ? line.price / matchedQuantity : line.price
+            // is canonically per-unit), but a receipt line's price is the line TOTAL. Die Menge
+            // kommt mengenbewusst bevorzugt vom Bon selbst (Mengenzeile "2 x 1.25€" oder
+            // Multipack-Token "6X1.5L" → `line.quantity`), sonst vom abgehakten Artikel
+            // (`match.quantityAmount`); Fallback ist 1, dann ist der Preis bereits per-unit.
+            let quantity = line.quantity > 1 ? line.quantity : (match?.quantityAmount ?? 1)
+            store.learnedPrices[lineLower] = quantity > 0 ? line.price / quantity : line.price
 
             if let match {
                 match.actualPrice = line.price
@@ -242,8 +275,8 @@ struct ReceiptScannerView: View {
                 modelContext.insert(PurchaseRecord(
                     itemName: line.name,
                     storeName: store.name,
-                    quantityAmount: 1,
-                    unit: "",
+                    quantityAmount: line.quantity,
+                    unit: line.unit,
                     actualPrice: line.price
                 ))
             }
@@ -258,17 +291,36 @@ struct ReceiptScannerView: View {
 private struct ReceiptLineRow: View {
     @Binding var line: EditableReceiptLine
 
+    /// "6 × 0,20 € · 1,5l" — Menge, Stückpreis und Größe aus dem Bon, falls erkannt.
+    private var detailText: String? {
+        var parts: [String] = []
+        if line.quantity > 1 {
+            let unitPrice = line.price / line.quantity
+            let formatted = unitPrice.formatted(.currency(code: Locale.current.currency?.identifier ?? "EUR"))
+            parts.append("\(Int(line.quantity)) × \(formatted)")
+        }
+        if !line.unit.isEmpty { parts.append(line.unit) }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
     var body: some View {
         HStack(spacing: 10) {
             Toggle("", isOn: $line.isIncluded)
                 .labelsHidden()
 
-            HStack(spacing: 4) {
-                TextField("Artikelname", text: $line.name)
-                    .font(.system(size: 15))
-                Image(systemName: "pencil")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.tertiary)
+            VStack(alignment: .leading, spacing: 1) {
+                HStack(spacing: 4) {
+                    TextField("Artikelname", text: $line.name)
+                        .font(.system(size: 15))
+                    Image(systemName: "pencil")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.tertiary)
+                }
+                if let detailText {
+                    Text(detailText)
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
             }
             .opacity(line.isIncluded ? 1 : 0.4)
 

@@ -26,12 +26,14 @@ struct EditItemView: View {
     /// The canonical category list, plus the item's current category if it's a stale/legacy
     /// value not present in `AssignmentService.categoryOrder` — so the Picker always has a
     /// matching option for `category` and never falls back to an unselected/blank state.
+    /// Sorted alphabetically (locale-aware) for easier scanning in the Picker; the aisle
+    /// order of `AssignmentService.categoryOrder` itself stays untouched for grouped lists.
     private var availableCategories: [String] {
         var categories = AssignmentService.categoryOrder
         if !category.isEmpty, !categories.contains(category) {
             categories.append(category)
         }
-        return categories
+        return categories.sorted { $0.localizedStandardCompare($1) == .orderedAscending }
     }
 
     init(item: ShoppingItem) {

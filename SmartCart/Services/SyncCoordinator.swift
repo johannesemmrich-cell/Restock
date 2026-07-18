@@ -1,18 +1,36 @@
 import CloudKit
 import Foundation
+import Observation
 import SwiftData
+import WidgetKit
 
 /// Central place that applies remote shared-store state (items + members) onto the local
 /// SwiftData store. Used by StoreDetailView's pull/push cycle, JoinStoreSheet, and the
 /// CloudKit push-notification handler in AppDelegate so all three paths merge consistently.
+///
+/// `@Observable` so views can depend on `applyGeneration` (see below) — the deterministic
+/// "remote changes just landed" signal for the category-grouped list views.
 @MainActor
+@Observable
 final class SyncCoordinator {
     static let shared = SyncCoordinator()
     private init() {}
 
     /// Set once at app launch (`SmartCartApp.init`) so the push-notification handler,
     /// which has no view hierarchy, can still look up and update SwiftData stores.
-    var modelContext: ModelContext?
+    @ObservationIgnored var modelContext: ModelContext?
+
+    /// Monotonic counter, bumped every time `apply()` actually persists remote state into the
+    /// local SwiftData store. The category-grouped views (StoreDetailView's grouped sections,
+    /// HomeView's category list, AllItemsView) read this in `body` so a remote category/name
+    /// change reliably re-runs their section derivation. Without it they can miss the change:
+    /// the per-row category caption lives in `ItemRow` (its own observation scope, updates fine),
+    /// but the parent view's section assignment isn't reliably invalidated by the sync's model
+    /// mutation — and `AllItemsView`'s `@Query` predicate (`isCompleted == false`) is untouched
+    /// by a category edit, so the query itself never signals either. Symptom this fixes: the
+    /// item already shows the new category when opened in EditItemView, yet still sits in its
+    /// old section in the list.
+    private(set) var applyGeneration = 0
 
     enum SyncFailureKind {
         case permissionDenied   // CKError.permissionFailure: server rejected the write (schema security roles)
@@ -99,6 +117,40 @@ final class SyncCoordinator {
         pushInBackground([store])
     }
 
+    /// One-shot push of ALL shared stores after the homescreen widget checked items off while
+    /// the app wasn't running. The widget extension writes straight into the local SwiftData
+    /// store but cannot reach CloudKit itself — and it also cannot even tell WHICH stores are
+    /// shared (`Store.shareID` lives in the main app's `UserDefaults.standard`, invisible to
+    /// the extension process). So the widget just raises an app-group flag and the next app
+    /// activation pushes every shared store once. `push` is a pull-merge-push round trip, and
+    /// the widget's `lastModified` bump wins last-write-wins in `apply()`, so the checkoff
+    /// can't be clobbered by the merge. Cheap no-op when the flag isn't set.
+    func pushWidgetCheckoffsIfNeeded() {
+        let defaults = UserDefaults(suiteName: SharedModelContainer.appGroupID)
+        guard defaults?.bool(forKey: "widgetDidCheckOffItem") == true else { return }
+        guard let context = modelContext else { return }
+        guard let stores = try? context.fetch(FetchDescriptor<Store>()) else { return }
+        let sharedStores = stores.filter { $0.shareID != nil }
+        guard !sharedStores.isEmpty else {
+            // Nothing shared → nothing to push, flag served its purpose.
+            defaults?.removeObject(forKey: "widgetDidCheckOffItem")
+            return
+        }
+        // Clear the flag only AFTER every shared store pushed successfully. Offline or a
+        // CK error → flag stays set and the next app activation retries; clearing upfront
+        // would silently drop the widget checkoff's propagation to other members.
+        Task {
+            var allSucceeded = true
+            for store in sharedStores {
+                let ok = await push(store: store)
+                if !ok { allSucceeded = false }
+            }
+            if allSucceeded {
+                defaults?.removeObject(forKey: "widgetDidCheckOffItem")
+            }
+        }
+    }
+
     /// Looks up a locally known store by its CloudKit shareID and pulls its latest state.
     /// Entry point for the silent-push notification handler.
     func pullStore(shareID: String) async {
@@ -106,6 +158,45 @@ final class SyncCoordinator {
         guard let stores = try? context.fetch(FetchDescriptor<Store>()) else { return }
         guard let store = stores.first(where: { $0.shareID == shareID }) else { return }
         await pull(store: store)
+    }
+
+    // MARK: - App-wide periodic pull
+
+    @ObservationIgnored private var periodicPullTask: Task<Void, Never>?
+
+    /// Pulls the latest remote state for every shared store this device knows about.
+    /// Cheap when nothing changed: `SharedStoreService.pull` compares the server record's
+    /// `modificationDate` against the per-store watermark and returns nil without merging.
+    func pullAllSharedStores() async {
+        guard let context = modelContext else { return }
+        guard let stores = try? context.fetch(FetchDescriptor<Store>()) else { return }
+        for store in stores where store.shareID != nil {
+            await pull(store: store)
+        }
+    }
+
+    /// App-wide polling loop for ALL shared stores, running whenever the app is active
+    /// (started/stopped from `SmartCartApp` on scenePhase changes). Closes the gap where
+    /// remote changes only ever arrived via StoreDetailView's own 10s loop or the CloudKit
+    /// silent push (which iOS may throttle or drop entirely): on HomeView / AllItemsView /
+    /// anywhere else, nothing pulled at all, so another member's edit could take arbitrarily
+    /// long to show up. The first iteration pulls immediately, so returning to the foreground
+    /// also fetches right away. 15s (vs. StoreDetailView's 10s for the list you're actively
+    /// looking at) keeps the extra public-database traffic modest since this loop multiplies
+    /// across every shared store.
+    func startPeriodicPulls() {
+        guard periodicPullTask == nil else { return }
+        periodicPullTask = Task {
+            while !Task.isCancelled {
+                await pullAllSharedStores()
+                try? await Task.sleep(for: .seconds(15))
+            }
+        }
+    }
+
+    func stopPeriodicPulls() {
+        periodicPullTask?.cancel()
+        periodicPullTask = nil
     }
 
     /// Re-registers push subscriptions for every store this device currently shares or has
@@ -182,6 +273,12 @@ final class SyncCoordinator {
 
         do {
             try context.save()
+            // Only after a successful save: views depending on this must never re-render into
+            // state that wasn't actually persisted (a failed save leaves the merge un-applied).
+            applyGeneration += 1
+            // Central widget-reload hook for everything that arrives via sync: another member's
+            // add/checkoff/delete has just been persisted, so the homescreen widget must refresh.
+            WidgetCenter.shared.reloadAllTimelines()
             if let shareID = store.shareID, let modifiedAt {
                 await SharedStoreService.shared.markSynced(shareID: shareID, at: modifiedAt)
             }

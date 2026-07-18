@@ -2,10 +2,12 @@ import SwiftUI
 import SwiftData
 import UIKit
 import AppIntents
+import WidgetKit
 
 @main
 struct SmartCartApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @Environment(\.scenePhase) private var scenePhase
     let container: ModelContainer
     @StateObject private var premium = PremiumService.shared
 
@@ -33,20 +35,12 @@ struct SmartCartApp: App {
             cloudKitDatabase: .none
         )
 
-        // 1. CloudKit mit App-Group
-        if let c = try? ModelContainer(
-            for: schema,
-            configurations: ModelConfiguration(
-                groupContainer: .identifier(Self.appGroupID),
-                cloudKitDatabase: .private("iCloud.com.johannesemmrich.SmartCart")
-            )
-        ) {
-            container = c
-            return
-        }
-
-        // 2. Lokaler Store in App-Group (kein CloudKit)
-        if let c = try? ModelContainer(for: schema, configurations: groupConfig) {
+        // 1.+2. CloudKit mit App-Group, sonst lokaler App-Group-Store — über den gemeinsamen
+        // Helper, den auch AddShoppingItemIntent und das Homescreen-Widget benutzen, damit
+        // alle Prozesse GARANTIERT dieselbe Schema-Deklaration + Fallback-Reihenfolge öffnen
+        // (ein Mismatch hier hat historisch echten Datenverlust verursacht, siehe
+        // SharedModelContainer.swift).
+        if let c = SharedModelContainer.make() {
             container = c
             return
         }
@@ -131,6 +125,26 @@ struct SmartCartApp: App {
                 }
                 .task {
                     await SyncCoordinator.shared.resubscribeAll()
+                }
+                // App-wide pull for ALL shared stores: immediately on every (re)activation and
+                // then every 15s while active. Without this, remote changes only arrived via
+                // StoreDetailView's own polling or the (unreliable) CloudKit silent push — on
+                // HomeView/AllItemsView nothing pulled at all. `initial: true` covers cold
+                // launch, where the phase may already be `.active` before any change fires.
+                .onChange(of: scenePhase, initial: true) { _, phase in
+                    if phase == .active {
+                        SyncCoordinator.shared.startPeriodicPulls()
+                        // Falls das Homescreen-Widget Artikel abgehakt hat, während die App
+                        // nicht lief: Änderungen liegen nur lokal (die Widget-Extension kann
+                        // nicht zu CloudKit pushen) — jetzt einmalig alle geteilten Läden pushen.
+                        SyncCoordinator.shared.pushWidgetCheckoffsIfNeeded()
+                    } else {
+                        SyncCoordinator.shared.stopPeriodicPulls()
+                        // Zentraler Reload-Hook: was auch immer in dieser Session hinzugefügt/
+                        // gelöscht/umbenannt wurde — beim Verlassen der App zeigt das Widget
+                        // den frischen Stand.
+                        WidgetCenter.shared.reloadAllTimelines()
+                    }
                 }
         }
     }

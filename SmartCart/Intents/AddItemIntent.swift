@@ -21,29 +21,13 @@ struct AddShoppingItemIntent: AppIntent {
     var unit: String?
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        // Must mirror SmartCartApp's container setup exactly — this intent runs out-of-process and
-        // opens the SAME app-group store file. Two things have to match what the main app actually
-        // ended up using: (1) the schema representation (versioned, not a plain array — a mismatch
-        // here has already once caused SwiftData to treat this app's store as incompatible and wipe
-        // it, see SmartCartApp.swift's migration comments), and (2) whether the store is CloudKit-
-        // mirrored — SmartCartApp tries CloudKit first and only falls back to a local-only store if
-        // that fails, so this intent must attempt the same CloudKit configuration first rather than
-        // always opening with `cloudKitDatabase: .none`, or it could fail (or silently desync) against
-        // a store the main app actually opened with CloudKit mirroring enabled.
-        let schema = Schema(versionedSchema: SchemaV1.self)
-        let groupContainerID = "group.com.johannesemmrich.SmartCart"
-        let container: ModelContainer
-        if let cloudKitContainer = try? ModelContainer(
-            for: schema,
-            configurations: ModelConfiguration(
-                groupContainer: .identifier(groupContainerID),
-                cloudKitDatabase: .private("iCloud.com.johannesemmrich.SmartCart")
-            )
-        ) {
-            container = cloudKitContainer
-        } else {
-            let localConfig = ModelConfiguration(groupContainer: .identifier(groupContainerID), cloudKitDatabase: .none)
-            container = try ModelContainer(for: schema, configurations: localConfig)
+        // This intent runs out-of-process and opens the SAME app-group store file as the main
+        // app. It MUST use the shared helper (never a hand-rolled ModelContainer): the schema
+        // representation and the CloudKit-first-then-local fallback have to match what the main
+        // app actually ended up using — a mismatch here has already once caused SwiftData to
+        // treat the app's store as incompatible and wipe it. See SharedModelContainer.swift.
+        guard let container = SharedModelContainer.make() else {
+            return .result(dialog: "Die Einkaufsliste ist gerade nicht verfügbar. Bitte öffne Restock einmal.")
         }
         let context = ModelContext(container)
 

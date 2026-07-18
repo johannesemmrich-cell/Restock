@@ -48,6 +48,11 @@ struct AllItemsView: View {
     }
 
     var body: some View {
+        // Re-runs body whenever a sync merge lands in SwiftData, so `nonUrgentByCategory`
+        // regroups immediately. The `@Query`'s predicate (`isCompleted == false`) is untouched
+        // by a remote category change, so the query alone never signals one — and the section
+        // derivation lives in this body, not in the rows.
+        let _ = SyncCoordinator.shared.applyGeneration
         NavigationStack {
             List {
                 if pendingItems.isEmpty {

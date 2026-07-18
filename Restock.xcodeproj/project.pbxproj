@@ -38,6 +38,7 @@
 		AA11BB22CC33DD44EE55FF66 /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB22CC33DD44EE55FF6677AA /* BarcodeScannerView.swift */; };
 		ACAA0ED3F8C4A30CB3B60F17 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 55FFB2C5C2C97A02689A1FB6 /* Localizable.strings */; };
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* ReceiptParserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* ReceiptParserService.swift */; };
+		RA1B2C3D4E5F6A7B8C9D0F01 /* ReceiptAliasService.swift in Sources */ = {isa = PBXBuildFile; fileRef = RA2B2C3D4E5F6A7B8C9D0F02 /* ReceiptAliasService.swift */; };
 		BB33CC44DD55EE66FF7788AA /* FeedbackItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */; };
 		BEA22437C49C7A0CEC5786AE /* DevFeedbackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F251AAC3AEE858B76DCF7E8 /* DevFeedbackButton.swift */; };
 		C9139F3211CC76DF720FB66C /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A4065E868200E2B3A0F02D /* FeedbackView.swift */; };
@@ -51,6 +52,10 @@
 		WD13B4C5D6E7F8A9B0C1D013 /* FeedbackItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */; };
 		WD14C5D6E7F8A9B0C1D2E014 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC44DD55EE66FF7788AABB33 /* TodoItem.swift */; };
 		WD15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = WF15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift */; };
+		WD16E7F8A9B0C1D2E3F4A016 /* SchemaVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10DE23FA56BC78DE90FA10 /* SchemaVersions.swift */; };
+		WD17F8A9B0C1D2E3F4A5B017 /* SharedModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = WF17F8A9B0C1D2E3F4A5B017 /* SharedModelContainer.swift */; };
+		WD18A9B0C1D2E3F4A5B6C018 /* ShoppingListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = WF18A9B0C1D2E3F4A5B6C018 /* ShoppingListWidget.swift */; };
+		AD19C1D2E3F4A5B6C7D8E019 /* SharedModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = WF17F8A9B0C1D2E3F4A5B017 /* SharedModelContainer.swift */; };
 		FF20C1D2E3F4A5B6C7D8E020 /* QuickAddControlIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF19B0C1D2E3F4A5B6C7D019 /* QuickAddControlIntent.swift */; };
 		FF21D2E3F4A5B6C7D8E9F021 /* QuickAddControlIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF19B0C1D2E3F4A5B6C7D019 /* QuickAddControlIntent.swift */; };
 		A102C3D4E5F6A7B8C9D0E102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A101B2C3D4E5F6A7B8C9D101 /* AppDelegate.swift */; };
@@ -123,6 +128,7 @@
 		9D6DDDDC065602308F0A3A52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9E1FEF9707C7C16B4D0F2CF5 /* SmartCartApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCartApp.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* ReceiptParserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserService.swift; sourceTree = "<group>"; };
+		RA2B2C3D4E5F6A7B8C9D0F02 /* ReceiptAliasService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptAliasService.swift; sourceTree = "<group>"; };
 		AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackItem.swift; sourceTree = "<group>"; };
 		BB22CC33DD44EE55FF6677AA /* BarcodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerView.swift; sourceTree = "<group>"; };
 		C362CB3A6517D504DCBC7D3E /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
@@ -149,6 +155,8 @@
 		WF01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCartWidgetsBundle.swift; sourceTree = "<group>"; };
 		WF02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingLiveActivity.swift; sourceTree = "<group>"; };
 		WF15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddControl.swift; sourceTree = "<group>"; };
+		WF17F8A9B0C1D2E3F4A5B017 /* SharedModelContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedModelContainer.swift; sourceTree = "<group>"; };
+		WF18A9B0C1D2E3F4A5B6C018 /* ShoppingListWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListWidget.swift; sourceTree = "<group>"; };
 		A101B2C3D4E5F6A7B8C9D101 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A103D4E5F6A7B8C9D0E1F103 /* QuickActionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionState.swift; sourceTree = "<group>"; };
 		WF04E5F6A7B8C9D0E1F2A004 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -217,6 +225,7 @@
 				AA02BB03CC04DD05EE06FF07 /* SmartCartWidgets.entitlements */,
 				WF01B2C3D4E5F6A7B8C9D001 /* SmartCartWidgetsBundle.swift */,
 				WF02C3D4E5F6A7B8C9D0E002 /* ShoppingLiveActivity.swift */,
+				WF18A9B0C1D2E3F4A5B6C018 /* ShoppingListWidget.swift */,
 				WF15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift */,
 				WF07B8C9D0E1F2A3B4C5D007 /* Info.plist */,
 			);
@@ -241,6 +250,7 @@
 			children = (
 				AA22BB33CC44DD55EE66FF77 /* FeedbackItem.swift */,
 				DD34C5D25C3945D6153A049B /* PurchaseRecord.swift */,
+				WF17F8A9B0C1D2E3F4A5B017 /* SharedModelContainer.swift */,
 				A002B3C4D5E6F7A8B9C0D002 /* ShoppingActivityAttributes.swift */,
 				1791AA94F3726B793EB09F74 /* ShoppingItem.swift */,
 				3A49612BE198AF3B48211B62 /* Store.swift */,
@@ -354,6 +364,7 @@
 				427C78F11F632892DD9E807F /* QuickAddParser.swift */,
 				C8B6F1B6E82484B41C0A48AD /* RecipeRecognitionService.swift */,
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* ReceiptParserService.swift */,
+				RA2B2C3D4E5F6A7B8C9D0F02 /* ReceiptAliasService.swift */,
 				FF6677AABB11CC22DD33EE44 /* SeasonalService.swift */,
 				BC10DE23FA56BC78DE90FA10 /* SchemaVersions.swift */,
 				CF91A23B4D5E6F7A8B9C0D1E /* CloudPreferencesSync.swift */,
@@ -524,6 +535,9 @@
 				WD13B4C5D6E7F8A9B0C1D013 /* FeedbackItem.swift in Sources */,
 				WD14C5D6E7F8A9B0C1D2E014 /* TodoItem.swift in Sources */,
 				WD15D6E7F8A9B0C1D2E3F015 /* QuickAddControl.swift in Sources */,
+				WD16E7F8A9B0C1D2E3F4A016 /* SchemaVersions.swift in Sources */,
+				WD17F8A9B0C1D2E3F4A5B017 /* SharedModelContainer.swift in Sources */,
+				WD18A9B0C1D2E3F4A5B6C018 /* ShoppingListWidget.swift in Sources */,
 				FF21D2E3F4A5B6C7D8E9F021 /* QuickAddControlIntent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -533,6 +547,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC33DD44EE55FF6677AABB11 /* AddItemIntent.swift in Sources */,
+				AD19C1D2E3F4A5B6C7D8E019 /* SharedModelContainer.swift in Sources */,
 				CC44DD55EE66FF7799AABB22 /* CheckOffItemIntent.swift in Sources */,
 				FF20C1D2E3F4A5B6C7D8E020 /* QuickAddControlIntent.swift in Sources */,
 				DEBF56414AA7F6AF04B254E2 /* AddItemView.swift in Sources */,
@@ -574,6 +589,7 @@
 				D0518513ABE97A21C14A74C3 /* StoreDetailView.swift in Sources */,
 				429C369375554B2060939718 /* StoreSetupView.swift in Sources */,
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* ReceiptParserService.swift in Sources */,
+				RA1B2C3D4E5F6A7B8C9D0F01 /* ReceiptAliasService.swift in Sources */,
 				D4E5F6A7B8C9D0E1F2A3B4C5 /* ReceiptScannerView.swift in Sources */,
 				F6A7B8C9D0E1F2A3B4C5D6E7 /* PriceOverviewView.swift in Sources */,
 				AEBD09BFC16B566EAF6E18EC /* ActualPriceEntryView.swift in Sources */,

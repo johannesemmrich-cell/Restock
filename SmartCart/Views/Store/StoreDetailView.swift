@@ -56,6 +56,11 @@ struct StoreDetailView: View {
     }
 
     var body: some View {
+        // Re-runs body (and thus `groupedRegularItems`' section derivation) whenever a sync
+        // merge lands in SwiftData. Without this dependency, a remotely changed category shows
+        // up inside the item (EditItemView/ItemRow observe the item directly) while the item
+        // still sits in its old category section here.
+        let _ = SyncCoordinator.shared.applyGeneration
         List {
             if syncFailed && store.shareID != nil {
                 Section {
@@ -773,19 +778,44 @@ struct StoreDetailView: View {
         }
     }
 
+    /// Same semantics as `WidgetStoreLoader.drainPendingCheckoffs` (keep in sync): complete
+    /// exactly the item UUIDs queued by the Dynamic-Island intent; already-completed IDs
+    /// (double-drain, sync merge, double-tap duplicates) are no-ops. Micro-window: app and
+    /// widget could theoretically claim the same UUID simultaneously — accepted, no
+    /// cross-process lock (see the drain comment in ShoppingListWidget.swift).
     private func applyPendingCheckoffs() {
         let defaults = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart")
-        let key = "pendingCheckoffs_\(store.name)"
-        let count = defaults?.integer(forKey: key) ?? 0
-        guard count > 0 else { return }
-        defaults?.removeObject(forKey: key)
         var applied = 0
-        for _ in 0..<count {
-            guard let item = store.pendingItems.first else { break }
-            item.markCompleted()
-            store.recordCompletionOrder([item.name])
-            applied += 1
+
+        // UUID-Queue: exakt die gequeueten Items erledigen (nicht "die ersten N" —
+        // count-basiert würde nach Widget-Checkoff/Sync-Merge das falsche Item treffen).
+        let idKey = "pendingCheckoffIDs_\(store.name)"
+        if let queuedIDs = defaults?.stringArray(forKey: idKey), !queuedIDs.isEmpty {
+            defaults?.removeObject(forKey: idKey)
+            for idString in queuedIDs {
+                guard let id = UUID(uuidString: idString),
+                      let item = store.items.first(where: { $0.id == id }),
+                      !item.isCompleted else { continue }
+                item.markCompleted()
+                store.recordCompletionOrder([item.name])
+                applied += 1
+            }
         }
+
+        // Legacy (einmaliger Übergang): Zähler-Key einer alten App-Version noch
+        // count-basiert drainen, damit ein Update mitten im Einkauf nichts verliert.
+        let legacyKey = "pendingCheckoffs_\(store.name)"
+        let legacyCount = defaults?.integer(forKey: legacyKey) ?? 0
+        if legacyCount > 0 {
+            defaults?.removeObject(forKey: legacyKey)
+            for _ in 0..<legacyCount {
+                guard let item = store.pendingItems.first else { break }
+                item.markCompleted()
+                store.recordCompletionOrder([item.name])
+                applied += 1
+            }
+        }
+
         guard applied > 0 else { return }
         try? context.save()
         LiveActivityService.shared.update(for: store)
