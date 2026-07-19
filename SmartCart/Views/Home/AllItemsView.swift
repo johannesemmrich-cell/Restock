@@ -55,6 +55,26 @@ struct AllItemsView: View {
         let _ = SyncCoordinator.shared.applyGeneration
         NavigationStack {
             List {
+                Section {
+                    HStack(spacing: 12) {
+                        Text("Alle Artikel")
+                            .font(.system(size: 13, weight: .semibold))
+                            .tracking(0.8)
+                            .textCase(.uppercase)
+                            .foregroundStyle(Color.textSecondary)
+                        Spacer()
+                        Picker("Sortierung", selection: $groupByCategory) {
+                            Text("Kategorie").tag(true)
+                            Text("Laden").tag(false)
+                        }
+                        .pickerStyle(.segmented)
+                        .fixedSize()
+                        .onChange(of: groupByCategory) { _, _ in Haptics.impact(.light) }
+                    }
+                }
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 6, trailing: 16))
+
                 if pendingItems.isEmpty {
                     ContentUnavailableView(
                         "Alles erledigt",
@@ -65,101 +85,105 @@ struct AllItemsView: View {
                 } else {
                     if !urgentItems.isEmpty {
                         Section {
+                            sectionHeaderRow("Dringend", count: urgentItems.count, tint: .orange)
                             ForEach(urgentItems) { item in
                                 itemRow(item, storeColor: item.store?.color ?? .gray, storeEmoji: groupByCategory ? nil : item.store?.emoji)
                             }
-                        } header: {
-                            Label("Dringend", systemImage: "exclamationmark.circle.fill")
-                                .foregroundStyle(.orange)
-                                .font(.system(size: 12, weight: .semibold))
-                                .textCase(nil)
                         }
+                        .listRowBackground(Color.surface)
                     }
 
                     if groupByCategory {
                         ForEach(nonUrgentByCategory, id: \.category) { group in
                             Section {
+                                sectionHeaderRow(group.category, count: group.items.count)
                                 ForEach(group.items) { item in
                                     itemRow(item, storeColor: .secondary, storeEmoji: nil)
                                 }
-                            } header: {
-                                HStack(spacing: 6) {
-                                    Text(group.emoji)
-                                    Text(group.category)
-                                        .font(.system(size: 13, weight: .semibold))
-                                    Spacer()
-                                    Text("\(group.items.count) Artikel")
-                                        .font(.system(size: 11))
-                                        .foregroundStyle(.secondary)
-                                }
                             }
+                            .listRowBackground(Color.surface)
                         }
                     } else {
                         ForEach(nonUrgentByStore, id: \.store.persistentModelID) { entry in
                             Section {
+                                sectionHeaderRow(entry.store.name, count: entry.items.count)
                                 ForEach(entry.items) { item in
                                     itemRow(item, storeColor: entry.store.color, storeEmoji: nil)
                                 }
-                            } header: {
-                                HStack(spacing: 6) {
-                                    Text(entry.store.emoji)
-                                    Text(entry.store.name)
-                                        .font(.system(size: 13, weight: .semibold))
-                                        .foregroundStyle(entry.store.color)
-                                    Spacer()
-                                    Text("\(entry.items.count) Artikel")
-                                        .font(.system(size: 11))
-                                        .foregroundStyle(entry.store.color.opacity(0.7))
-                                }
                             }
+                            .listRowBackground(Color.surface)
                         }
 
                         if !noStoreItems.isEmpty {
                             Section {
+                                sectionHeaderRow("Ohne Laden", count: noStoreItems.count)
                                 ForEach(noStoreItems) { item in
                                     itemRow(item, storeColor: .secondary, storeEmoji: nil)
                                 }
-                            } header: {
-                                HStack(spacing: 6) {
-                                    Text("Ohne Laden")
-                                        .font(.system(size: 13, weight: .semibold))
-                                        .foregroundStyle(.secondary)
-                                    Spacer()
-                                    Text("\(noStoreItems.count) Artikel")
-                                        .font(.system(size: 11))
-                                        .foregroundStyle(.secondary)
-                                }
                             }
+                            .listRowBackground(Color.surface)
                         }
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.canvas)
             .navigationTitle("Alle Artikel (\(pendingItems.count))")
             .navigationBarTitleDisplayMode(.inline)
+            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: groupByCategory)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { groupByCategory.toggle() }
-                        Haptics.impact(.light)
-                    } label: {
-                        Label(
-                            groupByCategory ? "Nach Läden" : "Nach Produktart",
-                            systemImage: groupByCategory ? "storefront" : "tag"
-                        )
+                ChipToolbarItem(placement: .navigationBarLeading) {
+                    Button { dismiss() } label: {
+                        Image(systemName: "house")
+                            .fontWeight(.medium)
+                            .foregroundStyle(Color.ink)
+                            .toolbarChip()
                     }
+                    .buttonStyle(.plain)
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Fertig") { dismiss() }
-                        .fontWeight(.semibold)
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { dismiss() } label: {
+                        Text("Fertig").toolbarChip(prominent: true)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
         .devFeedback(context: "Alle Artikel")
     }
 
+    /// Kategorie-/Laden-Header als erste Zeile INNERHALB der Karte (Spec: Versalien-Label,
+    /// Zähler rechts) statt als grauer System-Section-Header außerhalb.
+    private func sectionHeaderRow(_ title: String, count: Int, tint: Color = Color.textSecondary) -> some View {
+        HStack {
+            Text(title)
+                .font(.system(size: 13, weight: .semibold))
+                .tracking(0.8)
+                .textCase(.uppercase)
+                .foregroundStyle(tint)
+            Spacer()
+            Text("\(count)")
+                .font(.system(size: 13))
+                .monospacedDigit()
+                .foregroundStyle(Color.textSecondary)
+        }
+        .listRowSeparator(.visible)
+    }
+
     @ViewBuilder
     private func itemRow(_ item: ShoppingItem, storeColor: Color, storeEmoji: String?) -> some View {
         HStack(spacing: 12) {
+            Button {
+                withAnimation(.spring(response: 0.3)) { item.markCompleted() }
+                Haptics.success()
+                SyncCoordinator.shared.pushInBackground(item.store)
+            } label: {
+                RoundedRectangle(cornerRadius: 5)
+                    .strokeBorder(Color.hairlineStrong, lineWidth: 1.5)
+                    .frame(width: 18, height: 18)
+            }
+            .buttonStyle(.plain)
+
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     if item.isUrgent {
@@ -168,7 +192,7 @@ struct AllItemsView: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 2)
-                            .background(Color.orange, in: Capsule())
+                            .background(Color.orange, in: RoundedRectangle(cornerRadius: RCRadius.tag))
                     }
                     Text(item.name)
                         .font(.system(size: 15))
@@ -185,16 +209,9 @@ struct AllItemsView: View {
                 }
             }
             Spacer()
-            Button {
-                withAnimation(.spring(response: 0.3)) { item.markCompleted() }
-                Haptics.success()
-                SyncCoordinator.shared.pushInBackground(item.store)
-            } label: {
-                Image(systemName: "circle")
-                    .font(.system(size: 24))
-                    .foregroundStyle(storeColor.opacity(0.5))
-            }
-            .buttonStyle(.plain)
+            Image(systemName: "cart")
+                .font(.system(size: 13))
+                .foregroundStyle(Color.textSecondary.opacity(0.6))
         }
         .padding(.vertical, 2)
     }

@@ -78,7 +78,8 @@ struct EditItemView: View {
                             .frame(width: 72)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 8))
+                            .background(Color.surface, in: RoundedRectangle(cornerRadius: 8))
+                            .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.hairline))
                         Spacer()
                     }
 
@@ -197,14 +198,13 @@ struct EditItemView: View {
             .navigationTitle(String(localized: "item.edit.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "action.cancel")) { dismiss() }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip() }
+                        .buttonStyle(.plain)
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(String(localized: "action.save")) {
-                        save()
-                    }
-                    .fontWeight(.semibold)
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { save() } label: { Text(String(localized: "action.save")).toolbarChip(prominent: true) }
+                    .buttonStyle(.plain)
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }

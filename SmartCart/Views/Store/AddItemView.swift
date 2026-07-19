@@ -39,7 +39,7 @@ struct AddItemView: View {
                             showScanner = true
                         } label: {
                             Image(systemName: "barcode.viewfinder")
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(Color.accent)
                         }
                         .buttonStyle(.plain)
                     }
@@ -52,7 +52,8 @@ struct AddItemView: View {
                             .frame(width: 72)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 8))
+                            .background(Color.surface, in: RoundedRectangle(cornerRadius: 8))
+                            .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.hairline))
                         Spacer()
                     }
 
@@ -87,7 +88,7 @@ struct AddItemView: View {
                             Spacer()
                             if selectedStore?.id == store.id {
                                 Image(systemName: "checkmark")
-                                    .foregroundStyle(.blue)
+                                    .foregroundStyle(Color.accent)
                                     .font(.system(size: 14, weight: .semibold))
                             }
                         }
@@ -103,7 +104,7 @@ struct AddItemView: View {
                         Spacer()
                         if selectedStore == nil {
                             Image(systemName: "checkmark")
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(Color.accent)
                                 .font(.system(size: 14, weight: .semibold))
                         }
                     }
@@ -117,13 +118,14 @@ struct AddItemView: View {
             .navigationTitle(String(localized: "item.add.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "action.cancel")) { dismiss() }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip() }
+                        .buttonStyle(.plain)
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(String(localized: "action.add")) { addItem() }
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { addItem() } label: { Text(String(localized: "action.add")).toolbarChip(prominent: true) }
+                        .buttonStyle(.plain)
                         .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
-                        .fontWeight(.semibold)
                 }
             }
         }

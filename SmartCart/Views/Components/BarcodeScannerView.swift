@@ -42,9 +42,10 @@ struct BarcodeScannerSheet: View {
             .navigationTitle("Barcode scannen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
-                }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
+                        .buttonStyle(.plain)
+}
             }
         }
     }

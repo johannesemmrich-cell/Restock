@@ -40,16 +40,16 @@ struct ItemRow: View {
                 if !item.isCompleted { isAnimating = true }
             }) {
                 ZStack {
-                    Circle()
-                        .fill(item.isCompleted ? Color.success : Color.clear)
-                        .frame(width: 26, height: 26)
-                    Circle()
-                        .stroke(item.isCompleted ? Color.success : Color(.systemGray3), lineWidth: 2)
-                        .frame(width: 26, height: 26)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(item.isCompleted ? Color.accent : Color.clear)
+                        .frame(width: 22, height: 22)
+                    RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(item.isCompleted ? Color.accent : Color.hairlineStrong, lineWidth: 1.5)
+                        .frame(width: 22, height: 22)
                     if item.isCompleted {
                         Image(systemName: "checkmark")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.canvas)
                     }
                 }
                 .scaleEffect(isAnimating ? 1.2 : 1.0)
@@ -68,7 +68,7 @@ struct ItemRow: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 2)
-                            .background(Color.orange, in: Capsule())
+                            .background(Color.orange, in: RoundedRectangle(cornerRadius: RCRadius.tag))
                     }
                     Text(item.name)
                         .font(.system(size: 16))

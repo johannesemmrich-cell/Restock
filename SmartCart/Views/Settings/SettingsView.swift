@@ -17,6 +17,10 @@ struct SettingsView: View {
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
     @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
     private var autoSortByLearnedOrder = true
+    // V5/V6 — dieselben Keys wie HomeView.storeViewModeRaw / AllItemsView.groupByCategory,
+    // damit eine Änderung hier sofort dort (und umgekehrt) wirkt.
+    @AppStorage("storeViewMode") private var storeViewModeRaw = StoreViewMode.cards.rawValue
+    @AppStorage("allItemsGroupByCategory") private var defaultGroupByCategory = false
 
     @EnvironmentObject private var premium: PremiumService
     @State private var showPaywall = false
@@ -35,7 +39,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(String(localized: "settings.profile.section")) {
+                Section {
                     HStack(spacing: 12) {
                         Image(systemName: "person.crop.circle.fill")
                             .font(.system(size: 20))
@@ -48,9 +52,53 @@ struct SettingsView: View {
                                 if trimmed != new { userDisplayName = trimmed }
                             }
                     }
+                } header: {
+                    settingsHeader(String(localized: "settings.profile.section"))
                 }
+                .listRowBackground(Color.surface)
 
-                Section(String(localized: "settings.region")) {
+                Section {
+                    HStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Läden-Ansicht")
+                            Text("NEU · V5")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Color.textSecondary)
+                        }
+                        Spacer()
+                        Picker("Läden-Ansicht", selection: $storeViewModeRaw) {
+                            Text("Karten").tag(StoreViewMode.cards.rawValue)
+                            Text("Liste").tag(StoreViewMode.list.rawValue)
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
+                        .fixedSize()
+                    }
+                    .padding(.vertical, 2)
+
+                    HStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Listen-Sortierung")
+                            Text("NEU · V6")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Color.textSecondary)
+                        }
+                        Spacer()
+                        Picker("Listen-Sortierung", selection: $defaultGroupByCategory) {
+                            Text("Kategorie").tag(true)
+                            Text("Laden").tag(false)
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
+                        .fixedSize()
+                    }
+                    .padding(.vertical, 2)
+                } header: {
+                    settingsHeader("Darstellung")
+                }
+                .listRowBackground(Color.surface)
+
+                Section {
                     Picker(String(localized: "settings.country"), selection: $selectedCountry) {
                         ForEach(Store.availableCountries, id: \.code) { country in
                             Text("\(country.flag) \(country.name)").tag(country.code)
@@ -65,14 +113,34 @@ struct SettingsView: View {
                         Text("Deutsch").tag("de")
                         Text("English").tag("en")
                     }
+                } header: {
+                    settingsHeader(String(localized: "settings.region"))
                 }
+                .listRowBackground(Color.surface)
 
-                Section("Restock Pro") {
+                Section {
+                    Toggle("Saisonale Vorschläge", isOn: $seasonalSuggestionsEnabled)
+                    NavigationLink {
+                        SiriSettingsView()
+                    } label: {
+                        Text("Siri & Schnellzugriff")
+                    }
+                    NavigationLink {
+                        NotificationSettingsView()
+                    } label: {
+                        Text("Benachrichtigungen")
+                    }
+                } header: {
+                    settingsHeader("Funktionen")
+                }
+                .listRowBackground(Color.surface)
+
+                Section {
                     if premium.isPremiumUnlocked {
                         HStack(spacing: 12) {
                             Image(systemName: "checkmark.seal.fill")
                                 .font(.system(size: 20))
-                                .foregroundStyle(.green)
+                                .foregroundStyle(Color.accent)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Pro aktiv")
                                     .font(.system(size: 15, weight: .medium))
@@ -99,7 +167,7 @@ struct SettingsView: View {
                             HStack(spacing: 12) {
                                 Image(systemName: "star.fill")
                                     .font(.system(size: 18))
-                                    .foregroundStyle(LinearGradient.brand)
+                                    .foregroundStyle(Color.accent)
                                     .frame(width: 28)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Restock Pro freischalten")
@@ -118,14 +186,12 @@ struct SettingsView: View {
                         }
                         .buttonStyle(.plain)
                     }
-                }
 
-                Section("Teilen & Zusammenarbeit") {
                     if premium.isSharedListsUnlocked {
                         HStack(spacing: 12) {
                             Image(systemName: "checkmark.seal.fill")
                                 .font(.system(size: 20))
-                                .foregroundStyle(.green)
+                                .foregroundStyle(Color.accent)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Geteilte Listen aktiv")
                                     .font(.system(size: 15, weight: .medium))
@@ -144,7 +210,7 @@ struct SettingsView: View {
                             HStack(spacing: 12) {
                                 Image(systemName: "person.2.fill")
                                     .font(.system(size: 18))
-                                    .foregroundStyle(LinearGradient.brand)
+                                    .foregroundStyle(Color.accent)
                                     .frame(width: 28)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Geteilte Listen freischalten")
@@ -168,122 +234,48 @@ struct SettingsView: View {
                     } label: {
                         Label("Geteiltem Store beitreten", systemImage: "person.badge.plus")
                     }
+                } header: {
+                    settingsHeader("Daten")
                 }
+                .listRowBackground(Color.surface)
 
-                Section(String(localized: "settings.notifications")) {
-                    Toggle(String(localized: "settings.notifications.replenish"), isOn: $notificationsEnabled)
-                        .onChange(of: notificationsEnabled) { _, enabled in
-                            if enabled {
-                                Task {
-                                    notificationsEnabled = await NotificationService.shared.requestPermission()
-                                }
-                            } else {
-                                NotificationService.shared.cancelAll()
-                            }
-                        }
-                    Toggle("Saisonale Vorschläge", isOn: $seasonalSuggestionsEnabled)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Toggle("Automatisch nach Einkaufsreihenfolge sortieren", isOn: $autoSortByLearnedOrder)
-                        Text("Restock merkt sich, in welcher Reihenfolge du Artikel abhakst, und sortiert die Liste beim nächsten Mal entsprechend.")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 2)
-                }
-
-                Section("Siri & Schnellzugriff") {
-                    HStack(spacing: 12) {
-                        Image(systemName: "mic.fill")
-                            .font(.system(size: 18))
-                            .foregroundStyle(.purple)
-                            .frame(width: 28)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Siri")
-                                .font(.system(size: 15, weight: .medium))
-                            Text("\"Hey Siri, füge Milch zu Restock hinzu\"")
-                                .font(.system(size: 12))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .padding(.vertical, 2)
-
-                    HStack(spacing: 12) {
-                        Image(systemName: "switch.2")
-                            .font(.system(size: 18))
-                            .foregroundStyle(.blue)
-                            .frame(width: 28)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Kontrollzentrum")
-                                .font(.system(size: 15, weight: .medium))
-                            Text("Widget hinzufügen: Einstellungen > Kontrollzentrum")
-                                .font(.system(size: 12))
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        Image(systemName: "arrow.up.right")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 2)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
-                        }
-                    }
-
-                    HStack(spacing: 12) {
-                        Image(systemName: "hand.tap.fill")
-                            .font(.system(size: 18))
-                            .foregroundStyle(.orange)
-                            .frame(width: 28)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("App-Icon lange drücken")
-                                .font(.system(size: 15, weight: .medium))
-                            Text("Öffnet die App direkt zur Schnelleingabe")
-                                .font(.system(size: 12))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .padding(.vertical, 2)
-
-                    Button {
-                        if let url = URL(string: "shortcuts://") {
-                            UIApplication.shared.open(url)
-                        }
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "square.grid.2x2.fill")
-                                .font(.system(size: 18))
-                                .foregroundStyle(Color(red: 0.7, green: 0.2, blue: 1.0))
-                                .frame(width: 28)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Homescreen-Kurzbefehl")
-                                    .font(.system(size: 15, weight: .medium))
-                                Text("Kurzbefehle-App öffnen → Restock-Kurzbefehl zum Homescreen hinzufügen")
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .font(.system(size: 12))
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding(.vertical, 2)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                Section(String(localized: "settings.feedback.section")) {
+                Section {
                     Button {
                         showFeedback = true
                     } label: {
-                        Label(String(localized: "settings.feedback.button"), systemImage: "bubble.left.and.bubble.right")
+                        HStack {
+                            Text(String(localized: "settings.feedback.button"))
+                                .foregroundStyle(Color.ink)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Color.textSecondary.opacity(0.6))
+                        }
                     }
-                }
+                    .buttonStyle(.plain)
 
-                Section("Über Restock") {
+                    Button {
+                        if let url = URL(string: "mailto:j.emmrich@icloud.com?subject=Restock%20Support") {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        HStack {
+                            Text("Support kontaktieren")
+                                .foregroundStyle(Color.ink)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Color.textSecondary.opacity(0.6))
+                        }
+                    }
+                    .buttonStyle(.plain)
+
+                    NavigationLink {
+                        LegalOverviewView()
+                    } label: {
+                        Text("Rechtliches")
+                    }
+
                     HStack {
                         Text(String(localized: "settings.version"))
                         Spacer()
@@ -305,22 +297,10 @@ struct SettingsView: View {
                             showDevPasswordPrompt = true
                         }
                     }
-
-                    NavigationLink {
-                        LegalOverviewView()
-                    } label: {
-                        Label("Rechtliches", systemImage: "doc.plaintext")
-                    }
-
-                    Button {
-                        if let url = URL(string: "mailto:j.emmrich@icloud.com?subject=Restock%20Support") {
-                            UIApplication.shared.open(url)
-                        }
-                    } label: {
-                        Label("Support kontaktieren", systemImage: "envelope")
-                            .foregroundStyle(.primary)
-                    }
+                } header: {
+                    settingsHeader("Support")
                 }
+                .listRowBackground(Color.surface)
 
                 if developerMode {
                     Section {
@@ -351,13 +331,21 @@ struct SettingsView: View {
                         }
                     }
                 }
+
+                Section {
+                    emmrichAppsFooter
+                }
+                .listRowBackground(Color.clear)
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.canvas)
+            .tint(Color.accent)
             .navigationTitle(String(localized: "settings.title"))
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(String(localized: "action.done")) { dismiss() }
-                        .fontWeight(.semibold)
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { dismiss() } label: { Text(String(localized: "action.done")).toolbarChip() }
+                        .buttonStyle(.plain)
                 }
             }
             .sheet(isPresented: $showJoinStore) { JoinStoreSheet() }
@@ -389,11 +377,194 @@ struct SettingsView: View {
         .devFeedback(context: "Einstellungen")
     }
 
+    private func settingsHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.system(size: 13, weight: .semibold))
+            .tracking(0.8)
+            .textCase(.uppercase)
+            .foregroundStyle(Color.textSecondary)
+    }
+
+    // MARK: - Emmrich Apps footer
+
+    private var emmrichAppsFooter: some View {
+        VStack(spacing: 8) {
+            Button {
+                if let url = URL(string: "https://emmrich-apps.de") {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
+                VStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Rectangle().frame(width: 15, height: 2.5)
+                        Rectangle().frame(width: 10, height: 2.5)
+                        Rectangle().frame(width: 15, height: 2.5)
+                    }
+                    .foregroundStyle(Color(hex: "#A98E5B") ?? Color.textSecondary)
+
+                    Text("Emmrich Apps")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Color.ink)
+                    Text("Dresslyst · Restock · Sunwake")
+                        .font(.system(size: 10))
+                        .foregroundStyle(Color.textSecondary)
+                }
+            }
+            .buttonStyle(.plain)
+
+            Text("Restock \(appVersionString)")
+                .font(.system(size: 9.5))
+                .foregroundStyle(Color.textSecondary.opacity(0.7))
+                .padding(.top, 2)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 18)
+    }
+
+    private var appVersionString: String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        return "\(version) (\(build))"
+    }
+
     private func seedStores(for countryCode: String) {
         guard allStores.filter({ $0.countryCode == countryCode }).isEmpty else { return }
         for store in Store.presets(for: countryCode) {
             context.insert(store)
         }
+    }
+}
+
+// MARK: - Funktionen-Unterseiten (Inhalte 1:1 aus den früheren Inline-Sektionen)
+
+struct NotificationSettingsView: View {
+    @AppStorage("notificationsEnabled") private var notificationsEnabled = true
+    @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
+    private var autoSortByLearnedOrder = true
+
+    var body: some View {
+        List {
+            Section {
+                Toggle(String(localized: "settings.notifications.replenish"), isOn: $notificationsEnabled)
+                    .onChange(of: notificationsEnabled) { _, enabled in
+                        if enabled {
+                            Task {
+                                notificationsEnabled = await NotificationService.shared.requestPermission()
+                            }
+                        } else {
+                            NotificationService.shared.cancelAll()
+                        }
+                    }
+                VStack(alignment: .leading, spacing: 2) {
+                    Toggle("Automatisch nach Einkaufsreihenfolge sortieren", isOn: $autoSortByLearnedOrder)
+                    Text("Restock merkt sich, in welcher Reihenfolge du Artikel abhakst, und sortiert die Liste beim nächsten Mal entsprechend.")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 2)
+            }
+            .listRowBackground(Color.surface)
+        }
+        .scrollContentBackground(.hidden)
+        .background(Color.canvas)
+        .tint(Color.accent)
+        .navigationTitle("Benachrichtigungen")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct SiriSettingsView: View {
+    var body: some View {
+        List {
+            Section {
+                HStack(spacing: 12) {
+                    Image(systemName: "mic.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(Color.accent)
+                        .frame(width: 28)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Siri")
+                            .font(.system(size: 15, weight: .medium))
+                        Text("\"Hey Siri, füge Milch zu Restock hinzu\"")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 2)
+
+                HStack(spacing: 12) {
+                    Image(systemName: "switch.2")
+                        .font(.system(size: 18))
+                        .foregroundStyle(Color.accent)
+                        .frame(width: 28)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Kontrollzentrum")
+                            .font(.system(size: 15, weight: .medium))
+                        Text("Widget hinzufügen: Einstellungen > Kontrollzentrum")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 2)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+
+                HStack(spacing: 12) {
+                    Image(systemName: "hand.tap.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(Color.accent)
+                        .frame(width: 28)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("App-Icon lange drücken")
+                            .font(.system(size: 15, weight: .medium))
+                        Text("Öffnet die App direkt zur Schnelleingabe")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 2)
+
+                Button {
+                    if let url = URL(string: "shortcuts://") {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "square.grid.2x2.fill")
+                            .font(.system(size: 18))
+                            .foregroundStyle(Color.accent)
+                            .frame(width: 28)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Homescreen-Kurzbefehl")
+                                .font(.system(size: 15, weight: .medium))
+                            Text("Kurzbefehle-App öffnen → Restock-Kurzbefehl zum Homescreen hinzufügen")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "arrow.up.right")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 2)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+            .listRowBackground(Color.surface)
+        }
+        .scrollContentBackground(.hidden)
+        .background(Color.canvas)
+        .navigationTitle("Siri & Schnellzugriff")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

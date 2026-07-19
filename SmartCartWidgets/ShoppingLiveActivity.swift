@@ -32,7 +32,7 @@ struct ShoppingLiveActivity: Widget {
                             .stroke(Color.white.opacity(0.15), lineWidth: 4)
                         Circle()
                             .trim(from: 0, to: progress)
-                            .stroke(Color.green, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                            .stroke(Color(hex: "#A7AE6B")!, style: StrokeStyle(lineWidth: 4, lineCap: .round))
                             .rotationEffect(.degrees(-90))
                             .animation(.easeInOut, value: progress)
                     }
@@ -53,9 +53,9 @@ struct ShoppingLiveActivity: Widget {
                             }
                             Spacer()
                             Button(intent: CheckOffItemIntent(storeName: context.attributes.storeName)) {
-                                Image(systemName: "checkmark.circle.fill")
+                                Image(systemName: "checkmark.square.fill")
                                     .font(.system(size: 36))
-                                    .foregroundStyle(.green)
+                                    .foregroundStyle(Color(hex: "#A7AE6B")!)
                                     .symbolEffect(.bounce, value: next)
                             }
                         }
@@ -64,7 +64,7 @@ struct ShoppingLiveActivity: Widget {
                     } else {
                         Label("Alle erledigt! 🎉", systemImage: "checkmark.seal.fill")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(.green)
+                            .foregroundStyle(Color(hex: "#A7AE6B")!)
                             .padding(.vertical, 8)
                     }
                 }
@@ -78,7 +78,7 @@ struct ShoppingLiveActivity: Widget {
             } minimal: {
                 Text(context.attributes.storeEmoji)
             }
-            .keylineTint(.green)
+            .keylineTint(Color(hex: "#A7AE6B")!)
         }
     }
 }
@@ -121,7 +121,7 @@ private struct LockScreenView: View {
                             .fill(Color.white.opacity(0.15))
                             .frame(height: 4)
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(Color.green)
+                            .fill(Color(hex: "#A7AE6B")!)
                             .frame(width: geo.size.width * progress, height: 4)
                             .animation(.easeInOut, value: progress)
                     }
@@ -131,9 +131,9 @@ private struct LockScreenView: View {
 
             if context.state.nextItemName != nil {
                 Button(intent: CheckOffItemIntent(storeName: context.attributes.storeName)) {
-                    Image(systemName: "checkmark.circle.fill")
+                    Image(systemName: "checkmark.square.fill")
                         .font(.system(size: 30))
-                        .foregroundStyle(.green)
+                        .foregroundStyle(Color(hex: "#A7AE6B")!)
                 }
             }
         }

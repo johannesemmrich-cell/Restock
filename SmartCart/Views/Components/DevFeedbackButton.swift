@@ -63,7 +63,8 @@ struct DevFeedbackSheet: View {
                 TextEditor(text: $feedbackText)
                     .frame(minHeight: 120)
                     .padding(8)
-                    .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 10))
+                    .background(Color.surface, in: RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color.hairline))
                     .padding(.horizontal)
 
                 Spacer()

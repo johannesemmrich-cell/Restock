@@ -42,7 +42,7 @@ struct OnboardingView: View {
             VStack(spacing: 16) {
                 Image(systemName: "person.crop.circle.fill")
                     .font(.system(size: 72))
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(Color.accent)
 
                 VStack(spacing: 8) {
                     Text(String(localized: "onboarding.name.title"))
@@ -61,7 +61,8 @@ struct OnboardingView: View {
                     .font(.system(size: 20, weight: .medium))
                     .multilineTextAlignment(.center)
                     .padding()
-                    .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 12))
+                    .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.control))
+                    .overlay(RoundedRectangle(cornerRadius: RCRadius.control).strokeBorder(Color.hairline))
                     .padding(.horizontal, 32)
                     .submitLabel(.done)
                     .onSubmit { confirmName() }
@@ -73,7 +74,7 @@ struct OnboardingView: View {
                 Text(String(localized: "onboarding.name.cta"))
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.restockPrimary)
             .controlSize(.large)
             .disabled(nameInput.trimmingCharacters(in: .whitespaces).isEmpty)
             .padding(.horizontal, 32)
@@ -100,7 +101,7 @@ struct OnboardingView: View {
             VStack(spacing: 16) {
                 Image(systemName: "cart.badge.plus")
                     .font(.system(size: 80))
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(Color.accent)
                     .symbolEffect(.bounce, options: .repeating.speed(0.3))
 
                 Text("Restock")
@@ -119,7 +120,7 @@ struct OnboardingView: View {
                 Text(String(localized: "onboarding.welcome.cta"))
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.restockPrimary)
             .controlSize(.large)
             .padding(.horizontal, 32)
             .padding(.bottom, 48)
@@ -150,7 +151,7 @@ struct OnboardingView: View {
                         Spacer()
                         if selectedCountry == country.code {
                             Image(systemName: "checkmark")
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(Color.accent)
                                 .fontWeight(.semibold)
                         }
                     }
@@ -173,7 +174,7 @@ struct OnboardingView: View {
                 Text(String(localized: "onboarding.country.cta"))
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.restockPrimary)
             .controlSize(.large)
             .padding(.horizontal, 24)
             .padding(.bottom, 48)
@@ -225,7 +226,7 @@ struct OnboardingView: View {
                             .font(.system(size: 17))
                         Spacer()
                         Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                            .foregroundStyle(isSelected ? .blue : Color(.systemGray3))
+                            .foregroundStyle(isSelected ? Color.accent : Color.hairlineStrong)
                             .font(.system(size: 22))
                     }
                     .contentShape(Rectangle())
@@ -245,7 +246,7 @@ struct OnboardingView: View {
                 Text(String(localized: "onboarding.stores.cta"))
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.restockPrimary)
             .controlSize(.large)
             .padding(.horizontal, 24)
             .padding(.bottom, 48)
@@ -271,7 +272,7 @@ struct OnboardingView: View {
 
                     TutorialCard(
                         icon: "plus.circle.fill",
-                        iconColor: .blue,
+                        iconColor: Color.accent,
                         title: "Schnell hinzufügen",
                         description: "Tippe einfach ein, was du brauchst — Restock erkennt Menge und Einheit automatisch.\n\nBeispiele: \"500g Hackfleisch\", \"2 Liter Milch\", \"3 Äpfel\""
                     )
@@ -294,7 +295,7 @@ struct OnboardingView: View {
                 Text("Los geht's!")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.restockPrimary)
             .controlSize(.large)
             .padding(.horizontal, 24)
             .padding(.bottom, 48)
@@ -336,7 +337,8 @@ private struct TutorialCard: View {
             }
         }
         .padding(16)
-        .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 14))
+        .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.card))
+        .overlay(RoundedRectangle(cornerRadius: RCRadius.card).strokeBorder(Color.hairline))
     }
 }
 

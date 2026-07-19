@@ -66,12 +66,13 @@ struct PaywallView: View {
                 }
                 .padding(.horizontal, 24)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.canvas)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Schließen") { dismiss() }
-                }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text("Schließen").toolbarChip(prominent: false) }
+                        .buttonStyle(.plain)
+}
             }
         }
     }
@@ -82,11 +83,11 @@ struct PaywallView: View {
         VStack(spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(LinearGradient.brand.opacity(0.15))
+                    .fill(Color.accentContainer)
                     .frame(width: 80, height: 80)
                 Image(systemName: headerIcon)
                     .font(.system(size: 34, weight: .semibold))
-                    .foregroundStyle(LinearGradient.brand)
+                    .foregroundStyle(Color.accent)
             }
 
             Text(headerTitle)
@@ -213,11 +214,11 @@ struct PaywallView: View {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .strokeBorder(isSelected ? Color.brand : Color(.systemGray4), lineWidth: 2)
+                        .strokeBorder(isSelected ? Color.accent : Color.hairlineStrong, lineWidth: 2)
                         .frame(width: 22, height: 22)
                     if isSelected {
                         Circle()
-                            .fill(Color.brand)
+                            .fill(Color.accent)
                             .frame(width: 12, height: 12)
                     }
                 }
@@ -230,10 +231,10 @@ struct PaywallView: View {
                         if let badge {
                             Text(badge)
                                 .font(.system(size: 11, weight: .bold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Color.onButton)
                                 .padding(.horizontal, 7)
                                 .padding(.vertical, 2)
-                                .background(Color.brand, in: Capsule())
+                                .background(Color.accent, in: RoundedRectangle(cornerRadius: RCRadius.tag))
                         }
                     }
                     if let detail {
@@ -247,14 +248,14 @@ struct PaywallView: View {
 
                 Text(price)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(isSelected ? Color.brand : .primary)
+                    .foregroundStyle(isSelected ? Color.accent : .primary)
             }
             .padding(16)
-            .background(Color(.systemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .background(Color.surface)
+            .clipShape(RoundedRectangle(cornerRadius: RCRadius.card))
             .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(isSelected ? Color.brand : Color(.systemGray5), lineWidth: isSelected ? 2 : 1)
+                RoundedRectangle(cornerRadius: RCRadius.card)
+                    .strokeBorder(isSelected ? Color.accent : Color.hairline, lineWidth: isSelected ? 2 : 1)
             )
             .animation(.easeInOut(duration: 0.15), value: isSelected)
         }
@@ -267,11 +268,11 @@ struct PaywallView: View {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .strokeBorder(isSelected ? Color.brand : Color(.systemGray4), lineWidth: 2)
+                        .strokeBorder(isSelected ? Color.accent : Color.hairlineStrong, lineWidth: 2)
                         .frame(width: 22, height: 22)
                     if isSelected {
                         Circle()
-                            .fill(Color.brand)
+                            .fill(Color.accent)
                             .frame(width: 12, height: 12)
                     }
                 }
@@ -284,10 +285,10 @@ struct PaywallView: View {
                         if isRecommended {
                             Text("Empfohlen")
                                 .font(.system(size: 11, weight: .bold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Color.onButton)
                                 .padding(.horizontal, 7)
                                 .padding(.vertical, 2)
-                                .background(Color.brand, in: Capsule())
+                                .background(Color.accent, in: RoundedRectangle(cornerRadius: RCRadius.tag))
                         }
                     }
                     Text(detail)
@@ -299,14 +300,14 @@ struct PaywallView: View {
 
                 Text(price)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(isSelected ? Color.brand : .primary)
+                    .foregroundStyle(isSelected ? Color.accent : .primary)
             }
             .padding(16)
-            .background(Color(.systemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .background(Color.surface)
+            .clipShape(RoundedRectangle(cornerRadius: RCRadius.card))
             .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(isSelected ? Color.brand : Color(.systemGray5), lineWidth: isSelected ? 2 : 1)
+                RoundedRectangle(cornerRadius: RCRadius.card)
+                    .strokeBorder(isSelected ? Color.accent : Color.hairline, lineWidth: isSelected ? 2 : 1)
             )
             .animation(.easeInOut(duration: 0.15), value: isSelected)
         }
@@ -321,7 +322,7 @@ struct PaywallView: View {
                 HStack(spacing: 12) {
                     Image(systemName: benefit.icon)
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(Color.brand)
+                        .foregroundStyle(Color.accent)
                         .frame(width: 22)
                     VStack(alignment: .leading, spacing: 1) {
                         Text(benefit.title)
@@ -335,8 +336,8 @@ struct PaywallView: View {
             }
         }
         .padding(16)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.card))
+        .overlay(RoundedRectangle(cornerRadius: RCRadius.card).strokeBorder(Color.hairline))
     }
 
     private var sharedListsBenefits: some View {
@@ -345,7 +346,7 @@ struct PaywallView: View {
                 HStack(spacing: 12) {
                     Image(systemName: benefit.icon)
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(Color.brand)
+                        .foregroundStyle(Color.accent)
                         .frame(width: 22)
                     VStack(alignment: .leading, spacing: 1) {
                         Text(benefit.title)
@@ -359,8 +360,8 @@ struct PaywallView: View {
             }
         }
         .padding(16)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.card))
+        .overlay(RoundedRectangle(cornerRadius: RCRadius.card).strokeBorder(Color.hairline))
     }
 
     private struct Benefit { let icon: String; let title: String; let description: String }
@@ -389,7 +390,7 @@ struct PaywallView: View {
         } label: {
             Group {
                 if premium.isPurchasing {
-                    ProgressView().tint(.white)
+                    ProgressView().tint(Color.onButton)
                 } else {
                     Text(ctaTitle)
                         .font(.system(size: 17, weight: .bold))
@@ -397,9 +398,9 @@ struct PaywallView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 54)
-            .background(LinearGradient.brand)
-            .foregroundStyle(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .background(Color.buttonPrimary)
+            .foregroundStyle(Color.onButton)
+            .clipShape(RoundedRectangle(cornerRadius: RCRadius.control))
         }
         .buttonStyle(.plain)
         .disabled(premium.isPurchasing)

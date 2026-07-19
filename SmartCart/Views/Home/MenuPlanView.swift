@@ -125,13 +125,18 @@ struct MenuPlanView: View {
             .navigationTitle("Menüplan")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Schließen") { dismiss() }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: {
+                        Text("Schließen").toolbarChip()
+                    }
+                    .buttonStyle(.plain)
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Zur Liste") { addToList() }
-                        .fontWeight(.semibold)
-                        .disabled(allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }.isEmpty && loadingDays.isEmpty)
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { addToList() } label: {
+                        Text("Zur Liste").toolbarChip(prominent: true)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }.isEmpty && loadingDays.isEmpty)
                 }
             }
             .alert("Hinzugefügt", isPresented: $showConfirm) {
@@ -235,7 +240,7 @@ struct MenuPlanView: View {
                             } label: {
                                 Label("Speichern", systemImage: "bookmark.fill")
                             }
-                            .tint(.blue)
+                            .tint(Color.accent)
                         }
                 }
             }
@@ -245,7 +250,7 @@ struct MenuPlanView: View {
                     showAddDay = true
                 } label: {
                     Label("Tag hinzufügen", systemImage: "plus.circle.fill")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color.accent)
                 }
             }
         } header: {
@@ -296,9 +301,9 @@ struct MenuPlanView: View {
                 if !ings.isEmpty {
                     Text("\(ings.count)")
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.onButton)
                         .padding(.horizontal, 6).padding(.vertical, 2)
-                        .background(Color.brand, in: Capsule())
+                        .background(Color.accent, in: RoundedRectangle(cornerRadius: RCRadius.tag))
                 } else if isLoading {
                     ProgressView().scaleEffect(0.65)
                 }
@@ -318,9 +323,9 @@ struct MenuPlanView: View {
                 }
                 Haptics.impact(.light)
             } label: {
-                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 20))
-                    .foregroundStyle(isChecked ? .green : Color(.systemGray3))
+                Image(systemName: isChecked ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 18))
+                    .foregroundStyle(isChecked ? Color.accent : Color.hairlineStrong)
             }
             .buttonStyle(.plain)
             Text(name)
@@ -386,9 +391,9 @@ struct MenuPlanView: View {
                     if recipe.usageCount > 0 {
                         Text("\(recipe.usageCount)×")
                             .font(.system(size: 10, weight: .semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.accent)
                             .padding(.horizontal, 5).padding(.vertical, 1)
-                            .background(Color.brand.opacity(0.7), in: Capsule())
+                            .overlay(RoundedRectangle(cornerRadius: RCRadius.tag).strokeBorder(Color.accent.opacity(0.4)))
                     }
                 }
                 Text(recipe.ingredients.prefix(4).joined(separator: ", ") + (recipe.ingredients.count > 4 ? "…" : ""))
@@ -402,10 +407,10 @@ struct MenuPlanView: View {
             } label: {
                 Text("+ Liste")
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.onButton)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
-                    .background(Color.brand, in: Capsule())
+                    .background(Color.accent, in: RoundedRectangle(cornerRadius: RCRadius.tag))
             }
             .buttonStyle(.plain)
         }
@@ -553,7 +558,7 @@ private struct AddDaySheet: View {
                         } label: {
                             HStack {
                                 Image(systemName: "bookmark.fill")
-                                    .foregroundStyle(.blue)
+                                    .foregroundStyle(Color.accent)
                                 if let recipe = selectedRecipe {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(recipe.name)
@@ -564,7 +569,7 @@ private struct AddDaySheet: View {
                                     }
                                 } else {
                                     Text("Aus gespeichertem Rezept…")
-                                        .foregroundStyle(.blue)
+                                        .foregroundStyle(Color.accent)
                                 }
                                 Spacer()
                                 if selectedRecipe != nil {
@@ -611,15 +616,18 @@ private struct AddDaySheet: View {
             .navigationTitle("Tag hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Hinzufügen") {
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
+                        .buttonStyle(.plain)
+}
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button {
                         onSave(selectedDay, mealText.trimmingCharacters(in: .whitespaces), manualIngredients, selectedRecipe)
                         dismiss()
+                    } label: {
+                        Text("Hinzufügen").toolbarChip(prominent: true)
                     }
-                    .fontWeight(.semibold)
+                    .buttonStyle(.plain)
                     .disabled(mealText.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
@@ -687,9 +695,10 @@ private struct RecipePickerSheet: View {
             .navigationTitle("Rezept auswählen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
-                }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
+                        .buttonStyle(.plain)
+}
             }
         }
         .presentationDetents([.medium])

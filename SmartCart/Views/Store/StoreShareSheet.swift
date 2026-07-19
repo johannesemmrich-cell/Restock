@@ -25,7 +25,7 @@ struct StoreShareSheet: View {
 
                 Image(systemName: "person.2.badge.key.fill")
                     .font(.system(size: 64))
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(Color.accent)
 
                 VStack(spacing: 8) {
                     Text("\(store.emoji) \(store.name) teilen")
@@ -41,6 +41,7 @@ struct StoreShareSheet: View {
                     VStack(spacing: 20) {
                         Text(displayCode)
                             .font(.system(size: 40, weight: .bold, design: .monospaced))
+                            .foregroundStyle(Color.ink)
                             .kerning(2)
 
                         HStack(spacing: 12) {
@@ -51,16 +52,20 @@ struct StoreShareSheet: View {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) { copied = false }
                             } label: {
                                 Label(copied ? "Kopiert!" : "Kopieren", systemImage: copied ? "checkmark" : "doc.on.doc")
+                                    .font(.system(size: 15, weight: .semibold))
+                                    .foregroundStyle(Color.accent)
                                     .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 11)
+                                    .background(Color.accentContainer, in: RoundedRectangle(cornerRadius: RCRadius.control))
                             }
-                            .buttonStyle(.bordered)
+                            .buttonStyle(.plain)
                             .animation(.easeInOut, value: copied)
 
                             ShareLink(item: "Ich teile meine Restock-Einkaufsliste mit dir!\nCode: \(displayCode)") {
                                 Label("Teilen", systemImage: "square.and.arrow.up")
                                     .frame(maxWidth: .infinity)
                             }
-                            .buttonStyle(.borderedProminent)
+                            .buttonStyle(.restockPrimary)
                         }
                         .padding(.horizontal, 32)
 
@@ -74,7 +79,7 @@ struct StoreShareSheet: View {
                                         HStack(spacing: 10) {
                                             Image(systemName: "person.crop.circle.fill")
                                                 .font(.system(size: 22))
-                                                .foregroundStyle(.blue)
+                                                .foregroundStyle(Color.accent)
                                             Text(member)
                                                 .font(.system(size: 15))
                                             Spacer()
@@ -113,14 +118,14 @@ struct StoreShareSheet: View {
                     } label: {
                         if isPublishing {
                             ProgressView()
+                                .tint(Color.onButton)
                                 .frame(maxWidth: .infinity)
                         } else {
                             Text("Code generieren")
                                 .frame(maxWidth: .infinity)
                         }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
+                    .buttonStyle(.restockPrimary)
                     .padding(.horizontal, 32)
                     .disabled(isPublishing)
                 }
@@ -130,8 +135,9 @@ struct StoreShareSheet: View {
             .navigationTitle("Store teilen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Fertig") { dismiss() }
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { dismiss() } label: { Text("Fertig").toolbarChip() }
+                        .buttonStyle(.plain)
                 }
             }
         }
@@ -202,7 +208,7 @@ struct JoinStoreSheet: View {
 
                 Image(systemName: "person.badge.plus")
                     .font(.system(size: 64))
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(Color.accent)
 
                 VStack(spacing: 8) {
                     Text("Store beitreten")
@@ -218,9 +224,11 @@ struct JoinStoreSheet: View {
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
                     .font(.system(size: 28, weight: .bold, design: .monospaced))
+                    .foregroundStyle(Color.ink)
                     .multilineTextAlignment(.center)
                     .padding()
-                    .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 12))
+                    .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.control))
+                    .overlay(RoundedRectangle(cornerRadius: RCRadius.control).strokeBorder(Color.hairline))
                     .padding(.horizontal, 32)
                     .onChange(of: code) { _, new in
                         let cleaned = new.replacingOccurrences(of: "-", with: "")
@@ -251,21 +259,23 @@ struct JoinStoreSheet: View {
                             Spacer()
                         }
                         .padding()
-                        .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 14))
+                        .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.card))
+                        .overlay(RoundedRectangle(cornerRadius: RCRadius.card).strokeBorder(Color.hairline))
                         .padding(.horizontal, 32)
 
                         Button {
                             Task { await join(preview) }
                         } label: {
                             if isJoining {
-                                ProgressView().frame(maxWidth: .infinity)
+                                ProgressView()
+                                    .tint(Color.onButton)
+                                    .frame(maxWidth: .infinity)
                             } else {
                                 Text("\(preview.storeEmoji) \(preview.storeName) hinzufügen")
                                     .frame(maxWidth: .infinity)
                             }
                         }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
+                        .buttonStyle(.restockPrimary)
                         .padding(.horizontal, 32)
                         .disabled(isJoining)
                     }
@@ -284,8 +294,9 @@ struct JoinStoreSheet: View {
             .navigationTitle("Beitreten")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text("Abbrechen").toolbarChip() }
+                        .buttonStyle(.plain)
                 }
             }
         }

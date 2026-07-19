@@ -2,6 +2,7 @@ import SwiftUI
 
 struct FeedbackView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("feedbackHistory") private var feedbackHistoryData = Data()
 
     @State private var feedbackText = ""
@@ -76,15 +77,16 @@ struct FeedbackView: View {
             .navigationTitle(String(localized: "feedback.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "action.cancel")) { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(String(localized: "feedback.submit")) {
-                        submit()
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip(prominent: false) }
+                        .buttonStyle(.plain)
+}
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { submit() } label: {
+                        Text(String(localized: "feedback.submit")).toolbarChip(prominent: true)
                     }
+                    .buttonStyle(.plain)
                     .disabled(feedbackText.trimmingCharacters(in: .whitespaces).isEmpty)
-                    .fontWeight(.semibold)
                 }
             }
             .overlay {
@@ -109,9 +111,9 @@ struct FeedbackView: View {
                 .multilineTextAlignment(.center)
         }
         .padding(32)
-        .background(Color.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(color: .black.opacity(0.12), radius: 24, x: 0, y: 8)
+        .background(Color.surface)
+        .clipShape(RoundedRectangle(cornerRadius: RCRadius.sheet))
+        .overlayShadow(colorScheme)
         .padding(32)
     }
 

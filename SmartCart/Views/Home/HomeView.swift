@@ -28,8 +28,13 @@ struct HomeView: View {
     @State private var dueSoonItems: [ConsumptionPattern] = []
     @State private var headerScale: CGFloat = 1.0
 
+    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
     @AppStorage("homeListMode") private var listMode = false
+    // V5: Karten (Standard, horizontales Grid) oder Liste (Stores untereinander) — unabhängig
+    // vom obigen `listMode`, der auf eine ganz andere Ansicht (Kategorie-Liste) umschaltet.
+    @AppStorage("storeViewMode") private var storeViewModeRaw = StoreViewMode.cards.rawValue
+    private var storeViewMode: StoreViewMode { StoreViewMode(rawValue: storeViewModeRaw) ?? .cards }
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
     // Not read directly — its only job is to make SwiftUI re-invoke `body` (and thus the store
     // cards' pending-item preview text, which depends on `Store.pendingItems`' order) when the
@@ -103,7 +108,7 @@ struct HomeView: View {
                         } else {
                             premiumTeaser(
                                 icon: "arrow.clockwise.circle.fill",
-                                color: .orange,
+                                color: Color.amber,
                                 title: "\(dueSoonItems.count) Artikel bald fällig",
                                 subtitle: "Nachkauf-Erinnerungen mit Restock Pro",
                                 feature: "Nachkauf-Erinnerungen"
@@ -116,7 +121,7 @@ struct HomeView: View {
                         } else {
                             premiumTeaser(
                                 icon: SeasonalService.seasonIcon,
-                                color: .green,
+                                color: Color.accent,
                                 title: "\(seasonalSuggestions.count) saisonale Vorschläge",
                                 subtitle: "Saisonale Ideen mit Restock Pro",
                                 feature: "saisonale Vorschläge"
@@ -129,9 +134,10 @@ struct HomeView: View {
                 .padding(.top, 4)
                 .padding(.bottom, 40)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.canvas)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { toolbarContent }
+            .toolbar(.hidden, for: .navigationBar)
+            .safeAreaInset(edge: .top, spacing: 0) { customTopBar }
             .sheet(isPresented: $showAddItem)        { AddItemView() }
             .sheet(isPresented: $showRecipeImport)  { RecipeImportView() }
             .sheet(isPresented: $showSettings)      { SettingsView() }
@@ -212,7 +218,7 @@ struct HomeView: View {
         .overlay {
             if bannerExpanded {
                 ZStack {
-                    Color.black.opacity(0.45)
+                    (colorScheme == .dark ? Color.black.opacity(0.55) : Color.ink.opacity(0.42))
                         .ignoresSafeArea()
                         .onTapGesture { closeBanner() }
                     VStack {
@@ -246,32 +252,32 @@ struct HomeView: View {
             SyncCoordinator.shared.pushInBackground(item.store)
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: "circle")
-                    .font(.system(size: 22))
-                    .foregroundStyle(.white.opacity(0.65))
+                Image(systemName: "square")
+                    .font(.system(size: 19))
+                    .foregroundStyle(Color.hairlineStrong)
                 VStack(alignment: .leading, spacing: 1) {
                     HStack(spacing: 5) {
                         if item.isUrgent {
                             Image(systemName: "exclamationmark")
                                 .font(.system(size: 10, weight: .black))
-                                .foregroundStyle(.orange)
+                                .foregroundStyle(.white)
                                 .padding(.horizontal, 4)
                                 .padding(.vertical, 2)
-                                .background(.white.opacity(0.25), in: Capsule())
+                                .background(.orange, in: RoundedRectangle(cornerRadius: RCRadius.tag))
                         }
                         Text(item.name)
                             .font(.system(size: 14))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.ink)
                         if let emoji = storeEmoji {
                             Text(emoji)
                                 .font(.system(size: 11))
-                                .foregroundStyle(.white.opacity(0.6))
+                                .foregroundStyle(Color.textSecondary)
                         }
                     }
                     if !item.unit.isEmpty || item.quantityAmount != 1 {
                         Text(item.quantity + (!item.unit.isEmpty ? " \(item.unit)" : ""))
                             .font(.system(size: 11))
-                            .foregroundStyle(.white.opacity(0.55))
+                            .foregroundStyle(Color.textSecondary)
                     }
                 }
                 Spacer()
@@ -285,95 +291,87 @@ struct HomeView: View {
 
     private func openBanner() {
         guard totalPending > 0 else { return }
-        Haptics.impact(.medium)
-        withAnimation(.spring(response: 0.82, dampingFraction: 0.78)) { bannerExpanded = true }
+        Haptics.impact(.light)
+        withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) { bannerExpanded = true }
     }
 
     private func closeBanner() {
-        withAnimation(.spring(response: 0.68, dampingFraction: 0.88)) { bannerExpanded = false }
+        withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) { bannerExpanded = false }
     }
 
     private var headerCard: some View {
-        ZStack(alignment: .bottomLeading) {
-            Circle()
-                .fill(.white.opacity(0.07))
-                .frame(width: 140, height: 140)
-                .offset(x: 210, y: -30)
-            Circle()
-                .fill(.white.opacity(0.05))
-                .frame(width: 90, height: 90)
-                .offset(x: 260, y: 20)
-            VStack(alignment: .center, spacing: 4) {
+        VStack(spacing: 12) {
+            VStack(spacing: 11) {
                 Text("Restock")
-                    .font(.system(size: 26, weight: .bold))
-                    .foregroundStyle(.white)
-                if totalPending > 0 {
-                    HStack(spacing: 6) {
-                        Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
-                            .font(.system(size: 14))
-                            .foregroundStyle(.white.opacity(0.8))
-                        Image(systemName: "arrow.up.left.and.arrow.down.right")
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.5))
-                    }
-                } else {
-                    Text(String(localized: "home.header.empty"))
-                        .font(.system(size: 14))
-                        .foregroundStyle(.white.opacity(0.8))
-                }
+                    .font(.wordmark(31))
+                    .tracking(-0.3)
+                Rectangle()
+                    .fill(Color.accent.opacity(0.9))
+                    .frame(width: 36, height: 3)
             }
-            .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity)
-            .padding(20)
+            if totalPending > 0 {
+                Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
+                    .font(.system(size: 16))
+                    .foregroundStyle(Color.heroText.opacity(0.75))
+            } else {
+                Text(String(localized: "home.header.empty"))
+                    .font(.system(size: 16))
+                    .foregroundStyle(Color.heroText.opacity(0.75))
+            }
         }
-        .frame(height: 130)
+        .foregroundStyle(Color.heroText)
+        .multilineTextAlignment(.center)
+        .padding(.vertical, 31)
         .frame(maxWidth: .infinity)
-        .background(LinearGradient.brand)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(color: Color.brand.opacity(0.4), radius: 16, x: 0, y: 6)
+        .background(Color.heroSurface)
+        .clipShape(RoundedRectangle(cornerRadius: RCRadius.hero))
+        .heroShadow(colorScheme)
         .matchedGeometryEffect(id: "heroBanner", in: bannerNamespace, isSource: !bannerExpanded)
         .opacity(bannerExpanded ? 0 : 1)
-        .contentShape(RoundedRectangle(cornerRadius: 20))
+        .contentShape(RoundedRectangle(cornerRadius: RCRadius.hero))
         .onTapGesture { openBanner() }
     }
 
     private var expandedBannerCard: some View {
         VStack(spacing: 0) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(Color.hairlineStrong)
+                .frame(width: 32, height: 4)
+                .padding(.top, 10)
+
             // Header section
-            ZStack(alignment: .bottomLeading) {
-                Circle()
-                    .fill(.white.opacity(0.07))
-                    .frame(width: 130, height: 130)
-                    .offset(x: 230, y: -15)
-                Circle()
-                    .fill(.white.opacity(0.05))
-                    .frame(width: 85, height: 85)
-                    .offset(x: 275, y: 20)
-                VStack(alignment: .center, spacing: 4) {
-                    Text("Restock")
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(.white)
+            ZStack(alignment: .topTrailing) {
+                VStack(alignment: .center, spacing: 8) {
+                    VStack(spacing: 9) {
+                        Text("Restock")
+                            .font(.wordmark(25))
+                            .tracking(-0.25)
+                            .foregroundStyle(Color.ink)
+                        Rectangle()
+                            .fill(Color.accent)
+                            .frame(width: 32, height: 2.5)
+                    }
                     Text(String(format: String(localized: "home.header.items"), totalPending, activeStores.count))
-                        .font(.system(size: 13))
-                        .foregroundStyle(.white.opacity(0.8))
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color.textSecondary)
                 }
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
-                .padding(20)
+                .padding(.top, 10)
+                .padding(.bottom, 18)
                 Button { closeBanner() } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 26))
-                        .foregroundStyle(.white.opacity(0.7))
+                        .font(.system(size: 24))
+                        .foregroundStyle(Color.textSecondary.opacity(0.8))
                         .symbolRenderingMode(.hierarchical)
                 }
                 .buttonStyle(.plain)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .padding(14)
+                .padding(.horizontal, 14)
+                .padding(.top, 2)
             }
-            .frame(height: 110)
             .frame(maxWidth: .infinity)
 
-            Rectangle().fill(.white.opacity(0.2)).frame(height: 0.5)
+            Rectangle().fill(Color.hairline).frame(height: 1)
 
             // Items list
             ScrollView(showsIndicators: false) {
@@ -396,7 +394,7 @@ struct HomeView: View {
                             Spacer()
                             Text("\(allUrgent.count)")
                                 .font(.system(size: 11))
-                                .foregroundStyle(.white.opacity(0.5))
+                                .foregroundStyle(Color.textSecondary)
                         }
                         .padding(.horizontal, 18)
                         .padding(.top, 12)
@@ -404,7 +402,7 @@ struct HomeView: View {
                         ForEach(allUrgent, id: \.item.id) { entry in
                             bannerItemButton(entry.item, storeEmoji: entry.emoji)
                         }
-                        Rectangle().fill(.white.opacity(0.1)).frame(height: 0.5)
+                        Rectangle().fill(Color.hairline).frame(height: 1)
                             .padding(.horizontal, 18)
                             .padding(.top, 4)
                     }
@@ -412,22 +410,44 @@ struct HomeView: View {
                     ForEach(storesWithPendingItems) { store in
                         let nonUrgent = store.pendingItems.filter { !$0.isUrgent }
                         if !nonUrgent.isEmpty {
-                            HStack(spacing: 6) {
-                                Text(store.emoji).font(.system(size: 13))
-                                Text(store.name)
-                                    .font(.system(size: 12, weight: .semibold))
-                                    .foregroundStyle(.white.opacity(0.85))
-                                Spacer()
-                                Text("\(nonUrgent.count)")
-                                    .font(.system(size: 11))
-                                    .foregroundStyle(.white.opacity(0.5))
+                            Button {
+                                closeBanner()
+                                deepLinkStore = store
+                            } label: {
+                                HStack(spacing: 14) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: RCRadius.control)
+                                            .fill(Color.accentContainer)
+                                            .frame(width: 38, height: 38)
+                                        Image(systemName: store.iconSystemName)
+                                            .font(.system(size: 16, weight: .medium))
+                                            .foregroundStyle(Color.accent)
+                                    }
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(store.name)
+                                            .font(.system(size: 17, weight: .semibold))
+                                            .foregroundStyle(Color.ink)
+                                        Text(nonUrgent.prefix(3).map { $0.name }.joined(separator: ", "))
+                                            .font(.system(size: 14))
+                                            .foregroundStyle(Color.textSecondary)
+                                            .lineLimit(2)
+                                    }
+                                    Spacer()
+                                    VStack(alignment: .trailing, spacing: 0) {
+                                        Text("\(nonUrgent.count)")
+                                            .font(.system(size: 20, weight: .bold))
+                                            .foregroundStyle(Color.accent)
+                                        Text("Artikel")
+                                            .font(.system(size: 13, weight: .semibold))
+                                            .foregroundStyle(Color.accent)
+                                    }
+                                }
+                                .padding(.horizontal, 18)
+                                .padding(.vertical, 14)
+                                .contentShape(Rectangle())
                             }
-                            .padding(.horizontal, 18)
-                            .padding(.top, 12)
-                            .padding(.bottom, 2)
-                            ForEach(nonUrgent) { item in
-                                bannerItemButton(item, storeEmoji: nil)
-                            }
+                            .buttonStyle(.plain)
+                            Rectangle().fill(Color.hairline).frame(height: 1).padding(.horizontal, 18)
                         }
                     }
 
@@ -436,14 +456,14 @@ struct HomeView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "tray")
                                 .font(.system(size: 12))
-                                .foregroundStyle(.white.opacity(0.85))
+                                .foregroundStyle(Color.ink)
                             Text("Ohne Laden")
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(.white.opacity(0.85))
+                                .foregroundStyle(Color.ink)
                             Spacer()
                             Text("\(storelessRegular.count)")
                                 .font(.system(size: 11))
-                                .foregroundStyle(.white.opacity(0.5))
+                                .foregroundStyle(Color.textSecondary)
                         }
                         .padding(.horizontal, 18)
                         .padding(.top, 12)
@@ -456,28 +476,24 @@ struct HomeView: View {
             }
             .frame(maxHeight: 300)
 
-            Rectangle().fill(.white.opacity(0.15)).frame(height: 0.5)
+            Rectangle().fill(Color.hairline).frame(height: 1)
 
             // Footer
             Button {
                 closeBanner()
                 showAllItems = true
             } label: {
-                HStack(spacing: 4) {
-                    Text("Vollständige Liste")
-                        .font(.system(size: 13, weight: .medium))
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 11, weight: .semibold))
-                }
-                .foregroundStyle(.white.opacity(0.7))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
+                Text("Einkauf starten")
+                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.restockPrimary)
+            .padding(.horizontal, 18)
+            .padding(.top, 14)
+            .padding(.bottom, 18)
         }
-        .background(LinearGradient.brand)
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: Color.brand.opacity(0.55), radius: 28, x: 0, y: 14)
+        .background(Color.surface)
+        .clipShape(RoundedRectangle(cornerRadius: RCRadius.sheet))
+        .overlayShadow(colorScheme)
     }
 
     // MARK: - Quick add
@@ -500,9 +516,9 @@ struct HomeView: View {
         VStack(spacing: 6) {
             HStack(spacing: 10) {
                 HStack(spacing: 10) {
-                    Image(systemName: quickAddSucceeded ? "checkmark.circle.fill" : "plus.circle.fill")
-                        .foregroundStyle(quickAddSucceeded ? .green : .blue)
-                        .font(.system(size: 18))
+                    Image(systemName: quickAddSucceeded ? "checkmark" : "plus")
+                        .foregroundStyle(Color.accent)
+                        .font(.system(size: 17, weight: .semibold))
                         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: quickAddSucceeded)
 
                     TextField(String(localized: "home.quickadd.placeholder"), text: $addItemText)
@@ -517,22 +533,22 @@ struct HomeView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 12)
-                .background(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 15)
+                .background(Color.surface)
+                .clipShape(RoundedRectangle(cornerRadius: RCRadius.card))
+                .overlay(RoundedRectangle(cornerRadius: RCRadius.card).strokeBorder(Color.hairline))
 
                 Button {
                     Haptics.impact(.light)
                     showRecipeImport = true
                 } label: {
-                    Image(systemName: "camera.viewfinder")
-                        .font(.system(size: 18))
-                        .foregroundStyle(.white)
-                        .frame(width: 46, height: 46)
-                        .background(LinearGradient.brand)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                    Image(systemName: "viewfinder")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundStyle(Color.accent)
+                        .frame(width: 54, height: 54)
+                        .background(Color.accentContainer)
+                        .clipShape(RoundedRectangle(cornerRadius: RCRadius.control))
                 }
             }
 
@@ -548,10 +564,11 @@ struct HomeView: View {
                             } label: {
                                 Text(chip)
                                     .font(.system(size: 13, weight: .medium))
-                                    .foregroundStyle(.blue)
+                                    .foregroundStyle(Color.textSecondary)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
-                                    .background(Color.blue.opacity(0.1), in: Capsule())
+                                    .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.tag))
+                                    .overlay(RoundedRectangle(cornerRadius: RCRadius.tag).strokeBorder(Color.hairline))
                             }
                             .buttonStyle(.plain)
                         }
@@ -571,10 +588,10 @@ struct HomeView: View {
                                 : (parsed.quantityAmount != 1 ? "\(parsed.quantity) \(parsed.unit)" : parsed.unit)
                         )
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.accent)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
-                        .background(Color.blue, in: Capsule())
+                        .overlay(RoundedRectangle(cornerRadius: RCRadius.tag).strokeBorder(Color.accent.opacity(0.4)))
                     }
 
                     // Item name
@@ -598,12 +615,8 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
-                .background(Color.blue.opacity(0.08))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.blue.opacity(0.18), lineWidth: 1)
-                )
+                .background(Color.accentContainer)
+                .clipShape(RoundedRectangle(cornerRadius: RCRadius.control))
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
@@ -613,11 +626,19 @@ struct HomeView: View {
     // MARK: - Seasonal banner
 
     private var seasonalBanner: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Label("\(SeasonalService.currentSeason)stipps", systemImage: SeasonalService.seasonIcon)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.green)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 9)
+                        .fill(Color.accent)
+                        .frame(width: 28, height: 28)
+                    Image(systemName: SeasonalService.seasonIcon)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Color.canvas)
+                }
+                Text("\(SeasonalService.currentSeason)stipps")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(Color.ink)
                 Spacer()
                 Button("Alle hinzufügen") {
                     var touchedStores: [Store?] = []
@@ -630,8 +651,8 @@ struct HomeView: View {
                     Haptics.success()
                     SyncCoordinator.shared.pushInBackground(touchedStores)
                 }
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.green)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(Color.accent)
             }
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
@@ -652,8 +673,8 @@ struct HomeView: View {
                             }
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
-                            .background(Color.green.opacity(0.1), in: RoundedRectangle(cornerRadius: 10))
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.green.opacity(0.25), lineWidth: 1))
+                            .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.control))
+                            .overlay(RoundedRectangle(cornerRadius: RCRadius.control).strokeBorder(Color.hairline))
                         }
                         .buttonStyle(.plain)
                     }
@@ -661,9 +682,8 @@ struct HomeView: View {
             }
         }
         .padding(14)
-        .background(Color.green.opacity(0.07))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.green.opacity(0.2), lineWidth: 1))
+        .background(Color.accentContainer)
+        .clipShape(RoundedRectangle(cornerRadius: RCRadius.card))
     }
 
     // MARK: - Premium teaser
@@ -674,34 +694,34 @@ struct HomeView: View {
             showPaywall = true
             Haptics.impact(.light)
         } label: {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(color)
+            HStack(alignment: .top, spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: RCRadius.control)
+                        .fill(color)
+                        .frame(width: 34, height: 34)
+                    Image(systemName: icon)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(Color.canvas)
+                }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.primary)
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundStyle(Color.ink)
                     Text(subtitle)
-                        .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color.textSecondary)
                 }
                 Spacer()
-                HStack(spacing: 4) {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 10, weight: .semibold))
-                    Text("Pro")
-                        .font(.system(size: 12, weight: .bold))
-                }
-                .foregroundStyle(.white)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(LinearGradient.brand, in: Capsule())
+                Text("PRO")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(color)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .overlay(RoundedRectangle(cornerRadius: RCRadius.tag).strokeBorder(color))
             }
-            .padding(14)
-            .background(color.opacity(0.07))
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(color.opacity(0.2), lineWidth: 1))
+            .padding(16)
+            .background(color.opacity(0.13))
+            .clipShape(RoundedRectangle(cornerRadius: RCRadius.card))
         }
         .buttonStyle(.plain)
     }
@@ -709,56 +729,65 @@ struct HomeView: View {
     // MARK: - Replenishment banner
 
     private var replenishmentBanner: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Label(String(localized: "home.replenish.title"), systemImage: "arrow.clockwise.circle.fill")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.orange)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top) {
+                HStack(alignment: .top, spacing: 8) {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.amber)
+                        .frame(width: 8, height: 8)
+                        .padding(.top, 6)
+                    Text(String(localized: "home.replenish.title"))
+                        .font(.system(size: 19, weight: .bold))
+                        .foregroundStyle(Color.amber)
+                }
                 Spacer()
                 Button(String(localized: "home.replenish.addall")) {
                     addDueSoonToList()
                     Haptics.success()
                 }
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.orange)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(Color.amber)
+                .multilineTextAlignment(.trailing)
             }
 
             ForEach(dueSoonItems, id: \.itemName) { pattern in
-                HStack(spacing: 8) {
-                    Circle()
-                        .fill(pattern.isOverdue ? Color.destructive : Color.warning)
-                        .frame(width: 7, height: 7)
+                HStack(spacing: 10) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: RCRadius.tag)
+                            .fill(pattern.isOverdue ? Color.danger : Color.amber)
+                            .frame(width: 26, height: 26)
+                        Button {
+                            addSingleDueItem(pattern)
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.system(size: 13, weight: .bold))
+                                .foregroundStyle(Color.canvas)
+                        }
+                        .buttonStyle(.plain)
+                    }
                     Text(pattern.itemName)
-                        .font(.system(size: 14))
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(Color.ink)
                     Spacer()
                     Text(pattern.isOverdue
                          ? String(localized: "replenish.overdue")
                          : String(format: String(localized: "replenish.in.days"), pattern.daysUntilNeeded))
                         .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
-                    Button {
-                        addSingleDueItem(pattern)
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 20))
-                            .foregroundStyle(.orange)
-                    }
-                    .buttonStyle(.plain)
+                        .foregroundStyle(Color.textSecondary)
                     Button {
                         dismissDueItem(pattern)
                     } label: {
                         Image(systemName: "xmark.circle")
                             .font(.system(size: 18))
-                            .foregroundStyle(.secondary.opacity(0.7))
+                            .foregroundStyle(Color.textSecondary.opacity(0.7))
                     }
                     .buttonStyle(.plain)
                 }
             }
         }
-        .padding(14)
-        .background(Color.warning.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.warning.opacity(0.3), lineWidth: 1))
+        .padding(16)
+        .background(Color.amber.opacity(0.16))
+        .clipShape(RoundedRectangle(cornerRadius: RCRadius.card))
     }
 
     // MARK: - Store grid / Category list
@@ -767,24 +796,16 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
                 Text(listMode ? "Alle Artikel" : String(localized: "home.stores.title"))
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.system(size: 13, weight: .semibold))
+                    .tracking(0.8)
+                    .textCase(.uppercase)
+                    .foregroundStyle(Color.textSecondary)
                 Spacer()
-                Button {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { listMode.toggle() }
-                    Haptics.impact(.light)
-                } label: {
-                    Image(systemName: listMode ? "rectangle.grid.2x2" : "list.bullet")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 32, height: 32)
-                        .background(Color(.systemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
                 if !listMode {
                     Button { showStoreSetup = true } label: {
                         Text("Verwalten")
-                            .font(.system(size: 14))
-                            .foregroundStyle(.secondary)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(Color.accent)
                     }
                 }
             }
@@ -793,6 +814,8 @@ struct HomeView: View {
                 categoryListView
             } else if activeStores.isEmpty {
                 emptyStoresView
+            } else if storeViewMode == .list {
+                storeListView
             } else {
                 LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(orderedStores) { store in
@@ -855,6 +878,123 @@ struct HomeView: View {
         }
     }
 
+    // MARK: - Store list (V5 — Läden-Ansicht "Liste")
+
+    private var storeListView: some View {
+        VStack(spacing: 12) {
+            VStack(spacing: 0) {
+                ForEach(Array(orderedStores.enumerated()), id: \.element.id) { index, store in
+                    NavigationLink {
+                        StoreDetailView(store: store)
+                    } label: {
+                        storeListRow(store)
+                            .opacity(draggingStoreID == store.id ? 0.4 : 1.0)
+                    }
+                    .buttonStyle(.plain)
+                    .contextMenu {
+                        Button {
+                            withAnimation { store.isPaused.toggle() }
+                            Haptics.impact(.light)
+                        } label: {
+                            Label(store.isPaused ? "Fortsetzen" : "Pausieren",
+                                  systemImage: store.isPaused ? "play.circle" : "moon.circle")
+                        }
+                        Button(role: .destructive) {
+                            storeToDelete = store
+                        } label: {
+                            Label("Löschen", systemImage: "trash")
+                        }
+                        Button {
+                            store.isActive = false
+                            Haptics.impact(.light)
+                        } label: {
+                            Label("Archivieren", systemImage: "archivebox")
+                        }
+                    }
+                    .draggable(StoreDragPayload(storeID: store.id)) {
+                        storeListRow(store)
+                            .frame(width: 300)
+                            .background(Color.surface)
+                            .onAppear { draggingStoreID = store.id }
+                            .onDisappear { draggingStoreID = nil }
+                    }
+                    .dropDestination(for: StoreDragPayload.self) { items, _ in
+                        defer { draggingStoreID = nil }
+                        guard let payload = items.first else { return false }
+                        moveStore(draggedID: payload.storeID, before: store.id)
+                        return true
+                    } isTargeted: { _ in }
+
+                    if index < orderedStores.count - 1 {
+                        Rectangle().fill(Color.hairline).frame(height: 1)
+                            .padding(.leading, 52)
+                    }
+                }
+            }
+            .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.card))
+            .overlay(RoundedRectangle(cornerRadius: RCRadius.card).strokeBorder(Color.hairline))
+
+            addStoreCard
+            joinListCard
+        }
+        .dropDestination(for: StoreDragPayload.self) { _, _ in
+            draggingStoreID = nil
+            return false
+        } isTargeted: { _ in }
+    }
+
+    private func storeListRow(_ store: Store) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: store.iconSystemName)
+                .font(.system(size: 18, weight: .medium))
+                .foregroundStyle(Color.ink)
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text(store.name)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(Color.ink)
+                    if store.pendingItems.count > 0 {
+                        Text("· \(store.pendingItems.count)")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Color.accent)
+                    }
+                    if store.shareID != nil {
+                        Image(systemName: "person.2.fill")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(Color.accent)
+                    }
+                    if store.isPaused {
+                        Image(systemName: "moon.fill")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(Color.textSecondary)
+                    }
+                }
+                if store.pendingItems.isEmpty {
+                    Text("\(VisitFrequency.closest(to: store.visitsPerWeek).label) · \(String(localized: "store.empty"))")
+                        .font(.system(size: 14))
+                        .foregroundStyle(Color.textSecondary)
+                        .lineLimit(1)
+                } else {
+                    let freqLabel = VisitFrequency.closest(to: store.visitsPerWeek).label
+                    let preview = store.pendingItems.prefix(2).map { $0.name }.joined(separator: ", ")
+                    Text("\(freqLabel) · \(preview)\(store.pendingItems.count > 2 ? "…" : "")")
+                        .font(.system(size: 14))
+                        .foregroundStyle(Color.textSecondary)
+                        .lineLimit(1)
+                }
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Color.textSecondary.opacity(0.6))
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 14)
+        .opacity(store.isPaused ? 0.55 : 1.0)
+        .contentShape(Rectangle())
+    }
+
     // MARK: - Category list
 
     private var allPendingItems: [ShoppingItem] {
@@ -887,7 +1027,7 @@ struct HomeView: View {
             VStack(spacing: 12) {
                 Image(systemName: "checkmark.circle")
                     .font(.system(size: 44))
-                    .foregroundStyle(Color.brand.opacity(0.5))
+                    .foregroundStyle(Color.accent.opacity(0.5))
                 Text("Keine offenen Artikel")
                     .font(.headline)
                     .foregroundStyle(.secondary)
@@ -916,9 +1056,8 @@ struct HomeView: View {
                             categoryItemRow(item)
                         }
                     }
-                    .background(Color(.systemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
+                    .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.card))
+                    .overlay(RoundedRectangle(cornerRadius: RCRadius.card).strokeBorder(Color.hairline))
                 }
             }
         }
@@ -932,9 +1071,9 @@ struct HomeView: View {
             SyncCoordinator.shared.pushInBackground(item.store)
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: "circle")
-                    .font(.system(size: 20))
-                    .foregroundStyle(Color.brand.opacity(0.45))
+                Image(systemName: "square")
+                    .font(.system(size: 18))
+                    .foregroundStyle(Color.hairlineStrong)
                 VStack(alignment: .leading, spacing: 1) {
                     Text(item.name)
                         .font(.system(size: 15))
@@ -963,24 +1102,28 @@ struct HomeView: View {
             showAddStore = true
             Haptics.impact(.light)
         } label: {
-            VStack(spacing: 8) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.system(size: 28, weight: .medium))
-                    .foregroundStyle(Color.brand.opacity(0.6))
+            VStack(spacing: 10) {
+                Image(systemName: "plus")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(Color.accent)
+                    .frame(width: 34, height: 34)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: RCRadius.control)
+                            .strokeBorder(Color.hairlineStrong, lineWidth: 1)
+                    )
                 Text("Laden hinzufügen")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(Color.brand.opacity(0.7))
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.textSecondary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 90)
-            .background(Color.brand.opacity(0.06))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(.vertical, 22)
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: RCRadius.card)
                     .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
-                    .foregroundStyle(Color.brand.opacity(0.25))
+                    .foregroundStyle(Color.hairlineStrong)
             )
+            .contentShape(RoundedRectangle(cornerRadius: RCRadius.card))
         }
         .buttonStyle(.plain)
     }
@@ -990,24 +1133,28 @@ struct HomeView: View {
             showJoinStore = true
             Haptics.impact(.light)
         } label: {
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 Image(systemName: "person.badge.plus")
-                    .font(.system(size: 28, weight: .medium))
-                    .foregroundStyle(Color.indigo.opacity(0.7))
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(Color.accent)
+                    .frame(width: 34, height: 34)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: RCRadius.control)
+                            .strokeBorder(Color.hairlineStrong, lineWidth: 1)
+                    )
                 Text("Geteilter Liste beitreten")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(Color.indigo.opacity(0.8))
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.textSecondary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 90)
-            .background(Color.indigo.opacity(0.06))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(.vertical, 22)
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: RCRadius.card)
                     .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
-                    .foregroundStyle(Color.indigo.opacity(0.25))
+                    .foregroundStyle(Color.hairlineStrong)
             )
+            .contentShape(RoundedRectangle(cornerRadius: RCRadius.card))
         }
         .buttonStyle(.plain)
     }
@@ -1016,7 +1163,7 @@ struct HomeView: View {
         VStack(spacing: 16) {
             Image(systemName: "storefront")
                 .font(.system(size: 44))
-                .foregroundStyle(Color.brand.opacity(0.5))
+                .foregroundStyle(Color.accent.opacity(0.5))
             Text(String(localized: "home.stores.empty.title"))
                 .font(.headline)
                 .foregroundStyle(.secondary)
@@ -1036,14 +1183,19 @@ struct HomeView: View {
         .cardStyle()
     }
 
-    // MARK: - Toolbar
+    // MARK: - Top bar
+    //
+    // Eigene Leiste statt System-Toolbar: iOS 26 zerlegt gruppierte Toolbar-Buttons in einzelne
+    // Liquid-Glass-Elemente — hier behalten wir die Mockup-Chips (3er-Gruppe links, ☰ und ＋
+    // als getrennte Chips rechts) exakt unter Kontrolle. Positionen/Funktionen unverändert.
 
-    @ToolbarContentBuilder
-    private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            HStack(spacing: 16) {
+    private var customTopBar: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 24) {
                 Button { showSettings = true } label: {
-                    Image(systemName: "gear").foregroundStyle(.primary)
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 17, weight: .regular))
+                        .foregroundStyle(Color.ink)
                 }
                 Button {
                     if premium.hasPremiumAccess {
@@ -1053,7 +1205,9 @@ struct HomeView: View {
                         showPaywall = true
                     }
                 } label: {
-                    Image(systemName: "fork.knife").foregroundStyle(.primary)
+                    Image(systemName: "fork.knife")
+                        .font(.system(size: 17, weight: .regular))
+                        .foregroundStyle(Color.ink)
                 }
                 Button {
                     if premium.hasPremiumAccess {
@@ -1063,28 +1217,42 @@ struct HomeView: View {
                         showPaywall = true
                     }
                 } label: {
-                    Image(systemName: "chart.line.uptrend.xyaxis").foregroundStyle(.primary)
+                    Image(systemName: "chart.bar")
+                        .font(.system(size: 17, weight: .regular))
+                        .foregroundStyle(Color.ink)
                 }
             }
-        }
-        ToolbarItem(placement: .navigationBarTrailing) {
-            HStack(spacing: 16) {
-                Button {
-                    Haptics.impact(.light)
-                    showAllItems = true
-                } label: {
-                    Image(systemName: "list.bullet.rectangle")
-                        .foregroundStyle(.primary)
-                }
-                Button {
-                    Haptics.impact(.light)
-                    showAddItem = true
-                } label: {
-                    Image(systemName: "plus")
-                        .fontWeight(.semibold)
-                }
+            .buttonStyle(.plain)
+            .toolbarChip()
+
+            Spacer()
+
+            Button {
+                Haptics.impact(.light)
+                showAllItems = true
+            } label: {
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundStyle(Color.ink)
+                    .toolbarChip()
             }
+            .buttonStyle(.plain)
+
+            Button {
+                Haptics.impact(.light)
+                showAddItem = true
+            } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 18, weight: .regular))
+                    .foregroundStyle(Color.ink)
+                    .toolbarChip()
+            }
+            .buttonStyle(.plain)
         }
+        .padding(.horizontal, 16)
+        .padding(.top, 6)
+        .padding(.bottom, 10)
+        .background(Color.canvas)
     }
 
     // MARK: - Logic

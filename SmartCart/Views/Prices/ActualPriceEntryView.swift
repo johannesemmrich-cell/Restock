@@ -99,18 +99,21 @@ struct ActualPriceEntryView: View {
             .navigationTitle("Preis eintragen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Speichern") { save() }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
+                        .buttonStyle(.plain)
+}
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { save() } label: { Text("Speichern").toolbarChip(prominent: true) }
+                        .buttonStyle(.plain)
+                        .disabled(!canSave)
                         .fontWeight(.semibold)
                         .disabled(!canSave)
                 }
             }
         }
         .devFeedback(context: "Preis eintragen")
-    }
+}
 
     // MARK: - Logic
 

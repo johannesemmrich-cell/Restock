@@ -6,93 +6,73 @@ struct StoreCard: View {
 
     private var pendingCount: Int { store.pendingItems.count }
     private var freq: VisitFrequency { VisitFrequency.closest(to: store.visitsPerWeek) }
-
     private var isShared: Bool { store.shareID != nil }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Colored header band
-            ZStack(alignment: .topTrailing) {
-                HStack(alignment: .center) {
-                    Text(store.emoji)
-                        .font(.system(size: 34))
-                    Spacer()
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 14)
-                .background(store.color.gradient.opacity(colorScheme == .dark ? 0.25 : 0.15))
-
+            ZStack(alignment: .bottomTrailing) {
+                RoundedRectangle(cornerRadius: RCRadius.control)
+                    .fill(Color.accentContainer)
+                    .frame(width: 40, height: 40)
+                Image(systemName: store.iconSystemName)
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundStyle(Color.accent)
+                    .frame(width: 40, height: 40)
                 if store.isPaused {
                     Image(systemName: "moon.fill")
+                        .font(.system(size: 8, weight: .semibold))
+                        .foregroundStyle(Color.canvas)
+                        .padding(3)
+                        .background(Color.accent, in: Circle())
+                        .offset(x: 4, y: 4)
+                }
+            }
+            .padding(.bottom, 16)
+
+            HStack(spacing: 6) {
+                Text(store.name)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(Color.ink)
+                    .lineLimit(1)
+                if pendingCount > 0 {
+                    Text("· \(pendingCount)")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(Color.accent)
+                }
+                if isShared {
+                    Image(systemName: "person.2.fill")
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .padding(6)
-                        .background(Color(.systemGray3), in: Circle())
-                        .padding(10)
-                } else if pendingCount > 0 {
-                    Text("\(pendingCount)")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 3)
-                        .background(store.color, in: Capsule())
-                        .padding(10)
+                        .foregroundStyle(Color.accent)
                 }
             }
 
-            // Info section
-            VStack(alignment: .leading, spacing: 5) {
-                HStack(alignment: .top) {
-                    Text(store.name)
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(.primary)
-                    if isShared {
-                        Image(systemName: "person.2.fill")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(store.color)
-                    }
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(Color(.systemGray3))
-                }
+            Text(freq.label)
+                .font(.system(size: 13.5))
+                .foregroundStyle(Color.textSecondary)
+                .padding(.top, 3)
 
-                Text(freq.label)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-
+            Group {
                 if pendingCount > 0 {
                     let preview = store.pendingItems.prefix(2).map { $0.name }.joined(separator: ", ")
-                    Text(preview + (pendingCount > 2 ? " +\(pendingCount - 2)" : ""))
-                        .font(.system(size: 12))
-                        .foregroundStyle(store.color)
-                        .lineLimit(1)
+                    Text(preview + (pendingCount > 2 ? "…" : ""))
+                        .foregroundStyle(Color.accent)
                 } else {
                     Text(String(localized: "store.empty"))
-                        .font(.system(size: 12))
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(Color.textSecondary.opacity(0.7))
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
+            .font(.system(size: 13.5))
+            .lineLimit(1)
+            .padding(.top, 6)
         }
-        .background(Color.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.card))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(
-                    store.isPaused ? Color(.systemGray4)
-                        : store.color.opacity(colorScheme == .dark
-                            ? (pendingCount > 0 ? 0.5 : 0.25)
-                            : (pendingCount > 0 ? 0.3 : 0.12)),
-                    lineWidth: 1.5
-                )
+            RoundedRectangle(cornerRadius: RCRadius.card)
+                .strokeBorder(Color.hairline)
         )
-        .shadow(
-            color: store.color.opacity(store.isPaused || colorScheme == .dark ? 0 : (pendingCount > 0 ? 0.12 : 0.04)),
-            radius: 10, x: 0, y: 4
-        )
-        .opacity(store.isPaused ? 0.45 : 1.0)
-        .contentShape(RoundedRectangle(cornerRadius: 16))
+        .opacity(store.isPaused ? 0.55 : 1.0)
+        .contentShape(RoundedRectangle(cornerRadius: RCRadius.card))
     }
 }

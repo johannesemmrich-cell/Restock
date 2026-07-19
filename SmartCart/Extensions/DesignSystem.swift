@@ -1,28 +1,59 @@
 import SwiftUI
 
-// MARK: - Brand colors
+// MARK: - Design tokens ("Vorratskammer statt Tech-Demo")
+//
+// Alle Farben kommen aus Assets.xcassets Color Sets (Any + Dark), keine Hex-Werte hier.
+// `accent` ist die einzige Markenfarbe (Oliv, identisch zur Restock-Markenfarbe der Website);
+// `amber` ist ausschließlich für Nachkauf-Dringlichkeit, `danger` für destruktive Aktionen.
 
 extension Color {
-    static let brand        = Color(hex: "#007AFF")!
-    static let brandDark    = Color(hex: "#0047D8")!
-    static let success      = Color(hex: "#34C759")!
-    static let warning      = Color(hex: "#FF9500")!
-    static let destructive  = Color(hex: "#FF3B30")!
+    static let canvas          = Color("RCCanvas")
+    static let surface         = Color("RCSurface")
+    static let ink             = Color("RCInk")
+    static let textSecondary   = Color("RCTextSecondary")
+    static let hairline        = Color("RCHairline")
+    static let hairlineStrong  = Color("RCHairlineStrong")
+    static let accent          = Color("RCAccent")
+    static let accentContainer = Color("RCAccentContainer")
+    static let heroSurface     = Color("RCHeroSurface")
+    static let heroText        = Color("RCHeroText")
+    static let buttonPrimary   = Color("RCButtonPrimary")
+    static let onButton        = Color("RCOnButton")
+    static let amber           = Color("RCAmber")
+    static let danger          = Color("RCDanger")
+
+    // Beibehaltene Namen für minimale Call-Site-Änderungen an bestehenden Stellen, die
+    // semantisch "Warnung"/"destruktiv" meinen (Nachkauf-Dringlichkeit / Löschen) — zeigen
+    // jetzt auf die neuen Tokens statt auf die alten Blau-Verlauf-Ära-Hex-Werte.
+    static let warning     = amber
+    static let destructive = danger
 }
 
-// MARK: - Gradients
+// MARK: - Radien
 
-extension LinearGradient {
-    static let brand = LinearGradient(
-        colors: [Color(hex: "#0A7CFF")!, Color(hex: "#0047D8")!],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-    static let success = LinearGradient(
-        colors: [Color(hex: "#34C759")!, Color(hex: "#248A3D")!],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+enum RCRadius {
+    static let tag: CGFloat = 6
+    static let control: CGFloat = 10
+    static let card: CGFloat = 14
+    static let hero: CGFloat = 20
+    static let sheet: CGFloat = 24
+}
+
+// MARK: - Wordmark
+
+extension Font {
+    /// Clash Display Semibold — ausschließlich für den Schriftzug "Restock" im Banner (Spec §2).
+    /// Fällt automatisch auf SF Pro Semibold zurück, falls die Schriftdatei nicht im Bundle
+    /// registriert ist (z. B. `xcodegen generate` noch nicht gelaufen).
+    static func wordmark(_ size: CGFloat) -> Font {
+        .custom("ClashDisplay-Semibold", size: size, relativeTo: .title)
+    }
+}
+
+// MARK: - Läden-Ansicht (V5) / Sortierung (V6)
+
+enum StoreViewMode: String {
+    case cards, list
 }
 
 // MARK: - Visit frequency
@@ -58,23 +89,130 @@ enum VisitFrequency: Double, CaseIterable, Identifiable {
 }
 
 // MARK: - Card style
+//
+// Ebene 0 (Spec §4): Flächen im Seitenfluss bekommen eine Haarlinie, keinen Schatten. Schatten
+// ist reserviert für den Restock-Banner (Ebene 1) und aufgeklappte Karten/Sheets (Ebene 2) —
+// die setzen ihren Schatten direkt an ihrer eigenen View, nicht über diesen Modifier.
 
 struct CardModifier: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
     var padding: CGFloat = 16
 
     func body(content: Content) -> some View {
         content
             .padding(padding)
-            .background(Color.cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: Color(.label).opacity(colorScheme == .dark ? 0.12 : 0.07), radius: 10, x: 0, y: 3)
+            .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: RCRadius.card)
+                    .strokeBorder(Color.hairline)
+            )
     }
 }
 
 extension View {
     func cardStyle(padding: CGFloat = 16) -> some View {
         modifier(CardModifier(padding: padding))
+    }
+}
+
+// MARK: - Primary button style
+//
+// Ink auf Papier (Light) / Bone auf Tinte (Dark) — bewusst NICHT die Akzentfarbe, kein Capsule.
+
+struct PrimaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundStyle(Color.onButton)
+            .padding(.vertical, 15)
+            .frame(maxWidth: .infinity)
+            .background(Color.buttonPrimary, in: RoundedRectangle(cornerRadius: 13))
+            .opacity(configuration.isPressed ? 0.85 : 1)
+    }
+}
+
+extension ButtonStyle where Self == PrimaryButtonStyle {
+    static var restockPrimary: PrimaryButtonStyle { PrimaryButtonStyle() }
+}
+
+// MARK: - Toolbar chips
+//
+// Eckige Chips (Radius 11, Surface + Haarlinie bzw. Tinte/Bone für die Primäraktion) statt der
+// runden System-Capsules. `ChipToolbarItem` blendet dafür auf iOS 26 den automatischen
+// Liquid-Glass-Hintergrund des Items aus; auf iOS 18 bleibt das Systemverhalten bestehen.
+
+struct ToolbarChipModifier: ViewModifier {
+    var prominent = false
+
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 15, weight: .semibold))
+            .foregroundStyle(prominent ? Color.onButton : Color.ink)
+            .padding(.horizontal, 14)
+            .frame(minWidth: 40, minHeight: 38)
+            .background(
+                prominent ? Color.buttonPrimary : Color.surface,
+                in: RoundedRectangle(cornerRadius: 11)
+            )
+            .overlay {
+                if !prominent {
+                    RoundedRectangle(cornerRadius: 11).strokeBorder(Color.hairline)
+                }
+            }
+            .contentShape(RoundedRectangle(cornerRadius: 11))
+    }
+}
+
+extension View {
+    func toolbarChip(prominent: Bool = false) -> some View {
+        modifier(ToolbarChipModifier(prominent: prominent))
+    }
+}
+
+/// ToolbarItem ohne System-Glass-Hintergrund, damit `toolbarChip` die Form bestimmt.
+struct ChipToolbarItem<L: View>: ToolbarContent {
+    let placement: ToolbarItemPlacement
+    @ViewBuilder let label: () -> L
+
+    init(placement: ToolbarItemPlacement, @ViewBuilder label: @escaping () -> L) {
+        self.placement = placement
+        self.label = label
+    }
+
+    var body: some ToolbarContent {
+        if #available(iOS 26.0, *) {
+            ToolbarItem(placement: placement) { label() }
+                .sharedBackgroundVisibility(.hidden)
+        } else {
+            ToolbarItem(placement: placement) { label() }
+        }
+    }
+}
+
+// MARK: - Elevation (Spec §4)
+//
+// Nur zwei Stellen in der App bekommen überhaupt einen Schatten: der Restock-Banner
+// (eingeklappt, Ebene 1) und die aufgeklappte Detailkarte/Sheets (Ebene 2). Alles andere
+// bekommt eine Haarlinie (siehe CardModifier oben).
+
+extension View {
+    /// Schatten-Ebene 1 — ausschließlich der eingeklappte Restock-Banner.
+    @ViewBuilder
+    func heroShadow(_ colorScheme: ColorScheme) -> some View {
+        if colorScheme == .dark {
+            shadow(color: .black.opacity(0.45), radius: 15, x: 0, y: 10)
+        } else {
+            shadow(color: .black.opacity(0.14), radius: 12, x: 0, y: 8)
+        }
+    }
+
+    /// Schatten-Ebene 2 — aufgeklappte Restock-Detailkarte, Sheets, Popover.
+    @ViewBuilder
+    func overlayShadow(_ colorScheme: ColorScheme) -> some View {
+        if colorScheme == .dark {
+            shadow(color: .black.opacity(0.6), radius: 30, x: 0, y: 24)
+        } else {
+            shadow(color: .black.opacity(0.25), radius: 30, x: 0, y: 24)
+        }
     }
 }
 

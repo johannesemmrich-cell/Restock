@@ -26,7 +26,7 @@ struct LegalView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(20)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.canvas)
         .navigationTitle(document.rawValue)
         .navigationBarTitleDisplayMode(.inline)
     }

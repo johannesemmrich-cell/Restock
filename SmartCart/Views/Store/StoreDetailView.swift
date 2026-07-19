@@ -4,6 +4,7 @@ import SwiftData
 struct StoreDetailView: View {
     @Bindable var store: Store
     @Environment(\.modelContext) private var context
+    @Environment(\.colorScheme) private var colorScheme
 
     // Not read directly — its only job is to make SwiftUI re-invoke `body` (and thus re-derive
     // `store.pendingItems`, which internally consults this same key) the moment the user flips
@@ -62,6 +63,12 @@ struct StoreDetailView: View {
         // still sits in its old category section here.
         let _ = SyncCoordinator.shared.applyGeneration
         List {
+            Section {
+                storeHero
+            }
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
+
             if syncFailed && store.shareID != nil {
                 Section {
                     Button {
@@ -113,13 +120,13 @@ struct StoreDetailView: View {
                                     .font(.system(size: 12, weight: .semibold))
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 8).padding(.vertical, 3)
-                                    .background(store.color, in: Capsule())
+                                    .background(store.color, in: RoundedRectangle(cornerRadius: RCRadius.tag))
                             } else if let hint = historicQuantityHint(for: parsed.name) {
                                 Text(hint)
                                     .font(.system(size: 12, weight: .semibold))
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 8).padding(.vertical, 3)
-                                    .background(store.color.opacity(0.7), in: Capsule())
+                                    .background(store.color.opacity(0.7), in: RoundedRectangle(cornerRadius: RCRadius.tag))
                             }
                             Text(parsed.name)
                                 .font(.system(size: 13, weight: .medium))
@@ -150,6 +157,7 @@ struct StoreDetailView: View {
                     .listRowBackground(Color.clear)
                 }
             }
+            .listRowBackground(Color.surface)
             .animation(.easeInOut(duration: 0.15), value: quickAddParsed?.name)
 
             Section {
@@ -158,7 +166,7 @@ struct StoreDetailView: View {
                 }
                 frequencyRow
             }
-            .listRowBackground(Color.cardBackground)
+            .listRowBackground(Color.surface)
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
 
             let urgentItems = store.pendingItems.filter { $0.isUrgent }
@@ -173,8 +181,9 @@ struct StoreDetailView: View {
                     Label("Dringend", systemImage: "exclamationmark.circle.fill")
                         .foregroundStyle(.orange)
                         .font(.system(size: 12, weight: .semibold))
-                        .textCase(nil)
+                        .tracking(0.6)
                 }
+                .listRowBackground(Color.surface)
             }
 
             if !regularItems.isEmpty {
@@ -187,8 +196,9 @@ struct StoreDetailView: View {
                         } header: {
                             Text("\(group.emoji) \(group.category)")
                                 .font(.system(size: 12, weight: .semibold))
-                                .textCase(nil)
+                                .tracking(0.6)
                         }
+                        .listRowBackground(Color.surface)
                     }
                 } else {
                     Section(String(localized: "list.pending")) {
@@ -196,6 +206,7 @@ struct StoreDetailView: View {
                             pendingRow(item)
                         }
                     }
+                    .listRowBackground(Color.surface)
                 }
             }
 
@@ -238,6 +249,7 @@ struct StoreDetailView: View {
                         .textCase(nil)
                     }
                 }
+                .listRowBackground(Color.surface)
             }
 
             if store.items.isEmpty {
@@ -247,11 +259,13 @@ struct StoreDetailView: View {
                 .listRowBackground(Color.clear)
             }
         }
-        .navigationTitle(store.emoji + " " + store.name)
-        .navigationBarTitleDisplayMode(.large)
+        .scrollContentBackground(.hidden)
+        .background(Color.canvas)
+        .navigationTitle(store.name)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 16) {
+            ChipToolbarItem(placement: .navigationBarTrailing) {
+                HStack(spacing: 20) {
                     if isSyncing {
                         ProgressView()
                             .scaleEffect(0.8)
@@ -266,7 +280,10 @@ struct StoreDetailView: View {
                         Haptics.impact(.light)
                     } label: {
                         Image(systemName: store.shareID != nil ? "person.2.fill" : "person.2")
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color.ink)
                     }
+                    .buttonStyle(.plain)
                     Menu {
                         Toggle(isOn: Binding(
                             get: { groupByCategory },
@@ -322,16 +339,23 @@ struct StoreDetailView: View {
                             }
                         }
                     } label: {
-                        Image(systemName: "ellipsis.circle")
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color.ink)
                     }
+                    .menuStyle(.button)
+                    .buttonStyle(.plain)
                     Button {
                         showAddItem = true
                         Haptics.impact(.light)
                     } label: {
                         Image(systemName: "plus")
-                            .fontWeight(.semibold)
+                            .font(.system(size: 17))
+                            .foregroundStyle(Color.ink)
                     }
+                    .buttonStyle(.plain)
                 }
+                .toolbarChip()
             }
         }
         .sheet(isPresented: $showAddItem) { AddItemView() }
@@ -526,6 +550,28 @@ struct StoreDetailView: View {
         syncPush()
     }
 
+    // MARK: - Store hero
+
+    private var storeHero: some View {
+        VStack(spacing: 6) {
+            HStack(spacing: 6) {
+                Text(store.name)
+                Text("· \(store.pendingItems.count)")
+                    .foregroundStyle(Color.accent)
+            }
+            .font(.wordmark(18))
+            Text(VisitFrequency.closest(to: store.visitsPerWeek).label)
+                .font(.system(size: 12))
+                .foregroundStyle(Color.heroText.opacity(0.75))
+        }
+        .foregroundStyle(Color.heroText)
+        .padding(.vertical, 16)
+        .frame(maxWidth: .infinity)
+        .background(Color.heroSurface)
+        .clipShape(RoundedRectangle(cornerRadius: RCRadius.hero))
+        .heroShadow(colorScheme)
+    }
+
     // MARK: - Progress header
 
     private var progressHeader: some View {
@@ -538,10 +584,10 @@ struct StoreDetailView: View {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(Color(.systemGray5))
+                            .fill(Color.hairlineStrong)
                             .frame(height: 6)
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(LinearGradient.success)
+                            .fill(Color.accent)
                             .frame(width: geo.size.width * completionProgress, height: 6)
                             .animation(.spring(response: 0.4), value: completionProgress)
                     }
@@ -971,9 +1017,10 @@ private struct TemplatePickerSheet: View {
             .navigationTitle("Vorlage laden")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
-                }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
+                        .buttonStyle(.plain)
+}
             }
         }
     }

@@ -19,12 +19,13 @@ struct PriceOverviewView: View {
             .navigationTitle("Ausgaben")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Fertig") { dismiss() }
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { dismiss() } label: { Text("Fertig").toolbarChip(prominent: true) }
+                        .buttonStyle(.plain)
                         .fontWeight(.semibold)
                 }
             }
-        }
+}
         .devFeedback(context: "Preisübersicht")
     }
 
@@ -175,7 +176,7 @@ struct PriceOverviewView: View {
                     Spacer()
                     Text(budgetEstimate, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
                         .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color.accent)
                 }
                 .padding(.vertical, 6)
             }
@@ -189,7 +190,7 @@ struct PriceOverviewView: View {
                         x: .value("Monat", month.label.components(separatedBy: " ").first ?? month.label),
                         y: .value("Ausgaben", month.total)
                     )
-                    .foregroundStyle(LinearGradient.brand)
+                    .foregroundStyle(Color.accent)
                     .cornerRadius(4)
                 }
                 .frame(height: 140)

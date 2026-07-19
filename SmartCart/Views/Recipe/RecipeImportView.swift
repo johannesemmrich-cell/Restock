@@ -29,16 +29,17 @@ struct RecipeImportView: View {
             .navigationTitle(String(localized: "recipe.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "action.cancel")) { dismiss() }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip() }
+                        .buttonStyle(.plain)
                 }
                 if !recognizedIngredients.isEmpty {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button(String(localized: "recipe.add.selected")) {
-                            addSelected()
+                    ChipToolbarItem(placement: .confirmationAction) {
+                        Button { addSelected() } label: {
+                            Text(String(localized: "recipe.add.selected")).toolbarChip(prominent: true)
                         }
+                        .buttonStyle(.plain)
                         .disabled(selectedIngredients.isEmpty)
-                        .fontWeight(.semibold)
                     }
                 }
             }
@@ -77,7 +78,7 @@ struct RecipeImportView: View {
             Spacer()
             Image(systemName: "doc.viewfinder")
                 .font(.system(size: 64))
-                .foregroundStyle(.blue)
+                .foregroundStyle(Color.accent)
 
             VStack(spacing: 8) {
                 Text(String(localized: "recipe.prompt.title"))
@@ -107,7 +108,7 @@ struct RecipeImportView: View {
                     Label(String(localized: "recipe.source.camera"), systemImage: "camera")
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.restockPrimary)
                 .controlSize(.large)
                 .padding(.horizontal, 32)
 
@@ -159,9 +160,9 @@ struct RecipeImportView: View {
                     ForEach(recognizedIngredients) { ingredient in
                         let selected = selectedIngredients.contains(ingredient.id.uuidString)
                         HStack(spacing: 12) {
-                            Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                                .font(.system(size: 20))
-                                .foregroundStyle(selected ? .blue : Color(.systemGray3))
+                            Image(systemName: selected ? "checkmark.square.fill" : "square")
+                                .font(.system(size: 18))
+                                .foregroundStyle(selected ? Color.accent : Color.hairlineStrong)
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(ingredient.name)

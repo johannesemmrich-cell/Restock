@@ -90,6 +90,26 @@ class Store {
         Color(hex: colorHex) ?? .blue
     }
 
+    /// Monochromes SF-Symbol für die Laden-Kacheln des Redesigns, abgeleitet vom (weiterhin
+    /// editierbaren) Emoji des Ladens — Supermarkt-Wagen, Drogerie-Tropfen, Werkzeug etc.
+    /// Fallback für unbekannte/eigene Emojis ist die generische Ladenfront.
+    var iconSystemName: String {
+        switch emoji {
+        case "🛒": return "cart"
+        case "🧴": return "drop"
+        case "💊": return "pills"
+        case "🔨": return "hammer"
+        case "🏗️": return "wrench.and.screwdriver"
+        case "🔧": return "wrench.adjustable"
+        case "🏃": return "figure.run"
+        case "🏷️": return "tag"
+        case "🎯": return "target"
+        case "🌿": return "leaf"
+        case "🏬": return "building.2"
+        default:  return "storefront"
+        }
+    }
+
     /// User-facing toggle (Settings) — when off, falls back to insertion order instead of the
     /// learned aisle order. Read directly from UserDefaults rather than via `@AppStorage` since
     /// this is a model class, not a View. Uses the app-group suite (matching `UserIdentity` in

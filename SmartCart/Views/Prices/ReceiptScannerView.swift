@@ -49,13 +49,14 @@ struct ReceiptScannerView: View {
             .navigationTitle("Bon scannen — \(store.name)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
+                ChipToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text("Abbrechen").toolbarChip() }
+                        .buttonStyle(.plain)
                 }
                 if phase == .review && !parsedLines.filter(\.isIncluded).isEmpty {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Speichern") { save() }
-                            .fontWeight(.semibold)
+                    ChipToolbarItem(placement: .confirmationAction) {
+                        Button { save() } label: { Text("Speichern").toolbarChip(prominent: true) }
+                            .buttonStyle(.plain)
                     }
                 }
             }
@@ -83,7 +84,7 @@ struct ReceiptScannerView: View {
 
             Image(systemName: "doc.text.viewfinder")
                 .font(.system(size: 80))
-                .foregroundStyle(Color.brand.opacity(0.5))
+                .foregroundStyle(Color.accent.opacity(0.6))
 
             VStack(spacing: 8) {
                 Text("Kassenbon scannen")
@@ -104,7 +105,7 @@ struct ReceiptScannerView: View {
                         Label("Foto aufnehmen", systemImage: "camera")
                             .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.restockPrimary)
                 }
 
                 Button {

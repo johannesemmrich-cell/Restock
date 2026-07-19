@@ -43,7 +43,8 @@ struct BrowseStoresView: View {
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
-            .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 12))
+            .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.control))
+            .overlay(RoundedRectangle(cornerRadius: RCRadius.control).strokeBorder(Color.hairline))
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
 
@@ -64,11 +65,11 @@ struct BrowseStoresView: View {
                                 .padding(.vertical, 8)
                                 .background(
                                     selectedCountry == country.code
-                                        ? Color.brand.opacity(0.15)
-                                        : Color(.systemGray6)
+                                        ? Color.accentContainer
+                                        : Color.surface
                                 )
-                                .foregroundStyle(selectedCountry == country.code ? Color.brand : .primary)
-                                .clipShape(Capsule())
+                                .foregroundStyle(selectedCountry == country.code ? Color.accent : .primary)
+                                .clipShape(RoundedRectangle(cornerRadius: RCRadius.tag))
                             }
                             .buttonStyle(.plain)
                         }
@@ -87,7 +88,7 @@ struct BrowseStoresView: View {
                     VStack(spacing: 12) {
                         Image(systemName: "magnifyingglass")
                             .font(.system(size: 44))
-                            .foregroundStyle(Color.brand.opacity(0.4))
+                            .foregroundStyle(Color.accent.opacity(0.4))
                         Text(String(localized: "browse.search.empty"))
                             .font(.headline)
                             .foregroundStyle(.secondary)
@@ -99,14 +100,17 @@ struct BrowseStoresView: View {
                             presetRow(result.preset,
                                       subtitle: "\(result.country.flag) \(result.country.name)")
                         }
+                        .listRowBackground(Color.surface)
                     }
+                    .scrollContentBackground(.hidden)
+                    .background(Color.canvas)
                 }
             } else if selectedCountry.isEmpty {
                 Spacer()
                 VStack(spacing: 12) {
                     Image(systemName: "globe.europe.africa")
                         .font(.system(size: 44))
-                        .foregroundStyle(Color.brand.opacity(0.4))
+                        .foregroundStyle(Color.accent.opacity(0.4))
                     Text(String(localized: "browse.select.country"))
                         .font(.headline)
                         .foregroundStyle(.secondary)
@@ -124,22 +128,28 @@ struct BrowseStoresView: View {
                                 Text("\(country.flag) \(country.name)")
                             }
                         }
+                        .listRowBackground(Color.surface)
                     }
                     Section("Eigener Laden") {
                         Button {
                             showCustom = true
                         } label: {
                             HStack(spacing: 12) {
-                                Image(systemName: "plus.circle.fill")
-                                    .font(.system(size: 24))
-                                    .foregroundStyle(Color.brand)
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: RCRadius.control)
+                                        .fill(Color.accentContainer)
+                                        .frame(width: 34, height: 34)
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 15, weight: .medium))
+                                        .foregroundStyle(Color.accent)
+                                }
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Eigenen Laden erstellen")
                                         .font(.system(size: 16))
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(Color.ink)
                                     Text("Name, Emoji, Farbe & Häufigkeit")
                                         .font(.system(size: 12))
-                                        .foregroundStyle(.secondary)
+                                        .foregroundStyle(Color.textSecondary)
                                 }
                                 Spacer()
                             }
@@ -147,21 +157,27 @@ struct BrowseStoresView: View {
                         }
                         .buttonStyle(.plain)
                     }
+                    .listRowBackground(Color.surface)
                     Section("Geteilte Liste") {
                         Button {
                             showJoin = true
                         } label: {
                             HStack(spacing: 12) {
-                                Image(systemName: "person.badge.plus")
-                                    .font(.system(size: 22))
-                                    .foregroundStyle(.indigo)
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: RCRadius.control)
+                                        .fill(Color.accentContainer)
+                                        .frame(width: 34, height: 34)
+                                    Image(systemName: "person.badge.plus")
+                                        .font(.system(size: 15, weight: .medium))
+                                        .foregroundStyle(Color.accent)
+                                }
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Geteilter Liste beitreten")
                                         .font(.system(size: 16))
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(Color.ink)
                                     Text("6-stelligen Code eingeben, den dir jemand geschickt hat")
                                         .font(.system(size: 12))
-                                        .foregroundStyle(.secondary)
+                                        .foregroundStyle(Color.textSecondary)
                                 }
                                 Spacer()
                             }
@@ -169,15 +185,19 @@ struct BrowseStoresView: View {
                         }
                         .buttonStyle(.plain)
                     }
+                    .listRowBackground(Color.surface)
                 }
+                .scrollContentBackground(.hidden)
+                .background(Color.canvas)
             }
         }
+        .background(Color.canvas)
         .navigationTitle(String(localized: "browse.title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Fertig") { dismiss() }
-                    .fontWeight(.semibold)
+            ChipToolbarItem(placement: .confirmationAction) {
+                Button { dismiss() } label: { Text("Fertig").toolbarChip() }
+                    .buttonStyle(.plain)
             }
         }
         .sheet(isPresented: $showCustom) { AddCustomStoreView() }
@@ -212,7 +232,7 @@ struct BrowseStoresView: View {
                     addStore(preset)
                 } label: {
                     Image(systemName: "plus.circle.fill")
-                        .foregroundStyle(Color.brand)
+                        .foregroundStyle(Color.accent)
                         .font(.system(size: 22))
                 }
                 .buttonStyle(.plain)
