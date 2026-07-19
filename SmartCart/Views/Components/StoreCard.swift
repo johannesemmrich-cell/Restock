@@ -4,12 +4,15 @@ struct StoreCard: View {
     let store: Store
     @Environment(\.colorScheme) private var colorScheme
 
-    private var pendingCount: Int { store.pendingItems.count }
     private var freq: VisitFrequency { VisitFrequency.closest(to: store.visitsPerWeek) }
     private var isShared: Bool { store.shareID != nil }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        // Einmal holen statt der ungecachten `store.pendingItems` (Filter + Sort +
+        // UserDefaults-Zugriff) unten mehrfach einzeln neu aufzurufen — dieselbe Karte, die
+        // standardmäßig auf dem Homescreen für jeden Store gerendert wird.
+        let pending = store.pendingItems
+        return VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .bottomTrailing) {
                 RoundedRectangle(cornerRadius: RCRadius.control)
                     .fill(Color.accentContainer)
@@ -34,8 +37,8 @@ struct StoreCard: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(Color.ink)
                     .lineLimit(1)
-                if pendingCount > 0 {
-                    Text("· \(pendingCount)")
+                if pending.count > 0 {
+                    Text("· \(pending.count)")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(Color.accent)
                 }
@@ -52,9 +55,9 @@ struct StoreCard: View {
                 .padding(.top, 3)
 
             Group {
-                if pendingCount > 0 {
-                    let preview = store.pendingItems.prefix(2).map { $0.name }.joined(separator: ", ")
-                    Text(preview + (pendingCount > 2 ? "…" : ""))
+                if pending.count > 0 {
+                    let preview = pending.prefix(2).map { $0.name }.joined(separator: ", ")
+                    Text(preview + (pending.count > 2 ? "…" : ""))
                         .foregroundStyle(Color.accent)
                 } else {
                     Text(String(localized: "store.empty"))

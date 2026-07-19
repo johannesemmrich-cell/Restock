@@ -1,5 +1,8 @@
 import Foundation
 import CoreGraphics
+#if canImport(FoundationModels)
+import FoundationModels
+#endif
 
 struct ReceiptLine {
     let name: String
@@ -510,5 +513,133 @@ enum ReceiptParserService {
             i == 0 ? (w.first.map { String($0).uppercased() } ?? "") + w.dropFirst().lowercased()
                    : w.lowercased()
         }.joined(separator: " ")
+    }
+
+    // MARK: - Kürzel-Auflösung (Stufe 2: statisches Wörterbuch)
+
+    /// Bekannte Kassenbon-Kürzel (FR/DE) → volles Wort. Wortweiser Match (nicht Substring), damit
+    /// z. B. "past" nicht in "Pastete" hineingreift. Startsatz, bewusst nicht vollständig — wächst
+    /// über Zeit; für alles, was hier nicht drinsteht, greifen die nachgelagerten Stufen
+    /// (Kaufhistorie-Fuzzy-Match, dann optional Apple Intelligence, siehe ReceiptScannerView.process()).
+    /// Bewusst nur Kürzel, die (fast) nie ein eigenständiges, anders gemeintes Wort sind — z. B.
+    /// NICHT "frais" (frisch) → "Fraise" (Erdbeere), das hätte "LAIT FRAIS"/"POISSON FRAIS" verfälscht,
+    /// und NICHT "conf" (Confit vs. Confiture nicht eindeutig unterscheidbar). Eine falsche Stufe-2-
+    /// Zuordnung ist final (überschreibt keine spätere Stufe), daher lieber ein Kürzel weniger als
+    /// eines, das im Zweifel auf ein häufiges, harmloses Wort zugreift.
+    private static let abbreviationExpansions: [String: String] = [
+        // Französische Kassenbon-Kürzel
+        "shak": "Shaker", "sach": "Sachet", "past": "Pâtes",
+        "choc": "Chocolat", "framb": "Framboise", "yaou": "Yaourt",
+        "legu": "Légumes", "surg": "Surgelé", "marg": "Margarine", "beurr": "Beurre",
+        "fromag": "Fromage", "biscu": "Biscuit",
+        // Deutsche Kassenbon-Kürzel
+        "jogh": "Joghurt", "btr": "Butter", "kaffe": "Kaffee", "schok": "Schokolade",
+        "geb": "Gebäck", "tk": "Tiefkühl"
+    ]
+
+    /// Wendet `abbreviationExpansions` wortweise an. Trennt dabei auch an Punkten ohne
+    /// Leerzeichen ("Shak.Moutarde" wie "Shak. Moutarde" wie "Shak Moutarde" → gleiche Tokens),
+    /// da Kassenbons Kürzel-Punkte mal mit, mal ohne Leerzeichen drucken — ABER nie an einem
+    /// Punkt zwischen zwei Ziffern (Dezimalzahl wie "3.5" bleibt unangetastet, sonst würde ein
+    /// Treffer an anderer Stelle im Namen sie beim Zusammenfügen in "3 5" zerreißen). Liefert nil,
+    /// wenn kein einziges Wort im Wörterbuch stand, damit der Aufrufer zur nächsten Stufe weiterreicht.
+    static func expandAbbreviations(_ name: String) -> String? {
+        let splittable = name.replacingOccurrences(
+            of: #"(?<!\d)\.|\.(?!\d)"#, with: " ", options: .regularExpression)
+        let words = splittable.components(separatedBy: " ").filter { !$0.isEmpty }
+        guard !words.isEmpty else { return nil }
+        var matchedAny = false
+        let expanded = words.map { word -> String in
+            if let full = abbreviationExpansions[word.lowercased()] {
+                matchedAny = true
+                return full
+            }
+            return word
+        }
+        return matchedAny ? expanded.joined(separator: " ") : nil
+    }
+
+    // MARK: - Kürzel-Auflösung (Stufe 3: Kaufhistorie-Fuzzy-Match)
+
+    /// Sucht in der Kaufhistorie DESSELBEN Stores nach einem Artikelnamen, der stark mit dem
+    /// OCR-Token überlappt (bidirektionales `contains`, wie an anderen Stellen der App bereits
+    /// verwendet) — z. B. "Mozarela" (OCR) → "Mozzarella Di Bufala 125g" (frühere Käufe an diesem
+    /// Store). Hilft vor allem bei wiederkehrenden Artikeln; bei einem komplett neuen Kürzel ohne
+    /// Bezug zu vergangenen Käufen liefert das nichts (siehe Stufe 4, Apple Intelligence).
+    static func historyMatch(for token: String, in records: [PurchaseRecord], storeName: String) -> String? {
+        let needle = token.lowercased()
+        guard needle.count >= 3 else { return nil }
+        let storeLower = storeName.lowercased()
+        return records.first { record in
+            record.storeName.lowercased() == storeLower &&
+            (record.itemName.lowercased().contains(needle) || needle.contains(record.itemName.lowercased()))
+        }?.itemName
+    }
+}
+
+// MARK: - Kürzel-Auflösung (Stufe 4: Apple Intelligence, optional)
+
+/// Letzte Stufe der Kassenbon-Namensauflösung (siehe ReceiptScannerView.process()) — nur wenn
+/// gelernter Alias, Wörterbuch UND Kaufhistorie-Match nichts liefern. Spiegelt exakt das
+/// Guard-/Timeout-Muster von `MealIngredientService.aiIngredients`
+/// (RecipeRecognitionService.swift), inklusive 25-Sekunden-Timeout-Rennen, damit ein hängender
+/// Modellaufruf den Scan-Review-Bildschirm nie blockiert. Nur auf iOS 26+ mit verfügbarer Apple
+/// Intelligence aktiv; auf jedem anderen Gerät liefert `expand` einfach nil und die bisherige
+/// Stufe (unveränderter Roh-Text) bleibt stehen. Der User sieht/bearbeitet jede Zeile ohnehin vor
+/// dem Speichern, ein gelegentlich falscher Vorschlag ist daher kein Datenrisiko.
+actor ReceiptNameAIResolver {
+    static let shared = ReceiptNameAIResolver()
+
+    static func isAIAvailable() -> Bool {
+        #if canImport(FoundationModels)
+        guard #available(iOS 26, *) else { return false }
+        if case .available = SystemLanguageModel.default.availability { return true }
+        #endif
+        return false
+    }
+
+    /// Öffentlicher Einstiegspunkt — kapselt Verfügbarkeits-Check, iOS-Version-Guard und
+    /// Fehlerbehandlung, damit der Aufrufer nur ein einfaches optionales String bekommt.
+    func expand(_ raw: String) async -> String? {
+        guard #available(iOS 26, *) else { return nil }
+        return (try? await aiExpand(raw)) ?? nil
+    }
+
+    @available(iOS 26, *)
+    private func aiExpand(_ raw: String) async throws -> String? {
+        #if canImport(FoundationModels)
+        let model = SystemLanguageModel.default
+        guard case .available = model.availability else { return nil }
+        let prompt = """
+        Dies ist eine abgekürzte Positionszeile von einem Kassenbon (Deutsch oder Französisch): "\(raw)"
+        Antworte NUR mit dem wahrscheinlichsten vollen Produktnamen in derselben Sprache, ohne
+        Erklärung, ohne Anführungszeichen, ohne Preis oder Menge.
+        """
+        // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen
+        return try await withThrowingTaskGroup(of: String?.self) { group in
+            group.addTask {
+                let session = LanguageModelSession()
+                let response = try await session.respond(to: prompt)
+                return self.sanitize(response.content)
+            }
+            group.addTask {
+                try await Task.sleep(for: .seconds(25))
+                return nil
+            }
+            defer { group.cancelAll() }
+            for try await result in group { return result }
+            return nil
+        }
+        #else
+        return nil
+        #endif
+    }
+
+    nonisolated private func sanitize(_ text: String) -> String? {
+        let trimmed = text
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
+        guard !trimmed.isEmpty, trimmed.count <= 60, !trimmed.contains("\n") else { return nil }
+        return trimmed
     }
 }

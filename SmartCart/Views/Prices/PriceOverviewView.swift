@@ -21,7 +21,7 @@ struct PriceOverviewView: View {
             .toolbar {
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { dismiss() } label: { Text("Fertig").toolbarChip(prominent: true) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .fontWeight(.semibold)
                 }
             }

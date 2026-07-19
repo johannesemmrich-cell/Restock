@@ -28,7 +28,6 @@ struct StoreDetailView: View {
     @State private var syncFailed = false
     @State private var syncGeneration = 0
     @State private var showConfetti = false
-    @State private var periodicSyncTask: Task<Void, Never>?
     @FocusState private var isQuickAddFocused: Bool
     @Query private var allRecords: [PurchaseRecord]
     @ObservedObject private var templateService = TemplateService.shared
@@ -48,8 +47,8 @@ struct StoreDetailView: View {
         _groupByCategory = State(initialValue: store.groupByCategory)
     }
 
-    private var total: Double {
-        store.pendingItems.compactMap { $0.estimatedLineTotal }.reduce(0, +)
+    private func total(for items: [ShoppingItem]) -> Double {
+        items.compactMap { $0.estimatedLineTotal }.reduce(0, +)
     }
     private var completionProgress: Double {
         guard !store.items.isEmpty else { return 0 }
@@ -62,9 +61,12 @@ struct StoreDetailView: View {
         // up inside the item (EditItemView/ItemRow observe the item directly) while the item
         // still sits in its old category section here.
         let _ = SyncCoordinator.shared.applyGeneration
+        // Einmal pro Body-Durchlauf holen statt der ungecachten `store.pendingItems` (Filter +
+        // Sort + UserDefaults-Zugriff) an bis zu 6 Stellen in diesem body einzeln neu aufzurufen.
+        let pending = store.pendingItems
         List {
             Section {
-                storeHero
+                storeHero(pending: pending)
             }
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
@@ -89,7 +91,7 @@ struct StoreDetailView: View {
                         }
                         .foregroundStyle(.orange)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
                 .listRowBackground(Color.orange.opacity(0.1))
             }
@@ -108,7 +110,7 @@ struct StoreDetailView: View {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundStyle(Color(.systemGray3))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                 }
                 if let parsed = quickAddParsed {
@@ -135,7 +137,7 @@ struct StoreDetailView: View {
                                 .font(.system(size: 12))
                                 .foregroundStyle(.secondary)
                         }
-                        if let dup = quickAddDuplicate(for: parsed.name) {
+                        if let dup = quickAddDuplicate(for: parsed.name, in: pending) {
                             HStack(spacing: 4) {
                                 Image(systemName: "exclamationmark.triangle.fill")
                                     .font(.system(size: 11))
@@ -162,15 +164,15 @@ struct StoreDetailView: View {
 
             Section {
                 if !store.items.isEmpty {
-                    progressHeader
+                    progressHeader(pending: pending)
                 }
                 frequencyRow
             }
             .listRowBackground(Color.surface)
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
 
-            let urgentItems = store.pendingItems.filter { $0.isUrgent }
-            let regularItems = store.pendingItems.filter { !$0.isUrgent }
+            let urgentItems = pending.filter { $0.isUrgent }
+            let regularItems = pending.filter { !$0.isUrgent }
 
             if !urgentItems.isEmpty {
                 Section {
@@ -244,6 +246,7 @@ struct StoreDetailView: View {
                         Button(String(localized: "list.clear.completed")) {
                             showClearConfirm = true
                         }
+                        .buttonStyle(.pressable)
                         .font(.system(size: 12))
                         .foregroundStyle(.red)
                         .textCase(nil)
@@ -283,7 +286,7 @@ struct StoreDetailView: View {
                             .font(.system(size: 16))
                             .foregroundStyle(Color.ink)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     Menu {
                         Toggle(isOn: Binding(
                             get: { groupByCategory },
@@ -326,7 +329,7 @@ struct StoreDetailView: View {
                             }
                             Haptics.impact(.light)
                         }
-                        .disabled(store.pendingItems.isEmpty)
+                        .disabled(pending.isEmpty)
                         if !templateService.templates.isEmpty {
                             Button("Vorlage laden", systemImage: "folder") {
                                 if premium.hasPremiumAccess {
@@ -344,7 +347,7 @@ struct StoreDetailView: View {
                             .foregroundStyle(Color.ink)
                     }
                     .menuStyle(.button)
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     Button {
                         showAddItem = true
                         Haptics.impact(.light)
@@ -353,7 +356,7 @@ struct StoreDetailView: View {
                             .font(.system(size: 17))
                             .foregroundStyle(Color.ink)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
                 .toolbarChip()
             }
@@ -374,7 +377,7 @@ struct StoreDetailView: View {
             Button("Speichern") { saveAsTemplate() }
             Button("Abbrechen", role: .cancel) { templateName = "" }
         } message: {
-            Text("\(store.pendingItems.count) Artikel werden gespeichert")
+            Text("\(pending.count) Artikel werden gespeichert")
         }
         .confirmationDialog(
             String(localized: "list.clear.confirm"),
@@ -392,6 +395,12 @@ struct StoreDetailView: View {
             // kurz eine neue Activity, die der Drain eine Zeile später sofort wieder beendet (Flash).
             applyPendingCheckoffs()
             LiveActivityService.shared.start(for: store)
+            // Kein eigener wiederkehrender Poll-Loop mehr hier — SyncCoordinator.startPeriodicPulls()
+            // deckt bereits alle geteilten Stores app-weit alle 15s ab (Push + CloudKit-Notifications
+            // bleiben der schnelle Pfad; Polling ist nur das Fallback-Netz), ein zusätzlicher lokaler
+            // 10s-Loop hätte nur doppelt gepollt und doppelte Merge/Re-Render-Kaskaden ausgelöst,
+            // genau während man die Liste aktiv ansieht. Der sofortige Pull unten bleibt für ein
+            // knackiges erstes Laden.
             if store.shareID != nil {
                 let generation = nextSyncGeneration()
                 Task {
@@ -402,21 +411,9 @@ struct StoreDetailView: View {
                         applySyncResult(ok, generation: generation)
                     }
                 }
-                periodicSyncTask = Task {
-                    while !Task.isCancelled {
-                        try? await Task.sleep(for: .seconds(10))
-                        if !Task.isCancelled {
-                            let generation = await MainActor.run { nextSyncGeneration() }
-                            let ok = await SyncCoordinator.shared.pull(store: store)
-                            await MainActor.run { applySyncResult(ok, generation: generation) }
-                        }
-                    }
-                }
             }
         }
         .onDisappear {
-            periodicSyncTask?.cancel()
-            periodicSyncTask = nil
             LiveActivityService.shared.end(for: store)
             if store.shareID != nil {
                 let generation = nextSyncGeneration()
@@ -426,10 +423,8 @@ struct StoreDetailView: View {
                 }
             }
         }
-        .onChange(of: store.pendingItems.count) {
+        .onChange(of: pending.count) { oldCount, newCount in
             LiveActivityService.shared.update(for: store)
-        }
-        .onChange(of: store.pendingItems.count) { oldCount, newCount in
             if newCount == 0, oldCount > 0, !store.completedItems.isEmpty {
                 showConfetti = true
                 Task {
@@ -552,11 +547,11 @@ struct StoreDetailView: View {
 
     // MARK: - Store hero
 
-    private var storeHero: some View {
+    private func storeHero(pending: [ShoppingItem]) -> some View {
         VStack(spacing: 6) {
             HStack(spacing: 6) {
                 Text(store.name)
-                Text("· \(store.pendingItems.count)")
+                Text("· \(pending.count)")
                     .foregroundStyle(Color.accent)
             }
             .font(.wordmark(18))
@@ -574,7 +569,7 @@ struct StoreDetailView: View {
 
     // MARK: - Progress header
 
-    private var progressHeader: some View {
+    private func progressHeader(pending: [ShoppingItem]) -> some View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
                 Text(String(format: String(localized: "list.progress"),
@@ -595,12 +590,12 @@ struct StoreDetailView: View {
                 .frame(height: 6)
             }
 
-            if total > 0 {
+            if total(for: pending) > 0 {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text(String(localized: "list.estimated.total"))
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
-                    Text(total, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                    Text(total(for: pending), format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
                         .font(.system(size: 16, weight: .semibold))
                 }
             }
@@ -869,10 +864,10 @@ struct StoreDetailView: View {
 
     // MARK: - QuickAdd helpers
 
-    private func quickAddDuplicate(for name: String) -> ShoppingItem? {
+    private func quickAddDuplicate(for name: String, in items: [ShoppingItem]) -> ShoppingItem? {
         let nameLower = name.lowercased()
         guard nameLower.count >= 3 else { return nil }
-        return store.pendingItems.first { item in
+        return items.first { item in
             let n = item.name.lowercased()
             return n == nameLower || (n.count >= 3 && (n.contains(nameLower) || nameLower.contains(n)))
         }
@@ -1019,7 +1014,7 @@ private struct TemplatePickerSheet: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
 }
             }
         }

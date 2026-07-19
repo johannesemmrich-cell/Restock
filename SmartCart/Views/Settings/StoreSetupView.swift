@@ -113,7 +113,7 @@ struct StoreSetupView: View {
                 } label: {
                     Text(editMode == .active ? "Fertig" : "Bearbeiten").toolbarChip()
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .sheet(isPresented: $showAddCustomStore) {
@@ -175,7 +175,7 @@ struct StoreRow: View {
                         .foregroundStyle(Color.ink)
                         .frame(width: 24)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(store.name)
@@ -225,7 +225,7 @@ struct StoreRow: View {
                 .toolbar {
                     ChipToolbarItem(placement: .cancellationAction) {
                         Button { showEmojiEdit = false } label: { Text("Abbrechen").toolbarChip(prominent: false) }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
 }
                     ChipToolbarItem(placement: .confirmationAction) {
                         Button {
@@ -236,7 +236,7 @@ struct StoreRow: View {
                         } label: {
                             Text("Speichern").toolbarChip(prominent: true)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                 }
             }
@@ -300,11 +300,11 @@ struct AddCustomStoreView: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip(prominent: false) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
 }
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { addStore() } label: { Text(String(localized: "action.add")).toolbarChip(prominent: true) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                         .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                         .fontWeight(.semibold)

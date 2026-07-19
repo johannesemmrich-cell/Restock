@@ -39,6 +39,7 @@ struct BrowseStoresView: View {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(Color(.systemGray3))
                     }
+                    .buttonStyle(.pressable)
                 }
             }
             .padding(.horizontal, 14)
@@ -71,7 +72,7 @@ struct BrowseStoresView: View {
                                 .foregroundStyle(selectedCountry == country.code ? Color.accent : .primary)
                                 .clipShape(RoundedRectangle(cornerRadius: RCRadius.tag))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -155,7 +156,7 @@ struct BrowseStoresView: View {
                             }
                             .padding(.vertical, 2)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                     .listRowBackground(Color.surface)
                     Section("Geteilte Liste") {
@@ -183,7 +184,7 @@ struct BrowseStoresView: View {
                             }
                             .padding(.vertical, 2)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                     .listRowBackground(Color.surface)
                 }
@@ -197,7 +198,7 @@ struct BrowseStoresView: View {
         .toolbar {
             ChipToolbarItem(placement: .confirmationAction) {
                 Button { dismiss() } label: { Text("Fertig").toolbarChip() }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
             }
         }
         .sheet(isPresented: $showCustom) { AddCustomStoreView() }
@@ -235,7 +236,7 @@ struct BrowseStoresView: View {
                         .foregroundStyle(Color.accent)
                         .font(.system(size: 22))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .padding(.vertical, 2)

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct FeedbackView: View {
     @Environment(\.dismiss) private var dismiss
@@ -8,6 +9,7 @@ struct FeedbackView: View {
     @State private var feedbackText = ""
     @State private var selectedCategory = FeedbackCategory.general
     @State private var showThankYou = false
+    @State private var mailOpened = true
     @State private var history: [FeedbackEntry] = []
 
     enum FeedbackCategory: String, CaseIterable, Identifiable {
@@ -79,13 +81,13 @@ struct FeedbackView: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip(prominent: false) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
 }
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { submit() } label: {
                         Text(String(localized: "feedback.submit")).toolbarChip(prominent: true)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .disabled(feedbackText.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
@@ -100,12 +102,12 @@ struct FeedbackView: View {
 
     private var thankYouOverlay: some View {
         VStack(spacing: 16) {
-            Image(systemName: "checkmark.circle.fill")
+            Image(systemName: mailOpened ? "checkmark.circle.fill" : "envelope.badge.person.crop")
                 .font(.system(size: 56))
-                .foregroundStyle(.green)
-            Text(String(localized: "feedback.thankyou.title"))
+                .foregroundStyle(mailOpened ? .green : .secondary)
+            Text(String(localized: mailOpened ? "feedback.thankyou.title" : "feedback.mailunavailable.title"))
                 .font(.headline)
-            Text(String(localized: "feedback.thankyou.message"))
+            Text(String(localized: mailOpened ? "feedback.thankyou.message" : "feedback.mailunavailable.message"))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -118,19 +120,40 @@ struct FeedbackView: View {
     }
 
     private func submit() {
+        let trimmedMessage = feedbackText.trimmingCharacters(in: .whitespaces)
         let entry = FeedbackEntry(
             id: UUID().uuidString,
-            message: feedbackText.trimmingCharacters(in: .whitespaces),
+            message: trimmedMessage,
             category: selectedCategory,
             date: Date()
         )
         history.insert(entry, at: 0)
         saveHistory()
         feedbackText = ""
-        withAnimation { showThankYou = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation { showThankYou = false }
-            dismiss()
+        // Bisher landete Feedback nur lokal in @AppStorage und erreichte den Entwickler nie —
+        // zusätzlich denselben mailto-Weg wie "Support kontaktieren" (SettingsView) nutzen. Die
+        // lokale Historie ist so oder so schon gespeichert; die Overlay-Meldung zeigt ehrlich an,
+        // ob tatsächlich ein Mail-Programm geöffnet werden konnte (z. B. nicht der Fall, wenn auf
+        // dem Gerät gar kein Mail-Account eingerichtet ist).
+        sendMail(category: selectedCategory, message: trimmedMessage) { opened in
+            mailOpened = opened
+            withAnimation { showThankYou = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                withAnimation { showThankYou = false }
+                dismiss()
+            }
+        }
+    }
+
+    private func sendMail(category: FeedbackCategory, message: String, completion: @escaping (Bool) -> Void) {
+        var components = URLComponents(string: "mailto:j.emmrich@icloud.com")
+        components?.queryItems = [
+            URLQueryItem(name: "subject", value: "Restock Feedback: \(category.label)"),
+            URLQueryItem(name: "body", value: message)
+        ]
+        guard let url = components?.url else { completion(false); return }
+        UIApplication.shared.open(url, options: [:]) { success in
+            completion(success)
         }
     }
 

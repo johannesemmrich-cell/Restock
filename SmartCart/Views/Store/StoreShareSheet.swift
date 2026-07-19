@@ -58,7 +58,7 @@ struct StoreShareSheet: View {
                                     .padding(.vertical, 11)
                                     .background(Color.accentContainer, in: RoundedRectangle(cornerRadius: RCRadius.control))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             .animation(.easeInOut, value: copied)
 
                             ShareLink(item: "Ich teile meine Restock-Einkaufsliste mit dir!\nCode: \(displayCode)") {
@@ -102,6 +102,7 @@ struct StoreShareSheet: View {
                             Text("Teilen beenden")
                                 .font(.subheadline)
                         }
+                        .buttonStyle(.pressable)
                         .padding(.top, 4)
                     }
                 } else {
@@ -137,7 +138,7 @@ struct StoreShareSheet: View {
             .toolbar {
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { dismiss() } label: { Text("Fertig").toolbarChip() }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                 }
             }
         }
@@ -296,7 +297,7 @@ struct JoinStoreSheet: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Abbrechen").toolbarChip() }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                 }
             }
         }

@@ -101,11 +101,11 @@ struct ActualPriceEntryView: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
 }
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { save() } label: { Text("Speichern").toolbarChip(prominent: true) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(!canSave)
                         .fontWeight(.semibold)
                         .disabled(!canSave)

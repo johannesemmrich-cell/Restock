@@ -177,13 +177,13 @@ final class SyncCoordinator {
 
     /// App-wide polling loop for ALL shared stores, running whenever the app is active
     /// (started/stopped from `SmartCartApp` on scenePhase changes). Closes the gap where
-    /// remote changes only ever arrived via StoreDetailView's own 10s loop or the CloudKit
-    /// silent push (which iOS may throttle or drop entirely): on HomeView / AllItemsView /
-    /// anywhere else, nothing pulled at all, so another member's edit could take arbitrarily
-    /// long to show up. The first iteration pulls immediately, so returning to the foreground
-    /// also fetches right away. 15s (vs. StoreDetailView's 10s for the list you're actively
-    /// looking at) keeps the extra public-database traffic modest since this loop multiplies
-    /// across every shared store.
+    /// remote changes only ever arrived via the CloudKit silent push (which iOS may throttle or
+    /// drop entirely): on HomeView / AllItemsView / anywhere else, nothing pulled at all, so
+    /// another member's edit could take arbitrarily long to show up. The first iteration pulls
+    /// immediately, so returning to the foreground also fetches right away. 15s keeps the extra
+    /// public-database traffic modest since this loop multiplies across every shared store.
+    /// StoreDetailView no longer runs its own additional local loop on top of this one (removed
+    /// as a perf fix — it was a pure duplicate of this app-wide loop while a shared list was open).
     func startPeriodicPulls() {
         guard periodicPullTask == nil else { return }
         periodicPullTask = Task {

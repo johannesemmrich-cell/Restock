@@ -129,13 +129,13 @@ struct MenuPlanView: View {
                     Button { dismiss() } label: {
                         Text("Schließen").toolbarChip()
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { addToList() } label: {
                         Text("Zur Liste").toolbarChip(prominent: true)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .disabled(allIngredients.filter { !checkedIngredients.contains($0.lowercased()) }.isEmpty && loadingDays.isEmpty)
                 }
             }
@@ -285,7 +285,11 @@ struct MenuPlanView: View {
                     .foregroundStyle(.tertiary)
                     .padding(.vertical, 4)
             } else {
-                ForEach(ings, id: \.self) { name in
+                // Index-basierte Identität statt id: \.self — ein vom User doppelt getippter
+                // Zutatenname (z. B. "Zwiebeln, Mehl, Zwiebeln") würde sonst zwei ForEach-Zeilen
+                // mit identischer Identität erzeugen, was bei der animierten Swipe-/Expand-Logik
+                // dieser Zeile zu einem echten Absturz führen kann.
+                ForEach(Array(ings.enumerated()), id: \.offset) { _, name in
                     ingredientRow(name)
                 }
             }
@@ -327,7 +331,7 @@ struct MenuPlanView: View {
                     .font(.system(size: 18))
                     .foregroundStyle(isChecked ? Color.accent : Color.hairlineStrong)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             Text(name)
                 .font(.system(size: 14))
                 .foregroundStyle(isChecked ? .secondary : .primary)
@@ -412,7 +416,7 @@ struct MenuPlanView: View {
                     .padding(.vertical, 5)
                     .background(Color.accent, in: RoundedRectangle(cornerRadius: RCRadius.tag))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
         }
         .padding(.vertical, 2)
     }
@@ -438,7 +442,12 @@ struct MenuPlanView: View {
     }
 
     private func resolvedStore(for name: String) -> Store? {
-        if let targetStore { return targetStore }
+        // targetStore kann eine ungültig gewordene Referenz sein, wenn der Store währenddessen
+        // anderswo gelöscht wurde (z. B. Sync-Merge einer geteilten Liste) — nur verwenden, wenn
+        // er noch tatsächlich in den aktuell aktiven Stores auftaucht.
+        if let targetStore, activeStores.contains(where: { $0.persistentModelID == targetStore.persistentModelID }) {
+            return targetStore
+        }
         return AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords) ?? activeStores.first
     }
 
@@ -580,7 +589,7 @@ private struct AddDaySheet: View {
                                         Image(systemName: "xmark.circle.fill")
                                             .foregroundStyle(Color(.systemGray3))
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.pressable)
                                 }
                             }
                         }
@@ -618,7 +627,7 @@ private struct AddDaySheet: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
 }
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button {
@@ -627,7 +636,7 @@ private struct AddDaySheet: View {
                     } label: {
                         Text("Hinzufügen").toolbarChip(prominent: true)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .disabled(mealText.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
@@ -697,7 +706,7 @@ private struct RecipePickerSheet: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
 }
             }
         }

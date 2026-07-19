@@ -62,7 +62,7 @@ struct QuantityStepperField: View {
                     .font(.title2)
                     .foregroundStyle(.tint)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(currentValue <= step)
 
             TextField("1", text: $quantity)
@@ -92,7 +92,7 @@ struct QuantityStepperField: View {
                     .font(.title2)
                     .foregroundStyle(.tint)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
         }
     }
 }

@@ -139,13 +139,13 @@ struct AllItemsView: View {
                             .foregroundStyle(Color.ink)
                             .toolbarChip()
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { dismiss() } label: {
                         Text("Fertig").toolbarChip(prominent: true)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
         }
@@ -182,7 +182,7 @@ struct AllItemsView: View {
                     .strokeBorder(Color.hairlineStrong, lineWidth: 1.5)
                     .frame(width: 18, height: 18)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {

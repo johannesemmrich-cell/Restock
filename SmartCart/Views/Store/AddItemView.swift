@@ -41,7 +41,7 @@ struct AddItemView: View {
                             Image(systemName: "barcode.viewfinder")
                                 .foregroundStyle(Color.accent)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
 
                     HStack(spacing: 6) {
@@ -120,11 +120,11 @@ struct AddItemView: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip() }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                 }
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { addItem() } label: { Text(String(localized: "action.add")).toolbarChip(prominent: true) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }

@@ -71,7 +71,7 @@ struct PaywallView: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Schließen").toolbarChip(prominent: false) }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
 }
             }
         }
@@ -259,7 +259,7 @@ struct PaywallView: View {
             )
             .animation(.easeInOut(duration: 0.15), value: isSelected)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private func addOnCard(id: String, title: String, price: String, detail: String, isRecommended: Bool) -> some View {
@@ -311,7 +311,7 @@ struct PaywallView: View {
             )
             .animation(.easeInOut(duration: 0.15), value: isSelected)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     // MARK: - Benefits
@@ -402,7 +402,7 @@ struct PaywallView: View {
             .foregroundStyle(Color.onButton)
             .clipShape(RoundedRectangle(cornerRadius: RCRadius.control))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .disabled(premium.isPurchasing)
     }
 
@@ -445,6 +445,7 @@ struct PaywallView: View {
                 .font(.system(size: 14))
                 .foregroundStyle(.secondary)
         }
+        .buttonStyle(.pressable)
         .disabled(isRestoring)
     }
 

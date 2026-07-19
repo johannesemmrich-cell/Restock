@@ -196,7 +196,7 @@ private struct DevModeIndicator: View {
                 .padding(.vertical, 4)
                 .background(Color.orange, in: Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
 
             Button { developerMode = false } label: {
                 Image(systemName: "xmark")
@@ -205,7 +205,7 @@ private struct DevModeIndicator: View {
                     .padding(6)
                     .background(Color.orange.opacity(0.7), in: Circle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .padding(.leading, 4)
         }
         .padding(.horizontal, 12)

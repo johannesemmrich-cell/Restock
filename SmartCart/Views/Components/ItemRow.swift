@@ -58,7 +58,7 @@ struct ItemRow: View {
                     if val { DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { isAnimating = false } }
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
 
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {

@@ -327,6 +327,7 @@ struct ShoppingListProvider: AppIntentTimelineProvider {
 private let widgetCurrencyCode = Locale.current.currency?.identifier ?? "EUR"
 
 struct ShoppingListWidgetView: View {
+    @Environment(\.widgetFamily) private var family
     let entry: ShoppingListEntry
 
     var body: some View {
@@ -339,17 +340,18 @@ struct ShoppingListWidgetView: View {
             }
         }
         .containerBackground(for: .widget) {
-            // Nur noch .systemMedium unterstützt (Small entfernt) — immer der
-            // bestehende Medium-Hintergrund.
             Color(.systemBackground)
         }
     }
 
-    // Nur noch eine Familie (.systemMedium) unterstützt — kein switch über
-    // widgetFamily mehr nötig, direkter Aufruf.
     @ViewBuilder
     private func content(for snapshot: WidgetStoreSnapshot) -> some View {
-        MediumShoppingListView(snapshot: snapshot)
+        switch family {
+        case .systemSmall:
+            SmallShoppingListView(snapshot: snapshot)
+        default:
+            MediumShoppingListView(snapshot: snapshot)
+        }
     }
 
     private var emptyState: some View {
@@ -361,6 +363,70 @@ struct ShoppingListWidgetView: View {
                 .font(.system(size: 12))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+        }
+    }
+}
+
+// MARK: Small — Laden oben, Artikel darunter
+
+private struct SmallShoppingListView: View {
+    let snapshot: WidgetStoreSnapshot
+
+    private var storeColor: Color { Color(hex: snapshot.colorHex) ?? .blue }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 5) {
+                Text(snapshot.emoji)
+                    .font(.system(size: 15))
+                Text(snapshot.name)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(storeColor)
+                    .lineLimit(1)
+                Spacer(minLength: 0)
+            }
+
+            if snapshot.items.isEmpty {
+                Spacer(minLength: 0)
+                HStack {
+                    Spacer()
+                    VStack(spacing: 3) {
+                        Image(systemName: "checkmark.seal.fill")
+                            .font(.system(size: 18))
+                            .foregroundStyle(.green)
+                        Text("Alles erledigt!")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                }
+                Spacer(minLength: 0)
+            } else {
+                let shown = snapshot.items.prefix(3)
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(shown) { item in
+                        Button(intent: CheckOffWidgetItemIntent(itemID: item.id, storeID: snapshot.id)) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "circle")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundStyle(storeColor)
+                                Text(item.name)
+                                    .font(.system(size: 12, weight: item.isUrgent ? .semibold : .regular))
+                                    .foregroundStyle(.primary)
+                                    .lineLimit(1)
+                                Spacer(minLength: 0)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                if snapshot.pendingCount > shown.count {
+                    Text("+\(snapshot.pendingCount - shown.count) weitere")
+                        .font(.system(size: 9, weight: .medium))
+                        .foregroundStyle(.tertiary)
+                }
+                Spacer(minLength: 0)
+            }
         }
     }
 }
@@ -463,6 +529,6 @@ struct ShoppingListWidget: Widget {
         }
         .configurationDisplayName("Einkaufsliste")
         .description("Zeigt die offenen Artikel eines Ladens — direkt abhakbar.")
-        .supportedFamilies([.systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

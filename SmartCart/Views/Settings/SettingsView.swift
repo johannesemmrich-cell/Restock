@@ -154,6 +154,7 @@ struct SettingsView: View {
                                     UIApplication.shared.open(url)
                                 }
                             }
+                            .buttonStyle(.pressable)
                             .font(.system(size: 14))
                             .foregroundStyle(.secondary)
                         }
@@ -184,7 +185,7 @@ struct SettingsView: View {
                             }
                             .padding(.vertical, 2)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
 
                     if premium.isSharedListsUnlocked {
@@ -227,7 +228,7 @@ struct SettingsView: View {
                             }
                             .padding(.vertical, 2)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                     Button {
                         showJoinStore = true
@@ -252,7 +253,7 @@ struct SettingsView: View {
                                 .foregroundStyle(Color.textSecondary.opacity(0.6))
                         }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     Button {
                         if let url = URL(string: "mailto:j.emmrich@icloud.com?subject=Restock%20Support") {
@@ -268,7 +269,7 @@ struct SettingsView: View {
                                 .foregroundStyle(Color.textSecondary.opacity(0.6))
                         }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     NavigationLink {
                         LegalOverviewView()
@@ -345,7 +346,7 @@ struct SettingsView: View {
             .toolbar {
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { dismiss() } label: { Text(String(localized: "action.done")).toolbarChip() }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                 }
             }
             .sheet(isPresented: $showJoinStore) { JoinStoreSheet() }
@@ -410,7 +411,7 @@ struct SettingsView: View {
                         .foregroundStyle(Color.textSecondary)
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
 
             Text("Restock \(appVersionString)")
                 .font(.system(size: 9.5))
@@ -557,7 +558,7 @@ struct SiriSettingsView: View {
                     .padding(.vertical, 2)
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
             .listRowBackground(Color.surface)
         }
@@ -593,8 +594,10 @@ private struct DevPasswordSheet: View {
                 .padding(.horizontal)
             HStack(spacing: 16) {
                 Button("Abbrechen", role: .cancel) { onCancel() }
+                    .buttonStyle(.pressable)
                     .frame(maxWidth: .infinity)
                 Button("Entsperren") { verify() }
+                    .buttonStyle(.pressable)
                     .frame(maxWidth: .infinity)
                     .fontWeight(.semibold)
                     .disabled(input.isEmpty)

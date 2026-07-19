@@ -200,11 +200,11 @@ struct EditItemView: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip() }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                 }
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { save() } label: { Text(String(localized: "action.save")).toolbarChip(prominent: true) }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }

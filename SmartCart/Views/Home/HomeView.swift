@@ -135,6 +135,7 @@ struct HomeView: View {
                 .padding(.bottom, 40)
             }
             .background(Color.canvas)
+            .navigationTitle("Restock")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .top, spacing: 0) { customTopBar }
@@ -286,7 +287,7 @@ struct HomeView: View {
             .padding(.vertical, 7)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private func openBanner() {
@@ -365,7 +366,7 @@ struct HomeView: View {
                         .foregroundStyle(Color.textSecondary.opacity(0.8))
                         .symbolRenderingMode(.hierarchical)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .padding(.horizontal, 14)
                 .padding(.top, 2)
             }
@@ -446,7 +447,7 @@ struct HomeView: View {
                                 .padding(.vertical, 14)
                                 .contentShape(Rectangle())
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             Rectangle().fill(Color.hairline).frame(height: 1).padding(.horizontal, 18)
                         }
                     }
@@ -531,6 +532,7 @@ struct HomeView: View {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundStyle(Color(.systemGray3))
                         }
+                        .buttonStyle(.pressable)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -550,6 +552,7 @@ struct HomeView: View {
                         .background(Color.accentContainer)
                         .clipShape(RoundedRectangle(cornerRadius: RCRadius.control))
                 }
+                .buttonStyle(.pressable)
             }
 
             // Unit chips (shown while keyboard is open)
@@ -570,7 +573,7 @@ struct HomeView: View {
                                     .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.tag))
                                     .overlay(RoundedRectangle(cornerRadius: RCRadius.tag).strokeBorder(Color.hairline))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                         }
                     }
                 }
@@ -651,6 +654,7 @@ struct HomeView: View {
                     Haptics.success()
                     SyncCoordinator.shared.pushInBackground(touchedStores)
                 }
+                .buttonStyle(.pressable)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(Color.accent)
             }
@@ -676,7 +680,7 @@ struct HomeView: View {
                             .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.control))
                             .overlay(RoundedRectangle(cornerRadius: RCRadius.control).strokeBorder(Color.hairline))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                 }
             }
@@ -723,7 +727,7 @@ struct HomeView: View {
             .background(color.opacity(0.13))
             .clipShape(RoundedRectangle(cornerRadius: RCRadius.card))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     // MARK: - Replenishment banner
@@ -745,6 +749,7 @@ struct HomeView: View {
                     addDueSoonToList()
                     Haptics.success()
                 }
+                .buttonStyle(.pressable)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(Color.amber)
                 .multilineTextAlignment(.trailing)
@@ -763,7 +768,7 @@ struct HomeView: View {
                                 .font(.system(size: 13, weight: .bold))
                                 .foregroundStyle(Color.canvas)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                     Text(pattern.itemName)
                         .font(.system(size: 15, weight: .medium))
@@ -781,7 +786,7 @@ struct HomeView: View {
                             .font(.system(size: 18))
                             .foregroundStyle(Color.textSecondary.opacity(0.7))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
         }
@@ -807,6 +812,7 @@ struct HomeView: View {
                             .font(.system(size: 14, weight: .medium))
                             .foregroundStyle(Color.accent)
                     }
+                    .buttonStyle(.pressable)
                 }
             }
 
@@ -826,7 +832,7 @@ struct HomeView: View {
                                 .opacity(draggingStoreID == store.id ? 0.4 : 1.0)
                                 .scaleEffect(draggingStoreID == store.id ? 0.96 : 1.0)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .contextMenu {
                             Button {
                                 withAnimation { store.isPaused.toggle() }
@@ -890,7 +896,7 @@ struct HomeView: View {
                         storeListRow(store)
                             .opacity(draggingStoreID == store.id ? 0.4 : 1.0)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .contextMenu {
                         Button {
                             withAnimation { store.isPaused.toggle() }
@@ -944,7 +950,10 @@ struct HomeView: View {
     }
 
     private func storeListRow(_ store: Store) -> some View {
-        HStack(spacing: 14) {
+        // Einmal holen statt der ungecachten `store.pendingItems` (Filter + Sort +
+        // UserDefaults-Zugriff) unten 5× einzeln neu aufzurufen.
+        let pending = store.pendingItems
+        return HStack(spacing: 14) {
             Image(systemName: store.iconSystemName)
                 .font(.system(size: 18, weight: .medium))
                 .foregroundStyle(Color.ink)
@@ -954,8 +963,8 @@ struct HomeView: View {
                     Text(store.name)
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(Color.ink)
-                    if store.pendingItems.count > 0 {
-                        Text("· \(store.pendingItems.count)")
+                    if pending.count > 0 {
+                        Text("· \(pending.count)")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(Color.accent)
                     }
@@ -970,15 +979,15 @@ struct HomeView: View {
                             .foregroundStyle(Color.textSecondary)
                     }
                 }
-                if store.pendingItems.isEmpty {
+                if pending.isEmpty {
                     Text("\(VisitFrequency.closest(to: store.visitsPerWeek).label) · \(String(localized: "store.empty"))")
                         .font(.system(size: 14))
                         .foregroundStyle(Color.textSecondary)
                         .lineLimit(1)
                 } else {
                     let freqLabel = VisitFrequency.closest(to: store.visitsPerWeek).label
-                    let preview = store.pendingItems.prefix(2).map { $0.name }.joined(separator: ", ")
-                    Text("\(freqLabel) · \(preview)\(store.pendingItems.count > 2 ? "…" : "")")
+                    let preview = pending.prefix(2).map { $0.name }.joined(separator: ", ")
+                    Text("\(freqLabel) · \(preview)\(pending.count > 2 ? "…" : "")")
                         .font(.system(size: 14))
                         .foregroundStyle(Color.textSecondary)
                         .lineLimit(1)
@@ -1094,7 +1103,7 @@ struct HomeView: View {
             .padding(.vertical, 10)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private var addStoreCard: some View {
@@ -1125,7 +1134,7 @@ struct HomeView: View {
             )
             .contentShape(RoundedRectangle(cornerRadius: RCRadius.card))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private var joinListCard: some View {
@@ -1156,7 +1165,7 @@ struct HomeView: View {
             )
             .contentShape(RoundedRectangle(cornerRadius: RCRadius.card))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private var emptyStoresView: some View {
@@ -1222,7 +1231,7 @@ struct HomeView: View {
                         .foregroundStyle(Color.ink)
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .toolbarChip()
 
             Spacer()
@@ -1236,7 +1245,7 @@ struct HomeView: View {
                     .foregroundStyle(Color.ink)
                     .toolbarChip()
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
 
             Button {
                 Haptics.impact(.light)
@@ -1247,7 +1256,7 @@ struct HomeView: View {
                     .foregroundStyle(Color.ink)
                     .toolbarChip()
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
         }
         .padding(.horizontal, 16)
         .padding(.top, 6)

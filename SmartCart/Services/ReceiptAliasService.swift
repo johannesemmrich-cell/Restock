@@ -38,7 +38,11 @@ final class ReceiptAliasService {
     }
 
     private func normalize(_ s: String) -> String {
+        // Satzzeichen durch Leerzeichen ERSETZEN (nicht löschen) — sonst würde "Shak.moutarde"
+        // zu "shakmoutarde" (zusammengeklebt) statt zu "shak moutarde", und würde damit weiterhin
+        // NICHT mit "Shak moutarde" (schon mit Leerzeichen) übereinstimmen.
         s.lowercased()
+            .replacingOccurrences(of: #"[.,;:!*]"#, with: " ", options: .regularExpression)
             .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
             .trimmingCharacters(in: .whitespaces)
     }

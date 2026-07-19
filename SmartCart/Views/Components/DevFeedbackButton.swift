@@ -19,6 +19,7 @@ struct DevFeedbackOverlay: ViewModifier {
                             .frame(width: 30, height: 30)
                             .background(Color.red.opacity(0.6), in: Circle())
                     }
+                    .buttonStyle(.pressable)
                     .padding(8)
                 }
             }

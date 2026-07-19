@@ -225,9 +225,13 @@ actor RecipeRecognitionService {
                 if nameStart < parts.count {
                     let name = parts[nameStart...].joined(separator: " ")
                     let unitStr = hasUnit ? parts[1] : ""
+                    // OCR kann hier eine unplausible Zahl liefern (Barcode-/Seitenzahl-Fragment
+                    // als lange Ziffernfolge, "inf", "nan") — Int(firstNum) stürzt dafür hart ab.
+                    let safeQuantity = (firstNum.isFinite && abs(firstNum) < Double(Int.max))
+                        ? "\(Int(firstNum))" : "1"
                     results.append(RecognizedIngredient(
                         name: name,
-                        quantity: "\(Int(firstNum))",
+                        quantity: safeQuantity,
                         unit: unitStr
                     ))
                     continue

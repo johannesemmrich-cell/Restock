@@ -134,6 +134,30 @@ extension ButtonStyle where Self == PrimaryButtonStyle {
     static var restockPrimary: PrimaryButtonStyle { PrimaryButtonStyle() }
 }
 
+// MARK: - Pressable (Anklick-Feedback für handgebaute Row-/Chip-Buttons)
+//
+// `.plain` unterdrückt SwiftUI's Standard-Press-Highlight komplett — in dieser App fast überall
+// spürbar, da die meisten "Zeilen" (Settings-Rows, Toolbar-Chips, Karten) handgebaute
+// Button{}.buttonStyle(.plain)-Konstruktionen statt echter List-Rows sind. Bewusst NUR Opacity
+// (kein Hintergrund/Radius wie bei PrimaryButtonStyle), damit der Style mit jeder Art von
+// Label-Inhalt (Icon, Chip, Karte) funktioniert, ohne optisch zu kollidieren.
+struct PressableButtonStyle: ButtonStyle {
+    // `.plain` ist ein PrimitiveButtonStyle und dimmt disabled-Buttons automatisch mit — ein
+    // eigener ButtonStyle bekommt das NICHT geschenkt und muss `isEnabled` selbst auswerten,
+    // sonst sehen deaktivierte Buttons (z. B. "Speichern" ohne gültige Eingabe) plötzlich genauso
+    // tappable aus wie aktive.
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(isEnabled ? (configuration.isPressed ? 0.6 : 1) : 0.4)
+    }
+}
+
+extension ButtonStyle where Self == PressableButtonStyle {
+    static var pressable: PressableButtonStyle { PressableButtonStyle() }
+}
+
 // MARK: - Toolbar chips
 //
 // Eckige Chips (Radius 11, Surface + Haarlinie bzw. Tinte/Bone für die Primäraktion) statt der
@@ -147,6 +171,8 @@ struct ToolbarChipModifier: ViewModifier {
         content
             .font(.system(size: 15, weight: .semibold))
             .foregroundStyle(prominent ? Color.onButton : Color.ink)
+            .lineLimit(1)
+            .minimumScaleFactor(0.75)
             .padding(.horizontal, 14)
             .frame(minWidth: 40, minHeight: 38)
             .background(

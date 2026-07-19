@@ -107,7 +107,7 @@ struct TodoListView: View {
                     .font(.title3)
                     .foregroundStyle(item.isCompleted ? .green : .secondary)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.title)

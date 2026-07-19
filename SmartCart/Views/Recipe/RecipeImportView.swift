@@ -31,14 +31,14 @@ struct RecipeImportView: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip() }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                 }
                 if !recognizedIngredients.isEmpty {
                     ChipToolbarItem(placement: .confirmationAction) {
                         Button { addSelected() } label: {
                             Text(String(localized: "recipe.add.selected")).toolbarChip(prominent: true)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(selectedIngredients.isEmpty)
                     }
                 }
@@ -150,10 +150,12 @@ struct RecipeImportView: View {
                         Button(String(localized: "recipe.select.all")) {
                             selectedIngredients = Set(recognizedIngredients.map { $0.id.uuidString })
                         }
+                        .buttonStyle(.pressable)
                         Spacer()
                         Button(String(localized: "recipe.deselect.all")) {
                             selectedIngredients.removeAll()
                         }
+                        .buttonStyle(.pressable)
                     }
                     .font(.system(size: 14))
 

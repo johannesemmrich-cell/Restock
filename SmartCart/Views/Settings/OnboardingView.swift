@@ -212,6 +212,7 @@ struct OnboardingView: View {
                         Text(selectedStores.count == presetStores.count ? "Auswahl aufheben" : "Alle auswählen")
                             .font(.subheadline)
                     }
+                    .buttonStyle(.pressable)
                 }
                 .padding(.horizontal, 24)
             }

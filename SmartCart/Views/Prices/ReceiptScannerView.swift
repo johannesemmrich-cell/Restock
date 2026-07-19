@@ -51,12 +51,12 @@ struct ReceiptScannerView: View {
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Abbrechen").toolbarChip() }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                 }
                 if phase == .review && !parsedLines.filter(\.isIncluded).isEmpty {
                     ChipToolbarItem(placement: .confirmationAction) {
                         Button { save() } label: { Text("Speichern").toolbarChip(prominent: true) }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                     }
                 }
             }
@@ -229,13 +229,56 @@ struct ReceiptScannerView: View {
                 }
             }
             let parsed = ReceiptParserService.parse(lines)
+
+            // Kürzel → echter Name, mehrstufig (erste treffende Stufe gewinnt):
+            // 1) gelernter Alias (frühere User-Korrektur) 2) statisches Abkürzungswörterbuch
+            // 3) Fuzzy-Match gegen die Kaufhistorie an diesem Store 4) optional Apple
+            // Intelligence (iOS 26+) 5) unverändert (heutiges Verhalten).
+            // Stufen 1-3 laufen bewusst gemeinsam auf dem MainActor: ReceiptAliasService ist eine
+            // simple, nicht threadsichere Klasse (kein Lock/Actor) — würde resolve() hier parallel
+            // zu einem gleichzeitigen learn()-Aufruf aus save() (läuft immer auf dem MainActor)
+            // laufen, wäre das ein Race auf demselben Dictionary. Historie-Zugriff (PurchaseRecord)
+            // gehört aus demselben Grund ebenfalls auf den MainActor. Nur Stufe 4 (Apple
+            // Intelligence) ist echt langsam/asynchron und läuft deshalb separat.
+            var (resolvedNames, needsAI) = await MainActor.run { () -> ([Int: String], [Int]) in
+                var resolvedNames: [Int: String] = [:]
+                var needsAI: [Int] = []
+                let storeName = store.name
+                for (index, line) in parsed.enumerated() {
+                    if let alias = ReceiptAliasService.shared.resolve(line.name) {
+                        resolvedNames[index] = alias
+                    } else if let expanded = ReceiptParserService.expandAbbreviations(line.name) {
+                        resolvedNames[index] = expanded
+                    } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
+                        resolvedNames[index] = historical
+                    } else {
+                        needsAI.append(index)
+                    }
+                }
+                return (resolvedNames, needsAI)
+            }
+
+            if !needsAI.isEmpty, ReceiptNameAIResolver.isAIAvailable() {
+                await withTaskGroup(of: (Int, String?).self) { group in
+                    for index in needsAI {
+                        let raw = parsed[index].name
+                        group.addTask {
+                            (index, await ReceiptNameAIResolver.shared.expand(raw))
+                        }
+                    }
+                    for await (index, suggestion) in group {
+                        if let suggestion { resolvedNames[index] = suggestion }
+                    }
+                }
+            }
+
+            // Unveränderliche Kopie vor dem letzten MainActor-Hop — sonst warnt Swift zurecht vor
+            // dem Zugriff auf ein eingefangenes `var` aus nebenläufig ausführbarem Code.
+            let finalNames = resolvedNames
             await MainActor.run {
-                parsedLines = parsed.map { line in
-                    // Gelernte Kürzel-Zuordnung anwenden: "Beurrier ext" → "Butter", wenn der
-                    // User das bei einem früheren Scan so korrigiert hat.
-                    let learnedName = ReceiptAliasService.shared.resolve(line.name)
-                    return EditableReceiptLine(
-                        name: learnedName ?? line.name,
+                parsedLines = parsed.enumerated().map { index, line in
+                    EditableReceiptLine(
+                        name: finalNames[index] ?? line.name,
                         price: line.price,
                         originalName: line.name,
                         quantity: line.quantity,
