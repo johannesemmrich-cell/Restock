@@ -38,16 +38,61 @@ struct RecognizedIngredient: Identifiable {
     var unit: String
 }
 
+// MARK: - Real (non-cooperative) timeout
+
+/// A `TaskGroup`/`withThrowingTaskGroup` race does NOT actually bound a hanging `operation`:
+/// per Swift's structured-concurrency contract, the group awaits ALL of its child tasks before
+/// the enclosing `await withTaskGroup(...)` call itself returns — `cancelAll()` only sets a
+/// cooperative flag that `operation` would have to check itself, it does not stop execution. This
+/// was live-reproduced: a `withThrowingTaskGroup`-based 25s "timeout" race around a
+/// `LanguageModelSession` call still hung for well over a minute with no result. Here, both
+/// branches run as independent `Task.detached` work (NOT children of any group the caller has to
+/// wait for) racing to resume a single continuation — whichever finishes first genuinely lets the
+/// caller return; the loser keeps running orphaned in the background but blocks no one.
+func withRealTimeout<T: Sendable>(
+    seconds: Double,
+    operation: @escaping @Sendable () async -> T,
+    onTimeout: @escaping @Sendable () -> T
+) async -> T {
+    await withCheckedContinuation { (continuation: CheckedContinuation<T, Never>) in
+        let lock = NSLock()
+        var didResume = false
+        func resumeOnce(_ value: T) {
+            lock.lock()
+            let alreadyResumed = didResume
+            didResume = true
+            lock.unlock()
+            guard !alreadyResumed else { return }
+            continuation.resume(returning: value)
+        }
+        Task.detached {
+            resumeOnce(await operation())
+        }
+        Task.detached {
+            try? await Task.sleep(for: .seconds(seconds))
+            resumeOnce(onTimeout())
+        }
+    }
+}
+
 // MARK: - Meal Ingredient Service
 
 actor MealIngredientService {
     static let shared = MealIngredientService()
 
-    enum Source { case ai, database, none }
+    enum Source: Sendable { case ai, database, none }
 
-    func ingredients(for mealName: String) async -> (names: [String], source: Source) {
+    func ingredients(for mealName: String) async -> (items: [MealIngredient], source: Source) {
         let trimmed = mealName.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return ([], .none) }
+
+        // Bekannte Gerichte zuerst aus der lokalen Datenbank bedienen — sofort verfügbar, kein
+        // Risiko eines hängenden Modellaufrufs. Apple Intelligence lohnt sich nur für Gerichte,
+        // die die Datenbank nicht kennt (vorher lief AI IMMER zuerst, auch für exakte
+        // DB-Treffer wie "Pasta" — jede Eingabe eines bekannten Gerichts zahlte damit unnötig
+        // das volle Timeout-Risiko des KI-Pfads, siehe aiIngredients()).
+        let db = MealDatabase.ingredients(for: trimmed)
+        if !db.isEmpty { return (db, .database) }
 
         if #available(iOS 26, *) {
             if let result = try? await aiIngredients(for: trimmed), !result.isEmpty {
@@ -55,8 +100,7 @@ actor MealIngredientService {
             }
         }
 
-        let db = MealDatabase.ingredients(for: trimmed)
-        return db.isEmpty ? ([], .none) : (db, .database)
+        return ([], .none)
     }
 
     static func isAIAvailable() -> Bool {
@@ -68,43 +112,45 @@ actor MealIngredientService {
     }
 
     @available(iOS 26, *)
-    private func aiIngredients(for mealName: String) async throws -> [String]? {
+    private func aiIngredients(for mealName: String) async throws -> [MealIngredient]? {
         #if canImport(FoundationModels)
         let model = SystemLanguageModel.default
         guard case .available = model.availability else { return nil }
         let prompt = """
-        Gib mir die Hauptzutaten für das Gericht "\(mealName)" als JSON-Array von Strings auf Deutsch.
-        Nur Zutatennamen, keine Mengen, keine Einheiten, 4–8 Zutaten.
-        Antworte NUR mit dem JSON-Array, z.B.: ["Mehl","Eier","Milch"]
+        Gib mir die Hauptzutaten für das Gericht "\(mealName)" für \(MealDatabase.baseServings) Portionen \
+        als JSON-Array von Objekten auf Deutsch.
+        Jede Zutat braucht: "name" (String), "amount" (Zahl als String, z.B. "400"), "unit" \
+        (z.B. "g", "ml", "Stück", "EL", "TL", oder "" falls unpassend).
+        Antworte NUR mit dem JSON-Array, z.B.: [{"name":"Mehl","amount":"200","unit":"g"}]
         """
-        // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen
-        return try await withThrowingTaskGroup(of: [String]?.self) { group in
-            group.addTask {
-                let session = LanguageModelSession()
-                let response = try await session.respond(to: prompt)
-                return self.parseStringArray(from: response.content)
-            }
-            group.addTask {
-                try await Task.sleep(for: .seconds(25))
-                return nil
-            }
-            defer { group.cancelAll() }
-            for try await result in group { return result }
-            return nil
-        }
+        // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen. Nutzt `withRealTimeout`
+        // statt eines TaskGroup-Rennens, das den hängenden Aufruf nicht wirklich begrenzt hätte
+        // (siehe dessen Dokumentation).
+        return await withRealTimeout(
+            seconds: 25,
+            operation: {
+                guard let response = try? await LanguageModelSession().respond(to: prompt) else { return nil }
+                return self.parseMealIngredients(from: response.content)
+            },
+            onTimeout: { nil }
+        )
         #else
         return nil
         #endif
     }
 
-    nonisolated private func parseStringArray(from text: String) -> [String]? {
+    nonisolated private func parseMealIngredients(from text: String) -> [MealIngredient]? {
         guard let start = text.range(of: "["),
               let end = text.range(of: "]", options: .backwards),
               start.lowerBound <= end.lowerBound else { return nil }
         let jsonStr = String(text[start.lowerBound...end.upperBound])
         guard let data = jsonStr.data(using: .utf8),
-              let arr = try? JSONSerialization.jsonObject(with: data) as? [String] else { return nil }
-        return arr.filter { !$0.isEmpty }
+              let arr = try? JSONSerialization.jsonObject(with: data) as? [[String: String]] else { return nil }
+        return arr.compactMap { dict in
+            guard let name = dict["name"], !name.isEmpty else { return nil }
+            let amount = Double(dict["amount"] ?? "") ?? 1
+            return MealIngredient(name: name, amount: amount, unit: dict["unit"] ?? "")
+        }
     }
 }
 

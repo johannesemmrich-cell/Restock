@@ -140,6 +140,23 @@ class Store {
         items.filter { $0.isCompleted }
     }
 
+    /// Items stay in `completedItems` on purpose after check-off (deleting them would make
+    /// re-adding harder), but that means a running progress count/bar based on `completedItems`
+    /// would grow forever across shopping trips instead of reflecting the current one. Items
+    /// checked off within this window still count as "part of the current trip"; older ones drop
+    /// out of any progress count derived from this (but stay fully visible in the "Erledigt"
+    /// section — nothing here deletes or hides them from that list). Shared between
+    /// `StoreDetailView` (the store screen's progress bar/text) and `LiveActivityService`
+    /// (Dynamic Island/Lock Screen) so both always agree on the same number for the same store.
+    static let recentCompletionWindow: TimeInterval = 3600
+
+    var recentlyCompletedItems: [ShoppingItem] {
+        completedItems.filter {
+            guard let completedDate = $0.completedDate else { return false }
+            return Date().timeIntervalSince(completedDate) < Store.recentCompletionWindow
+        }
+    }
+
     func recordCompletionOrder(_ completedNames: [String]) {
         for (index, name) in completedNames.enumerated() {
             let key = name.lowercased()

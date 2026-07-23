@@ -5,6 +5,15 @@ import UIKit
 
 // MARK: - Editable line model
 
+/// Ein antippbarer Vorschlag für eine Bon-Zeile, hergeleitet aus den gerade abgehakten Artikeln
+/// dieses Stores (siehe `ReceiptParserService.completedItemCandidates`). Trägt `itemID` (nicht
+/// nur den Namen) mit, damit zwei gleichnamige abgehakte Artikel unterscheidbar bleiben.
+struct ReceiptSuggestion: Identifiable {
+    let id = UUID()
+    let name: String
+    let itemID: UUID
+}
+
 struct EditableReceiptLine: Identifiable {
     let id = UUID()
     var name: String
@@ -15,6 +24,12 @@ struct EditableReceiptLine: Identifiable {
     var originalName: String = ""
     var quantity: Double = 1 // Stückzahl (Mengenzeile "2 x 1.25€" / Multipack "6X1.5L")
     var unit: String = ""    // Größe aus dem Namen, z. B. "1,5l", "400g"
+    /// Antippbare Alternativen aus den gerade abgehakten Artikeln dieses Stores — z. B. wenn die
+    /// automatische Auflösung danebenliegt (kryptische Bon-Kürzel wie "MDHSZ" für "Mozzarella"
+    /// lassen sich durch keine Text-Ähnlichkeit zuverlässig auflösen). Tippen setzt nur `name`;
+    /// `originalName` bleibt unverändert, das Kürzel-Lernen in `save()` funktioniert dadurch
+    /// identisch zu einer manuellen Texteingabe.
+    var suggestions: [ReceiptSuggestion] = []
 }
 
 // MARK: - Main Scanner View
@@ -160,7 +175,7 @@ struct ReceiptScannerView: View {
                 } header: {
                     Text("Gefunden: \(parsedLines.count) Positionen")
                 } footer: {
-                    Text("Tippe auf einen Namen um ihn zu korrigieren – z. B. \"MDHSZ\" → \"Mozzarella\".")
+                    Text("Tippe auf einen Namen um ihn zu korrigieren – z. B. \"MDHSZ\" → \"Mozzarella\" – oder tippe einen Vorschlag an.")
                 }
 
                 Section {
@@ -232,30 +247,63 @@ struct ReceiptScannerView: View {
 
             // Kürzel → echter Name, mehrstufig (erste treffende Stufe gewinnt):
             // 1) gelernter Alias (frühere User-Korrektur) 2) statisches Abkürzungswörterbuch
-            // 3) Fuzzy-Match gegen die Kaufhistorie an diesem Store 4) optional Apple
-            // Intelligence (iOS 26+) 5) unverändert (heutiges Verhalten).
-            // Stufen 1-3 laufen bewusst gemeinsam auf dem MainActor: ReceiptAliasService ist eine
+            // 3) Fuzzy-Match gegen die gerade abgehakten Artikel dieses Stores (stärkeres Signal
+            // als Stufe 4, weil exakt auf diesen Einkauf bezogen) 4) Fuzzy-Match gegen die
+            // Kaufhistorie an diesem Store 5) optional Apple Intelligence (iOS 26+) 6) unverändert
+            // (heutiges Verhalten).
+            // Stufen 1-4 laufen bewusst gemeinsam auf dem MainActor: ReceiptAliasService ist eine
             // simple, nicht threadsichere Klasse (kein Lock/Actor) — würde resolve() hier parallel
             // zu einem gleichzeitigen learn()-Aufruf aus save() (läuft immer auf dem MainActor)
-            // laufen, wäre das ein Race auf demselben Dictionary. Historie-Zugriff (PurchaseRecord)
-            // gehört aus demselben Grund ebenfalls auf den MainActor. Nur Stufe 4 (Apple
-            // Intelligence) ist echt langsam/asynchron und läuft deshalb separat.
-            var (resolvedNames, needsAI) = await MainActor.run { () -> ([Int: String], [Int]) in
+            // laufen, wäre das ein Race auf demselben Dictionary. Historie-/Store-Zugriff
+            // (PurchaseRecord/ShoppingItem) gehört aus demselben Grund ebenfalls auf den
+            // MainActor. Nur Stufe 5 (Apple Intelligence) ist echt langsam/asynchron und läuft
+            // deshalb separat.
+            var (resolvedNames, needsAI, suggestionsByIndex) = await MainActor.run { () -> ([Int: String], [Int], [Int: [ReceiptSuggestion]]) in
                 var resolvedNames: [Int: String] = [:]
                 var needsAI: [Int] = []
+                var suggestionsByIndex: [Int: [ReceiptSuggestion]] = [:]
                 let storeName = store.name
+                let completedItems = store.completedItems
+                // Verhindert, dass zwei Bon-Zeilen automatisch denselben abgehakten Artikel
+                // beanspruchen (z. B. zwei OCR-Kürzel, die beide am ehesten zu "Milch" passen) —
+                // fällt stattdessen auf den nächstbesten noch unverbrauchten Kandidaten zurück.
+                // Gilt NUR für die automatische Übernahme; die Vorschlags-Chips unten bleiben
+                // absichtlich unabhängig davon (siehe Kommentar dort).
+                var consumedItemIDs: Set<UUID> = []
+
                 for (index, line) in parsed.enumerated() {
+                    let candidates = completedItems.isEmpty ? [] :
+                        ReceiptParserService.completedItemCandidates(for: line.name, in: completedItems, linePrice: line.price)
+
                     if let alias = ReceiptAliasService.shared.resolve(line.name) {
                         resolvedNames[index] = alias
                     } else if let expanded = ReceiptParserService.expandAbbreviations(line.name) {
                         resolvedNames[index] = expanded
+                    } else if let best = candidates.first(where: {
+                        !consumedItemIDs.contains($0.item.id) && $0.score >= ReceiptParserService.completedItemAutoApplyThreshold
+                    }) {
+                        resolvedNames[index] = best.item.name
+                        consumedItemIDs.insert(best.item.id)
                     } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
                         resolvedNames[index] = historical
                     } else {
                         needsAI.append(index)
                     }
+
+                    // Absichtlich NICHT auf den "else"-Fall beschränkt: auch wenn Alias/Wörterbuch
+                    // die Zeile schon aufgelöst hat, kann ein abgehakter Artikel noch die
+                    // genauere Alternative sein (z. B. gelernter Alias "Senf" vs. tatsächlich
+                    // abgehakt "Dijon-Senf Extra Scharf 200g") — per Tap aufwertbar. Kein
+                    // Ausschluss über Zeilen hinweg (keine `consumedItemIDs`-Filterung hier):
+                    // sonst könnte die eine Zeile, die den Artikel WIRKLICH braucht, ihn nicht
+                    // mehr vorgeschlagen bekommen, nur weil eine andere Zeile ihn (ggf. falsch)
+                    // schon automatisch beansprucht hat.
+                    let resolvedName = resolvedNames[index] ?? line.name
+                    suggestionsByIndex[index] = candidates
+                        .filter { $0.item.name.caseInsensitiveCompare(resolvedName) != .orderedSame }
+                        .map { ReceiptSuggestion(name: $0.item.name, itemID: $0.item.id) }
                 }
-                return (resolvedNames, needsAI)
+                return (resolvedNames, needsAI, suggestionsByIndex)
             }
 
             if !needsAI.isEmpty, ReceiptNameAIResolver.isAIAvailable() {
@@ -275,6 +323,7 @@ struct ReceiptScannerView: View {
             // Unveränderliche Kopie vor dem letzten MainActor-Hop — sonst warnt Swift zurecht vor
             // dem Zugriff auf ein eingefangenes `var` aus nebenläufig ausführbarem Code.
             let finalNames = resolvedNames
+            let finalSuggestions = suggestionsByIndex
             await MainActor.run {
                 parsedLines = parsed.enumerated().map { index, line in
                     EditableReceiptLine(
@@ -282,7 +331,8 @@ struct ReceiptScannerView: View {
                         price: line.price,
                         originalName: line.name,
                         quantity: line.quantity,
-                        unit: line.unit
+                        unit: line.unit,
+                        suggestions: finalSuggestions[index] ?? []
                     )
                 }
                 phase = .review
@@ -357,39 +407,70 @@ private struct ReceiptLineRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 10) {
-            Toggle("", isOn: $line.isIncluded)
-                .labelsHidden()
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 10) {
+                Toggle("", isOn: $line.isIncluded)
+                    .labelsHidden()
 
-            VStack(alignment: .leading, spacing: 1) {
-                HStack(spacing: 4) {
-                    TextField("Artikelname", text: $line.name)
-                        .font(.system(size: 15))
-                    Image(systemName: "pencil")
-                        .font(.system(size: 10))
-                        .foregroundStyle(.tertiary)
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack(spacing: 4) {
+                        TextField("Artikelname", text: $line.name)
+                            .font(.system(size: 15))
+                        Image(systemName: "pencil")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.tertiary)
+                    }
+                    if let detailText {
+                        Text(detailText)
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                if let detailText {
-                    Text(detailText)
-                        .font(.system(size: 11))
+                .opacity(line.isIncluded ? 1 : 0.4)
+
+                Spacer()
+
+                HStack(spacing: 2) {
+                    Text(Locale.current.currencySymbol ?? "€")
+                        .font(.system(size: 13))
                         .foregroundStyle(.secondary)
+                    TextField("0,00", value: $line.price, format: .number.precision(.fractionLength(2)))
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 62)
+                        .font(.system(size: 14, weight: .medium))
                 }
+                .opacity(line.isIncluded ? 1 : 0.4)
             }
-            .opacity(line.isIncluded ? 1 : 0.4)
 
-            Spacer()
-
-            HStack(spacing: 2) {
-                Text(Locale.current.currencySymbol ?? "€")
-                    .font(.system(size: 13))
-                    .foregroundStyle(.secondary)
-                TextField("0,00", value: $line.price, format: .number.precision(.fractionLength(2)))
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
-                    .frame(width: 62)
-                    .font(.system(size: 14, weight: .medium))
+            // Antippbare Alternativen aus den gerade abgehakten Artikeln dieses Stores — nur
+            // sichtbar, wenn es einen plausiblen, noch nicht übernommenen Kandidaten gibt (siehe
+            // ReceiptParserService.completedItemCandidates). Gleiche Bausteine wie die
+            // Mengen-Vorschlags-Chips in HomeView (RCRadius.tag/Color.surface/.hairline,
+            // .buttonStyle(.pressable), Haptics.impact).
+            if !line.suggestions.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(line.suggestions) { suggestion in
+                            Button {
+                                line.name = suggestion.name
+                                Haptics.impact(.light)
+                            } label: {
+                                Text(suggestion.name)
+                                    .lineLimit(1)
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundStyle(Color.textSecondary)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.tag))
+                                    .overlay(RoundedRectangle(cornerRadius: RCRadius.tag).strokeBorder(Color.hairline))
+                            }
+                            .buttonStyle(.pressable)
+                        }
+                    }
+                }
+                .opacity(line.isIncluded ? 1 : 0.4)
             }
-            .opacity(line.isIncluded ? 1 : 0.4)
         }
     }
 }

@@ -153,11 +153,15 @@ final class LiveActivityService {
         if !excluded.isEmpty {
             pending.removeAll { excluded.contains($0.id) }
         }
+        // Gleiche "nur kürzlich abgehakt zählt mit"-Fensterung wie StoreDetailView.completionProgress
+        // (Store.recentlyCompletedItems) — sonst würde die Live Activity/Dynamic Island einen ganz
+        // anderen (nie schrumpfenden) Fortschritt zeigen als der Store-Screen für denselben Store.
+        // `excluded` sind noch nicht persistierte, aber schon zur Anzeige als erledigt behandelte
+        // Island-Checkoffs — zählen unabhängig vom Zeitfenster immer zu "gerade erledigt".
+        let completed = store.recentlyCompletedItems.count + excluded.count
         return .init(
-            // items.count - pending.count == completedItems.count + noch gequeuete (für die
-            // Anzeige bereits erledigte) Island-Checkoffs; ohne Exclusion exakt completedItems.count.
-            completedCount: store.items.count - pending.count,
-            totalCount: store.items.count,
+            completedCount: completed,
+            totalCount: pending.count + completed,
             nextItemName: pending.first?.name,
             pendingItemNames: pending.map { $0.name },
             pendingItemIDs: pending.map { $0.id },

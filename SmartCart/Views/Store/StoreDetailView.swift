@@ -50,9 +50,15 @@ struct StoreDetailView: View {
     private func total(for items: [ShoppingItem]) -> Double {
         items.compactMap { $0.estimatedLineTotal }.reduce(0, +)
     }
+
+    /// "x von y" progress (count and bar below) counts only recently-completed items (see
+    /// `Store.recentlyCompletedItems`) so it reflects the current shopping trip rather than
+    /// growing forever — items stay listed in "Erledigt" regardless, this only affects the count.
     private var completionProgress: Double {
-        guard !store.items.isEmpty else { return 0 }
-        return Double(store.completedItems.count) / Double(store.items.count)
+        let recentCount = store.recentlyCompletedItems.count
+        let total = store.pendingItems.count + recentCount
+        guard total > 0 else { return 0 }
+        return Double(recentCount) / Double(total)
     }
 
     var body: some View {
@@ -573,7 +579,7 @@ struct StoreDetailView: View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
                 Text(String(format: String(localized: "list.progress"),
-                            store.completedItems.count, store.items.count))
+                            store.recentlyCompletedItems.count, pending.count + store.recentlyCompletedItems.count))
                     .font(.system(size: 13))
                     .foregroundStyle(.secondary)
                 GeometryReader { geo in

@@ -17,10 +17,9 @@ struct SettingsView: View {
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
     @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
     private var autoSortByLearnedOrder = true
-    // V5/V6 — dieselben Keys wie HomeView.storeViewModeRaw / AllItemsView.groupByCategory,
-    // damit eine Änderung hier sofort dort (und umgekehrt) wirkt.
+    // Gleicher Key wie HomeView.storeViewModeRaw, damit eine Änderung hier sofort dort
+    // (und umgekehrt) wirkt.
     @AppStorage("storeViewMode") private var storeViewModeRaw = StoreViewMode.cards.rawValue
-    @AppStorage("allItemsGroupByCategory") private var defaultGroupByCategory = false
 
     @EnvironmentObject private var premium: PremiumService
     @State private var showPaywall = false
@@ -59,34 +58,11 @@ struct SettingsView: View {
 
                 Section {
                     HStack(spacing: 12) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Läden-Ansicht")
-                            Text("NEU · V5")
-                                .font(.system(size: 12))
-                                .foregroundStyle(Color.textSecondary)
-                        }
+                        Text("Läden-Ansicht")
                         Spacer()
                         Picker("Läden-Ansicht", selection: $storeViewModeRaw) {
                             Text("Karten").tag(StoreViewMode.cards.rawValue)
                             Text("Liste").tag(StoreViewMode.list.rawValue)
-                        }
-                        .pickerStyle(.segmented)
-                        .labelsHidden()
-                        .fixedSize()
-                    }
-                    .padding(.vertical, 2)
-
-                    HStack(spacing: 12) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Listen-Sortierung")
-                            Text("NEU · V6")
-                                .font(.system(size: 12))
-                                .foregroundStyle(Color.textSecondary)
-                        }
-                        Spacer()
-                        Picker("Listen-Sortierung", selection: $defaultGroupByCategory) {
-                            Text("Kategorie").tag(true)
-                            Text("Laden").tag(false)
                         }
                         .pickerStyle(.segmented)
                         .labelsHidden()

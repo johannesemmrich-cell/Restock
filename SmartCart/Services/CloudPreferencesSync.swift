@@ -14,6 +14,8 @@ final class CloudPreferencesSync {
         "menuPlanJSON",
         "menuIngredientsJSON",
         "savedRecipesJSON",
+        "menuPortionsJSON",
+        "menuAddedDaysJSON",
         "selectedCountry",
         "selectedLanguage",
         "currencyCode",

@@ -519,8 +519,9 @@ enum ReceiptParserService {
 
     /// Bekannte Kassenbon-Kürzel (FR/DE) → volles Wort. Wortweiser Match (nicht Substring), damit
     /// z. B. "past" nicht in "Pastete" hineingreift. Startsatz, bewusst nicht vollständig — wächst
-    /// über Zeit; für alles, was hier nicht drinsteht, greifen die nachgelagerten Stufen
-    /// (Kaufhistorie-Fuzzy-Match, dann optional Apple Intelligence, siehe ReceiptScannerView.process()).
+    /// über Zeit; für alles, was hier nicht drinsteht, greifen die nachgelagerten Stufen (Abgleich
+    /// mit den gerade abgehakten Artikeln, dann Kaufhistorie-Fuzzy-Match, dann optional Apple
+    /// Intelligence, siehe ReceiptScannerView.process()).
     /// Bewusst nur Kürzel, die (fast) nie ein eigenständiges, anders gemeintes Wort sind — z. B.
     /// NICHT "frais" (frisch) → "Fraise" (Erdbeere), das hätte "LAIT FRAIS"/"POISSON FRAIS" verfälscht,
     /// und NICHT "conf" (Confit vs. Confiture nicht eindeutig unterscheidbar). Eine falsche Stufe-2-
@@ -559,7 +560,79 @@ enum ReceiptParserService {
         return matchedAny ? expanded.joined(separator: " ") : nil
     }
 
-    // MARK: - Kürzel-Auflösung (Stufe 3: Kaufhistorie-Fuzzy-Match)
+    // MARK: - Kürzel-Auflösung (Stufe 3: Abgehakte Artikel dieses Einkaufs)
+
+    /// Wie gut `token` (ein OCR-Bon-Text) zu `name` (ein Artikelname) passt — Dice-Koeffizient
+    /// über der längsten gemeinsamen Teilsequenz (LCS), nicht reines `contains` wie bei
+    /// `historyMatch` unten: reine Substring-Suche findet Kürzungen ("Mozzar" → "Mozzarella"),
+    /// aber nicht das andere verbreitete Bon-Kürzel-Muster, bei dem Zeichen mittendrin fehlen
+    /// ("Mzzrll" → "Mozzarella") — eine Teilsequenz erfasst beide Fälle gleich gut. Bewusst NICHT
+    /// Levenshtein-Distanz: die ist stark bei Zeichen-VERWECHSLUNGEN (OCR liest "0" als "O"), das
+    /// eigentliche Problem bei Kassenbons ist aber Kürzung/Auslassung, nicht Verwechslung.
+    /// Ehrlich gesagt: ein völlig beliebiger Code ohne jeden Bezug zur Buchstaben-Reihenfolge
+    /// (z. B. "MDHSZ" für "Mozzarella") bleibt auch hiermit ein schwacher Score — dafür gibt es
+    /// die antippbaren Vorschlags-Chips im Review (ReceiptLineRow), nicht eine noch bessere Formel.
+    private static func lcsSimilarity(_ a: String, _ b: String) -> Double {
+        let aChars = Array(a.lowercased())
+        let bChars = Array(b.lowercased())
+        guard !aChars.isEmpty, !bChars.isEmpty else { return 0 }
+        let lcs = longestCommonSubsequenceLength(aChars, bChars)
+        return (2.0 * Double(lcs)) / Double(aChars.count + bChars.count)
+    }
+
+    private static func longestCommonSubsequenceLength(_ a: [Character], _ b: [Character]) -> Int {
+        guard !a.isEmpty, !b.isEmpty else { return 0 }
+        var previous = [Int](repeating: 0, count: b.count + 1)
+        var current = [Int](repeating: 0, count: b.count + 1)
+        for i in 1...a.count {
+            for j in 1...b.count {
+                if a[i - 1] == b[j - 1] {
+                    current[j] = previous[j - 1] + 1
+                } else {
+                    current[j] = max(previous[j], current[j - 1])
+                }
+            }
+            swap(&previous, &current)
+        }
+        return previous[b.count]
+    }
+
+    /// Automatisch übernehmen, wenn der beste Treffer mindestens diesen Score erreicht.
+    static let completedItemAutoApplyThreshold: Double = 0.5
+    /// Trotzdem als antippbaren Vorschlags-Chip anzeigen, auch ohne automatische Übernahme.
+    static let completedItemSuggestionFloor: Double = 0.2
+
+    /// Sucht unter den gerade abgehakten Artikeln DIESES Stores nach den plausibelsten Treffern
+    /// für `token` (ein OCR-Bon-Text) — stärkeres Signal als `historyMatch`, weil es exakt das
+    /// erfasst, was gerade an diesem Store eingekauft wurde, statt irgendeines Kaufs der letzten
+    /// 7 Tage. `linePrice` (die Bon-Zeilen-GESAMTsumme) ist ein optionaler kleiner Tie-Breaker
+    /// gegen `item.estimatedLineTotal` (ebenfalls ein Gesamtpreis, keine Umrechnung nötig) — hebt
+    /// einen bereits plausiblen Text-Match weiter an, rettet aber nie einen schwachen.
+    static func completedItemCandidates(
+        for token: String,
+        in items: [ShoppingItem],
+        linePrice: Double? = nil,
+        limit: Int = 3
+    ) -> [(item: ShoppingItem, score: Double)] {
+        guard !items.isEmpty, token.count >= 2 else { return [] }
+        let scored: [(item: ShoppingItem, score: Double)] = items.map { item in
+            var score = lcsSimilarity(token, item.name)
+            if score >= completedItemSuggestionFloor,
+               let linePrice, let estimate = item.estimatedLineTotal, estimate > 0 {
+                let priceCloseness = 1 - min(abs(linePrice - estimate) / estimate, 1)
+                score += 0.1 * priceCloseness
+            }
+            return (item, score)
+        }
+        return Array(
+            scored
+                .filter { $0.score >= completedItemSuggestionFloor }
+                .sorted { $0.score > $1.score }
+                .prefix(limit)
+        )
+    }
+
+    // MARK: - Kürzel-Auflösung (Stufe 4: Kaufhistorie-Fuzzy-Match)
 
     /// Sucht in der Kaufhistorie DESSELBEN Stores nach einem Artikelnamen, der stark mit dem
     /// OCR-Token überlappt (bidirektionales `contains`, wie an anderen Stellen der App bereits
@@ -577,10 +650,10 @@ enum ReceiptParserService {
     }
 }
 
-// MARK: - Kürzel-Auflösung (Stufe 4: Apple Intelligence, optional)
+// MARK: - Kürzel-Auflösung (Stufe 5: Apple Intelligence, optional)
 
 /// Letzte Stufe der Kassenbon-Namensauflösung (siehe ReceiptScannerView.process()) — nur wenn
-/// gelernter Alias, Wörterbuch UND Kaufhistorie-Match nichts liefern. Spiegelt exakt das
+/// gelernter Alias, Wörterbuch, abgehakte Artikel UND Kaufhistorie-Match nichts liefern. Spiegelt exakt das
 /// Guard-/Timeout-Muster von `MealIngredientService.aiIngredients`
 /// (RecipeRecognitionService.swift), inklusive 25-Sekunden-Timeout-Rennen, damit ein hängender
 /// Modellaufruf den Scan-Review-Bildschirm nie blockiert. Nur auf iOS 26+ mit verfügbarer Apple
@@ -615,21 +688,17 @@ actor ReceiptNameAIResolver {
         Antworte NUR mit dem wahrscheinlichsten vollen Produktnamen in derselben Sprache, ohne
         Erklärung, ohne Anführungszeichen, ohne Preis oder Menge.
         """
-        // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen
-        return try await withThrowingTaskGroup(of: String?.self) { group in
-            group.addTask {
-                let session = LanguageModelSession()
-                let response = try await session.respond(to: prompt)
+        // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen. Nutzt `withRealTimeout`
+        // (RecipeRecognitionService.swift) statt eines TaskGroup-Rennens, das einen wirklich
+        // hängenden Aufruf nicht begrenzt hätte (siehe dessen Dokumentation).
+        return await withRealTimeout(
+            seconds: 25,
+            operation: {
+                guard let response = try? await LanguageModelSession().respond(to: prompt) else { return nil }
                 return self.sanitize(response.content)
-            }
-            group.addTask {
-                try await Task.sleep(for: .seconds(25))
-                return nil
-            }
-            defer { group.cancelAll() }
-            for try await result in group { return result }
-            return nil
-        }
+            },
+            onTimeout: { nil }
+        )
         #else
         return nil
         #endif
