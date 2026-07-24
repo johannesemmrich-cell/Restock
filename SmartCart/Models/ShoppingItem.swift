@@ -89,7 +89,7 @@ class ShoppingItem {
             key.count >= 3 && itemLower.count >= 3 &&
             (key.contains(itemLower) || itemLower.contains(key))
         }?.value
-        self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category, unit: unit)
+        self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category, unit: unit, quantityAmount: quantityAmount)
         self.estimatedPriceIsAutoDerived = (learnedPrice == nil)
     }
 
@@ -160,7 +160,18 @@ enum PriceEstimator {
         }
     }
 
-    static func estimate(for name: String, category: String, unit: String) -> Double? {
+    /// Über diesem geschätzten GESAMTpreis für einen einzelnen Posten wird die Schätzung
+    /// verworfen (nil) statt angezeigt — deutlich über jedem realistischen Einzelposten eines
+    /// Wocheneinkaufs. Schützt vor Fällen wie "Müllbeutel 50l": die Zahl vor "l" beschreibt hier
+    /// die Beutel-*Größe* (Fassungsvermögen pro Beutel), nicht die Kaufmenge, wird vom
+    /// Mengen-Parser (rein sprachlich nicht zuverlässig anders lösbar — "Milch 2l" ist dieselbe
+    /// Form und dort korrekt eine Kaufmenge) aber trotzdem als Menge behandelt — 50 × Pauschalpreis
+    /// hätte sonst z. B. 200€ ergeben. Ein fehlender Preis ist ehrlicher als ein sicher falscher.
+    /// Betrifft nur diese Funktion (automatisch geschätzte Preise) — echte gelernte/manuell
+    /// eingetragene Preise (`estimatedPriceIsAutoDerived == false`) laufen nie hier durch.
+    private static let maxPlausibleLineTotal = 30.0
+
+    static func estimate(for name: String, category: String, unit: String, quantityAmount: Double = 1) -> Double? {
         let nameLower = name.lowercased()
 
         // Specific product matches
@@ -196,28 +207,37 @@ enum PriceEstimator {
         ]
 
         let divisor = unitDivisor(for: unit)
+        var perUnit: Double?
 
         for entry in specificPrices {
             if entry.keywords.contains(where: { nameLower.contains($0) }) {
-                return entry.price / divisor
+                perUnit = entry.price / divisor
+                break
             }
         }
 
-        // Category fallback
-        switch category {
-        case "Obst & Gemüse": return 2.50 / divisor
-        case "Fleisch & Wurst": return 4.50 / divisor
-        case "Milchprodukte": return 2.00 / divisor
-        case "Backwaren": return 2.00 / divisor
-        case "Tiefkühlkost": return 3.50 / divisor
-        case "Getränke": return 1.50 / divisor
-        case "Snacks": return 1.80 / divisor
-        case "Körperpflege": return 4.00 / divisor
-        case "Kosmetik": return 6.00 / divisor
-        case "Reinigung": return 3.50 / divisor
-        case "Haushalt": return 5.00 / divisor
-        default: return nil
+        if perUnit == nil {
+            // Category fallback
+            switch category {
+            case "Obst & Gemüse": perUnit = 2.50 / divisor
+            case "Fleisch & Wurst": perUnit = 4.50 / divisor
+            case "Milchprodukte": perUnit = 2.00 / divisor
+            case "Backwaren": perUnit = 2.00 / divisor
+            case "Tiefkühlkost": perUnit = 3.50 / divisor
+            case "Getränke": perUnit = 1.50 / divisor
+            case "Snacks": perUnit = 1.80 / divisor
+            case "Körperpflege": perUnit = 4.00 / divisor
+            case "Kosmetik": perUnit = 6.00 / divisor
+            case "Reinigung": perUnit = 3.50 / divisor
+            case "Haushalt": perUnit = 5.00 / divisor
+            default: perUnit = nil
+            }
         }
+
+        guard let perUnit else { return nil }
+        let plausibleQuantity = quantityAmount > 0 ? quantityAmount : 1
+        guard perUnit * plausibleQuantity <= maxPlausibleLineTotal else { return nil }
+        return perUnit
     }
 }
 
@@ -268,7 +288,7 @@ enum PriceProvenanceMigration {
                   let buggyValue = PriceEstimator.estimate(for: item.name, category: item.category, unit: ""),
                   current == buggyValue
             else { continue }
-            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit)
+            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit, quantityAmount: item.quantityAmount)
         }
         try? context.save()
         UserDefaults.standard.set(true, forKey: flagKey)

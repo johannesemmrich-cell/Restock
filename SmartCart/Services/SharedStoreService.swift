@@ -206,6 +206,25 @@ actor SharedStoreService {
         try? await db.deleteSubscription(withID: "sub-\(shareID)")
     }
 
+    /// Räumt die Sharing-Verbindung eines geteilten Stores auf (Push-Abmeldung), wenn er lokal
+    /// gelöscht wird — dieselbe Aufräum-Logik wie der explizite "Teilen beenden"-Button in
+    /// `StoreShareSheet`. No-op ohne shareID (nicht geteilter Store). Gilt gleichermaßen für
+    /// Eigentümer und Beigetretene (beide sollten sauber abmelden, statt nur lokal zu
+    /// verschwinden); der geteilte CloudKit-Datensatz selbst bleibt für die übrigen Mitglieder
+    /// unverändert bestehen — nur die eigene Push-Subscription wird entfernt.
+    ///
+    /// Nimmt bewusst nur die shareID (String) entgegen, nicht den `Store` selbst: der Aufrufer
+    /// soll den lokalen `context.delete(store)` NICHT auf diesen Aufruf verzögern (das öffnete
+    /// ein Zeitfenster, in dem der Store — z. B. für geteilte Stores, die eh schon asynchron
+    /// laufen — noch in `activeStores` sichtbar ist und durch ein zwischenzeitliches
+    /// Sync-Update lokal "wiederauferstehen" könnte, bevor die eigentliche Löschung greift).
+    /// Stattdessen: shareID VOR dem Löschen sichern, synchron löschen, diesen Aufruf danach
+    /// unabhängig (fire-and-forget) hinterherschicken.
+    func leaveBeforeDeleting(shareID: String?) async {
+        guard let shareID else { return }
+        await unsubscribe(shareID: shareID)
+    }
+
     // MARK: - Last sync tracking
 
     /// `at` should be the CKRecord's server `modificationDate` whenever available, not this

@@ -53,8 +53,14 @@ struct PriceOverviewView: View {
         let unit: String
     }
 
+    /// Ein `StoreDetail` ist jetzt EIN Einkauf (Laden + Kalendertag), nicht mehr "dieser Laden,
+    /// gesamter Monat" — zwei Einkäufe im selben Laden an unterschiedlichen Tagen desselben
+    /// Monats erscheinen dadurch als zwei getrennte, einzeln aufklappbare Einträge statt zu
+    /// einem gemeinsamen Monats-Eintrag verschmolzen zu werden.
     private struct StoreDetail {
+        let tripKey: String  // "yyyy-MM-dd|Ladenname" — eindeutig pro Einkauf, für Expand/Delete
         let name: String
+        let date: Date
         let total: Double
         let entries: [EntryDetail]
     }
@@ -73,45 +79,58 @@ struct PriceOverviewView: View {
         formatter.locale = Locale(identifier: "de_DE")
         formatter.dateFormat = "MMMM yyyy"
 
-        var grouped: [String: (label: String, byStore: [String: [PurchaseRecord]])] = [:]
+        struct TripKey: Hashable { let day: String; let storeName: String }
+        var grouped: [String: (label: String, byTrip: [TripKey: [PurchaseRecord]])] = [:]
 
         for record in withPrice {
-            let comps = calendar.dateComponents([.year, .month], from: record.date)
-            guard let year = comps.year, let month = comps.month else { continue }
-            let key = "\(year)-\(String(format: "%02d", month))"
+            let comps = calendar.dateComponents([.year, .month, .day], from: record.date)
+            guard let year = comps.year, let month = comps.month, let day = comps.day else { continue }
+            let monthKey = "\(year)-\(String(format: "%02d", month))"
             let label = formatter.string(from: record.date)
             let storeName = record.storeName.isEmpty ? "Unbekannt" : record.storeName
+            let dayKey = "\(monthKey)-\(String(format: "%02d", day))"
 
-            if grouped[key] == nil { grouped[key] = (label: label, byStore: [:]) }
-            grouped[key]!.byStore[storeName, default: []].append(record)
+            if grouped[monthKey] == nil { grouped[monthKey] = (label: label, byTrip: [:]) }
+            grouped[monthKey]!.byTrip[TripKey(day: dayKey, storeName: storeName), default: []].append(record)
         }
 
-        return grouped.map { (key, data) -> MonthData in
-            let stores = data.byStore.map { (storeName, records) -> StoreDetail in
+        return grouped.map { (monthKey, data) -> MonthData in
+            let trips = data.byTrip.map { (key, records) -> StoreDetail in
                 let entries = records
                     .sorted { $0.date > $1.date }
                     .map { EntryDetail(id: $0.id, itemName: $0.itemName, price: $0.actualPrice!, qty: $0.quantityAmount, unit: $0.unit) }
                 let total = records.reduce(0.0) { $0 + ($1.actualPrice ?? 0) }
-                return StoreDetail(name: storeName, total: total, entries: entries)
+                let tripDate = records.map(\.date).max() ?? Date()
+                return StoreDetail(
+                    tripKey: "\(key.day)|\(key.storeName)",
+                    name: key.storeName,
+                    date: tripDate,
+                    total: total,
+                    entries: entries
+                )
             }
-            .sorted { $0.total > $1.total }
-            let total = stores.reduce(0.0) { $0 + $1.total }
-            return MonthData(id: key, label: data.label, total: total, byStore: stores)
+            .sorted { $0.date > $1.date }
+            let total = trips.reduce(0.0) { $0 + $1.total }
+            return MonthData(id: monthKey, label: data.label, total: total, byStore: trips)
         }
         .sorted { $0.id > $1.id }
     }
 
-    private func deleteRecords(storeName: String, monthKey: String) {
-        let parts = monthKey.split(separator: "-")
-        guard parts.count == 2, let year = Int(parts[0]), let month = Int(parts[1]) else { return }
+    private func deleteRecords(tripKey: String) {
+        let parts = tripKey.split(separator: "|", maxSplits: 1)
+        guard parts.count == 2 else { return }
+        let dayKey = String(parts[0])
+        let storeName = String(parts[1])
         let calendar = Calendar.current
         allRecords
             .filter { r in
-                let c = calendar.dateComponents([.year, .month], from: r.date)
-                return r.storeName == storeName && c.year == year && c.month == month
+                let c = calendar.dateComponents([.year, .month, .day], from: r.date)
+                guard let year = c.year, let month = c.month, let day = c.day else { return false }
+                let key = "\(year)-\(String(format: "%02d", month))-\(String(format: "%02d", day))"
+                return r.storeName == storeName && key == dayKey
             }
             .forEach { context.delete($0) }
-        expandedStoreKeys.remove("\(monthKey)-\(storeName)")
+        expandedStoreKeys.remove(tripKey)
         Haptics.impact(.medium)
     }
 
@@ -247,14 +266,13 @@ struct PriceOverviewView: View {
         } else {
             ForEach(spendingByMonth) { month in
                 Section {
-                    ForEach(month.byStore, id: \.name) { store in
-                        let storeKey = "\(month.id)-\(store.name)"
+                    ForEach(month.byStore, id: \.tripKey) { store in
                         DisclosureGroup(
                             isExpanded: Binding(
-                                get: { expandedStoreKeys.contains(storeKey) },
+                                get: { expandedStoreKeys.contains(store.tripKey) },
                                 set: {
-                                    if $0 { expandedStoreKeys.insert(storeKey) }
-                                    else { expandedStoreKeys.remove(storeKey) }
+                                    if $0 { expandedStoreKeys.insert(store.tripKey) }
+                                    else { expandedStoreKeys.remove(store.tripKey) }
                                     Haptics.impact(.light)
                                 }
                             )
@@ -279,9 +297,18 @@ struct PriceOverviewView: View {
                             }
                         } label: {
                             HStack {
-                                Text(store.name)
-                                    .font(.system(size: 14, weight: .medium))
-                                    .foregroundStyle(.primary)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(store.name)
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundStyle(.primary)
+                                    // Tag mit anzeigen, da jetzt mehrere Einkäufe im selben Laden
+                                    // innerhalb eines Monats als eigene Zeilen nebeneinander
+                                    // stehen können — ohne Datum wären die sonst nicht
+                                    // unterscheidbar.
+                                    Text(store.date.formatted(.dateTime.day().month(.abbreviated)))
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(.secondary)
+                                }
                                 Spacer()
                                 Text(store.total, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
                                     .font(.system(size: 13, weight: .semibold))
@@ -290,7 +317,7 @@ struct PriceOverviewView: View {
                         }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
-                                deleteRecords(storeName: store.name, monthKey: month.id)
+                                deleteRecords(tripKey: store.tripKey)
                             } label: {
                                 Label("Löschen", systemImage: "trash")
                             }

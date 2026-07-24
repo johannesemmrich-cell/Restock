@@ -204,9 +204,21 @@ struct HomeView: View {
                         // the async `.onChange(of: activeStores)` resync (which is skipped mid-drag
                         // and could otherwise leave a deleted Store referenced in `orderedStores`).
                         orderedStores.removeAll { $0.id == store.id }
-                        context.delete(store)
                         Haptics.impact(.medium)
                         storeToDelete = nil
+                        // shareID VOR dem Löschen sichern, dann sofort synchron löschen (wie
+                        // bisher, wie beim nicht-geteilten Fall) — die Push-Abmeldung (siehe
+                        // "Teilen beenden" in StoreShareSheet) läuft unabhängig hinterher statt
+                        // das Löschen zu verzögern. Ein verzögertes Löschen hätte ein Zeitfenster
+                        // geöffnet, in dem der Store noch in `activeStores` sichtbar ist und durch
+                        // ein zwischenzeitliches Sync-Update in `orderedStores` wiederauferstehen
+                        // könnte (syncStoreOrder() überschreibt orderedStores komplett aus
+                        // activeStores). No-op-Abmeldung für nicht geteilte Stores.
+                        let shareID = store.shareID
+                        context.delete(store)
+                        if shareID != nil {
+                            Task { await SharedStoreService.shared.leaveBeforeDeleting(shareID: shareID) }
+                        }
                     }
                 }
                 Button("Abbrechen", role: .cancel) { storeToDelete = nil }

@@ -266,7 +266,7 @@ struct EditItemView: View {
                 // A manual entry gives the price a real-world origin — never auto-recompute it again.
                 item.estimatedPriceIsAutoDerived = false
             } else if rawPrice.isEmpty {
-                item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit)
+                item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit, quantityAmount: item.quantityAmount)
                 item.estimatedPriceIsAutoDerived = true
             }
         } else if oldUnit != unit, item.estimatedPriceIsAutoDerived {
@@ -275,7 +275,7 @@ struct EditItemView: View {
             // (e.g. "" → "g" needs the per-gram rate, not the per-package rate). A learned or
             // manually-entered price (estimatedPriceIsAutoDerived == false) is left untouched here,
             // even if it would numerically collide with the old-unit formula.
-            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit)
+            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit, quantityAmount: item.quantityAmount)
         }
 
         Haptics.success()

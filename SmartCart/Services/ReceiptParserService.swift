@@ -61,11 +61,11 @@ enum ReceiptParserService {
         "coupon",
     ]
 
-    private static func isAdminLine(_ lower: String) -> Bool {
+    private static func isAdminLine(_ lower: String, ignoring exemptWords: Set<String> = []) -> Bool {
         for phrase in skipPhrases where lower.contains(phrase) { return true }
         // Tokenizing auch an "." und "/" — fängt "TOT.GENERAL" und "S/TOTAL"
         // als Whole-Word-Treffer ("tot" bzw. "total").
-        return adminWords(lower).contains(where: { skipWordSet.contains($0) })
+        return adminWords(lower).contains(where: { skipWordSet.contains($0) && !exemptWords.contains($0) })
     }
 
     private static func adminWords(_ lower: String) -> [String] {
@@ -104,7 +104,8 @@ enum ReceiptParserService {
 
     // MARK: - Parsing
 
-    static func parse(_ lines: [String]) -> [ReceiptLine] {
+    static func parse(_ rawLines: [String]) -> [ReceiptLine] {
+        let lines = rawLines.map(repairSplitDecimals)
         // Formaterkennung: mehrere POSITIONS-Zeilen mit Währungs-SUFFIX hinter dem Preis
         // (z. B. "…TOMATE ENTIER  2.50€") bedeuten einen südeuropäischen Bon
         // (Frankreich/Carrefour-Stil) mit eigener Struktur. Gezählt wird erst NACH dem
@@ -117,6 +118,25 @@ enum ReceiptParserService {
             return parseEuroSuffixStyle(lines)
         }
         return parseClassic(lines)
+    }
+
+    /// Vision zerlegt eine Kommazahl auf manchen Bon-Fotos in zwei Textblöcke, die
+    /// `reconstructLines` mit doppeltem Leerzeichen wieder zusammenfügt — das bricht jedes
+    /// nachfolgende Preis-Regex, das eine zusammenhängende Zahl erwartet. Beobachtete Varianten:
+    /// "2,  49" (Trennzeichen im ersten Block) und "2.  ,29" (Trennzeichen im ZWEITEN Block, mit
+    /// OCR-Verwechslung Punkt/Komma) — in BEIDEN Fällen steht ein Trennzeichen an mindestens
+    /// einer Seite der Lücke. Genau das wird hier verlangt (mind. eine Seite, nicht zwingend
+    /// beide): ein Trennzeichen auf KEINER Seite (z. B. "1  49") wird bewusst NICHT repariert,
+    /// weil sich das nicht zuverlässig von zwei echten, unabhängigen mehrspaltigen Zahlen
+    /// unterscheiden lässt (beobachtet an einer MwSt-Tabellenzeile mit drei echten Einzelzahlen
+    /// wie "14,80  15,84" — ein zu freizügiges Muster hätte die fälschlich zusammengezogen).
+    /// Baut die Zahl mit einem einheitlichen Komma wieder zusammen; welches Trennzeichen
+    /// ursprünglich gemeint war, ist für die nachgelagerten Preis-Regexe ohnehin egal (die
+    /// akzeptieren beide, siehe `[,\.]`-Muster).
+    private static func repairSplitDecimals(_ line: String) -> String {
+        guard let rx = try? NSRegularExpression(pattern: #"(\d)(?:[,\.]\s{2,}[,\.]?|\s{2,}[,\.])(\d{2})\b"#) else { return line }
+        let range = NSRange(line.startIndex..., in: line)
+        return rx.stringByReplacingMatches(in: line, range: range, withTemplate: "$1,$2")
     }
 
     /// PATCH Iteration 3: klassischer deutscher Positions-Kandidat — Spaltenform mit
@@ -162,29 +182,53 @@ enum ReceiptParserService {
 
         var results: [ReceiptLine] = []
         var pendingName: String? = nil
+        // Gegenstück zu pendingName für den umgekehrten Fall (beobachtet bei Gewichtsartikeln
+        // auf manchen Bons): eine reine Preiszeile OHNE vorherigen Namen steht VOR statt NACH
+        // der Name+Gewicht-Zeile. Wird nur gesetzt, wenn eine Zeile WIRKLICH nur ein Preis ist
+        // (siehe unten) — verhindert, dass so eine Zeile stattdessen fälschlich als pendingName
+        // (Artikel-"Name") missbraucht wird, was den nächsten echten Preis komplett falsch
+        // zuordnen würde (beobachtet: eine isolierte Gewichtsartikel-Preiszeile wie "0,75 A"
+        // wurde so zum Pseudo-Namen für den Preis einer GANZ ANDEREN, folgenden Position).
+        var pendingPrice: Double? = nil
 
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
-            guard trimmed.count >= 3 else { pendingName = nil; continue }
+            guard trimmed.count >= 3 else { pendingName = nil; pendingPrice = nil; continue }
 
             let lower = trimmed.lowercased()
 
+            // Gewichts-/Multiplikatorzeilen ("0,436 kg x 12,49", "…  0,584 kg x 1,29  EUR/Kg")
+            // MÜSSEN vor dem allgemeinen Admin-Filter geprüft werden: die Mengeneinheit "EUR/Kg"
+            // enthält "eur" (Admin-Schlüsselwort) und würde sonst JEDE Gewichtszeile — und damit
+            // jeden gewogenen Artikel (Obst, Gemüse, Frischetheke) — komplett verschlucken, bevor
+            // die eigentliche Gewichts-Erkennung unten überhaupt zum Zug kommt. Trotzdem NICHT
+            // blind vor den Admin-Filter gezogen: eine wirklich administrative Zeile, die zufällig
+            // auch " x "/"/kg" enthält (z. B. "Pfand 3 x -0,75"), soll weiter normal gefiltert
+            // werden — daher hier nur "eur"/"euro" als alleinigen Admin-Grund ignorieren (die
+            // Mengeneinheit), jeden ANDEREN Admin-Treffer (pfand, summe, …) weiter ernst nehmen.
+            if (lower.contains(" x ") || lower.contains(" × ") || lower.contains("/kg") || lower.contains("/stk"))
+                && !isAdminLine(lower, ignoring: ["eur", "euro"]) {
+                // Preis bevorzugt aus dieser Zeile selbst, sonst aus einer vorherigen reinen
+                // Preiszeile (umgekehrte Reihenfolge, siehe pendingPrice oben).
+                let price = extractTrailingPrice(from: trimmed) ?? pendingPrice
+                // Name bevorzugt aus einer vorherigen Namenszeile; fehlt die, aus dem Teil DIESER
+                // Zeile vor dem Gewichts-Muster (manche Bons drucken Name und Gewichtsdetail auf
+                // derselben rekonstruierten Zeile).
+                let name = pendingName ?? nameChunkBeforeWeightDetail(trimmed)
+                if let name, let price {
+                    results.append(ReceiptLine(name: name, price: price))
+                }
+                pendingName = nil
+                pendingPrice = nil
+                continue
+            }
             // Administrative Zeilen überspringen
             if isAdminLine(lower) {
-                pendingName = nil; continue
+                pendingName = nil; pendingPrice = nil; continue
             }
             // Reine Zahlenzeilen (EAN, Artikelnr.) überspringen
             if trimmed.allSatisfy({ $0.isNumber || $0 == " " || $0 == "-" }) {
-                pendingName = nil; continue
-            }
-            // Gewichts-/Multiplikatorzeilen überspringen ("0,436 kg x 12,49")
-            if lower.contains(" x ") || lower.contains(" × ") || lower.contains("/kg") || lower.contains("/stk") {
-                // Preis aus dieser Zeile extrahieren und mit pendingName verknüpfen
-                if let pending = pendingName, let price = extractTrailingPrice(from: trimmed) {
-                    results.append(ReceiptLine(name: pending, price: price))
-                    pendingName = nil
-                }
-                continue
+                pendingName = nil; pendingPrice = nil; continue
             }
 
             let nsRange = NSRange(trimmed.startIndex..., in: trimmed)
@@ -197,10 +241,12 @@ enum ReceiptParserService {
                     if let price = Double(raw), price > 0.05, price < 999 {
                         results.append(ReceiptLine(name: pending, price: price))
                         pendingName = nil
+                        pendingPrice = nil
                         continue
                     }
                 }
                 pendingName = nil
+                pendingPrice = nil
             }
 
             // Negative Preise (Rabatte) ignorieren
@@ -241,7 +287,17 @@ enum ReceiptParserService {
 
                 results.append(ReceiptLine(name: smartCapitalize(rawName), price: price))
                 pendingName = nil
+                pendingPrice = nil
 
+            } else if let priceMatch = priceOnlyRegex.firstMatch(in: trimmed, range: nsRange),
+                      let priceRange = Range(priceMatch.range(at: 1), in: trimmed) {
+                // Zeile besteht nur aus einem Preis (+ optionalem MwSt-Kürzel) — als pendingPrice
+                // merken (siehe Gewichtszeilen-Zweig oben), NICHT als möglichen Produktnamen
+                // behandeln (der `hasLetters`-Zweig unten würde sonst z. B. "0,75 A" wegen des
+                // MwSt-Buchstabens fälschlich als Name durchlassen).
+                let raw = String(trimmed[priceRange]).replacingOccurrences(of: ",", with: ".")
+                pendingPrice = Double(raw)
+                pendingName = nil
             } else {
                 // Kein Preis auf dieser Zeile → ggf. Produktname für nächste Zeile merken
                 let hasLetters = trimmed.contains(where: { $0.isLetter })
@@ -254,12 +310,47 @@ enum ReceiptParserService {
                     }
                     if candidate.count >= 2 {
                         pendingName = smartCapitalize(candidate)
+                        // Eine evtl. noch offene pendingPrice aus einer früheren, nie verbrauchten
+                        // Preiszeile darf nicht über diese neue Namenszeile hinweg an eine spätere,
+                        // unabhängige Gewichtszeile "durchsickern" — pendingName/pendingPrice
+                        // repräsentieren zwei alternative, sich gegenseitig ausschließende
+                        // Bridging-Zustände, nie beide gleichzeitig.
+                        pendingPrice = nil
                     }
                 }
             }
         }
 
-        // Duplikate entfernen (letzter Preis gewinnt bei gleichem Namen)
+        return dedupAndSort(droppingLeakedTotal(results))
+    }
+
+    /// Extrahiert den Namens-Teil einer rekonstruierten Zeile, die Artikelname UND
+    /// Gewichtsdetail gemeinsam enthält ("Banane lose  0,584 kg x 1,29  EUR/Kg") — der erste
+    /// per Doppelleerzeichen abgetrennte Teil, der nicht mit einer Ziffer beginnt. Nur als
+    /// Fallback genutzt, wenn keine separate vorherige Namenszeile (pendingName) vorliegt.
+    private static func nameChunkBeforeWeightDetail(_ line: String) -> String? {
+        let chunks = line.components(separatedBy: "  ")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        guard let first = chunks.first, let firstChar = first.first, !firstChar.isNumber else { return nil }
+        return smartCapitalize(first)
+    }
+
+    /// Bei sehr engem Zeilenabstand kann der Bon-Gesamtbetrag an die letzte echte Artikelzeile
+    /// "andocken" (deren eigener Preis geht dabei verloren) — beobachtet z. B. bei "Vollkorn
+    /// Toast" direkt vor der "zu zahlen"-Zeile. Sehr sicheres Erkennungsmerkmal: der Preis der
+    /// letzten Zeile entspricht (fast) exakt der Summe aller vorherigen — dass ein echter
+    /// Einzelposten zufällig genau der Summe aller anderen entspricht, ist praktisch
+    /// ausgeschlossen.
+    private static func droppingLeakedTotal(_ results: [ReceiptLine]) -> [ReceiptLine] {
+        guard results.count >= 2, let last = results.last else { return results }
+        let othersSum = results.dropLast().reduce(0.0) { $0 + $1.price }
+        guard othersSum > 0, abs(last.price - othersSum) < 0.01 else { return results }
+        return Array(results.dropLast())
+    }
+
+    /// Duplikate entfernen (letzter Preis gewinnt bei gleichem Namen), dann alphabetisch sortiert.
+    private static func dedupAndSort(_ results: [ReceiptLine]) -> [ReceiptLine] {
         var seen: [String: ReceiptLine] = [:]
         for r in results { seen[r.name.lowercased()] = r }
         return seen.values.sorted { $0.name < $1.name }
@@ -423,10 +514,7 @@ enum ReceiptParserService {
             // damit gespiegelter Hintergrundtext eine Name/Preis-Paarung nicht zerreißt.
         }
 
-        // Duplikate entfernen (letzter Preis gewinnt bei gleichem Namen), wie im klassischen Pfad
-        var seen: [String: ReceiptLine] = [:]
-        for r in results { seen[r.name.lowercased()] = r }
-        return seen.values.sorted { $0.name < $1.name }
+        return dedupAndSort(droppingLeakedTotal(results))
     }
 
     /// Bereinigt einen rohen Carrefour-Positionsnamen:

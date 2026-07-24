@@ -30,6 +30,14 @@ struct EditableReceiptLine: Identifiable {
     /// `originalName` bleibt unverändert, das Kürzel-Lernen in `save()` funktioniert dadurch
     /// identisch zu einer manuellen Texteingabe.
     var suggestions: [ReceiptSuggestion] = []
+    /// Gesetzt, wenn diese Zeile einem konkreten, gerade abgehakten `ShoppingItem` zugeordnet
+    /// wurde (automatisch oder per Vorschlags-Chip) — `save()` schreibt den gelernten Preis dann
+    /// direkt auf DIESES Item zurück (statt nur `store.learnedPrices` für künftige Artikel zu
+    /// lernen), und nutzt für die PurchaseRecord-Zuordnung dessen eigene Historie statt der
+    /// unscharfen 7-Tage-Suche. Wird zurückgesetzt, sobald der Name danach frei überschrieben
+    /// wird — sonst bliebe ein manuell korrigierter Name fälschlich mit der alten Identität
+    /// verknüpft.
+    var matchedItemID: UUID? = nil
 }
 
 // MARK: - Main Scanner View
@@ -258,10 +266,11 @@ struct ReceiptScannerView: View {
             // (PurchaseRecord/ShoppingItem) gehört aus demselben Grund ebenfalls auf den
             // MainActor. Nur Stufe 5 (Apple Intelligence) ist echt langsam/asynchron und läuft
             // deshalb separat.
-            var (resolvedNames, needsAI, suggestionsByIndex) = await MainActor.run { () -> ([Int: String], [Int], [Int: [ReceiptSuggestion]]) in
+            var (resolvedNames, needsAI, suggestionsByIndex, matchedItemIDs) = await MainActor.run { () -> ([Int: String], [Int], [Int: [ReceiptSuggestion]], [Int: UUID]) in
                 var resolvedNames: [Int: String] = [:]
                 var needsAI: [Int] = []
                 var suggestionsByIndex: [Int: [ReceiptSuggestion]] = [:]
+                var matchedItemIDs: [Int: UUID] = [:]
                 let storeName = store.name
                 let completedItems = store.completedItems
                 // Verhindert, dass zwei Bon-Zeilen automatisch denselben abgehakten Artikel
@@ -284,6 +293,7 @@ struct ReceiptScannerView: View {
                     }) {
                         resolvedNames[index] = best.item.name
                         consumedItemIDs.insert(best.item.id)
+                        matchedItemIDs[index] = best.item.id
                     } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
                         resolvedNames[index] = historical
                     } else {
@@ -303,7 +313,7 @@ struct ReceiptScannerView: View {
                         .filter { $0.item.name.caseInsensitiveCompare(resolvedName) != .orderedSame }
                         .map { ReceiptSuggestion(name: $0.item.name, itemID: $0.item.id) }
                 }
-                return (resolvedNames, needsAI, suggestionsByIndex)
+                return (resolvedNames, needsAI, suggestionsByIndex, matchedItemIDs)
             }
 
             if !needsAI.isEmpty, ReceiptNameAIResolver.isAIAvailable() {
@@ -324,6 +334,7 @@ struct ReceiptScannerView: View {
             // dem Zugriff auf ein eingefangenes `var` aus nebenläufig ausführbarem Code.
             let finalNames = resolvedNames
             let finalSuggestions = suggestionsByIndex
+            let finalMatchedItemIDs = matchedItemIDs
             await MainActor.run {
                 parsedLines = parsed.enumerated().map { index, line in
                     EditableReceiptLine(
@@ -332,7 +343,8 @@ struct ReceiptScannerView: View {
                         originalName: line.name,
                         quantity: line.quantity,
                         unit: line.unit,
-                        suggestions: finalSuggestions[index] ?? []
+                        suggestions: finalSuggestions[index] ?? [],
+                        matchedItemID: finalMatchedItemIDs[index]
                     )
                 }
                 phase = .review
@@ -355,13 +367,19 @@ struct ReceiptScannerView: View {
                 ReceiptAliasService.shared.learn(receiptText: line.originalName, itemName: line.name)
             }
 
-            // Try to update an existing recent record for this store rather than creating a duplicate.
-            let match = allRecords.first { record in
-                record.storeName.lowercased() == storeNameLower &&
-                record.date >= cutoff &&
-                (record.itemName.lowercased().contains(lineLower) ||
-                 lineLower.contains(record.itemName.lowercased()))
-            }
+            // Ist diese Zeile einem konkreten, gerade abgehakten Artikel zugeordnet (automatisch
+            // oder per Vorschlags-Chip), dessen eigene Historie bevorzugen — präziser als die
+            // unscharfe 7-Tage-Suche, weil die Identität schon feststeht statt nur über den Namen
+            // erraten zu werden. Kein eigener unbepreister Datensatz vorhanden (oder gar kein
+            // Match) → gleiche Fuzzy-Suche wie bisher als Fallback.
+            let matchedItem = line.matchedItemID.flatMap { id in store.items.first { $0.id == id } }
+            let match = matchedItem?.purchaseRecords.filter({ $0.actualPrice == nil }).max(by: { $0.date < $1.date })
+                ?? allRecords.first { record in
+                    record.storeName.lowercased() == storeNameLower &&
+                    record.date >= cutoff &&
+                    (record.itemName.lowercased().contains(lineLower) ||
+                     lineLower.contains(record.itemName.lowercased()))
+                }
 
             // Learn price for this store — overwrites previous learned price for this item.
             // `learnedPrices` must stay per-unit (it seeds `ShoppingItem.estimatedPrice`, which
@@ -370,7 +388,17 @@ struct ReceiptScannerView: View {
             // Multipack-Token "6X1.5L" → `line.quantity`), sonst vom abgehakten Artikel
             // (`match.quantityAmount`); Fallback ist 1, dann ist der Preis bereits per-unit.
             let quantity = line.quantity > 1 ? line.quantity : (match?.quantityAmount ?? 1)
-            store.learnedPrices[lineLower] = quantity > 0 ? line.price / quantity : line.price
+            let perUnitPrice = quantity > 0 ? line.price / quantity : line.price
+            store.learnedPrices[lineLower] = perUnitPrice
+
+            // Direkt auf den bereits gelisteten Artikel zurückschreiben — sonst lernt ein Scan nur
+            // für KÜNFTIG neu erstellte Artikel (über `learnedPrices`), während der schon
+            // abgehakte Artikel auf der aktuellen Liste weiterhin gar keinen oder einen veralteten
+            // geschätzten Preis zeigt, obwohl der Bon ihn gerade korrekt erkannt hat.
+            if let matchedItem {
+                matchedItem.estimatedPrice = perUnitPrice
+                matchedItem.estimatedPriceIsAutoDerived = false
+            }
 
             if let match {
                 match.actualPrice = line.price
@@ -414,7 +442,18 @@ private struct ReceiptLineRow: View {
 
                 VStack(alignment: .leading, spacing: 1) {
                     HStack(spacing: 4) {
-                        TextField("Artikelname", text: $line.name)
+                        // Eigenes Binding statt $line.name direkt: eine manuelle Korrektur hier
+                        // löst die Artikel-Identität aus einem automatischen Match/Chip-Tap wieder
+                        // — sonst bliebe `matchedItemID` fälschlich mit dem alten, jetzt
+                        // überschriebenen Namen verknüpft, und save() würde den gelernten Preis
+                        // auf den falschen Artikel zurückschreiben.
+                        TextField("Artikelname", text: Binding(
+                            get: { line.name },
+                            set: { newValue in
+                                line.name = newValue
+                                line.matchedItemID = nil
+                            }
+                        ))
                             .font(.system(size: 15))
                         Image(systemName: "pencil")
                             .font(.system(size: 10))
@@ -454,6 +493,7 @@ private struct ReceiptLineRow: View {
                         ForEach(line.suggestions) { suggestion in
                             Button {
                                 line.name = suggestion.name
+                                line.matchedItemID = suggestion.itemID
                                 Haptics.impact(.light)
                             } label: {
                                 Text(suggestion.name)

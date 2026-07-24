@@ -126,8 +126,18 @@ struct StoreSetupView: View {
         ) {
             if let store = storeToDelete {
                 Button("Löschen", role: .destructive) {
-                    context.delete(store)
                     storeToDelete = nil
+                    // shareID VOR dem Löschen sichern, dann sofort synchron löschen (wie bisher,
+                    // wie beim nicht-geteilten Fall) — die Push-Abmeldung (siehe "Teilen beenden"
+                    // in StoreShareSheet) läuft unabhängig hinterher statt das Löschen zu
+                    // verzögern (verzögertes Löschen könnte den Store für ein Zeitfenster
+                    // wiederauferstehen lassen, siehe HomeView für den identischen Fix mit
+                    // ausführlicherer Begründung). No-op-Abmeldung für nicht geteilte Stores.
+                    let shareID = store.shareID
+                    context.delete(store)
+                    if shareID != nil {
+                        Task { await SharedStoreService.shared.leaveBeforeDeleting(shareID: shareID) }
+                    }
                 }
             }
             Button("Abbrechen", role: .cancel) { storeToDelete = nil }
