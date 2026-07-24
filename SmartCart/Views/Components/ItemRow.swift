@@ -126,7 +126,13 @@ struct ItemRow: View {
 
             Spacer()
 
-            if let price = item.estimatedLineTotal, !item.isCompleted {
+            // Bei offenen Artikeln immer die Schätzung zeigen (hilft beim Budgetieren). Bei
+            // bereits abgehakten Artikeln dagegen nur einen ECHTEN Preis (Kassenbon-Rückschreibung
+            // oder manuelle Eingabe, estimatedPriceIsAutoDerived == false) — eine reine Schätzung
+            // ist für einen schon gekauften Artikel nicht hilfreich, aber ein per Bon bestätigter
+            // Preis soll sichtbar sein (sonst gibt es für das Kassenbon-Rückschreiben aus
+            // ReceiptScannerView.save() keinerlei sichtbare Bestätigung).
+            if let price = item.estimatedLineTotal, !item.isCompleted || !item.estimatedPriceIsAutoDerived {
                 Text(price, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.secondary)

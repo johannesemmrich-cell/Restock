@@ -159,7 +159,16 @@ struct ActualPriceEntryView: View {
         guard itemActualTotal > 0 else { return }
 
         let key = item.name.lowercased()
-        store.learnedPrices[key] = item.quantityAmount > 0 ? itemActualTotal / item.quantityAmount : itemActualTotal
+        let perUnitPrice = item.quantityAmount > 0 ? itemActualTotal / item.quantityAmount : itemActualTotal
+        store.learnedPrices[key] = perUnitPrice
+
+        // Direkt auf den Artikel selbst zurückschreiben (wie ReceiptScannerView.save()) — item ist
+        // hier bereits die exakte, eindeutige ShoppingItem-Referenz (kein Fuzzy-Matching nötig wie
+        // beim Bon-Scan), also ohne jedes Konfidenz-Risiko. Ohne dieses Update würde ein per Hand
+        // eingetragener Preis zwar in den Ausgaben auftauchen (über den PurchaseRecord unten), aber
+        // nicht auf der Liste selbst — dieselbe Inkonsistenz wie beim Bon-Scan.
+        item.estimatedPrice = perUnitPrice
+        item.estimatedPriceIsAutoDerived = false
 
         // `purchaseRecords` only ever grows (a new record is appended on every markCompleted(), and
         // nothing prunes old ones) — an item toggled complete/pending/complete again, or simply left
@@ -169,6 +178,12 @@ struct ActualPriceEntryView: View {
         // has a price, don't guess — leave them as they are.
         if let record = item.purchaseRecords.filter({ $0.actualPrice == nil }).max(by: { $0.date < $1.date }) {
             record.actualPrice = itemActualTotal
+            // Diese Eingabe fasst potenziell mehrere, an unterschiedlichen Tagen abgehakte Artikel
+            // zu EINEM tatsächlichen Bezahlvorgang zusammen (store.completedItems altert nicht von
+            // selbst aus) — ohne dieses Update behielte ein altes Abhak-Datum bestehen, während
+            // andere hier eingetragene Artikel ggf. ein frisch angelegtes Rekord-Datum bekommen,
+            // und EIN Bezahlvorgang würde in der tageweisen Ausgaben-Gruppierung auseinanderfallen.
+            record.date = Date()
         }
     }
 }

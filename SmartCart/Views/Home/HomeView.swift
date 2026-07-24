@@ -1381,7 +1381,8 @@ struct HomeView: View {
         var touchedStores: [Store?] = []
         for pattern in dueSoonItems {
             let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
-            context.insert(ShoppingItem(name: pattern.itemName, store: store))
+            let category = AssignmentService.category(for: pattern.itemName)
+            context.insert(ShoppingItem(name: pattern.itemName, category: category, store: store))
             touchedStores.append(store)
         }
         dueSoonItems = []
@@ -1390,7 +1391,8 @@ struct HomeView: View {
 
     private func addSingleDueItem(_ pattern: ConsumptionPattern) {
         let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
-        context.insert(ShoppingItem(name: pattern.itemName, store: store))
+        let category = AssignmentService.category(for: pattern.itemName)
+        context.insert(ShoppingItem(name: pattern.itemName, category: category, store: store))
         dueSoonItems.removeAll { $0.itemName == pattern.itemName }
         Haptics.impact(.light)
         SyncCoordinator.shared.pushInBackground(store)

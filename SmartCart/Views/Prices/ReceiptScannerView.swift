@@ -300,6 +300,29 @@ struct ReceiptScannerView: View {
                         needsAI.append(index)
                     }
 
+                    let resolvedName = resolvedNames[index] ?? line.name
+
+                    // matchedItemID unabhängig davon setzen, welche Stufe den Namen aufgelöst hat.
+                    // Der obige if/else-if-Zweig setzt es NUR im completedItemCandidates-Zweig —
+                    // löst aber z. B. ein gelernter Alias (aus einem FRÜHEREN Scan desselben Bons,
+                    // durchaus üblich beim wiederholten Testen) oder die 7-Tage-Kaufhistorie den
+                    // Namen bereits korrekt auf, wird dieser Zweig nie erreicht: der angezeigte
+                    // Name stimmt dann zwar, aber die Verknüpfung zum KONKRETEN abgehakten Artikel
+                    // fehlt — und genau die braucht save(), um den Preis auf die Liste
+                    // zurückzuschreiben. Deshalb hier als Fallback erneut prüfen, diesmal gegen
+                    // den AUFGELÖSTEN (sauberen) statt den rohen OCR-Namen — bessere Grundlage für
+                    // einen Treffer als der ursprüngliche, ggf. kryptische Bon-Text.
+                    if matchedItemIDs[index] == nil {
+                        let resolvedCandidates = resolvedName.caseInsensitiveCompare(line.name) == .orderedSame ? candidates :
+                            (completedItems.isEmpty ? [] : ReceiptParserService.completedItemCandidates(for: resolvedName, in: completedItems, linePrice: line.price))
+                        if let match = resolvedCandidates.first(where: {
+                            !consumedItemIDs.contains($0.item.id) && $0.score >= ReceiptParserService.completedItemAutoApplyThreshold
+                        }) {
+                            matchedItemIDs[index] = match.item.id
+                            consumedItemIDs.insert(match.item.id)
+                        }
+                    }
+
                     // Absichtlich NICHT auf den "else"-Fall beschränkt: auch wenn Alias/Wörterbuch
                     // die Zeile schon aufgelöst hat, kann ein abgehakter Artikel noch die
                     // genauere Alternative sein (z. B. gelernter Alias "Senf" vs. tatsächlich
@@ -308,7 +331,6 @@ struct ReceiptScannerView: View {
                     // sonst könnte die eine Zeile, die den Artikel WIRKLICH braucht, ihn nicht
                     // mehr vorgeschlagen bekommen, nur weil eine andere Zeile ihn (ggf. falsch)
                     // schon automatisch beansprucht hat.
-                    let resolvedName = resolvedNames[index] ?? line.name
                     suggestionsByIndex[index] = candidates
                         .filter { $0.item.name.caseInsensitiveCompare(resolvedName) != .orderedSame }
                         .map { ReceiptSuggestion(name: $0.item.name, itemID: $0.item.id) }
@@ -370,16 +392,32 @@ struct ReceiptScannerView: View {
             // Ist diese Zeile einem konkreten, gerade abgehakten Artikel zugeordnet (automatisch
             // oder per Vorschlags-Chip), dessen eigene Historie bevorzugen — präziser als die
             // unscharfe 7-Tage-Suche, weil die Identität schon feststeht statt nur über den Namen
-            // erraten zu werden. Kein eigener unbepreister Datensatz vorhanden (oder gar kein
-            // Match) → gleiche Fuzzy-Suche wie bisher als Fallback.
+            // erraten zu werden. Kein eigener unbepreister Datensatz vorhanden → laxe, rein auf
+            // Substring basierende 7-Tage/Store-Suche über ALLE Datensätze als Fallback.
             let matchedItem = line.matchedItemID.flatMap { id in store.items.first { $0.id == id } }
-            let match = matchedItem?.purchaseRecords.filter({ $0.actualPrice == nil }).max(by: { $0.date < $1.date })
-                ?? allRecords.first { record in
-                    record.storeName.lowercased() == storeNameLower &&
-                    record.date >= cutoff &&
-                    (record.itemName.lowercased().contains(lineLower) ||
-                     lineLower.contains(record.itemName.lowercased()))
-                }
+            let ownUnpricedRecord = matchedItem?.purchaseRecords
+                .filter({ $0.actualPrice == nil })
+                .max(by: { $0.date < $1.date })
+            let looseMatch = allRecords.first { record in
+                record.storeName.lowercased() == storeNameLower &&
+                record.date >= cutoff &&
+                (record.itemName.lowercased().contains(lineLower) ||
+                 lineLower.contains(record.itemName.lowercased()))
+            }
+            // `looseMatch` hat KEINERLEI Namens-Ähnlichkeitsprüfung — reines `contains` kann einen
+            // komplett anderen Artikel treffen (z. B. "Milch" matcht einen bestehenden
+            // "Kondensmilch"-Datensatz). Für `ownUnpricedRecord` ist die Identität schon über
+            // `matchedItemID` verifiziert, aber `looseMatch` wird unten für ZWEI Schreibvorgänge auf
+            // einem fremden Datensatz benutzt (Preis UND — neu — Datum), deshalb dieselbe Schwelle
+            // wie bei der automatischen Vorschlags-Übernahme verlangen, statt ihn blind zu
+            // vertrauen. Kein Treffer über der Schwelle → wie "kein Match" behandeln (unten wird
+            // dann ein neuer Datensatz angelegt statt einen fremden zu verfälschen).
+            let match: PurchaseRecord? = {
+                if let ownUnpricedRecord { return ownUnpricedRecord }
+                guard let looseMatch else { return nil }
+                let score = ReceiptParserService.lcsSimilarity(line.name, looseMatch.itemName)
+                return score >= ReceiptParserService.completedItemAutoApplyThreshold ? looseMatch : nil
+            }()
 
             // Learn price for this store — overwrites previous learned price for this item.
             // `learnedPrices` must stay per-unit (it seeds `ShoppingItem.estimatedPrice`, which
@@ -394,14 +432,31 @@ struct ReceiptScannerView: View {
             // Direkt auf den bereits gelisteten Artikel zurückschreiben — sonst lernt ein Scan nur
             // für KÜNFTIG neu erstellte Artikel (über `learnedPrices`), während der schon
             // abgehakte Artikel auf der aktuellen Liste weiterhin gar keinen oder einen veralteten
-            // geschätzten Preis zeigt, obwohl der Bon ihn gerade korrekt erkannt hat.
-            if let matchedItem {
-                matchedItem.estimatedPrice = perUnitPrice
-                matchedItem.estimatedPriceIsAutoDerived = false
+            // geschätzten Preis zeigt, obwohl der Bon ihn gerade korrekt erkannt hat. Bevorzugt
+            // `matchedItem` (aus der Kandidaten-Suche mit dem aufgelösten Namen), fällt aber auf
+            // `match.item` zurück — `match` ist an dieser Stelle bereits namensgeprüft (entweder
+            // über `matchedItemID` oder die LCS-Schwelle oben), das PurchaseRecord kennt über die
+            // Kaufhistorie oft denselben, noch existierenden Artikel, auch wenn `matchedItemID`
+            // z. B. wegen einer OCR-Verwucherung des Namens nicht griff. Ohne diesen Fallback
+            // bekommt der PurchaseRecord (und damit die Ausgaben-Ansicht) einen Preis, während der
+            // Artikel auf der Liste selbst weiterhin keinen zeigt — genau das gemeldete
+            // Mandeln-Symptom.
+            let itemToUpdate = matchedItem ?? match?.item
+            if let itemToUpdate {
+                itemToUpdate.estimatedPrice = perUnitPrice
+                itemToUpdate.estimatedPriceIsAutoDerived = false
             }
 
             if let match {
                 match.actualPrice = line.price
+                // Ein Bon-Scan ist die verlässlichste verfügbare Evidenz für das tatsächliche
+                // Kaufdatum — verlässlicher als der Zeitpunkt, an dem der Artikel in der App
+                // abgehakt wurde (kann beim Planen Tage vorher liegen). Ohne dieses Update behält
+                // ein aktualisierter Datensatz sein altes Abhak-Datum, während andere Positionen
+                // desselben Bons als neu eingefügte Datensätze das heutige Datum bekommen — ein
+                // einzelner Bon würde dann in der tageweisen Ausgaben-Gruppierung (PriceOverviewView
+                // .TripKey) auf mehrere "Einkäufe" auseinanderfallen.
+                match.date = Date()
             } else {
                 modelContext.insert(PurchaseRecord(
                     itemName: line.name,

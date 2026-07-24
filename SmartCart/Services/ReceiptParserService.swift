@@ -324,15 +324,29 @@ enum ReceiptParserService {
         return dedupAndSort(droppingLeakedTotal(results))
     }
 
+    // Ein einzelnes Fremdzeichen + Leerzeichen ganz am Anfang, gefolgt von einem echten
+    // (buchstaben-startenden) Namen — Vision liest das Aufzählungssymbol vor jeder Bon-Position
+    // (Punkt/Häkchen-Icon) manchmal als eigenständiges Zeichen ("1 Handelkerne", "I Barane lose").
+    private static let strayBulletPrefixRegex = try? NSRegularExpression(pattern: #"^\S\s+(?=[A-Za-zÀ-ÿ])"#)
+
     /// Extrahiert den Namens-Teil einer rekonstruierten Zeile, die Artikelname UND
     /// Gewichtsdetail gemeinsam enthält ("Banane lose  0,584 kg x 1,29  EUR/Kg") — der erste
-    /// per Doppelleerzeichen abgetrennte Teil, der nicht mit einer Ziffer beginnt. Nur als
-    /// Fallback genutzt, wenn keine separate vorherige Namenszeile (pendingName) vorliegt.
+    /// per Doppelleerzeichen abgetrennte Teil, der (nach Abstreifen eines evtl. angehängten
+    /// Aufzählungs-Fremdzeichens) nicht mit einer Ziffer beginnt. Nur als Fallback genutzt, wenn
+    /// keine separate vorherige Namenszeile (pendingName) vorliegt.
     private static func nameChunkBeforeWeightDetail(_ line: String) -> String? {
         let chunks = line.components(separatedBy: "  ")
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
-        guard let first = chunks.first, let firstChar = first.first, !firstChar.isNumber else { return nil }
+        guard var first = chunks.first else { return nil }
+        if let rx = strayBulletPrefixRegex {
+            let range = NSRange(first.startIndex..., in: first)
+            if let match = rx.firstMatch(in: first, range: range), match.range.location == 0,
+               let matchRange = Range(match.range, in: first) {
+                first = String(first[matchRange.upperBound...])
+            }
+        }
+        guard let firstChar = first.first, !firstChar.isNumber else { return nil }
         return smartCapitalize(first)
     }
 
@@ -660,7 +674,12 @@ enum ReceiptParserService {
     /// Ehrlich gesagt: ein völlig beliebiger Code ohne jeden Bezug zur Buchstaben-Reihenfolge
     /// (z. B. "MDHSZ" für "Mozzarella") bleibt auch hiermit ein schwacher Score — dafür gibt es
     /// die antippbaren Vorschlags-Chips im Review (ReceiptLineRow), nicht eine noch bessere Formel.
-    private static func lcsSimilarity(_ a: String, _ b: String) -> Double {
+    ///
+    /// Nicht `private`: `ReceiptScannerView.save()` braucht dieselbe Bewertung auch für die laxe,
+    /// namensbasierte Fallback-Suche über ALLE PurchaseRecords (nicht nur die abgehakten Artikel
+    /// dieses Stores) — ohne diese Prüfung könnte ein zufälliger Substring-Treffer (z. B. "Milch"
+    /// matcht einen bestehenden "Kondensmilch"-Datensatz) einen fremden Artikel verfälschen.
+    static func lcsSimilarity(_ a: String, _ b: String) -> Double {
         let aChars = Array(a.lowercased())
         let bChars = Array(b.lowercased())
         guard !aChars.isEmpty, !bChars.isEmpty else { return 0 }
