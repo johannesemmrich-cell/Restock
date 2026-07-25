@@ -349,7 +349,7 @@ struct JoinStoreSheet: View {
             // Reuses the same merge logic as the periodic sync, so joining is exactly
             // equivalent to a first pull — no separate item-copying path to maintain.
             if let result {
-                await SyncCoordinator.shared.apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, modifiedAt: result.modifiedAt, to: store)
+                await SyncCoordinator.shared.apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, modifiedAt: result.modifiedAt, to: store)
             }
 
             let members = try? await SharedStoreService.shared.addSelfAsMember(shareID: preview.shareID)

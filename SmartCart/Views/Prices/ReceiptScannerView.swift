@@ -53,6 +53,12 @@ struct ReceiptScannerView: View {
     @State private var showPhotoLibrary = false
     @State private var parsedLines: [EditableReceiptLine] = []
     @State private var phase: Phase = .capture
+    /// Die von Vision rekonstruierten Rohzeilen VOR dem Parsing — nur für die Dev-Feedback-
+    /// Diagnose (siehe `.devFeedback` unten) gehalten, damit ein "das ist komisch"-Feedback aus
+    /// dem Review automatisch den tatsächlichen OCR-Rohtext mitschickt, statt dass ein einzelner
+    /// falsch erkannter oder komplett fehlender Artikel ohne das Originalfoto nicht mehr
+    /// nachvollziehbar ist.
+    @State private var debugRawLines: [String] = []
 
     enum Phase { case capture, processing, review }
 
@@ -96,7 +102,9 @@ struct ReceiptScannerView: View {
                 process(image)
             }
         }
-        .devFeedback(context: "Bon scannen")
+        .devFeedback(context: debugRawLines.isEmpty
+            ? "Bon scannen — \(store.name)"
+            : "Bon scannen — \(store.name)\n\nRohzeilen:\n\(debugRawLines.joined(separator: "\n"))")
     }
 
     // MARK: - Phase views
@@ -211,6 +219,10 @@ struct ReceiptScannerView: View {
 
     private func process(_ image: UIImage) {
         phase = .processing
+        // Sofort zurücksetzen, nicht erst nach der OCR — sonst könnte ein Feedback-Tap während
+        // dieses Scans (oder ein Scan, der schon am fehlenden cgImage scheitert, siehe Guard
+        // unten) noch die Rohzeilen des VORHERIGEN Fotos anzeigen.
+        debugRawLines = []
         Task.detached(priority: .userInitiated) {
             guard let cgImage = image.cgImage else {
                 await MainActor.run { parsedLines = []; phase = .review }
@@ -251,6 +263,7 @@ struct ReceiptScannerView: View {
                     continuation.resume(returning: [])
                 }
             }
+            await MainActor.run { debugRawLines = lines }
             let parsed = ReceiptParserService.parse(lines)
 
             // Kürzel → echter Name, mehrstufig (erste treffende Stufe gewinnt):
@@ -428,6 +441,7 @@ struct ReceiptScannerView: View {
             let quantity = line.quantity > 1 ? line.quantity : (match?.quantityAmount ?? 1)
             let perUnitPrice = quantity > 0 ? line.price / quantity : line.price
             store.learnedPrices[lineLower] = perUnitPrice
+            store.learnedPriceDates[lineLower] = Date()
 
             // Direkt auf den bereits gelisteten Artikel zurückschreiben — sonst lernt ein Scan nur
             // für KÜNFTIG neu erstellte Artikel (über `learnedPrices`), während der schon

@@ -17,6 +17,11 @@ class Store {
     var itemOrderMap: [String: Double]
     // Learned prices per store: item name (lowercased) -> last confirmed price from receipt
     var learnedPrices: [String: Double]
+    /// Zeitstempel pro `learnedPrices`-Eintrag — ausschließlich fürs Sync-Merge geteilter Listen
+    /// nötig (bei einem Preis-Konflikt zwischen zwei Geräten/Mitgliedern gewinnt der spätere,
+    /// siehe `SharedStoreService.mergePrices`). Additiv wie `categoryManuallySet`/`completedBy`
+    /// bei `ShoppingItem`, kein Schema-Versionsbump nötig.
+    var learnedPriceDates: [String: Date] = [:]
     var sortIndex: Int = 0
 
     @Relationship(deleteRule: .cascade, inverse: \ShoppingItem.store)
@@ -84,6 +89,7 @@ class Store {
         self.isCustom = isCustom
         self.itemOrderMap = [:]
         self.learnedPrices = [:]
+        self.learnedPriceDates = [:]
     }
 
     var color: Color {

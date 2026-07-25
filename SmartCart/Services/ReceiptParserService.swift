@@ -6,7 +6,8 @@ import FoundationModels
 
 struct ReceiptLine {
     let name: String
-    let price: Double        // Zeilen-GESAMTpreis (bei Menge > 1: Menge × Stückpreis)
+    var price: Double        // Zeilen-GESAMTpreis (bei Menge > 1: Menge × Stückpreis; nachträglich
+                              // veränderlich, z. B. um einen Pfand-/Consigne-Betrag zu addieren)
     var quantity: Double = 1 // Stückzahl (aus "N x P.PP"-Mengenzeile oder Multipack-Token wie "6X1.5L")
     var unit: String = ""    // Größenangabe aus dem Namen, z. B. "1,5l", "400g", "50cl"
 
@@ -75,8 +76,13 @@ enum ReceiptParserService {
 
     // Führende Artikelnummern (5+ Ziffern)
     private static let articleNumberRegex = try? NSRegularExpression(pattern: #"^\d{5,}\s+"#)
-    // Anhängende MwSt-Kennbuchstaben (A B 1 2 * E am Zeilenende)
-    private static let vatSuffixRegex = try? NSRegularExpression(pattern: #"\s+[AB12E\*]\s*$"#)
+    // Anhängende MwSt-/Zeilentyp-Kennbuchstaben (A B 1 2 * E am Zeilenende) — "M" kam dazu, weil
+    // Lidl die Pfand-Zeile eigens damit kennzeichnet ("Pfand 0,25 M", eigener Code statt echter
+    // MwSt-Kategorie): ohne "M" in dieser Klasse matchte KEINE der Preis-Regexes in dieser Datei
+    // (alle 6 Stellen mit `[AB...]` unten verwenden dieselbe Zeichenklasse) die Pfand-Zeile, der
+    // Pfand-Merge-Zweig griff dadurch nie — die Zeile fiel weiter auf den generischen Admin-Skip
+    // zurück, exakt der ursprüngliche Bug blieb bestehen.
+    private static let vatSuffixRegex = try? NSRegularExpression(pattern: #"\s+[ABM12E\*]\s*$"#)
 
     // MARK: - Zeilen-Rekonstruktion aus Vision-Beobachtungen
 
@@ -145,7 +151,7 @@ enum ReceiptParserService {
     private static func isClassicVatItemCandidate(_ rawLine: String) -> Bool {
         let line = rawLine.trimmingCharacters(in: .whitespaces)
         guard line.count >= 3, !isAdminLine(line.lowercased()) else { return false }
-        return line.range(of: #"^.+?\s{2,}-?\d{1,4}[,\.]\d{2}\s*[AB12E\*]\s*$"#,
+        return line.range(of: #"^.+?\s{2,}-?\d{1,4}[,\.]\d{2}\s*[ABM12E\*]\s*$"#,
                           options: .regularExpression) != nil
     }
 
@@ -169,15 +175,15 @@ enum ReceiptParserService {
     private static func parseClassic(_ lines: [String]) -> [ReceiptLine] {
         // Bevorzugt: Name + 2+ Leerzeichen + Preis (+ opt. MwSt-Kürzel)
         guard let tightRegex = try? NSRegularExpression(
-            pattern: #"^(.+?)\s{2,}(-?\d{1,4}[,\.]\d{2})\s*[AB12E\*]?\s*$"#
+            pattern: #"^(.+?)\s{2,}(-?\d{1,4}[,\.]\d{2})\s*[ABM12E\*]?\s*$"#
         ) else { return [] }
         // Fallback: 1 Leerzeichen vor Preis
         guard let looseRegex = try? NSRegularExpression(
-            pattern: #"^(.+?)\s+(-?\d{1,4}[,\.]\d{2})\s*[AB12E\*]?\s*$"#
+            pattern: #"^(.+?)\s+(-?\d{1,4}[,\.]\d{2})\s*[ABM12E\*]?\s*$"#
         ) else { return [] }
         // Nur-Preis-Zeile (für gewichtsbasierte Artikel)
         guard let priceOnlyRegex = try? NSRegularExpression(
-            pattern: #"^(-?\d{1,4}[,\.]\d{2})\s*[AB12E\*]?\s*$"#
+            pattern: #"^(-?\d{1,4}[,\.]\d{2})\s*[ABM12E\*]?\s*$"#
         ) else { return [] }
 
         var results: [ReceiptLine] = []
@@ -190,12 +196,26 @@ enum ReceiptParserService {
         // zuordnen würde (beobachtet: eine isolierte Gewichtsartikel-Preiszeile wie "0,75 A"
         // wurde so zum Pseudo-Namen für den Preis einer GANZ ANDEREN, folgenden Position).
         var pendingPrice: Double? = nil
+        // Wird wahr, sobald die "zu zahlen"-Zeile erreicht ist — ab da folgt auf deutschen Bons
+        // nur noch Zahlungs-Metadaten (TSE-Transaktionsnummer, Seriennr., Autorisierungscode,
+        // "GEN.NR", …), die sonst einzeln per Schlüsselwort erkannt werden müssten und sonst als
+        // Produktzeile durchrutschen (z. B. "00 GEN.NR: 54  13,03" wurde als Artikel erkannt).
+        // Bewusst NUR "zahlen" als Auslöser (nicht z. B. "montant"/"total" für französische Bons)
+        // — "montant" steht dort in der SPALTEN-KOPFZEILE ganz oben ("MONTANT TTC"), ein Abbruch
+        // darauf würde den kompletten Rest jedes französischen Bons verschlucken.
+        var pastItemSection = false
 
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             guard trimmed.count >= 3 else { pendingName = nil; pendingPrice = nil; continue }
 
             let lower = trimmed.lowercased()
+
+            if pastItemSection { continue }
+            if adminWords(lower).contains("zahlen") {
+                pastItemSection = true
+                continue
+            }
 
             // Gewichts-/Multiplikatorzeilen ("0,436 kg x 12,49", "…  0,584 kg x 1,29  EUR/Kg")
             // MÜSSEN vor dem allgemeinen Admin-Filter geprüft werden: die Mengeneinheit "EUR/Kg"
@@ -220,6 +240,20 @@ enum ReceiptParserService {
                 }
                 pendingName = nil
                 pendingPrice = nil
+                continue
+            }
+            // Pfand-Zeile ("Pfand 0,25 M") gehört zur VORHERIGEN Position (Flaschen-/Dosenpfand) —
+            // statt sie wie jede andere Admin-Zeile zu verwerfen (bisheriges Verhalten: der Betrag
+            // verschwand einfach spurlos), zum letzten erkannten Preis addieren.
+            if adminWords(lower).contains("pfand"), !results.isEmpty,
+               let pfandPrice = extractTrailingPrice(from: trimmed) {
+                // extractTrailingPrice liefert nur die Ziffern, ein führendes "-" (Pfand-Rückgabe/
+                // Leergut-Erstattung, siehe Beispiel "Pfand 3 x -0,75" im Kommentar weiter oben)
+                // geht dabei verloren — hier separat erkennen, sonst würde eine Rückerstattung
+                // fälschlich zum vorherigen Preis ADDIERT statt abgezogen.
+                let isRefund = hasNegativeTrailingAmount(trimmed)
+                results[results.count - 1].price += isRefund ? -pfandPrice : pfandPrice
+                pendingName = nil; pendingPrice = nil
                 continue
             }
             // Administrative Zeilen überspringen
@@ -413,7 +447,19 @@ enum ReceiptParserService {
                 .replacingOccurrences(of: "×", with: "x")
                 .trimmingCharacters(in: .whitespaces)
             guard line.count >= 3 else { continue }
-            if isAdminLine(line.lowercased()) { pendingName = nil; continue }
+            let lineLower = line.lowercased()
+            // "Consigne" (frz. Pfand) gehört zur VORHERIGEN Position, analog zu "Pfand" im
+            // klassischen Pfad — statt den Betrag wie jede andere Admin-Zeile spurlos zu verwerfen.
+            if adminWords(lineLower).contains("consigne"), !results.isEmpty,
+               let consignePrice = extractTrailingEuroPrice(from: line) {
+                // Gleiches Vorzeichen-Problem wie beim deutschen Pfand-Pfad (siehe dortiger
+                // Kommentar): extractTrailingEuroPrice verliert ein führendes "-".
+                let isRefund = hasNegativeTrailingAmount(line)
+                results[results.count - 1].price += isRefund ? -consignePrice : consignePrice
+                pendingName = nil
+                continue
+            }
+            if isAdminLine(lineLower) { pendingName = nil; continue }
 
             // Eigenständige Mengenzeile "2 x 1.25€" → Menge der VORHERIGEN Position.
             // Nur übernehmen, wenn Menge × Stückpreis zum Zeilenpreis passt (±5 ct).
@@ -583,13 +629,27 @@ enum ReceiptParserService {
 
     // Preis am Zeilenende extrahieren (für Gewichtszeilen)
     private static func extractTrailingPrice(from line: String) -> Double? {
-        let pattern = #"(\d{1,4}[,\.]\d{2})\s*[AB12E\*]?\s*$"#
+        let pattern = #"(\d{1,4}[,\.]\d{2})\s*[ABM12E\*]?\s*$"#
         guard let rx = try? NSRegularExpression(pattern: pattern),
               let match = rx.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)),
               let range = Range(match.range(at: 1), in: line) else { return nil }
         let raw = String(line[range]).replacingOccurrences(of: ",", with: ".")
         let price = Double(raw)
         return (price ?? 0) > 0.05 ? price : nil
+    }
+
+    // Prüft, ob dem End-Preis einer Zeile ein Minus-artiges Zeichen UNMITTELBAR vorausgeht (nur
+    // Leerraum dazwischen) — genauer als eine simple "enthält die Zeile irgendwo einen
+    // Bindestrich"-Prüfung, die z. B. bei einer Artikel-/Belegnummer wie "Art-Nr 4011-8" fälschlich
+    // anschlagen würde, obwohl der eigentliche Preis am Ende positiv ist. `\D*$` statt einer der
+    // spezifischen Endungs-Zeichenklassen oben, damit dieselbe Prüfung für beide Preisformate
+    // (deutsches "M"/"A"/… -Kürzel UND französisches Währungssymbol) funktioniert. Deckt neben dem
+    // ASCII-Bindestrich auch die Gedankenstrich-/Minus-Varianten ab, die Vision bei OCR gelegentlich
+    // statt eines echten Minus liefert (vgl. die x/х-Behandlung weiter oben in dieser Datei).
+    private static func hasNegativeTrailingAmount(_ line: String) -> Bool {
+        let pattern = #"[-–—−]\s*\d{1,4}[,\.]\d{2}\D*$"#
+        guard let rx = try? NSRegularExpression(pattern: pattern) else { return false }
+        return rx.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)) != nil
     }
 
     // Preis am Zeilenende extrahieren, Euro-Suffix-Variante ("… 1.66€" / "… 1.66")
@@ -684,6 +744,20 @@ enum ReceiptParserService {
         let bChars = Array(b.lowercased())
         guard !aChars.isEmpty, !bChars.isEmpty else { return 0 }
         let lcs = longestCommonSubsequenceLength(aChars, bChars)
+        // Ein Teilstring-Bonus ("Red Bull" in "Red Bull White Peach" höher werten) wurde erwogen
+        // und wieder verworfen: deutsche Komposita machen "kurzes echtes Wort ist Teilstring eines
+        // LÄNGEREN, ANDEREN Produkts" extrem häufig ("Milch" in "Kondensmilch", "Apfel" in
+        // "Apfelsaft", "Sahne" in "Schlagsahne") — ein pauschaler Bonus hätte genau die
+        // Verwechslungsgefahr verschärft, die er lösen sollte (durch echten Test bestätigt: der
+        // Bonus hob "Milch"/"Kondensmilch" von 0,588 auf 0,788 an — über die Auto-Übernahme-
+        // Schwelle). Der reine Ratio-Wert unten kann echte Kürzungen (0,57-0,65) ohnehin nicht
+        // immer von Komposita-Kollisionen (ebenfalls 0,57-0,71) unterscheiden — ohne echtes
+        // Sprachwissen (Kompositazerlegung) ist das mit reiner String-Ähnlichkeit nicht
+        // zuverlässig lösbar. Bewusster Kompromiss stattdessen in der Schwelle unten: hoch genug,
+        // dass die im echten Bon aufgetretenen Fälle korrekt fallen, auch wenn dadurch ein paar
+        // legitime kurze Markennamen (z. B. "Red Bull" als Kürzung von "Red Bull White Peach")
+        // auf den Vorschlags-Chip statt Auto-Übernahme zurückfallen — ein falscher Tipp-Vorschlag
+        // ist ungefährlicher als eine still falsch umbenannte/gelernte Position.
         return (2.0 * Double(lcs)) / Double(aChars.count + bChars.count)
     }
 
@@ -705,7 +779,12 @@ enum ReceiptParserService {
     }
 
     /// Automatisch übernehmen, wenn der beste Treffer mindestens diesen Score erreicht.
-    static let completedItemAutoApplyThreshold: Double = 0.5
+    /// 0,6 statt (früher) 0,5 — hebt die Schwelle über den konkret beobachteten Fehltreffer
+    /// "Bananen"/"Mandeln" (0,571) hinaus, OHNE das Verhältnis selbst zu verändern (siehe
+    /// Kommentar in `lcsSimilarity` oben, warum ein Teilstring-Bonus dort verworfen wurde).
+    /// Bleibt trotzdem unvollständig: manche echte Komposita-Kollisionen liegen noch darüber
+    /// (z. B. "Apfel"/"Apfelsaft" ≈ 0,71) — bekannte, nicht in dieser Runde gelöste Grenze.
+    static let completedItemAutoApplyThreshold: Double = 0.6
     /// Trotzdem als antippbaren Vorschlags-Chip anzeigen, auch ohne automatische Übernahme.
     static let completedItemSuggestionFloor: Double = 0.2
 
@@ -731,10 +810,24 @@ enum ReceiptParserService {
             }
             return (item, score)
         }
+        // Nach Name deduplizieren (höchsten Score behalten) — sonst ergeben zwei an
+        // unterschiedlichen Tagen abgehakte, gleichnamige Artikel (z. B. zwei "Mandeln"-Käufe)
+        // zwei identische Vorschlags-Chips in der UI.
+        var bestByName: [String: (item: ShoppingItem, score: Double)] = [:]
+        for entry in scored {
+            let key = entry.item.name.lowercased()
+            if let existing = bestByName[key], existing.score >= entry.score { continue }
+            bestByName[key] = entry
+        }
         return Array(
-            scored
+            bestByName.values
                 .filter { $0.score >= completedItemSuggestionFloor }
-                .sorted { $0.score > $1.score }
+                // Namen als zweites Sortierkriterium: `bestByName.values` iteriert in
+                // unspezifizierter (pro Prozess zufälliger) Dictionary-Reihenfolge — ohne
+                // deterministischen Tie-Breaker könnte die Reihenfolge zweier exakt
+                // gleich bewerteter, unterschiedlich benannter Artikel zwischen App-Starts
+                // wechseln.
+                .sorted { $0.score != $1.score ? $0.score > $1.score : $0.item.name < $1.item.name }
                 .prefix(limit)
         )
     }

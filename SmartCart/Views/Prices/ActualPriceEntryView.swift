@@ -161,6 +161,7 @@ struct ActualPriceEntryView: View {
         let key = item.name.lowercased()
         let perUnitPrice = item.quantityAmount > 0 ? itemActualTotal / item.quantityAmount : itemActualTotal
         store.learnedPrices[key] = perUnitPrice
+        store.learnedPriceDates[key] = Date()
 
         // Direkt auf den Artikel selbst zurückschreiben (wie ReceiptScannerView.save()) — item ist
         // hier bereits die exakte, eindeutige ShoppingItem-Referenz (kein Fuzzy-Matching nötig wie

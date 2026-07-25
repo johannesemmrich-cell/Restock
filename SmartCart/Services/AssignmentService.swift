@@ -31,6 +31,7 @@ struct AssignmentService {
         "müllbeutel", "gefrierbeutel", "frischhaltefolie", "alufolie",
         "schwamm", "spülbürste", "scheuertuch", "putztuch",
         "garbage bag", "bin bag", "sponge",
+        "handschuh", "gloves",
         // Hygiene
         "tampons", "binden", "kondome", "cotton pads", "zahnseide",
         // Apotheke / Medizin
@@ -600,7 +601,7 @@ struct AssignmentService {
         if ["shampoo", "conditioner", "duschgel", "seife", "deo", "haarspray", "shower", "soap", "hair"].contains(where: { nameLower.contains($0) }) {
             return "Körperpflege"
         }
-        if ["waschmittel", "spülmittel", "reiniger", "detergent", "cleaning"].contains(where: { nameLower.contains($0) }) {
+        if ["waschmittel", "spülmittel", "reiniger", "detergent", "cleaning", "handschuh", "gloves"].contains(where: { nameLower.contains($0) }) {
             return "Reinigung"
         }
         if ["pflaster", "paracetamol", "ibuprofen", "vitamin", "medikament", "medicine", "plaster"].contains(where: { nameLower.contains($0) }) {

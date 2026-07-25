@@ -29,18 +29,18 @@ actor SharedStoreService {
 
     @discardableResult
     func publish(store: Store) async throws -> String {
-        let (code, _, _, _) = try await syncToCloud(store: store)
+        let (code, _, _, _, _, _) = try await syncToCloud(store: store)
         return code
     }
 
     @discardableResult
-    func push(store: Store) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>)? {
+    func push(store: Store) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date])? {
         guard store.shareID != nil else { return nil }
-        let (_, items, members, deletedIDs) = try await syncToCloud(store: store)
-        return (items, members, deletedIDs)
+        let (_, items, members, deletedIDs, prices, priceDates) = try await syncToCloud(store: store)
+        return (items, members, deletedIDs, prices, priceDates)
     }
 
-    private func syncToCloud(store: Store) async throws -> (code: String, items: [SharedItemData], members: [String], deletedIDs: Set<UUID>) {
+    private func syncToCloud(store: Store) async throws -> (code: String, items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date]) {
         let code = store.shareID ?? Self.generateCode()
         let recordID = CKRecord.ID(recordName: code)
 
@@ -56,12 +56,12 @@ actor SharedStoreService {
 
         var attempt = 0
         while true {
-            let (mergedItems, mergedMembers, mergedDeletedIDs) = mergeIntoRecord(record, store: store, code: code, isNewRecord: isNewRecord)
+            let (mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates) = mergeIntoRecord(record, store: store, code: code, isNewRecord: isNewRecord)
             do {
                 let saved = try await db.save(record)
                 markSynced(shareID: code, at: saved.modificationDate ?? Date())
                 pruneDeletions(shareID: code, stillPresent: Set(mergedItems.map(\.id)))
-                return (code, mergedItems, mergedMembers, mergedDeletedIDs)
+                return (code, mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates)
             } catch let error as CKError where error.code == .serverRecordChanged && attempt == 0 {
                 // Another device saved between our fetch and our save. Re-merge against the
                 // record that actually won instead of blindly overwriting it a second time.
@@ -73,16 +73,22 @@ actor SharedStoreService {
         }
     }
 
-    /// Merges local store state into `record` in place and returns the merged items/members/tombstones.
-    private func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool) -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>) {
+    /// Merges local store state into `record` in place and returns the merged items/members/
+    /// tombstones/prices.
+    private func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool) -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date]) {
         let remoteItems = decodeItems(record["itemsJSON"] as? String ?? "[]")
         let remoteMembers = decodeMembers(record["membersJSON"] as? String ?? "[]")
         let remoteDeletedIDs = decodeIDs(record["deletedJSON"] as? String ?? "[]")
+        let (remotePrices, remotePriceDates) = decodePrices(record["pricesJSON"] as? String ?? "{}")
 
         let localTombstones = pendingDeletions(shareID: code)
         let allTombstones = localTombstones.union(remoteDeletedIDs)
         let localItems = sharedItemData(from: store.items)
         let mergedItems = merge(local: localItems, remote: remoteItems, tombstones: allTombstones)
+        let (mergedPrices, mergedPriceDates) = mergePrices(
+            local: store.learnedPrices, localDates: store.learnedPriceDates,
+            remote: remotePrices, remoteDates: remotePriceDates
+        )
         // Always include this device's own display name: whoever pushes is by definition a
         // member. This also self-heals lists whose join-time `addSelfAsMember` write failed
         // (e.g. rejected by CloudKit permissions) — the member appears with their next push.
@@ -103,7 +109,8 @@ actor SharedStoreService {
         record["itemsJSON"] = encodeItems(mergedItems) as CKRecordValue
         record["membersJSON"] = encodeMembers(mergedMembers) as CKRecordValue
         record["deletedJSON"] = encodeIDs(mergedDeletedIDs) as CKRecordValue
-        return (mergedItems, mergedMembers, mergedDeletedIDs)
+        record["pricesJSON"] = encodePrices(mergedPrices, dates: mergedPriceDates) as CKRecordValue
+        return (mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates)
     }
 
     /// Per-item last-write-wins merge: an id present in both is resolved by the newer `lastModified`.
@@ -120,6 +127,26 @@ actor SharedStoreService {
             byID[item.id] = item
         }
         return Array(byID.values)
+    }
+
+    /// Per-key last-write-wins merge for learned prices, analog zum Item-Merge oben: ein
+    /// Preis-Schlüssel, der auf beiden Seiten existiert, wird per Zeitstempel entschieden (der
+    /// spätere gewinnt). Ein Schlüssel, der nur auf einer Seite existiert, bleibt unverändert
+    /// erhalten — Preise werden hier nie gelöscht, nur überschrieben.
+    private func mergePrices(
+        local: [String: Double], localDates: [String: Date],
+        remote: [String: Double], remoteDates: [String: Date]
+    ) -> (prices: [String: Double], priceDates: [String: Date]) {
+        var mergedPrices = remote
+        var mergedDates = remoteDates
+        for (key, localPrice) in local {
+            let localDate = localDates[key] ?? .distantPast
+            if localDate >= (remoteDates[key] ?? .distantPast) {
+                mergedPrices[key] = localPrice
+                mergedDates[key] = localDate
+            }
+        }
+        return (mergedPrices, mergedDates)
     }
 
     // MARK: - Fetch preview (before joining)
@@ -139,7 +166,7 @@ actor SharedStoreService {
 
     // MARK: - Pull (download remote items if newer)
 
-    func pull(shareID: String) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, modifiedAt: Date)? {
+    func pull(shareID: String) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], modifiedAt: Date)? {
         let recordID = CKRecord.ID(recordName: shareID)
         let record = try await db.record(for: recordID)
         let remoteModified = record.modificationDate ?? .distantPast
@@ -153,11 +180,15 @@ actor SharedStoreService {
         let allRemoteItems = decodeItems(record["itemsJSON"] as? String ?? "[]")
         let items = allRemoteItems.filter { !allTombstones.contains($0.id) }
         let members = decodeMembers(record["membersJSON"] as? String ?? "[]")
+        // Preise werden NICHT hier schon gemergt (anders als beim Push in `mergeIntoRecord`) —
+        // der Aufrufer (SyncCoordinator.apply) entscheidet pro Schlüssel gegen den LOKALEN Stand
+        // zum Anwendungszeitpunkt, exakt wie er es für `items` per `lastModified` auch schon tut.
+        let (prices, priceDates) = decodePrices(record["pricesJSON"] as? String ?? "{}")
         pruneDeletions(shareID: shareID, stillPresent: Set(allRemoteItems.map(\.id)))
         // Not marked synced here: the caller (SyncCoordinator) only advances the watermark once
         // this result has actually been applied and saved into the local SwiftData store, so a
         // failed/interrupted apply doesn't permanently skip the merge that would have fixed it.
-        return (items, members, allTombstones, remoteModified)
+        return (items, members, allTombstones, prices, priceDates, remoteModified)
     }
 
     // MARK: - Members
@@ -335,6 +366,34 @@ actor SharedStoreService {
                 lastModified: (dict["lastModified"] as? TimeInterval).map(Date.init(timeIntervalSince1970:)) ?? .distantPast
             )
         }
+    }
+
+    /// Preis-Schlüssel → {price, date}-Objekt, damit jeder Eintrag seinen eigenen Zeitstempel
+    /// mitführt (nötig für `mergePrices`s "später gewinnt"). Fehlende Werte defaulten beim
+    /// Decode auf leer, damit ein älterer Record ohne dieses Feld (vor diesem Feature) nicht bricht.
+    func encodePrices(_ prices: [String: Double], dates: [String: Date]) -> String {
+        var dicts: [String: [String: Any]] = [:]
+        for (key, price) in prices {
+            dicts[key] = ["price": price, "date": (dates[key] ?? .distantPast).timeIntervalSince1970]
+        }
+        guard let data = try? JSONSerialization.data(withJSONObject: dicts),
+              let str = String(data: data, encoding: .utf8) else { return "{}" }
+        return str
+    }
+
+    func decodePrices(_ json: String) -> (prices: [String: Double], dates: [String: Date]) {
+        guard let data = json.data(using: .utf8),
+              let dict = try? JSONSerialization.jsonObject(with: data) as? [String: [String: Any]] else { return ([:], [:]) }
+        var prices: [String: Double] = [:]
+        var dates: [String: Date] = [:]
+        for (key, entry) in dict {
+            guard let price = entry["price"] as? Double else { continue }
+            prices[key] = price
+            if let ts = entry["date"] as? TimeInterval {
+                dates[key] = Date(timeIntervalSince1970: ts)
+            }
+        }
+        return (prices, dates)
     }
 
     func encodeMembers(_ members: [String]) -> String {
