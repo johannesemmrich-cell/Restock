@@ -119,6 +119,9 @@ struct StoreDetailView: View {
                         .buttonStyle(.pressable)
                     }
                 }
+                if isQuickAddFocused {
+                    ProductSuggestionChips(suggestions: quickAddSuggestions, tint: store.color, onSelect: applyQuickAddSuggestion)
+                }
                 if let parsed = quickAddParsed {
                     VStack(spacing: 4) {
                         HStack(spacing: 8) {
@@ -641,6 +644,35 @@ struct StoreDetailView: View {
         let r = QuickAddParser.parse(quickAddText)
         guard r.name != quickAddText.trimmingCharacters(in: .whitespaces) || !r.unit.isEmpty else { return nil }
         return r
+    }
+
+    private var quickAddSuggestions: [String] {
+        guard !quickAddText.trimmingCharacters(in: .whitespaces).isEmpty else { return [] }
+        return QuickAddParser.knownProductSuggestions(for: QuickAddParser.parse(quickAddText).name, in: allRecords)
+    }
+
+    /// `QuickAddParser` erkennt Menge/Einheit entweder VOR dem Namen ("200g Hafer" → Name ist
+    /// Suffix von `trimmed`) oder NACH dem Namen ("Hackfleisch 3kg" → Name ist Präfix) — beide
+    /// Fälle müssen beim Ersetzen per Tipp auf einen Vorschlag die bereits getippte Menge
+    /// erhalten, statt sie stillschweigend zu verwerfen. Der Vergleich läuft gegen dieselbe
+    /// auf Einzel-Leerzeichen normalisierte Tokenisierung, die `QuickAddParser.parse` intern
+    /// für den zurückgegebenen Namen verwendet (`tokens.joined(separator: " ")`) — sonst würde
+    /// z.B. ein eingefügter Name mit doppeltem Leerzeichen ("Bio  Vollmilch") weder als Suffix
+    /// noch als Präfix des unveränderten `trimmed` erkannt und die Menge ginge verloren.
+    private func applyQuickAddSuggestion(_ suggestion: String) {
+        let normalized = quickAddText
+            .trimmingCharacters(in: .whitespaces)
+            .components(separatedBy: .whitespaces)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+        let parsedName = QuickAddParser.parse(quickAddText).name
+        if normalized.hasSuffix(parsedName) {
+            quickAddText = String(normalized.dropLast(parsedName.count)) + suggestion
+        } else if normalized.hasPrefix(parsedName) {
+            quickAddText = suggestion + String(normalized.dropFirst(parsedName.count))
+        } else {
+            quickAddText = suggestion
+        }
     }
 
     private func quickAdd() {

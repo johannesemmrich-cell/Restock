@@ -164,4 +164,25 @@ enum QuickAddParser {
         parts.append(r.name)
         return parts.joined(separator: " · ")
     }
+
+    /// Namen, die der Nutzer schon mal gekauft/eingetippt hat, gefiltert per Präfix (nicht die an
+    /// anderer Stelle in diesen Views verwendete Fuzzy-Teilstring-Suche) — für eine
+    /// Autocomplete-während-des-Tippens-UI wäre Teilstring-Matching zu unruhig. Schwelle 2 Zeichen
+    /// statt der sonst in diesem Bereich üblichen `>= 3`: Präfix-Matching ist präzise genug, dass
+    /// kurze deutsche Grundnahrungsmittel ("Ei" → "Eier") schon ab 2 Zeichen sinnvoll greifen.
+    static func knownProductSuggestions(for input: String, in records: [PurchaseRecord], limit: Int = 5) -> [String] {
+        let trimmed = input.trimmingCharacters(in: .whitespaces)
+        guard trimmed.count >= 2 else { return [] }
+        let inputLower = trimmed.lowercased()
+        var seenLower = Set<String>()
+        var result: [String] = []
+        for record in records.sorted(by: { $0.date > $1.date }) {
+            let lower = record.itemName.lowercased()
+            guard lower.hasPrefix(inputLower), lower != inputLower, !seenLower.contains(lower) else { continue }
+            seenLower.insert(lower)
+            result.append(record.itemName)
+            if result.count == limit { break }
+        }
+        return result
+    }
 }

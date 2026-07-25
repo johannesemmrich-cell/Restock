@@ -519,6 +519,35 @@ struct HomeView: View {
         return r
     }
 
+    private var quickAddSuggestions: [String] {
+        guard !addItemText.trimmingCharacters(in: .whitespaces).isEmpty else { return [] }
+        return QuickAddParser.knownProductSuggestions(for: QuickAddParser.parse(addItemText).name, in: allRecords)
+    }
+
+    /// `QuickAddParser` erkennt Menge/Einheit entweder VOR dem Namen ("200g Hafer" → Name ist
+    /// Suffix von `trimmed`) oder NACH dem Namen ("Hackfleisch 3kg" → Name ist Präfix) — beide
+    /// Fälle müssen beim Ersetzen per Tipp auf einen Vorschlag die bereits getippte Menge
+    /// erhalten, statt sie stillschweigend zu verwerfen. Der Vergleich läuft gegen dieselbe
+    /// auf Einzel-Leerzeichen normalisierte Tokenisierung, die `QuickAddParser.parse` intern
+    /// für den zurückgegebenen Namen verwendet (`tokens.joined(separator: " ")`) — sonst würde
+    /// z.B. ein eingefügter Name mit doppeltem Leerzeichen ("Bio  Vollmilch") weder als Suffix
+    /// noch als Präfix des unveränderten `trimmed` erkannt und die Menge ginge verloren.
+    private func applyQuickAddSuggestion(_ suggestion: String) {
+        let normalized = addItemText
+            .trimmingCharacters(in: .whitespaces)
+            .components(separatedBy: .whitespaces)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+        let parsedName = QuickAddParser.parse(addItemText).name
+        if normalized.hasSuffix(parsedName) {
+            addItemText = String(normalized.dropLast(parsedName.count)) + suggestion
+        } else if normalized.hasPrefix(parsedName) {
+            addItemText = suggestion + String(normalized.dropFirst(parsedName.count))
+        } else {
+            addItemText = suggestion
+        }
+    }
+
     private var suggestedStore: Store? {
         guard !addItemText.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
         let parsed = QuickAddParser.parse(addItemText)
@@ -590,6 +619,10 @@ struct HomeView: View {
                     }
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+
+            if isQuickAddFocused {
+                ProductSuggestionChips(suggestions: quickAddSuggestions, tint: Color.accent, onSelect: applyQuickAddSuggestion)
             }
 
             // Smart parsing preview chip

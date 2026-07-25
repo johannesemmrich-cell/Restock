@@ -49,6 +49,7 @@
 		6BA9AE00008A24FF621597EE /* ClashDisplay-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 984CA66C3B260EF487FA4218 /* ClashDisplay-Semibold.ttf */; };
 		708347169C9B1DF2C1D474FF /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ED485E807ADF771EE3C623 /* LiveActivityService.swift */; };
 		716005436031FFBC9466BE23 /* HabitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B1060B802DB6BB5B27C69F /* HabitService.swift */; };
+		724971FF469D398F3392EE4D /* ProductSuggestionChips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04C3B4437166F2F65BE05DFA /* ProductSuggestionChips.swift */; };
 		76231DDEAAE5FCB046639E2C /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B54EB99B9957838C1031AD /* TodoItem.swift */; };
 		7660A43490BFCE3AC2E4961E /* QuantityStepperField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3AE2CD051F27D5809DC417 /* QuantityStepperField.swift */; };
 		79405378A9C9AEC3323E5E20 /* BrowseStoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC6F3E41F217D74D6B1A8AA /* BrowseStoresView.swift */; };
@@ -111,6 +112,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		04C3B4437166F2F65BE05DFA /* ProductSuggestionChips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductSuggestionChips.swift; sourceTree = "<group>"; };
 		0A2D05B867EE15815F1F8052 /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
 		0AC1BA745165F01898D190CD /* QuickActionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionState.swift; sourceTree = "<group>"; };
 		1316E9EFE646ED0F0078332F /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				519C06AED82093BEDB756BC6 /* BarcodeScannerView.swift */,
 				A0B3C94D41DFA9563A9BB455 /* DevFeedbackButton.swift */,
 				1E8324737F70EA3B4DE90882 /* ItemRow.swift */,
+				04C3B4437166F2F65BE05DFA /* ProductSuggestionChips.swift */,
 				BC3AE2CD051F27D5809DC417 /* QuantityStepperField.swift */,
 				CFC3EDA58E0C12B818369746 /* StoreCard.swift */,
 			);
@@ -566,6 +569,7 @@
 				F3CAD908E7CDBA459BD4D03D /* PaywallView.swift in Sources */,
 				CC54003EAD03F5D228A1AAB4 /* PremiumService.swift in Sources */,
 				30E6C2EC12A083FADF6AFAC1 /* PriceOverviewView.swift in Sources */,
+				724971FF469D398F3392EE4D /* ProductSuggestionChips.swift in Sources */,
 				35F5935E8A87960AE4AC2B66 /* PurchaseRecord.swift in Sources */,
 				7660A43490BFCE3AC2E4961E /* QuantityStepperField.swift in Sources */,
 				E8D21EC3494AC71233B98568 /* QuickActionState.swift in Sources */,

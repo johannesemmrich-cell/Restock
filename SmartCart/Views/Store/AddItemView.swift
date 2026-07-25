@@ -14,6 +14,7 @@ struct AddItemView: View {
     @State private var autoAssigned = false
     @State private var note = ""
     @State private var showScanner = false
+    @FocusState private var isNameFocused: Bool
 
     private var duplicateWarning: String? {
         guard let store = selectedStore, !name.isEmpty else { return nil }
@@ -26,12 +27,17 @@ struct AddItemView: View {
         return match.map { "'\($0.name)' ist bereits in der Liste" }
     }
 
+    private var nameSuggestions: [String] {
+        QuickAddParser.knownProductSuggestions(for: name, in: allRecords)
+    }
+
     var body: some View {
         NavigationStack {
             Form {
                 Section {
                     HStack {
                         TextField(String(localized: "item.name.placeholder"), text: $name)
+                            .focused($isNameFocused)
                             .onChange(of: name) { _, newValue in
                                 if !newValue.isEmpty { autoAssign(name: newValue) }
                             }
@@ -42,6 +48,12 @@ struct AddItemView: View {
                                 .foregroundStyle(Color.accent)
                         }
                         .buttonStyle(.pressable)
+                    }
+
+                    if isNameFocused {
+                        ProductSuggestionChips(suggestions: nameSuggestions, tint: Color.accent) { picked in
+                            name = picked
+                        }
                     }
 
                     HStack(spacing: 6) {

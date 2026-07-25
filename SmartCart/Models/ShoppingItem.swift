@@ -204,6 +204,10 @@ enum PriceEstimator {
             (["rinderhack", "hackfleisch", "ground beef"], 4.00),
             (["nudeln", "pasta"], 1.50),
             (["reis", "rice"], 2.00),
+            (["haferflocken", "porridge", "oats"], 1.80),
+            (["müsli", "cornflakes", "granola", "cereal"], 2.50),
+            (["mehl", "flour"], 1.20),
+            (["zucker", "sugar"], 1.50),
         ]
 
         let divisor = unitDivisor(for: unit)
@@ -218,18 +222,37 @@ enum PriceEstimator {
 
         if perUnit == nil {
             // Category fallback
+            // Deckt alle 26 Kategorien aus AssignmentService.categoryOrder ab (vorher nur 9 von
+            // 26 — u.a. "Konserven" fehlte, weshalb z.B. "Haferflocken" ohne Preis blieb). Die
+            // frühere "Haushalt"-Kategorie hieß nie so in categoryOrder (echt: "Haushaltswaren")
+            // und "Kosmetik" existierte dort nie — beide waren toter Code, hier korrigiert/entfernt.
             switch category {
             case "Obst & Gemüse": perUnit = 2.50 / divisor
             case "Fleisch & Wurst": perUnit = 4.50 / divisor
             case "Milchprodukte": perUnit = 2.00 / divisor
             case "Backwaren": perUnit = 2.00 / divisor
-            case "Tiefkühlkost": perUnit = 3.50 / divisor
             case "Getränke": perUnit = 1.50 / divisor
+            case "Tiefkühlkost": perUnit = 3.50 / divisor
             case "Snacks": perUnit = 1.80 / divisor
+            case "Gewürze & Backen": perUnit = 2.00 / divisor
+            case "Konserven": perUnit = 2.00 / divisor
+            case "Lebensmittel": perUnit = 2.50 / divisor
             case "Körperpflege": perUnit = 4.00 / divisor
-            case "Kosmetik": perUnit = 6.00 / divisor
             case "Reinigung": perUnit = 3.50 / divisor
-            case "Haushalt": perUnit = 5.00 / divisor
+            case "Medikamente": perUnit = 6.00 / divisor
+            case "Babybedarf": perUnit = 8.00 / divisor
+            case "Haushaltswaren": perUnit = 5.00 / divisor
+            case "Küchenausstattung": perUnit = 8.00 / divisor
+            case "Elektronik": perUnit = 10.00 / divisor
+            case "Textilien": perUnit = 8.00 / divisor
+            case "Schreibwaren": perUnit = 3.00 / divisor
+            case "Spielzeug": perUnit = 10.00 / divisor
+            case "Dekoration": perUnit = 6.00 / divisor
+            case "Werkzeug": perUnit = 12.00 / divisor
+            case "Garten": perUnit = 8.00 / divisor
+            case "Farbe & Lack": perUnit = 15.00 / divisor
+            case "Sanitär": perUnit = 10.00 / divisor
+            case "Baumaterial": perUnit = 12.00 / divisor
             default: perUnit = nil
             }
         }
