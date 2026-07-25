@@ -59,11 +59,37 @@ struct ReceiptScannerView: View {
     /// falsch erkannter oder komplett fehlender Artikel ohne das Originalfoto nicht mehr
     /// nachvollziehbar ist.
     @State private var debugRawLines: [String] = []
+    /// Der auf dem Bon selbst aufgedruckte Gesamtbetrag ("zu zahlen"), unabhängig von den
+    /// erkannten Positionen — Vergleichswert für `totalMismatchWarning` unten. `nil`, wenn der
+    /// Bon keine "zahlen"-Zeile enthielt (z. B. französisches Format) oder kein Betrag daraus
+    /// extrahierbar war — dann bleibt die Warnung schlicht aus, statt etwas zu behaupten.
+    @State private var detectedTotal: Double?
 
     enum Phase { case capture, processing, review }
 
     private var selectedTotal: Double {
         parsedLines.filter(\.isIncluded).reduce(0.0) { $0 + $1.price }
+    }
+
+    /// Summe ALLER erkannten Positionen, unabhängig vom An/Aus-Toggle — bewusst nicht
+    /// `selectedTotal`, weil ein Nutzer einzelne Positionen absichtlich abwählen kann (z. B. weil
+    /// er sie nicht in die Preis-Historie übernehmen will); das wäre keine Erkennungslücke.
+    private var parsedTotal: Double {
+        parsedLines.reduce(0.0) { $0 + $1.price }
+    }
+
+    /// Nicht-nil, wenn die erkannten Positionen nicht zur aufgedruckten Bon-Summe passen (mehr als
+    /// 1 Cent Differenz, um harmlose Rundung nicht fälschlich zu melden) — macht eine
+    /// Erkennungslücke wie eine komplett von Vision übersehene Position (Name UND Zuordnung fehlen,
+    /// nicht reparierbar) wenigstens sichtbar, statt sie in der Summe kommentarlos verschwinden zu
+    /// lassen.
+    private var totalMismatchWarning: String? {
+        guard let detectedTotal, abs(parsedTotal - detectedTotal) > 0.01 else { return nil }
+        let diff = detectedTotal - parsedTotal
+        let diffText = abs(diff).formatted(.currency(code: Locale.current.currency?.identifier ?? "EUR"))
+        return diff > 0
+            ? "Erkannte Positionen ergeben \(diffText) weniger als die Bon-Summe — vermutlich wurde eine Position nicht erkannt."
+            : "Erkannte Positionen ergeben \(diffText) mehr als die Bon-Summe."
     }
 
     var body: some View {
@@ -194,6 +220,15 @@ struct ReceiptScannerView: View {
                     Text("Tippe auf einen Namen um ihn zu korrigieren – z. B. \"MDHSZ\" → \"Mozzarella\" – oder tippe einen Vorschlag an.")
                 }
 
+                if let totalMismatchWarning {
+                    Section {
+                        Label(totalMismatchWarning, systemImage: "exclamationmark.triangle.fill")
+                            .font(.system(size: 13))
+                            .foregroundStyle(.orange)
+                    }
+                    .listRowBackground(Color.orange.opacity(0.08))
+                }
+
                 Section {
                     HStack {
                         Text("Ausgewählt")
@@ -223,6 +258,7 @@ struct ReceiptScannerView: View {
         // dieses Scans (oder ein Scan, der schon am fehlenden cgImage scheitert, siehe Guard
         // unten) noch die Rohzeilen des VORHERIGEN Fotos anzeigen.
         debugRawLines = []
+        detectedTotal = nil
         Task.detached(priority: .userInitiated) {
             guard let cgImage = image.cgImage else {
                 await MainActor.run { parsedLines = []; phase = .review }
@@ -263,7 +299,10 @@ struct ReceiptScannerView: View {
                     continuation.resume(returning: [])
                 }
             }
-            await MainActor.run { debugRawLines = lines }
+            await MainActor.run {
+                debugRawLines = lines
+                detectedTotal = ReceiptParserService.detectedTotal(from: lines)
+            }
             let parsed = ReceiptParserService.parse(lines)
 
             // Kürzel → echter Name, mehrstufig (erste treffende Stufe gewinnt):

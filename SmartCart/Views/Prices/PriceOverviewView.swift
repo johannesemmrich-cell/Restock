@@ -116,19 +116,37 @@ struct PriceOverviewView: View {
         .sorted { $0.id > $1.id }
     }
 
-    private func deleteRecords(tripKey: String) {
+    /// Löscht GENAU diesen einen `PurchaseRecord` — anders als `deleteRecords(tripKey:)` unten,
+    /// das bewusst den ganzen Einkauf löscht. Ohne diese Funktion gab es keinen Weg, nur eine
+    /// einzelne Position aus der Ausgaben-Historie zu entfernen: der einzige Swipe in dieser Ansicht
+    /// hing am `DisclosureGroup` selbst und löschte deshalb beim Wegwischen IRGENDEINER Zeile immer
+    /// den kompletten Einkauf dieses Tages/Ladens statt nur der angetippten Position.
+    private func deleteRecord(id: UUID, tripKey: String) {
+        guard let record = allRecords.first(where: { $0.id == id }) else { return }
+        context.delete(record)
+        // War das die letzte Position dieses Einkaufs, verschwindet die Gruppe komplett aus
+        // `spendingByMonth` — ohne diese Bereinigung bliebe ihr Schlüssel in `expandedStoreKeys`
+        // hängen und würde einen künftigen, zufällig gleich benannten Einkauf am selben Tag
+        // (gleicher Laden) automatisch vorab aufgeklappt zeigen.
+        if !allRecords.contains(where: { $0.id != id && matchesTripKey($0, tripKey) }) {
+            expandedStoreKeys.remove(tripKey)
+        }
+        Haptics.impact(.medium)
+    }
+
+    private func matchesTripKey(_ record: PurchaseRecord, _ tripKey: String) -> Bool {
         let parts = tripKey.split(separator: "|", maxSplits: 1)
-        guard parts.count == 2 else { return }
-        let dayKey = String(parts[0])
-        let storeName = String(parts[1])
+        guard parts.count == 2 else { return false }
         let calendar = Calendar.current
+        let c = calendar.dateComponents([.year, .month, .day], from: record.date)
+        guard let year = c.year, let month = c.month, let day = c.day else { return false }
+        let key = "\(year)-\(String(format: "%02d", month))-\(String(format: "%02d", day))"
+        return record.storeName == String(parts[1]) && key == String(parts[0])
+    }
+
+    private func deleteRecords(tripKey: String) {
         allRecords
-            .filter { r in
-                let c = calendar.dateComponents([.year, .month, .day], from: r.date)
-                guard let year = c.year, let month = c.month, let day = c.day else { return false }
-                let key = "\(year)-\(String(format: "%02d", month))-\(String(format: "%02d", day))"
-                return r.storeName == storeName && key == dayKey
-            }
+            .filter { matchesTripKey($0, tripKey) }
             .forEach { context.delete($0) }
         expandedStoreKeys.remove(tripKey)
         Haptics.impact(.medium)
@@ -294,8 +312,23 @@ struct PriceOverviewView: View {
                                         .foregroundStyle(.secondary)
                                 }
                                 .padding(.vertical, 1)
+                                .swipeActions(edge: .trailing) {
+                                    Button(role: .destructive) {
+                                        deleteRecord(id: entry.id, tripKey: store.tripKey)
+                                    } label: {
+                                        Label("Löschen", systemImage: "trash")
+                                    }
+                                }
                             }
                         } label: {
+                            // .swipeActions sitzt bewusst HIER am Label-Inhalt, nicht auf der
+                            // ganzen DisclosureGroup (wie vorher) — an der DisclosureGroup selbst
+                            // "durchsickert" die Swipe-Aktion sonst nachweislich auch zu den
+                            // aufgeklappten Kind-Zeilen (siehe Kommentar bei deleteRecord oben:
+                            // genau das war die Ursache des ursprünglichen "ein Artikel löschen
+                            // löscht den ganzen Einkauf"-Bugs). So bleibt der Trip-Swipe streng
+                            // auf die Kopfzeile beschränkt, unabhängig vom Swipe auf den einzelnen
+                            // Positionen weiter oben.
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(store.name)
@@ -314,12 +347,12 @@ struct PriceOverviewView: View {
                                     .font(.system(size: 13, weight: .semibold))
                                     .foregroundStyle(.primary)
                             }
-                        }
-                        .swipeActions(edge: .trailing) {
-                            Button(role: .destructive) {
-                                deleteRecords(tripKey: store.tripKey)
-                            } label: {
-                                Label("Löschen", systemImage: "trash")
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive) {
+                                    deleteRecords(tripKey: store.tripKey)
+                                } label: {
+                                    Label("Löschen", systemImage: "trash")
+                                }
                             }
                         }
                     }

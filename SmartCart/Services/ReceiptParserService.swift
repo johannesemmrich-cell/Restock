@@ -126,6 +126,25 @@ enum ReceiptParserService {
         return parseClassic(lines)
     }
 
+    /// Der auf dem Bon selbst aufgedruckte Gesamtbetrag ("zu zahlen"-Zeile), unabhängig vom
+    /// eigentlichen Positions-Parsing — NICHT Teil der erkannten Positionen, nur als Vergleichswert
+    /// für einen "Summe stimmt nicht"-Hinweis in der Review-Ansicht gedacht (siehe
+    /// `ReceiptScannerView`). Ein einzelner Artikel, dessen NAME von Vision gar nicht erst erkannt
+    /// wurde (beobachteter Fall: eine Position fehlt komplett, nur ihr Preis taucht als
+    /// namenlose Zeile auf und wird beim Parsing mangels Namen verworfen), lässt sich dadurch
+    /// zumindest sichtbar machen, statt spurlos in der Summe zu fehlen. Bewusst nur für den
+    /// deutschen Pfad (Trigger-Wort "zahlen", siehe `pastItemSection` oben) — für französische
+    /// Bons liefert das absichtlich `nil` (kein Hinweis, kein falscher).
+    static func detectedTotal(from rawLines: [String]) -> Double? {
+        let lines = rawLines.map(repairSplitDecimals)
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            guard adminWords(trimmed.lowercased()).contains("zahlen") else { continue }
+            return extractTrailingPrice(from: trimmed)
+        }
+        return nil
+    }
+
     /// Vision zerlegt eine Kommazahl auf manchen Bon-Fotos in zwei Textblöcke, die
     /// `reconstructLines` mit doppeltem Leerzeichen wieder zusammenfügt — das bricht jedes
     /// nachfolgende Preis-Regex, das eine zusammenhängende Zahl erwartet. Beobachtete Varianten:
