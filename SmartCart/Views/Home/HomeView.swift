@@ -72,6 +72,10 @@ struct HomeView: View {
     // Extension die App aktiv über extensionContext?.open(...) öffnet statt über den
     // widgetURL-Sondermechanismus).
     @State private var pendingReceiptScan: PendingReceiptScan?
+    // Gesetzt von SmartCartApp.init(), falls der Notfall-Pfad (lokale Store-Dateien löschen +
+    // neu anlegen) gegriffen hat — zeigt einmalig einen erklärenden Hinweis, statt dass die App
+    // nach diesem Vorfall kommentarlos leer aussieht.
+    @State private var showDataResetAlert = false
 
     private var seasonalSuggestions: [SeasonalService.Suggestion] {
         seasonalSuggestionsEnabled ? SeasonalService.currentSuggestions() : []
@@ -180,17 +184,18 @@ struct HomeView: View {
                     return
                 }
                 // Von der Share Extension: Bon-Bild wurde in einer anderen App geteilt, dort
-                // bereits erkannt+ausgewertet (siehe ReceiptShareHandoff) — nur noch den
-                // passenden Laden auflösen und die vorbefüllte Review-Ansicht zeigen.
-                if url.scheme == "restock", url.host == "receiptscan",
-                   let payload = ReceiptShareHandoff.takePending() {
-                    let resolvedStore = payload.storeID.flatMap { id in activeStores.first { $0.id == id } }
-                        ?? activeStores.first
-                    guard let resolvedStore else { return }
-                    pendingReceiptScan = PendingReceiptScan(store: resolvedStore, payload: payload)
+                // bereits erkannt+ausgewertet (siehe ReceiptShareHandoff). Dieser Zweig ist nur
+                // ein Bonus, falls extensionContext?.open(...) doch mal greift — siehe
+                // checkPendingReceiptScan() für den eigentlich verlässlichen Weg.
+                if url.scheme == "restock", url.host == "receiptscan" {
+                    checkPendingReceiptScan()
                 }
             }
             .onAppear {
+                if UserDefaults.standard.bool(forKey: "smartcart.dataResetOccurred") {
+                    UserDefaults.standard.removeObject(forKey: "smartcart.dataResetOccurred")
+                    showDataResetAlert = true
+                }
                 refreshDueSoon()
                 registerShortcutItems()
                 if QuickActionState.shared.triggerQuickAdd {
@@ -198,7 +203,13 @@ struct HomeView: View {
                     activateQuickAdd()
                 }
                 checkPendingQuickAdd()
+                checkPendingReceiptScan()
                 syncStoreOrder()
+            }
+            .alert(String(localized: "data.reset.title"), isPresented: $showDataResetAlert) {
+                Button("OK") {}
+            } message: {
+                Text(String(localized: "data.reset.message"))
             }
             .onReceive(NotificationCenter.default.publisher(for: .quickAddRequested)) { _ in
                 activateQuickAdd()
@@ -206,6 +217,7 @@ struct HomeView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active {
                     checkPendingQuickAdd()
+                    checkPendingReceiptScan()
                 } else {
                     // Safety net: a drag interrupted by the app backgrounding (incoming call,
                     // Control Center, etc.) may leave `draggingStoreID` set if the drag preview's
@@ -1382,6 +1394,20 @@ struct HomeView: View {
         guard defaults?.bool(forKey: "pendingQuickAdd") == true else { return }
         defaults?.removeObject(forKey: "pendingQuickAdd")
         activateQuickAdd()
+    }
+
+    // Share Extensions dürfen laut Apple offiziell nur als Today-Widget die eigene App per
+    // extensionContext?.open(...) öffnen — bei RestockShareExtension (Share-Extension-Typ)
+    // schlägt das in der Praxis unzuverlässig fehl. Deshalb NICHT darauf verlassen, dass
+    // .onOpenURL mit restock://receiptscan jemals feuert, sondern bei jedem App-Start/
+    // Vordergrund-Wechsel selbst nachschauen, ob eine Bon-Übergabe wartet — exakt das gleiche
+    // Muster wie checkPendingQuickAdd() oben.
+    private func checkPendingReceiptScan() {
+        guard pendingReceiptScan == nil, let payload = ReceiptShareHandoff.takePending() else { return }
+        let resolvedStore = payload.storeID.flatMap { id in activeStores.first { $0.id == id } }
+            ?? activeStores.first
+        guard let resolvedStore else { return }
+        pendingReceiptScan = PendingReceiptScan(store: resolvedStore, payload: payload)
     }
 
     private func refreshDueSoon() {

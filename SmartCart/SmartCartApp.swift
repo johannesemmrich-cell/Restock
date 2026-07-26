@@ -45,7 +45,11 @@ struct SmartCartApp: App {
             return
         }
 
-        // 3. Store-Dateien löschen + nochmal
+        // 3. Store-Dateien löschen + nochmal. Merkt sich, dass dieser Notfall-Pfad gegriffen hat
+        // (.standard, übersteht das Löschen unten) — HomeView zeigt daraufhin einmalig einen
+        // Hinweis, statt dass die App danach kommentarlos leer aussieht (siehe SharedModelContainer
+        // für den analogen Logging-Mechanismus bei den zwei vorherigen, weniger drastischen Stufen).
+        UserDefaults.standard.set(true, forKey: "smartcart.dataResetOccurred")
         Self.deleteStoreFiles()
         if let c = try? ModelContainer(for: schema, configurations: groupConfig) {
             container = c

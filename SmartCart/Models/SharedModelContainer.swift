@@ -1,3 +1,4 @@
+import Foundation
 import SwiftData
 
 /// The ONE shared way to open the app-group SwiftData store, used by every process that
@@ -35,21 +36,37 @@ enum SharedModelContainer {
     /// identical for every process (see the header warning above).
     static func make() -> ModelContainer? {
         let schema = Schema(versionedSchema: SchemaV1.self)
-        if let cloud = try? ModelContainer(
-            for: schema,
-            configurations: ModelConfiguration(
-                groupContainer: .identifier(appGroupID),
-                cloudKitDatabase: .private(cloudKitContainerID)
+        do {
+            return try ModelContainer(
+                for: schema,
+                configurations: ModelConfiguration(
+                    groupContainer: .identifier(appGroupID),
+                    cloudKitDatabase: .private(cloudKitContainerID)
+                )
             )
-        ) {
-            return cloud
+        } catch {
+            logContainerFailure("cloud", error)
         }
-        return try? ModelContainer(
-            for: schema,
-            configurations: ModelConfiguration(
-                groupContainer: .identifier(appGroupID),
-                cloudKitDatabase: .none
+        do {
+            return try ModelContainer(
+                for: schema,
+                configurations: ModelConfiguration(
+                    groupContainer: .identifier(appGroupID),
+                    cloudKitDatabase: .none
+                )
             )
-        )
+        } catch {
+            logContainerFailure("local", error)
+            return nil
+        }
+    }
+
+    /// `try?` verschluckte diese Fehler früher komplett — bei einem entfernten TestFlight-Tester
+    /// ist die Xcode-Konsole ohnehin nicht erreichbar, daher zusätzlich in `.standard` (bewusst
+    /// NICHT die App-Gruppe — genau die könnte ja gerade das Problem sein) ablegen, damit der
+    /// Grund im Fehlerfall wenigstens über einen Diagnose-Screenshot sichtbar wird.
+    private static func logContainerFailure(_ stage: String, _ error: Error) {
+        print("⚠️ SharedModelContainer[\(stage)] failed: \(error)")
+        UserDefaults.standard.set("[\(stage)] \(error)", forKey: "smartcart.lastContainerError")
     }
 }

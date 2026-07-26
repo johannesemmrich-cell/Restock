@@ -59,15 +59,23 @@ struct ShareReceiptView: View {
                      ?? "\(itemCount) Positionen erkannt")
                     .font(.headline)
                     .multilineTextAlignment(.center)
+                // iOS erlaubt nur Today-Widgets offiziell, die eigene App per
+                // extensionContext?.open(...) zu öffnen — bei Share Extensions schlägt das in
+                // der Praxis unzuverlässig fehl (bestätigt: Apple DTS, mehrere Entwickler-Foren-
+                // Threads). openApp() unten wird trotzdem als Bonus versucht, aber verlässlich
+                // ist nur, dass Restock die Position beim nächsten manuellen Öffnen selbst
+                // findet (HomeView.checkPendingReceiptScan, läuft bei jedem App-Start).
+                Text("Als Nächstes: Restock öffnen, um die Positionen zu bestätigen.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
                 Button {
                     openApp()
                 } label: {
-                    Text("In Restock öffnen")
+                    Text("Fertig")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                Button("Fertig") { finish() }
-                    .buttonStyle(.bordered)
 
             case .noItemsFound:
                 Image(systemName: "doc.text.magnifyingglass")
