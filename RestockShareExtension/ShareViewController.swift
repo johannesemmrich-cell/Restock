@@ -3,6 +3,7 @@ import SwiftUI
 import SwiftData
 import Vision
 import UniformTypeIdentifiers
+import UserNotifications
 
 /// Principal-Klasse der Share Extension (siehe `NSExtensionPrincipalClass` in Info.plist) —
 /// reine Hülle, die die eigentliche Arbeit an eine SwiftUI-Ansicht delegiert. `extensionContext`
@@ -157,7 +158,28 @@ struct ShareReceiptView: View {
             detectedTotal: ReceiptParserService.detectedTotal(from: lines)
         )
         ReceiptShareHandoff.store(payload)
+        scheduleOpenReminder(storeName: detectedStore?.name, itemCount: resolvedLines.count)
         state = .success(storeName: detectedStore?.name, itemCount: resolvedLines.count)
+    }
+
+    /// Extensions dürfen die eigene App nicht öffnen (siehe openApp()), aber Apple erlaubt und
+    /// empfiehlt ausdrücklich lokale Benachrichtigungen, um die Aufmerksamkeit des Nutzers zu
+    /// bekommen — Antippen einer Mitteilung darf die App öffnen, ein direkter Aufruf aus der
+    /// Extension nicht. Bewusst NICHT über den gemeinsamen NotificationService (App-Ziel) —
+    /// der hängt an ConsumptionPattern/HabitService, unnötiger Ballast für diese Extension.
+    /// Ohne erteilte Berechtigung schlägt `add` einfach lautlos fehl (kein Crash, kein Fehler
+    /// sichtbar) — HomeView.checkPendingReceiptScan() bleibt so oder so der verlässliche Weg,
+    /// sobald der Nutzer Restock von sich aus öffnet.
+    private func scheduleOpenReminder(storeName: String?, itemCount: Int) {
+        let content = UNMutableNotificationContent()
+        content.title = "Bon erkannt"
+        content.body = storeName.map { "\(itemCount) Positionen bei \($0) — zum Bestätigen antippen." }
+            ?? "\(itemCount) Positionen erkannt — zum Bestätigen antippen."
+        content.sound = .default
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2, repeats: false)
+        let request = UNNotificationRequest(identifier: "share-receipt-pending", content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request)
     }
 
     /// Exakt dieselben Vision-Einstellungen wie `ReceiptScannerView.process()` — dieselbe
