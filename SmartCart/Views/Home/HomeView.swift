@@ -122,9 +122,9 @@ struct HomeView: View {
                             premiumTeaser(
                                 icon: SeasonalService.seasonIcon,
                                 color: Color.accent,
-                                title: "\(seasonalSuggestions.count) saisonale Vorschläge",
-                                subtitle: "Saisonale Ideen mit Restock Pro",
-                                feature: "saisonale Vorschläge"
+                                title: String(format: String(localized: "seasonal.count.suggestions"), seasonalSuggestions.count),
+                                subtitle: String(localized: "seasonal.premium.subtitle"),
+                                feature: String(localized: "seasonal.feature.label")
                             )
                         }
                     }
@@ -684,7 +684,7 @@ struct HomeView: View {
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(Color.canvas)
                 }
-                Text("\(SeasonalService.currentSeason)stipps")
+                Text(SeasonalService.seasonalTitle)
                     .font(.system(size: 17, weight: .bold))
                     .foregroundStyle(Color.ink)
                 Spacer()
@@ -845,7 +845,7 @@ struct HomeView: View {
     private var storeSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
-                Text(listMode ? "Alle Artikel" : String(localized: "home.stores.title"))
+                Text(listMode ? String(localized: "home.allitems") : String(localized: "home.stores.title"))
                     .font(.system(size: 13, weight: .semibold))
                     .tracking(0.8)
                     .textCase(.uppercase)
@@ -853,7 +853,7 @@ struct HomeView: View {
                 Spacer()
                 if !listMode {
                     Button { showStoreSetup = true } label: {
-                        Text("Verwalten")
+                        Text(String(localized: "home.stores.manage"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundStyle(Color.accent)
                     }
@@ -1096,7 +1096,7 @@ struct HomeView: View {
                         HStack(spacing: 8) {
                             Text(group.emoji)
                                 .font(.system(size: 15))
-                            Text(group.category)
+                            Text(AssignmentService.displayCategory(group.category))
                                 .font(.system(size: 15, weight: .semibold))
                             Spacer()
                             Text("\(group.items.count)")
@@ -1165,7 +1165,7 @@ struct HomeView: View {
                         RoundedRectangle(cornerRadius: RCRadius.control)
                             .strokeBorder(Color.hairlineStrong, lineWidth: 1)
                     )
-                Text("Laden hinzufügen")
+                Text(String(localized: "home.stores.addcustom"))
                     .font(.system(size: 15))
                     .foregroundStyle(Color.textSecondary)
                     .multilineTextAlignment(.center)
@@ -1196,7 +1196,7 @@ struct HomeView: View {
                         RoundedRectangle(cornerRadius: RCRadius.control)
                             .strokeBorder(Color.hairlineStrong, lineWidth: 1)
                     )
-                Text("Geteilter Liste beitreten")
+                Text(String(localized: "home.join.shared"))
                     .font(.system(size: 15))
                     .foregroundStyle(Color.textSecondary)
                     .multilineTextAlignment(.center)
@@ -1228,7 +1228,7 @@ struct HomeView: View {
             Button {
                 showJoinStore = true
             } label: {
-                Label("Geteilter Liste beitreten", systemImage: "person.badge.plus")
+                Label(String(localized: "home.join.shared"), systemImage: "person.badge.plus")
             }
             .buttonStyle(.bordered)
         }

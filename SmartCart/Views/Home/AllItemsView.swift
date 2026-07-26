@@ -57,15 +57,15 @@ struct AllItemsView: View {
             List {
                 Section {
                     HStack(spacing: 12) {
-                        Text("Alle Artikel")
+                        Text(String(localized: "allitems.title"))
                             .font(.system(size: 13, weight: .semibold))
                             .tracking(0.8)
                             .textCase(.uppercase)
                             .foregroundStyle(Color.textSecondary)
                         Spacer()
-                        Picker("Sortierung", selection: $groupByCategory) {
-                            Text("Kategorie").tag(true)
-                            Text("Laden").tag(false)
+                        Picker(String(localized: "allitems.sort.label"), selection: $groupByCategory) {
+                            Text(String(localized: "allitems.sort.category")).tag(true)
+                            Text(String(localized: "allitems.sort.store")).tag(false)
                         }
                         .pickerStyle(.segmented)
                         .fixedSize()
@@ -77,15 +77,15 @@ struct AllItemsView: View {
 
                 if pendingItems.isEmpty {
                     ContentUnavailableView(
-                        "Alles erledigt",
+                        String(localized: "allitems.alldone"),
                         systemImage: "checkmark.circle",
-                        description: Text("Keine offenen Artikel in deinen Listen.")
+                        description: Text(String(localized: "allitems.empty"))
                     )
                     .listRowBackground(Color.clear)
                 } else {
                     if !urgentItems.isEmpty {
                         Section {
-                            sectionHeaderRow("Dringend", count: urgentItems.count, tint: .orange)
+                            sectionHeaderRow(String(localized: "allitems.urgent"), count: urgentItems.count, tint: .orange)
                             ForEach(urgentItems) { item in
                                 itemRow(item, storeColor: item.store?.color ?? .gray, storeEmoji: groupByCategory ? nil : item.store?.emoji)
                             }
@@ -96,7 +96,7 @@ struct AllItemsView: View {
                     if groupByCategory {
                         ForEach(nonUrgentByCategory, id: \.category) { group in
                             Section {
-                                sectionHeaderRow(group.category, count: group.items.count)
+                                sectionHeaderRow(AssignmentService.displayCategory(group.category), count: group.items.count)
                                 ForEach(group.items) { item in
                                     itemRow(item, storeColor: .secondary, storeEmoji: nil)
                                 }
@@ -116,7 +116,7 @@ struct AllItemsView: View {
 
                         if !noStoreItems.isEmpty {
                             Section {
-                                sectionHeaderRow("Ohne Laden", count: noStoreItems.count)
+                                sectionHeaderRow(String(localized: "allitems.nostore"), count: noStoreItems.count)
                                 ForEach(noStoreItems) { item in
                                     itemRow(item, storeColor: .secondary, storeEmoji: nil)
                                 }
@@ -128,7 +128,7 @@ struct AllItemsView: View {
             }
             .scrollContentBackground(.hidden)
             .background(Color.canvas)
-            .navigationTitle("Alle Artikel (\(pendingItems.count))")
+            .navigationTitle(String(format: String(localized: "allitems.navtitle.format"), pendingItems.count))
             .navigationBarTitleDisplayMode(.inline)
             .animation(.spring(response: 0.35, dampingFraction: 0.8), value: groupByCategory)
             .toolbar {
@@ -143,7 +143,7 @@ struct AllItemsView: View {
                 }
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { dismiss() } label: {
-                        Text("Fertig").toolbarChip(prominent: true)
+                        Text(String(localized: "action.done")).toolbarChip(prominent: true)
                     }
                     .buttonStyle(.pressable)
                 }

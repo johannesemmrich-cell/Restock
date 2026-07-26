@@ -28,9 +28,9 @@ struct StoreShareSheet: View {
                     .foregroundStyle(Color.accent)
 
                 VStack(spacing: 8) {
-                    Text("\(store.emoji) \(store.name) teilen")
+                    Text(String(format: String(localized: "share.title.format"), store.emoji, store.name))
                         .font(.title2.bold())
-                    Text("Schick den Code per iMessage oder WhatsApp. Die andere Person gibt ihn in Restock ein.")
+                    Text(String(localized: "share.subtitle"))
                         .font(.body)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -51,7 +51,7 @@ struct StoreShareSheet: View {
                                 copied = true
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) { copied = false }
                             } label: {
-                                Label(copied ? "Kopiert!" : "Kopieren", systemImage: copied ? "checkmark" : "doc.on.doc")
+                                Label(copied ? String(localized: "share.copied") : String(localized: "share.copy"), systemImage: copied ? "checkmark" : "doc.on.doc")
                                     .font(.system(size: 15, weight: .semibold))
                                     .foregroundStyle(Color.accent)
                                     .frame(maxWidth: .infinity)
@@ -61,8 +61,8 @@ struct StoreShareSheet: View {
                             .buttonStyle(.pressable)
                             .animation(.easeInOut, value: copied)
 
-                            ShareLink(item: "Ich teile meine Restock-Einkaufsliste mit dir!\nCode: \(displayCode)") {
-                                Label("Teilen", systemImage: "square.and.arrow.up")
+                            ShareLink(item: String(format: String(localized: "share.sharelink.message"), displayCode)) {
+                                Label(String(localized: "share.sharelabel"), systemImage: "square.and.arrow.up")
                                     .frame(maxWidth: .infinity)
                             }
                             .buttonStyle(.restockPrimary)
@@ -99,7 +99,7 @@ struct StoreShareSheet: View {
                             try? context.save()
                             dismiss()
                         } label: {
-                            Text("Teilen beenden")
+                            Text(String(localized: "share.stopsharing"))
                                 .font(.subheadline)
                         }
                         .buttonStyle(.pressable)
@@ -122,7 +122,7 @@ struct StoreShareSheet: View {
                                 .tint(Color.onButton)
                                 .frame(maxWidth: .infinity)
                         } else {
-                            Text("Code generieren")
+                            Text(String(localized: "share.generatecode"))
                                 .frame(maxWidth: .infinity)
                         }
                     }
@@ -133,11 +133,11 @@ struct StoreShareSheet: View {
 
                 Spacer()
             }
-            .navigationTitle("Store teilen")
+            .navigationTitle(String(localized: "share.navtitle"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ChipToolbarItem(placement: .confirmationAction) {
-                    Button { dismiss() } label: { Text("Fertig").toolbarChip() }
+                    Button { dismiss() } label: { Text(String(localized: "action.done")).toolbarChip() }
                         .buttonStyle(.pressable)
                 }
             }
@@ -212,16 +212,16 @@ struct JoinStoreSheet: View {
                     .foregroundStyle(Color.accent)
 
                 VStack(spacing: 8) {
-                    Text("Store beitreten")
+                    Text(String(localized: "share.join.title"))
                         .font(.title2.bold())
-                    Text("Gib den 6-stelligen Code ein, den dir jemand geschickt hat.")
+                    Text(String(localized: "share.join.subtitle"))
                         .font(.body)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                 }
 
-                TextField("Z.B. KRT-M4X", text: $code)
+                TextField(String(localized: "share.join.codeplaceholder"), text: $code)
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
                     .font(.system(size: 28, weight: .bold, design: .monospaced))
@@ -253,7 +253,7 @@ struct JoinStoreSheet: View {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(preview.storeName)
                                     .font(.headline)
-                                Text("Von \(preview.ownerDevice)")
+                                Text(String(format: String(localized: "share.join.fromdevice.format"), preview.ownerDevice))
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
                             }
@@ -272,7 +272,7 @@ struct JoinStoreSheet: View {
                                     .tint(Color.onButton)
                                     .frame(maxWidth: .infinity)
                             } else {
-                                Text("\(preview.storeEmoji) \(preview.storeName) hinzufügen")
+                                Text(String(format: String(localized: "share.join.add.format"), preview.storeEmoji, preview.storeName))
                                     .frame(maxWidth: .infinity)
                             }
                         }
@@ -292,11 +292,11 @@ struct JoinStoreSheet: View {
 
                 Spacer()
             }
-            .navigationTitle("Beitreten")
+            .navigationTitle(String(localized: "share.join.navtitle"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: { Text("Abbrechen").toolbarChip() }
+                    Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip() }
                         .buttonStyle(.pressable)
                 }
             }
@@ -311,7 +311,7 @@ struct JoinStoreSheet: View {
             await MainActor.run { preview = p; isLooking = false }
         } catch {
             await MainActor.run {
-                self.error = "Kein Store mit diesem Code gefunden."
+                self.error = String(localized: "share.join.notfound")
                 isLooking = false
             }
         }
@@ -328,7 +328,7 @@ struct JoinStoreSheet: View {
         }
         if let name = alreadyJoinedName {
             await MainActor.run {
-                self.error = "Du bist \"\(name)\" bereits beigetreten."
+                self.error = String(format: String(localized: "share.join.alreadyjoined.format"), name)
                 isJoining = false
             }
             return
@@ -366,7 +366,7 @@ struct JoinStoreSheet: View {
             }
         } catch {
             await MainActor.run {
-                self.error = "Fehler: \(error.localizedDescription)"
+                self.error = String(format: String(localized: "share.join.error.format"), error.localizedDescription)
                 isJoining = false
             }
         }

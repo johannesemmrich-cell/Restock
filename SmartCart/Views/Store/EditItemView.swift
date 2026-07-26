@@ -103,10 +103,10 @@ struct EditItemView: View {
                     }
                 }
 
-                Section("Kategorie") {
-                    Picker("Kategorie", selection: $category) {
+                Section(String(localized: "item.category.section")) {
+                    Picker(String(localized: "item.category.section"), selection: $category) {
                         ForEach(availableCategories, id: \.self) { cat in
-                            Text("\(AssignmentService.categoryEmoji(cat)) \(cat)").tag(cat)
+                            Text("\(AssignmentService.categoryEmoji(cat)) \(AssignmentService.displayCategory(cat))").tag(cat)
                         }
                     }
                 }

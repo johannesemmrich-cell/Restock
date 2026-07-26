@@ -205,7 +205,7 @@ struct StoreDetailView: View {
                                 pendingRow(item)
                             }
                         } header: {
-                            Text("\(group.emoji) \(group.category)")
+                            Text("\(group.emoji) \(AssignmentService.displayCategory(group.category))")
                                 .font(.system(size: 12, weight: .semibold))
                                 .tracking(0.6)
                         }

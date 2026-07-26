@@ -27,8 +27,16 @@ struct MenuPlanView: View {
     @State private var expandedDays: Set<Int> = []
     @State private var fetchTasks: [Int: Task<Void, Never>] = [:]
 
-    private let dayNames     = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
-    private let dayNamesFull = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
+    private let dayNames = [
+        String(localized: "day.short.mo"), String(localized: "day.short.di"), String(localized: "day.short.mi"),
+        String(localized: "day.short.do"), String(localized: "day.short.fr"), String(localized: "day.short.sa"),
+        String(localized: "day.short.so"),
+    ]
+    private let dayNamesFull = [
+        String(localized: "day.full.mo"), String(localized: "day.full.di"), String(localized: "day.full.mi"),
+        String(localized: "day.full.do"), String(localized: "day.full.fr"), String(localized: "day.full.sa"),
+        String(localized: "day.full.so"),
+    ]
 
     init() {
         let mealStored = UserDefaults.standard.string(forKey: "menuPlanJSON") ?? ""
@@ -158,18 +166,18 @@ struct MenuPlanView: View {
                 mealsSection
                 savedRecipesSection
             }
-            .navigationTitle("Menüplan")
+            .navigationTitle(String(localized: "menuplan.navtitle"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: {
-                        Text("Schließen").toolbarChip()
+                        Text(String(localized: "menuplan.close")).toolbarChip()
                     }
                     .buttonStyle(.pressable)
                 }
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { addRemainingDaysToList() } label: {
-                        Text("Alle hinzufügen").toolbarChip(prominent: true)
+                        Text(String(localized: "menuplan.addall")).toolbarChip(prominent: true)
                     }
                     .buttonStyle(.pressable)
                     .disabled(remainingDaysToAdd.isEmpty)
@@ -247,7 +255,7 @@ struct MenuPlanView: View {
             Button {
                 onPick(nil)
             } label: {
-                Label("Automatisch zuordnen", systemImage: "wand.and.stars")
+                Label(String(localized: "menuplan.autoassign"), systemImage: "wand.and.stars")
             }
             if !activeStores.isEmpty {
                 Divider()
@@ -265,7 +273,7 @@ struct MenuPlanView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 11))
                 }
-                Text(alreadyAdded ? "Auf der Liste" : "+ Liste")
+                Text(alreadyAdded ? String(localized: "menuplan.onlist") : String(localized: "menuplan.addtolist"))
                     .font(.system(size: 12, weight: .semibold))
             }
             .foregroundStyle(alreadyAdded ? Color.accent : Color.onButton)
@@ -290,7 +298,7 @@ struct MenuPlanView: View {
     private var mealsSection: some View {
         Section {
             if plannedIndices.isEmpty {
-                Label("Noch keine Tage geplant.", systemImage: "fork.knife")
+                Label(String(localized: "menuplan.empty"), systemImage: "fork.knife")
                     .font(.system(size: 14))
                     .foregroundStyle(.secondary)
                     .listRowBackground(Color.clear)
@@ -311,14 +319,14 @@ struct MenuPlanView: View {
                                 savePortions()
                                 saveAddedDays()
                             } label: {
-                                Label("Löschen", systemImage: "trash")
+                                Label(String(localized: "menuplan.delete"), systemImage: "trash")
                             }
                         }
                         .swipeActions(edge: .leading) {
                             Button {
                                 withAnimation { saveRecipe(dayIndex: i) }
                             } label: {
-                                Label("Speichern", systemImage: "bookmark.fill")
+                                Label(String(localized: "menuplan.save"), systemImage: "bookmark.fill")
                             }
                             .tint(Color.accent)
                         }
@@ -329,14 +337,14 @@ struct MenuPlanView: View {
                 Button {
                     showAddDay = true
                 } label: {
-                    Label("Tag hinzufügen", systemImage: "plus.circle.fill")
+                    Label(String(localized: "menuplan.addday"), systemImage: "plus.circle.fill")
                         .foregroundStyle(Color.accent)
                 }
             }
         } header: {
-            Text("Diese Woche")
+            Text(String(localized: "menuplan.thisweek"))
         } footer: {
-            Text("Nach links wischen → löschen. Nach rechts wischen → Rezept speichern.")
+            Text(String(localized: "menuplan.swipehint"))
                 .font(.caption)
         }
     }
@@ -353,7 +361,7 @@ struct MenuPlanView: View {
         ) {
             if !ings.isEmpty {
                 Stepper(
-                    "Portionen: \(portions(for: i))",
+                    String(format: String(localized: "menuplan.portions.format"), portions(for: i)),
                     value: portionsBinding(for: i),
                     in: 1...12
                 )
@@ -363,13 +371,13 @@ struct MenuPlanView: View {
             if isLoading {
                 HStack(spacing: 5) {
                     ProgressView().scaleEffect(0.65)
-                    Text("Zutaten werden erkannt…")
+                    Text(String(localized: "menuplan.recognizing"))
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
                 }
                 .padding(.vertical, 4)
             } else if ings.isEmpty {
-                Text("Keine Zutaten erkannt")
+                Text(String(localized: "menuplan.noingredients"))
                     .font(.system(size: 11))
                     .foregroundStyle(.tertiary)
                     .padding(.vertical, 4)
@@ -447,7 +455,7 @@ struct MenuPlanView: View {
     private var savedRecipesSection: some View {
         Section {
             if savedRecipes.isEmpty {
-                Text("Noch keine Rezepte gespeichert. Gericht im Wochenplan nach rechts wischen \u{2192} \"Speichern\".")
+                Text(String(localized: "menuplan.noSavedRecipes"))
                     .font(.system(size: 13))
                     .foregroundStyle(.secondary)
                     .listRowBackground(Color.clear)
@@ -458,14 +466,14 @@ struct MenuPlanView: View {
                             Button(role: .destructive) {
                                 deleteSavedRecipe(recipe)
                             } label: {
-                                Label("Löschen", systemImage: "trash")
+                                Label(String(localized: "menuplan.delete"), systemImage: "trash")
                             }
                         }
                 }
             }
         } header: {
             HStack {
-                Text("Gespeicherte Rezepte")
+                Text(String(localized: "menuplan.savedrecipes"))
                 Spacer()
                 if !savedRecipes.isEmpty {
                     Text("\(savedRecipes.count)")
@@ -476,7 +484,7 @@ struct MenuPlanView: View {
             }
         } footer: {
             if !savedRecipes.isEmpty {
-                Text("Tippe auf \"+ Liste\" um eine Ziel-Liste zu wählen und alle Zutaten direkt einzukaufen. Nach links wischen zum L\u{00F6}schen.")
+                Text(String(localized: "menuplan.tapaddlist"))
                     .font(.caption)
             }
         }
@@ -785,13 +793,13 @@ private struct AddDaySheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Tag & Mahlzeit") {
-                    Picker("Tag", selection: $selectedDay) {
+                Section(String(localized: "menuplan.section.daymeal")) {
+                    Picker(String(localized: "menuplan.day.label"), selection: $selectedDay) {
                         ForEach(availableDays, id: \.index) { day in
                             Text(day.name).tag(day.index)
                         }
                     }
-                    TextField("Gericht eingeben…", text: $mealText)
+                    TextField(String(localized: "menuplan.mealplaceholder"), text: $mealText)
                         .autocorrectionDisabled()
                         .onChange(of: mealText) { _, _ in
                             // Clear recipe selection if user types a different name
@@ -799,7 +807,7 @@ private struct AddDaySheet: View {
                                 selectedRecipe = nil
                             }
                         }
-                    Stepper("Portionen: \(portions)", value: $portions, in: 1...12)
+                    Stepper(String(format: String(localized: "menuplan.portions.format"), portions), value: $portions, in: 1...12)
                 }
 
                 if !savedRecipes.isEmpty {
@@ -814,12 +822,12 @@ private struct AddDaySheet: View {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(recipe.name)
                                             .foregroundStyle(.primary)
-                                        Text("\(recipe.ingredients.count) Zutaten")
+                                        Text(String(format: String(localized: "menuplan.ingredientscount.format"), recipe.ingredients.count))
                                             .font(.system(size: 12))
                                             .foregroundStyle(.secondary)
                                     }
                                 } else {
-                                    Text("Aus gespeichertem Rezept…")
+                                    Text(String(localized: "menuplan.fromsavedrecipe"))
                                         .foregroundStyle(Color.accent)
                                 }
                                 Spacer()
@@ -837,16 +845,16 @@ private struct AddDaySheet: View {
                         }
                         .foregroundStyle(.primary)
                     } header: {
-                        Text("Gespeicherte Rezepte")
+                        Text(String(localized: "menuplan.savedrecipes"))
                     }
                 }
 
                 if selectedRecipe == nil {
                     Section {
-                        TextField("Mehl, Eier, Milch…", text: $manualText)
+                        TextField(String(localized: "menuplan.manualplaceholder"), text: $manualText)
                             .autocorrectionDisabled()
                     } header: {
-                        Text("Zutaten (optional)")
+                        Text(String(localized: "menuplan.ingredientsoptional"))
                     } footer: {
                         aiFootnote
                     }
@@ -856,19 +864,19 @@ private struct AddDaySheet: View {
                             Text(ing.name).font(.system(size: 14)).foregroundStyle(.secondary)
                         }
                         if recipe.ingredients.count > 6 {
-                            Text("+ \(recipe.ingredients.count - 6) weitere")
+                            Text(String(format: String(localized: "menuplan.moreingredients.format"), recipe.ingredients.count - 6))
                                 .font(.system(size: 13)).foregroundStyle(.tertiary)
                         }
                     } header: {
-                        Text("Zutaten aus Rezept")
+                        Text(String(localized: "menuplan.ingredientsfromrecipe"))
                     }
                 }
             }
-            .navigationTitle("Tag hinzufügen")
+            .navigationTitle(String(localized: "menuplan.addday.navtitle"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
+                    Button { dismiss() } label: { Text(String(localized: "menuplan.cancel")).toolbarChip(prominent: false) }
                         .buttonStyle(.pressable)
 }
                 ChipToolbarItem(placement: .confirmationAction) {
@@ -876,7 +884,7 @@ private struct AddDaySheet: View {
                         onSave(selectedDay, mealText.trimmingCharacters(in: .whitespaces), manualIngredients, selectedRecipe, portions)
                         dismiss()
                     } label: {
-                        Text("Hinzufügen").toolbarChip(prominent: true)
+                        Text(String(localized: "menuplan.add")).toolbarChip(prominent: true)
                     }
                     .buttonStyle(.pressable)
                     .disabled(mealText.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -899,11 +907,11 @@ private struct AddDaySheet: View {
     @ViewBuilder
     private var aiFootnote: some View {
         if MealIngredientService.isAIAvailable() {
-            Label("Leer lassen — Apple Intelligence erkennt Zutaten automatisch.", systemImage: "apple.intelligence")
+            Label(String(localized: "menuplan.aihint"), systemImage: "apple.intelligence")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         } else {
-            Text("Optional: Zutaten kommagetrennt eingeben (Apple Intelligence nicht verfügbar).")
+            Text(String(localized: "menuplan.manualhint"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -931,7 +939,7 @@ private struct RecipePickerSheet: View {
                                 .foregroundStyle(.primary)
                             Spacer()
                             if recipe.usageCount > 0 {
-                                Text("\(recipe.usageCount)× verwendet")
+                                Text(String(format: String(localized: "menuplan.usedcount.format"), recipe.usageCount))
                                     .font(.system(size: 11))
                                     .foregroundStyle(.secondary)
                             }
@@ -944,11 +952,11 @@ private struct RecipePickerSheet: View {
                     }
                 }
             }
-            .navigationTitle("Rezept auswählen")
+            .navigationTitle(String(localized: "menuplan.selectrecipe.navtitle"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: { Text("Abbrechen").toolbarChip(prominent: false) }
+                    Button { dismiss() } label: { Text(String(localized: "menuplan.cancel")).toolbarChip(prominent: false) }
                         .buttonStyle(.pressable)
 }
             }

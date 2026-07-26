@@ -288,7 +288,7 @@ struct AddCustomStoreView: View {
                 Section(String(localized: "stores.categories")) {
                     ForEach(allCategories, id: \.self) { category in
                         HStack {
-                            Text(category)
+                            Text(AssignmentService.displayCategory(category))
                             Spacer()
                             if selectedCategories.contains(category) {
                                 Image(systemName: "checkmark").foregroundStyle(Color.accent)

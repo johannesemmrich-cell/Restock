@@ -315,6 +315,41 @@ struct AssignmentService {
         "Dekoration", "Werkzeug", "Garten", "Farbe & Lack", "Sanitär", "Baumaterial"
     ]
 
+    /// Localized label for a raw category value — display only. The raw value itself
+    /// (`categoryOrder`, `categoryMap`, everything `category(for:)` returns) must never be
+    /// translated: it's persisted on `ShoppingItem.category` and used for sorting/grouping.
+    static func displayCategory(_ category: String) -> String {
+        switch category {
+        case "Obst & Gemüse":     return String(localized: "category.fruitveg")
+        case "Fleisch & Wurst":   return String(localized: "category.meat")
+        case "Milchprodukte":     return String(localized: "category.dairy")
+        case "Backwaren":         return String(localized: "category.bakery")
+        case "Getränke":          return String(localized: "category.drinks")
+        case "Tiefkühlkost":      return String(localized: "category.frozen")
+        case "Snacks":            return String(localized: "category.snacks")
+        case "Gewürze & Backen":  return String(localized: "category.spicesbaking")
+        case "Konserven":         return String(localized: "category.canned")
+        case "Lebensmittel":      return String(localized: "category.groceries")
+        case "Körperpflege":      return String(localized: "category.personalcare")
+        case "Reinigung":         return String(localized: "category.cleaning")
+        case "Medikamente":       return String(localized: "category.medicine")
+        case "Babybedarf":        return String(localized: "category.baby")
+        case "Haushaltswaren":    return String(localized: "category.household")
+        case "Küchenausstattung": return String(localized: "category.kitchenware")
+        case "Elektronik":        return String(localized: "category.electronics")
+        case "Textilien":         return String(localized: "category.textiles")
+        case "Schreibwaren":      return String(localized: "category.stationery")
+        case "Spielzeug":         return String(localized: "category.toys")
+        case "Dekoration":        return String(localized: "category.decor")
+        case "Werkzeug":          return String(localized: "category.tools")
+        case "Garten":            return String(localized: "category.garden")
+        case "Farbe & Lack":      return String(localized: "category.paint")
+        case "Sanitär":           return String(localized: "category.plumbing")
+        case "Baumaterial":       return String(localized: "category.building")
+        default:                  return category
+        }
+    }
+
     static func categoryEmoji(_ category: String) -> String {
         switch category {
         case "Obst & Gemüse":     return "🥦"
