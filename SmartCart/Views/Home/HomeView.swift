@@ -3,6 +3,15 @@ import SwiftData
 import UIKit
 import UniformTypeIdentifiers
 
+/// `.sheet(item:)`-Ziel für einen per Share Extension hereingereichten Bon (siehe
+/// `ReceiptShareHandoff`) — bündelt den aufgelösten Laden mit der Nutzlast, damit beides in
+/// einem Schritt an `ReceiptScannerView.init(store:prefilled:)` weitergereicht werden kann.
+private struct PendingReceiptScan: Identifiable {
+    let id = UUID()
+    let store: Store
+    let payload: SharedReceiptPayload
+}
+
 struct HomeView: View {
     @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
     @Query private var allRecords: [PurchaseRecord]
@@ -58,6 +67,11 @@ struct HomeView: View {
     // Deep-Link-Ziel vom Homescreen-Widget (restock://store/<uuid> via widgetURL) —
     // navigationDestination(item:) pusht die passende StoreDetailView.
     @State private var deepLinkStore: Store?
+    // Deep-Link-Ziel von der Share Extension (restock://receiptscan, per registriertem
+    // URL-Schema — anders als beim Widget-Link oben BRAUCHT das ein echtes Schema, da die
+    // Extension die App aktiv über extensionContext?.open(...) öffnet statt über den
+    // widgetURL-Sondermechanismus).
+    @State private var pendingReceiptScan: PendingReceiptScan?
 
     private var seasonalSuggestions: [SeasonalService.Suggestion] {
         seasonalSuggestionsEnabled ? SeasonalService.currentSuggestions() : []
@@ -152,15 +166,29 @@ struct HomeView: View {
             .navigationDestination(item: $deepLinkStore) { store in
                 StoreDetailView(store: store)
             }
+            .sheet(item: $pendingReceiptScan) { pending in
+                ReceiptScannerView(store: pending.store, prefilled: pending.payload)
+            }
             // Tap auf das Homescreen-Widget (außerhalb der Abhak-Buttons): öffnet die App
             // direkt beim angezeigten Laden. widgetURL-Links werden vom System immer an die
             // eigene App zugestellt — ein registriertes URL-Scheme ist dafür nicht nötig.
             .onOpenURL { url in
-                guard url.scheme == "restock", url.host == "store",
-                      let id = UUID(uuidString: url.lastPathComponent),
-                      let store = activeStores.first(where: { $0.id == id })
-                else { return }
-                deepLinkStore = store
+                if url.scheme == "restock", url.host == "store",
+                   let id = UUID(uuidString: url.lastPathComponent),
+                   let store = activeStores.first(where: { $0.id == id }) {
+                    deepLinkStore = store
+                    return
+                }
+                // Von der Share Extension: Bon-Bild wurde in einer anderen App geteilt, dort
+                // bereits erkannt+ausgewertet (siehe ReceiptShareHandoff) — nur noch den
+                // passenden Laden auflösen und die vorbefüllte Review-Ansicht zeigen.
+                if url.scheme == "restock", url.host == "receiptscan",
+                   let payload = ReceiptShareHandoff.takePending() {
+                    let resolvedStore = payload.storeID.flatMap { id in activeStores.first { $0.id == id } }
+                        ?? activeStores.first
+                    guard let resolvedStore else { return }
+                    pendingReceiptScan = PendingReceiptScan(store: resolvedStore, payload: payload)
+                }
             }
             .onAppear {
                 refreshDueSoon()

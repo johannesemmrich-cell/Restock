@@ -8,28 +8,9 @@ import FoundationModels
 // Apple Intelligence (FoundationModels, iOS 26+) as primary engine.
 // Vision OCR + rule-based parsing as fallback.
 
-// Vision (VNImageRequestHandler) works on raw pixel buffers and knows nothing about
-// UIImage.imageOrientation — without telling it the orientation explicitly, a portrait
-// photo (whose pixels are usually stored landscape-rotated by the camera sensor, with
-// iOS only tagging the rotation instead of physically rotating the pixels) gets read as
-// sideways text and OCR fails silently. This mapping is Apple's standard sample-code
-// pattern (there is no built-in UIImage.Orientation -> CGImagePropertyOrientation
-// converter in the SDK); used by both ReceiptScannerView and RecipeRecognitionService.
-extension CGImagePropertyOrientation {
-    init(_ uiOrientation: UIImage.Orientation) {
-        switch uiOrientation {
-        case .up: self = .up
-        case .upMirrored: self = .upMirrored
-        case .down: self = .down
-        case .downMirrored: self = .downMirrored
-        case .left: self = .left
-        case .leftMirrored: self = .leftMirrored
-        case .right: self = .right
-        case .rightMirrored: self = .rightMirrored
-        @unknown default: self = .up
-        }
-    }
-}
+// CGImagePropertyOrientation(_ uiOrientation:) lebt jetzt in
+// SmartCart/Extensions/CGImagePropertyOrientation+UIImage.swift — dort auch von der Share
+// Extension nutzbar, ohne den Rest dieser Datei (Apple-Intelligence-Rezepterkennung) mitzuziehen.
 
 struct RecognizedIngredient: Identifiable {
     let id = UUID()
@@ -38,42 +19,10 @@ struct RecognizedIngredient: Identifiable {
     var unit: String
 }
 
-// MARK: - Real (non-cooperative) timeout
-
-/// A `TaskGroup`/`withThrowingTaskGroup` race does NOT actually bound a hanging `operation`:
-/// per Swift's structured-concurrency contract, the group awaits ALL of its child tasks before
-/// the enclosing `await withTaskGroup(...)` call itself returns — `cancelAll()` only sets a
-/// cooperative flag that `operation` would have to check itself, it does not stop execution. This
-/// was live-reproduced: a `withThrowingTaskGroup`-based 25s "timeout" race around a
-/// `LanguageModelSession` call still hung for well over a minute with no result. Here, both
-/// branches run as independent `Task.detached` work (NOT children of any group the caller has to
-/// wait for) racing to resume a single continuation — whichever finishes first genuinely lets the
-/// caller return; the loser keeps running orphaned in the background but blocks no one.
-func withRealTimeout<T: Sendable>(
-    seconds: Double,
-    operation: @escaping @Sendable () async -> T,
-    onTimeout: @escaping @Sendable () -> T
-) async -> T {
-    await withCheckedContinuation { (continuation: CheckedContinuation<T, Never>) in
-        let lock = NSLock()
-        var didResume = false
-        func resumeOnce(_ value: T) {
-            lock.lock()
-            let alreadyResumed = didResume
-            didResume = true
-            lock.unlock()
-            guard !alreadyResumed else { return }
-            continuation.resume(returning: value)
-        }
-        Task.detached {
-            resumeOnce(await operation())
-        }
-        Task.detached {
-            try? await Task.sleep(for: .seconds(seconds))
-            resumeOnce(onTimeout())
-        }
-    }
-}
+// withRealTimeout(seconds:operation:onTimeout:) lebt jetzt in
+// SmartCart/Extensions/CGImagePropertyOrientation+UIImage.swift — dort bereits Ziel-Mitgliedschaft
+// in Haupt-App UND Share Extension, ohne das hier ebenfalls zu brauchen (ReceiptNameAIResolver in
+// ReceiptParserService.swift nutzt sie, unabhängig von der Rezepterkennung dieser Datei).
 
 // MARK: - Meal Ingredient Service
 

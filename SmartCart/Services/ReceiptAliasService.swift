@@ -13,6 +13,11 @@ import Foundation
 final class ReceiptAliasService {
     static let shared = ReceiptAliasService()
     private let storageKey = "smartcart.receiptNameAliases"
+    // App-Group-Suite statt .standard: die Share Extension (eigener Prozess, eigener
+    // .standard-Container) muss dieselben gelernten Kürzel sehen wie die Haupt-App, sonst würde
+    // Stufe 1 der Namensauflösung (siehe ReceiptResolutionService.resolve) beim Scannen eines
+    // geteilten Bon-Bilds immer leer laufen.
+    private static let suite = UserDefaults(suiteName: SharedModelContainer.appGroupID) ?? .standard
     private var aliases: [String: String] = [:]
 
     private init() { load() }
@@ -48,13 +53,22 @@ final class ReceiptAliasService {
     }
 
     private func load() {
-        guard let data = UserDefaults.standard.data(forKey: storageKey),
+        // Einmalige, selbstheilende Migration: bestehende Installationen haben ihre gelernten
+        // Kürzel noch in .standard (wo dieser Service vor der Share Extension lebte). Ohne das
+        // wären sie für Bestandsnutzer nach diesem Wechsel plötzlich unsichtbar, bis sie zufällig
+        // erneut gelernt werden. Greift nur, solange die Suite noch nichts hat — danach ein No-op.
+        if let legacyData = UserDefaults.standard.data(forKey: storageKey),
+           Self.suite.data(forKey: storageKey) == nil {
+            Self.suite.set(legacyData, forKey: storageKey)
+            UserDefaults.standard.removeObject(forKey: storageKey)
+        }
+        guard let data = Self.suite.data(forKey: storageKey),
               let decoded = try? JSONDecoder().decode([String: String].self, from: data) else { return }
         aliases = decoded
     }
 
     private func persist() {
         guard let data = try? JSONEncoder().encode(aliases) else { return }
-        UserDefaults.standard.set(data, forKey: storageKey)
+        Self.suite.set(data, forKey: storageKey)
     }
 }

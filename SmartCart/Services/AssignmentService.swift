@@ -647,4 +647,44 @@ struct AssignmentService {
         }
         return "Körperpflege"
     }
+
+    // MARK: - Store detection from receipt text (Share Extension)
+
+    /// Mindest-Ähnlichkeit für einen Laden-Treffer — bewusst HÖHER als
+    /// `ReceiptParserService.completedItemAutoApplyThreshold` (0,6), nicht identisch. Ladennamen
+    /// stehen auf Bons als Logo/Kopfzeile klar gedruckt; die einzige real beobachtete
+    /// OCR-Verwucherung dieser Session war ein einzelnes fehlendes Zeichen ("LIDL"→"LDL",
+    /// Score 0,857) — anders als bei Artikel-Kürzeln ("MDHSZ"→"Mozzarella") braucht es hier keine
+    /// großzügige Schwelle für starke Abkürzungen. Eine niedrigere Schwelle hätte hier zudem ein
+    /// eigenes, nachgerechnetes Fehltreffer-Risiko: "Land" (als eigenständiges Wort in einer
+    /// Kopfzeile) erreicht gegen den Ladennamen "Kaufland" bereits 0,667 — echte Suffix-Beziehung,
+    /// exakt dieselbe Komposita-Falle wie bei Artikelnamen ("Milch" in "Kondensmilch").
+    private static let storeDetectionThreshold = 0.75
+
+    /// Erkennt, zu welchem der übergebenen Läden ein gescannter Bon gehört, anhand der ersten
+    /// paar rekonstruierten OCR-Zeilen (Kopfbereich, wo Logo/Ladenname stehen — auf den Bons
+    /// dieser Session stand "LIDL"/"LDL" jeweils als eigenständige erste Zeile). Vergleicht gegen
+    /// einzelne WÖRTER, nicht ganze Zeilen: eine mehrteilige Kopfzeile wie "DM Drogerie Markt"
+    /// würde das Längenverhältnis von `lcsSimilarity` sonst so verdünnen, dass ein kurzer
+    /// Ladenname wie "DM" nie einen hohen Score erreichen könnte, selbst bei exakter
+    /// Übereinstimmung (nachgerechnet: nur 0,21 statt der nötigen Schwelle).
+    static func detectStore(fromReceiptLines lines: [String], candidates: [Store]) -> Store? {
+        guard !candidates.isEmpty else { return nil }
+        let headerTokens = lines.prefix(8)
+            .joined(separator: " ")
+            .components(separatedBy: CharacterSet.whitespaces.union(CharacterSet(charactersIn: "-./,")))
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { $0.count >= 2 }
+
+        var best: (store: Store, score: Double)?
+        for store in candidates {
+            for token in headerTokens {
+                let score = ReceiptParserService.lcsSimilarity(store.name, token)
+                if score >= storeDetectionThreshold, best == nil || score > best!.score {
+                    best = (store, score)
+                }
+            }
+        }
+        return best?.store
+    }
 }

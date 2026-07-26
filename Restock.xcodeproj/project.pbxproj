@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0503BAEECD10EAC68D657F43 /* SharedStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1766165B3F2604B32CDF325 /* SharedStoreService.swift */; };
 		059ED66B634ECEBA14ADDC6B /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B2A1EB22AD0811654C001D2 /* NotificationService.swift */; };
+		0A78A28FBF5674A858A985C2 /* CGImagePropertyOrientation+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F51AA9DCF1ADFC21308D83 /* CGImagePropertyOrientation+UIImage.swift */; };
 		0C9590985D77472293C9588A /* SmartCartWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2DC36AAF6609AD2E3E1ED90C /* SmartCartWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0D82EF580C3A6433AD4D11E7 /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61D35E4D1402C78C693A39B /* FeedbackView.swift */; };
 		0E572B57E04F1F59292F514F /* ShoppingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859546BD22AB55E21A80A96 /* ShoppingActivityAttributes.swift */; };
@@ -54,6 +55,7 @@
 		7660A43490BFCE3AC2E4961E /* QuantityStepperField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3AE2CD051F27D5809DC417 /* QuantityStepperField.swift */; };
 		79405378A9C9AEC3323E5E20 /* BrowseStoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC6F3E41F217D74D6B1A8AA /* BrowseStoresView.swift */; };
 		7CAD0AEC61B590345B718919 /* SchemaVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27BD0C5EE55D1C2CCC616ED /* SchemaVersions.swift */; };
+		7E0F9A1304D50BDA6BC9B811 /* ReceiptResolutionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC528160F1AD80A0C4650A6 /* ReceiptResolutionService.swift */; };
 		83F7A018CC455374AA300D07 /* SmartCartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F284820C68BD8D5DFB6B618 /* SmartCartApp.swift */; };
 		86AF02F353829B169AD82B87 /* ShoppingLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E93E36DB4037B719B4BD29 /* ShoppingLiveActivity.swift */; };
 		89FAA6870A0A33955404AA66 /* QuickAddControlIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46D46BF139B378E43E1466C /* QuickAddControlIntent.swift */; };
@@ -83,8 +85,25 @@
 		E5FAA46232584C02C3CC2199 /* SeasonalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418D17DD19B7E69AA8260DEB /* SeasonalService.swift */; };
 		E8D21EC3494AC71233B98568 /* QuickActionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1BA745165F01898D190CD /* QuickActionState.swift */; };
 		E96A6287698D332B072D9A1E /* ActualPriceEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD050279AD19DB593A2AF6B1 /* ActualPriceEntryView.swift */; };
+		EFDC00E355EA647D21C911B4 /* ReceiptShareHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD41AB8DD4E930B591A67F4C /* ReceiptShareHandoff.swift */; };
 		F3CAD908E7CDBA459BD4D03D /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8846DD51E2BCCCBD8A0FFE0E /* PaywallView.swift */; };
 		F5B8C18CCAC190938D4DECA0 /* QuickAddControlIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46D46BF139B378E43E1466C /* QuickAddControlIntent.swift */; };
+		31546751CB90B05528936FE2 /* RestockShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3600D48F36B44A06C8902C37 /* RestockShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CB7B598D69B866E2A165B196 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D225389B0F89B5DE96DEAD2 /* ShareViewController.swift */; };
+		52C8EBC70575CE1543785171 /* ReceiptParserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54E0CCE44BCFCE3EB38E0F87 /* ReceiptParserService.swift */; };
+		FE6E95A3D85D504494220D42 /* ReceiptAliasService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F213D22060B00AE4751A8 /* ReceiptAliasService.swift */; };
+		BF41CB2B055AF1806850C81F /* ReceiptResolutionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC528160F1AD80A0C4650A6 /* ReceiptResolutionService.swift */; };
+		C79D40337E438C71F75EAE89 /* ReceiptShareHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD41AB8DD4E930B591A67F4C /* ReceiptShareHandoff.swift */; };
+		12DCF82BA93F86AEAF162959 /* AssignmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4084283388CDEF7C7D514BF7 /* AssignmentService.swift */; };
+		ACD11C0BBEDC0BDB5F301210 /* CGImagePropertyOrientation+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F51AA9DCF1ADFC21308D83 /* CGImagePropertyOrientation+UIImage.swift */; };
+		7E06970AC7613715F6D3FD83 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1316E9EFE646ED0F0078332F /* Store.swift */; };
+		B711DBF38176A71AC66E9C5A /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */; };
+		526C089A5B6BCE0A9721DBFA /* PurchaseRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49543DB9877A4EABA86E2BF /* PurchaseRecord.swift */; };
+		61A8C33F2B04D602F6FA2F69 /* SchemaVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27BD0C5EE55D1C2CCC616ED /* SchemaVersions.swift */; };
+		03D887C33569F0893E493C47 /* SharedModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28D34BA8493613BB54D6FE07 /* SharedModelContainer.swift */; };
+		52BE25312617DFA94CCDBC9D /* FeedbackItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B041DCB417023E5CB6417592 /* FeedbackItem.swift */; };
+		F6AC9DBCCD3B0340225F0207 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B54EB99B9957838C1031AD /* TodoItem.swift */; };
+		65B0C5DC9B4E6AEB0236E6C2 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D7F4FB432EE17B51EBF4B1 /* Color+Hex.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +113,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2173228C9C541DE670F8E0CF;
 			remoteInfo = SmartCartWidgets;
+		};
+		73D4762AA3FC60C53F34D42F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8D1EBE439F0566ED49E1ED53 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D934E8A9223AA0C0AC578C5;
+			remoteInfo = RestockShareExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -105,6 +131,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				0C9590985D77472293C9588A /* SmartCartWidgets.appex in Embed Foundation Extensions */,
+				31546751CB90B05528936FE2 /* RestockShareExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -143,6 +170,7 @@
 		607111C83CB9E39ECC518AC2 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		68D7F4FB432EE17B51EBF4B1 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
 		6E7BD9F3BC448DE79398597F /* ShoppingListWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListWidget.swift; sourceTree = "<group>"; };
+		6FC528160F1AD80A0C4650A6 /* ReceiptResolutionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptResolutionService.swift; sourceTree = "<group>"; };
 		72C8631D7DD41099763F9A12 /* QuickAddParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddParser.swift; sourceTree = "<group>"; };
 		744F23A30FF8C6D5A3004B1B /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListView.swift; sourceTree = "<group>"; };
 		74CCFFF2043317403EE4722D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -157,6 +185,7 @@
 		8846DD51E2BCCCBD8A0FFE0E /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		8B5C49213E1D6DACA024E359 /* StoreSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSetupView.swift; sourceTree = "<group>"; };
 		984CA66C3B260EF487FA4218 /* ClashDisplay-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ClashDisplay-Semibold.ttf"; sourceTree = "<group>"; };
+		98F51AA9DCF1ADFC21308D83 /* CGImagePropertyOrientation+UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGImagePropertyOrientation+UIImage.swift"; sourceTree = "<group>"; };
 		99E93E36DB4037B719B4BD29 /* ShoppingLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingLiveActivity.swift; sourceTree = "<group>"; };
 		9B2A1EB22AD0811654C001D2 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		9D196483EDA2488062F10DF0 /* EditItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditItemView.swift; sourceTree = "<group>"; };
@@ -172,6 +201,7 @@
 		B61D35E4D1402C78C693A39B /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
 		BC3AE2CD051F27D5809DC417 /* QuantityStepperField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuantityStepperField.swift; sourceTree = "<group>"; };
 		BCD924269EE28D045DBDAE33 /* RecipeRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRecognitionService.swift; sourceTree = "<group>"; };
+		BD41AB8DD4E930B591A67F4C /* ReceiptShareHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptShareHandoff.swift; sourceTree = "<group>"; };
 		C6B1060B802DB6BB5B27C69F /* HabitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitService.swift; sourceTree = "<group>"; };
 		CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItem.swift; sourceTree = "<group>"; };
 		CEE064FA6DDAEBC63D60DD65 /* AddItemIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemIntent.swift; sourceTree = "<group>"; };
@@ -185,12 +215,17 @@
 		E46D46BF139B378E43E1466C /* QuickAddControlIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddControlIntent.swift; sourceTree = "<group>"; };
 		E59CED41FC8E666B11CC8C09 /* LegalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalView.swift; sourceTree = "<group>"; };
 		F2567C6C42C00F59D0860F1F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		10D468C02AE4FED05FA03700 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		5D50B46194D499838CA3B954 /* RestockShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RestockShareExtension.entitlements; sourceTree = "<group>"; };
+		0D225389B0F89B5DE96DEAD2 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		3600D48F36B44A06C8902C37 /* RestockShareExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = RestockShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		1A6595DCDBBB484F6FBDC70E /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				98F51AA9DCF1ADFC21308D83 /* CGImagePropertyOrientation+UIImage.swift */,
 				68D7F4FB432EE17B51EBF4B1 /* Color+Hex.swift */,
 				DF9DBA3F3FAF084DAE33A4F3 /* DesignSystem.swift */,
 			);
@@ -225,6 +260,7 @@
 			children = (
 				4F56959E2BC2D8D9BFACBE4D /* Restock.app */,
 				2DC36AAF6609AD2E3E1ED90C /* SmartCartWidgets.appex */,
+				3600D48F36B44A06C8902C37 /* RestockShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -291,6 +327,7 @@
 			children = (
 				41193C84BC703BED280A4991 /* SmartCart */,
 				B831F953906C1265643B2445 /* SmartCartWidgets */,
+				E2E57E1D3AE8240BCE96F034 /* RestockShareExtension */,
 				3E62E12F3B5AE4C2FAF8646A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -408,6 +445,8 @@
 				72C8631D7DD41099763F9A12 /* QuickAddParser.swift */,
 				2D5F213D22060B00AE4751A8 /* ReceiptAliasService.swift */,
 				54E0CCE44BCFCE3EB38E0F87 /* ReceiptParserService.swift */,
+				6FC528160F1AD80A0C4650A6 /* ReceiptResolutionService.swift */,
+				BD41AB8DD4E930B591A67F4C /* ReceiptShareHandoff.swift */,
 				BCD924269EE28D045DBDAE33 /* RecipeRecognitionService.swift */,
 				E27BD0C5EE55D1C2CCC616ED /* SchemaVersions.swift */,
 				418D17DD19B7E69AA8260DEB /* SeasonalService.swift */,
@@ -416,6 +455,16 @@
 				A6CD744C2468F68006A11973 /* TemplateService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		E2E57E1D3AE8240BCE96F034 /* RestockShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				10D468C02AE4FED05FA03700 /* Info.plist */,
+				5D50B46194D499838CA3B954 /* RestockShareExtension.entitlements */,
+				0D225389B0F89B5DE96DEAD2 /* ShareViewController.swift */,
+			);
+			path = RestockShareExtension;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -450,6 +499,7 @@
 			);
 			dependencies = (
 				273792F0B2EDCC98681602A0 /* PBXTargetDependency */,
+				035A90E69BC0DF07058A6DCB /* PBXTargetDependency */,
 			);
 			name = Restock;
 			packageProductDependencies = (
@@ -457,6 +507,23 @@
 			productName = Restock;
 			productReference = 4F56959E2BC2D8D9BFACBE4D /* Restock.app */;
 			productType = "com.apple.product-type.application";
+		};
+		7D934E8A9223AA0C0AC578C5 /* RestockShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 73A434A243CA503DE5CB09E8 /* Build configuration list for PBXNativeTarget "RestockShareExtension" */;
+			buildPhases = (
+				67BDC10E19FEF56A93370E2E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RestockShareExtension;
+			packageProductDependencies = (
+			);
+			productName = RestockShareExtension;
+			productReference = 3600D48F36B44A06C8902C37 /* RestockShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -468,6 +535,10 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					2173228C9C541DE670F8E0CF = {
+						DevelopmentTeam = XK87E2B3VR;
+						ProvisioningStyle = Automatic;
+					};
+					7D934E8A9223AA0C0AC578C5 = {
 						DevelopmentTeam = XK87E2B3VR;
 						ProvisioningStyle = Automatic;
 					};
@@ -494,6 +565,7 @@
 			targets = (
 				FB3462C32B1AFC0E92A07C37 /* Restock */,
 				2173228C9C541DE670F8E0CF /* SmartCartWidgets */,
+				7D934E8A9223AA0C0AC578C5 /* RestockShareExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -548,6 +620,7 @@
 				66061099219273F5BD83F273 /* AssignmentService.swift in Sources */,
 				2B5FBA79ED7DCD9F3014F33C /* BarcodeScannerView.swift in Sources */,
 				79405378A9C9AEC3323E5E20 /* BrowseStoresView.swift in Sources */,
+				0A78A28FBF5674A858A985C2 /* CGImagePropertyOrientation+UIImage.swift in Sources */,
 				5C7508E97A69CBA21B6DE5C5 /* CheckOffItemIntent.swift in Sources */,
 				D1F81BBFA8DB2C7EACB7F631 /* CloudPreferencesSync.swift in Sources */,
 				220E60F93646C9A34D1C12BA /* Color+Hex.swift in Sources */,
@@ -577,7 +650,9 @@
 				AE420C42F689A92711663329 /* QuickAddParser.swift in Sources */,
 				4C16FAE9DA52BB877ACC9BC3 /* ReceiptAliasService.swift in Sources */,
 				426FFE6DA2C0EFDE1E621225 /* ReceiptParserService.swift in Sources */,
+				7E0F9A1304D50BDA6BC9B811 /* ReceiptResolutionService.swift in Sources */,
 				4F223836DA8ED358DC718C1F /* ReceiptScannerView.swift in Sources */,
+				EFDC00E355EA647D21C911B4 /* ReceiptShareHandoff.swift in Sources */,
 				CCF05C1044554FC71B37CE85 /* RecipeImportView.swift in Sources */,
 				52AFCA1171068886BF74BF47 /* RecipeRecognitionService.swift in Sources */,
 				D1DF4ECFAFDF255FFD0C5C55 /* SchemaVersions.swift in Sources */,
@@ -600,6 +675,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		67BDC10E19FEF56A93370E2E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CB7B598D69B866E2A165B196 /* ShareViewController.swift in Sources */,
+				52C8EBC70575CE1543785171 /* ReceiptParserService.swift in Sources */,
+				FE6E95A3D85D504494220D42 /* ReceiptAliasService.swift in Sources */,
+				BF41CB2B055AF1806850C81F /* ReceiptResolutionService.swift in Sources */,
+				C79D40337E438C71F75EAE89 /* ReceiptShareHandoff.swift in Sources */,
+				12DCF82BA93F86AEAF162959 /* AssignmentService.swift in Sources */,
+				ACD11C0BBEDC0BDB5F301210 /* CGImagePropertyOrientation+UIImage.swift in Sources */,
+				7E06970AC7613715F6D3FD83 /* Store.swift in Sources */,
+				B711DBF38176A71AC66E9C5A /* ShoppingItem.swift in Sources */,
+				526C089A5B6BCE0A9721DBFA /* PurchaseRecord.swift in Sources */,
+				61A8C33F2B04D602F6FA2F69 /* SchemaVersions.swift in Sources */,
+				03D887C33569F0893E493C47 /* SharedModelContainer.swift in Sources */,
+				52BE25312617DFA94CCDBC9D /* FeedbackItem.swift in Sources */,
+				F6AC9DBCCD3B0340225F0207 /* TodoItem.swift in Sources */,
+				65B0C5DC9B4E6AEB0236E6C2 /* Color+Hex.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -607,6 +704,11 @@
 			isa = PBXTargetDependency;
 			target = 2173228C9C541DE670F8E0CF /* SmartCartWidgets */;
 			targetProxy = 762A14DB1B8A469B6D651347 /* PBXContainerItemProxy */;
+		};
+		035A90E69BC0DF07058A6DCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7D934E8A9223AA0C0AC578C5 /* RestockShareExtension */;
+			targetProxy = 73D4762AA3FC60C53F34D42F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -862,6 +964,56 @@
 			};
 			name = Debug;
 		};
+		B7F306B9D57D516BFF9D7386 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = RestockShareExtension/RestockShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = XK87E2B3VR;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = RestockShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.Restock.RestockShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		832AC4657837378F51764FE2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = RestockShareExtension/RestockShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = XK87E2B3VR;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = RestockShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.Restock.RestockShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -888,6 +1040,15 @@
 			buildConfigurations = (
 				00D6438B2A6E7AF2917F4E00 /* Debug */,
 				520F06112170CA0C32093D84 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		73A434A243CA503DE5CB09E8 /* Build configuration list for PBXNativeTarget "RestockShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B7F306B9D57D516BFF9D7386 /* Debug */,
+				832AC4657837378F51764FE2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
