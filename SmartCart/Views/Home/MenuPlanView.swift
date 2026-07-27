@@ -119,13 +119,13 @@ struct MenuPlanView: View {
         guard !meal.isEmpty, !ings.isEmpty else { return }
         var recipes = savedRecipes
         guard !recipes.contains(where: { $0.name.lowercased() == meal.lowercased() }) else {
-            toastMessage = "Bereits gespeichert"
+            toastMessage = String(localized: "menuplan.alreadysaved")
             return
         }
         recipes.append(SavedRecipe(name: meal, ingredients: ings))
         persistSavedRecipes(recipes)
         Haptics.success()
-        toastMessage = "\"\(meal)\" gespeichert"
+        toastMessage = String(format: String(localized: "menuplan.recipesaved.format"), meal)
     }
 
     private func deleteSavedRecipe(_ recipe: SavedRecipe) {
@@ -624,7 +624,7 @@ struct MenuPlanView: View {
         Haptics.success()
         SyncCoordinator.shared.pushInBackground(touchedStores)
         if showToast {
-            toastMessage = "\"\(meals[dayIndex])\" zur Liste hinzugefügt"
+            toastMessage = String(format: String(localized: "menuplan.addedtolist.format"), meals[dayIndex])
         }
     }
 
@@ -644,7 +644,9 @@ struct MenuPlanView: View {
             addDayToList(dayIndex, store: nil, showToast: false)
         }
         checkedIngredients.removeAll()
-        toastMessage = remaining.count == 1 ? "1 Tag zur Liste hinzugefügt" : "\(remaining.count) Tage zur Liste hinzugefügt"
+        toastMessage = remaining.count == 1
+            ? String(localized: "menuplan.daysadded.one")
+            : String(format: String(localized: "menuplan.daysadded.other.format"), remaining.count)
     }
 
     private func addRecipeToList(_ recipe: SavedRecipe, store explicitStore: Store?) {
@@ -666,7 +668,7 @@ struct MenuPlanView: View {
         recordUsage(recipe)
         Haptics.success()
         SyncCoordinator.shared.pushInBackground(touchedStores)
-        toastMessage = "\"\(recipe.name)\" zur Liste hinzugefügt"
+        toastMessage = String(format: String(localized: "menuplan.addedtolist.format"), recipe.name)
     }
 
     private func savePlan() {

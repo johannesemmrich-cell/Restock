@@ -7,6 +7,7 @@
 "action.add" = "Add";
 "action.done" = "Done";
 "action.delete" = "Delete";
+"action.edit" = "Edit";
 
 // MARK: - Home
 "home.quickadd.placeholder" = "Quick add item…";
@@ -82,6 +83,7 @@
 "settings.language.system" = "System default";
 "settings.stores" = "Stores";
 "settings.notifications" = "Notifications";
+"settings.pro.manage" = "Manage";
 "settings.notifications.replenish" = "Restock reminders";
 "settings.feedback.section" = "Feedback";
 "settings.feedback.button" = "Send feedback";
@@ -133,6 +135,7 @@
 "browse.search.placeholder" = "Search stores (all countries)";
 "browse.search.empty"       = "No results";
 "stores.browse.other"    = "Browse stores from other countries";
+"browse.sharedlist.section" = "Shared List";
 
 // MARK: - Visit frequency
 "frequency.monthly"   = "Once a month";
@@ -337,3 +340,8 @@
 "menuplan.ingredientscount.format" = "%d ingredients";
 "menuplan.moreingredients.format" = "+ %d more";
 "menuplan.usedcount.format" = "Used %d×";
+"menuplan.alreadysaved" = "Already saved";
+"menuplan.recipesaved.format" = "\"%@\" saved";
+"menuplan.addedtolist.format" = "\"%@\" added to list";
+"menuplan.daysadded.one" = "1 day added to list";
+"menuplan.daysadded.other.format" = "%d days added to list";

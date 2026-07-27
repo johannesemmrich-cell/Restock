@@ -159,7 +159,7 @@ struct BrowseStoresView: View {
                         .buttonStyle(.pressable)
                     }
                     .listRowBackground(Color.surface)
-                    Section("Geteilte Liste") {
+                    Section(String(localized: "browse.sharedlist.section")) {
                         Button {
                             showJoin = true
                         } label: {
@@ -173,10 +173,10 @@ struct BrowseStoresView: View {
                                         .foregroundStyle(Color.accent)
                                 }
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("Geteilter Liste beitreten")
+                                    Text(String(localized: "home.join.shared"))
                                         .font(.system(size: 16))
                                         .foregroundStyle(Color.ink)
-                                    Text("6-stelligen Code eingeben, den dir jemand geschickt hat")
+                                    Text(String(localized: "share.join.subtitle"))
                                         .font(.system(size: 12))
                                         .foregroundStyle(Color.textSecondary)
                                 }

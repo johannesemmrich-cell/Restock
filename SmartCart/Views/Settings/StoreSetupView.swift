@@ -111,7 +111,7 @@ struct StoreSetupView: View {
                 Button {
                     withAnimation { editMode = editMode == .active ? .inactive : .active }
                 } label: {
-                    Text(editMode == .active ? "Fertig" : "Bearbeiten").toolbarChip()
+                    Text(editMode == .active ? String(localized: "action.done") : String(localized: "action.edit")).toolbarChip()
                 }
                 .buttonStyle(.pressable)
             }

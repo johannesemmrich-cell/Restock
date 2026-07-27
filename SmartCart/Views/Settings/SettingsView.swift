@@ -125,7 +125,7 @@ struct SettingsView: View {
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
-                            Button("Verwalten") {
+                            Button(String(localized: "settings.pro.manage")) {
                                 if let url = URL(string: "itms-apps://apps.apple.com/account/subscriptions") {
                                     UIApplication.shared.open(url)
                                 }
@@ -209,7 +209,7 @@ struct SettingsView: View {
                     Button {
                         showJoinStore = true
                     } label: {
-                        Label("Geteiltem Store beitreten", systemImage: "person.badge.plus")
+                        Label(String(localized: "home.join.shared"), systemImage: "person.badge.plus")
                     }
                 } header: {
                     settingsHeader("Daten")
