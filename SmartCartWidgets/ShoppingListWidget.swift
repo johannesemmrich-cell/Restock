@@ -53,8 +53,20 @@ private enum WidgetStoreLoader {
     /// drain and this one read the SAME queue concurrently, both may claim a UUID — the
     /// `!item.isCompleted` guard in whichever runs second turns that into a no-op after the
     /// first save lands, but a truly simultaneous claim could double-record. Accepted.
-    static func drainPendingCheckoffs(for store: Store) {
+    ///
+    /// Returns the drained batch's completion order (item names) so the caller can continue
+    /// the same sequence for the tapped item that triggered this drain — the drain and the
+    /// tap are one continuous logical checkoff action, and `Store.recordCompletionOrder`
+    /// needs the tapped item's name appended to this array (not passed alone) to learn its
+    /// position relative to whatever was just drained, not just "position 0" every time.
+    @discardableResult
+    static func drainPendingCheckoffs(for store: Store) -> [String] {
         let defaults = UserDefaults(suiteName: SharedModelContainer.appGroupID)
+        // Wie StoreDetailView.applyPendingCheckoffs() (muss in Sync bleiben, siehe oben): die
+        // ganze Batch-Reihenfolge akkumulieren und jedes Mal komplett übergeben, statt jedes Item
+        // isoliert mit `[item.name]` zu melden — sonst sieht recordCompletionOrder nur ein
+        // Ein-Element-Array (Index immer 0) und bekommt kein Signal über die Reihenfolge.
+        var batchOrder: [String] = []
 
         // UUID-Queue: exakt die gequeueten Items erledigen (nicht "die ersten N" —
         // count-basiert würde nach Widget-Checkoff/Sync-Merge das falsche Item treffen).
@@ -65,8 +77,9 @@ private enum WidgetStoreLoader {
                 guard let id = UUID(uuidString: idString),
                       let item = store.items.first(where: { $0.id == id }),
                       !item.isCompleted else { continue }
+                batchOrder.append(item.name)
                 item.markCompleted()
-                store.recordCompletionOrder([item.name])
+                store.recordCompletionOrder(batchOrder)
             }
         }
 
@@ -78,10 +91,12 @@ private enum WidgetStoreLoader {
             defaults?.removeObject(forKey: legacyKey)
             for _ in 0..<legacyCount {
                 guard let item = store.pendingItems.first else { break }
+                batchOrder.append(item.name)
                 item.markCompleted()
-                store.recordCompletionOrder([item.name])
+                store.recordCompletionOrder(batchOrder)
             }
         }
+        return batchOrder
     }
 }
 
@@ -181,15 +196,19 @@ struct CheckOffWidgetItemIntent: AppIntent {
         //    Store danach exakt dem, was der Nutzer beim Tippen gesehen hat. War der
         //    getippte Artikel selbst schon per Island abgehakt, ist er jetzt completed
         //    und Schritt 2 wird ein No-op statt eines Doppel-Abhakens.
-        WidgetStoreLoader.drainPendingCheckoffs(for: store)
+        var batchOrder = WidgetStoreLoader.drainPendingCheckoffs(for: store)
 
         // 2. Den getippten Artikel mit ALLEN Seiteneffekten der App abhaken:
         //    markCompleted() setzt completedDate/completedBy, bumpt lastModified (schützt
         //    die Änderung via Last-Write-Wins vor dem nächsten Sync-Pull) und legt den
-        //    PurchaseRecord für die Habit-Analyse an.
+        //    PurchaseRecord für die Habit-Analyse an. Reihenfolge setzt Schritt 1's Batch
+        //    fort (nicht isoliert `[item.name]`), da Drain+Tap eine zusammenhängende
+        //    Abhak-Aktion sind — sonst hätte der getippte Artikel für recordCompletionOrder
+        //    immer Index 0, unabhängig davon, was gerade eben schon gedraint wurde.
         if let item = store.items.first(where: { $0.id == itemUUID }), !item.isCompleted {
+            batchOrder.append(item.name)
             item.markCompleted()
-            store.recordCompletionOrder([item.name])
+            store.recordCompletionOrder(batchOrder)
         }
 
         try context.save()

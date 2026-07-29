@@ -865,6 +865,12 @@ struct StoreDetailView: View {
     private func applyPendingCheckoffs() {
         let defaults = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart")
         var applied = 0
+        // Wie completionOrder in toggle(): die ganze Batch-Reihenfolge akkumulieren und jedes
+        // Mal komplett übergeben, statt jedes Item isoliert mit `[item.name]` zu melden — sonst
+        // sieht recordCompletionOrder für jeden Aufruf nur ein Ein-Element-Array (Index immer 0)
+        // und bekommt gar kein Signal, in welcher Reihenfolge die Items in dieser Drain-Batch
+        // erledigt wurden.
+        var batchOrder: [String] = []
 
         // UUID-Queue: exakt die gequeueten Items erledigen (nicht "die ersten N" —
         // count-basiert würde nach Widget-Checkoff/Sync-Merge das falsche Item treffen).
@@ -875,8 +881,9 @@ struct StoreDetailView: View {
                 guard let id = UUID(uuidString: idString),
                       let item = store.items.first(where: { $0.id == id }),
                       !item.isCompleted else { continue }
+                batchOrder.append(item.name)
                 item.markCompleted()
-                store.recordCompletionOrder([item.name])
+                store.recordCompletionOrder(batchOrder)
                 applied += 1
             }
         }
@@ -889,8 +896,9 @@ struct StoreDetailView: View {
             defaults?.removeObject(forKey: legacyKey)
             for _ in 0..<legacyCount {
                 guard let item = store.pendingItems.first else { break }
+                batchOrder.append(item.name)
                 item.markCompleted()
-                store.recordCompletionOrder([item.name])
+                store.recordCompletionOrder(batchOrder)
                 applied += 1
             }
         }

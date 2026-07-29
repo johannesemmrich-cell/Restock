@@ -163,9 +163,20 @@ class Store {
         }
     }
 
+    /// `completedNames` is the caller's full completion history for this session, replayed on
+    /// every call (not just the newest name) — callers append-then-pass-the-whole-array so the
+    /// running average always reflects each item's usual position. That replay makes duplicates
+    /// dangerous: if a name appears twice (item unchecked and rechecked within one visit, or the
+    /// same staple bought again on a later trip before completed items were ever cleared), the
+    /// second occurrence would be processed again WITHIN this same call and average against the
+    /// value the first occurrence just set — dragging the learned position toward the later,
+    /// accidental repeat instead of the item's real typical spot. Only the first occurrence of
+    /// each name counts per call.
     func recordCompletionOrder(_ completedNames: [String]) {
+        var seen = Set<String>()
         for (index, name) in completedNames.enumerated() {
             let key = name.lowercased()
+            guard seen.insert(key).inserted else { continue }
             if let existing = itemOrderMap[key] {
                 itemOrderMap[key] = (existing + Double(index)) / 2.0
             } else {
