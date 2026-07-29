@@ -728,7 +728,7 @@ struct HomeView: View {
                     .font(.system(size: 17, weight: .bold))
                     .foregroundStyle(Color.ink)
                 Spacer()
-                Button("Alle hinzufügen") {
+                Button(String(localized: "home.replenish.addall")) {
                     var touchedStores: [Store?] = []
                     for s in seasonalSuggestions {
                         let category = AssignmentService.category(for: s.name)
