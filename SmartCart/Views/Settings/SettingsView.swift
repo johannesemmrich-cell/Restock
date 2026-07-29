@@ -367,7 +367,7 @@ struct SettingsView: View {
     private var emmrichAppsFooter: some View {
         VStack(spacing: 8) {
             Button {
-                if let url = URL(string: "https://emmrich-apps.de") {
+                if let url = URL(string: "https://emmrich-business.com") {
                     UIApplication.shared.open(url)
                 }
             } label: {
