@@ -364,7 +364,29 @@ struct ReceiptScannerView: View {
             // unscharfe 7-Tage-Suche, weil die Identität schon feststeht statt nur über den Namen
             // erraten zu werden. Kein eigener unbepreister Datensatz vorhanden → laxe, rein auf
             // Substring basierende 7-Tage/Store-Suche über ALLE Datensätze als Fallback.
-            let matchedItem = line.matchedItemID.flatMap { id in store.items.first { $0.id == id } }
+            //
+            // `matchedItemID` ist oft bewusst nil: eine manuelle Namens-Korrektur im Review löscht
+            // sie extra (siehe ReceiptLineRow), damit ein automatischer Match/Chip-Tap nicht
+            // fälschlich am alten, überschriebenen Namen hängen bleibt. Der gerade korrigierte
+            // Name IST aber die verlässlichste verfügbare Evidenz an dieser Stelle — bevor auf die
+            // unscharfe 7-Tage-Historie unten zurückgefallen wird, zusätzlich exakt (nicht nur
+            // "contains") gegen ALLE Artikel dieses Stores suchen, nicht nur die letzten 7 Tage.
+            // Behebt "Maultaschen ohne Preis": der Artikel stand nach der Korrektur schon korrekt
+            // benannt auf der Liste, nur die Rück-Zuordnung fand ihn vorher nicht mehr.
+            let matchedItem: ShoppingItem? = {
+                if let id = line.matchedItemID, let item = store.items.first(where: { $0.id == id }) {
+                    return item
+                }
+                // Nur bereits abgehakte Artikel — ein Bon belegt einen tatsächlichen Kauf, ein
+                // noch offener Artikel mit gleichem Namen (z. B. schon wieder für den nächsten
+                // Einkauf vorgemerkt) wurde nicht gekauft. Ohne dieses Filter könnte `max(by:)`
+                // bevorzugt den neueren, aber ungekauften Artikel treffen (späteres addedDate als
+                // das completedDate des tatsächlich gekauften) und der Bon-Preis würde auf dem
+                // falschen Artikel landen, während der echte Kauf weiterhin ohne Preis bleibt.
+                return store.items
+                    .filter { $0.isCompleted && $0.name.lowercased() == lineLower }
+                    .max(by: { ($0.completedDate ?? $0.addedDate) < ($1.completedDate ?? $1.addedDate) })
+            }()
             let ownUnpricedRecord = matchedItem?.purchaseRecords
                 .filter({ $0.actualPrice == nil })
                 .max(by: { $0.date < $1.date })
