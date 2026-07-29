@@ -1906,15 +1906,50 @@ enum MealDatabase {
         ],
     ]
 
+    /// Deliberately NOT a full English translation of `db` (120 dishes) — that's a much
+    /// larger, separate undertaking. Free-text dish names typed by a real English-speaking
+    /// user mostly won't match a German key anyway and fall through to the AI path below,
+    /// which already produces a reasonable result independent of this database. This only
+    /// covers the 2 dishes ShotBot's English screenshot test relies on for a deterministic
+    /// (non-AI) ingredient list — "lasagne" (spelled the same in both languages) and
+    /// "gulasch"/goulash.
+    private static let dbEN: [String: [MealIngredient]] = [
+        "lasagne": [
+            MealIngredient(name: "Ground Beef", amount: 400, unit: "g"),
+            MealIngredient(name: "Lasagna Sheets", amount: 250, unit: "g"),
+            MealIngredient(name: "Tomato Sauce", amount: 500, unit: "ml"),
+            MealIngredient(name: "Béchamel Sauce", amount: 300, unit: "ml"),
+            MealIngredient(name: "Cheese", amount: 150, unit: "g"),
+            MealIngredient(name: "Onion", amount: 1, unit: ""),
+        ],
+        "gulasch": [
+            MealIngredient(name: "Beef", amount: 800, unit: "g"),
+            MealIngredient(name: "Onions", amount: 3, unit: ""),
+            MealIngredient(name: "Paprika Powder", amount: 2, unit: "tbsp"),
+            MealIngredient(name: "Tomato Paste", amount: 2, unit: "tbsp"),
+            MealIngredient(name: "Broth", amount: 500, unit: "ml"),
+            MealIngredient(name: "Potatoes", amount: 800, unit: "g"),
+        ],
+        "goulash": [
+            MealIngredient(name: "Beef", amount: 800, unit: "g"),
+            MealIngredient(name: "Onions", amount: 3, unit: ""),
+            MealIngredient(name: "Paprika Powder", amount: 2, unit: "tbsp"),
+            MealIngredient(name: "Tomato Paste", amount: 2, unit: "tbsp"),
+            MealIngredient(name: "Broth", amount: 500, unit: "ml"),
+            MealIngredient(name: "Potatoes", amount: 800, unit: "g"),
+        ],
+    ]
+
     static func ingredients(for meal: String) -> [MealIngredient] {
         let key = meal.trimmingCharacters(in: .whitespaces).lowercased()
-        if let exact = db[key] { return exact }
+        let source = Bundle.main.preferredLocalizations.first?.hasPrefix("en") == true ? dbEN : db
+        if let exact = source[key] { return exact }
         // Multiple keys can match a given input (e.g. "hähnchen curry" contains both "hähnchen"
         // and "curry"). Dictionary iteration order is randomized per launch, so picking the first
         // match during a plain iteration would make the result non-deterministic across app
         // launches. Instead, deterministically prefer the longest (most specific) matching key,
         // breaking ties alphabetically.
-        let match = db
+        let match = source
             .filter { key.contains($0.key) || $0.key.contains(key) }
             .sorted { $0.key.count != $1.key.count ? $0.key.count > $1.key.count : $0.key < $1.key }
             .first
