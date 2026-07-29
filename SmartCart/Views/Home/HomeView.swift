@@ -1456,8 +1456,8 @@ struct HomeView: View {
         UIApplication.shared.shortcutItems = [
             UIApplicationShortcutItem(
                 type: "com.smartcart.quickadd",
-                localizedTitle: String(localized: "Artikel hinzufügen"),
-                localizedSubtitle: String(localized: "Zur Einkaufsliste hinzufügen"),
+                localizedTitle: String(localized: "shortcut.additem.title"),
+                localizedSubtitle: String(localized: "shortcut.additem.subtitle"),
                 icon: UIApplicationShortcutIcon(systemImageName: "cart.badge.plus"),
                 userInfo: nil
             )
