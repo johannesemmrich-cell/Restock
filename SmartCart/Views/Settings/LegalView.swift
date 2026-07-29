@@ -58,7 +58,7 @@ Stand: Juni 2026
 
 Johannes Emmrich
 Eichenaue 14, 48157 Münster
-E-Mail: j.emmrich@icloud.com
+E-Mail: support@emmrich-business.com
 
 ---
 
@@ -106,7 +106,7 @@ Du hast das Recht auf:
 - **Datenportabilität**
 - **Widerspruch** gegen die Verarbeitung
 
-Für Anfragen wende dich an: j.emmrich@icloud.com
+Für Anfragen wende dich an: support@emmrich-business.com
 
 ---
 
@@ -118,7 +118,7 @@ Alle lokalen Daten kannst du durch Deinstallation der App löschen. Für iCloud-
 
 **7. Kontakt bei Datenschutzfragen**
 
-j.emmrich@icloud.com
+support@emmrich-business.com
 """
 
     // MARK: - Nutzungsbedingungen
@@ -202,7 +202,7 @@ Es gilt deutsches Recht unter Ausschluss des UN-Kaufrechts.
 **9. Kontakt**
 
 Bei Fragen zu diesen Nutzungsbedingungen:
-j.emmrich@icloud.com
+support@emmrich-business.com
 """
 
     // MARK: - Impressum
@@ -220,7 +220,7 @@ Eichenaue 14
 48157 Münster
 Deutschland
 
-E-Mail: j.emmrich@icloud.com
+E-Mail: support@emmrich-business.com
 
 ---
 

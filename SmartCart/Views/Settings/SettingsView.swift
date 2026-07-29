@@ -232,7 +232,7 @@ struct SettingsView: View {
                     .buttonStyle(.pressable)
 
                     Button {
-                        if let url = URL(string: "mailto:j.emmrich@icloud.com?subject=Restock%20Support") {
+                        if let url = URL(string: "mailto:support@emmrich-business.com?subject=Restock%20Support") {
                             UIApplication.shared.open(url)
                         }
                     } label: {

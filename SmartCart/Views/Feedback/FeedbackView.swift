@@ -146,7 +146,7 @@ struct FeedbackView: View {
     }
 
     private func sendMail(category: FeedbackCategory, message: String, completion: @escaping (Bool) -> Void) {
-        var components = URLComponents(string: "mailto:j.emmrich@icloud.com")
+        var components = URLComponents(string: "mailto:support@emmrich-business.com")
         components?.queryItems = [
             URLQueryItem(name: "subject", value: "Restock Feedback: \(category.label)"),
             URLQueryItem(name: "body", value: message)
