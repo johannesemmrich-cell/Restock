@@ -57,7 +57,7 @@ Stand: Juni 2026
 **1. Verantwortlicher**
 
 Johannes Emmrich
-[Adresse eintragen]
+Eichenaue 14, 48157 Münster
 E-Mail: j.emmrich@icloud.com
 
 ---
@@ -216,8 +216,8 @@ Angaben gemäß § 5 TMG
 **Anbieter**
 
 Johannes Emmrich
-[Straße und Hausnummer eintragen]
-[PLZ und Ort eintragen]
+Eichenaue 14
+48157 Münster
 Deutschland
 
 E-Mail: j.emmrich@icloud.com
