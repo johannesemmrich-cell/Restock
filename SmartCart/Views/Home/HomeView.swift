@@ -76,16 +76,6 @@ struct HomeView: View {
     // neu anlegen) gegriffen hat — zeigt einmalig einen erklärenden Hinweis, statt dass die App
     // nach diesem Vorfall kommentarlos leer aussieht.
     @State private var showDataResetAlert = false
-    // Live per Diagnose bestätigt (2026-07-30, SwiftDataError.loadIssueModelContainer): eine
-    // lokale Store-Datei, die schon einmal OHNE Cloud-Spiegelung geöffnet wurde (z. B. nach
-    // einem Signatur-Wechsel zwischen Xcode-Debug-Install und TestFlight), lässt den
-    // Cloud-Versuch in SharedModelContainer.make() bei JEDEM künftigen Start erneut scheitern —
-    // die App landet dauerhaft in der lokalen, nicht synchronisierten Kopie, ohne dass sie das
-    // je von selbst merkt oder behebt. Bewusst KEIN automatischer Lösch-Versuch (das würde
-    // destruktiv auf einer noch nicht in der Praxis erprobten Heuristik beruhen) — nur ein
-    // Hinweis mit explizitem Reparieren-Button.
-    @State private var showCloudRepairPrompt = false
-    @State private var showCloudRepairDone = false
 
     private var seasonalSuggestions: [SeasonalService.Suggestion] {
         seasonalSuggestionsEnabled ? SeasonalService.currentSuggestions() : []
@@ -205,12 +195,6 @@ struct HomeView: View {
                 if UserDefaults.standard.bool(forKey: "smartcart.dataResetOccurred") {
                     UserDefaults.standard.removeObject(forKey: "smartcart.dataResetOccurred")
                     showDataResetAlert = true
-                // Nur EINS von beiden pro Start zeigen — dataResetOccurred ist der drastischere,
-                // bereits behobene Fall; ein frischer Cloud-Fehlschlag direkt danach in derselben
-                // Sitzung ist unwahrscheinlich genug, um das hintanzustellen statt zwei Alerts
-                // gleichzeitig aufpoppen zu lassen.
-                } else if UserDefaults.standard.string(forKey: SharedModelContainer.lastFailureKey)?.hasPrefix("[cloud]") == true {
-                    showCloudRepairPrompt = true
                 }
                 refreshDueSoon()
                 registerShortcutItems()
@@ -226,17 +210,6 @@ struct HomeView: View {
                 Button("OK") {}
             } message: {
                 Text(String(localized: "data.reset.message"))
-            }
-            .alert(String(localized: "cloud.repair.title"), isPresented: $showCloudRepairPrompt) {
-                Button(String(localized: "cloud.repair.later"), role: .cancel) {}
-                Button(String(localized: "cloud.repair.fix")) { repairCloudSync() }
-            } message: {
-                Text(String(localized: "cloud.repair.message"))
-            }
-            .alert(String(localized: "cloud.repair.done.title"), isPresented: $showCloudRepairDone) {
-                Button("OK") {}
-            } message: {
-                Text(String(localized: "cloud.repair.done.message"))
             }
             .onReceive(NotificationCenter.default.publisher(for: .quickAddRequested)) { _ in
                 activateQuickAdd()
@@ -1435,18 +1408,6 @@ struct HomeView: View {
             ?? activeStores.first
         guard let resolvedStore else { return }
         pendingReceiptScan = PendingReceiptScan(store: resolvedStore, payload: payload)
-    }
-
-    /// Nutzerausgelöst per "Reparieren"-Button (siehe showCloudRepairPrompt) — löscht nur die
-    /// lokalen Store-Dateien. Tauscht NICHT den schon gebundenen ModelContainer dieser laufenden
-    /// Sitzung aus (dafür bräuchte es eine größere Umstellung, container ist ein `let` in
-    /// SmartCartApp) — der eigentliche Neuaufbau (Cloud zuerst, diesmal ohne die alte Cloud-lose
-    /// Datei im Weg) passiert erst beim nächsten echten App-Start, siehe SmartCartApp.init().
-    /// Deshalb der Hinweis danach, die App manuell zu schließen und neu zu öffnen.
-    private func repairCloudSync() {
-        SmartCartApp.deleteStoreFiles()
-        UserDefaults.standard.removeObject(forKey: SharedModelContainer.lastFailureKey)
-        showCloudRepairDone = true
     }
 
     private func refreshDueSoon() {

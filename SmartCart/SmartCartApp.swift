@@ -92,11 +92,13 @@ struct SmartCartApp: App {
         }
     }
 
-    /// Not `private`: HomeView's user-triggered Cloud-Reparatur button calls this directly (see
-    /// dort) — braucht bewusst ein explizites Antippen statt automatisch zu feuern, da dies
-    /// lokale Daten löscht, ausgelöst durch eine Heuristik (`[cloud]`-only-Fehler), die noch
-    /// nicht in der Praxis erprobt ist.
-    static func deleteStoreFiles() {
+    /// 31.07.2026: der frühere HomeView-"Reparieren"-Button, der diese Funktion userausgelöst
+    /// aufrief, wurde komplett entfernt — er hat auf einem transienten Cloud-Aussetzer (nicht dem
+    /// eigentlichen, inzwischen behobenen Schema-Fehler) reagiert und dabei echte, noch nicht
+    /// synchronisierte Nutzerdaten unwiederbringlich gelöscht. Wieder `private`: nur noch der
+    /// automatische Notfall-Pfad unten (Stufe 3, beide ModelContainer-Versuche gescheitert) darf
+    /// das auslösen, kein weiteres, auf einer Heuristik beruhendes UI-Trigger mehr.
+    private static func deleteStoreFiles() {
         let fm = FileManager.default
         // App-Group-Container (primärer Store-Speicherort)
         if let groupURL = fm.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
