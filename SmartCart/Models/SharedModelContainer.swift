@@ -104,7 +104,11 @@ enum SharedModelContainer {
     /// nicht jeder künftige Start.
     private static func backupLocalStoreBeforeFirstCloudAttempt() {
         let suite = UserDefaults(suiteName: appGroupID) ?? .standard
-        let flagKey = "smartcart.preCloudBackupDone"
+        // "v2": das alte Flag "smartcart.preCloudBackupDone" ist auf Testgeräten bereits gesetzt
+        // (lief einmalig, als der lokale Store noch leer war — schützte dadurch beim eigentlich
+        // kritischen zweiten Vorfall nichts). Neuer Key erzwingt genau EIN frisches Backup vor dem
+        // ersten Kontakt mit dem jetzt korrigierten Schema — unabhängig vom alten Flag-Stand.
+        let flagKey = "smartcart.preCloudBackupDone.v2"
         guard suite.bool(forKey: flagKey) == false else { return }
         suite.set(true, forKey: flagKey)
 
