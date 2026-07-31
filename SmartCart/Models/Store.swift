@@ -3,20 +3,28 @@ import SwiftUI
 
 @Model
 class Store {
-    var id: UUID
-    var name: String
-    var emoji: String
-    var colorHex: String
-    var visitsPerWeek: Double
-    var isActive: Bool
+    // Jede gespeicherte Eigenschaft braucht für SwiftDatas automatische CloudKit-Spiegelung
+    // (SharedModelContainer.make(), erster Versuch: cloudKitDatabase: .private(...)) entweder
+    // optional zu sein oder einen Standardwert zu haben — sonst schlägt ModelContainer-Init mit
+    // SwiftDataError.loadIssueModelContainer fehl. Live bestätigt (30.07.2026): weder in
+    // Development noch Production existierte für Store/ShoppingItem/etc. je ein CloudKit-
+    // Record-Typ, weil genau diese Anforderung verletzt war. Die echten Werte kommen weiterhin
+    // ausschließlich aus init() unten — diese Defaults werden dort immer sofort überschrieben,
+    // sind also rein für die Schema-Validierung da, nie im echten Betrieb sichtbar.
+    var id: UUID = UUID()
+    var name: String = ""
+    var emoji: String = ""
+    var colorHex: String = "#808080"
+    var visitsPerWeek: Double = 1.0
+    var isActive: Bool = true
     var isPaused: Bool = false
-    var categories: [String]
-    var countryCode: String
-    var isCustom: Bool
+    var categories: [String] = []
+    var countryCode: String = "DE"
+    var isCustom: Bool = false
     // Learned aisle order: item name -> average completion position
-    var itemOrderMap: [String: Double]
+    var itemOrderMap: [String: Double] = [:]
     // Learned prices per store: item name (lowercased) -> last confirmed price from receipt
-    var learnedPrices: [String: Double]
+    var learnedPrices: [String: Double] = [:]
     /// Zeitstempel pro `learnedPrices`-Eintrag — ausschließlich fürs Sync-Merge geteilter Listen
     /// nötig (bei einem Preis-Konflikt zwischen zwei Geräten/Mitgliedern gewinnt der spätere,
     /// siehe `SharedStoreService.mergePrices`). Additiv wie `categoryManuallySet`/`completedBy`

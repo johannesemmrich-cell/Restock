@@ -3,12 +3,15 @@ import Foundation
 
 @Model
 class PurchaseRecord {
-    var id: UUID
-    var itemName: String
-    var storeName: String
-    var date: Date
-    var quantityAmount: Double
-    var unit: String
+    // Siehe Store.swift für die Begründung: jede gespeicherte Eigenschaft braucht für SwiftDatas
+    // automatische CloudKit-Spiegelung entweder optional zu sein oder einen Standardwert zu
+    // haben. Echte Werte kommen weiterhin ausschließlich aus init() unten.
+    var id: UUID = UUID()
+    var itemName: String = ""
+    var storeName: String = ""
+    var date: Date = Date()
+    var quantityAmount: Double = 1
+    var unit: String = ""
     var actualPrice: Double?
 
     var item: ShoppingItem?

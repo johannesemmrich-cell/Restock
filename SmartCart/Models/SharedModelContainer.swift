@@ -41,6 +41,7 @@ enum SharedModelContainer {
 
     static func make() -> ModelContainer? {
         let schema = Schema(versionedSchema: SchemaV1.self)
+        backupLocalStoreBeforeFirstCloudAttempt()
         do {
             let cloud = try ModelContainer(
                 for: schema,
@@ -78,5 +79,39 @@ enum SharedModelContainer {
     private static func logContainerFailure(_ stage: String, _ error: Error) {
         print("⚠️ SharedModelContainer[\(stage)] failed: \(error)")
         UserDefaults.standard.set("[\(stage)] \(error)", forKey: lastFailureKey)
+    }
+
+    /// Sicherheitsnetz für Bestandsnutzer, deren Store bisher nie erfolgreich Cloud-gespiegelt
+    /// war (z. B. wegen des am 30.07.2026 behobenen Schema-Fehlers) und die jetzt zum ersten Mal
+    /// den `.private(...)`-Versuch oben gegen eine bereits bestehende, echte lokale Datei
+    /// erleben. Mehrere dokumentierte Apple-Entwickler-Berichte (developer.apple.com/forums,
+    /// u.a. Threads 756538/742899/697756) beschreiben genau dabei Datenverlust — u.a. weil
+    /// NSPersistentCloudKitContainer die lokalen Datensätze entfernen kann, wenn CloudKit den
+    /// iCloud-Account kurzzeitig als nicht verfügbar einstuft. Reine Kopie der Store-Dateien in
+    /// einen separaten Ordner, VOR dem ersten Cloud-Versuch — ändert am eigentlichen Ablauf
+    /// nichts, gibt aber einen manuellen Wiederherstellungsweg, falls der Übergang doch Daten
+    /// verliert. Läuft nur einmal pro Gerät (App-Gruppen-weites Flag, damit nicht jeder der 3
+    /// Prozesse separat sichert) — das genau EINE riskante "erste Mal"-Fenster ist der Punkt,
+    /// nicht jeder künftige Start.
+    private static func backupLocalStoreBeforeFirstCloudAttempt() {
+        let suite = UserDefaults(suiteName: appGroupID) ?? .standard
+        let flagKey = "smartcart.preCloudBackupDone"
+        guard suite.bool(forKey: flagKey) == false else { return }
+        suite.set(true, forKey: flagKey)
+
+        let fm = FileManager.default
+        guard let groupURL = fm.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else { return }
+        let appSupport = groupURL.appendingPathComponent("Library/Application Support")
+        guard let files = try? fm.contentsOfDirectory(at: appSupport, includingPropertiesForKeys: nil) else { return }
+        let storeFiles = files.filter {
+            $0.pathExtension == "store" || $0.lastPathComponent.hasSuffix(".store-wal") || $0.lastPathComponent.hasSuffix(".store-shm")
+        }
+        guard !storeFiles.isEmpty else { return }
+
+        let backupDir = appSupport.appendingPathComponent("PreCloudBackup")
+        try? fm.createDirectory(at: backupDir, withIntermediateDirectories: true)
+        for file in storeFiles {
+            try? fm.copyItem(at: file, to: backupDir.appendingPathComponent(file.lastPathComponent))
+        }
     }
 }

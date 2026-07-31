@@ -22,23 +22,28 @@ enum UserIdentity {
 
 @Model
 class ShoppingItem {
-    var id: UUID
-    var name: String
-    var category: String
+    // Jede gespeicherte Eigenschaft braucht für SwiftDatas automatische CloudKit-Spiegelung
+    // (SharedModelContainer.make(), erster Versuch: cloudKitDatabase: .private(...)) entweder
+    // optional zu sein oder einen Standardwert zu haben — sonst schlägt ModelContainer-Init mit
+    // SwiftDataError.loadIssueModelContainer fehl (live bestätigt 30.07.2026, siehe Store.swift).
+    // Echte Werte kommen weiterhin ausschließlich aus init() unten.
+    var id: UUID = UUID()
+    var name: String = ""
+    var category: String = ""
     /// True once the user has explicitly picked a category in `EditItemView` that differs from
     /// what `AssignmentService.category(for:)` would auto-detect from the name. Views that group
     /// items by category should respect this: keep re-deriving the category from the name for
     /// everything else (so keyword-rule improvements apply immediately), but never overwrite a
     /// category the user manually chose.
     var categoryManuallySet: Bool = false
-    var quantity: String
-    var quantityAmount: Double
-    var unit: String
-    var isCompleted: Bool
+    var quantity: String = "1"
+    var quantityAmount: Double = 1
+    var unit: String = ""
+    var isCompleted: Bool = false
     var isUrgent: Bool = false
-    var addedDate: Date
+    var addedDate: Date = Date()
     var completedDate: Date?
-    var note: String
+    var note: String = ""
     var estimatedPrice: Double?
     /// `true` when `estimatedPrice` came purely from `PriceEstimator` (catalog/category flat
     /// rate) and can therefore be safely recomputed at any time (unit changes, migrations).
