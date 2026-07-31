@@ -104,6 +104,8 @@
 		52BE25312617DFA94CCDBC9D /* FeedbackItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B041DCB417023E5CB6417592 /* FeedbackItem.swift */; };
 		F6AC9DBCCD3B0340225F0207 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B54EB99B9957838C1031AD /* TodoItem.swift */; };
 		65B0C5DC9B4E6AEB0236E6C2 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D7F4FB432EE17B51EBF4B1 /* Color+Hex.swift */; };
+		196D222251481884D5F2584B /* SchemaCloudKitCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C791F6A83D8FA86AE5BB002 /* SchemaCloudKitCompatibilityTests.swift */; };
+		D78DB66BFF8EBECE0338D4D6 /* ExistingDataSurvivesCloudEnableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E41CD9B259ABB65652D89028 /* ExistingDataSurvivesCloudEnableTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +122,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7D934E8A9223AA0C0AC578C5;
 			remoteInfo = RestockShareExtension;
+		};
+		37AF5861F998B18738ADA770 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8D1EBE439F0566ED49E1ED53 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB3462C32B1AFC0E92A07C37;
+			remoteInfo = Restock;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -219,6 +228,9 @@
 		5D50B46194D499838CA3B954 /* RestockShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RestockShareExtension.entitlements; sourceTree = "<group>"; };
 		0D225389B0F89B5DE96DEAD2 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		3600D48F36B44A06C8902C37 /* RestockShareExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = RestockShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C791F6A83D8FA86AE5BB002 /* SchemaCloudKitCompatibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaCloudKitCompatibilityTests.swift; sourceTree = "<group>"; };
+		E41CD9B259ABB65652D89028 /* ExistingDataSurvivesCloudEnableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExistingDataSurvivesCloudEnableTests.swift; sourceTree = "<group>"; };
+		634FBBE2D9633DD7732C8BAF /* RestockTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -261,6 +273,7 @@
 				4F56959E2BC2D8D9BFACBE4D /* Restock.app */,
 				2DC36AAF6609AD2E3E1ED90C /* SmartCartWidgets.appex */,
 				3600D48F36B44A06C8902C37 /* RestockShareExtension.appex */,
+				634FBBE2D9633DD7732C8BAF /* RestockTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -328,6 +341,7 @@
 				41193C84BC703BED280A4991 /* SmartCart */,
 				B831F953906C1265643B2445 /* SmartCartWidgets */,
 				E2E57E1D3AE8240BCE96F034 /* RestockShareExtension */,
+				64E513CDAB2FC8643D24CD6C /* RestockTests */,
 				3E62E12F3B5AE4C2FAF8646A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -467,6 +481,15 @@
 			path = RestockShareExtension;
 			sourceTree = "<group>";
 		};
+		64E513CDAB2FC8643D24CD6C /* RestockTests */ = {
+			isa = PBXGroup;
+			children = (
+				E41CD9B259ABB65652D89028 /* ExistingDataSurvivesCloudEnableTests.swift */,
+				0C791F6A83D8FA86AE5BB002 /* SchemaCloudKitCompatibilityTests.swift */,
+			);
+			path = RestockTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -525,6 +548,24 @@
 			productReference = 3600D48F36B44A06C8902C37 /* RestockShareExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		DC2F3F5F5BD4F073EFDE0A16 /* RestockTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07D4A2CA0201AAC8A7CE314F /* Build configuration list for PBXNativeTarget "RestockTests" */;
+			buildPhases = (
+				E4CC99CAE0D7BA03FF816A58 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FECEE7FCB8468342FC62D72F /* PBXTargetDependency */,
+			);
+			name = RestockTests;
+			packageProductDependencies = (
+			);
+			productName = RestockTests;
+			productReference = 634FBBE2D9633DD7732C8BAF /* RestockTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -546,6 +587,11 @@
 						DevelopmentTeam = XK87E2B3VR;
 						ProvisioningStyle = Automatic;
 					};
+					DC2F3F5F5BD4F073EFDE0A16 = {
+						DevelopmentTeam = XK87E2B3VR;
+						ProvisioningStyle = Automatic;
+						TestTargetID = FB3462C32B1AFC0E92A07C37;
+					};
 				};
 			};
 			buildConfigurationList = C9D725C7FF19989A296B1DC8 /* Build configuration list for PBXProject "Restock" */;
@@ -566,6 +612,7 @@
 				FB3462C32B1AFC0E92A07C37 /* Restock */,
 				2173228C9C541DE670F8E0CF /* SmartCartWidgets */,
 				7D934E8A9223AA0C0AC578C5 /* RestockShareExtension */,
+				DC2F3F5F5BD4F073EFDE0A16 /* RestockTests */,
 			);
 		};
 /* End PBXProject section */
@@ -697,6 +744,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E4CC99CAE0D7BA03FF816A58 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D78DB66BFF8EBECE0338D4D6 /* ExistingDataSurvivesCloudEnableTests.swift in Sources */,
+				196D222251481884D5F2584B /* SchemaCloudKitCompatibilityTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -709,6 +765,11 @@
 			isa = PBXTargetDependency;
 			target = 7D934E8A9223AA0C0AC578C5 /* RestockShareExtension */;
 			targetProxy = 73D4762AA3FC60C53F34D42F /* PBXContainerItemProxy */;
+		};
+		FECEE7FCB8468342FC62D72F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB3462C32B1AFC0E92A07C37 /* Restock */;
+			targetProxy = 37AF5861F998B18738ADA770 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1014,6 +1075,50 @@
 			};
 			name = Release;
 		};
+		36EEC017BC9BF610D090A50D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XK87E2B3VR;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.Restock.RestockTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Restock.app/Restock";
+			};
+			name = Debug;
+		};
+		AE8265D2BA6CB43BB4486DDB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XK87E2B3VR;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.johannesemmrich.Restock.RestockTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Restock.app/Restock";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1049,6 +1154,15 @@
 			buildConfigurations = (
 				B7F306B9D57D516BFF9D7386 /* Debug */,
 				832AC4657837378F51764FE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		07D4A2CA0201AAC8A7CE314F /* Build configuration list for PBXNativeTarget "RestockTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				36EEC017BC9BF610D090A50D /* Debug */,
+				AE8265D2BA6CB43BB4486DDB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

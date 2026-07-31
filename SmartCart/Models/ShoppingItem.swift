@@ -62,8 +62,10 @@ class ShoppingItem {
 
     var store: Store?
 
+    // Siehe Store.swift für die Begründung: CloudKit verlangt To-many-Relationships zwingend
+    // als Optional, nicht nur mit Standardwert — bestätigt per Test (31.07.2026, RestockTests).
     @Relationship(deleteRule: .cascade, inverse: \PurchaseRecord.item)
-    var purchaseRecords: [PurchaseRecord] = []
+    var purchaseRecords: [PurchaseRecord]? = []
 
     init(
         name: String,
@@ -125,7 +127,7 @@ class ShoppingItem {
             actualPrice: nil
         )
         record.item = self
-        purchaseRecords.append(record)
+        purchaseRecords = (purchaseRecords ?? []) + [record]
         // Central widget-reload hook: every check-off path in every process funnels through
         // here (StoreDetailView, AllItemsView, pending-checkoff drain, the widget's own
         // intent), so the homescreen widget refreshes no matter who completed the item.

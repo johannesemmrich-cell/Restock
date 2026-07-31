@@ -374,7 +374,7 @@ struct ReceiptScannerView: View {
             // Behebt "Maultaschen ohne Preis": der Artikel stand nach der Korrektur schon korrekt
             // benannt auf der Liste, nur die Rück-Zuordnung fand ihn vorher nicht mehr.
             let matchedItem: ShoppingItem? = {
-                if let id = line.matchedItemID, let item = store.items.first(where: { $0.id == id }) {
+                if let id = line.matchedItemID, let item = store.items?.first(where: { $0.id == id }) {
                     return item
                 }
                 // Nur bereits abgehakte Artikel — ein Bon belegt einen tatsächlichen Kauf, ein
@@ -383,11 +383,11 @@ struct ReceiptScannerView: View {
                 // bevorzugt den neueren, aber ungekauften Artikel treffen (späteres addedDate als
                 // das completedDate des tatsächlich gekauften) und der Bon-Preis würde auf dem
                 // falschen Artikel landen, während der echte Kauf weiterhin ohne Preis bleibt.
-                return store.items
+                return (store.items ?? [])
                     .filter { $0.isCompleted && $0.name.lowercased() == lineLower }
                     .max(by: { ($0.completedDate ?? $0.addedDate) < ($1.completedDate ?? $1.addedDate) })
             }()
-            let ownUnpricedRecord = matchedItem?.purchaseRecords
+            let ownUnpricedRecord = matchedItem?.purchaseRecords?
                 .filter({ $0.actualPrice == nil })
                 .max(by: { $0.date < $1.date })
             let looseMatch = allRecords.first { record in

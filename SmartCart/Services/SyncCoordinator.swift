@@ -241,9 +241,9 @@ final class SyncCoordinator {
             store.learnedPriceDates[key] = remoteDate
         }
 
-        let localByID = Dictionary(uniqueKeysWithValues: store.items.map { ($0.id, $0) })
+        let localByID = Dictionary(uniqueKeysWithValues: (store.items ?? []).map { ($0.id, $0) })
 
-        for item in store.items where deletedIDs.contains(item.id) {
+        for item in (store.items ?? []) where deletedIDs.contains(item.id) {
             context.delete(item)
         }
 

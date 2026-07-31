@@ -32,8 +32,15 @@ class Store {
     var learnedPriceDates: [String: Date] = [:]
     var sortIndex: Int = 0
 
+    // CloudKit verlangt für automatische Spiegelung, dass ALLE To-many-Relationships optional
+    // sind — nicht nur einen Standardwert haben (anders als bei skalaren Eigenschaften). Live
+    // per Test bestätigt (31.07.2026, RestockTests): SwiftData wirft sonst
+    // SwiftDataError.loadIssueModelContainer mit der expliziten Meldung "CloudKit integration
+    // requires that all relationships be optional" — der Grund, warum der reine
+    // Default-Value-Fix bei skalaren Feldern (siehe oben) allein NICHT ausreichte. Zugriffsstellen
+    // im ganzen Code nutzen weiterhin `items` als nicht-optionale Liste über den Fallback `?? []`.
     @Relationship(deleteRule: .cascade, inverse: \ShoppingItem.store)
-    var items: [ShoppingItem] = []
+    var items: [ShoppingItem]? = []
 
     var shareID: String? {
         get { UserDefaults.standard.string(forKey: "shareID_\(id.uuidString)") }
@@ -139,7 +146,7 @@ class Store {
 
     var pendingItems: [ShoppingItem] {
         let sortByLearnedOrder = autoSortByLearnedOrderEnabled
-        return items.filter { !$0.isCompleted }.sorted { a, b in
+        return (items ?? []).filter { !$0.isCompleted }.sorted { a, b in
             if a.isUrgent != b.isUrgent { return a.isUrgent }
             if sortByLearnedOrder {
                 let posA = itemOrderMap[a.name.lowercased()] ?? 999
@@ -151,7 +158,7 @@ class Store {
     }
 
     var completedItems: [ShoppingItem] {
-        items.filter { $0.isCompleted }
+        (items ?? []).filter { $0.isCompleted }
     }
 
     /// Items stay in `completedItems` on purpose after check-off (deleting them would make

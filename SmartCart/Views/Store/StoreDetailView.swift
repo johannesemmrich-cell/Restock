@@ -172,7 +172,7 @@ struct StoreDetailView: View {
             .animation(.easeInOut(duration: 0.15), value: quickAddParsed?.name)
 
             Section {
-                if !store.items.isEmpty {
+                if !(store.items ?? []).isEmpty {
                     progressHeader(pending: pending)
                 }
                 frequencyRow
@@ -264,7 +264,7 @@ struct StoreDetailView: View {
                 .listRowBackground(Color.surface)
             }
 
-            if store.items.isEmpty {
+            if (store.items ?? []).isEmpty {
                 Section {
                     emptyState
                 }
@@ -879,7 +879,7 @@ struct StoreDetailView: View {
             defaults?.removeObject(forKey: idKey)
             for idString in queuedIDs {
                 guard let id = UUID(uuidString: idString),
-                      let item = store.items.first(where: { $0.id == id }),
+                      let item = store.items?.first(where: { $0.id == id }),
                       !item.isCompleted else { continue }
                 batchOrder.append(item.name)
                 item.markCompleted()

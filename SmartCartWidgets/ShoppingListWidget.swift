@@ -75,7 +75,7 @@ private enum WidgetStoreLoader {
             defaults?.removeObject(forKey: idKey)
             for idString in queuedIDs {
                 guard let id = UUID(uuidString: idString),
-                      let item = store.items.first(where: { $0.id == id }),
+                      let item = store.items?.first(where: { $0.id == id }),
                       !item.isCompleted else { continue }
                 batchOrder.append(item.name)
                 item.markCompleted()
@@ -205,7 +205,7 @@ struct CheckOffWidgetItemIntent: AppIntent {
         //    fort (nicht isoliert `[item.name]`), da Drain+Tap eine zusammenhängende
         //    Abhak-Aktion sind — sonst hätte der getippte Artikel für recordCompletionOrder
         //    immer Index 0, unabhängig davon, was gerade eben schon gedraint wurde.
-        if let item = store.items.first(where: { $0.id == itemUUID }), !item.isCompleted {
+        if let item = store.items?.first(where: { $0.id == itemUUID }), !item.isCompleted {
             batchOrder.append(item.name)
             item.markCompleted()
             store.recordCompletionOrder(batchOrder)

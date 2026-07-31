@@ -77,8 +77,17 @@ enum SharedModelContainer {
     /// NICHT die App-Gruppe — genau die könnte ja gerade das Problem sein) ablegen, damit der
     /// Grund im Fehlerfall wenigstens über einen Diagnose-Screenshot sichtbar wird.
     private static func logContainerFailure(_ stage: String, _ error: Error) {
-        print("⚠️ SharedModelContainer[\(stage)] failed: \(error)")
-        UserDefaults.standard.set("[\(stage)] \(error)", forKey: lastFailureKey)
+        // Die bisherige Kurzform (nur `\(error)`) zeigte nur den generischen Fehlerfall-Namen
+        // (z. B. "loadIssueModelContainer") ohne die tatsächliche zugrunde liegende Ursache —
+        // zu wenig, um zwischen "Schema-Problem", "Account/Netzwerk-Problem" oder etwas ganz
+        // anderem zu unterscheiden. NSError-Bridging + userInfo-Dump holt raus, was Swifts
+        // Standard-Interpolation eines SwiftDataError sonst verschluckt (u.a. oft ein
+        // verschachtelter NSUnderlyingError mit dem echten CloudKit-/CoreData-Fehlercode).
+        let nsError = error as NSError
+        let detail = "domain=\(nsError.domain) code=\(nsError.code) userInfo=\(nsError.userInfo)"
+        let full = "[\(stage)] \(error) | \(detail)"
+        print("⚠️ SharedModelContainer[\(stage)] failed: \(full)")
+        UserDefaults.standard.set(full, forKey: lastFailureKey)
     }
 
     /// Sicherheitsnetz für Bestandsnutzer, deren Store bisher nie erfolgreich Cloud-gespiegelt

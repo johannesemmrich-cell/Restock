@@ -177,7 +177,7 @@ struct ActualPriceEntryView: View {
         // that hasn't already been priced (by a previous receipt scan or price entry) so this can
         // never silently overwrite an earlier, already-recorded purchase; if every record already
         // has a price, don't guess — leave them as they are.
-        if let record = item.purchaseRecords.filter({ $0.actualPrice == nil }).max(by: { $0.date < $1.date }) {
+        if let record = (item.purchaseRecords ?? []).filter({ $0.actualPrice == nil }).max(by: { $0.date < $1.date }) {
             record.actualPrice = itemActualTotal
             // Diese Eingabe fasst potenziell mehrere, an unterschiedlichen Tagen abgehakte Artikel
             // zu EINEM tatsächlichen Bezahlvorgang zusammen (store.completedItems altert nicht von

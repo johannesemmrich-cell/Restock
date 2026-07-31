@@ -83,7 +83,7 @@ actor SharedStoreService {
 
         let localTombstones = pendingDeletions(shareID: code)
         let allTombstones = localTombstones.union(remoteDeletedIDs)
-        let localItems = sharedItemData(from: store.items)
+        let localItems = sharedItemData(from: store.items ?? [])
         let mergedItems = merge(local: localItems, remote: remoteItems, tombstones: allTombstones)
         let (mergedPrices, mergedPriceDates) = mergePrices(
             local: store.learnedPrices, localDates: store.learnedPriceDates,
