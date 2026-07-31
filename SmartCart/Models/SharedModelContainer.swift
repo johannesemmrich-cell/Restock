@@ -34,16 +34,26 @@ enum SharedModelContainer {
     /// mirror against the same store create duplicate records. And do NOT add per-process
     /// branching here either: the fallback order IS the mechanism, and it must stay
     /// identical for every process (see the header warning above).
+    /// Diagnostic key holding the most recent failure from `make()`, prefixed `[cloud]`/`[local]`
+    /// so callers can tell which stage failed — `SmartCartApp.init()` uses the `[cloud]` prefix
+    /// specifically to detect "local opened fine, but cloud never got a chance" (see there).
+    static let lastFailureKey = "smartcart.lastContainerError"
+
     static func make() -> ModelContainer? {
         let schema = Schema(versionedSchema: SchemaV1.self)
         do {
-            return try ModelContainer(
+            let cloud = try ModelContainer(
                 for: schema,
                 configurations: ModelConfiguration(
                     groupContainer: .identifier(appGroupID),
                     cloudKitDatabase: .private(cloudKitContainerID)
                 )
             )
+            // Erfolg löscht einen ggf. stehen gebliebenen Fehler von einem früheren Start —
+            // sonst würde SmartCartApp.init() einen veralteten "[cloud]"-Eintrag von VORHIN
+            // fälschlich auf DIESEN (eigentlich erfolgreichen) Aufruf beziehen.
+            UserDefaults.standard.removeObject(forKey: lastFailureKey)
+            return cloud
         } catch {
             logContainerFailure("cloud", error)
         }
@@ -67,6 +77,6 @@ enum SharedModelContainer {
     /// Grund im Fehlerfall wenigstens über einen Diagnose-Screenshot sichtbar wird.
     private static func logContainerFailure(_ stage: String, _ error: Error) {
         print("⚠️ SharedModelContainer[\(stage)] failed: \(error)")
-        UserDefaults.standard.set("[\(stage)] \(error)", forKey: "smartcart.lastContainerError")
+        UserDefaults.standard.set("[\(stage)] \(error)", forKey: lastFailureKey)
     }
 }
