@@ -256,6 +256,9 @@ struct HomeView: View {
                         // activeStores). No-op-Abmeldung für nicht geteilte Stores.
                         let shareID = store.shareID
                         context.delete(store)
+                        // Flush sofort — sonst sehen andere schon offene Ansichten (z.B.
+                        // StoreSetupView) und der Widget-Prozess die Löschung erst verzögert.
+                        try? context.save()
                         if shareID != nil {
                             Task { await SharedStoreService.shared.leaveBeforeDeleting(shareID: shareID) }
                         }
@@ -922,6 +925,10 @@ struct HomeView: View {
                             Button {
                                 withAnimation { store.isPaused.toggle() }
                                 Haptics.impact(.light)
+                                // Flush sofort — sonst sieht z.B. der Widget-Prozess (eigener
+                                // Store-Zugriff) die Änderung erst verzögert über SwiftDatas
+                                // Autosave (gleiches Muster wie StoreDetailView.toggle(item:)).
+                                try? context.save()
                             } label: {
                                 Label(store.isPaused ? "Fortsetzen" : "Pausieren",
                                       systemImage: store.isPaused ? "play.circle" : "moon.circle")
@@ -934,6 +941,9 @@ struct HomeView: View {
                             Button {
                                 store.isActive = false
                                 Haptics.impact(.light)
+                                // Flush sofort — sonst bleibt der Laden je nach Autosave-Timing
+                                // noch sichtbar, bis `.onChange(of: activeStores)` nachzieht.
+                                try? context.save()
                             } label: {
                                 Label("Archivieren", systemImage: "archivebox")
                             }
@@ -986,6 +996,10 @@ struct HomeView: View {
                         Button {
                             withAnimation { store.isPaused.toggle() }
                             Haptics.impact(.light)
+                            // Flush sofort — sonst sieht z.B. der Widget-Prozess (eigener
+                            // Store-Zugriff) die Änderung erst verzögert über SwiftDatas
+                            // Autosave (gleiches Muster wie StoreDetailView.toggle(item:)).
+                            try? context.save()
                         } label: {
                             Label(store.isPaused ? "Fortsetzen" : "Pausieren",
                                   systemImage: store.isPaused ? "play.circle" : "moon.circle")
@@ -998,6 +1012,9 @@ struct HomeView: View {
                         Button {
                             store.isActive = false
                             Haptics.impact(.light)
+                            // Flush sofort — sonst bleibt der Laden je nach Autosave-Timing
+                            // noch sichtbar, bis `.onChange(of: activeStores)` nachzieht.
+                            try? context.save()
                         } label: {
                             Label("Archivieren", systemImage: "archivebox")
                         }

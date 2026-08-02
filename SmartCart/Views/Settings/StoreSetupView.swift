@@ -19,6 +19,10 @@ struct StoreSetupView: View {
                             Button {
                                 withAnimation { store.isActive = false }
                                 Haptics.impact(.medium)
+                                // Flush sofort — sonst bleibt der Laden auf dem Homescreen je
+                                // nach Autosave-Timing noch sichtbar (gleiches Muster wie
+                                // StoreDetailView.toggle(item:)/HomeView-Kontextmenü).
+                                try? context.save()
                             } label: {
                                 Label("Deaktivieren", systemImage: "pause.circle")
                             }
@@ -48,6 +52,11 @@ struct StoreSetupView: View {
                                 Button {
                                     withAnimation { store.isActive = true }
                                     Haptics.impact(.medium)
+                                    // Flush sofort — sonst taucht der Laden auf dem Homescreen
+                                    // erst mit spürbarer Verzögerung wieder auf, weil HomeViews
+                                    // @Query die Änderung sonst erst über SwiftDatas Autosave
+                                    // mitbekommt (gleiches Muster wie StoreDetailView.toggle(item:)).
+                                    try? context.save()
                                 } label: {
                                     Label("Aktivieren", systemImage: "play.circle")
                                 }
@@ -135,6 +144,9 @@ struct StoreSetupView: View {
                     // ausführlicherer Begründung). No-op-Abmeldung für nicht geteilte Stores.
                     let shareID = store.shareID
                     context.delete(store)
+                    // Flush sofort — sonst sehen HomeView und der Widget-Prozess die Löschung
+                    // erst verzögert über SwiftDatas Autosave.
+                    try? context.save()
                     if shareID != nil {
                         Task { await SharedStoreService.shared.leaveBeforeDeleting(shareID: shareID) }
                     }
@@ -162,6 +174,7 @@ struct StoreSetupView: View {
 
 struct StoreRow: View {
     @Bindable var store: Store
+    @Environment(\.modelContext) private var context
     @State private var showEmojiEdit = false
     @State private var emojiDraft = ""
 
@@ -199,6 +212,9 @@ struct StoreRow: View {
                 Toggle("", isOn: $store.isActive)
                     .labelsHidden()
                     .tint(Color.accent)
+                    // Flush sofort — sonst sieht HomeView die Umschaltung erst verzögert über
+                    // SwiftDatas Autosave (gleiches Muster wie die Swipe-Actions oben).
+                    .onChange(of: store.isActive) { _, _ in try? context.save() }
             }
 
             if store.isActive {

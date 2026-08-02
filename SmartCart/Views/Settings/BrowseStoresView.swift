@@ -257,6 +257,10 @@ struct BrowseStoresView: View {
             newStore.isActive = true
             context.insert(newStore)
         }
+        // Flush sofort — sonst taucht der (wieder-)aktivierte Laden auf dem Homescreen erst
+        // verzögert auf, weil HomeViews @Query die Änderung sonst erst über SwiftDatas Autosave
+        // mitbekommt (gleiches Muster wie StoreDetailView.toggle(item:)).
+        try? context.save()
         addedNames.insert(preset.name)
         Haptics.success()
     }

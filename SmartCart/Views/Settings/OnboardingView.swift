@@ -308,6 +308,9 @@ struct OnboardingView: View {
             store.isActive = selectedStores.contains(store.name)
             context.insert(store)
         }
+        // Flush sofort, bevor HomeView direkt im Anschluss frisch gemountet wird — sonst könnte
+        // dessen erster @Query-Fetch je nach Autosave-Timing noch den alten Stand sehen.
+        try? context.save()
         Task {
             notificationsEnabled = await NotificationService.shared.requestPermission()
         }
