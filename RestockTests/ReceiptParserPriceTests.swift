@@ -1,0 +1,172 @@
+import XCTest
+import SwiftData
+@testable import Restock
+
+/// Beweist den Fix für den Skyr-Bug (gemeldet 2026-08-03): "Skyr, 500 g" (Lidl) zeigte
+/// geschätzt 1.145,00 € statt 1,15 €, wodurch auch der Listen-Gesamtbetrag ("Geschätzter
+/// Betrag") mit aufsummiert kaputt war.
+///
+/// Root Cause war KEIN Formatierungs-/Dezimaltrennzeichen-Bug — jede Preisanzeige in der App
+/// läuft über SwiftUIs lokalisiertes `.currency`-FormatStyle, es gibt keinen einzigen
+/// `NumberFormatter` oder manuelles String-Bauen mit "€" im Repo. Stattdessen ein
+/// Berechnungsfehler in `ReceiptParserService.parseClassic()`: bei Gewichts-/Grundpreiszeilen
+/// wie "0,500 kg x 2,29" (Bon druckt Gewicht × €/kg-Rate, ohne separaten Gesamtpreis auf
+/// derselben Zeile) griff `extractTrailingPrice` die Rate (2,29) selbst statt eines
+/// Gesamtpreises — die Rate wurde dadurch fälschlich als `ReceiptLine.price` (laut eigenem
+/// Struct-Kommentar der Zeilen-GESAMTpreis) übernommen und landete unkorrigiert in
+/// `store.learnedPrices`. Für ein 500g-Produkt macht das ×500 (statt ×0,5) den Endpreis
+/// 1000-fach zu groß: 2,29 × 500 = 1145,00 statt 2,29 × 0,5 = 1,145 ≈ 1,15 €.
+///
+/// Zweiter, per unabhängigem Review gefundener Teil desselben Bugs: selbst mit korrektem
+/// Gesamtpreis lernte `ReceiptScannerView.save()` bei einem ERSTEN Scan eines neuen
+/// Gewichtsartikels (kein historischer Artikel-Match vorhanden, `match?.quantityAmount` liefert
+/// nichts) weiterhin per Fallback `quantity = 1` — der korrekte Gesamtpreis (1,15) landete dann
+/// selbst als "Preis pro Gramm" in `learnedPrices`, und ein künftiger 500g-Artikel hätte
+/// 1,15 × 500 = 575 € geschätzt bekommen. `ReceiptLine.weightBasis` schließt genau diese Lücke.
+final class ReceiptParserPriceTests: XCTestCase {
+
+    // MARK: - Der gemeldete Bug
+
+    func testWeightBasedGrundpreisLineComputesCorrectTotal() throws {
+        // Name auf eigener Zeile, Gewichtsdetail direkt darunter, OHNE "EUR/Kg"-Textrest nach
+        // der Rate (Vision-Rekonstruktion lässt diesen manchmal weg) — exakt das im Code
+        // dokumentierte "0,436 kg x 12,49"-Format, nur mit Skyrs echten Zahlen.
+        let lines = ["Skyr Natur 500g", "0,500 kg x 2,29"]
+
+        let result = ReceiptParserService.parse(lines)
+
+        let skyr = try XCTUnwrap(
+            result.first { $0.name.lowercased().contains("skyr") },
+            "Kein ReceiptLine für Skyr erkannt"
+        )
+        XCTAssertEqual(
+            skyr.price, 1.15, accuracy: 0.005,
+            "Gesamtpreis muss Gewicht × Grundpreis sein (0,5 kg × 2,29 €/kg ≈ 1,15 €), nicht die nackte Rate 2,29 €"
+        )
+
+        // Exakt die Formatierung, die der Nutzer auf der Liste sieht (SwiftUI .currency-Style,
+        // deutsches Locale). Non-breaking spaces normalisieren, da Apples Formatter je nach
+        // OS-Version U+00A0/U+202F statt eines normalen Leerzeichens vor "€" verwendet.
+        let formatted = skyr.price
+            .formatted(.currency(code: "EUR").locale(Locale(identifier: "de_DE")))
+            .replacingOccurrences(of: "\u{00A0}", with: " ")
+            .replacingOccurrences(of: "\u{202F}", with: " ")
+        XCTAssertEqual(formatted, "1,15 €")
+    }
+
+    /// Der Gewichts-Divisor muss getrennt von `quantity` ankommen: `quantity` wird in der
+    /// Review-UI als "N × Preis" angezeigt (`ReceiptLineRow.detailText`) — 500 dort würde
+    /// "500 × ..." zeigen, als hätte der Nutzer 500 Stück gekauft.
+    func testWeightLineSetsGramWeightBasisNotQuantity() throws {
+        let lines = ["Skyr Natur 500g", "0,500 kg x 2,29"]
+
+        let result = ReceiptParserService.parse(lines)
+
+        let skyr = try XCTUnwrap(result.first { $0.name.lowercased().contains("skyr") })
+        XCTAssertEqual(skyr.weightBasis ?? -1, 500, accuracy: 0.01, "500g als Gramm-Basis erwartet")
+        XCTAssertEqual(skyr.quantity, 1, accuracy: 0.001, "quantity darf NICHT auf das Gewicht gesetzt werden")
+    }
+
+    // MARK: - Weiteres dokumentiertes Format (Code-Kommentar in ReceiptParserService)
+
+    func testDocumentedWeightLineWithoutSuffixComputesWeightTimesRate() throws {
+        let lines = ["Aufschnitt", "0,436 kg x 12,49"]
+
+        let result = ReceiptParserService.parse(lines)
+
+        let line = try XCTUnwrap(result.first { $0.name.lowercased().contains("aufschnitt") })
+        XCTAssertEqual(line.price, 0.436 * 12.49, accuracy: 0.01)
+        XCTAssertNotEqual(line.price, 12.49, "Die nackte Grundpreis-Rate darf nie als Gesamtpreis übernommen werden")
+    }
+
+    // MARK: - Stückzahl-Variante ("3 Stk x 0,79") — quantity statt weightBasis
+
+    func testPieceCountLineSetsQuantityNotWeightBasis() throws {
+        let lines = ["Eier Freiland", "3 Stk x 0,79"]
+
+        let result = ReceiptParserService.parse(lines)
+
+        let eier = try XCTUnwrap(result.first { $0.name.lowercased().contains("eier") })
+        XCTAssertEqual(eier.price, 3 * 0.79, accuracy: 0.01)
+        XCTAssertEqual(eier.quantity, 3, accuracy: 0.001, "echte Stückzahl gehört in quantity (korrekt für die '3 × 0,79 €'-Anzeige)")
+        XCTAssertNil(eier.weightBasis, "Stückzahl-Zeilen dürfen keinen Gewichts-Divisor setzen")
+    }
+
+    // MARK: - Non-Regression: Zeile mit echtem, separatem Gesamtpreis bleibt unangetastet
+
+    func testWeightLineWithSeparateTotalPriceLineIsNotOverridden() throws {
+        // "Umgekehrte Reihenfolge" (siehe pendingPrice-Kommentar in ReceiptParserService): eine
+        // reine Preiszeile (der echte, tatsächlich bezahlte Gesamtpreis — hier absichtlich MIT
+        // Rabatt, klar verschieden von Gewicht × Rate = 0,584 × 1,29 ≈ 0,75) steht VOR der
+        // Name+Gewicht-Zeile. Mit 0,75 statt 0,50 wären beide Pfade (Override greift / Override
+        // greift nicht) numerisch ununterscheidbar gewesen — bewusst so gewählt, dass ein
+        // fälschlich greifender Override (0,75 statt 0,50) den Test sicher rot machen würde.
+        let lines = ["0,50", "Banane lose  0,584 kg x 1,29  EUR/Kg"]
+
+        let result = ReceiptParserService.parse(lines)
+
+        let banane = try XCTUnwrap(result.first { $0.name.lowercased().contains("banane") })
+        XCTAssertEqual(
+            banane.price, 0.50, accuracy: 0.005,
+            "Ein bereits vorhandener echter Gesamtpreis darf nicht durch Gewicht × Rate überschrieben werden"
+        )
+    }
+
+    // MARK: - Fehlender Gesamtpreis überhaupt (weder Trailing-Preis noch pendingPrice)
+
+    func testWeightLineWithNoSeparateTotalFallsBackToComputedTotal() throws {
+        // Gleiche Zeile wie oben, aber OHNE vorherige Preiszeile — bisher wurde die Position in
+        // diesem Fall mangels erkennbaren Preises komplett verworfen (fehlender statt sicher
+        // falscher Preis); jetzt wird der berechenbare Gesamtpreis genutzt.
+        let lines = ["Banane lose  0,584 kg x 1,29  EUR/Kg"]
+
+        let result = ReceiptParserService.parse(lines)
+
+        let banane = try XCTUnwrap(result.first { $0.name.lowercased().contains("banane") })
+        XCTAssertEqual(banane.price, 0.584 * 1.29, accuracy: 0.01)
+    }
+
+    // MARK: - End-to-End: derselbe Mengen-Auflösung/Lern-Kreislauf wie ReceiptScannerView.save()
+
+    /// Ruft `EditableReceiptLine.learningQuantity(matchQuantityAmount:)` — dieselbe Methode, die
+    /// `ReceiptScannerView.save()` selbst aufruft — statt ihre Formel hier nachzubilden. Ein
+    /// unabhängiges Review hat gezeigt: eine Kopie der Formel bemerkt eine Regression in `save()`
+    /// selbst NICHT (Beweis: `save()`s echte Formel testweise auf den alten, kaputten Stand
+    /// zurückgesetzt — beide Tests blieben mit der kopierten Formel grün). Läuft für BEIDE Fälle
+    /// durch: ein historischer Match existiert (`matchQuantityAmount` gesetzt) UND — der zuvor
+    /// kaputte Fall — gar keiner (`nil`, z. B. allererster Scan dieses Artikels). Vor der
+    /// `weightBasis`-Änderung fiel der `nil`-Fall auf den Fallback `1` zurück und hätte 1,15 als
+    /// Gramm-Preis gelernt (→ 575 € für einen künftigen 500g-Artikel statt 1,15 €).
+    private func assertLearnedPriceRoundTrip(matchQuantityAmount: Double?, line: String) throws {
+        let lines = ["Skyr Natur 500g", line]
+        let receiptLine = try XCTUnwrap(ReceiptParserService.parse(lines).first)
+
+        // Exakt dieselbe Konstruktion wie an den echten Call-Sites in ReceiptScannerView.swift
+        // (init(store:prefilled:) / der normale Scan-Pfad) — kein Test-Sonderweg.
+        let editableLine = EditableReceiptLine(
+            name: receiptLine.name,
+            price: receiptLine.price,
+            quantity: receiptLine.quantity,
+            unit: receiptLine.unit,
+            weightBasis: receiptLine.weightBasis
+        )
+        let quantity = editableLine.learningQuantity(matchQuantityAmount: matchQuantityAmount)
+        let perUnitPrice = receiptLine.price / quantity
+
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#123456")
+        store.learnedPrices["skyr natur 500g"] = perUnitPrice
+        let item = ShoppingItem(name: "Skyr Natur 500g", quantityAmount: 500, unit: "g", store: store)
+
+        XCTAssertEqual(try XCTUnwrap(item.estimatedLineTotal), 1.15, accuracy: 0.01)
+    }
+
+    func testLearnedPriceRoundTripWithHistoricalMatch() throws {
+        try assertLearnedPriceRoundTrip(matchQuantityAmount: 500, line: "0,500 kg x 2,29")
+    }
+
+    func testLearnedPriceRoundTripWithoutHistoricalMatch() throws {
+        // Der Fall, den die alte Version dieses Tests (vor dem unabhängigen Review) nicht
+        // abdeckte: kein Match, `matchQuantityAmount: nil`.
+        try assertLearnedPriceRoundTrip(matchQuantityAmount: nil, line: "0,500 kg x 2,29")
+    }
+}

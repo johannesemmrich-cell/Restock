@@ -30,6 +30,11 @@ struct ResolvedReceiptLine: Codable {
     var price: Double
     var quantity: Double
     var unit: String
+    /// Siehe `ReceiptLine.weightBasis` — durchgereicht bis zum Preis-Lernen in
+    /// `ReceiptScannerView.save()`. Optional mit Default, damit ein bereits in der Share-Extension-
+    /// Handoff-UserDefaults liegender, älterer `SharedReceiptPayload` (ohne dieses Feld) beim
+    /// Decodieren nicht fehlschlägt, sondern einfach `nil` liefert.
+    var weightBasis: Double? = nil
     var suggestions: [ReceiptSuggestion]
     var matchedItemID: UUID?
 }
@@ -146,6 +151,7 @@ enum ReceiptResolutionService {
                 price: line.price,
                 quantity: line.quantity,
                 unit: line.unit,
+                weightBasis: line.weightBasis,
                 suggestions: suggestionsByIndex[index] ?? [],
                 matchedItemID: matchedItemIDs[index]
             )

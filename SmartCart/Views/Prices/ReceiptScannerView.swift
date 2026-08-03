@@ -18,6 +18,9 @@ struct EditableReceiptLine: Identifiable {
     var originalName: String = ""
     var quantity: Double = 1 // Stückzahl (Mengenzeile "2 x 1.25€" / Multipack "6X1.5L")
     var unit: String = ""    // Größe aus dem Namen, z. B. "1,5l", "400g"
+    /// Siehe `ReceiptLine.weightBasis` (ReceiptParserService.swift) — reiner Durchreiche-Wert
+    /// für `save()`, keine eigene UI-Darstellung.
+    var weightBasis: Double? = nil
     /// Antippbare Alternativen aus den gerade abgehakten Artikeln dieses Stores — z. B. wenn die
     /// automatische Auflösung danebenliegt (kryptische Bon-Kürzel wie "MDHSZ" für "Mozzarella"
     /// lassen sich durch keine Text-Ähnlichkeit zuverlässig auflösen). Tippen setzt nur `name`;
@@ -32,6 +35,18 @@ struct EditableReceiptLine: Identifiable {
     /// wird — sonst bliebe ein manuell korrigierter Name fälschlich mit der alten Identität
     /// verknüpft.
     var matchedItemID: UUID? = nil
+
+    /// Divisor fürs Preis-Lernen in `save()` — als Methode extrahiert (statt inline dort
+    /// berechnet), damit Tests exakt diese Formel aufrufen statt sie nachzubilden. Ein Test, der
+    /// die Formel nur kopiert, würde eine künftige Regression in `save()` selbst nicht bemerken
+    /// (siehe RestockTests/ReceiptParserPriceTests.swift). Bevorzugt `weightBasis` (Gewichtszeile
+    /// wie "0,500 kg x 2,29" — verlässlich, weil direkt aus dem Bon geparst, unabhängig von einem
+    /// Artikel-Match), sonst mengenbewusst `quantity` selbst (Mengenzeile "2 x 1.25€" oder
+    /// Multipack-Token "6X1.5L"), sonst den abgehakten Artikel (`matchQuantityAmount`); Fallback
+    /// ist 1, dann ist der Preis bereits per-unit.
+    func learningQuantity(matchQuantityAmount: Double?) -> Double {
+        weightBasis ?? (quantity > 1 ? quantity : (matchQuantityAmount ?? 1))
+    }
 }
 
 // MARK: - Main Scanner View
@@ -79,6 +94,7 @@ struct ReceiptScannerView: View {
                 originalName: line.originalName,
                 quantity: line.quantity,
                 unit: line.unit,
+                weightBasis: line.weightBasis,
                 suggestions: line.suggestions,
                 matchedItemID: line.matchedItemID
             )
@@ -335,6 +351,7 @@ struct ReceiptScannerView: View {
                         originalName: line.originalName,
                         quantity: line.quantity,
                         unit: line.unit,
+                        weightBasis: line.weightBasis,
                         suggestions: line.suggestions,
                         matchedItemID: line.matchedItemID
                     )
@@ -413,11 +430,9 @@ struct ReceiptScannerView: View {
 
             // Learn price for this store — overwrites previous learned price for this item.
             // `learnedPrices` must stay per-unit (it seeds `ShoppingItem.estimatedPrice`, which
-            // is canonically per-unit), but a receipt line's price is the line TOTAL. Die Menge
-            // kommt mengenbewusst bevorzugt vom Bon selbst (Mengenzeile "2 x 1.25€" oder
-            // Multipack-Token "6X1.5L" → `line.quantity`), sonst vom abgehakten Artikel
-            // (`match.quantityAmount`); Fallback ist 1, dann ist der Preis bereits per-unit.
-            let quantity = line.quantity > 1 ? line.quantity : (match?.quantityAmount ?? 1)
+            // is canonically per-unit), but a receipt line's price is the line TOTAL — siehe
+            // `EditableReceiptLine.learningQuantity(matchQuantityAmount:)` für die Herleitung.
+            let quantity = line.learningQuantity(matchQuantityAmount: match?.quantityAmount)
             let perUnitPrice = quantity > 0 ? line.price / quantity : line.price
             store.learnedPrices[lineLower] = perUnitPrice
             store.learnedPriceDates[lineLower] = Date()

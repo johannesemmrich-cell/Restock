@@ -146,7 +146,8 @@ struct ShareReceiptView: View {
             resolvedLines = parsed.map { line in
                 ResolvedReceiptLine(
                     name: line.name, originalName: line.name, price: line.price,
-                    quantity: line.quantity, unit: line.unit, suggestions: [], matchedItemID: nil
+                    quantity: line.quantity, unit: line.unit, weightBasis: line.weightBasis,
+                    suggestions: [], matchedItemID: nil
                 )
             }
         }

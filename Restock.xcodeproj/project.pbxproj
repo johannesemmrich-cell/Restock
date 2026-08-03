@@ -106,6 +106,7 @@
 		65B0C5DC9B4E6AEB0236E6C2 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D7F4FB432EE17B51EBF4B1 /* Color+Hex.swift */; };
 		196D222251481884D5F2584B /* SchemaCloudKitCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C791F6A83D8FA86AE5BB002 /* SchemaCloudKitCompatibilityTests.swift */; };
 		D78DB66BFF8EBECE0338D4D6 /* ExistingDataSurvivesCloudEnableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E41CD9B259ABB65652D89028 /* ExistingDataSurvivesCloudEnableTests.swift */; };
+		9D507887509A2C64F3C625EF /* ReceiptParserPriceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -230,6 +231,7 @@
 		3600D48F36B44A06C8902C37 /* RestockShareExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = RestockShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C791F6A83D8FA86AE5BB002 /* SchemaCloudKitCompatibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaCloudKitCompatibilityTests.swift; sourceTree = "<group>"; };
 		E41CD9B259ABB65652D89028 /* ExistingDataSurvivesCloudEnableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExistingDataSurvivesCloudEnableTests.swift; sourceTree = "<group>"; };
+		68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserPriceTests.swift; sourceTree = "<group>"; };
 		634FBBE2D9633DD7732C8BAF /* RestockTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -486,6 +488,7 @@
 			children = (
 				E41CD9B259ABB65652D89028 /* ExistingDataSurvivesCloudEnableTests.swift */,
 				0C791F6A83D8FA86AE5BB002 /* SchemaCloudKitCompatibilityTests.swift */,
+				68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */,
 			);
 			path = RestockTests;
 			sourceTree = "<group>";
@@ -750,6 +753,7 @@
 			files = (
 				D78DB66BFF8EBECE0338D4D6 /* ExistingDataSurvivesCloudEnableTests.swift in Sources */,
 				196D222251481884D5F2584B /* SchemaCloudKitCompatibilityTests.swift in Sources */,
+				9D507887509A2C64F3C625EF /* ReceiptParserPriceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

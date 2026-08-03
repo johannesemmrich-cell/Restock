@@ -10,6 +10,15 @@ struct ReceiptLine {
                               // veränderlich, z. B. um einen Pfand-/Consigne-Betrag zu addieren)
     var quantity: Double = 1 // Stückzahl (aus "N x P.PP"-Mengenzeile oder Multipack-Token wie "6X1.5L")
     var unit: String = ""    // Größenangabe aus dem Namen, z. B. "1,5l", "400g", "50cl"
+    /// Bei Gewichtszeilen ("0,500 kg x 2,29") das erkannte Gewicht umgerechnet in Gramm (z. B.
+    /// 500 für "0,500 kg") — bewusst NICHT in `quantity` abgelegt, weil `quantity` als Stückzahl
+    /// in der Review-UI angezeigt wird (`ReceiptLineRow.detailText`: "N × Preis") und dort ein
+    /// Gewichts-Divisor als "500× gekauft" erscheinen würde. Dient ausschließlich als
+    /// verlässlicher Divisor beim Preis-Lernen (`ReceiptScannerView.save()`), unabhängig davon,
+    /// ob ein historischer Artikel-Match existiert — der bisher (`match?.quantityAmount`) die
+    /// einzige Quelle für einen korrekten Gewichts-Divisor war und bei einem ERSTEN Scan eines
+    /// neuen Gewichtsartikels fehlt (dann fiel der Divisor fälschlich auf 1 zurück).
+    var weightBasis: Double? = nil
 
     /// Stückpreis (Gesamtpreis ÷ Menge) — Basis für mengenbewusstes Preis-Lernen.
     var unitPrice: Double { quantity > 0 ? price / quantity : price }
@@ -249,13 +258,45 @@ enum ReceiptParserService {
                 && !isAdminLine(lower, ignoring: ["eur", "euro"]) {
                 // Preis bevorzugt aus dieser Zeile selbst, sonst aus einer vorherigen reinen
                 // Preiszeile (umgekehrte Reihenfolge, siehe pendingPrice oben).
-                let price = extractTrailingPrice(from: trimmed) ?? pendingPrice
+                var price = extractTrailingPrice(from: trimmed) ?? pendingPrice
+                var quantity: Double = 1
+                var weightBasis: Double? = nil
+                // Manche Bons drucken auf dieser Zeile NUR Gewicht/Stückzahl × Grundpreis-Rate,
+                // ohne separaten Gesamtpreis ("0,436 kg x 12,49" — Beispiel oben im Kommentar).
+                // Dann liest extractTrailingPrice (mangels anderer Zahl) die RATE selbst statt
+                // eines Gesamtpreises — erkennbar daran, dass der oben ermittelte "Preis" exakt
+                // der Rate entspricht (oder gar keiner gefunden wurde). In dem Fall durch den
+                // tatsächlichen, mathematisch korrekten Gesamtpreis (Gewicht × Rate) ersetzen,
+                // statt die Rate fälschlich als Gesamtpreis zu übernehmen — Ursache eines Bugs,
+                // bei dem gewogene Artikel (z. B. "Skyr 500g" bei 2,29 €/kg) mit dem 1000-fachen
+                // Preis (1145,00 € statt 1,15 €) auf der Liste landeten. Greift NICHT, wenn oben
+                // bereits ein echter, eigenständiger Gesamtpreis gefunden wurde (z. B. über
+                // pendingPrice aus einer vorherigen reinen Preiszeile) — der ist verlässlicher als
+                // eine Neuberechnung.
+                if let match = weightTimesRate(in: trimmed),
+                   price == nil || price.map({ abs($0 - match.rate) < 0.005 }) == true {
+                    price = (match.weight * match.rate * 100).rounded() / 100
+                    switch match.unit {
+                    case "kg":
+                        // Gramm-Basis, damit der Divisor direkt zu `quantityAmount`/`unit == "g"`
+                        // auf `ShoppingItem` passt (siehe `weightBasis`-Doc oben) — unabhängig
+                        // davon, ob beim Preis-Lernen später ein historischer Match existiert.
+                        weightBasis = match.weight * 1000
+                    case "stk":
+                        // Echte Stückzahl — anders als bei "kg" hier direkt `quantity` selbst
+                        // setzen: das ist zugleich der korrekte Wert für die "N × Preis"-Anzeige
+                        // in der Review-UI (ReceiptLineRow.detailText), keine Sonderrolle nötig.
+                        quantity = match.weight
+                    default:
+                        break
+                    }
+                }
                 // Name bevorzugt aus einer vorherigen Namenszeile; fehlt die, aus dem Teil DIESER
                 // Zeile vor dem Gewichts-Muster (manche Bons drucken Name und Gewichtsdetail auf
                 // derselben rekonstruierten Zeile).
                 let name = pendingName ?? nameChunkBeforeWeightDetail(trimmed)
                 if let name, let price {
-                    results.append(ReceiptLine(name: name, price: price))
+                    results.append(ReceiptLine(name: name, price: price, quantity: quantity, weightBasis: weightBasis))
                 }
                 pendingName = nil
                 pendingPrice = nil
@@ -644,6 +685,29 @@ enum ReceiptParserService {
         if !viable(cleaned) { cleaned = tidy(s) }
         if !viable(cleaned) { cleaned = tidy(raw) }
         return (smartCapitalize(cleaned), quantity, unit)
+    }
+
+    // Erkennt "0,436 kg x 12,49" / "0,500 kg x 2,29 EUR/Kg" / "3 Stk x 0,79 EUR/Stk" — Gewicht
+    // bzw. Stückzahl × Grundpreis-Rate — irgendwo in der Zeile (nicht zeilenend-verankert, im
+    // Gegensatz zu extractTrailingPrice), damit auch ein nachfolgender "EUR/Kg"-Textrest die
+    // Erkennung nicht blockiert. Die Einheit (Gruppe 2) wird mit zurückgegeben, weil "kg" und
+    // "stk" beim Aufrufer unterschiedlich behandelt werden (Gewichts-Divisor vs. echte Stückzahl).
+    private static let weightTimesRateRegex = try? NSRegularExpression(
+        pattern: #"(\d{1,3}(?:[,\.]\d{1,3})?)\s*(kg|stk)\s*[x×]\s*(\d{1,4}[,\.]\d{2})"#,
+        options: [.caseInsensitive]
+    )
+
+    private static func weightTimesRate(in line: String) -> (weight: Double, unit: String, rate: Double)? {
+        guard let rx = weightTimesRateRegex,
+              let match = rx.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)),
+              let weightRange = Range(match.range(at: 1), in: line),
+              let unitRange = Range(match.range(at: 2), in: line),
+              let rateRange = Range(match.range(at: 3), in: line),
+              let weight = Double(line[weightRange].replacingOccurrences(of: ",", with: ".")),
+              let rate = Double(line[rateRange].replacingOccurrences(of: ",", with: ".")),
+              weight > 0, rate > 0
+        else { return nil }
+        return (weight, line[unitRange].lowercased(), rate)
     }
 
     // Preis am Zeilenende extrahieren (für Gewichtszeilen)
