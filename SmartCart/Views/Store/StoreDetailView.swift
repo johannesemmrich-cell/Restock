@@ -410,7 +410,15 @@ struct StoreDetailView: View {
             // 10s-Loop hätte nur doppelt gepollt und doppelte Merge/Re-Render-Kaskaden ausgelöst,
             // genau während man die Liste aktiv ansieht. Der sofortige Pull unten bleibt für ein
             // knackiges erstes Laden.
-            if store.shareID != nil {
+            var skipCloudKit = false
+            #if DEBUG
+            // Für Screenshot-Automation: ein per `-seedSharedAssignmentForScreenshots`
+            // synthetisch gesetztes shareID hat keinen echten CloudKit-Share dahinter — ein
+            // echter Pull-Versuch würde fehlschlagen und den "Sync fehlgeschlagen"-Banner
+            // zeigen. Gleiches Muster wie `-skipCloudKitForScreenshots` in StoreShareSheet.swift.
+            skipCloudKit = ProcessInfo.processInfo.arguments.contains("-skipCloudKitForScreenshots")
+            #endif
+            if store.shareID != nil && !skipCloudKit {
                 let generation = nextSyncGeneration()
                 Task {
                     await MainActor.run { isSyncing = true }

@@ -19,7 +19,12 @@ struct SmartCartApp: App {
         // Runs regardless of which branch below sets `container`, and before any push
         // notification can arrive — a silent push can wake the app in the background without
         // ever presenting the WindowGroup, so this can't wait for a view's `.task` to run.
-        defer { SyncCoordinator.shared.modelContext = container.mainContext }
+        defer {
+            SyncCoordinator.shared.modelContext = container.mainContext
+            #if DEBUG
+            Self.seedSharedAssignmentForScreenshotsIfNeeded(context: container.mainContext)
+            #endif
+        }
 
         SmartCartShortcuts.updateAppShortcutParameters()
         CloudPreferencesSync.shared.start()
@@ -122,6 +127,56 @@ struct SmartCartApp: App {
             }
         }
     }
+
+    #if DEBUG
+    /// Screenshot-only seed for the "Wer bringt was mit?" marketing screenshot: a real shared
+    /// store with real CloudKit members requires a second participant actually accepting a
+    /// share, which a single-simulator screenshot run can't produce — `shareID`/`members` are
+    /// plain UserDefaults-backed properties though (see Store.swift), so seeding them directly
+    /// is safe and mirrors the existing `-premiumForScreenshots` pattern in PremiumService.swift.
+    /// Only runs on `-seedSharedAssignmentForScreenshots`, DEBUG-only, never ships to users.
+    private static func seedSharedAssignmentForScreenshotsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedSharedAssignmentForScreenshots") else { return }
+        // The App-Group container persists across installs/test runs (see the class-level
+        // comment on `appGroupID` above) — a stale "Lidl" store from an earlier ShotBot run
+        // (e.g. testCartTeilen's seedStoreAndHabit) would otherwise sort ahead of this one and
+        // `openStoreCard`'s `label CONTAINS "Lidl"` match would grab the wrong store. Wipe all
+        // stores first so this screenshot mode always starts from a known, clean state.
+        if let existing = try? context.fetch(FetchDescriptor<Store>()) {
+            for s in existing { context.delete(s) }
+        }
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")
+        store.shareID = "444-RU8"
+        store.isSharedByMe = true
+        store.members = ["Anna", "Tom"]
+        context.insert(store)
+
+        // English item names for the EN screenshot pass — AssignmentService.category(for:)
+        // recognizes both German and English keywords (see its category dictionaries), so
+        // category detection still works either way.
+        let isEnglish = ProcessInfo.processInfo.arguments.contains("(en)")
+        let seeds: [(name: String, quantity: String, unit: String, assignedTo: String, addedBy: String)] = isEnglish
+            ? [
+                ("Milk", "2", "l", "Anna", "Anna"),
+                ("Bananas", "1", "kg", "Tom", "Tom"),
+                ("Bread", "1", "", "", UserIdentity.displayName),
+                ("Cheese", "1", "", "Anna", UserIdentity.displayName),
+            ]
+            : [
+                ("Milch", "2", "l", "Anna", "Anna"),
+                ("Bananen", "1", "kg", "Tom", "Tom"),
+                ("Brot", "1", "", "", UserIdentity.displayName),
+                ("Käse", "1", "", "Anna", UserIdentity.displayName),
+            ]
+        for seed in seeds {
+            let item = ShoppingItem(name: seed.name, quantity: seed.quantity, unit: seed.unit, store: store)
+            item.assignedTo = seed.assignedTo
+            item.addedBy = seed.addedBy
+            context.insert(item)
+        }
+        try? context.save()
+    }
+    #endif
 
     var body: some Scene {
         WindowGroup {
