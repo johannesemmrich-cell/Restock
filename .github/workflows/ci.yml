@@ -5,13 +5,37 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: macos-26
     timeout-minutes: 30
     steps:
+      # Always first, always runs, pure shell echo — costs nothing even if every
+      # later step fails or gets skipped.
+      - name: Regression-Testhinweis
+        run: |
+          echo "⚠️ Wichtig: CI verhindert Regressionen nur zusammen mit Tests — für neue Features bitte jeweils einen passenden Unit-Test in RestockTests/ ergänzen, sonst greift die CI nicht." >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/checkout@v4
+
+      # NOTE: this project uses XcodeGen (project.yml), but project.yml is known to be
+      # stale vs. the checked-in Restock.xcodeproj — it doesn't declare the
+      # SmartCartWidgets target, its entitlements, or the shared scheme. Running
+      # `xcodegen generate` would silently drop all of that. CI intentionally builds
+      # the committed .xcodeproj as-is and does NOT run xcodegen.
+
+      - name: Select latest available Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$LATEST" ]; then LATEST="/Applications/Xcode.app"; fi
+          echo "Using $LATEST"
+          echo "DEVELOPER_DIR=$LATEST/Contents/Developer" >> "$GITHUB_ENV"
 
       - name: Show environment
         run: |
@@ -21,16 +45,53 @@ jobs:
       - name: Install xcpretty
         run: gem install xcpretty --no-document
 
+      - name: Pick newest available iPhone simulator
+        id: sim
+        run: |
+          DEVICES=$(xcrun simctl list -j devices available)
+          RUNTIME=$(echo "$DEVICES" | jq -r '.devices | keys | map(select(test("iOS"))) | sort | last')
+          UDID=$(echo "$DEVICES" | jq -r --arg rt "$RUNTIME" '.devices[$rt] | map(select(.isAvailable and (.name | test("^iPhone")))) | .[0].udid')
+          NAME=$(echo "$DEVICES" | jq -r --arg rt "$RUNTIME" '.devices[$rt] | map(select(.isAvailable and (.name | test("^iPhone")))) | .[0].name')
+          if [ -z "$UDID" ] || [ "$UDID" = "null" ]; then
+            echo "No available iPhone simulator found" >&2
+            exit 1
+          fi
+          echo "Using $NAME ($UDID) on runtime $RUNTIME"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
       - name: Build and test
         run: |
           set -o pipefail
           xcodebuild test \
             -project Restock.xcodeproj \
             -scheme Restock \
-            -destination 'platform=iOS Simulator,name=iPhone 17' \
+            -destination 'platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}' \
+            -only-testing:RestockTests \
+            -resultBundlePath TestResults.xcresult \
+            -enableCodeCoverage YES \
             -skipMacroValidation \
             CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=YES \
             AD_HOC_CODE_SIGNING_ALLOWED=YES \
             | xcpretty
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          if [ -d TestResults.xcresult ]; then
+            {
+              echo "### Code Coverage"
+              echo '```'
+              xcrun xccov view --report --only-targets TestResults.xcresult
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload xcresult on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults.xcresult
+          path: TestResults.xcresult
+          retention-days: 7
