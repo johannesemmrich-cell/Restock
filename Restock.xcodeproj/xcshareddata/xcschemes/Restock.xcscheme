@@ -49,6 +49,20 @@
                ReferencedContainer = "container:Restock.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "78FFE3BC7E33E172B1422F46"
+               BuildableName = "RestockUITests.xctest"
+               BlueprintName = "RestockUITests"
+               ReferencedContainer = "container:Restock.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -74,6 +88,16 @@
                BlueprintIdentifier = "DC2F3F5F5BD4F073EFDE0A16"
                BuildableName = "RestockTests.xctest"
                BlueprintName = "RestockTests"
+               ReferencedContainer = "container:Restock.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "78FFE3BC7E33E172B1422F46"
+               BuildableName = "RestockUITests.xctest"
+               BlueprintName = "RestockUITests"
                ReferencedContainer = "container:Restock.xcodeproj">
             </BuildableReference>
          </TestableReference>

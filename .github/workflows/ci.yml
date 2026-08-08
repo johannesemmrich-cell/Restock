@@ -95,3 +95,74 @@ jobs:
           name: TestResults.xcresult
           path: TestResults.xcresult
           retention-days: 7
+
+  ui-test:
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest available Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$LATEST" ]; then LATEST="/Applications/Xcode.app"; fi
+          echo "DEVELOPER_DIR=$LATEST/Contents/Developer" >> "$GITHUB_ENV"
+
+      - name: Install xcpretty
+        run: gem install xcpretty --no-document
+
+      - name: Pick newest available iPhone simulator
+        id: sim
+        run: |
+          DEVICES=$(xcrun simctl list -j devices available)
+          RUNTIME=$(echo "$DEVICES" | jq -r '.devices | keys | map(select(test("iOS"))) | sort | last')
+          UDID=$(echo "$DEVICES" | jq -r --arg rt "$RUNTIME" '.devices[$rt] | map(select(.isAvailable and (.name | test("^iPhone")))) | .[0].udid')
+          NAME=$(echo "$DEVICES" | jq -r --arg rt "$RUNTIME" '.devices[$rt] | map(select(.isAvailable and (.name | test("^iPhone")))) | .[0].name')
+          if [ -z "$UDID" ] || [ "$UDID" = "null" ]; then
+            echo "No available iPhone simulator found" >&2
+            exit 1
+          fi
+          echo "Using $NAME ($UDID) on runtime $RUNTIME"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
+      # Explicit boot + bootstatus instead of letting xcodebuild boot implicitly: more
+      # reliable, and required so `simctl privacy grant` below has a running device to
+      # target before any test tries to trigger a permission prompt.
+      - name: Boot simulator
+        run: |
+          xcrun simctl boot ${{ steps.sim.outputs.udid }}
+          xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
+
+      # Grants everything the app can prompt for (camera, photos — see project.pbxproj
+      # INFOPLIST_KEY_NS*UsageDescription). The one smoke test in RestockUITests doesn't
+      # currently touch either flow, but granting up front means a future receipt-scan/
+      # recipe-photo UI test doesn't hang on a system permission alert XCUITest can't
+      # reliably dismiss.
+      - name: Grant app permissions
+        run: |
+          xcrun simctl privacy ${{ steps.sim.outputs.udid }} grant camera com.johannesemmrich.Restock
+          xcrun simctl privacy ${{ steps.sim.outputs.udid }} grant photos com.johannesemmrich.Restock
+
+      - name: Build and run UI tests
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Restock.xcodeproj \
+            -scheme Restock \
+            -destination 'platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}' \
+            -only-testing:RestockUITests \
+            -resultBundlePath UITestResults.xcresult \
+            -skipMacroValidation \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=YES \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            | xcpretty
+
+      - name: Upload xcresult on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: UITestResults.xcresult
+          path: UITestResults.xcresult
+          retention-days: 7
