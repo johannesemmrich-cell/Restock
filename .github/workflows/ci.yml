@@ -15,6 +15,7 @@ jobs:
 
       - name: Show environment
         run: |
+          ls /Applications | grep -i xcode
           xcodebuild -version
           xcodebuild -list -project Restock.xcodeproj
           xcrun simctl list devices available
