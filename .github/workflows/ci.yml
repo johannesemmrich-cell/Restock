@@ -15,10 +15,8 @@ jobs:
 
       - name: Show environment
         run: |
-          ls /Applications | grep -i xcode
           xcodebuild -version
           xcodebuild -list -project Restock.xcodeproj
-          xcrun simctl list devices available
 
       - name: Install xcpretty
         run: gem install xcpretty --no-document
@@ -29,7 +27,7 @@ jobs:
           xcodebuild test \
             -project Restock.xcodeproj \
             -scheme Restock \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -destination 'platform=iOS Simulator,name=iPhone 17' \
             -skipMacroValidation \
             CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO \
