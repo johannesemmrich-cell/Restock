@@ -13,15 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '16.2'
-
       - name: Show environment
         run: |
           xcodebuild -version
           xcodebuild -list -project Restock.xcodeproj
+          xcrun simctl list devices available
 
       - name: Install xcpretty
         run: gem install xcpretty --no-document
