@@ -32,6 +32,12 @@ struct HomeView: View {
     @Namespace private var bannerNamespace
     @State private var addItemText = ""
     @State private var quickAddSucceeded = false
+    @State private var quickAddToastMessage: String? = nil
+    /// Item from the most recent Quick-Add, kept only long enough for a toast tap to correct its
+    /// store — cleared together with quickAddToastMessage when the toast auto-dismisses, so a
+    /// tap after that point (on nothing visible) can't silently reassign a stale, unrelated item.
+    @State private var quickAddToastItem: ShoppingItem? = nil
+    @State private var showStoreCorrection = false
     @FocusState private var isQuickAddFocused: Bool
     @Environment(\.scenePhase) private var scenePhase
     @State private var dueSoonItems: [ConsumptionPattern] = []
@@ -60,6 +66,11 @@ struct HomeView: View {
     @State private var showStoreSetup = false
     @State private var storeToDelete: Store?
     @State private var showJoinStore = false
+    /// Set by `restock://join/<code>` (see onOpenURL below) so JoinStoreSheet can skip straight
+    /// to the preview/join-button instead of making the recipient type the code by hand. Reset
+    /// to nil on the manual "Store beitreten" entry points so a stale code never leaks into a
+    /// sheet the user opened themselves.
+    @State private var pendingJoinCode: String? = nil
     // Lokale Kopie für ForEach — verhindert dass @Query-Re-Sort die Drag-Animation im Grid abbricht
     // (gleiches Muster wie StoreSetupView.orderedActiveStores)
     @State private var orderedStores: [Store] = []
@@ -165,7 +176,7 @@ struct HomeView: View {
             .sheet(isPresented: $showAddStore) { NavigationStack { BrowseStoresView() } }
             .sheet(isPresented: $showAllItems) { AllItemsView() }
             .sheet(isPresented: $showStoreSetup) { NavigationStack { StoreSetupView() } }
-            .sheet(isPresented: $showJoinStore) { JoinStoreSheet() }
+            .sheet(isPresented: $showJoinStore) { JoinStoreSheet(prefilledCode: pendingJoinCode) }
             .sheet(isPresented: $showPaywall) { PaywallView(context: paywallContext) }
             .navigationDestination(item: $deepLinkStore) { store in
                 StoreDetailView(store: store)
@@ -189,6 +200,54 @@ struct HomeView: View {
                 // checkPendingReceiptScan() für den eigentlich verlässlichen Weg.
                 if url.scheme == "restock", url.host == "receiptscan" {
                     checkPendingReceiptScan()
+                }
+                // Beitritts-Link aus StoreShareSheet (restock://join/<Code>) — Code kommt bereits
+                // sauber aus generateCode()'s Zeichensatz, keine Sonderzeichen zu decodieren.
+                if url.scheme == "restock", url.host == "join" {
+                    pendingJoinCode = url.lastPathComponent
+                    showJoinStore = true
+                }
+            }
+            .overlay(alignment: .bottom) {
+                if let toast = quickAddToastMessage {
+                    Button {
+                        guard quickAddToastItem != nil else { return }
+                        showStoreCorrection = true
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text(toast)
+                            if quickAddToastItem != nil {
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.system(size: 11, weight: .semibold))
+                            }
+                        }
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(.black.opacity(0.75), in: Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.bottom, 20)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            withAnimation {
+                                quickAddToastMessage = nil
+                                quickAddToastItem = nil
+                            }
+                        }
+                    }
+                }
+            }
+            .animation(.easeInOut(duration: 0.25), value: quickAddToastMessage)
+            .confirmationDialog(
+                String(localized: "home.quickadd.correctstore.title"),
+                isPresented: $showStoreCorrection,
+                titleVisibility: .visible
+            ) {
+                ForEach(otherStoresForCorrection) { store in
+                    Button("\(store.emoji) \(store.name)") { correctQuickAddStore(to: store) }
                 }
             }
             .onAppear {
@@ -564,7 +623,7 @@ struct HomeView: View {
 
     private var quickAddSuggestions: [String] {
         guard !addItemText.trimmingCharacters(in: .whitespaces).isEmpty else { return [] }
-        return QuickAddParser.knownProductSuggestions(for: QuickAddParser.parse(addItemText).name, in: allRecords)
+        return QuickAddParser.knownProductSuggestions(for: QuickAddParser.parse(addItemText).name, in: allRecords, itemNames: activeStores.flatMap { $0.items ?? [] }.map(\.name))
     }
 
     /// `QuickAddParser` erkennt Menge/Einheit entweder VOR dem Namen ("200g Hafer" → Name ist
@@ -923,8 +982,12 @@ struct HomeView: View {
                         .buttonStyle(.pressable)
                         .contextMenu {
                             Button {
-                                withAnimation { store.isPaused.toggle() }
+                                // Haptik zuerst — spürbares Feedback so früh wie möglich, noch
+                                // während das System das Kontextmenü selbst ausblendet (dessen
+                                // eigene Animation ist der Hauptanteil der wahrgenommenen
+                                // Verzögerung, nicht diese Zeilen hier).
                                 Haptics.impact(.light)
+                                withAnimation { store.isPaused.toggle() }
                                 // Flush sofort — sonst sieht z.B. der Widget-Prozess (eigener
                                 // Store-Zugriff) die Änderung erst verzögert über SwiftDatas
                                 // Autosave (gleiches Muster wie StoreDetailView.toggle(item:)).
@@ -939,8 +1002,12 @@ struct HomeView: View {
                                 Label("Löschen", systemImage: "trash")
                             }
                             Button {
-                                store.isActive = false
-                                Haptics.impact(.light)
+                                // Kräftigere Haptik als Pausieren — Archivieren ist der
+                                // destructive-nahere der beiden Aktionen (Laden verschwindet
+                                // komplett aus der Übersicht statt nur grau zu werden), soll sich
+                                // auch spürbar anders anfühlen.
+                                Haptics.impact(.medium)
+                                withAnimation { store.isActive = false }
                                 // Flush sofort — sonst bleibt der Laden je nach Autosave-Timing
                                 // noch sichtbar, bis `.onChange(of: activeStores)` nachzieht.
                                 try? context.save()
@@ -994,8 +1061,8 @@ struct HomeView: View {
                     .buttonStyle(.pressable)
                     .contextMenu {
                         Button {
-                            withAnimation { store.isPaused.toggle() }
                             Haptics.impact(.light)
+                            withAnimation { store.isPaused.toggle() }
                             // Flush sofort — sonst sieht z.B. der Widget-Prozess (eigener
                             // Store-Zugriff) die Änderung erst verzögert über SwiftDatas
                             // Autosave (gleiches Muster wie StoreDetailView.toggle(item:)).
@@ -1010,8 +1077,8 @@ struct HomeView: View {
                             Label("Löschen", systemImage: "trash")
                         }
                         Button {
-                            store.isActive = false
-                            Haptics.impact(.light)
+                            Haptics.impact(.medium)
+                            withAnimation { store.isActive = false }
                             // Flush sofort — sonst bleibt der Laden je nach Autosave-Timing
                             // noch sichtbar, bis `.onChange(of: activeStores)` nachzieht.
                             try? context.save()
@@ -1241,6 +1308,7 @@ struct HomeView: View {
 
     private var joinListCard: some View {
         Button {
+            pendingJoinCode = nil
             showJoinStore = true
             Haptics.impact(.light)
         } label: {
@@ -1283,6 +1351,7 @@ struct HomeView: View {
             }
             .buttonStyle(.borderedProminent)
             Button {
+                pendingJoinCode = nil
                 showJoinStore = true
             } label: {
                 Label(String(localized: "home.join.shared"), systemImage: "person.badge.plus")
@@ -1374,23 +1443,55 @@ struct HomeView: View {
         let parsed = QuickAddParser.parse(trimmed)
         let category = AssignmentService.category(for: parsed.name)
         let store = AssignmentService.assign(itemName: parsed.name, to: activeStores, purchaseRecords: allRecords)
-        context.insert(ShoppingItem(
+        let item = ShoppingItem(
             name: parsed.name,
             category: category,
             quantity: parsed.quantity,
             quantityAmount: parsed.quantityAmount,
             unit: parsed.unit,
             store: store
-        ))
+        )
+        context.insert(item)
         SyncCoordinator.shared.pushInBackground(store)
         addItemText = ""
         Haptics.success()
+        quickAddToastItem = item
+        quickAddToastMessage = store.map { String(format: String(localized: "home.quickadd.addedto.format"), $0.name) }
+            ?? String(localized: "home.quickadd.addedwithoutstore")
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { quickAddSucceeded = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
             withAnimation(.spring(response: 0.4)) { quickAddSucceeded = false }
         }
         // Tastatur offen lassen — Nutzer kann direkt weitertippen
         DispatchQueue.main.async { isQuickAddFocused = true }
+    }
+
+    /// Stores offered in the toast's correction dialog — the currently assigned store is left
+    /// out since tapping it again would be a no-op (see correctQuickAddStore's own guard too,
+    /// kept as a second line of defense in case this list is ever read stale).
+    private var otherStoresForCorrection: [Store] {
+        activeStores.filter { $0.id != quickAddToastItem?.store?.id }
+    }
+
+    /// Moves the just-added item to a different store and remembers the correction (via
+    /// StoreAssignmentOverrideService) so the same item name is assigned correctly next time,
+    /// without waiting on AssignmentService.dominantStore's purchase-history threshold.
+    private func correctQuickAddStore(to newStore: Store) {
+        guard let item = quickAddToastItem, item.store?.id != newStore.id else { return }
+        let oldStore = item.store
+        item.store = newStore
+        try? context.save()
+        StoreAssignmentOverrideService.shared.remember(itemName: item.name, storeName: newStore.name)
+        SyncCoordinator.shared.pushInBackground(oldStore)
+        SyncCoordinator.shared.pushInBackground(newStore)
+        Haptics.success()
+        withAnimation { quickAddToastMessage = String(format: String(localized: "home.quickadd.movedto.format"), newStore.name) }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation {
+                quickAddToastMessage = nil
+                quickAddToastItem = nil
+            }
+        }
     }
 
     private func activateQuickAdd() {

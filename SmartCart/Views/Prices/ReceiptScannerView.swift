@@ -35,6 +35,11 @@ struct EditableReceiptLine: Identifiable {
     /// wird — sonst bliebe ein manuell korrigierter Name fälschlich mit der alten Identität
     /// verknüpft.
     var matchedItemID: UUID? = nil
+    /// Siehe `ResolvedReceiptLine.resolvedByAI` — steuert die Art.-50-Kennzeichnung in
+    /// `ReceiptLineRow`. Wird zurückgesetzt, sobald der Name manuell überschrieben wird (gleicher
+    /// Reset-Zeitpunkt wie `matchedItemID`), da die Kennzeichnung sonst fälschlich an einem vom
+    /// Nutzer selbst eingetippten Text hängen bliebe.
+    var resolvedByAI: Bool = false
 
     /// Divisor fürs Preis-Lernen in `save()` — als Methode extrahiert (statt inline dort
     /// berechnet), damit Tests exakt diese Formel aufrufen statt sie nachzubilden. Ein Test, der
@@ -46,6 +51,35 @@ struct EditableReceiptLine: Identifiable {
     /// ist 1, dann ist der Preis bereits per-unit.
     func learningQuantity(matchQuantityAmount: Double?) -> Double {
         weightBasis ?? (quantity > 1 ? quantity : (matchQuantityAmount ?? 1))
+    }
+
+    /// Indizes von Zeilen, die Stufe 5 (Apple Intelligence) noch NICHT durchlaufen haben — erkannt
+    /// daran, dass ihr Name unverändert dem OCR-Rohtext entspricht UND `resolvedByAI` false ist
+    /// (ein per Alias/Fuzzy-Match bereits aufgelöster Name wäre von `originalName` verschieden,
+    /// selbst ohne KI). Reine, testbare Auswahl-Logik — von `reResolveAIIfNeeded()` (Share-
+    /// Handoff-Pfad) verwendet, ohne dass ein Test FoundationModels/SystemLanguageModel-
+    /// Verfügbarkeit braucht.
+    static func linesNeedingAIReresolution(_ lines: [EditableReceiptLine]) -> [Int] {
+        lines.indices.filter { i in
+            !lines[i].resolvedByAI && lines[i].name == lines[i].originalName
+        }
+    }
+
+    /// Schreibt das Ergebnis einer erneuten Auflösung (siehe `linesNeedingAIReresolution`) an
+    /// exakt den ausgewählten Indizes zurück, alle anderen Zeilen bleiben unangetastet.
+    /// `resolved` muss `indices.count` Einträge haben, in derselben Reihenfolge wie `indices`
+    /// (so wie `ReceiptResolutionService.resolve` sie liefert, wenn man ihm dieselbe Teilmenge
+    /// als `parsed` übergibt).
+    static func mergeAIReresolution(into lines: [EditableReceiptLine], resolved: [ResolvedReceiptLine], at indices: [Int]) -> [EditableReceiptLine] {
+        var result = lines
+        for (offset, index) in indices.enumerated() where offset < resolved.count {
+            let r = resolved[offset]
+            result[index].name = r.name
+            result[index].suggestions = r.suggestions
+            result[index].matchedItemID = r.matchedItemID
+            result[index].resolvedByAI = r.resolvedByAI
+        }
+        return result
     }
 }
 
@@ -73,6 +107,12 @@ struct ReceiptScannerView: View {
     /// Bon keine "zahlen"-Zeile enthielt (z. B. französisches Format) oder kein Betrag daraus
     /// extrahierbar war — dann bleibt die Warnung schlicht aus, statt etwas zu behaupten.
     @State private var detectedTotal: Double?
+    /// Nur bei `init(store:prefilled:)` true — steuert `reResolveAIIfNeeded()`: die Share
+    /// Extension übergibt Zeilen mit `allowAIResolution: false` (Speicherlimit dort, siehe
+    /// `ReceiptResolutionService`-Doku), Stufe 5 muss also spätestens hier, mit vollem
+    /// App-Speicherbudget, noch nachgeholt werden — sonst bleiben geteilte Bons dauerhaft auf den
+    /// rohen OCR-Namen aus Stufe 1-4 hängen ("Namen nicht so gut wie vorher").
+    @State private var cameFromShareHandoff = false
 
     enum Phase { case capture, processing, review }
 
@@ -87,6 +127,7 @@ struct ReceiptScannerView: View {
     init(store: Store, prefilled: SharedReceiptPayload) {
         self.store = store
         _phase = State(initialValue: .review)
+        _cameFromShareHandoff = State(initialValue: true)
         _parsedLines = State(initialValue: prefilled.lines.map { line in
             EditableReceiptLine(
                 name: line.name,
@@ -96,7 +137,8 @@ struct ReceiptScannerView: View {
                 unit: line.unit,
                 weightBasis: line.weightBasis,
                 suggestions: line.suggestions,
-                matchedItemID: line.matchedItemID
+                matchedItemID: line.matchedItemID,
+                resolvedByAI: line.resolvedByAI
             )
         })
         _debugRawLines = State(initialValue: prefilled.rawLines)
@@ -167,6 +209,26 @@ struct ReceiptScannerView: View {
         .devFeedback(context: debugRawLines.isEmpty
             ? "Bon scannen — \(store.name)"
             : "Bon scannen — \(store.name)\n\nRohzeilen:\n\(debugRawLines.joined(separator: "\n"))")
+        .task { await reResolveAIIfNeeded() }
+    }
+
+    /// Holt Stufe 5 (Apple Intelligence) für Zeilen nach, die aus einem Share-Extension-Handoff
+    /// stammen und dort mit `allowAIResolution: false` übersprungen wurden (Speicherlimit einer
+    /// Extension) — jetzt mit vollem App-Speicherbudget. No-op für einen normalen Kamera-/Foto-
+    /// Scan (`process()` hat dort bereits Stufe 5 mit `allowAIResolution: true` durchlaufen).
+    /// Nutzt `originalName` statt des ggf. schon (Stufe 1-4) gesetzten `name`, weil Stufe 1-4 in
+    /// der Extension bereits gelaufen ist — ein erneuter Durchlauf davon hier ist zwar günstig/
+    /// idempotent, aber unnötig; nur Stufe 5 leistet neue Arbeit.
+    private func reResolveAIIfNeeded() async {
+        guard cameFromShareHandoff else { return }
+        let indices = EditableReceiptLine.linesNeedingAIReresolution(parsedLines)
+        guard !indices.isEmpty else { return }
+        let toResolve = indices.map { i -> ReceiptLine in
+            let line = parsedLines[i]
+            return ReceiptLine(name: line.originalName, price: line.price, quantity: line.quantity, unit: line.unit, weightBasis: line.weightBasis)
+        }
+        let resolved = await ReceiptResolutionService.resolve(parsed: toResolve, store: store, allRecords: allRecords)
+        parsedLines = EditableReceiptLine.mergeAIReresolution(into: parsedLines, resolved: resolved, at: indices)
     }
 
     // MARK: - Phase views
@@ -353,7 +415,8 @@ struct ReceiptScannerView: View {
                         unit: line.unit,
                         weightBasis: line.weightBasis,
                         suggestions: line.suggestions,
-                        matchedItemID: line.matchedItemID
+                        matchedItemID: line.matchedItemID,
+                        resolvedByAI: line.resolvedByAI
                     )
                 }
                 phase = .review
@@ -515,12 +578,26 @@ private struct ReceiptLineRow: View {
                             set: { newValue in
                                 line.name = newValue
                                 line.matchedItemID = nil
+                                line.resolvedByAI = false
                             }
                         ))
                             .font(.system(size: 15))
                         Image(systemName: "pencil")
                             .font(.system(size: 10))
                             .foregroundStyle(.tertiary)
+                        // Art.-50-Kennzeichnung: dieser Name wurde von Apple Intelligence
+                        // vervollständigt (ReceiptResolutionService Stufe 5), nicht nur per
+                        // Alias/Fuzzy-Match gefunden — muss laut EU-Kommissions-FAQ direkt an der
+                        // Stelle sichtbar sein, an der der Vorschlag erscheint, nicht nur in der
+                        // Datenschutzerklärung (siehe EU-AI-Act-Recherche).
+                        if line.resolvedByAI {
+                            Label("KI-Vorschlag", systemImage: "sparkles")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundStyle(Color.accent)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.accentContainer, in: Capsule())
+                        }
                     }
                     if let detailText {
                         Text(detailText)
@@ -557,6 +634,7 @@ private struct ReceiptLineRow: View {
                             Button {
                                 line.name = suggestion.name
                                 line.matchedItemID = suggestion.itemID
+                                line.resolvedByAI = false
                                 Haptics.impact(.light)
                             } label: {
                                 Text(suggestion.name)

@@ -46,6 +46,8 @@
 		5BA9390E49F89DCBF753FDA6 /* ShoppingListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7BD9F3BC448DE79398597F /* ShoppingListWidget.swift */; };
 		5C7508E97A69CBA21B6DE5C5 /* CheckOffItemIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EA668475A6DE0784E49FA3 /* CheckOffItemIntent.swift */; };
 		66061099219273F5BD83F273 /* AssignmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4084283388CDEF7C7D514BF7 /* AssignmentService.swift */; };
+		8D7A8C2AF327DD52D72635D3 /* AssignmentService+Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24448321D03F83A4CFD19BFD /* AssignmentService+Category.swift */; };
+		7522ED5098B3DCB24841F0A7 /* StoreAssignmentOverrideService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD783E672BFB6E63873F2F47 /* StoreAssignmentOverrideService.swift */; };
 		6A8BB1A057222174ABCEEA9E /* ShoppingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859546BD22AB55E21A80A96 /* ShoppingActivityAttributes.swift */; };
 		6BA9AE00008A24FF621597EE /* ClashDisplay-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 984CA66C3B260EF487FA4218 /* ClashDisplay-Semibold.ttf */; };
 		708347169C9B1DF2C1D474FF /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ED485E807ADF771EE3C623 /* LiveActivityService.swift */; };
@@ -95,6 +97,9 @@
 		BF41CB2B055AF1806850C81F /* ReceiptResolutionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC528160F1AD80A0C4650A6 /* ReceiptResolutionService.swift */; };
 		C79D40337E438C71F75EAE89 /* ReceiptShareHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD41AB8DD4E930B591A67F4C /* ReceiptShareHandoff.swift */; };
 		12DCF82BA93F86AEAF162959 /* AssignmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4084283388CDEF7C7D514BF7 /* AssignmentService.swift */; };
+		42462DCAA905E9A45030CFDE /* AssignmentService+Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24448321D03F83A4CFD19BFD /* AssignmentService+Category.swift */; };
+		32D6E391AFE2A606E4E8C123 /* StoreAssignmentOverrideService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD783E672BFB6E63873F2F47 /* StoreAssignmentOverrideService.swift */; };
+		DC22CEE4B196C9605354F44E /* AssignmentService+Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24448321D03F83A4CFD19BFD /* AssignmentService+Category.swift */; };
 		ACD11C0BBEDC0BDB5F301210 /* CGImagePropertyOrientation+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F51AA9DCF1ADFC21308D83 /* CGImagePropertyOrientation+UIImage.swift */; };
 		7E06970AC7613715F6D3FD83 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1316E9EFE646ED0F0078332F /* Store.swift */; };
 		B711DBF38176A71AC66E9C5A /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */; };
@@ -109,6 +114,10 @@
 		9D507887509A2C64F3C625EF /* ReceiptParserPriceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */; };
 		DF69955CC809EAF24ADC4174 /* QuickAddParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD6412F9400E7E874C40688 /* QuickAddParserTests.swift */; };
 		71D26D6EF94B734658085600 /* ConsumptionPatternTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F566D87050A4B455E0DD862E /* ConsumptionPatternTests.swift */; };
+		1A2B3C4D5E6F70819293A4B5 /* StorePresetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A39281706F5E4D3C2B1A0 /* StorePresetsTests.swift */; };
+		2C3D4E5F60718293A4B5C6D7 /* AssignmentServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C5B4A39281706F5E4D3C2B1 /* AssignmentServiceTests.swift */; };
+		3D4E5F60718293A4B5C6D7E8 /* ReceiptParserSuggestionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */; };
+		4E5F60718293A4B5C6D7E8F9 /* ReceiptScannerReResolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */; };
 		399CF1332B66B0375C4CC7D2 /* DateFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB84990BF53C04B19AF3452 /* DateFixtures.swift */; };
 		4ABB3142671E3907EC867A62 /* RestockUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079C73B4452D6EED07DD471A /* RestockUITests.swift */; };
 /* End PBXBuildFile section */
@@ -178,6 +187,8 @@
 		3C52A86F4702DAAA38F3DB10 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3CCF8959E358A9E9DEBD5A80 /* SmartCartWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCartWidgetsBundle.swift; sourceTree = "<group>"; };
 		4084283388CDEF7C7D514BF7 /* AssignmentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentService.swift; sourceTree = "<group>"; };
+		24448321D03F83A4CFD19BFD /* AssignmentService+Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AssignmentService+Category.swift"; sourceTree = "<group>"; };
+		BD783E672BFB6E63873F2F47 /* StoreAssignmentOverrideService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreAssignmentOverrideService.swift; sourceTree = "<group>"; };
 		413B97577F2E4B603EC6E01F /* SmartCart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCart.entitlements; sourceTree = "<group>"; };
 		418D17DD19B7E69AA8260DEB /* SeasonalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonalService.swift; sourceTree = "<group>"; };
 		4711FDD2B9E28CBB4722024B /* SyncCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCoordinator.swift; sourceTree = "<group>"; };
@@ -245,6 +256,10 @@
 		68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserPriceTests.swift; sourceTree = "<group>"; };
 		6AD6412F9400E7E874C40688 /* QuickAddParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddParserTests.swift; sourceTree = "<group>"; };
 		F566D87050A4B455E0DD862E /* ConsumptionPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumptionPatternTests.swift; sourceTree = "<group>"; };
+		5B4A39281706F5E4D3C2B1A0 /* StorePresetsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePresetsTests.swift; sourceTree = "<group>"; };
+		6C5B4A39281706F5E4D3C2B1 /* AssignmentServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentServiceTests.swift; sourceTree = "<group>"; };
+		7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserSuggestionTests.swift; sourceTree = "<group>"; };
+		8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScannerReResolutionTests.swift; sourceTree = "<group>"; };
 		5AB84990BF53C04B19AF3452 /* DateFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFixtures.swift; sourceTree = "<group>"; };
 		079C73B4452D6EED07DD471A /* RestockUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestockUITests.swift; sourceTree = "<group>"; };
 		E2ECD600D24B6ACC3CB50C74 /* RestockUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -471,6 +486,7 @@
 			isa = PBXGroup;
 			children = (
 				4084283388CDEF7C7D514BF7 /* AssignmentService.swift */,
+				24448321D03F83A4CFD19BFD /* AssignmentService+Category.swift */,
 				236336393E480FD30FC90DC7 /* CloudPreferencesSync.swift */,
 				C6B1060B802DB6BB5B27C69F /* HabitService.swift */,
 				15ED485E807ADF771EE3C623 /* LiveActivityService.swift */,
@@ -485,6 +501,7 @@
 				E27BD0C5EE55D1C2CCC616ED /* SchemaVersions.swift */,
 				418D17DD19B7E69AA8260DEB /* SeasonalService.swift */,
 				A1766165B3F2604B32CDF325 /* SharedStoreService.swift */,
+				BD783E672BFB6E63873F2F47 /* StoreAssignmentOverrideService.swift */,
 				4711FDD2B9E28CBB4722024B /* SyncCoordinator.swift */,
 				A6CD744C2468F68006A11973 /* TemplateService.swift */,
 			);
@@ -509,6 +526,10 @@
 				68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */,
 				6AD6412F9400E7E874C40688 /* QuickAddParserTests.swift */,
 				F566D87050A4B455E0DD862E /* ConsumptionPatternTests.swift */,
+				5B4A39281706F5E4D3C2B1A0 /* StorePresetsTests.swift */,
+				6C5B4A39281706F5E4D3C2B1 /* AssignmentServiceTests.swift */,
+				7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */,
+				8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */,
 				5AB84990BF53C04B19AF3452 /* DateFixtures.swift */,
 			);
 			path = RestockTests;
@@ -693,6 +714,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC22CEE4B196C9605354F44E /* AssignmentService+Category.swift in Sources */,
 				215CD8EF08D0891F2BEDDE16 /* CheckOffItemIntent.swift in Sources */,
 				D728A505E8E8989ABDA4F8F2 /* Color+Hex.swift in Sources */,
 				B4EE666767BE579CC746C856 /* FeedbackItem.swift in Sources */,
@@ -721,6 +743,8 @@
 				191A046F90257F3D549E96DD /* AllItemsView.swift in Sources */,
 				22B841D0E56102D8F2F0323C /* AppDelegate.swift in Sources */,
 				66061099219273F5BD83F273 /* AssignmentService.swift in Sources */,
+				7522ED5098B3DCB24841F0A7 /* StoreAssignmentOverrideService.swift in Sources */,
+				8D7A8C2AF327DD52D72635D3 /* AssignmentService+Category.swift in Sources */,
 				2B5FBA79ED7DCD9F3014F33C /* BarcodeScannerView.swift in Sources */,
 				79405378A9C9AEC3323E5E20 /* BrowseStoresView.swift in Sources */,
 				0A78A28FBF5674A858A985C2 /* CGImagePropertyOrientation+UIImage.swift in Sources */,
@@ -788,6 +812,8 @@
 				BF41CB2B055AF1806850C81F /* ReceiptResolutionService.swift in Sources */,
 				C79D40337E438C71F75EAE89 /* ReceiptShareHandoff.swift in Sources */,
 				12DCF82BA93F86AEAF162959 /* AssignmentService.swift in Sources */,
+				32D6E391AFE2A606E4E8C123 /* StoreAssignmentOverrideService.swift in Sources */,
+				42462DCAA905E9A45030CFDE /* AssignmentService+Category.swift in Sources */,
 				ACD11C0BBEDC0BDB5F301210 /* CGImagePropertyOrientation+UIImage.swift in Sources */,
 				7E06970AC7613715F6D3FD83 /* Store.swift in Sources */,
 				B711DBF38176A71AC66E9C5A /* ShoppingItem.swift in Sources */,
@@ -809,6 +835,10 @@
 				9D507887509A2C64F3C625EF /* ReceiptParserPriceTests.swift in Sources */,
 				DF69955CC809EAF24ADC4174 /* QuickAddParserTests.swift in Sources */,
 				71D26D6EF94B734658085600 /* ConsumptionPatternTests.swift in Sources */,
+				1A2B3C4D5E6F70819293A4B5 /* StorePresetsTests.swift in Sources */,
+				2C3D4E5F60718293A4B5C6D7 /* AssignmentServiceTests.swift in Sources */,
+				3D4E5F60718293A4B5C6D7E8 /* ReceiptParserSuggestionTests.swift in Sources */,
+				4E5F60718293A4B5C6D7E8F9 /* ReceiptScannerReResolutionTests.swift in Sources */,
 				399CF1332B66B0375C4CC7D2 /* DateFixtures.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

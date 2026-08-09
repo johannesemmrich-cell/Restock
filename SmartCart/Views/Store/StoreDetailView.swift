@@ -656,7 +656,7 @@ struct StoreDetailView: View {
 
     private var quickAddSuggestions: [String] {
         guard !quickAddText.trimmingCharacters(in: .whitespaces).isEmpty else { return [] }
-        return QuickAddParser.knownProductSuggestions(for: QuickAddParser.parse(quickAddText).name, in: allRecords)
+        return QuickAddParser.knownProductSuggestions(for: QuickAddParser.parse(quickAddText).name, in: allRecords, itemNames: (store.items ?? []).map(\.name))
     }
 
     /// `QuickAddParser` erkennt Menge/Einheit entweder VOR dem Namen ("200g Hafer" → Name ist

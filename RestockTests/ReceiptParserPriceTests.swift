@@ -169,4 +169,27 @@ final class ReceiptParserPriceTests: XCTestCase {
         // abdeckte: kein Match, `matchQuantityAmount: nil`.
         try assertLearnedPriceRoundTrip(matchQuantityAmount: nil, line: "0,500 kg x 2,29")
     }
+
+    // MARK: - Regression guards für OCR-Formatvarianten (Nutzer meldete den Skyr-Bug erneut nach
+    // dem Fix — dieser Test beweist, dass der Fix nicht an einem bestimmten Dezimaltrennzeichen
+    // oder Multiplikationszeichen hängt, das ein anderer Beleg-Scan liefern könnte)
+
+    func testWeightLineWithDecimalDotInsteadOfCommaComputesCorrectTotal() throws {
+        let lines = ["Skyr Natur 500g", "0.500 kg x 2.29"]
+
+        let result = ReceiptParserService.parse(lines)
+
+        let skyr = try XCTUnwrap(result.first { $0.name.lowercased().contains("skyr") })
+        XCTAssertEqual(skyr.price, 1.15, accuracy: 0.005)
+        XCTAssertNotEqual(skyr.price, 2.29, "Die nackte Rate darf auch bei Punkt-Dezimaltrennzeichen nicht als Gesamtpreis übernommen werden")
+    }
+
+    func testWeightLineWithMultiplicationSignInsteadOfXComputesCorrectTotal() throws {
+        let lines = ["Aufschnitt", "0,436 kg × 12,49"]
+
+        let result = ReceiptParserService.parse(lines)
+
+        let line = try XCTUnwrap(result.first { $0.name.lowercased().contains("aufschnitt") })
+        XCTAssertEqual(line.price, 0.436 * 12.49, accuracy: 0.01)
+    }
 }

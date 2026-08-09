@@ -159,4 +159,23 @@ final class QuickAddParserTests: XCTestCase {
         }
         XCTAssertEqual(QuickAddParser.knownProductSuggestions(for: "Apfel", in: records, limit: 3).count, 3)
     }
+
+    // MARK: - Erweiterter Kandidatenpool + Diakritik/Teilstring (Nutzer: "zu wenig vorgeschlagen")
+
+    func testSuggestionsIncludeItemNamesNotOnlyPurchaseRecords() {
+        let result = QuickAddParser.knownProductSuggestions(for: "Ei", in: [], itemNames: ["Eier"])
+        XCTAssertEqual(result, ["Eier"], "Noch nicht abgehakte Listen-Artikel müssen auch als Vorschlag zählen, nicht nur Kaufhistorie")
+    }
+
+    func testSuggestionsFoldDiacriticsForMatching() {
+        let records = [PurchaseRecord(itemName: "Äpfel", storeName: "Edeka")]
+        let result = QuickAddParser.knownProductSuggestions(for: "Ap", in: records)
+        XCTAssertEqual(result, ["Äpfel"])
+    }
+
+    func testSuggestionsFallBackToSubstringWhenPrefixMatchesAreFew() {
+        let records = [PurchaseRecord(itemName: "Apfelmus", storeName: "Edeka")]
+        let result = QuickAddParser.knownProductSuggestions(for: "fel", in: records)
+        XCTAssertEqual(result, ["Apfelmus"], "Ohne Präfix-Treffer muss die Teilstring-Suche als Fallback greifen")
+    }
 }

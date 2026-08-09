@@ -127,6 +127,7 @@ class Store {
         case "🎯": return "target"
         case "🌿": return "leaf"
         case "🏬": return "building.2"
+        case "🛋️": return "sofa"
         default:  return "storefront"
         }
     }
@@ -152,6 +153,13 @@ class Store {
                 let posA = itemOrderMap[a.name.lowercased()] ?? 999
                 let posB = itemOrderMap[b.name.lowercased()] ?? 999
                 if posA != posB { return posA < posB }
+                // Neither item has a learned checkout position yet — fall back to a realistic
+                // supermarket aisle order instead of jumping straight to insertion order.
+                let categoryA = a.categoryManuallySet ? a.category : AssignmentService.category(for: a.name)
+                let categoryB = b.categoryManuallySet ? b.category : AssignmentService.category(for: b.name)
+                let aisleA = AssignmentService.categoryOrder.firstIndex(of: categoryA) ?? Int.max
+                let aisleB = AssignmentService.categoryOrder.firstIndex(of: categoryB) ?? Int.max
+                if aisleA != aisleB { return aisleA < aisleB }
             }
             return a.addedDate < b.addedDate
         }
@@ -224,6 +232,7 @@ extension Store {
                 Store(name: "OBI",        emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "DE"),
                 Store(name: "Bauhaus",    emoji: "🔧", colorHex: "#1565C0", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "DE"),
                 Store(name: "Hagebaumarkt", emoji: "🏗️", colorHex: "#4CAF50", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "DE"),
+                Store(name: "IKEA",       emoji: "🛋️", colorHex: "#0058A3", visitsPerWeek: 0.25, categories: Category.variety,  countryCode: "DE"),
             ]
         case "AT":
             return [
@@ -237,6 +246,7 @@ extension Store {
                 Store(name: "Decathlon", emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,   countryCode: "AT"),
                 Store(name: "Hornbach",  emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "AT"),
                 Store(name: "OBI",       emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "AT"),
+                Store(name: "IKEA",      emoji: "🛋️", colorHex: "#0058A3", visitsPerWeek: 0.25, categories: Category.variety, countryCode: "AT"),
             ]
         case "CH":
             return [
@@ -249,6 +259,7 @@ extension Store {
                 Store(name: "Decathlon", emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,   countryCode: "CH"),
                 Store(name: "Hornbach",  emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "CH"),
                 Store(name: "OBI",       emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "CH"),
+                Store(name: "IKEA",      emoji: "🛋️", colorHex: "#0058A3", visitsPerWeek: 0.25, categories: Category.variety, countryCode: "CH"),
             ]
         case "US":
             return [
@@ -260,6 +271,7 @@ extension Store {
                 Store(name: "Walgreens",  emoji: "💊", colorHex: "#E31837", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "US"),
                 Store(name: "Home Depot", emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "US"),
                 Store(name: "Lowe's",     emoji: "🔨", colorHex: "#1565C0", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "US"),
+                Store(name: "IKEA",       emoji: "🛋️", colorHex: "#0058A3", visitsPerWeek: 0.25, categories: Category.variety, countryCode: "US"),
             ]
         case "GB":
             return [
@@ -270,6 +282,7 @@ extension Store {
                 Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 1, categories: Category.grocery, countryCode: "GB"),
                 Store(name: "Boots", emoji: "💊", colorHex: "#003B71", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "GB"),
                 Store(name: "B&Q",   emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "GB"),
+                Store(name: "IKEA",  emoji: "🛋️", colorHex: "#0058A3", visitsPerWeek: 0.25, categories: Category.variety, countryCode: "GB"),
             ]
         case "BE":
             return [
@@ -286,6 +299,7 @@ extension Store {
                 Store(name: "Carrefour Express", emoji: "🛒", colorHex: "#0050C8", visitsPerWeek: 1,   categories: Category.grocery,  countryCode: "BE"), // Blau
                 Store(name: "Brico",    emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "BE"),
                 Store(name: "Hornbach", emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "BE"),
+                Store(name: "IKEA",     emoji: "🛋️", colorHex: "#0058A3", visitsPerWeek: 0.25, categories: Category.variety, countryCode: "BE"),
             ]
         case "NL":
             return [
@@ -300,6 +314,7 @@ extension Store {
                 Store(name: "Decathlon",    emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,    countryCode: "NL"),
                 Store(name: "Gamma",        emoji: "🔨", colorHex: "#FF6F00", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "NL"),
                 Store(name: "Hornbach",     emoji: "🏗️", colorHex: "#E53935", visitsPerWeek: 0.5, categories: Category.hardware,  countryCode: "NL"),
+                Store(name: "IKEA",         emoji: "🛋️", colorHex: "#0058A3", visitsPerWeek: 0.25, categories: Category.variety, countryCode: "NL"),
             ]
         case "FR":
             return [
@@ -313,6 +328,7 @@ extension Store {
                 Store(name: "Decathlon",    emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,   countryCode: "FR"),
                 Store(name: "Leroy Merlin", emoji: "🏗️", colorHex: "#4CAF50", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "FR"),
                 Store(name: "Castorama",    emoji: "🔨", colorHex: "#1565C0", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "FR"),
+                Store(name: "IKEA",         emoji: "🛋️", colorHex: "#0058A3", visitsPerWeek: 0.25, categories: Category.variety, countryCode: "FR"),
             ]
         case "IT":
             return [
@@ -324,6 +340,7 @@ extension Store {
                 Store(name: "Farmacia",     emoji: "💊", colorHex: "#16A34A", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "IT"), // Grün
                 Store(name: "Decathlon",    emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,   countryCode: "IT"),
                 Store(name: "Leroy Merlin", emoji: "🏗️", colorHex: "#4CAF50", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "IT"),
+                Store(name: "IKEA",         emoji: "🛋️", colorHex: "#0058A3", visitsPerWeek: 0.25, categories: Category.variety, countryCode: "IT"),
             ]
         case "ES":
             return [
@@ -335,6 +352,7 @@ extension Store {
                 Store(name: "Farmacia",      emoji: "💊", colorHex: "#16A34A", visitsPerWeek: 1,   categories: Category.drugstore, countryCode: "ES"), // Grün
                 Store(name: "Decathlon",     emoji: "🏃", colorHex: "#007DC5", visitsPerWeek: 0.5, categories: Category.sports,   countryCode: "ES"),
                 Store(name: "Leroy Merlin",  emoji: "🏗️", colorHex: "#4CAF50", visitsPerWeek: 0.5, categories: Category.hardware, countryCode: "ES"),
+                Store(name: "IKEA",          emoji: "🛋️", colorHex: "#0058A3", visitsPerWeek: 0.25, categories: Category.variety, countryCode: "ES"),
             ]
         default:
             return []

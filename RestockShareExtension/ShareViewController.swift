@@ -141,7 +141,10 @@ struct ShareReceiptView: View {
         // rohen OCR-Namen, unaufgelöst, statt der Extension hier eine Laden-Auswahl nachzubauen.
         let resolvedLines: [ResolvedReceiptLine]
         if let detectedStore {
-            resolvedLines = await ReceiptResolutionService.resolve(parsed: parsed, store: detectedStore, allRecords: allRecords)
+            // allowAIResolution: false — SystemLanguageModel braucht mehr Speicher, als eine Share
+            // Extension zuverlässig zugesprochen bekommt (siehe ReceiptResolutionService-Doku);
+            // unaufgelöste Namen landen unverändert bei ReceiptScannerView in der Haupt-App.
+            resolvedLines = await ReceiptResolutionService.resolve(parsed: parsed, store: detectedStore, allRecords: allRecords, allowAIResolution: false)
         } else {
             resolvedLines = parsed.map { line in
                 ResolvedReceiptLine(

@@ -61,7 +61,7 @@ struct StoreShareSheet: View {
                             .buttonStyle(.pressable)
                             .animation(.easeInOut, value: copied)
 
-                            ShareLink(item: String(format: String(localized: "share.sharelink.message"), displayCode)) {
+                            ShareLink(item: String(format: String(localized: "share.sharelink.message"), store.shareID ?? "", displayCode)) {
                                 Label(String(localized: "share.sharelabel"), systemImage: "square.and.arrow.up")
                                     .frame(maxWidth: .infinity)
                             }
@@ -196,6 +196,12 @@ struct JoinStoreSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
+    /// Set when opened via `restock://join/<code>` (see HomeView.onOpenURL) — pre-fills the
+    /// code field so the recipient lands straight on the join-preview/button instead of having
+    /// to type the code by hand. `onChange(of: code)` below already does the cleaning+lookup,
+    /// so assigning here reuses that exact path instead of duplicating it.
+    var prefilledCode: String? = nil
+
     @State private var code = ""
     @State private var preview: SharedStorePreview?
     @State private var isLooking = false
@@ -299,6 +305,11 @@ struct JoinStoreSheet: View {
                     Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip() }
                         .buttonStyle(.pressable)
                 }
+            }
+        }
+        .onAppear {
+            if let prefilledCode, code.isEmpty {
+                code = prefilledCode
             }
         }
     }

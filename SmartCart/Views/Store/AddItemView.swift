@@ -28,7 +28,7 @@ struct AddItemView: View {
     }
 
     private var nameSuggestions: [String] {
-        QuickAddParser.knownProductSuggestions(for: name, in: allRecords)
+        QuickAddParser.knownProductSuggestions(for: name, in: allRecords, itemNames: activeStores.flatMap { $0.items ?? [] }.map(\.name))
     }
 
     var body: some View {

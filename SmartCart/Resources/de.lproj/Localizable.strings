@@ -15,6 +15,10 @@
 
 // MARK: - Home
 "home.quickadd.placeholder" = "Schnell hinzufügen…";
+"home.quickadd.addedto.format" = "Zu %@ hinzugefügt";
+"home.quickadd.addedwithoutstore" = "Ohne Laden hinzugefügt";
+"home.quickadd.correctstore.title" = "Zu welchem Laden?";
+"home.quickadd.movedto.format" = "Zu %@ verschoben";
 "home.stores.title" = "Meine Läden";
 "home.stores.empty.title" = "Noch keine Läden";
 "home.stores.setup" = "Läden einrichten";
@@ -280,7 +284,7 @@
 "share.subtitle" = "Schick den Code per iMessage oder WhatsApp. Die andere Person gibt ihn in Restock ein.";
 "share.copy" = "Kopieren";
 "share.copied" = "Kopiert!";
-"share.sharelink.message" = "Ich teile meine Restock-Einkaufsliste mit dir!\nCode: %@";
+"share.sharelink.message" = "Ich teile meine Restock-Einkaufsliste mit dir!\n\nLink zum Beitreten: restock://join/%@\n\nFunktioniert der Link nicht, gib in Restock unter „Store beitreten“ diesen Code ein: %@";
 "share.sharelabel" = "Teilen";
 "share.stopsharing" = "Teilen beenden";
 "share.generatecode" = "Code generieren";

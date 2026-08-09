@@ -881,7 +881,7 @@ enum ReceiptParserService {
         for token: String,
         in items: [ShoppingItem],
         linePrice: Double? = nil,
-        limit: Int = 3
+        limit: Int = 5
     ) -> [(item: ShoppingItem, score: Double)] {
         guard !items.isEmpty, token.count >= 2 else { return [] }
         let scored: [(item: ShoppingItem, score: Double)] = items.map { item in

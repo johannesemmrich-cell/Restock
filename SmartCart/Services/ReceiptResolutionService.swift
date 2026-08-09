@@ -37,6 +37,10 @@ struct ResolvedReceiptLine: Codable {
     var weightBasis: Double? = nil
     var suggestions: [ReceiptSuggestion]
     var matchedItemID: UUID?
+    /// Gesetzt, wenn Stufe 5 (Apple Intelligence) diesen Namen vervollständigt hat — steuert die
+    /// Art.-50-Kennzeichnung im Review (ReceiptLineRow). Default `false`, damit ein bereits
+    /// gespeicherter, älterer `SharedReceiptPayload` ohne dieses Feld nicht am Decodieren scheitert.
+    var resolvedByAI: Bool = false
 }
 
 /// Löst OCR-Rohnamen von Bon-Zeilen zu echten Artikelnamen auf. Ausgelagert aus
@@ -57,7 +61,17 @@ enum ReceiptResolutionService {
     /// (PurchaseRecord/ShoppingItem) gehört aus demselben Grund ebenfalls auf den
     /// MainActor. Nur Stufe 5 (Apple Intelligence) ist echt langsam/asynchron und läuft
     /// deshalb separat.
-    static func resolve(parsed: [ReceiptLine], store: Store, allRecords: [PurchaseRecord]) async -> [ResolvedReceiptLine] {
+    ///
+    /// `allowAIResolution` schaltet ausschließlich Stufe 5 ab (Stufen 1-4 unverändert aktiv).
+    /// Die Share Extension übergibt hier `false`: `SystemLanguageModel` lädt ein mehrere
+    /// hundert MB großes On-Device-Modell — App Extensions haben ein deutlich engeres
+    /// Speicherlimit als die Haupt-App, das Laden des Modells kann den Extension-Prozess
+    /// dadurch vom System lautlos beenden (kein catchable Swift-Error, der Prozess verschwindet
+    /// einfach) noch bevor `state` je von `.loading` wegkommt. Kein Funktionsverlust dadurch:
+    /// die Extension übergibt ohnehin unaufgelöste Rohnamen an die Haupt-App weiter, die beim
+    /// nächsten manuellen Öffnen (`HomeView.checkPendingReceiptScan`) ganz normal in
+    /// `ReceiptScannerView` landen — dort läuft Stufe 5 mit vollem App-Speicherbudget.
+    static func resolve(parsed: [ReceiptLine], store: Store, allRecords: [PurchaseRecord], allowAIResolution: Bool = true) async -> [ResolvedReceiptLine] {
         var (resolvedNames, needsAI, suggestionsByIndex, matchedItemIDs) = await MainActor.run { () -> ([Int: String], [Int], [Int: [ReceiptSuggestion]], [Int: UUID]) in
             var resolvedNames: [Int: String] = [:]
             var needsAI: [Int] = []
@@ -65,6 +79,14 @@ enum ReceiptResolutionService {
             var matchedItemIDs: [Int: UUID] = [:]
             let storeName = store.name
             let completedItems = store.completedItems
+            // Breiterer Kandidaten-Pool NUR für die Vorschlags-Chips (unten, `suggestionsByIndex`)
+            // — umfasst auch noch nicht abgehakte Artikel, damit z. B. ein gerade erst
+            // hinzugefügter, noch offener "Mozzarella" beim Scannen als Vorschlag auftaucht statt
+            // erst nach dem Abhaken. Die automatische Übernahme (`candidates`/`consumedItemIDs`
+            // unten) bleibt bewusst auf `completedItems` beschränkt — ein noch offener Artikel
+            // automatisch zu matchen wäre ein zu starker Eingriff, ein antippbarer Vorschlag ist
+            // dagegen risikolos.
+            let suggestionPool = store.items ?? []
             // Verhindert, dass zwei Bon-Zeilen automatisch denselben abgehakten Artikel
             // beanspruchen (z. B. zwei OCR-Kürzel, die beide am ehesten zu "Milch" passen) —
             // fällt stattdessen auf den nächstbesten noch unverbrauchten Kandidaten zurück.
@@ -75,6 +97,8 @@ enum ReceiptResolutionService {
             for (index, line) in parsed.enumerated() {
                 let candidates = completedItems.isEmpty ? [] :
                     ReceiptParserService.completedItemCandidates(for: line.name, in: completedItems, linePrice: line.price)
+                let suggestionCandidates = suggestionPool.isEmpty ? [] :
+                    ReceiptParserService.completedItemCandidates(for: line.name, in: suggestionPool, linePrice: line.price)
 
                 if let alias = ReceiptAliasService.shared.resolve(line.name) {
                     resolvedNames[index] = alias
@@ -123,14 +147,18 @@ enum ReceiptResolutionService {
                 // sonst könnte die eine Zeile, die den Artikel WIRKLICH braucht, ihn nicht
                 // mehr vorgeschlagen bekommen, nur weil eine andere Zeile ihn (ggf. falsch)
                 // schon automatisch beansprucht hat.
-                suggestionsByIndex[index] = candidates
+                suggestionsByIndex[index] = suggestionCandidates
                     .filter { $0.item.name.caseInsensitiveCompare(resolvedName) != .orderedSame }
                     .map { ReceiptSuggestion(name: $0.item.name, itemID: $0.item.id) }
             }
             return (resolvedNames, needsAI, suggestionsByIndex, matchedItemIDs)
         }
 
-        if !needsAI.isEmpty, ReceiptNameAIResolver.isAIAvailable() {
+        // Indizes, deren Name tatsächlich von Apple Intelligence stammt (nicht nur versucht —
+        // `expand` liefert bei Nichtverfügbarkeit/Timeout/leerer Antwort `nil`, dann bleibt der
+        // Roh-Text stehen und es ist kein KI-Vorschlag). Steuert die Art.-50-Kennzeichnung unten.
+        var aiResolvedIndices: Set<Int> = []
+        if allowAIResolution, !needsAI.isEmpty, ReceiptNameAIResolver.isAIAvailable() {
             await withTaskGroup(of: (Int, String?).self) { group in
                 for index in needsAI {
                     let raw = parsed[index].name
@@ -139,7 +167,10 @@ enum ReceiptResolutionService {
                     }
                 }
                 for await (index, suggestion) in group {
-                    if let suggestion { resolvedNames[index] = suggestion }
+                    if let suggestion {
+                        resolvedNames[index] = suggestion
+                        aiResolvedIndices.insert(index)
+                    }
                 }
             }
         }
@@ -153,7 +184,8 @@ enum ReceiptResolutionService {
                 unit: line.unit,
                 weightBasis: line.weightBasis,
                 suggestions: suggestionsByIndex[index] ?? [],
-                matchedItemID: matchedItemIDs[index]
+                matchedItemID: matchedItemIDs[index],
+                resolvedByAI: aiResolvedIndices.contains(index)
             )
         }
     }
