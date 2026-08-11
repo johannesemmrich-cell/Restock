@@ -74,7 +74,7 @@ Wenn iCloud auf deinem Gerät aktiviert ist, werden die App-Daten über Apples C
 Beim Scannen eines Produktbarcodes wird ausschließlich die EAN-Nummer an den Open-Food-Facts-Dienst (openfoodfacts.org) übermittelt, um den Produktnamen abzufragen. Es werden keine personenbezogenen Daten übertragen. Open Food Facts ist ein gemeinnütziges Projekt mit eigener Datenschutzrichtlinie unter world.openfoodfacts.org/privacy.
 
 **Geteilte Listen (Premium)**
-Wenn du eine Einkaufsliste mit anderen teilst, werden die Listendaten (Artikelnamen, Status, Zuweisung) verschlüsselt in Apples CloudKit Public Database gespeichert. Der Zugriff erfolgt ausschließlich über einen 6-stelligen Einladungscode. Es werden keine Kontodaten oder andere personenbezogene Informationen der Teilnehmer gespeichert.
+Wenn du eine Einkaufsliste mit anderen teilst, werden die Listendaten (Artikelnamen, Status, Zuweisung, Preise) sowie die von dir vergebenen Anzeigenamen der Mitglieder in Apples CloudKit Public Database gespeichert. Der Zugriff erfolgt über einen Einladungscode, der ausschließlich über den Teilen-Dialog der App weitergegeben werden sollte. Es werden keine Kontodaten (z. B. Apple-ID, E-Mail) gespeichert.
 
 **In-App-Käufe**
 Käufe werden ausschließlich über Apples StoreKit-Dienst abgewickelt. Restock erhält dabei keine Zahlungsinformationen oder Kontodaten.

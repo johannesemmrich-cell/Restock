@@ -23,6 +23,17 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
 
+    /// Confirms the device actually registered with APNs — previously unobservable (no logging
+    /// existed on either outcome), which made a real-device sync-delay report impossible to
+    /// diagnose beyond "it's slow, don't know why". Purely additive: no control flow changes.
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("[AppDelegate] push registration succeeded, token length: \(deviceToken.count)")
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("[AppDelegate] push registration FAILED: \(error)")
+    }
+
     func application(
         _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
@@ -30,6 +41,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     ) {
         guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo) as? CKQueryNotification,
               let recordID = notification.recordID else {
+            print("[AppDelegate] received remote notification but couldn't parse it as a CKQueryNotification with a recordID")
             completionHandler(.noData)
             return
         }

@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct EditItemView: View {
     @Bindable var item: ShoppingItem
@@ -16,6 +17,17 @@ struct EditItemView: View {
     @State private var assignedTo: String
     @State private var category: String
     @State private var showDeleteConfirm = false
+
+    @State private var stagedPhotoData: Data?
+    @State private var photoChanged = false
+    @State private var isLoadingPhoto = false
+    /// A single `.sheet(item:)` driven by this, instead of two sibling `.sheet(isPresented:)`
+    /// modifiers (one per source), which is a known SwiftUI pitfall: with two independent
+    /// `isPresented` bindings on the same view, the system can present the wrong one (observed:
+    /// tapping "Aus Bibliothek" opened the camera instead). One optional item makes "which picker,
+    /// if any" a single source of truth.
+    @State private var activePickerSource: ItemPhotoPickerSource?
+    @State private var showFullScreenPhoto = false
 
     /// The exact string `priceText` was seeded with in `init`, so `save()` can tell whether the
     /// user actually edited the price field (vs. just changing quantity elsewhere in the sheet,
@@ -45,6 +57,7 @@ struct EditItemView: View {
         _selectedStore = State(initialValue: item.store)
         _assignedTo = State(initialValue: item.assignedTo)
         _category = State(initialValue: item.category)
+        _stagedPhotoData = State(initialValue: item.photoData)
         // `item.estimatedPrice` is stored per-unit, but the field here shows/accepts the TOTAL
         // for this line (matching what a user would read off a receipt for e.g. a 6-pack),
         // so scale by quantity for display and divide back out again in `save()`.
@@ -102,6 +115,8 @@ struct EditItemView: View {
                         TextField(String(localized: "item.note.placeholder"), text: $note)
                     }
                 }
+
+                photoSection
 
                 Section(String(localized: "item.category.section")) {
                     Picker(String(localized: "item.category.section"), selection: $category) {
@@ -220,6 +235,91 @@ struct EditItemView: View {
             }
         }
         .devFeedback(context: "Artikel bearbeiten")
+        .sheet(item: $activePickerSource) { source in
+            ItemPhotoPicker(sourceType: source.uiKitSourceType) { image in
+                guard let image, let data = PhotoCompressor.compress(image) else { return }
+                stagedPhotoData = data
+                photoChanged = true
+            }
+        }
+        .fullScreenCover(isPresented: $showFullScreenPhoto) {
+            if let stagedPhotoData, let uiImage = UIImage(data: stagedPhotoData) {
+                FullScreenPhotoView(image: uiImage) { showFullScreenPhoto = false }
+            }
+        }
+        .task { await loadRemotePhotoIfNeeded() }
+    }
+
+    /// A device that only knows a photo exists (`hasPhoto == true`, synced via the hot-path
+    /// `itemsJSON` flag) but hasn't downloaded the bytes yet fetches them here — lazily, once,
+    /// on opening the sheet. Never runs on a timer, never touches `item.lastModified` (that would
+    /// falsely make this item "win" a future last-write-wins merge against a real edit elsewhere).
+    private func loadRemotePhotoIfNeeded() async {
+        guard stagedPhotoData == nil, item.hasPhoto, let shareID = selectedStore?.shareID else { return }
+        isLoadingPhoto = true
+        defer { isLoadingPhoto = false }
+        guard let data = try? await SharedItemPhotoService.shared.pull(itemID: item.id) else { return }
+        await MainActor.run {
+            item.photoData = data
+            item.photoLastModified = Date()
+            try? context.save()
+            stagedPhotoData = data
+        }
+    }
+
+    @ViewBuilder
+    private var photoSection: some View {
+        Section(String(localized: "item.photo.section")) {
+            if let stagedPhotoData, let uiImage = UIImage(data: stagedPhotoData) {
+                HStack {
+                    // `.contentShape`/`.onTapGesture` scoped to just the thumbnail, and both
+                    // buttons given an explicit `.buttonStyle` — inside a Form row, a plain
+                    // `Image` next to un-styled `Button`s can otherwise have its taps misrouted
+                    // to one of the buttons (observed: tapping the thumbnail deleted the photo
+                    // instead of opening it).
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 60, height: 60)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .contentShape(Rectangle())
+                        .onTapGesture { showFullScreenPhoto = true }
+                    Spacer()
+                    Button(String(localized: "item.photo.replace")) { activePickerSource = .library }
+                        .buttonStyle(.borderless)
+                    Button(role: .destructive) {
+                        self.stagedPhotoData = nil
+                        photoChanged = true
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .buttonStyle(.borderless)
+                }
+            } else if isLoadingPhoto {
+                HStack {
+                    ProgressView()
+                    Text(String(localized: "item.photo.loading"))
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                HStack(spacing: 12) {
+                    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                        Button {
+                            activePickerSource = .camera
+                        } label: {
+                            Label(String(localized: "item.photo.camera"), systemImage: "camera")
+                        }
+                        .buttonStyle(.borderless)
+                    }
+                    Button {
+                        activePickerSource = .library
+                    } label: {
+                        Label(String(localized: "item.photo.library"), systemImage: "photo")
+                    }
+                    .buttonStyle(.borderless)
+                }
+            }
+        }
     }
 
     /// Switching stores can invalidate the current assignment (the new store may not even be
@@ -251,6 +351,12 @@ struct EditItemView: View {
         item.store = selectedStore
         item.assignedTo = selectedStore?.shareID != nil ? assignedTo : ""
         item.lastModified = Date()
+
+        if photoChanged {
+            item.photoData = stagedPhotoData
+            item.hasPhoto = stagedPhotoData != nil
+            item.photoLastModified = Date()
+        }
 
         // If the user never touched the price field — even if they changed the quantity elsewhere
         // in this same sheet — `priceText` is still showing the OLD total for the OLD quantity.
@@ -291,6 +397,20 @@ struct EditItemView: View {
             }
         }
         syncPush(selectedStore)
+
+        // Cross-account photo transport runs separately from `syncPush` above — a distinct actor,
+        // a distinct CKRecord type, fired only when the user actually changed the photo. Never
+        // part of the `itemsJSON` hot path (see `SharedItemPhotoService`).
+        if photoChanged, let shareID = selectedStore?.shareID {
+            let photoToUpload = stagedPhotoData
+            Task {
+                if let photoToUpload {
+                    try? await SharedItemPhotoService.shared.push(itemID: itemID, shareID: shareID, data: photoToUpload)
+                } else {
+                    await SharedItemPhotoService.shared.delete(itemID: itemID)
+                }
+            }
+        }
     }
 
     /// Uploads the edited list right away instead of waiting for the store's detail view to
@@ -314,6 +434,10 @@ struct EditItemView: View {
             await SharedStoreService.shared.recordLocalDeletion(shareID: shareID, itemID: itemID)
             await MainActor.run { context.delete(item) }
             await SyncCoordinator.shared.push(store: store)
+            // Best-effort — no-op if this item never had a `SharedItemPhoto` record. Prevents an
+            // orphaned CKAsset record from lingering in the public DB forever after the item itself
+            // is gone.
+            await SharedItemPhotoService.shared.delete(itemID: itemID)
         }
     }
 }

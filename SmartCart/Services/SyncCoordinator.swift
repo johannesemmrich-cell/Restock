@@ -207,7 +207,8 @@ final class SyncCoordinator {
         guard let stores = try? context.fetch(FetchDescriptor<Store>()) else { return }
         for store in stores {
             guard let shareID = store.shareID else { continue }
-            try? await SharedStoreService.shared.subscribe(shareID: shareID)
+            do { try await SharedStoreService.shared.subscribe(shareID: shareID) }
+            catch { print("[SyncCoordinator] resubscribeAll failed for shareID \(shareID): \(error)") }
         }
     }
 
@@ -264,6 +265,9 @@ final class SyncCoordinator {
                 local.addedBy = remote.addedBy
                 local.completedBy = remote.completedBy
                 local.lastModified = remote.lastModified
+                // Only the flag travels here — actual bytes are fetched lazily and separately by
+                // `SharedItemPhotoService`, never as part of this hot-path merge.
+                local.hasPhoto = remote.hasPhoto
             } else {
                 let item = ShoppingItem(
                     name: remote.name, category: remote.category,
@@ -278,6 +282,7 @@ final class SyncCoordinator {
                 item.addedBy = remote.addedBy
                 item.completedBy = remote.completedBy
                 item.lastModified = remote.lastModified
+                item.hasPhoto = remote.hasPhoto
                 context.insert(item)
             }
         }

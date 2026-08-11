@@ -159,11 +159,14 @@ enum ReceiptResolutionService {
         // Roh-Text stehen und es ist kein KI-Vorschlag). Steuert die Art.-50-Kennzeichnung unten.
         var aiResolvedIndices: Set<Int> = []
         if allowAIResolution, !needsAI.isEmpty, ReceiptNameAIResolver.isAIAvailable() {
+            // Nur einmal pro Scan aufgebaut (nicht pro Zeile) — reiner Empfehlungs-Kontext für den
+            // Prompt, siehe `knownItemNames` unten.
+            let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
             await withTaskGroup(of: (Int, String?).self) { group in
                 for index in needsAI {
                     let raw = parsed[index].name
                     group.addTask {
-                        (index, await ReceiptNameAIResolver.shared.expand(raw))
+                        (index, await ReceiptNameAIResolver.shared.expand(raw, knownNames: knownNames))
                     }
                 }
                 for await (index, suggestion) in group {
@@ -188,5 +191,29 @@ enum ReceiptResolutionService {
                 resolvedByAI: aiResolvedIndices.contains(index)
             )
         }
+    }
+
+    /// Baut den Wortschatz-Kontext für Stufe 5 (Apple Intelligence): dieselben zwei Quellen wie
+    /// `QuickAddParser.knownProductSuggestions` (Kaufhistorie über ALLE Stores/Zeit, absteigend
+    /// nach Datum, plus aktuelle — auch noch nicht gekaufte — Artikelnamen dieses Stores), aber
+    /// ohne Präfix-Filterung, weil hier nicht "was passt zu diesem Tippbeginn" gefragt ist,
+    /// sondern "was kennt dieser Nutzer überhaupt". Reiner Empfehlungs-Kontext für den Prompt —
+    /// nie eine automatische Übernahme wie bei Stufe 3/4 —, deshalb bewusst bei 40 Einträgen
+    /// gedeckelt: klein genug fürs Prompt-/Zeitbudget (25s-Timeout), groß genug, um die
+    /// gängigsten eigenen Produktnamen abzudecken.
+    static func knownItemNames(allRecords: [PurchaseRecord], store: Store, limit: Int = 40) -> [String] {
+        let candidateNames = allRecords.sorted(by: { $0.date > $1.date }).map(\.itemName) + (store.items ?? []).map(\.name)
+        var seenLower = Set<String>()
+        var result: [String] = []
+        for name in candidateNames {
+            if result.count == limit { break }
+            let trimmed = name.trimmingCharacters(in: .whitespaces)
+            guard !trimmed.isEmpty else { continue }
+            let lower = trimmed.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+            guard !seenLower.contains(lower) else { continue }
+            seenLower.insert(lower)
+            result.append(trimmed)
+        }
+        return result
     }
 }

@@ -14,8 +14,8 @@ struct StoreShareSheet: View {
     @State private var copied = false
 
     private var displayCode: String {
-        guard let id = store.shareID, id.count == 6 else { return "" }
-        return "\(id.prefix(3))-\(id.dropFirst(3))"
+        guard let id = store.shareID, id.count == 10 else { return "" }
+        return "\(id.prefix(4))-\(id.dropFirst(4).prefix(3))-\(id.dropFirst(7))"
     }
 
     var body: some View {
@@ -163,7 +163,8 @@ struct StoreShareSheet: View {
         do {
             let code = try await SharedStoreService.shared.publish(store: store)
             let members = try? await SharedStoreService.shared.addSelfAsMember(shareID: code)
-            try? await SharedStoreService.shared.subscribe(shareID: code)
+            do { try await SharedStoreService.shared.subscribe(shareID: code) }
+            catch { print("[SharedStoreService] subscribe (start share) failed: \(error)") }
             await MainActor.run {
                 store.shareID = code
                 store.isSharedByMe = true
@@ -244,7 +245,7 @@ struct JoinStoreSheet: View {
                         if cleaned != new { code = cleaned }
                         preview = nil
                         error = nil
-                        if cleaned.count == 6 {
+                        if cleaned.count == 10 {
                             Task { await lookup(cleaned) }
                         }
                     }
@@ -364,7 +365,8 @@ struct JoinStoreSheet: View {
             }
 
             let members = try? await SharedStoreService.shared.addSelfAsMember(shareID: preview.shareID)
-            try? await SharedStoreService.shared.subscribe(shareID: preview.shareID)
+            do { try await SharedStoreService.shared.subscribe(shareID: preview.shareID) }
+            catch { print("[SharedStoreService] subscribe (join) failed: \(error)") }
 
             await MainActor.run {
                 for name in members ?? [] { store.addMember(name) }

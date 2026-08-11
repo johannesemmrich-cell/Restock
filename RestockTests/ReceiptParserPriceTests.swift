@@ -192,4 +192,47 @@ final class ReceiptParserPriceTests: XCTestCase {
         let line = try XCTUnwrap(result.first { $0.name.lowercased().contains("aufschnitt") })
         XCTAssertEqual(line.price, 0.436 * 12.49, accuracy: 0.01)
     }
+
+    // MARK: - Vierter Anlauf: derselbe sichtbare Bug (1145€ statt 1,15€), aber eine ANDERE Ursache
+    // — ein abgepackter Skyr-Becher mit festem Gesamtpreis druckt auf dem Bon NUR eine einzige
+    // Zeile ("SKYR NATUR 500G   2,29"), OHNE separate "0,500 kg x 2,29"-Gewichtszeile (die gibt es
+    // nur bei an der Frischetheke/Waage gewogener Ware). `weightBasis` blieb dadurch `nil`, UND
+    // `matchQuantityAmount` ist beim allerersten Scan dieses Artikels ebenfalls `nil` —
+    // `learningQuantity` fiel auf den absoluten Fallback `1` zurück und lernte 2,29€ als
+    // vermeintlichen Gramm-Preis. Fix: `ReceiptParserService.weightBasisFromName` liest die im
+    // Namen selbst gedruckte Füllmenge ("500G") als letzten Fallback vor der `1`.
+
+    func testFlatPricePackagedItemWithoutWeightLineLearnsCorrectPerGramPrice() throws {
+        let lines = ["Skyr Natur 500g   2,29"]
+        let receiptLine = try XCTUnwrap(ReceiptParserService.parse(lines).first)
+        XCTAssertNil(receiptLine.weightBasis, "Setup-Annahme: keine separate Gewichtszeile vorhanden")
+
+        let editableLine = EditableReceiptLine(
+            name: receiptLine.name,
+            price: receiptLine.price,
+            originalName: receiptLine.name,
+            quantity: receiptLine.quantity,
+            unit: receiptLine.unit,
+            weightBasis: receiptLine.weightBasis
+        )
+        // Allererster Scan dieses Artikels — kein historischer Match.
+        let quantity = editableLine.learningQuantity(matchQuantityAmount: nil)
+        XCTAssertEqual(quantity, 500, "Divisor muss aus der im Namen gedruckten Füllmenge (500G) kommen, nicht auf 1 zurückfallen")
+
+        let perUnitPrice = receiptLine.price / quantity
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#123456")
+        store.learnedPrices["skyr natur 500g"] = perUnitPrice
+        let item = ShoppingItem(name: "Skyr Natur 500g", quantityAmount: 500, unit: "g", store: store)
+
+        XCTAssertEqual(try XCTUnwrap(item.estimatedLineTotal), 2.29, accuracy: 0.01)
+        XCTAssertNotEqual(try XCTUnwrap(item.estimatedLineTotal), 1145.0)
+    }
+
+    func testWeightBasisFromNameHandlesKgLiterAndCentiliterUnits() {
+        XCTAssertEqual(ReceiptParserService.weightBasisFromName("Skyr Natur 500g"), 500)
+        XCTAssertEqual(ReceiptParserService.weightBasisFromName("Reis 1kg"), 1000)
+        XCTAssertEqual(ReceiptParserService.weightBasisFromName("Cola 1,5l"), 1500)
+        XCTAssertEqual(ReceiptParserService.weightBasisFromName("Rotwein 75cl"), 750)
+        XCTAssertNil(ReceiptParserService.weightBasisFromName("Bio Eier 6er"), "Ohne erkennbare g/kg/l-Einheit darf nichts erfunden werden")
+    }
 }

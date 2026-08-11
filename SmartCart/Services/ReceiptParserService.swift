@@ -697,6 +697,42 @@ enum ReceiptParserService {
         options: [.caseInsensitive]
     )
 
+    private static let sizeInNameRegex = try? NSRegularExpression(
+        pattern: #"(\d+(?:[.,]\d+)?)\s*(kg|g|ml|cl|dl|l)\b"#,
+        options: [.caseInsensitive]
+    )
+
+    /// Extrahiert eine im Produktnamen selbst gedruckte Füllmenge (z. B. "SKYR NATUR 500G" → 500,
+    /// "Cola 1,5l" → 1500) — Fallback-Quelle für `EditableReceiptLine.learningQuantity`, wenn KEINE
+    /// separate Gewichts-/Mengenzeile existiert (siehe `weightBasis`-Doc oben: die deckt nur
+    /// gewogene Frischware mit eigener "0,500 kg x 2,29"-Zeile ab). Ein abgepacktes Produkt mit
+    /// festem Gesamtpreis (z. B. ein Skyr-Becher, Bon-Zeile nur "SKYR NATUR 500G   2,29", ohne
+    /// "x"/"kg"-Rechenzeile) hatte dadurch bisher KEINEN Divisor — `learningQuantity` fiel auf 1
+    /// zurück und lernte den vollen Zeilenpreis (2,29€) als vermeintlichen PRO-GRAMM-Preis. Bei
+    /// späterer Artikel-Anlage mit `quantityAmount: 500, unit: "g"` (z. B. über `QuickAddParser`)
+    /// ergab das 2,29 × 500 = 1145€ (`ShoppingItem.estimatedLineTotal`) — der wiederholt gemeldete
+    /// "Skyr-Bug". Sucht bewusst den LETZTEN Treffer im Namen (Größenangabe steht typischerweise am
+    /// Ende), damit eine zufällige führende Ziffernfolge (Artikelnummer) nicht fälschlich matcht.
+    /// Normiert auf dieselbe Gramm-/Milliliter-Basis wie der `weightTimesRate`-Zweig oben (kg/l ×
+    /// 1000, cl × 10, dl × 100), damit der Divisor zur später angelegten `ShoppingItem.unit`
+    /// ("g"/"ml") passt.
+    static func weightBasisFromName(_ name: String) -> Double? {
+        guard let rx = sizeInNameRegex else { return nil }
+        let range = NSRange(name.startIndex..., in: name)
+        guard let match = rx.matches(in: name, range: range).last,
+              let amountRange = Range(match.range(at: 1), in: name),
+              let unitRange = Range(match.range(at: 2), in: name),
+              let amount = Double(name[amountRange].replacingOccurrences(of: ",", with: ".")),
+              amount > 0
+        else { return nil }
+        switch name[unitRange].lowercased() {
+        case "kg", "l": return amount * 1000
+        case "cl": return amount * 10
+        case "dl": return amount * 100
+        default: return amount // g, ml
+        }
+    }
+
     private static func weightTimesRate(in line: String) -> (weight: Double, unit: String, rate: Double)? {
         guard let rx = weightTimesRateRegex,
               let match = rx.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)),
@@ -917,19 +953,35 @@ enum ReceiptParserService {
 
     // MARK: - Kürzel-Auflösung (Stufe 4: Kaufhistorie-Fuzzy-Match)
 
-    /// Sucht in der Kaufhistorie DESSELBEN Stores nach einem Artikelnamen, der stark mit dem
-    /// OCR-Token überlappt (bidirektionales `contains`, wie an anderen Stellen der App bereits
-    /// verwendet) — z. B. "Mozarela" (OCR) → "Mozzarella Di Bufala 125g" (frühere Käufe an diesem
-    /// Store). Hilft vor allem bei wiederkehrenden Artikeln; bei einem komplett neuen Kürzel ohne
-    /// Bezug zu vergangenen Käufen liefert das nichts (siehe Stufe 4, Apple Intelligence).
+    /// Sucht in der Kaufhistorie DESSELBEN Stores nach dem Artikelnamen, der am stärksten mit dem
+    /// OCR-Token überlappt — z. B. "Mozarela" (OCR) → "Mozzarella Di Bufala 125g" (frühere Käufe an
+    /// diesem Store). Hilft vor allem bei wiederkehrenden Artikeln; bei einem komplett neuen Kürzel
+    /// ohne Bezug zu vergangenen Käufen liefert das nichts (siehe Stufe 5, Apple Intelligence).
+    ///
+    /// Nutzt dieselbe Fuzzy-Bewertung (`lcsSimilarity`) und denselben Schwellwert
+    /// (`completedItemAutoApplyThreshold`) wie Stufe 3 (`completedItemCandidates`) statt reinem
+    /// `contains` — vorher gewann der ERSTE textlich überlappende Treffer, nicht der beste, und ein
+    /// eigener, vom Nutzer tatsächlich verwendeter Name (z. B. "Burger Brötchen") konnte an einem
+    /// schwächeren `contains`-Zufallstreffer vorbeigehen und fiel dadurch bis zur KI-Stufe durch,
+    /// die ohne jeden Nutzerkontext rät. Store-Scope bleibt bewusst erhalten: kein
+    /// store-übergreifendes Auto-Apply, um keine Namen von einem anderen Store fälschlich
+    /// zuzuordnen.
     static func historyMatch(for token: String, in records: [PurchaseRecord], storeName: String) -> String? {
-        let needle = token.lowercased()
-        guard needle.count >= 3 else { return nil }
+        guard token.count >= 3 else { return nil }
         let storeLower = storeName.lowercased()
-        return records.first { record in
-            record.storeName.lowercased() == storeLower &&
-            (record.itemName.lowercased().contains(needle) || needle.contains(record.itemName.lowercased()))
-        }?.itemName
+        let sameStore = records.filter { $0.storeName.lowercased() == storeLower }
+        guard !sameStore.isEmpty else { return nil }
+
+        var bestByName: [String: Double] = [:]
+        for record in sameStore {
+            let score = lcsSimilarity(token, record.itemName)
+            let key = record.itemName.lowercased()
+            if let existing = bestByName[key], existing >= score { continue }
+            bestByName[key] = score
+        }
+        guard let best = bestByName.max(by: { $0.value < $1.value }),
+              best.value >= completedItemAutoApplyThreshold else { return nil }
+        return sameStore.first { $0.itemName.lowercased() == best.key }?.itemName
     }
 }
 
@@ -956,20 +1008,29 @@ actor ReceiptNameAIResolver {
 
     /// Öffentlicher Einstiegspunkt — kapselt Verfügbarkeits-Check, iOS-Version-Guard und
     /// Fehlerbehandlung, damit der Aufrufer nur ein einfaches optionales String bekommt.
-    func expand(_ raw: String) async -> String? {
+    /// `knownNames` sind die eigenen, bereits bekannten Artikelnamen des Nutzers (siehe
+    /// `ReceiptResolutionService.knownItemNames`) — rein empfehlender Kontext für den Prompt,
+    /// keine harte Vorgabe.
+    func expand(_ raw: String, knownNames: [String] = []) async -> String? {
         guard #available(iOS 26, *) else { return nil }
-        return (try? await aiExpand(raw)) ?? nil
+        return (try? await aiExpand(raw, knownNames: knownNames)) ?? nil
     }
 
     @available(iOS 26, *)
-    private func aiExpand(_ raw: String) async throws -> String? {
+    private func aiExpand(_ raw: String, knownNames: [String]) async throws -> String? {
         #if canImport(FoundationModels)
         let model = SystemLanguageModel.default
         guard case .available = model.availability else { return nil }
+        // Empfehlend, nicht bindend ("bevorzuge... falls plausibel") — bei einem echten neuen
+        // Produkt, das nicht in `knownNames` vorkommt, soll das Modell weiterhin frei raten dürfen.
+        let knownHint = knownNames.isEmpty ? "" : """
+
+        Der Nutzer verwendet u. a. diese eigenen Artikelnamen (bevorzuge eine Übereinstimmung/Ähnlichkeit hiermit, falls plausibel): \(knownNames.joined(separator: ", "))
+        """
         let prompt = """
         Dies ist eine abgekürzte Positionszeile von einem Kassenbon (Deutsch oder Französisch): "\(raw)"
         Antworte NUR mit dem wahrscheinlichsten vollen Produktnamen in derselben Sprache, ohne
-        Erklärung, ohne Anführungszeichen, ohne Preis oder Menge.
+        Erklärung, ohne Anführungszeichen, ohne Preis oder Menge.\(knownHint)
         """
         // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen. Nutzt `withRealTimeout`
         // (RecipeRecognitionService.swift) statt eines TaskGroup-Rennens, das einen wirklich

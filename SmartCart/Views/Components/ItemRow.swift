@@ -74,6 +74,11 @@ struct ItemRow: View {
                         .font(.system(size: 16))
                         .foregroundStyle(item.isCompleted ? .tertiary : .primary)
                         .strikethrough(item.isCompleted, color: Color(.tertiaryLabel))
+                    if item.hasPhoto {
+                        Image(systemName: "photo.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 HStack(spacing: 6) {

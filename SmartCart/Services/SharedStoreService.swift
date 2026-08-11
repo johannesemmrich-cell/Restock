@@ -11,9 +11,14 @@ actor SharedStoreService {
 
     // MARK: - Code generation
 
+    // 10 chars from a 32-char alphabet ≈ 1.15×10^15 combinations — brute-forcing/enumerating a
+    // valid code against the public database is computationally infeasible, unlike the previous
+    // 6-char code (~1.07×10^9 combinations, guessable by a scripted client). This is a mitigation
+    // for the code-guessing attack vector; it does not change the underlying public-database
+    // access model (see SharedStoreService's public db property).
     static func generateCode() -> String {
         let chars = Array("ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
-        return String((0..<6).map { _ in chars.randomElement()! })
+        return String((0..<10).map { _ in chars.randomElement()! })
     }
 
     // MARK: - Publish / push (owner or member uploads local state)
@@ -315,7 +320,8 @@ actor SharedStoreService {
                 assignedTo: item.assignedTo,
                 addedBy: item.addedBy,
                 completedBy: item.completedBy,
-                lastModified: item.lastModified
+                lastModified: item.lastModified,
+                hasPhoto: item.hasPhoto
             )
         }
     }
@@ -335,7 +341,8 @@ actor SharedStoreService {
             "assignedTo": item.assignedTo,
             "addedBy": item.addedBy,
             "completedBy": item.completedBy,
-            "lastModified": item.lastModified.timeIntervalSince1970
+            "lastModified": item.lastModified.timeIntervalSince1970,
+            "hasPhoto": item.hasPhoto
         ]}
         guard let data = try? JSONSerialization.data(withJSONObject: dicts),
               let str = String(data: data, encoding: .utf8) else { return "[]" }
@@ -363,7 +370,10 @@ actor SharedStoreService {
                 // Optional-with-default like every other field: payloads written before this
                 // field existed simply decode as "" instead of failing.
                 completedBy: dict["completedBy"] as? String ?? "",
-                lastModified: (dict["lastModified"] as? TimeInterval).map(Date.init(timeIntervalSince1970:)) ?? .distantPast
+                lastModified: (dict["lastModified"] as? TimeInterval).map(Date.init(timeIntervalSince1970:)) ?? .distantPast,
+                // Same additive/defaulted pattern as `completedBy` above: payloads written before
+                // this field existed simply decode as `false`.
+                hasPhoto: dict["hasPhoto"] as? Bool ?? false
             )
         }
     }
@@ -449,4 +459,8 @@ struct SharedItemData {
     let addedBy: String
     let completedBy: String
     let lastModified: Date
+    // Single scalar, additive with a default like `completedBy` above — the only photo-related
+    // signal on this hot path. The actual bytes travel separately via `SharedItemPhotoService`,
+    // fetched lazily and on-demand, never as part of this JSON blob.
+    let hasPhoto: Bool
 }

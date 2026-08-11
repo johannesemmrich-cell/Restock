@@ -47,10 +47,16 @@ struct EditableReceiptLine: Identifiable {
     /// (siehe RestockTests/ReceiptParserPriceTests.swift). Bevorzugt `weightBasis` (Gewichtszeile
     /// wie "0,500 kg x 2,29" — verlässlich, weil direkt aus dem Bon geparst, unabhängig von einem
     /// Artikel-Match), sonst mengenbewusst `quantity` selbst (Mengenzeile "2 x 1.25€" oder
-    /// Multipack-Token "6X1.5L"), sonst den abgehakten Artikel (`matchQuantityAmount`); Fallback
-    /// ist 1, dann ist der Preis bereits per-unit.
+    /// Multipack-Token "6X1.5L"), sonst den abgehakten Artikel (`matchQuantityAmount`), sonst eine
+    /// im rohen Bon-Namen selbst gedruckte Füllmenge (`ReceiptParserService.weightBasisFromName` —
+    /// deckt abgepackte Ware mit festem Gesamtpreis ab, z. B. "SKYR NATUR 500G", die NIE eine
+    /// eigene Gewichts-/Mengenzeile hat; behebt den wiederholt gemeldeten Skyr-Bug, bei dem der
+    /// volle Zeilenpreis mangels jeglichen Divisors als Pro-Gramm-Preis gelernt wurde). Nutzt
+    /// bewusst `originalName` (roher OCR-Text), nicht `name` — eine bereits aufgelöste/KI-
+    /// vervollständigte Bezeichnung könnte die gedruckte Füllmenge nicht mehr enthalten. Absoluter
+    /// Fallback ist 1, dann ist der Preis bereits per-unit.
     func learningQuantity(matchQuantityAmount: Double?) -> Double {
-        weightBasis ?? (quantity > 1 ? quantity : (matchQuantityAmount ?? 1))
+        weightBasis ?? (quantity > 1 ? quantity : (matchQuantityAmount ?? ReceiptParserService.weightBasisFromName(originalName) ?? 1))
     }
 
     /// Indizes von Zeilen, die Stufe 5 (Apple Intelligence) noch NICHT durchlaufen haben — erkannt

@@ -60,6 +60,18 @@ class ShoppingItem {
     var completedBy: String = ""
     var lastModified: Date = Date()
 
+    /// Compressed photo bytes attached to this item, or nil if none. `.externalStorage` keeps the
+    /// blob out of the in-memory row and lets SwiftData's existing private CloudKit mirror carry
+    /// it as a CKAsset automatically — reuses that infra instead of hand-rolled file management.
+    /// Deliberately NEVER synced through `SharedItemData`/`itemsJSON` (see `SharedItemPhotoService`
+    /// for the separate, lazy, cross-account path) — only `hasPhoto` below travels that hot path.
+    @Attribute(.externalStorage) var photoData: Data?
+    /// True once a photo exists for this item, locally or (for shared-list members) uploaded by
+    /// someone else but not yet downloaded to this device. The only photo-related field synced via
+    /// `SharedItemData`/`itemsJSON` — a single scalar, additive with a default like `completedBy`.
+    var hasPhoto: Bool = false
+    var photoLastModified: Date?
+
     var store: Store?
 
     // Siehe Store.swift für die Begründung: CloudKit verlangt To-many-Relationships zwingend
