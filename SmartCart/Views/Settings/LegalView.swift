@@ -141,7 +141,7 @@ Restock bietet digitale Einkaufslisten mit folgenden Funktionen:
 - Artikel hinzufügen, organisieren und abhaken
 - Automatische Ladenzuweisung basierend auf Kaufhistorie
 - Kassenbon-Scan und Preiserfassung (Premium)
-- Menüplanung (Premium)
+- Menüplanung
 - Geteilte Listen zur Zusammenarbeit (Premium / Add-on)
 - Ausgaben-Analyse (Premium)
 

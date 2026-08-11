@@ -132,11 +132,51 @@ struct PaywallView: View {
     private func fallbackPrice(for id: String) -> String {
         switch id {
         case PremiumService.monthlyID:     return "1,99 €"
-        case PremiumService.yearlyID:      return "9,99 €"
-        case PremiumService.lifetimeID:    return "4,99 €"
+        case PremiumService.yearlyID:      return "8,99 €"
+        case PremiumService.lifetimeID:    return "14,99 €"
         case PremiumService.sharedListsID: return "4,99 €"
         default: return "–"
         }
+    }
+
+    /// Rohwert (ohne Formatierung) hinter den obigen Anzeige-Preisen, für Rabatt-/Vergleichsrechnungen.
+    /// Fällt auf denselben Wert zurück wie `fallbackPrice`, wenn StoreKit noch nicht geladen hat.
+    private func rawPrice(for id: String) -> Double {
+        if let value = premium.product(for: id)?.price {
+            return NSDecimalNumber(decimal: value).doubleValue
+        }
+        switch id {
+        case PremiumService.monthlyID:  return 1.99
+        case PremiumService.yearlyID:   return 8.99
+        case PremiumService.lifetimeID: return 14.99
+        default: return 0
+        }
+    }
+
+    /// Ersparnis des Jahres-Abos gegenüber 12x Monatspreis, gerundet auf ganze Prozent — treibt
+    /// das "-62%"-Badge, damit die Zahl bei Preisänderungen nicht von Hand nachgepflegt werden muss.
+    private var yearlySavingsPercent: Int {
+        let monthly = rawPrice(for: PremiumService.monthlyID)
+        let yearly = rawPrice(for: PremiumService.yearlyID)
+        guard monthly > 0 else { return 0 }
+        let fullPrice = monthly * 12
+        guard fullPrice > 0 else { return 0 }
+        return Int(((fullPrice - yearly) / fullPrice * 100).rounded())
+    }
+
+    private var yearlyPerMonth: String {
+        String(format: "%.2f €", rawPrice(for: PremiumService.yearlyID) / 12)
+            .replacingOccurrences(of: ".", with: ",")
+    }
+
+    /// Nach wie vielen Monaten sich der Einmalkauf gegenüber dem Jahres-Abo amortisiert hat —
+    /// macht den höheren Lifetime-Preis für Vielnutzer greifbar statt nur "ist halt teurer".
+    private var lifetimeBreakEvenYears: String {
+        let yearly = rawPrice(for: PremiumService.yearlyID)
+        let lifetime = rawPrice(for: PremiumService.lifetimeID)
+        guard yearly > 0 else { return "" }
+        let years = lifetime / yearly
+        return String(format: "%.1f", years).replacingOccurrences(of: ".", with: ",")
     }
 
     // MARK: - Full Premium Options
@@ -150,24 +190,33 @@ struct PaywallView: View {
                     id: PremiumService.yearlyID,
                     title: "Jährlich",
                     price: "\(productPrice(for: PremiumService.yearlyID))/Jahr",
-                    detail: "= ca. 0,83 €/Monat",
-                    badge: "Beliebt"
+                    detail: "= \(yearlyPerMonth)/Monat",
+                    badge: "Beliebt",
+                    savingsBadge: yearlySavingsPercent > 0 ? "-\(yearlySavingsPercent)%" : nil
                 )
                 planCard(
                     id: PremiumService.monthlyID,
                     title: "Monatlich",
                     price: "\(productPrice(for: PremiumService.monthlyID))/Monat",
-                    detail: nil,
-                    badge: nil
+                    detail: "jederzeit kündbar",
+                    badge: nil,
+                    savingsBadge: nil
                 )
                 planCard(
                     id: PremiumService.lifetimeID,
                     title: "Einmalig",
                     price: productPrice(for: PremiumService.lifetimeID),
-                    detail: "einmaliger Kauf",
-                    badge: nil
+                    detail: "kein Abo · zahlt sich ab Jahr \(lifetimeBreakEvenYears) aus",
+                    badge: "Für immer",
+                    savingsBadge: nil
                 )
             }
+
+            Text("Alle Preise inkl. MwSt. Du kannst jederzeit wechseln oder kündigen.")
+                .font(.system(size: 11))
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+                .padding(.top, 2)
         }
     }
 
@@ -208,7 +257,7 @@ struct PaywallView: View {
 
     // MARK: - Plan Cards
 
-    private func planCard(id: String, title: String, price: String, detail: String?, badge: String?) -> some View {
+    private func planCard(id: String, title: String, price: String, detail: String?, badge: String?, savingsBadge: String? = nil) -> some View {
         let isSelected = selectedPlanID == id
         return Button { selectedPlanID = id } label: {
             HStack(spacing: 12) {
@@ -246,9 +295,16 @@ struct PaywallView: View {
 
                 Spacer()
 
-                Text(price)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(isSelected ? Color.accent : .primary)
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(price)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(isSelected ? Color.accent : .primary)
+                    if let savingsBadge {
+                        Text(savingsBadge)
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(Color.accent)
+                    }
+                }
             }
             .padding(16)
             .background(Color.surface)
@@ -369,7 +425,6 @@ struct PaywallView: View {
     private let premiumBenefits: [Benefit] = [
         Benefit(icon: "person.2.fill",          title: "Geteilte Listen",       description: "Echtzeit-Sync mit Partner, Familie oder Mitbewohnern"),
         Benefit(icon: "doc.text.viewfinder",    title: "Kassenbon-Scan",        description: "Preise automatisch aus Kassenbon einlesen"),
-        Benefit(icon: "fork.knife",             title: "Menüplan",              description: "Wochenspeiseplan & Zutaten automatisch hinzufügen"),
         Benefit(icon: "chart.bar.fill",         title: "Ausgaben-Analyse",      description: "Monatliche Ausgaben & Budgetschätzung"),
         Benefit(icon: "arrow.clockwise",        title: "Nachkauf-Erinnerungen", description: "Intelligente Hinweise, wenn ein Artikel fällig ist"),
         Benefit(icon: "folder.fill",            title: "Vorlagen",              description: "Listen als Vorlage speichern & wiederverwenden"),

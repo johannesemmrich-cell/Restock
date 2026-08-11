@@ -150,7 +150,7 @@ struct SettingsView: View {
                                     Text("Restock Pro freischalten")
                                         .font(.system(size: 15, weight: .medium))
                                         .foregroundStyle(.primary)
-                                    Text("Kassenbon-Scan, Menüplan, Ausgaben & mehr")
+                                    Text("Kassenbon-Scan, Ausgaben-Analyse & mehr")
                                         .font(.system(size: 12))
                                         .foregroundStyle(.secondary)
                                 }

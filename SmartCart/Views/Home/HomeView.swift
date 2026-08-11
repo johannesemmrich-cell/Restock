@@ -1378,12 +1378,7 @@ struct HomeView: View {
                         .foregroundStyle(Color.ink)
                 }
                 Button {
-                    if premium.hasPremiumAccess {
-                        showMenuPlan = true
-                    } else {
-                        paywallContext = .premium(feature: "den Menüplan")
-                        showPaywall = true
-                    }
+                    showMenuPlan = true
                 } label: {
                     Image(systemName: "fork.knife")
                         .font(.system(size: 17, weight: .regular))
