@@ -71,6 +71,10 @@ struct HomeView: View {
     /// to nil on the manual "Store beitreten" entry points so a stale code never leaks into a
     /// sheet the user opened themselves.
     @State private var pendingJoinCode: String? = nil
+    /// Vom App-weiten `.onOpenURL` in `SmartCartApp` befüllt, falls ein `restock://join/<code>`-
+    /// Link ankam während noch `OnboardingView` (statt `HomeView`) aktiv war — siehe
+    /// `checkPendingJoinCode()`.
+    @AppStorage("pendingJoinCode") private var pendingJoinCodeStorage: String?
     // Lokale Kopie für ForEach — verhindert dass @Query-Re-Sort die Drag-Animation im Grid abbricht
     // (gleiches Muster wie StoreSetupView.orderedActiveStores)
     @State private var orderedStores: [Store] = []
@@ -206,6 +210,12 @@ struct HomeView: View {
                 if url.scheme == "restock", url.host == "join" {
                     pendingJoinCode = url.lastPathComponent
                     showJoinStore = true
+                    // SwiftUI kann denselben Link zusätzlich an SmartCartApps App-weiten
+                    // .onOpenURL-Handler ausliefern (Onboarding-Fallback, siehe dort), der ihn
+                    // unabhängig davon in pendingJoinCodeStorage cached — hier sofort leeren,
+                    // sonst zeigt der nächste App-Start via checkPendingJoinCode() ungefragt
+                    // erneut ein Join-Sheet mit diesem längst verbrauchten Code.
+                    pendingJoinCodeStorage = nil
                 }
             }
             .overlay(alignment: .bottom) {
@@ -264,6 +274,7 @@ struct HomeView: View {
                 checkPendingQuickAdd()
                 checkPendingReceiptScan()
                 syncStoreOrder()
+                checkPendingJoinCode()
             }
             .alert(String(localized: "data.reset.title"), isPresented: $showDataResetAlert) {
                 Button("OK") {}
@@ -1309,6 +1320,7 @@ struct HomeView: View {
     private var joinListCard: some View {
         Button {
             pendingJoinCode = nil
+            pendingJoinCodeStorage = nil
             showJoinStore = true
             Haptics.impact(.light)
         } label: {
@@ -1352,6 +1364,7 @@ struct HomeView: View {
             .buttonStyle(.borderedProminent)
             Button {
                 pendingJoinCode = nil
+                pendingJoinCodeStorage = nil
                 showJoinStore = true
             } label: {
                 Label(String(localized: "home.join.shared"), systemImage: "person.badge.plus")
@@ -1500,6 +1513,18 @@ struct HomeView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
             isQuickAddFocused = true
         }
+    }
+
+    // Deckt den Fall ab, dass jemand einen restock://join/<code>-Link antippt während noch
+    // OnboardingView (statt HomeView) aktiv ist: SwiftUIs .onOpenURL feuert nur an Views, die
+    // gerade in der Hierarchie stecken, HomeView.onOpenURL existiert während des Onboardings noch
+    // gar nicht. Der App-weite Handler in SmartCartApp fängt den Link trotzdem ab und legt ihn
+    // hier zwischen — sobald HomeView danach zum ersten Mal erscheint, holt dieser Check ihn ab.
+    private func checkPendingJoinCode() {
+        guard let code = pendingJoinCodeStorage, !code.isEmpty else { return }
+        pendingJoinCodeStorage = nil
+        pendingJoinCode = code
+        showJoinStore = true
     }
 
     private func checkPendingQuickAdd() {

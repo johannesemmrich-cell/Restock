@@ -12,6 +12,10 @@ struct SmartCartApp: App {
     @StateObject private var premium = PremiumService.shared
 
     @AppStorage("developerMode") private var developerMode = false
+    /// Zwischenspeicher für einen `restock://join/<code>`-Link, der ankam während noch
+    /// `OnboardingView` (statt `HomeView`) aktiv war — siehe `.onOpenURL` unten und
+    /// `HomeView.task`, wo der Wert abgeholt und wieder gelöscht wird.
+    @AppStorage("pendingJoinCode") private var pendingJoinCodeStorage: String?
 
     private static let appGroupID = "group.com.johannesemmrich.SmartCart"
 
@@ -186,6 +190,18 @@ struct SmartCartApp: App {
                 .safeAreaInset(edge: .top) {
                     if developerMode {
                         DevModeIndicator()
+                    }
+                }
+                // Fängt restock://join/<code> auch ab, wenn noch OnboardingView statt HomeView
+                // aktiv ist (HomeView.onOpenURL existiert dann noch gar nicht in der Hierarchie —
+                // SwiftUI liefert das Event sonst spurlos ins Leere). Schreibt nur in den
+                // App-Storage-Zwischenspeicher; HomeView.task holt ihn ab, sobald sie erscheint
+                // (siehe dortiger Kommentar). Die store/receiptscan-Fälle bleiben exklusiv
+                // HomeViews eigenem onOpenURL überlassen — die brauchen ohnehin erst nach dem
+                // Onboarding vorhandene Stores/Kontext.
+                .onOpenURL { url in
+                    if url.scheme == "restock", url.host == "join" {
+                        pendingJoinCodeStorage = url.lastPathComponent
                     }
                 }
                 .task {

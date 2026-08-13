@@ -196,6 +196,12 @@ struct StoreShareSheet: View {
 struct JoinStoreSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var premium: PremiumService
+    // Für das Free-Plan-Kontingent geteilter Listen (PremiumService.canShareAdditionalList) —
+    // Beitreten zählt genauso gegen das Limit wie selbst Teilen, sonst würde dieser Pfad das
+    // Limit komplett umgehen.
+    @Query private var allStoresForShareCount: [Store]
+    @State private var showPaywall = false
 
     /// Set when opened via `restock://join/<code>` (see HomeView.onOpenURL) — pre-fills the
     /// code field so the recipient lands straight on the join-preview/button instead of having
@@ -211,8 +217,13 @@ struct JoinStoreSheet: View {
 
     var body: some View {
         NavigationStack {
+            // ScrollView statt eines reinen VStack: mit sichtbarer Tastatur (nach manueller
+            // Code-Eingabe) oder größerer Dynamic-Type-Einstellung passte Vorschau-Karte +
+            // Code-Feld + Beitreten-Button sonst nicht mehr auf kleinere Bildschirme — der Button
+            // landete unterhalb des sichtbaren Bereichs, obwohl er (unbedingt) im Code stand.
+            ScrollView {
             VStack(spacing: 28) {
-                Spacer()
+                Spacer(minLength: 12)
 
                 Image(systemName: "person.badge.plus")
                     .font(.system(size: 64))
@@ -297,7 +308,9 @@ struct JoinStoreSheet: View {
                         .padding(.horizontal, 32)
                 }
 
-                Spacer()
+                Spacer(minLength: 12)
+            }
+            .frame(maxWidth: .infinity)
             }
             .navigationTitle(String(localized: "share.join.navtitle"))
             .navigationBarTitleDisplayMode(.inline)
@@ -308,6 +321,7 @@ struct JoinStoreSheet: View {
                 }
             }
         }
+        .sheet(isPresented: $showPaywall) { PaywallView(context: .sharedLists) }
         .onAppear {
             if let prefilledCode, code.isEmpty {
                 code = prefilledCode
@@ -342,6 +356,19 @@ struct JoinStoreSheet: View {
             await MainActor.run {
                 self.error = String(format: String(localized: "share.join.alreadyjoined.format"), name)
                 isJoining = false
+            }
+            return
+        }
+
+        // Free-Plan-Kontingent: ohne diese Prüfung würde der Beitritts-Pfad das Limit aus
+        // PremiumService.canShareAdditionalList komplett umgehen (bisher gab es hier gar keine
+        // Premium-Prüfung), während StoreDetailView das Starten einer eigenen geteilten Liste
+        // bereits gate't.
+        let sharedListCount = allStoresForShareCount.filter { $0.shareID != nil }.count
+        guard premium.canShareAdditionalList(currentSharedListCount: sharedListCount) else {
+            await MainActor.run {
+                isJoining = false
+                showPaywall = true
             }
             return
         }

@@ -104,10 +104,24 @@ class ShoppingItem {
         // Use store-specific learned price first (fuzzy: "Hackfleisch" matches "Hackfleisch Gemischt 500g"),
         // then fall back to generic estimator
         let itemLower = name.lowercased()
-        let learnedPrice = store?.learnedPrices.first { key, _ in
+        let rawLearnedPrice = store?.learnedPrices.first { key, _ in
             key.count >= 3 && itemLower.count >= 3 &&
             (key.contains(itemLower) || itemLower.contains(key))
         }?.value
+        // `learnedPrices` is supposed to hold a PER-UNIT rate (see `estimatedLineTotal` below), but
+        // a corrupted/stale entry (e.g. a full line total saved under the wrong key before an
+        // earlier fix) can turn this into an absurd total once multiplied by quantityAmount (the
+        // reported "Skyr 500g → 1145€" bug). Reject it here rather than ever displaying it.
+        // Deliberately a MUCH higher bound than the generic estimator's `maxPlausibleLineTotal`
+        // (30€) below: that one guards a hardcoded catalog guess, which should never claim a
+        // pricey item — but a *learned* price came from a real receipt and can legitimately be
+        // expensive (a nice steak, a bottle of wine, a whole ham). Independent review caught an
+        // earlier version of this fix using the 30€ bound here too, which would have silently
+        // discarded/corrupted correctly-learned prices for anything over 30€ — this only needs to
+        // catch the reported bug's "off by the quantity factor" order-of-magnitude corruption,
+        // not draw a tight realistic-price boundary.
+        let plausibleQuantity = quantityAmount > 0 ? quantityAmount : 1
+        let learnedPrice = rawLearnedPrice.flatMap { $0 * plausibleQuantity <= PriceEstimator.maxPlausibleLearnedLineTotal ? $0 : nil }
         self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category, unit: unit, quantityAmount: quantityAmount)
         self.estimatedPriceIsAutoDerived = (learnedPrice == nil)
     }
@@ -188,7 +202,18 @@ enum PriceEstimator {
     /// hätte sonst z. B. 200€ ergeben. Ein fehlender Preis ist ehrlicher als ein sicher falscher.
     /// Betrifft nur diese Funktion (automatisch geschätzte Preise) — echte gelernte/manuell
     /// eingetragene Preise (`estimatedPriceIsAutoDerived == false`) laufen nie hier durch.
-    private static let maxPlausibleLineTotal = 30.0
+    static let maxPlausibleLineTotal = 30.0
+
+    /// Separate, viel höhere Grenze für ECHTE gelernte Preise (`Store.learnedPrices`, siehe
+    /// `ShoppingItem.init` und `PriceProvenanceMigration` Phase C) — die kommen von einem echten
+    /// Kassenbon und dürfen legitim teuer sein (ein gutes Steak, eine Flasche Wein, ein ganzer
+    /// Schinken). `maxPlausibleLineTotal` (30€) ist dafür zu eng: ein unabhängiges Review hat
+    /// gezeigt, dass eine gemeinsame Grenze korrekt gelernte Preise über 30€ fälschlich verworfen
+    /// bzw. in der Migration sogar überschrieben hätte. Diese Grenze muss nur den gemeldeten Bug
+    /// abfangen — ein um den Mengenfaktor verrutschter Wert (z. B. 1145€ statt 1,15€), eine
+    /// Größenordnung jenseits jedes realistischen Einzelpostens — nicht eine enge, realistische
+    /// Preisgrenze ziehen.
+    static let maxPlausibleLearnedLineTotal = 200.0
 
     static func estimate(for name: String, category: String, unit: String, quantityAmount: Double = 1) -> Double? {
         let nameLower = name.lowercased()
@@ -298,8 +323,17 @@ enum PriceEstimator {
 /// Only items that come out of Phase A as auto-derived AND match the old bug's exact
 /// fingerprint (sub-unit, large quantity, value equals the undivided catalog constant) get
 /// rewritten in Phase B.
+///
+/// Phase C (added for the "Skyr 500g → 1145€" bug, reported 2026-08-13) additionally repairs
+/// `Store.learnedPrices` itself: a corrupted entry (a full line total saved under a per-unit key,
+/// before an earlier fix) survives Phase A/B untouched — those only rewrite `ShoppingItem`
+/// instances — and keeps poisoning every future item with that name via the fuzzy lookup in
+/// `ShoppingItem.init`. Unlike Phase B there's no hardcoded catalog constant to compare a learned
+/// price against, so the fingerprint instead uses matching `PurchaseRecord` history: a sub-unit,
+/// large-quantity purchase of the same (fuzzy-matched) name at the same store whose quantity would
+/// make the stored price imply an implausible line total.
 enum PriceProvenanceMigration {
-    static let flagKey = "priceProvenanceMigrationV2Applied"
+    static let flagKey = "priceProvenanceMigrationV3Applied"
     static let minQuantityForSafeRewrite = 10.0
     private static let subUnits: Set<String> = ["g", "gramm", "mg", "milligramm", "ml", "milliliter", "cl", "zentiliter", "dl", "deziliter"]
 
@@ -332,6 +366,30 @@ enum PriceProvenanceMigration {
             else { continue }
             item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit, quantityAmount: item.quantityAmount)
         }
+
+        // Phase C: repair Store.learnedPrices entries themselves (see class doc above) — otherwise
+        // a corrupted entry keeps producing wrong prices for every future item with that name, even
+        // after Phase A/B fixed all *existing* items.
+        if let stores = try? context.fetch(FetchDescriptor<Store>()) {
+            let allRecords = (try? context.fetch(FetchDescriptor<PurchaseRecord>())) ?? []
+            for store in stores {
+                for (key, price) in store.learnedPrices {
+                    let matchingRecords = allRecords.filter { record in
+                        guard record.storeName == store.name,
+                              subUnits.contains(record.unit.trimmingCharacters(in: .whitespaces).lowercased()),
+                              record.quantityAmount > minQuantityForSafeRewrite
+                        else { return false }
+                        let rn = record.itemName.lowercased()
+                        return key.count >= 3 && rn.count >= 3 && (rn.contains(key) || key.contains(rn))
+                    }
+                    guard let mostRecentMatch = matchingRecords.max(by: { $0.date < $1.date }),
+                          price * mostRecentMatch.quantityAmount > PriceEstimator.maxPlausibleLearnedLineTotal
+                    else { continue }
+                    store.learnedPrices[key] = price / mostRecentMatch.quantityAmount
+                }
+            }
+        }
+
         try? context.save()
         UserDefaults.standard.set(true, forKey: flagKey)
     }

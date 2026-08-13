@@ -119,6 +119,10 @@
 		59990828CCDE670F831874AD /* PhotoCompressorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E81942B396B5E8737A9976 /* PhotoCompressorTests.swift */; };
 		D78DB66BFF8EBECE0338D4D6 /* ExistingDataSurvivesCloudEnableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E41CD9B259ABB65652D89028 /* ExistingDataSurvivesCloudEnableTests.swift */; };
 		9D507887509A2C64F3C625EF /* ReceiptParserPriceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */; };
+		406A9602E2603784E461BA88 /* PriceProvenanceMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */; };
+		6574A986470A3AD7EEA0BEFF /* ReceiptParserReweTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCC241CB61A25D895ACF37B /* ReceiptParserReweTests.swift */; };
+		D022D581762EA72A52910313 /* ReceiptParserStornoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9B48866D4E0411F89FC94E /* ReceiptParserStornoTests.swift */; };
+		905C05C564BF1B61F276C508 /* ReceiptAbbreviationExpansionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE0143DE796992502CF38D3 /* ReceiptAbbreviationExpansionTests.swift */; };
 		DF69955CC809EAF24ADC4174 /* QuickAddParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD6412F9400E7E874C40688 /* QuickAddParserTests.swift */; };
 		71D26D6EF94B734658085600 /* ConsumptionPatternTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F566D87050A4B455E0DD862E /* ConsumptionPatternTests.swift */; };
 		1A2B3C4D5E6F70819293A4B5 /* StorePresetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A39281706F5E4D3C2B1A0 /* StorePresetsTests.swift */; };
@@ -268,6 +272,10 @@
 		25E81942B396B5E8737A9976 /* PhotoCompressorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCompressorTests.swift; sourceTree = "<group>"; };
 		E41CD9B259ABB65652D89028 /* ExistingDataSurvivesCloudEnableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExistingDataSurvivesCloudEnableTests.swift; sourceTree = "<group>"; };
 		68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserPriceTests.swift; sourceTree = "<group>"; };
+		16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceProvenanceMigrationTests.swift; sourceTree = "<group>"; };
+		4DCC241CB61A25D895ACF37B /* ReceiptParserReweTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserReweTests.swift; sourceTree = "<group>"; };
+		FA9B48866D4E0411F89FC94E /* ReceiptParserStornoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserStornoTests.swift; sourceTree = "<group>"; };
+		9BE0143DE796992502CF38D3 /* ReceiptAbbreviationExpansionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptAbbreviationExpansionTests.swift; sourceTree = "<group>"; };
 		6AD6412F9400E7E874C40688 /* QuickAddParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddParserTests.swift; sourceTree = "<group>"; };
 		F566D87050A4B455E0DD862E /* ConsumptionPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumptionPatternTests.swift; sourceTree = "<group>"; };
 		5B4A39281706F5E4D3C2B1A0 /* StorePresetsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePresetsTests.swift; sourceTree = "<group>"; };
@@ -545,6 +553,10 @@
 				27029F1EAB7F4E23EABF7783 /* SharedItemDataPhotoRegressionTests.swift */,
 				25E81942B396B5E8737A9976 /* PhotoCompressorTests.swift */,
 				68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */,
+				16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */,
+				4DCC241CB61A25D895ACF37B /* ReceiptParserReweTests.swift */,
+				FA9B48866D4E0411F89FC94E /* ReceiptParserStornoTests.swift */,
+				9BE0143DE796992502CF38D3 /* ReceiptAbbreviationExpansionTests.swift */,
 				6AD6412F9400E7E874C40688 /* QuickAddParserTests.swift */,
 				F566D87050A4B455E0DD862E /* ConsumptionPatternTests.swift */,
 				5B4A39281706F5E4D3C2B1A0 /* StorePresetsTests.swift */,
@@ -861,6 +873,10 @@
 				6E2DF557B7FAF55F3567C875 /* SharedItemDataPhotoRegressionTests.swift in Sources */,
 				59990828CCDE670F831874AD /* PhotoCompressorTests.swift in Sources */,
 				9D507887509A2C64F3C625EF /* ReceiptParserPriceTests.swift in Sources */,
+				406A9602E2603784E461BA88 /* PriceProvenanceMigrationTests.swift in Sources */,
+				6574A986470A3AD7EEA0BEFF /* ReceiptParserReweTests.swift in Sources */,
+				D022D581762EA72A52910313 /* ReceiptParserStornoTests.swift in Sources */,
+				905C05C564BF1B61F276C508 /* ReceiptAbbreviationExpansionTests.swift in Sources */,
 				DF69955CC809EAF24ADC4174 /* QuickAddParserTests.swift in Sources */,
 				71D26D6EF94B734658085600 /* ConsumptionPatternTests.swift in Sources */,
 				1A2B3C4D5E6F70819293A4B5 /* StorePresetsTests.swift in Sources */,

@@ -41,6 +41,14 @@ targets:
       properties:
         UIAppFonts:
         - ClashDisplay-Semibold.ttf
+        # Muss hier stehen, sonst überschreibt der nächste `xcodegen generate`-Lauf die
+        # manuell in Generated-Info.plist eingetragene URL-Scheme-Registrierung stillschweigend
+        # (restock://store, restock://join, restock://receiptscan brechen dann alle) — siehe
+        # Memory "XcodeGen-Drift-Warnung".
+        CFBundleURLTypes:
+        - CFBundleURLName: $(PRODUCT_BUNDLE_IDENTIFIER)
+          CFBundleURLSchemes:
+          - restock
   SmartCartWidgets:
     type: app-extension
     platform: iOS

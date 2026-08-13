@@ -22,11 +22,13 @@
 	<dict>
 		<key>NSExtensionAttributes</key>
 		<dict>
+			<!-- Akzeptiert sowohl Bilder (Screenshot/Foto eines Bons, z. B. Lidl Plus) als auch
+			     PDFs (digitaler eBon, z. B. Rewe teilt seine Kassenbons als PDF, nicht als Bild —
+			     mit der reinen NSExtensionActivationSupportsImageWithMaxCount-Form tauchte Restock
+			     im Teilen-Menü für PDFs gar nicht erst auf). Die einfache Dictionary-Form kann nur
+			     UND-verknüpfen, für "Bild ODER PDF" ist die Prädikat-String-Form nötig. -->
 			<key>NSExtensionActivationRule</key>
-			<dict>
-				<key>NSExtensionActivationSupportsImageWithMaxCount</key>
-				<integer>1</integer>
-			</dict>
+			<string>SUBQUERY (extensionItems, $item, SUBQUERY ($item.attachments, $attachment, (ANY $attachment.registeredTypeIdentifiers UTI-conforms-to "public.image") OR (ANY $attachment.registeredTypeIdentifiers UTI-conforms-to "com.adobe.pdf")).@count &gt;= 1).@count &gt;= 1</string>
 		</dict>
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).ShareViewController</string>

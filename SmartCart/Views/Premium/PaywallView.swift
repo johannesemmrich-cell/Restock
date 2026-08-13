@@ -118,7 +118,7 @@ struct PaywallView: View {
 
     private var headerSubtitle: String {
         switch context {
-        case .sharedLists: return "Kaufe gemeinsam mit Partner,\nFamilie oder Mitbewohnern ein."
+        case .sharedLists: return "Die ersten \(PremiumService.freeSharedListLimit) geteilten Listen sind kostenlos.\nFür weitere: einmalig freischalten."
         case .premium(let feature): return "Schalte \(feature) und alle weiteren\nPro-Features frei."
         }
     }

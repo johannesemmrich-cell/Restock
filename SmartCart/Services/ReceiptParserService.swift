@@ -41,6 +41,11 @@ enum ReceiptParserService {
         "transaktions", "terminal", "belegnr",
         "kundenkarte", "mitglied", "bediener",
         "retoure", "gutschrift", "sofortrabatt",
+        // Rewe-Fußzeile: "Gesamtbetrag" ist ein zusammengesetztes Wort, matcht das vorhandene
+        // "gesamt" deshalb NICHT über den Whole-Word-Vergleich (siehe Kommentar oben) — eigener
+        // Eintrag nötig, sonst rutscht die MwSt-Aufschlüsselungszeile ("Gesamtbetrag 27,29 2,15
+        // 29,44") als Phantom-Artikel durch.
+        "gesamtbetrag",
         // Französische Bons (Carrefour & Co.)
         // ACHTUNG: "merci" gehört NICHT hierher — MERCI ist eine deutsche
         // Schokoladenmarke ("MERCI FINEST SELECTION"). Französische
@@ -71,8 +76,18 @@ enum ReceiptParserService {
         "coupon",
     ]
 
+    // MwSt-Aufschlüsselungs-Tabellenzeile — Kennung gefolgt von "=" am Zeilenanfang, dann der
+    // Prozentsatz und die Brutto/Netto/MwSt-Spalten. Die Kennung ist je nach Kassensystem ein
+    // Buchstabe ("A= 19,0% 2,02 0,38 2,40", Rewe) ODER eine Ziffer ("1=19,00% 25,45 21,39 4,06",
+    // DM — reales Beispiel, wurde ohne diese Erweiterung fälschlich als Produktposition erkannt).
+    // Kommt in Produktnamen so nicht vor, kein Wort aus skipWordSet/skipPhrases deckt das ab.
+    private static let vatSummaryRowRegex = try? NSRegularExpression(pattern: #"^[A-Za-z0-9]\s*=\s*\d"#)
+
     private static func isAdminLine(_ lower: String, ignoring exemptWords: Set<String> = []) -> Bool {
         for phrase in skipPhrases where lower.contains(phrase) { return true }
+        if let rx = vatSummaryRowRegex, rx.firstMatch(in: lower, range: NSRange(lower.startIndex..., in: lower)) != nil {
+            return true
+        }
         // Tokenizing auch an "." und "/" — fängt "TOT.GENERAL" und "S/TOTAL"
         // als Whole-Word-Treffer ("tot" bzw. "total").
         return adminWords(lower).contains(where: { skipWordSet.contains($0) && !exemptWords.contains($0) })
@@ -119,8 +134,50 @@ enum ReceiptParserService {
 
     // MARK: - Parsing
 
+    /// Manche Bons (z. B. Rewes digitaler eBon) drucken den vollen Gesamtpreis DIREKT auf der
+    /// Namenszeile UND zusätzlich eine Mengen-/Gewichts-Bestätigungszeile direkt darunter
+    /// ("4 Stk x 0,39", "0,706 kg x 2,49 EUR/kg") — bei Lidl trägt die Namenszeile dagegen NUR
+    /// den bloßen Namen, der Gesamtpreis wird erst weiter unten AUS genau so einer Zeile
+    /// berechnet (siehe `weightTimesRate` in `parseClassic`). Ohne diese Vorfilterung würde eine
+    /// reine Bestätigungszeile als eigenständige Phantom-Position mit unsinnigem/leerem Namen
+    /// erkannt (beobachtet: "4 Stk x 0,39" wurde selbst zu einer "Position").
+    ///
+    /// Nur droppen, wenn die VORHERIGE Roh-Zeile bereits für sich allein ein vollständiger
+    /// Positions-Kandidat war (Name + Preis + Pflicht-MwSt-Kürzel) — genau dann ist die Menge
+    /// redundant. Bleibt die vorherige Zeile ein bloßer Name ohne Preis (Lidl-Fall), wird nichts
+    /// gedroppt: die Gewichtszeile bleibt dort die einzige Preisquelle. Bewusst NICHT
+    /// `isClassicVatItemCandidate` selbst (die verlangt 2+ Leerzeichen vor dem Preis, wie es
+    /// Visions Bounding-Box-Spaltenrekonstruktion liefert) — PDF-Textextraktion (Rewe-eBon) liefert
+    /// oft nur EIN Leerzeichen, daher hier dieselbe Prüfung mit der lockereren 1+-Leerzeichen-Form.
+    private static func isClassicVatItemCandidateLoose(_ rawLine: String) -> Bool {
+        let line = rawLine.trimmingCharacters(in: .whitespaces)
+        guard line.count >= 3, !isAdminLine(line.lowercased()) else { return false }
+        return line.range(of: #"^.+?\s+-?\d{1,4}[,\.]\d{2}\s*[ABM12E\*]\s*$"#, options: .regularExpression) != nil
+    }
+
+    private static func droppingRedundantQuantityConfirmationLines(_ lines: [String]) -> [String] {
+        var result: [String] = []
+        for line in lines {
+            if let previous = result.last,
+               isClassicVatItemCandidateLoose(previous),
+               isBareQuantityOrWeightConfirmationLine(line) {
+                continue
+            }
+            result.append(line)
+        }
+        return result
+    }
+
+    private static func isBareQuantityOrWeightConfirmationLine(_ rawLine: String) -> Bool {
+        let line = rawLine.trimmingCharacters(in: .whitespaces)
+        return line.range(
+            of: #"^-?\d+([,\.]\d+)?\s*(Stk|St|kg|g)?\s*[x×]\s*-?\d{1,4}[,\.]\d{2}"#,
+            options: [.regularExpression, .caseInsensitive]
+        ) != nil
+    }
+
     static func parse(_ rawLines: [String]) -> [ReceiptLine] {
-        let lines = rawLines.map(repairSplitDecimals)
+        let lines = droppingRedundantQuantityConfirmationLines(rawLines.map(repairSplitDecimals))
         // Formaterkennung: mehrere POSITIONS-Zeilen mit Währungs-SUFFIX hinter dem Preis
         // (z. B. "…TOMATE ENTIER  2.50€") bedeuten einen südeuropäischen Bon
         // (Frankreich/Carrefour-Stil) mit eigener Struktur. Gezählt wird erst NACH dem
@@ -198,6 +255,23 @@ enum ReceiptParserService {
         return last.range(of: #"^-?\d{1,4}[.,]\d{2}\s*\p{Sc}$"#, options: .regularExpression) != nil
     }
 
+    /// Entfernt die zuletzt erfasste Position mit einem zu `rawName` fuzzy-passenden Namen aus
+    /// `results` (dieselbe Substring-Heuristik wie an den anderen Fuzzy-Match-Stellen im Projekt,
+    /// z. B. `ShoppingItem.init`) — genutzt, um eine per "ZEILENSTORNO" stornierte Position
+    /// wieder zu entfernen. `lastIndex` statt `firstIndex`, weil bei mehreren gleichnamigen
+    /// Positionen (z. B. zwei identische Artikel nacheinander gekauft) die STORNO-Zeile die
+    /// zuletzt hinzugefügte meint, nicht zwangsläufig die allererste.
+    private static func removingMostRecentMatch(named rawName: String, from results: inout [ReceiptLine]) {
+        let target = rawName.lowercased()
+        guard target.count >= 3 else { return }
+        if let idx = results.lastIndex(where: { line in
+            let ln = line.name.lowercased()
+            return ln.count >= 3 && (ln.contains(target) || target.contains(ln))
+        }) {
+            results.remove(at: idx)
+        }
+    }
+
     // MARK: - Klassisches Format (deutsche Bons: "EMMENTALER   2,19 A")
 
     private static func parseClassic(_ lines: [String]) -> [ReceiptLine] {
@@ -232,6 +306,15 @@ enum ReceiptParserService {
         // — "montant" steht dort in der SPALTEN-KOPFZEILE ganz oben ("MONTANT TTC"), ein Abbruch
         // darauf würde den kompletten Rest jedes französischen Bons verschlucken.
         var pastItemSection = false
+        // Wird wahr bei einer "ZEILENSTORNO"/"STORNO"-Zeile (Kassierer storniert die zuletzt
+        // gescannte Position, meist gefolgt von derselben Position noch einmal mit negativem
+        // Vorzeichen — beobachtet auf einem echten DM-Bon: ein falscher CO2-Zylinder wurde
+        // storniert und durch den richtigen ersetzt). Ohne Sonderbehandlung bleibt die
+        // ursprüngliche (falsche/stornierte) Position in `results` stehen, während die
+        // stornierende Negativ-Zeile weiter unten am `price > 0.05`-Positivitäts-Check scheitert
+        // und einfach spurlos verworfen wird — der stornierte Artikel erscheint dann fälschlich
+        // als gekauft, OHNE dass die Korrektur je zum Zuge kommt.
+        var pendingStornoCancel = false
 
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
@@ -242,6 +325,11 @@ enum ReceiptParserService {
             if pastItemSection { continue }
             if adminWords(lower).contains("zahlen") {
                 pastItemSection = true
+                continue
+            }
+            if lower.contains("storno") {
+                pendingStornoCancel = true
+                pendingName = nil; pendingPrice = nil
                 continue
             }
 
@@ -369,15 +457,26 @@ enum ReceiptParserService {
                         .trimmingCharacters(in: .whitespaces)
                 }
 
-                let rawPrice = String(trimmed[priceRange]).replacingOccurrences(of: ",", with: ".")
-
                 // Allow names starting with numbers ("2er Pack", "3M") —
                 // only reject names that are entirely digits/spaces (article codes).
                 guard rawName.count >= 2,
-                      !rawName.allSatisfy({ $0.isNumber || $0 == " " }),
-                      let price = Double(rawPrice),
-                      price > 0.05,
-                      price < 999 else { continue }
+                      !rawName.allSatisfy({ $0.isNumber || $0 == " " })
+                else { continue }
+
+                // Stornierende Zeile: unabhängig von IHREM Preis (Vorzeichen/Wert je nach
+                // Kassensystem unterschiedlich) die zuletzt erfasste Position mit demselben Namen
+                // wieder entfernen, statt eine neue (und garantiert falsche) Position daraus zu
+                // machen. Siehe `pendingStornoCancel`-Deklaration oben für den beobachteten Fall.
+                if pendingStornoCancel {
+                    pendingStornoCancel = false
+                    removingMostRecentMatch(named: rawName, from: &results)
+                    pendingName = nil
+                    pendingPrice = nil
+                    continue
+                }
+
+                let rawPrice = String(trimmed[priceRange]).replacingOccurrences(of: ",", with: ".")
+                guard let price = Double(rawPrice), price > 0.05, price < 999 else { continue }
 
                 results.append(ReceiptLine(name: smartCapitalize(rawName), price: price))
                 pendingName = nil
@@ -385,6 +484,17 @@ enum ReceiptParserService {
 
             } else if let priceMatch = priceOnlyRegex.firstMatch(in: trimmed, range: nsRange),
                       let priceRange = Range(priceMatch.range(at: 1), in: trimmed) {
+                // Storno-Zeile ohne erkennbaren Namen (z. B. wenn die Rekonstruktion Name und
+                // Preis auf getrennte Zeilen aufteilt) — die letzte erfasste Position ist die
+                // einzig sinnvolle Kandidatin zum Entfernen, da Stornos immer unmittelbar auf
+                // die zu korrigierende Position folgen.
+                if pendingStornoCancel {
+                    pendingStornoCancel = false
+                    if !results.isEmpty { results.removeLast() }
+                    pendingName = nil
+                    pendingPrice = nil
+                    continue
+                }
                 // Zeile besteht nur aus einem Preis (+ optionalem MwSt-Kürzel) — als pendingPrice
                 // merken (siehe Gewichtszeilen-Zweig oben), NICHT als möglichen Produktnamen
                 // behandeln (der `hasLetters`-Zweig unten würde sonst z. B. "0,75 A" wegen des
@@ -816,21 +926,48 @@ enum ReceiptParserService {
         "fromag": "Fromage", "biscu": "Biscuit",
         // Deutsche Kassenbon-Kürzel
         "jogh": "Joghurt", "btr": "Butter", "kaffe": "Kaffee", "schok": "Schokolade",
-        "geb": "Gebäck", "tk": "Tiefkühl"
+        "geb": "Gebäck", "tk": "Tiefkühl",
+        // dm-/Drogerie-Kürzel (reales Beispiel, gemeldet 13.08.2026: "Hakle ToiPa Traumweich
+        // 8x130Bl" wurde mangels dieses Eintrags an Stufe 5 [Apple Intelligence] durchgereicht,
+        // die es fälschlich zu "Flaschenbürste" statt "Toilettenpapier" "expandierte" — ein
+        // deterministischer Wörterbuch-Treffer hier schaltet die unzuverlässige KI-Stufe für
+        // diesen sehr verbreiteten Artikel komplett aus, statt sie zu korrigieren.
+        "toipa": "Toilettenpapier", "prem": "Premium"
     ]
 
-    /// Wendet `abbreviationExpansions` wortweise an. Trennt dabei auch an Punkten ohne
-    /// Leerzeichen ("Shak.Moutarde" wie "Shak. Moutarde" wie "Shak Moutarde" → gleiche Tokens),
-    /// da Kassenbons Kürzel-Punkte mal mit, mal ohne Leerzeichen drucken — ABER nie an einem
-    /// Punkt zwischen zwei Ziffern (Dezimalzahl wie "3.5" bleibt unangetastet, sonst würde ein
-    /// Treffer an anderer Stelle im Namen sie beim Zusammenfügen in "3 5" zerreißen). Liefert nil,
-    /// wenn kein einziges Wort im Wörterbuch stand, damit der Aufrufer zur nächsten Stufe weiterreicht.
+    /// Mehrwort-Kürzel, die NACH dem Punkt-Split in zwei separate Tokens zerfallen würden und
+    /// deshalb über die einfache `abbreviationExpansions`-Wort-für-Wort-Zuordnung nicht lösbar
+    /// sind (z. B. "Fl.buerste" → Tokens "Fl" + "buerste", von denen keins für sich allein
+    /// eindeutig genug wäre — "Fl" ist ein zu generisches Kürzel für Auto-Übernahme). Wird VOR
+    /// dem Punkt-Split als zusammenhängende Phrase (case-insensitive) ersetzt. Reales Beispiel
+    /// (13.08.2026, DM-Bon): "babylove Prem. Fl.buerste 1St" — die Flaschenbürste für
+    /// Babyflaschen, nicht zu verwechseln mit einer generischen Flasche.
+    private static let phraseExpansions: [String: String] = [
+        "fl.buerste": "Flaschenbürste", "fl buerste": "Flaschenbürste",
+        "fl.bürste": "Flaschenbürste", "fl bürste": "Flaschenbürste",
+    ]
+
+    /// Wendet zuerst `phraseExpansions` (Mehrwort-Kürzel, siehe dort), dann `abbreviationExpansions`
+    /// wortweise an. Trennt dabei auch an Punkten ohne Leerzeichen ("Shak.Moutarde" wie
+    /// "Shak. Moutarde" wie "Shak Moutarde" → gleiche Tokens), da Kassenbons Kürzel-Punkte mal
+    /// mit, mal ohne Leerzeichen drucken — ABER nie an einem Punkt zwischen zwei Ziffern
+    /// (Dezimalzahl wie "3.5" bleibt unangetastet, sonst würde ein Treffer an anderer Stelle im
+    /// Namen sie beim Zusammenfügen in "3 5" zerreißen). Liefert nil, wenn nichts im Wörterbuch
+    /// stand, damit der Aufrufer zur nächsten Stufe weiterreicht.
     static func expandAbbreviations(_ name: String) -> String? {
-        let splittable = name.replacingOccurrences(
+        var working = name
+        var matchedAny = false
+        for (phrase, full) in phraseExpansions {
+            if let range = working.range(of: phrase, options: [.caseInsensitive]) {
+                working.replaceSubrange(range, with: full)
+                matchedAny = true
+            }
+        }
+
+        let splittable = working.replacingOccurrences(
             of: #"(?<!\d)\.|\.(?!\d)"#, with: " ", options: .regularExpression)
         let words = splittable.components(separatedBy: " ").filter { !$0.isEmpty }
-        guard !words.isEmpty else { return nil }
-        var matchedAny = false
+        guard !words.isEmpty else { return matchedAny ? working : nil }
         let expanded = words.map { word -> String in
             if let full = abbreviationExpansions[word.lowercased()] {
                 matchedAny = true

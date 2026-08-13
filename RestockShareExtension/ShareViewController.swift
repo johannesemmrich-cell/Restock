@@ -2,6 +2,7 @@ import UIKit
 import SwiftUI
 import SwiftData
 import Vision
+import PDFKit
 import UniformTypeIdentifiers
 import UserNotifications
 
@@ -108,17 +109,24 @@ struct ShareReceiptView: View {
     // MARK: - Verarbeitung
 
     private func process() async {
-        guard let image = await loadSharedImage() else {
-            state = .error("Kein Bild gefunden.")
-            return
-        }
-        guard let cgImage = image.cgImage else {
-            state = .error("Bild konnte nicht verarbeitet werden.")
+        guard let attachment = await loadSharedAttachment() else {
+            state = .error("Kein Bild oder PDF gefunden.")
             return
         }
 
-        let orientation = CGImagePropertyOrientation(image.imageOrientation)
-        let lines = await recognizeText(cgImage: cgImage, orientation: orientation)
+        let lines: [String]
+        switch attachment {
+        case .image(let image):
+            guard let cgImage = image.cgImage else {
+                state = .error("Bild konnte nicht verarbeitet werden.")
+                return
+            }
+            let orientation = CGImagePropertyOrientation(image.imageOrientation)
+            lines = await recognizeText(cgImage: cgImage, orientation: orientation)
+        case .pdfLines(let pdfLines):
+            lines = pdfLines
+        }
+
         let parsed = ReceiptParserService.parse(lines)
         guard !parsed.isEmpty else {
             state = .noItemsFound
@@ -209,28 +217,71 @@ struct ShareReceiptView: View {
         }
     }
 
-    private func loadSharedImage() async -> UIImage? {
+    private enum SharedAttachment {
+        case image(UIImage)
+        /// Bereits in Zeilen gesplitteter Text, direkt aus dem PDF extrahiert — kein Vision-OCR
+        /// nötig, weil ein digitaler eBon (z. B. Rewe) echten Text statt eines Fotos enthält.
+        case pdfLines([String])
+    }
+
+    /// Bild ODER PDF laden — Lidl Plus teilt einen Bon offenbar als Screenshot/Bild, Rewes
+    /// digitaler eBon kommt dagegen als PDF (`NSExtensionActivationRule` in Info.plist erlaubt seit
+    /// diesem Fix beides). PDF wird zuerst geprüft, da ein PDF-Attachment i.d.R. NICHT gleichzeitig
+    /// `UTType.image` erfüllt.
+    private func loadSharedAttachment() async -> SharedAttachment? {
         guard let item = extensionContext?.inputItems.first as? NSExtensionItem,
               let attachment = item.attachments?.first(where: {
+                  $0.hasItemConformingToTypeIdentifier(UTType.pdf.identifier) ||
                   $0.hasItemConformingToTypeIdentifier(UTType.image.identifier)
               })
         else { return nil }
+
+        if attachment.hasItemConformingToTypeIdentifier(UTType.pdf.identifier) {
+            return await withCheckedContinuation { continuation in
+                attachment.loadItem(forTypeIdentifier: UTType.pdf.identifier, options: nil) { item, _ in
+                    let data: Data?
+                    if let url = item as? URL { data = try? Data(contentsOf: url) }
+                    else if let d = item as? Data { data = d }
+                    else { data = nil }
+                    guard let data, let document = PDFDocument(data: data) else {
+                        continuation.resume(returning: nil)
+                        return
+                    }
+                    let lines = Self.extractLines(from: document)
+                    continuation.resume(returning: lines.isEmpty ? nil : .pdfLines(lines))
+                }
+            }
+        }
 
         return await withCheckedContinuation { continuation in
             attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: nil) { item, _ in
                 // Je nach Quell-App liefert der Item-Provider ein Bild als Datei-URL, als
                 // rohes UIImage oder als Data — alle drei Formen defensiv abdecken.
                 if let url = item as? URL, let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                    continuation.resume(returning: image)
+                    continuation.resume(returning: .image(image))
                 } else if let image = item as? UIImage {
-                    continuation.resume(returning: image)
+                    continuation.resume(returning: .image(image))
                 } else if let data = item as? Data, let image = UIImage(data: data) {
-                    continuation.resume(returning: image)
+                    continuation.resume(returning: .image(image))
                 } else {
                     continuation.resume(returning: nil)
                 }
             }
         }
+    }
+
+    /// Textzeilen pro PDF-Seite, in der vom PDF selbst vorgegebenen Zeilenreihenfolge —
+    /// `ReceiptParserService.parse` erwartet ohnehin bereits zeilengetrennten Text (normalerweise
+    /// aus Visions Bounding-Box-Rekonstruktion), ein digitales PDF liefert das direkt.
+    private static func extractLines(from document: PDFDocument) -> [String] {
+        var lines: [String] = []
+        for pageIndex in 0..<document.pageCount {
+            guard let page = document.page(at: pageIndex), let text = page.string else { continue }
+            lines.append(contentsOf: text.components(separatedBy: .newlines))
+        }
+        return lines
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
     }
 
     // MARK: - Aktionen

@@ -30,6 +30,10 @@ struct StoreDetailView: View {
     @State private var showConfetti = false
     @FocusState private var isQuickAddFocused: Bool
     @Query private var allRecords: [PurchaseRecord]
+    // Für das Free-Plan-Kontingent geteilter Listen (PremiumService.canShareAdditionalList) —
+    // `shareID` ist UserDefaults-backed, kein SwiftData-Attribut, deshalb hier alle Stores laden
+    // und in Swift filtern statt über ein #Predicate.
+    @Query private var allStoresForShareCount: [Store]
     @ObservedObject private var templateService = TemplateService.shared
     @EnvironmentObject private var premium: PremiumService
     @State private var showPaywall = false
@@ -283,7 +287,13 @@ struct StoreDetailView: View {
                             .scaleEffect(0.8)
                     }
                     Button {
-                        if premium.hasSharedListsAccess {
+                        // Ein bereits geteilter Store (Verwalten/Beenden) ist nie vom Kontingent
+                        // betroffen — nur das STARTEN einer NEUEN geteilten Liste zählt gegen das
+                        // Free-Limit. `allStoresForShareCount` schließt diesen Store selbst mit
+                        // ein, ist an dieser Stelle aber irrelevant, weil `store.shareID == nil`
+                        // hier bereits geprüft wurde (der erste Zweig fängt den anderen Fall ab).
+                        let sharedListCount = allStoresForShareCount.filter { $0.shareID != nil }.count
+                        if store.shareID != nil || premium.canShareAdditionalList(currentSharedListCount: sharedListCount) {
                             showShareSheet = true
                         } else {
                             paywallContext = .sharedLists

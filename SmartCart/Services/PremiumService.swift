@@ -48,6 +48,15 @@ final class PremiumService: ObservableObject {
         Self.debugAllFeaturesUnlocked || isSharedListsUnlocked
     }
 
+    /// Free-Plan-Kontingent: auch ohne Kauf dürfen bis zu `freeSharedListLimit` geteilte Listen
+    /// benutzt werden (eigene + beigetretene zusammen), erst darüber hinaus greift die Paywall.
+    /// Zentral hier statt in den einzelnen Views, damit die Zahl an genau einer Stelle steht.
+    static let freeSharedListLimit = 2
+
+    func canShareAdditionalList(currentSharedListCount: Int) -> Bool {
+        hasSharedListsAccess || currentSharedListCount < Self.freeSharedListLimit
+    }
+
     func product(for id: String) -> Product? {
         products.first { $0.id == id }
     }
