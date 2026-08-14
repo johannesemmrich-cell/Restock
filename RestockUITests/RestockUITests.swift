@@ -81,6 +81,37 @@ final class RestockUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Restock"].waitForExistence(timeout: 5), "Nach Abbrechen nicht zurück auf dem Home-Screen")
     }
 
+    /// Beweist den Fix für einen von einem echten Nutzer gemeldeten Bug (14.08.2026): ein alter,
+    /// vor der Code-Härtung (6→10 Zeichen, siehe SharedStoreService.generateCode()) erzeugter
+    /// Freigabe-Link liefert weiterhin einen 6-stelligen Code, den `JoinStoreSheet`s starrer
+    /// "== 10"-Trigger nie eine Suche auslösen ließ — das Sheet blieb komplett tatenlos stehen
+    /// (kein Spinner, kein Fehler, kein Beitreten-Button), obwohl der Code selbst gültig war.
+    /// Manuelles Tippen eines 6-stelligen Codes durchläuft denselben `onChange`-Codepfad wie ein
+    /// vorausgefüllter Link (`JoinStoreSheet.onAppear` weist `prefilledCode` demselben `@State
+    /// code` zu) — dieser Test deckt damit beide Auslöser gleichzeitig ab.
+    func testJoinWithLegacySixCharacterCodeTriggersLookup() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES"]
+        app.launch()
+
+        let joinButton = app.buttons["Geteilter Liste beitreten"]
+        XCTAssertTrue(joinButton.waitForExistence(timeout: 15), "Join-Button im leeren Home-State nicht gefunden")
+        joinButton.tap()
+
+        let codeField = app.textFields.matching(NSPredicate(format: "placeholderValue == %@", "Z.B. ABCD-EFG-HIJ")).firstMatch
+        XCTAssertTrue(codeField.waitForExistence(timeout: 5), "Code-Eingabefeld im JoinStoreSheet nicht sichtbar")
+        sleep(1)
+        codeField.tap()
+        codeField.typeText("CGU5ZN") // exakt der vom Nutzer gemeldete, echte (alte) Code
+
+        // Vor dem Fix: hier passiert schlicht NICHTS — kein Spinner, kein Fehler. Der Fix löst
+        // nach kurzer Verzögerung trotzdem eine echte Suche aus; ohne echten iCloud-Account im
+        // Simulator schlägt sie erwartungsgemäß fehl, aber genau DAS beweist, dass überhaupt
+        // gesucht wurde.
+        let notFoundText = app.staticTexts["Kein Store mit diesem Code gefunden."]
+        XCTAssertTrue(notFoundText.waitForExistence(timeout: 15), "6-stelliger Code löste keine Suche aus — exakt der gemeldete Bug")
+    }
+
     /// Klick-Durch-Test für Laden hinzufügen → Artikel per Schnelleingabe → Preis wird angezeigt,
     /// kein Absturz. Deckt den echten Laufzeitpfad von `ShoppingItem.init` ab (Preis-
     /// Plausibilitätsgrenze, siehe ShoppingItem.swift) — unit-getestet für die Logik selbst, hier

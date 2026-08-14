@@ -13,9 +13,19 @@ struct StoreShareSheet: View {
     @State private var error: String?
     @State private var copied = false
 
+    /// `generateCode()` produces 10-Zeichen-Codes seit der Sicherheits-Härtung (siehe Kommentar
+    /// dort), aber ein `Store.shareID` wird nur EINMAL erzeugt und danach dauerhaft wiederverwendet
+    /// (`syncToCloud`: `store.shareID ?? Self.generateCode()`) — ein Store, der VOR der Härtung
+    /// zum ersten Mal geteilt wurde, behält für immer seinen alten 6-Zeichen-Code. Der bisherige
+    /// harte `id.count == 10`-Check ließ so einen Besitzer seinen eigenen (weiterhin gültigen)
+    /// Code hier nie sehen — leeres Feld statt Code (gemeldet 14.08.2026).
     private var displayCode: String {
-        guard let id = store.shareID, id.count == 10 else { return "" }
-        return "\(id.prefix(4))-\(id.dropFirst(4).prefix(3))-\(id.dropFirst(7))"
+        guard let id = store.shareID, !id.isEmpty else { return "" }
+        switch id.count {
+        case 10: return "\(id.prefix(4))-\(id.dropFirst(4).prefix(3))-\(id.dropFirst(7))"
+        case 6: return "\(id.prefix(3))-\(id.dropFirst(3))"
+        default: return id // unbekannte Länge: lieber unformatiert korrekt als leer
+        }
     }
 
     var body: some View {
@@ -210,6 +220,7 @@ struct JoinStoreSheet: View {
     var prefilledCode: String? = nil
 
     @State private var code = ""
+    @State private var lookupTask: Task<Void, Never>?
     @State private var preview: SharedStorePreview?
     @State private var isLooking = false
     @State private var isJoining = false
@@ -256,8 +267,23 @@ struct JoinStoreSheet: View {
                         if cleaned != new { code = cleaned }
                         preview = nil
                         error = nil
-                        if cleaned.count == 10 {
-                            Task { await lookup(cleaned) }
+                        lookupTask?.cancel()
+                        // Sowohl der aktuelle 10-stellige Code als auch der alte, vor der
+                        // Sicherheits-Härtung verwendete 6-stellige Code (siehe
+                        // SharedStoreService.generateCode()) sind gültige, tatsächlich noch aktive
+                        // Codes: ein `Store.shareID` wird nur einmal erzeugt und danach dauerhaft
+                        // wiederverwendet, ein vor der Härtung erstmals geteilter Store behält also
+                        // für immer seinen alten 6-stelligen Code. Der bisherige starre "== 10"-
+                        // Check ließ so einen per Link empfangenen 6-stelligen Code nie eine Suche
+                        // auslösen — das Sheet blieb tatenlos stehen (gemeldeter Bug, 14.08.2026).
+                        guard cleaned.count == 6 || cleaned.count == 10 else { return }
+                        lookupTask = Task {
+                            // Kurze Verzögerung: tippt der Nutzer über die 6 Zeichen hinaus zum
+                            // vollen 10-stelligen Code weiter, wird die verworfene 6er-Zwischenstufe
+                            // dank der Cancellation oben nicht erst als "nicht gefunden" aufblitzen.
+                            try? await Task.sleep(for: .milliseconds(350))
+                            guard !Task.isCancelled else { return }
+                            await lookup(cleaned)
                         }
                     }
 
