@@ -7,6 +7,13 @@ struct AddItemView: View {
     @Query(filter: #Predicate<Store> { $0.isActive }) private var activeStores: [Store]
     @Query private var allRecords: [PurchaseRecord]
 
+    /// Vorausgewählter Store, wenn diese Ansicht aus einer `StoreDetailView` heraus geöffnet
+    /// wurde (der "+"-Button dort) — der Aufenthalt im Laden ist ein stärkeres, explizites
+    /// Signal als jede Namens-basierte Inferenz und darf nicht von `autoAssign` überschrieben
+    /// werden (siehe dort). `nil`, wenn von HomeView aus geöffnet — dort gibt es bewusst keinen
+    /// Store-Kontext.
+    let presetStore: Store?
+
     @State private var name = ""
     @State private var quantity = ""
     @State private var unit = ""
@@ -15,6 +22,11 @@ struct AddItemView: View {
     @State private var note = ""
     @State private var showScanner = false
     @FocusState private var isNameFocused: Bool
+
+    init(presetStore: Store? = nil) {
+        self.presetStore = presetStore
+        _selectedStore = State(initialValue: presetStore)
+    }
 
     private var duplicateWarning: String? {
         guard let store = selectedStore, !name.isEmpty else { return nil }
@@ -153,7 +165,13 @@ struct AddItemView: View {
     }
 
     private func autoAssign(name: String) {
-        let store = AssignmentService.assign(itemName: name, to: activeStores)
+        // Ein vorausgewählter Store (aus StoreDetailView geöffnet) ist ein stärkeres Signal als
+        // jede Namens-Inferenz — nie überschreiben, auch nicht bei einem erkannten Artikelnamen.
+        guard presetStore == nil else {
+            applySuggestedQuantity(for: name)
+            return
+        }
+        let store = AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords)
         if store != nil {
             selectedStore = store
             autoAssigned = true

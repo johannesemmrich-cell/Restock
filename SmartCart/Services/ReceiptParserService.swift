@@ -1116,7 +1116,12 @@ enum ReceiptParserService {
             if let existing = bestByName[key], existing >= score { continue }
             bestByName[key] = score
         }
-        guard let best = bestByName.max(by: { $0.value < $1.value }),
+        // Wie completedItemCandidates oben: bestByName.max(by:) allein iteriert in
+        // unspezifizierter (pro Prozess zufälliger) Dictionary-Reihenfolge — ohne
+        // deterministischen Tie-Breaker könnte bei zwei exakt gleich bewerteten,
+        // unterschiedlich benannten Kaufhistorie-Einträgen das Ergebnis zwischen App-Starts
+        // wechseln (gefunden 19.08.2026, gleiche Ursache/Lösung wie dort).
+        guard let best = bestByName.max(by: { $0.value != $1.value ? $0.value < $1.value : $0.key > $1.key }),
               best.value >= completedItemAutoApplyThreshold else { return nil }
         return sameStore.first { $0.itemName.lowercased() == best.key }?.itemName
     }

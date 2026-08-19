@@ -76,7 +76,15 @@ class ShoppingItem {
 
     // Siehe Store.swift für die Begründung: CloudKit verlangt To-many-Relationships zwingend
     // als Optional, nicht nur mit Standardwert — bestätigt per Test (31.07.2026, RestockTests).
-    @Relationship(deleteRule: .cascade, inverse: \PurchaseRecord.item)
+    // .nullify statt .cascade: PurchaseRecords sind die Datenquelle für storeübergreifende
+    // Produkt-Vorschläge (QuickAddParser.knownProductSuggestions) — müssen das Löschen eines
+    // Items/Stores überleben, sonst verschwindet die Vorschlagshistorie beim Aufräumen der
+    // Liste (gemeldet 19.08.2026). Sicher, da PurchaseRecord vollständig denormalisiert ist
+    // (eigene itemName/storeName/date/... Felder); `.item` wird außerhalb dieser Zuweisung nur
+    // noch an einer Stelle optional-verkettet gelesen (ReceiptScannerView.swift, `match?.item`),
+    // bereits nil-sicher — ein orphan-gewordener Record (item == nil) kann dort nichts zum
+    // Absturz bringen.
+    @Relationship(deleteRule: .nullify, inverse: \PurchaseRecord.item)
     var purchaseRecords: [PurchaseRecord]? = []
 
     init(
@@ -104,10 +112,31 @@ class ShoppingItem {
         // Use store-specific learned price first (fuzzy: "Hackfleisch" matches "Hackfleisch Gemischt 500g"),
         // then fall back to generic estimator
         let itemLower = name.lowercased()
-        let rawLearnedPrice = store?.learnedPrices.first { key, _ in
-            key.count >= 3 && itemLower.count >= 3 &&
-            (key.contains(itemLower) || itemLower.contains(key))
-        }?.value
+        // Bei mehreren fuzzy passenden gelernten Preisen (z.B. "Hackfleisch Gemischt 500g" UND
+        // "Rinderhackfleisch" für getipptes "Hackfleisch") entschied bisher `.first` — Swifts
+        // Dictionary-Iterationsreihenfolge ist pro Prozess zufällig gehasht, der angezeigte
+        // Preis konnte also zwischen App-Starts flippen (gefunden 19.08.2026). Datum allein als
+        // Tie-Breaker reicht NICHT: haben beide Treffer kein learnedPriceDates (Normalfall bei
+        // älteren, vor Einführung des Feldes gelernten Preisen — keine Backfill-Migration dafür,
+        // auch PriceProvenanceMigration Phase C schreibt nur den Preis, nie das Datum), sind
+        // beide `.distantPast`, der Vergleich bleibt unentschieden und max(by:) fällt zurück auf
+        // dieselbe zufällige Iterationsreihenfolge — von einer unabhängigen Review-Runde per
+        // mehrfachem Prozess-Neustart nachgewiesen, dass der Bug so bestehen bliebe, nur
+        // seltener. Deshalb zusätzlich der Key selbst (garantiert eindeutig, alphabetisch) als
+        // letzte, immer entscheidende Instanz.
+        let rawLearnedPrice: Double? = {
+            guard let store else { return nil }
+            let matchingKeys = store.learnedPrices.keys.filter { key in
+                key.count >= 3 && itemLower.count >= 3 &&
+                (key.contains(itemLower) || itemLower.contains(key))
+            }
+            let bestKey = matchingKeys.max { a, b in
+                let dateA = store.learnedPriceDates[a] ?? .distantPast
+                let dateB = store.learnedPriceDates[b] ?? .distantPast
+                return dateA != dateB ? dateA < dateB : a > b
+            }
+            return bestKey.flatMap { store.learnedPrices[$0] }
+        }()
         // `learnedPrices` is supposed to hold a PER-UNIT rate (see `estimatedLineTotal` below), but
         // a corrupted/stale entry (e.g. a full line total saved under the wrong key before an
         // earlier fix) can turn this into an absurd total once multiplied by quantityAmount (the

@@ -32,8 +32,11 @@ struct AddShoppingItemIntent: AppIntent {
         let context = ModelContext(container)
 
         let stores = try context.fetch(FetchDescriptor<Store>(predicate: #Predicate { $0.isActive }))
+        // Nice-to-have für die Store-Zuordnung — ein Fetch-Fehler hier soll das Hinzufügen des
+        // Artikels selbst nicht scheitern lassen, deshalb `try?` statt `try`.
+        let purchaseRecords = (try? context.fetch(FetchDescriptor<PurchaseRecord>())) ?? []
         let category = AssignmentService.category(for: itemName)
-        let store = AssignmentService.assign(itemName: itemName, to: stores)
+        let store = AssignmentService.assign(itemName: itemName, to: stores, purchaseRecords: purchaseRecords)
 
         let qty = Double(quantity)
         let qtyStr = quantity == 1 ? "1" : "\(quantity)"

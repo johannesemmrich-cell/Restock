@@ -42,6 +42,25 @@ final class PriceProvenanceMigrationTests: XCTestCase {
         XCTAssertTrue(item.estimatedPriceIsAutoDerived, "Ein verworfener gelernter Preis muss als Schätzung markiert sein, nicht als 'echt'")
     }
 
+    // MARK: - ShoppingItem.init: deterministischer Tie-Breaker bei mehreren fuzzy-Treffern ohne Datum
+    //
+    // Gefunden 19.08.2026 von einer unabhängigen Review-Runde, per mehrfachem Prozess-Neustart
+    // empirisch nachgewiesen: eine erste Fix-Fassung nutzte NUR learnedPriceDates als
+    // Tie-Breaker — haben beide fuzzy-Treffer kein Datum (Normalfall bei älteren Einträgen,
+    // keine Backfill-Migration), blieb der ursprüngliche Zufalls-Bug bestehen, nur seltener.
+
+    func testShoppingItemPicksDeterministicWinnerWhenMultipleLearnedPricesMatchWithoutDates() {
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#123456")
+        // Bewusst OHNE zugehörige learnedPriceDates-Einträge — genau der Fall, in dem Datum
+        // allein als Tie-Breaker nicht reicht.
+        store.learnedPrices["hackfleisch gemischt 500g"] = 3.49
+        store.learnedPrices["rinderhackfleisch"] = 5.99
+
+        let item = ShoppingItem(name: "Hackfleisch", category: "Fleisch & Wurst", store: store)
+
+        XCTAssertEqual(item.estimatedPrice, 3.49, "Bei gleichem (fehlendem) Datum muss der alphabetisch frühere Key ('hackfleisch gemischt 500g') deterministisch gewinnen, nicht die zufällige Dictionary-Reihenfolge")
+    }
+
     /// Beweist den Fix für ein von einem unabhängigen Review gefundenes Problem in der ERSTEN
     /// Version dieses Fixes: eine gemeinsame 30€-Grenze für geschätzte UND gelernte Preise hätte
     /// einen echten, korrekt gelernten Preis für ein teures Produkt (hier: 400g Filet für 32€)

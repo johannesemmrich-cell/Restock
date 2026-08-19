@@ -1542,8 +1542,10 @@ struct HomeView: View {
     // Muster wie checkPendingQuickAdd() oben.
     private func checkPendingReceiptScan() {
         guard pendingReceiptScan == nil, let payload = ReceiptShareHandoff.takePending() else { return }
+        // Kein reines "erstes Element" mehr (Array-Reihenfolge) — siehe identische Begründung in
+        // ShareViewController.swift, wo der Store ursprünglich erkannt wird.
         let resolvedStore = payload.storeID.flatMap { id in activeStores.first { $0.id == id } }
-            ?? activeStores.first
+            ?? activeStores.max(by: { $0.visitsPerWeek < $1.visitsPerWeek })
         guard let resolvedStore else { return }
         pendingReceiptScan = PendingReceiptScan(store: resolvedStore, payload: payload)
     }

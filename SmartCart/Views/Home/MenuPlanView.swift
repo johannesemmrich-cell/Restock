@@ -567,7 +567,9 @@ struct MenuPlanView: View {
     /// expliziten Store-Wahl — ersetzt das frühere `resolvedStore(for:)`, das zusätzlich einen
     /// einzigen globalen `targetStore` bevorzugt hätte (jetzt entfallen, siehe `storeTargetMenu`).
     private func autoAssignedStore(for name: String) -> Store? {
-        AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords) ?? activeStores.first
+        // Bewusst OHNE Fallback auf den ersten aktiven Laden: siehe RecipeImportView.resolvedStore
+        // für die identische Begründung (AssignmentService.bestFallback).
+        AssignmentService.assign(itemName: name, to: activeStores, purchaseRecords: allRecords)
     }
 
     private func portions(for dayIndex: Int) -> Int {

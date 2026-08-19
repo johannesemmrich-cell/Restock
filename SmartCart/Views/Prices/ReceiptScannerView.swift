@@ -545,6 +545,12 @@ struct ReceiptScannerView: View {
             }
         }
         Haptics.success()
+        // Ohne diesen Push sieht kein anderes Mitglied einer geteilten Liste die neuen Preise/
+        // Positionen, bis irgendeine SPÄTERE Aktion zufällig einen Push auslöst — jede andere
+        // Mutations-Stelle im Code (HomeView, AddItemView, EditItemView, StoreDetailView, ...)
+        // pusht bereits zuverlässig, save() hier war die einzige Ausnahme (gemeldet 19.08.2026:
+        // Bon-Import löste nie eine Push-Notification für andere Mitglieder aus).
+        SyncCoordinator.shared.pushInBackground(store)
         dismiss()
     }
 }

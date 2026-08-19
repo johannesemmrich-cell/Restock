@@ -42,4 +42,19 @@ final class ReceiptHistoryMatchTests: XCTestCase {
         let result = ReceiptParserService.historyMatch(for: "Burger Brötchen", in: records, storeName: "Lidl")
         XCTAssertNil(result)
     }
+
+    /// Gefunden 19.08.2026 von einer unabhängigen Review-Runde: `bestByName.max(by:)` allein
+    /// iteriert in unspezifizierter (pro Prozess zufälliger) Dictionary-Reihenfolge — bei
+    /// exaktem Score-Gleichstand zwischen zwei unterschiedlich benannten Einträgen entschied
+    /// das früher die Reihenfolge, nicht ein echtes Signal.
+    func testTieBreaksDeterministicallyByAlphabeticallyEarlierName() {
+        // "ABX" und "AXB" sind gegen den Token "ABC" exakt gleich gut bewertet
+        // (lcsSimilarity = 2*2/(3+3) ≈ 0,667, über der Auto-Apply-Schwelle 0,6).
+        let records = [
+            record("AXB", store: "Lidl"),
+            record("ABX", store: "Lidl")
+        ]
+        let result = ReceiptParserService.historyMatch(for: "ABC", in: records, storeName: "Lidl")
+        XCTAssertEqual(result, "ABX", "Bei echtem Score-Gleichstand muss das Ergebnis deterministisch sein, nicht von der Dictionary-Reihenfolge abhängen")
+    }
 }

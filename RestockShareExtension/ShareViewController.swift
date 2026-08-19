@@ -108,6 +108,15 @@ struct ShareReceiptView: View {
 
     // MARK: - Verarbeitung
 
+    /// @MainActor statt einzelner `MainActor.run`-Wraps (anders als das Schwester-Pattern in
+    /// `ReceiptScannerView.process(_:)`): erzwingt, dass nach JEDEM `await` — insbesondere nach
+    /// `recognizeText()`, dessen Continuation aus einem Vision-Completion-Handler auf einem
+    /// beliebigen Hintergrund-Thread resumed wird — die Ausführung wieder auf den Main Actor
+    /// hoppt, bevor `state` mutiert wird. Ohne das lief `state = .success(...)` (und die anderen
+    /// Zuweisungen) je nach Timing/Gerät auf einem Hintergrund-Thread weiter — undefiniertes
+    /// SwiftUI-Rendering (kein Crash, aber die Erfolgs-Animation blieb bei manchen Nutzern
+    /// stillschweigend aus, gemeldet 19.08.2026).
+    @MainActor
     private func process() async {
         guard let attachment = await loadSharedAttachment() else {
             state = .error("Kein Bild oder PDF gefunden.")
@@ -139,8 +148,13 @@ struct ShareReceiptView: View {
         }
         let context = container.mainContext
         let activeStores = (try? context.fetch(FetchDescriptor<Store>(predicate: #Predicate { $0.isActive }))) ?? []
+        // Kein reines "erstes Element" mehr als letzter Ausweg (reine Array-Reihenfolge, kein
+        // Bezug zum tatsächlichen Laden) — zumindest ein echtes Signal (Besuchsfrequenz) nutzen,
+        // wenn die Text-Erkennung keinen Treffer über der Schwelle findet. Löst das Problem nicht
+        // vollständig (siehe Backlog: fehlende Laden-Korrektur-Möglichkeit im Review-Screen bleibt
+        // offen), reduziert aber die rein zufällige Fehlzuordnung.
         let detectedStore = AssignmentService.detectStore(fromReceiptLines: lines, candidates: activeStores)
-            ?? activeStores.first
+            ?? activeStores.max(by: { $0.visitsPerWeek < $1.visitsPerWeek })
         let allRecords = (try? context.fetch(FetchDescriptor<PurchaseRecord>())) ?? []
 
         // Ohne irgendeinen konfigurierten Laden (seltener Fall — z. B. ganz frische Installation)

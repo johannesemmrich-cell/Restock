@@ -5,6 +5,7 @@ struct RecipeImportView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
+    @Query private var allRecords: [PurchaseRecord]
 
     @State private var selectedImage: UIImage?
     @State private var showImagePicker = false
@@ -242,12 +243,17 @@ struct RecipeImportView: View {
         }
     }
 
-    /// Laden, den eine Zutat beim Import bekommt (auch für die Emoji-Vorschau):
-    /// explizit gewählte Ziel-Liste, sonst Auto-Zuordnung mit Fallback auf den
-    /// ersten aktiven Laden, damit keine Zutat ohne Liste angelegt wird.
+    /// Laden, den eine Zutat beim Import bekommt (auch für die Emoji-Vorschau): explizit
+    /// gewählte Ziel-Liste, sonst Auto-Zuordnung anhand echter Kaufhistorie — bewusst OHNE
+    /// Fallback auf den ersten aktiven Laden mehr: das hätte Zutaten ohne jede Evidenz
+    /// selbstbewusst einem unpassenden Laden zugewiesen (gleiche Ursache wie die "Hast du eine
+    /// Partnerschaft mit Rewe?"-Beschwerde beim Schnell-Hinzufügen — siehe
+    /// AssignmentService.bestFallback). Eine ohne Evidenz zugewiesene Zutat bleibt "ohne
+    /// Laden" — weiterhin sichtbar (HomeView "Ohne Laden"-Sektion) und jederzeit über den
+    /// Ziel-Liste-Picker oben korrigierbar.
     private func resolvedStore(for ingredient: RecognizedIngredient) -> Store? {
         if let targetStore { return targetStore }
-        return AssignmentService.assign(itemName: ingredient.name, to: activeStores) ?? activeStores.first
+        return AssignmentService.assign(itemName: ingredient.name, to: activeStores, purchaseRecords: allRecords)
     }
 
     private func addSelected() {

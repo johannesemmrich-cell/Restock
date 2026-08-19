@@ -215,8 +215,11 @@ struct JoinStoreSheet: View {
 
     /// Set when opened via `restock://join/<code>` (see HomeView.onOpenURL) — pre-fills the
     /// code field so the recipient lands straight on the join-preview/button instead of having
-    /// to type the code by hand. `onChange(of: code)` below already does the cleaning+lookup,
-    /// so assigning here reuses that exact path instead of duplicating it.
+    /// to type the code by hand. `onAppear` below calls `triggerLookup(rawValue:)` directly
+    /// rather than relying on `onChange(of: code)` to notice the programmatic assignment —
+    /// SwiftUI doesn't reliably fire `onChange` for a mutation this early in the first render
+    /// pass, which left the join button permanently invisible (it only appears once `preview`
+    /// is set, which only happens after a lookup actually runs; gemeldet 19.08.2026).
     var prefilledCode: String? = nil
 
     @State private var code = ""
@@ -261,30 +264,7 @@ struct JoinStoreSheet: View {
                     .overlay(RoundedRectangle(cornerRadius: RCRadius.control).strokeBorder(Color.hairline))
                     .padding(.horizontal, 32)
                     .onChange(of: code) { _, new in
-                        let cleaned = new.replacingOccurrences(of: "-", with: "")
-                                         .replacingOccurrences(of: " ", with: "")
-                                         .uppercased()
-                        if cleaned != new { code = cleaned }
-                        preview = nil
-                        error = nil
-                        lookupTask?.cancel()
-                        // Sowohl der aktuelle 10-stellige Code als auch der alte, vor der
-                        // Sicherheits-Härtung verwendete 6-stellige Code (siehe
-                        // SharedStoreService.generateCode()) sind gültige, tatsächlich noch aktive
-                        // Codes: ein `Store.shareID` wird nur einmal erzeugt und danach dauerhaft
-                        // wiederverwendet, ein vor der Härtung erstmals geteilter Store behält also
-                        // für immer seinen alten 6-stelligen Code. Der bisherige starre "== 10"-
-                        // Check ließ so einen per Link empfangenen 6-stelligen Code nie eine Suche
-                        // auslösen — das Sheet blieb tatenlos stehen (gemeldeter Bug, 14.08.2026).
-                        guard cleaned.count == 6 || cleaned.count == 10 else { return }
-                        lookupTask = Task {
-                            // Kurze Verzögerung: tippt der Nutzer über die 6 Zeichen hinaus zum
-                            // vollen 10-stelligen Code weiter, wird die verworfene 6er-Zwischenstufe
-                            // dank der Cancellation oben nicht erst als "nicht gefunden" aufblitzen.
-                            try? await Task.sleep(for: .milliseconds(350))
-                            guard !Task.isCancelled else { return }
-                            await lookup(cleaned)
-                        }
+                        triggerLookup(rawValue: new)
                     }
 
                 if isLooking {
@@ -350,8 +330,43 @@ struct JoinStoreSheet: View {
         .sheet(isPresented: $showPaywall) { PaywallView(context: .sharedLists) }
         .onAppear {
             if let prefilledCode, code.isEmpty {
-                code = prefilledCode
+                triggerLookup(rawValue: prefilledCode)
             }
+        }
+    }
+
+    /// Bereinigt `code`, verwirft eine veraltete Preview/Fehlermeldung und startet (nach kurzer
+    /// Entprell-Verzögerung) die Server-Suche — gemeinsame Logik für sowohl manuelle Eingabe
+    /// (`onChange(of: code)`) als auch einen per Link vorausgefüllten Code (`onAppear`). Nötig,
+    /// weil SwiftUI `onChange` nachweislich nicht zuverlässig auslöst, wenn `code` so früh wie in
+    /// `onAppear` programmatisch gesetzt wird — der Beitreten-Button blieb dadurch unsichtbar,
+    /// weil er erst nach erfolgreicher Suche erscheint, die Suche aber nie startete, obwohl der
+    /// Code sichtbar im Feld stand (gemeldet 19.08.2026). `onAppear` ruft diese Methode jetzt
+    /// zusätzlich direkt auf, unabhängig davon, ob `onChange` zuverlässig feuert.
+    private func triggerLookup(rawValue: String) {
+        let cleaned = rawValue.replacingOccurrences(of: "-", with: "")
+                               .replacingOccurrences(of: " ", with: "")
+                               .uppercased()
+        if code != cleaned { code = cleaned }
+        preview = nil
+        error = nil
+        lookupTask?.cancel()
+        // Sowohl der aktuelle 10-stellige Code als auch der alte, vor der
+        // Sicherheits-Härtung verwendete 6-stellige Code (siehe
+        // SharedStoreService.generateCode()) sind gültige, tatsächlich noch aktive
+        // Codes: ein `Store.shareID` wird nur einmal erzeugt und danach dauerhaft
+        // wiederverwendet, ein vor der Härtung erstmals geteilter Store behält also
+        // für immer seinen alten 6-stelligen Code. Der bisherige starre "== 10"-
+        // Check ließ so einen per Link empfangenen 6-stelligen Code nie eine Suche
+        // auslösen — das Sheet blieb tatenlos stehen (gemeldeter Bug, 14.08.2026).
+        guard cleaned.count == 6 || cleaned.count == 10 else { return }
+        lookupTask = Task {
+            // Kurze Verzögerung: tippt der Nutzer über die 6 Zeichen hinaus zum
+            // vollen 10-stelligen Code weiter, wird die verworfene 6er-Zwischenstufe
+            // dank der Cancellation oben nicht erst als "nicht gefunden" aufblitzen.
+            try? await Task.sleep(for: .milliseconds(350))
+            guard !Task.isCancelled else { return }
+            await lookup(cleaned)
         }
     }
 

@@ -380,7 +380,7 @@ struct StoreDetailView: View {
                 .toolbarChip()
             }
         }
-        .sheet(isPresented: $showAddItem) { AddItemView() }
+        .sheet(isPresented: $showAddItem) { AddItemView(presetStore: store) }
         .sheet(isPresented: $showShareSheet) { StoreShareSheet(store: store) }
         .sheet(isPresented: $showReceiptScanner) { ReceiptScannerView(store: store) }
         .sheet(isPresented: $showActualPriceEntry) { ActualPriceEntryView(store: store) }
