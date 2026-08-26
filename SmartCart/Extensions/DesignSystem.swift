@@ -195,6 +195,18 @@ extension View {
 }
 
 /// ToolbarItem ohne System-Glass-Hintergrund, damit `toolbarChip` die Form bestimmt.
+///
+/// WICHTIG (gefunden 24.08.2026, `ReceiptScannerView`+`RecipeImportView`): niemals ein
+/// `ChipToolbarItem` in ein `if`/`if let` wrappen, um es zeitweise ganz aus der Toolbar zu
+/// nehmen. Ändert sich die Toolbar-Item-ANZAHL genau in dem Moment, in dem eine `List` erstmals
+/// gemountet wird (z. B. beide zusammen beim Wechsel auf eine "fertig"-Phase), erfasst die
+/// `List` ihren oberen Safe-Area-Inset offenbar VOR diesem Toolbar-Relayout und aktualisiert ihn
+/// danach nicht mehr — der erste Section-Header landet dann sichtbar teilweise hinter der
+/// Nav-Bar. Stattdessen das `ChipToolbarItem` IMMER deklarieren und nur den Inhalt per
+/// `.disabled(...)`/`.opacity(...)` sichtbar/aktiv schalten — das hält die Toolbar-Komposition ab
+/// dem ersten Frame stabil. Dabei zusätzlich `.accessibilityHidden(...)` mit derselben Bedingung
+/// wie `.opacity(...)` ergänzen — sonst kann VoiceOver auf einen unsichtbaren, nur per Opacity
+/// ausgeblendeten Button landen (siehe `ReceiptScannerView`/`RecipeImportView` als Vorlage).
 struct ChipToolbarItem<L: View>: ToolbarContent {
     let placement: ToolbarItemPlacement
     @ViewBuilder let label: () -> L

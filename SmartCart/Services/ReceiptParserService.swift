@@ -83,6 +83,16 @@ enum ReceiptParserService {
     // Kommt in Produktnamen so nicht vor, kein Wort aus skipWordSet/skipPhrases deckt das ab.
     private static let vatSummaryRowRegex = try? NSRegularExpression(pattern: #"^[A-Za-z0-9]\s*=\s*\d"#)
 
+    /// Prüft, ob `lowercasedWord` (bereits klein geschrieben) ein bekanntes
+    /// Kassenbon-Verwaltungswort ist (siehe `skipWordSet` oben). Nicht `private`:
+    /// `AssignmentService.detectStore` (anderer Typ) braucht das für die Fallback-Suche über den
+    /// ganzen Bon — verhindert, dass generische MwSt-Tabellen-Vokabeln wie "netto"/"brutto"
+    /// fälschlich als Laden-Namens-Treffer zählen (kollidiert konkret mit dem eingebauten
+    /// Laden-Preset "Netto", gefunden von einer unabhängigen Verify-Runde, 24.08.2026).
+    static func isKnownAdminWord(_ lowercasedWord: String) -> Bool {
+        skipWordSet.contains(lowercasedWord)
+    }
+
     private static func isAdminLine(_ lower: String, ignoring exemptWords: Set<String> = []) -> Bool {
         for phrase in skipPhrases where lower.contains(phrase) { return true }
         if let rx = vatSummaryRowRegex, rx.firstMatch(in: lower, range: NSRange(lower.startIndex..., in: lower)) != nil {
@@ -96,6 +106,27 @@ enum ReceiptParserService {
     private static func adminWords(_ lower: String) -> [String] {
         lower.components(separatedBy: CharacterSet.whitespaces.union(CharacterSet(charactersIn: "./")))
             .map { $0.trimmingCharacters(in: CharacterSet.alphanumerics.inverted) }
+    }
+
+    // Zusätzliche, von "zahlen" unabhängige Auslöser für `pastItemSection` (siehe Deklaration in
+    // `parseClassic`). Falls Vision "zu zahlen" auf einem echten Foto (Unschärfe, Schatten,
+    // Blendung) NICHT liest, blieb der Cutoff bisher komplett aus: der gesamte
+    // Zahlungs-/Metadaten-Bereich, INSBESONDERE MwSt-Tabellen-DATENZEILEN im Format "A  7 %
+    // 1,92  27,46  29,38" (enthalten kein Wort aus `skipWordSet`, siehe `vatSummaryRowRegex`
+    // oben — die deckt nur das "Buchstabe/Ziffer="-Format ab, nicht dieses) wurden als
+    // Positions-Kandidaten durchgereicht (gemeldet 24.08.2026: vier Phantom-Positionen aus genau
+    // dieser Tabelle + Bon-Summe). "mwst" ist bereits ein admin-Wort (filtert seine EIGENE
+    // Zeile), schützt bisher aber keine FOLGEZEILEN — als zusätzlicher Cutoff-Auslöser tut es das
+    // jetzt auch, ebenso zwei weitere, ausschließlich in der Zahlungs-Metadaten-Sektion
+    // vorkommende Begriffe. Jede Phrase hier ist auf einem echten Bon praktisch nie Teil eines
+    // Artikelnamens — Whole-Word-Vergleich wie bei `skipWordSet`, keine neue Fehltreffer-Fläche.
+    private static let additionalPastItemsTriggerWords: Set<String> = [
+        "mwst", "transaktionsnummer", "signaturzähler",
+    ]
+
+    private static func triggersPastItemSection(_ lower: String) -> Bool {
+        let words = adminWords(lower)
+        return words.contains("zahlen") || words.contains(where: additionalPastItemsTriggerWords.contains)
     }
 
     // Führende Artikelnummern (5+ Ziffern)
@@ -199,14 +230,33 @@ enum ReceiptParserService {
     /// wurde (beobachteter Fall: eine Position fehlt komplett, nur ihr Preis taucht als
     /// namenlose Zeile auf und wird beim Parsing mangels Namen verworfen), lässt sich dadurch
     /// zumindest sichtbar machen, statt spurlos in der Summe zu fehlen. Bewusst nur für den
-    /// deutschen Pfad (Trigger-Wort "zahlen", siehe `pastItemSection` oben) — für französische
-    /// Bons liefert das absichtlich `nil` (kein Hinweis, kein falscher).
+    /// deutschen Pfad — für französische Bons liefert das absichtlich `nil` (kein Hinweis, kein
+    /// falscher).
+    ///
+    /// Mehrere Auslöser-Wörter, nicht nur "zahlen" (Trigger-Wort von `pastItemSection` oben):
+    /// "Kreditkarte"/"EC-Karte"/"Betrag" tragen auf einem deutschen Bon denselben Gesamtbetrag
+    /// wie die "zu zahlen"-Zeile (Zahlungsbestätigung), stehen aber auf eigenen, unabhängigen
+    /// Zeilen — falls Vision ausgerechnet "zu zahlen" nicht liest (derselbe Foto-OCR-Fehler,
+    /// gegen den `pastItemSection` gehärtet wurde, siehe dort), bleibt so noch eine zweite und
+    /// dritte Chance, den echten Betrag zu finden, statt den "Summe stimmt nicht"-Hinweis
+    /// stillschweigend ausfallen zu lassen (gefunden von einer unabhängigen Verify-Runde,
+    /// 24.08.2026 — `pastItemSection` wurde gehärtet, diese Funktion aber vergessen). Prüft bei
+    /// einem Treffer-Wort ohne extrahierbaren Preis weiter mit der nächsten Kandidaten-Zeile,
+    /// statt sofort mit `nil` aufzugeben.
+    private static let detectedTotalTriggerWords: Set<String> = ["zahlen", "kreditkarte", "ec-karte", "betrag"]
+
     static func detectedTotal(from rawLines: [String]) -> Double? {
         let lines = rawLines.map(repairSplitDecimals)
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
-            guard adminWords(trimmed.lowercased()).contains("zahlen") else { continue }
-            return extractTrailingPrice(from: trimmed)
+            guard adminWords(trimmed.lowercased()).contains(where: detectedTotalTriggerWords.contains) else { continue }
+            // "Betrag  35,87 EUR" (Kartenzahlungs-Beleg) hängt die Währung als volles Wort an,
+            // nicht als einzelnes MwSt-Kürzel wie "A"/"B"/"M" — extractTrailingPrice erlaubt am
+            // Zeilenende nur EIN optionales Kürzel-Zeichen, kein 3-Buchstaben-Wort, und würde
+            // sonst nichts finden. Deshalb vorher entfernen.
+            let withoutCurrencyWord = trimmed.replacingOccurrences(
+                of: #"\s*(EUR|eur)\s*$"#, with: "", options: .regularExpression)
+            if let total = extractTrailingPrice(from: withoutCurrencyWord) { return total }
         }
         return nil
     }
@@ -298,12 +348,14 @@ enum ReceiptParserService {
         // zuordnen würde (beobachtet: eine isolierte Gewichtsartikel-Preiszeile wie "0,75 A"
         // wurde so zum Pseudo-Namen für den Preis einer GANZ ANDEREN, folgenden Position).
         var pendingPrice: Double? = nil
-        // Wird wahr, sobald die "zu zahlen"-Zeile erreicht ist — ab da folgt auf deutschen Bons
+        // Wird wahr, sobald die "zu zahlen"-Zeile (oder einer der weiteren Auslöser in
+        // `triggersPastItemSection`, siehe dort) erreicht ist — ab da folgt auf deutschen Bons
         // nur noch Zahlungs-Metadaten (TSE-Transaktionsnummer, Seriennr., Autorisierungscode,
-        // "GEN.NR", …), die sonst einzeln per Schlüsselwort erkannt werden müssten und sonst als
-        // Produktzeile durchrutschen (z. B. "00 GEN.NR: 54  13,03" wurde als Artikel erkannt).
-        // Bewusst NUR "zahlen" als Auslöser (nicht z. B. "montant"/"total" für französische Bons)
-        // — "montant" steht dort in der SPALTEN-KOPFZEILE ganz oben ("MONTANT TTC"), ein Abbruch
+        // "GEN.NR", MwSt-Tabelle, …), die sonst einzeln per Schlüsselwort erkannt werden müssten
+        // und sonst als Produktzeile durchrutschen (z. B. "00 GEN.NR: 54  13,03" wurde als
+        // Artikel erkannt, ebenso MwSt-Tabellen-Datenzeilen ohne "="-Kennung). Alle Auslöser
+        // bewusst nur deutsche Begriffe (nicht z. B. "montant"/"total" für französische Bons) —
+        // "montant" steht dort in der SPALTEN-KOPFZEILE ganz oben ("MONTANT TTC"), ein Abbruch
         // darauf würde den kompletten Rest jedes französischen Bons verschlucken.
         var pastItemSection = false
         // Wird wahr bei einer "ZEILENSTORNO"/"STORNO"-Zeile (Kassierer storniert die zuletzt
@@ -323,7 +375,7 @@ enum ReceiptParserService {
             let lower = trimmed.lowercased()
 
             if pastItemSection { continue }
-            if adminWords(lower).contains("zahlen") {
+            if triggersPastItemSection(lower) {
                 pastItemSection = true
                 continue
             }
@@ -378,6 +430,20 @@ enum ReceiptParserService {
                     default:
                         break
                     }
+                } else if let bare = priceTimesCount(in: trimmed), let currentPrice = price,
+                          abs(currentPrice - bare.unitPrice * bare.count) <= 0.05 {
+                    // Lidl-Mehrfachkauf OHNE Einheiten-Wort ("BürgerSchwä.Maultas.  2,29 x  3
+                    // 6,87 A" — Stückpreis × Anzahl, der Gesamtpreis 6,87 steht bereits als
+                    // Trailing-Preis auf derselben Zeile fest). `weightTimesRate` oben griff hier
+                    // nie (die verlangt zwingend "kg"/"stk" zwischen den Zahlen), `quantity` blieb
+                    // dadurch beim Default 1 — der volle Zeilen-Gesamtpreis wurde beim Speichern
+                    // (`ReceiptScannerView.save()`s `perUnitPrice = line.price / quantity`)
+                    // fälschlich als Stückpreis gelernt statt durch die echte Anzahl geteilt
+                    // (gemeldet 24.08.2026: "3 Packungen Maultaschen à 2,29€ lernen 6,87€ pro
+                    // Packung"). Sanity-Check gegen den bereits extrahierten Gesamtpreis (wie
+                    // `euroQtyRegex` in `parseEuroSuffixStyle`) — nur übernehmen, wenn Menge ×
+                    // Stückpreis wirklich zum Zeilenpreis passt.
+                    quantity = bare.count
                 }
                 // Name bevorzugt aus einer vorherigen Namenszeile; fehlt die, aus dem Teil DIESER
                 // Zeile vor dem Gewichts-Muster (manche Bons drucken Name und Gewichtsdetail auf
@@ -856,6 +922,30 @@ enum ReceiptParserService {
         return (weight, line[unitRange].lowercased(), rate)
     }
 
+    // Erkennt "2,29 x 3" / "0,39 x  2" — Stückpreis × Anzahl OHNE Einheiten-Wort dazwischen
+    // (Lidl-Mehrfachkauf-Format). Bewusst getrennt von `weightTimesRateRegex`: dort steht IMMER
+    // ein Einheiten-Wort ("kg"/"stk") zwischen den beiden Zahlen — hier nie; die Abwesenheit
+    // eines Einheiten-Worts ist gerade das Unterscheidungsmerkmal. `count` mindestens 2 (wie
+    // `euroQtyRegex` in `parseEuroSuffixStyle`): eine Zeile "x 1" auf einem echten Bon kommt
+    // praktisch nicht vor und wäre kein sinnvoller Mehrfachkauf-Hinweis. Negative Lookahead
+    // verhindert einen Teiltreffer auf eine längere Zahl (z. B. "35" oder "3,50") direkt nach der
+    // vermeintlichen Anzahl.
+    private static let priceTimesCountRegex = try? NSRegularExpression(
+        pattern: #"(\d{1,4}[,\.]\d{2})\s*[x×]\s*(\d{1,2})(?![\d,\.])"#
+    )
+
+    private static func priceTimesCount(in line: String) -> (unitPrice: Double, count: Double)? {
+        guard let rx = priceTimesCountRegex,
+              let match = rx.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)),
+              let priceRange = Range(match.range(at: 1), in: line),
+              let countRange = Range(match.range(at: 2), in: line),
+              let unitPrice = Double(line[priceRange].replacingOccurrences(of: ",", with: ".")),
+              let count = Double(line[countRange]),
+              unitPrice > 0, count >= 2, count <= 99
+        else { return nil }
+        return (unitPrice, count)
+    }
+
     // Preis am Zeilenende extrahieren (für Gewichtszeilen)
     private static func extractTrailingPrice(from line: String) -> Double? {
         let pattern = #"(\d{1,4}[,\.]\d{2})\s*[ABM12E\*]?\s*$"#
@@ -1140,6 +1230,18 @@ enum ReceiptParserService {
 actor ReceiptNameAIResolver {
     static let shared = ReceiptNameAIResolver()
 
+    /// Antwort-Marker für "das ist gar kein Produkt" — siehe Prompt in `aiExpand` und `sanitize`
+    /// unten. Ohne diesen Ausweg musste das Modell für JEDEN Text, der Stufe 5 erreicht
+    /// (`ReceiptResolutionService.resolve`), einen Produktnamen erfinden — auch für Fragmente aus
+    /// nicht sauber gefilterten Tabellen-/Zahlungs-Metadaten-Zeilen. Gemeldet 24.08.2026: vier
+    /// erfundene "Pizza Baguette"-Positionen, deren Preise exakt der MwSt-Tabelle + Bon-Summe
+    /// entsprachen — kein echter Artikel, aber das Modell musste trotzdem etwas Plausibles raten.
+    /// Nicht `private`: `RestockTests` braucht ihn, um `sanitize` direkt zu testen, ohne den
+    /// String zu duplizieren (der eigentliche LLM-Aufruf selbst ist in der Test-Umgebung nicht
+    /// verfügbar — Apple Intelligence läuft im Simulator/CI nicht — deshalb testet
+    /// `ReceiptNameAIResolverSanitizeTests` nur die deterministische Nachbearbeitung).
+    static let nonProductSentinel = "KEIN_PRODUKT"
+
     static func isAIAvailable() -> Bool {
         #if canImport(FoundationModels)
         guard #available(iOS 26, *) else { return false }
@@ -1171,8 +1273,15 @@ actor ReceiptNameAIResolver {
         """
         let prompt = """
         Dies ist eine abgekürzte Positionszeile von einem Kassenbon (Deutsch oder Französisch): "\(raw)"
-        Antworte NUR mit dem wahrscheinlichsten vollen Produktnamen in derselben Sprache, ohne
-        Erklärung, ohne Anführungszeichen, ohne Preis oder Menge.\(knownHint)
+
+        Antworte NUR mit einem KURZEN, generischen Produktnamen, wie er normalerweise auf einer
+        Einkaufsliste steht — z. B. "Sahne" oder "Bio Sahne", NICHT "Bio Schlagsahne 30% Fett
+        Weihenstephan Frischebecher" — in derselben Sprache, ohne Erklärung, ohne
+        Anführungszeichen, ohne Preis oder Menge.
+
+        Falls der Text KEIN Produkt ist (z. B. ein Zahlungs-/Steuer-/Transaktionscode, eine reine
+        Zahlenfolge, ein Tabellen-Fragment oder sonstiger Kassenbon-Verwaltungstext ohne
+        erkennbaren Produktbezug), antworte NUR mit \(Self.nonProductSentinel), sonst nichts.\(knownHint)
         """
         // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen. Nutzt `withRealTimeout`
         // (RecipeRecognitionService.swift) statt eines TaskGroup-Rennens, das einen wirklich
@@ -1190,11 +1299,12 @@ actor ReceiptNameAIResolver {
         #endif
     }
 
-    nonisolated private func sanitize(_ text: String) -> String? {
+    nonisolated func sanitize(_ text: String) -> String? {
         let trimmed = text
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
         guard !trimmed.isEmpty, trimmed.count <= 60, !trimmed.contains("\n") else { return nil }
+        guard trimmed.caseInsensitiveCompare(Self.nonProductSentinel) != .orderedSame else { return nil }
         return trimmed
     }
 }

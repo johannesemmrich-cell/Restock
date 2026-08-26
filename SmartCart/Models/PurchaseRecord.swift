@@ -41,7 +41,11 @@ struct ConsumptionPattern {
     }
 
     var isOverdue: Bool { daysUntilNeeded < 0 }
-    var isDueSoon: Bool { daysUntilNeeded >= 0 && daysUntilNeeded <= 7 }
+    // War 7 Tage — gemeldet 24.08.2026: fühlte sich zu breit an, Home-Banner + Push-Vorlauf
+    // zeigten Artikel, die noch fast eine Woche entfernt waren, gleichzeitig mit wirklich
+    // dringenden. Nutzer bestätigt: 2 Tage, ohne Obergrenze für die Anzahl gleichzeitig
+    // gezeigter Artikel.
+    var isDueSoon: Bool { daysUntilNeeded >= 0 && daysUntilNeeded <= 2 }
 }
 
 extension Array where Element == PurchaseRecord {

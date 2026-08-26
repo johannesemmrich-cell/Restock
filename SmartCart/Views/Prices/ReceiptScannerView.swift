@@ -176,6 +176,13 @@ struct ReceiptScannerView: View {
             : "Erkannte Positionen ergeben \(diffText) mehr als die Bon-Summe."
     }
 
+    /// Siehe `ChipToolbarItem`-Dokumentation (DesignSystem.swift): der Button muss immer
+    /// deklariert bleiben, hier nur per `disabled`/`opacity` gesteuert werden — kein `if` um das
+    /// ganze `ChipToolbarItem`.
+    private var canSave: Bool {
+        phase == .review && !parsedLines.filter(\.isIncluded).isEmpty
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -192,11 +199,15 @@ struct ReceiptScannerView: View {
                     Button { dismiss() } label: { Text("Abbrechen").toolbarChip() }
                         .buttonStyle(.pressable)
                 }
-                if phase == .review && !parsedLines.filter(\.isIncluded).isEmpty {
-                    ChipToolbarItem(placement: .confirmationAction) {
-                        Button { save() } label: { Text("Speichern").toolbarChip(prominent: true) }
-                            .buttonStyle(.pressable)
-                    }
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { save() } label: { Text("Speichern").toolbarChip(prominent: true) }
+                        .buttonStyle(.pressable)
+                        .disabled(!canSave)
+                        .opacity(phase == .review ? 1 : 0)
+                        // Explizit statt sich auf automatisches Opacity-Ausblenden zu verlassen —
+                        // sonst könnte VoiceOver in .capture/.processing auf einen unsichtbaren
+                        // "Speichern"-Button landen (siehe ChipToolbarItem-Dokumentation).
+                        .accessibilityHidden(phase != .review)
                 }
             }
         }

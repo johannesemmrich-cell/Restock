@@ -235,4 +235,72 @@ final class ReceiptParserPriceTests: XCTestCase {
         XCTAssertEqual(ReceiptParserService.weightBasisFromName("Rotwein 75cl"), 750)
         XCTAssertNil(ReceiptParserService.weightBasisFromName("Bio Eier 6er"), "Ohne erkennbare g/kg/l-Einheit darf nichts erfunden werden")
     }
+
+    // MARK: - Lidl-Mehrfachkauf ohne Einheiten-Wort ("2,29 x 3") — gemeldet 24.08.2026
+    //
+    // Bon druckt Stückpreis × Anzahl OHNE "Stk"/"kg"-Wort dazwischen ("2,29 x 3   6,87 A").
+    // `weightTimesRateRegex` griff hier nie (verlangt zwingend ein Einheiten-Wort), `quantity`
+    // blieb beim Default 1 — der volle Zeilen-Gesamtpreis (6,87€) wurde beim erneuten
+    // Hinzufügen zur Liste fälschlich als Stückpreis angezeigt statt 2,29€.
+
+    func testBarePriceTimesCountSetsQuantityFromLidlMultiBuyLine() throws {
+        let lines = ["BürgerSchwä.Maultas.  2,29 x 3  6,87 A"]
+
+        let result = ReceiptParserService.parse(lines)
+
+        let maultaschen = try XCTUnwrap(result.first { $0.name.lowercased().contains("maultas") })
+        XCTAssertEqual(maultaschen.price, 6.87, accuracy: 0.001, "Zeilen-Gesamtpreis bleibt unverändert (für die Ausgaben-Ansicht)")
+        XCTAssertEqual(maultaschen.quantity, 3, accuracy: 0.001, "Menge muss aus 'x 3' erkannt werden, nicht beim Default 1 bleiben")
+    }
+
+    func testBarePriceTimesCountLearnsPerUnitPriceNotLineTotal() throws {
+        // Derselbe End-zu-Ende-Kreislauf wie die Skyr-Roundtrip-Tests oben: die eigentliche
+        // Nutzer-Beschwerde war nicht "quantity falsch", sondern "beim erneuten Hinzufügen zur
+        // Liste steht 6,87€ statt 2,29€ pro Packung".
+        let lines = ["BürgerSchwä.Maultas.  2,29 x 3  6,87 A"]
+        let receiptLine = try XCTUnwrap(ReceiptParserService.parse(lines).first)
+
+        let editableLine = EditableReceiptLine(
+            name: receiptLine.name,
+            price: receiptLine.price,
+            quantity: receiptLine.quantity,
+            unit: receiptLine.unit,
+            weightBasis: receiptLine.weightBasis
+        )
+        let quantity = editableLine.learningQuantity(matchQuantityAmount: nil)
+        let perUnitPrice = receiptLine.price / quantity
+
+        XCTAssertEqual(perUnitPrice, 2.29, accuracy: 0.01, "Stückpreis muss 2,29€ sein, nicht der Zeilen-Gesamtpreis 6,87€")
+    }
+
+    func testBarePriceTimesCountHandlesMandelkerneAndBroetchenFromRealLidlReceipt() throws {
+        // Zwei weitere reale Zeilen desselben Bons (24.08.2026) — beweist, dass der Fix nicht
+        // nur für einen einzelnen Zahlenwert zufällig passt.
+        let mandelnResult = ReceiptParserService.parse(["Mandelkerne  2,49 x 2  4,98 A"])
+        let mandeln = try XCTUnwrap(mandelnResult.first { $0.name.lowercased().contains("mandel") })
+        XCTAssertEqual(mandeln.price, 4.98, accuracy: 0.001)
+        XCTAssertEqual(mandeln.quantity, 2, accuracy: 0.001)
+
+        let broetchenResult = ReceiptParserService.parse(["Brötchen Lauge  0,39 x 2  0,78 A"])
+        let broetchen = try XCTUnwrap(broetchenResult.first { $0.name.lowercased().contains("brötchen") })
+        XCTAssertEqual(broetchen.price, 0.78, accuracy: 0.001)
+        XCTAssertEqual(broetchen.quantity, 2, accuracy: 0.001)
+    }
+
+    func testBarePriceTimesCountDoesNotInterfereWithWeightBasedLine() throws {
+        // Non-Regression: das bestehende "kg x Rate"-Format (siehe
+        // testWeightBasedGrundpreisLineComputesCorrectTotal oben) muss unverändert funktionieren,
+        // auch wenn eine Zeile im selben Bon das neue "Preis x Anzahl"-Format nutzt.
+        let lines = ["Skyr Natur 500g", "0,500 kg x 2,29", "Mandelkerne  2,49 x 2  4,98 A"]
+
+        let result = ReceiptParserService.parse(lines)
+
+        let skyr = try XCTUnwrap(result.first { $0.name.lowercased().contains("skyr") })
+        XCTAssertEqual(skyr.price, 1.15, accuracy: 0.005)
+        XCTAssertEqual(skyr.quantity, 1, accuracy: 0.001)
+        XCTAssertEqual(skyr.weightBasis ?? -1, 500, accuracy: 0.01)
+
+        let mandeln = try XCTUnwrap(result.first { $0.name.lowercased().contains("mandel") })
+        XCTAssertEqual(mandeln.quantity, 2, accuracy: 0.001)
+    }
 }

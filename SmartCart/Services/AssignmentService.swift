@@ -205,30 +205,78 @@ extension AssignmentService {
     /// exakt dieselbe Komposita-Falle wie bei Artikelnamen ("Milch" in "Kondensmilch").
     private static let storeDetectionThreshold = 0.75
 
-    /// Erkennt, zu welchem der übergebenen Läden ein gescannter Bon gehört, anhand der ersten
-    /// paar rekonstruierten OCR-Zeilen (Kopfbereich, wo Logo/Ladenname stehen — auf den Bons
-    /// dieser Session stand "LIDL"/"LDL" jeweils als eigenständige erste Zeile). Vergleicht gegen
+    /// Erkennt, zu welchem der übergebenen Läden ein gescannter Bon gehört. Vergleicht gegen
     /// einzelne WÖRTER, nicht ganze Zeilen: eine mehrteilige Kopfzeile wie "DM Drogerie Markt"
     /// würde das Längenverhältnis von `lcsSimilarity` sonst so verdünnen, dass ein kurzer
     /// Ladenname wie "DM" nie einen hohen Score erreichen könnte, selbst bei exakter
     /// Übereinstimmung (nachgerechnet: nur 0,21 statt der nötigen Schwelle).
+    ///
+    /// EIN gemeinsamer Kandidaten-Pool aus zwei unterschiedlich behandelten Quellen, nicht zwei
+    /// nacheinander versuchte Stufen (eine "nur wenn die erste nichts findet"-Reihenfolge wurde
+    /// testweise gebaut und verworfen — sie griff nie über den Kopfbereich hinaus, sobald DORT
+    /// bereits irgendein, und sei es falscher, Treffer lag, siehe Lehre unten):
+    /// - Kopfbereich (erste 8 Zeilen) — UNGEFILTERT, unverändertes, ursprüngliches Verhalten.
+    /// - Rest des Bons — GEFILTERT: bekannte Kassenbon-Verwaltungswörter
+    ///   (`ReceiptParserService.isKnownAdminWord`) zählen hier nicht als Treffer. Sonst würde die
+    ///   MwSt-Tabellenzeile, die auf so gut wie JEDEM deutschen Bon irgendwo "... Netto = Brutto"
+    ///   druckt, das eingebaute Laden-Preset "Netto" mit einem perfekten Score 1.0 treffen,
+    ///   unabhängig vom tatsächlichen Laden (von einer unabhängigen Verify-Runde gefunden,
+    ///   24.08.2026 — sonst hätte JEDER Nutzer mit "Netto" als konfiguriertem Laden JEDEN Bon als
+    ///   "Netto" fehlerkannt bekommen). Der Kopfbereich bleibt bewusst ungefiltert: er enthält
+    ///   praktisch nie MwSt-Vokabular, und ein Laden, der wirklich "Netto" heißt, muss über seinen
+    ///   eigenen (lesbaren) Kopfzeilen-Namen weiterhin erkennbar bleiben.
+    ///
+    /// BEIDE Quellen zusammen fließen in EINE Bewertung (nicht sequenziell mit früher Rückkehr) —
+    /// gemeldet 24.08.2026: ein Lidl-Bon wurde als "Frankfurt" statt "Lidl" erkannt, weil das
+    /// Lidl-Logo ein reines Bild ist, das Vision nicht als Text liest, der Ladenname aber im
+    /// Fußbereich mehrfach lesbar steht ("Lidl Plus Rabatt", "www.lidl.de", "Lidl Punkte"),
+    /// während "Frankfurt" zufällig schon in der Adresszeile IM Kopfbereich steht. Ein
+    /// früher-Rückgabe-Entwurf ("Kopfbereich zuerst, Fußbereich nur als Fallback") hätte hier
+    /// bereits beim Kopfbereichs-Treffer "Frankfurt" aufgehört und den besseren, häufigeren
+    /// Fußbereichs-Treffer "Lidl" nie gesehen — durch einen echten Test aufgedeckt, nicht nur
+    /// vermutet. Ein Unentschieden zwischen zwei VERSCHIEDENEN Läden mit demselben Top-Score wird
+    /// außerdem nicht mehr durch die unspezifizierte SwiftData-Fetch-Reihenfolge von `candidates`
+    /// entschieden (das war vorher der Fall — score > best.score ist strikt "größer als", der
+    /// erste Laden in `candidates` gewann jedes Unentschieden rein zufällig). Zweiter Tie-Breaker
+    /// ist die HÄUFIGKEIT der Treffer über der Schwelle: der eigene Markenname eines Ladens taucht
+    /// auf dem eigenen Bon typischerweise mehrfach auf (Treuepunkte-Programm, Website,
+    /// Dankes-Fußzeile), ein zufälliger Nebentreffer (z. B. ein Stadtname in der Adresse) meist
+    /// nur einmal — genau das entscheidet den Lidl-vs-Frankfurt-Fall richtig (4 Treffer vs. 1).
+    /// Danach Ladenname, danach `id` (UUID) als garantiert eindeutiger letzter Tie-Breaker —
+    /// dasselbe Muster wie `bestFallback` oben in dieser Datei.
     static func detectStore(fromReceiptLines lines: [String], candidates: [Store]) -> Store? {
         guard !candidates.isEmpty else { return nil }
-        let headerTokens = lines.prefix(8)
+        let headerTokens = tokens(from: Array(lines.prefix(8)))
+        let bodyTokens = tokens(from: Array(lines.dropFirst(8)))
+            .filter { !ReceiptParserService.isKnownAdminWord($0.lowercased()) }
+        return bestMatchingStore(forTokens: headerTokens + bodyTokens, among: candidates)
+    }
+
+    private static func tokens(from lines: [String]) -> [String] {
+        lines
             .joined(separator: " ")
             .components(separatedBy: CharacterSet.whitespaces.union(CharacterSet(charactersIn: "-./,")))
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { $0.count >= 2 }
+    }
 
-        var best: (store: Store, score: Double)?
-        for store in candidates {
-            for token in headerTokens {
+    private static func bestMatchingStore(forTokens tokens: [String], among candidates: [Store]) -> Store? {
+        let scored: [(store: Store, bestScore: Double, matchCount: Int)] = candidates.compactMap { store in
+            var bestScore = 0.0
+            var matchCount = 0
+            for token in tokens {
                 let score = ReceiptParserService.lcsSimilarity(store.name, token)
-                if score >= storeDetectionThreshold, best == nil || score > best!.score {
-                    best = (store, score)
-                }
+                guard score >= storeDetectionThreshold else { continue }
+                matchCount += 1
+                bestScore = max(bestScore, score)
             }
+            return matchCount > 0 ? (store, bestScore, matchCount) : nil
         }
-        return best?.store
+        return scored.max(by: {
+            if $0.bestScore != $1.bestScore { return $0.bestScore < $1.bestScore }
+            if $0.matchCount != $1.matchCount { return $0.matchCount < $1.matchCount }
+            if $0.store.name != $1.store.name { return $0.store.name > $1.store.name }
+            return $0.store.id.uuidString > $1.store.id.uuidString
+        })?.store
     }
 }

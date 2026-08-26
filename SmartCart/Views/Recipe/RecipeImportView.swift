@@ -34,14 +34,16 @@ struct RecipeImportView: View {
                     Button { dismiss() } label: { Text(String(localized: "action.cancel")).toolbarChip() }
                         .buttonStyle(.pressable)
                 }
-                if !recognizedIngredients.isEmpty {
-                    ChipToolbarItem(placement: .confirmationAction) {
-                        Button { addSelected() } label: {
-                            Text(String(localized: "recipe.add.selected")).toolbarChip(prominent: true)
-                        }
-                        .buttonStyle(.pressable)
-                        .disabled(selectedIngredients.isEmpty)
+                ChipToolbarItem(placement: .confirmationAction) {
+                    Button { addSelected() } label: {
+                        Text(String(localized: "recipe.add.selected")).toolbarChip(prominent: true)
                     }
+                    .buttonStyle(.pressable)
+                    .disabled(recognizedIngredients.isEmpty || selectedIngredients.isEmpty)
+                    .opacity(recognizedIngredients.isEmpty ? 0 : 1)
+                    // Explizit statt sich auf automatisches Opacity-Ausblenden zu verlassen —
+                    // siehe ChipToolbarItem-Dokumentation.
+                    .accessibilityHidden(recognizedIngredients.isEmpty)
                 }
             }
             .sheet(isPresented: $showCamera) {
