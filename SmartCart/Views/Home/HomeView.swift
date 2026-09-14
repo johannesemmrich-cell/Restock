@@ -60,6 +60,7 @@ struct HomeView: View {
     // hides the suggestion for its current purchase cycle only: the next real purchase shifts
     // the estimated date, which makes the item eligible for the banner again.
     @AppStorage("dismissedReplenishments") private var dismissedReplenishmentsData = Data()
+    @AppStorage("replenishmentCollapsed") private var replenishmentCollapsed = false
     @EnvironmentObject private var premium: PremiumService
     @State private var showPaywall = false
     @State private var paywallContext: PaywallContext = .premium(feature: "dieses Feature")
@@ -893,15 +894,28 @@ struct HomeView: View {
     private var replenishmentBanner: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
-                HStack(alignment: .top, spacing: 8) {
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(Color.amber)
-                        .frame(width: 8, height: 8)
-                        .padding(.top, 6)
-                    Text(String(localized: "home.replenish.title"))
-                        .font(.system(size: 19, weight: .bold))
-                        .foregroundStyle(Color.amber)
+                Button {
+                    Haptics.impact(.light)
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
+                        replenishmentCollapsed.toggle()
+                    }
+                } label: {
+                    HStack(alignment: .top, spacing: 8) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color.amber)
+                            .frame(width: 8, height: 8)
+                            .padding(.top, 6)
+                        Text(String(localized: "home.replenish.title"))
+                            .font(.system(size: 19, weight: .bold))
+                            .foregroundStyle(Color.amber)
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(Color.amber)
+                            .rotationEffect(.degrees(replenishmentCollapsed ? -90 : 0))
+                            .padding(.top, 3)
+                    }
                 }
+                .buttonStyle(.pressable)
                 Spacer()
                 Button(String(localized: "home.replenish.addall")) {
                     addDueSoonToList()
@@ -913,39 +927,42 @@ struct HomeView: View {
                 .multilineTextAlignment(.trailing)
             }
 
-            ForEach(dueSoonItems, id: \.itemName) { pattern in
-                HStack(spacing: 10) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: RCRadius.tag)
-                            .fill(pattern.isOverdue ? Color.danger : Color.amber)
-                            .frame(width: 26, height: 26)
+            if !replenishmentCollapsed {
+                ForEach(dueSoonItems, id: \.itemName) { pattern in
+                    HStack(spacing: 10) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: RCRadius.tag)
+                                .fill(pattern.isOverdue ? Color.danger : Color.amber)
+                                .frame(width: 26, height: 26)
+                            Button {
+                                addSingleDueItem(pattern)
+                            } label: {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 13, weight: .bold))
+                                    .foregroundStyle(Color.canvas)
+                            }
+                            .buttonStyle(.pressable)
+                        }
+                        Text(pattern.itemName)
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundStyle(Color.ink)
+                        Spacer()
+                        Text(pattern.isOverdue
+                             ? String(localized: "replenish.overdue")
+                             : String(format: String(localized: "replenish.in.days"), pattern.daysUntilNeeded))
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color.textSecondary)
                         Button {
-                            addSingleDueItem(pattern)
+                            dismissDueItem(pattern)
                         } label: {
-                            Image(systemName: "plus")
-                                .font(.system(size: 13, weight: .bold))
-                                .foregroundStyle(Color.canvas)
+                            Image(systemName: "xmark.circle")
+                                .font(.system(size: 18))
+                                .foregroundStyle(Color.textSecondary.opacity(0.7))
                         }
                         .buttonStyle(.pressable)
                     }
-                    Text(pattern.itemName)
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(Color.ink)
-                    Spacer()
-                    Text(pattern.isOverdue
-                         ? String(localized: "replenish.overdue")
-                         : String(format: String(localized: "replenish.in.days"), pattern.daysUntilNeeded))
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color.textSecondary)
-                    Button {
-                        dismissDueItem(pattern)
-                    } label: {
-                        Image(systemName: "xmark.circle")
-                            .font(.system(size: 18))
-                            .foregroundStyle(Color.textSecondary.opacity(0.7))
-                    }
-                    .buttonStyle(.pressable)
                 }
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
         .padding(16)

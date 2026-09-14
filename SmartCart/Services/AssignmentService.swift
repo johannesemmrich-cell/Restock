@@ -99,12 +99,14 @@ extension AssignmentService {
         let isHardware = hardwareStoreKeywords.contains(where: { nameLower.contains($0) })
         if isHardware {
             let hardwareStores = activeStores.filter { $0.categories.contains(where: { Category.hardware.contains($0) }) }
-            if let best = bestFallback(among: hardwareStores, purchaseRecords: purchaseRecords) {
+            if let best = preferredDefault(for: "hardware", among: hardwareStores)
+                ?? bestFallback(among: hardwareStores, purchaseRecords: purchaseRecords) {
                 return best
             }
             // No hardware store → fall through to variety
             let varietyFallback = activeStores.filter { $0.categories.contains(where: { Category.variety.contains($0) }) }
-            if let best = bestFallback(among: varietyFallback, purchaseRecords: purchaseRecords) {
+            if let best = preferredDefault(for: "variety", among: varietyFallback)
+                ?? bestFallback(among: varietyFallback, purchaseRecords: purchaseRecords) {
                 return best
             }
         }
@@ -116,7 +118,8 @@ extension AssignmentService {
             let varietyStores = activeStores.filter { store in
                 store.categories.contains(where: { Category.variety.contains($0) })
             }
-            if let best = bestFallback(among: varietyStores, purchaseRecords: purchaseRecords) {
+            if let best = preferredDefault(for: "variety", among: varietyStores)
+                ?? bestFallback(among: varietyStores, purchaseRecords: purchaseRecords) {
                 return best
             }
         }
@@ -128,62 +131,95 @@ extension AssignmentService {
                 store.categories.contains(where: { Category.drugstore.contains($0) })
                     && !store.categories.contains(where: { Category.grocery.contains($0) })
             }
-            if let best = bestFallback(among: drugstores, purchaseRecords: purchaseRecords) {
+            if let best = preferredDefault(for: "drugstore", among: drugstores)
+                ?? bestFallback(among: drugstores, purchaseRecords: purchaseRecords) {
                 return best
             }
         }
 
-        // 3. High-frequency food → store with highest visit frequency
+        // 4. High-frequency food → store with highest visit frequency
         let isFrequentFood = highFrequencyFoodKeywords.contains(where: { nameLower.contains($0) })
         if isFrequentFood {
             let groceryStores = activeStores.filter { store in
                 store.categories.contains(where: { Category.grocery.contains($0) })
             }
-            return bestFallback(among: groceryStores, purchaseRecords: purchaseRecords)
+            return preferredDefault(for: "grocery", among: groceryStores)
+                ?? bestFallback(among: groceryStores, purchaseRecords: purchaseRecords)
         }
 
-        // 4. Default: highest-frequency grocery store
+        // 5. Default: dominant grocery store by real purchase history (visit frequency only as tiebreak)
         let groceryStores = activeStores.filter { store in
             store.categories.contains(where: { Category.grocery.contains($0) })
         }
-        return bestFallback(among: groceryStores, purchaseRecords: purchaseRecords)
+        return preferredDefault(for: "grocery", among: groceryStores)
+            ?? bestFallback(among: groceryStores, purchaseRecords: purchaseRecords)
+    }
+
+    /// Nutzer-konfigurierter Standard-Laden (`DefaultStoreService`, Settings → Standard-Läden)
+    /// für eine bereits nach Kategorie gefilterte Kandidatenliste. Vor jedem `bestFallback`-Aufruf
+    /// geprüft: eine explizite Nutzer-Einstellung soll immer Vorrang vor der nur abgeleiteten
+    /// Kaufhistorie-/Besuchsfrequenz-Heuristik haben — dasselbe Prinzip wie die Artikelname-
+    /// Korrektur in Stufe 0a oben, nur auf Kategorie-Ebene statt pro Artikel. Liefert `nil`, wenn
+    /// nichts konfiguriert ist ODER der konfigurierte Laden in `candidates` fehlt (deaktiviert,
+    /// gelöscht, oder passt nicht mehr zur Kategorie) — der Aufrufer fällt dann automatisch auf
+    /// `bestFallback` zurück, kein gesonderter Cleanup nötig.
+    private static func preferredDefault(for groupKey: String, among candidates: [Store]) -> Store? {
+        guard let name = DefaultStoreService.shared.storeName(for: groupKey) else { return nil }
+        return candidates.first { $0.name.lowercased() == name.lowercased() }
     }
 
     /// Wählt aus `candidates` (bereits nach Kategorie gefiltert) den passendsten Store.
-    /// `visitsPerWeek` ist ein echtes Signal (Preset- oder Nutzer-gesetzt) — hat ein Kandidat
-    /// darin eindeutig den höchsten Wert (kein Gleichstand), gewinnt er unverändert wie bisher.
-    /// NUR bei einem echten Gleichstand zwischen 2+ Kandidaten entscheidet zusätzlich echte
-    /// Kaufhistorie (irgendein Kauf an diesem Store, nicht nur für diesen Artikelnamen — das
-    /// deckt bereits `dominantStore` oben ab); ohne Evidenz dann ehrlich `nil` statt der
-    /// vorherigen, rein durch Array-Reihenfolge bestimmten Zufallsentscheidung (gemeldet
-    /// 19.08.2026: "Hast du eine Partnerschaft mit Rewe?"). Bei genau einem Kandidaten gibt es
-    /// nichts zu entscheiden — unbedingt zurückgeben.
     ///
-    /// Ursprünglich (erste Fassung, selbiger Tag) nur auf die Lebensmittel-Stufen 3/4 angewendet
-    /// und dabei `visitsPerWeek` auch bei NICHT vorliegendem Gleichstand komplett verworfen
-    /// (z. B. Lidl=2 vs. Edeka=1 hätte fälschlich "kein Laden" statt Lidl ergeben) — eine
-    /// unabhängige Review-Runde fand beide Lücken (fehlende Anwendung auf Baumarkt-/Sonstiges-/
-    /// Drogerie-Stufen, und das unnötige Verwerfen echter Unterschiede), hier behoben.
+    /// PRIMÄRES Signal ist jetzt die tatsächliche Kaufanzahl an jedem Kandidaten über ALLE
+    /// Artikel hinweg (nicht nur für den gerade zugeordneten Artikelnamen — das deckt bereits
+    /// `dominantStore` oben ab), nicht mehr `visitsPerWeek`. Hintergrund (Nutzerbericht
+    /// 14.09.2026): `visitsPerWeek` ist eine beim Laden-Setup manuell (oder per Preset) gesetzte
+    /// Zahl, deren Einfluss auf die automatische Zuordnung den meisten Nutzern nicht bewusst ist
+    /// — ein Nutzer, der real ausschließlich bei Lidl einkauft, aber die Zahl nie angefasst hat
+    /// (oder sie für einen anderen Laden zufällig höher steht), bekam trotzdem dauerhaft den
+    /// falschen Laden vorgeschlagen. Echtes Einkaufsverhalten ist ein verlässlicheres Signal als
+    /// eine kaum sichtbare Einstellung. `visitsPerWeek` bleibt NUR noch relevant, wenn für KEINEN
+    /// Kandidaten überhaupt Kaufhistorie vorliegt (z. B. ganz neuer Nutzer) — dort ist es
+    /// weiterhin die einzige verfügbare Information (Presets: Lidl=2 vs. Rewe=1 z. B.).
+    ///
+    /// Bei genau einem Kandidaten gibt es nichts zu entscheiden — unbedingt zurückgeben.
     private static func bestFallback(among candidates: [Store], purchaseRecords: [PurchaseRecord]) -> Store? {
         guard candidates.count > 1 else { return candidates.first }
-        guard let topVisits = candidates.map(\.visitsPerWeek).max() else { return nil }
-        let tied = candidates.filter { $0.visitsPerWeek == topVisits }
-        guard tied.count > 1 else { return tied.first }
+
         var purchaseCounts: [String: Int] = [:]
         for record in purchaseRecords {
             purchaseCounts[record.storeName, default: 0] += 1
         }
-        let withEvidence = tied.filter { (purchaseCounts[$0.name] ?? 0) > 0 }
-        // Bleiben nach der Evidenz-Filterung 2+ Stores mit identischer Kaufanzahl übrig (z.B.
-        // je 1 früher Kauf an beiden), entschied max(by:) allein wieder rein durch
-        // Array-Reihenfolge — derselbe Bug, nur eine Ebene tiefer versteckt (gefunden
-        // 19.08.2026 von einer unabhängigen Review-Runde). `name` allein ist dafür KEIN
-        // garantiert eindeutiger Tie-Breaker (nichts in der App verhindert einen Custom-Store
-        // mit demselben Namen wie ein Preset, oder zwei beigetretene geteilte Listen mit
-        // zufällig gleichem Namen — bei echtem Namens-Gleichstand wäre `name > name` wieder in
-        // beide Richtungen false, derselbe Bug erneut). `id` (UUID) ist dagegen bei zwei
-        // verschiedenen Store-Objekten immer verschieden — echter letzter Tie-Breaker.
-        return withEvidence.max(by: {
+
+        let withEvidence = candidates.filter { (purchaseCounts[$0.name] ?? 0) > 0 }
+        guard !withEvidence.isEmpty else {
+            // Kein Kandidat hat je einen abgeschlossenen Kauf verzeichnet — einzig verfügbares
+            // Signal ist dann noch visitsPerWeek.
+            return bestByVisits(among: candidates, purchaseCounts: purchaseCounts)
+        }
+
+        let topCount = withEvidence.map { purchaseCounts[$0.name] ?? 0 }.max()!
+        let tied = withEvidence.filter { (purchaseCounts[$0.name] ?? 0) == topCount }
+        guard tied.count > 1 else { return tied.first }
+        // Gleichstand in der Kaufanzahl (z. B. je 1 früher Kauf an beiden) — visitsPerWeek
+        // entscheidet als nächste Stufe, dann Name, dann `id` als garantiert eindeutiger
+        // letzter Tie-Breaker (gleiches Muster wie `detectStore` unten in dieser Datei).
+        return bestByVisits(among: tied, purchaseCounts: purchaseCounts)
+    }
+
+    /// Reiner visitsPerWeek-Vergleich mit demselben Kaufanzahl-/Name-/id-Tie-Breaker-Aufbau wie
+    /// zuvor `bestFallback` allein — jetzt als eigener letzter Entscheidungsschritt ausgelagert,
+    /// damit `bestFallback` ihn sowohl bei fehlender Kaufhistorie als auch bei einem Gleichstand
+    /// in der Kaufanzahl wiederverwenden kann, ohne die Tie-Breaker-Logik zu duplizieren.
+    private static func bestByVisits(among candidates: [Store], purchaseCounts: [String: Int]) -> Store? {
+        guard let topVisits = candidates.map(\.visitsPerWeek).max() else { return nil }
+        let tied = candidates.filter { $0.visitsPerWeek == topVisits }
+        guard tied.count > 1 else { return tied.first }
+        // `name` allein ist KEIN garantiert eindeutiger Tie-Breaker (nichts in der App verhindert
+        // einen Custom-Store mit demselben Namen wie ein Preset, oder zwei beigetretene geteilte
+        // Listen mit zufällig gleichem Namen). `id` (UUID) ist dagegen bei zwei verschiedenen
+        // Store-Objekten immer verschieden — echter letzter Tie-Breaker.
+        return tied.max(by: {
             let countA = purchaseCounts[$0.name] ?? 0
             let countB = purchaseCounts[$1.name] ?? 0
             if countA != countB { return countA < countB }

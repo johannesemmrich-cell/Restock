@@ -106,6 +106,11 @@ struct SettingsView: View {
                     } label: {
                         Text("Benachrichtigungen")
                     }
+                    NavigationLink {
+                        DefaultStoresSettingsView()
+                    } label: {
+                        Text("Standard-Läden")
+                    }
                 } header: {
                     settingsHeader("Funktionen")
                 }
@@ -447,6 +452,70 @@ struct NotificationSettingsView: View {
         .tint(Color.accent)
         .navigationTitle("Benachrichtigungen")
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/// Lässt den Nutzer pro Kategorie-Gruppe (dieselben vier, die `AssignmentService.assign` per
+/// Keyword-Suche unterscheidet) einen festen Standard-Laden wählen — greift dort über
+/// `DefaultStoreService` VOR der automatischen Kaufhistorie-/Besuchsfrequenz-Heuristik. Siehe
+/// `DefaultStoreService` für den auslösenden Nutzerbericht (14.09.2026).
+struct DefaultStoresSettingsView: View {
+    @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
+    @State private var selections: [String: String] = [:]
+
+    private let groups: [(key: String, label: String, categories: [String])] = [
+        ("grocery", "Lebensmittel", Category.grocery),
+        ("drugstore", "Drogerie", Category.drugstore),
+        ("variety", "Sonstiges (Elektronik, Haushalt, Deko …)", Category.variety),
+        ("hardware", "Baumarkt & Garten", Category.hardware),
+    ]
+
+    var body: some View {
+        List {
+            Section {
+                Text("Lege pro Kategorie einen festen Laden fest, zu dem neue Artikel hinzugefügt werden, wenn Restock sie nicht eindeutig zuordnen kann. Das hat Vorrang vor der automatischen Zuordnung anhand deiner bisherigen Käufe.")
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 2)
+            }
+            .listRowBackground(Color.surface)
+
+            Section {
+                ForEach(groups, id: \.key) { group in
+                    let candidates = activeStores.filter { store in
+                        store.categories.contains(where: { group.categories.contains($0) })
+                    }
+                    Picker(group.label, selection: binding(for: group.key)) {
+                        Text("Automatisch").tag("")
+                        ForEach(candidates) { store in
+                            Text("\(store.emoji) \(store.name)").tag(store.name)
+                        }
+                    }
+                    .disabled(candidates.isEmpty)
+                }
+            }
+            .listRowBackground(Color.surface)
+        }
+        .scrollContentBackground(.hidden)
+        .background(Color.canvas)
+        .tint(Color.accent)
+        .navigationTitle("Standard-Läden")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            for group in groups {
+                selections[group.key] = DefaultStoreService.shared.storeName(for: group.key) ?? ""
+            }
+        }
+    }
+
+    private func binding(for groupKey: String) -> Binding<String> {
+        Binding(
+            get: { selections[groupKey] ?? "" },
+            set: { newValue in
+                selections[groupKey] = newValue
+                DefaultStoreService.shared.setStoreName(newValue.isEmpty ? nil : newValue, for: groupKey)
+            }
+        )
     }
 }
 

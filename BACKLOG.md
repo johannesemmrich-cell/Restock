@@ -2,6 +2,19 @@
 
 ## Implementiert
 
+### "Zeit zum Nachkaufen" einklappbar + Laden-Zuordnung überarbeitet (2026-09-14)
+Nutzerbericht: Artikel landeten trotz nie dort getätigter Käufe immer bei Rewe statt beim tatsächlich genutzten Lidl.
+
+- **HomeView.swift** (`replenishmentBanner`): Header ist jetzt tippbar (Chevron), Liste einklappbar, Zustand in `@AppStorage("replenishmentCollapsed")` persistiert.
+- **AssignmentService.swift**: `bestFallback` entscheidet jetzt primär anhand echter aggregierter Kaufanzahl pro Laden (über alle Artikel, nicht nur namensgleiche) statt anhand der kaum sichtbaren `Store.visitsPerWeek`-Einstellung. `visitsPerWeek` ist nur noch Tie-Breaker bzw. Fallback für Läden ganz ohne Kaufhistorie.
+- **Neu: `DefaultStoreService`** (`StoreAssignmentOverrideService.swift`): Nutzer kann in Settings → "Standard-Läden" pro Kategorie-Gruppe (Lebensmittel/Drogerie/Sonstiges/Baumarkt) einen festen Laden festlegen — schlägt die automatische Zuordnung, siehe `preferredDefault(for:among:)` in `AssignmentService.assign`.
+- **Neu: `DefaultStoresSettingsView`** (`SettingsView.swift`).
+
+**Bewusst nicht enthalten:** "Sport"-Kategorie-Gruppe (`Category.sports`) — `assign()` hat dafür aktuell gar keine Keyword-Erkennung (Sport-Artikel fallen immer durch auf den Lebensmittel-Fallback), ein Settings-Eintrag dafür wäre wirkungslos gewesen. Bräuchte eigene Sport-Keyword-Liste analog zu `hardwareStoreKeywords`, nicht Teil dieser Änderung.
+
+### Offen (vertagt): Preis-Bug beim Bon-Scan — falscher Preis bei Eiern
+Nutzer berichtete (2026-09-14): bei einem gescannten Kassenbon zeigte Restock für Eier 3 € an, obwohl auf dem Bon ein anderer Preis stand. Kein Repro-Material (Bon-Foto/genaue Zahlen) verfügbar — `ReceiptParserService.swift` (1300+ Zeilen) ist bereits sehr fein auf viele dokumentierte Einzelfälle austariert; ein Fix auf Verdacht riskiert, andere bereits gelöste Fälle zu brechen. **Nächster Schritt, sobald der Bug erneut auftritt:** Bon-Foto (oder zumindest die genaue Artikelzeile + echter Preis + Laden) sichern, dann gezielt in `ReceiptParserService.parse`/`parseClassic` nachvollziehen.
+
 ### EU AI Act Art. 50 — geprüft, kein Änderungsbedarf (2026-08-06)
 Im Zuge einer App-übergreifenden EU-AI-Act-Prüfung (siehe auch `~/Developer/Lumio/BACKLOG.md` für die Sunwake-Änderungen) auch Restock durchleuchtet:
 - `RecipeRecognitionService.swift` (Vision OCR + Apple Intelligence, Rezept-Foto → Zutaten): extrahiert echten Text aus einem fotografierten Rezept, keine Inhaltserzeugung — kein Art.-50(2)-Fall. `RecipeImportView.swift` sagt dem Nutzer ohnehin schon vorher „Restock erkennt die Zutaten automatisch".
