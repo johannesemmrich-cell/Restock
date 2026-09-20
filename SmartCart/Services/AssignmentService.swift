@@ -210,17 +210,25 @@ extension AssignmentService {
         let withEvidence = candidates.filter { (purchaseCounts[normalizedStoreKey($0.name)] ?? 0) > 0 }
         guard !withEvidence.isEmpty else {
             // Kein Kandidat hat je einen abgeschlossenen Kauf verzeichnet — einzig verfügbares
-            // Signal ist dann noch visitsPerWeek.
-            return bestByVisits(among: candidates, purchaseCounts: purchaseCounts)
+            // Signal ist dann noch visitsPerWeek. Bleiben AUCH darüber mehrere Kandidaten gleichauf
+            // (kein Kauf, keine unterschiedliche Besuchsfrequenz), gibt es buchstäblich kein Signal
+            // mehr, das für den einen statt den anderen spricht — raten statt "kein Vorschlag"
+            // wäre hier genau der ursprünglich gemeldete "Partnerschaft mit Rewe?"-Bug (19.08.2026):
+            // ein Name-/id-Tie-Breaker ist zwar deterministisch, aber trotzdem willkürlich, wenn
+            // nichts über das tatsächliche Einkaufsverhalten bekannt ist. `guessOnTie: false`.
+            return bestByVisits(among: candidates, purchaseCounts: purchaseCounts, guessOnTie: false)
         }
 
         let topCount = withEvidence.map { purchaseCounts[normalizedStoreKey($0.name)] ?? 0 }.max()!
         let tied = withEvidence.filter { (purchaseCounts[normalizedStoreKey($0.name)] ?? 0) == topCount }
         guard tied.count > 1 else { return tied.first }
-        // Gleichstand in der Kaufanzahl (z. B. je 1 früher Kauf an beiden) — visitsPerWeek
-        // entscheidet als nächste Stufe, dann Name, dann `id` als garantiert eindeutiger
-        // letzter Tie-Breaker (gleiches Muster wie `detectStore` unten in dieser Datei).
-        return bestByVisits(among: tied, purchaseCounts: purchaseCounts)
+        // Gleichstand in der Kaufanzahl (z. B. je 1 früher Kauf an beiden) — ECHTE Evidenz liegt
+        // vor, nur eben bei mehreren Kandidaten gleich stark; visitsPerWeek entscheidet als
+        // nächste Stufe, dann Name, dann `id` als garantiert eindeutiger letzter Tie-Breaker
+        // (gleiches Muster wie `detectStore` unten in dieser Datei). Hier IST ein deterministischer
+        // Tie-Breaker gerechtfertigt (`guessOnTie: true`), weil beide Kandidaten tatsächlich echte
+        // Kaufhistorie vorweisen — anders als im evidenzlosen Zweig oben.
+        return bestByVisits(among: tied, purchaseCounts: purchaseCounts, guessOnTie: true)
     }
 
     /// Reiner visitsPerWeek-Vergleich mit demselben Kaufanzahl-/Name-/id-Tie-Breaker-Aufbau wie
@@ -230,10 +238,18 @@ extension AssignmentService {
     /// `purchaseCounts` ist bereits über `normalizedStoreKey` (getrimmt, klein geschrieben)
     /// geschlüsselt (siehe Aufrufer) — Zugriff hier deshalb ebenfalls darüber, sonst würde derselbe
     /// Case-/Whitespace-Mismatch wie in `bestFallback` erneut echte Kaufanzahl-Treffer verstecken.
-    private static func bestByVisits(among candidates: [Store], purchaseCounts: [String: Int]) -> Store? {
+    /// `guessOnTie` unterscheidet zwei sehr unterschiedliche Aufrufsituationen: `false`, wenn KEIN
+    /// Kandidat je eine Kaufhistorie hatte (der Aufrufer hat dann nichts als dieses visitsPerWeek-
+    /// Signal) — bleiben hier AUCH die Besuchsfrequenzen gleich, gibt es kein einziges echtes Signal
+    /// mehr, und ein Name-/id-Tie-Breaker wäre reines Raten (`nil` statt einer willkürlichen Wahl:
+    /// der ursprünglich gemeldete "Partnerschaft mit Rewe?"-Bug, 19.08.2026). `true`, wenn die
+    /// Kandidaten hier schon eine Stufe tiefer aus einem echten Kaufanzahl-Gleichstand kommen (siehe
+    /// Aufrufer) — dort ist ein deterministischer Tie-Breaker weiterhin gerechtfertigt.
+    private static func bestByVisits(among candidates: [Store], purchaseCounts: [String: Int], guessOnTie: Bool) -> Store? {
         guard let topVisits = candidates.map(\.visitsPerWeek).max() else { return nil }
         let tied = candidates.filter { $0.visitsPerWeek == topVisits }
         guard tied.count > 1 else { return tied.first }
+        guard guessOnTie else { return nil }
         // `name` allein ist KEIN garantiert eindeutiger Tie-Breaker (nichts in der App verhindert
         // einen Custom-Store mit demselben Namen wie ein Preset, oder zwei beigetretene geteilte
         // Listen mit zufällig gleichem Namen). `id` (UUID) ist dagegen bei zwei verschiedenen
