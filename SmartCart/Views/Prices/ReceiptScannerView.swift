@@ -194,8 +194,16 @@ struct ReceiptScannerView: View {
     /// Siehe `ChipToolbarItem`-Dokumentation (DesignSystem.swift): der Button muss immer
     /// deklariert bleiben, hier nur per `disabled`/`opacity` gesteuert werden — kein `if` um das
     /// ganze `ChipToolbarItem`.
+    ///
+    /// `!storeNeedsConfirmation`: OHNE diese Bedingung ließ sich „Speichern" antippen, während das
+    /// orange Banner unten noch unbeachtet stand — ein per Share Extension nur GERATENER Laden
+    /// (`storeConfidentlyDetected: false`) hätte dann still und ungefragt alle Positionen bekommen,
+    /// obwohl der Nutzer den Hinweis nie bestätigt oder korrigiert hat. Genau der Fall, den das
+    /// Banner eigentlich verhindern soll (Nutzerrückmeldung 20.09.2026: "keine falsch-Zuordnung...
+    /// sondern dies für die App offen gelassen" — das Banner allein war nur ein Hinweis, keine
+    /// erzwungene Entscheidung).
     private var canSave: Bool {
-        phase == .review && !parsedLines.filter(\.isIncluded).isEmpty
+        phase == .review && !storeNeedsConfirmation && !parsedLines.filter(\.isIncluded).isEmpty
     }
 
     /// Kandidaten für den Korrektur-Dialog — der aktuell angenommene Laden fehlt bewusst (Tippen
@@ -367,16 +375,21 @@ struct ReceiptScannerView: View {
                 // Positionen zugleich (Preise landen im falschen Laden), muss also vor allem
                 // anderen aufgelöst werden. Nur sichtbar, solange der Laden aus der Share
                 // Extension noch ein unbestätigter Rate-Treffer ist (`storeNeedsConfirmation`).
+                //
+                // ZWEI explizite Aktionen statt nur "antippen zum Ändern": eine geratene Zuordnung
+                // kann ja auch zufällig stimmen, dann soll der Nutzer das aktiv bestätigen können,
+                // statt gezwungen zu sein, denselben Laden nochmal aus dem Korrektur-Dialog
+                // auszuwählen. Beide Wege setzen `storeNeedsConfirmation = false` und schalten
+                // damit „Speichern" (`canSave`) erst frei — reines Ignorieren des Banners speichert
+                // NICHT mehr stillschweigend beim geratenen Laden.
                 if storeNeedsConfirmation {
                     Section {
-                        Button {
-                            showStoreCorrection = true
-                        } label: {
+                        VStack(alignment: .leading, spacing: 10) {
                             Label {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Laden nicht sicher erkannt")
                                         .font(.system(size: 14, weight: .semibold))
-                                    Text("Aktuell angenommen: \(store.emoji) \(store.name) — antippen zum Ändern")
+                                    Text("Angenommen: \(store.emoji) \(store.name) — bitte bestätigen oder ändern, bevor du speicherst.")
                                         .font(.system(size: 12))
                                         .foregroundStyle(.secondary)
                                 }
@@ -384,8 +397,26 @@ struct ReceiptScannerView: View {
                                 Image(systemName: "questionmark.circle.fill")
                                     .foregroundStyle(.orange)
                             }
+                            HStack(spacing: 8) {
+                                Button {
+                                    storeNeedsConfirmation = false
+                                } label: {
+                                    Label("\(store.name) ist richtig", systemImage: "checkmark")
+                                        .font(.system(size: 13, weight: .medium))
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(.orange)
+
+                                Button {
+                                    showStoreCorrection = true
+                                } label: {
+                                    Text("Anderer Laden")
+                                        .font(.system(size: 13, weight: .medium))
+                                }
+                                .buttonStyle(.bordered)
+                            }
                         }
-                        .buttonStyle(.plain)
+                        .padding(.vertical, 4)
                     }
                     .listRowBackground(Color.orange.opacity(0.08))
                 }
