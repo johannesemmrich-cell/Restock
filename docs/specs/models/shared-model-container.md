@@ -61,7 +61,7 @@ tags: [bugfix, cloudkit, share-extension, swiftdata]
 2. **Verzweigung in `make()`.** Wird eine App-Erweiterung erkannt, überspringt `make()` sowohl den Aufruf von `backupLocalStoreBeforeFirstCloudAttempt()` als auch den `try ModelContainer(... cloudKitDatabase: .private(...))`-Versuch und öffnet direkt den lokalen App-Gruppen-Store (`cloudKitDatabase: .none`). Die Schema-Deklaration (`Schema(versionedSchema: SchemaV1.self)`) und die Store-Adressierung (`groupContainer: .identifier(appGroupID)`) bleiben in beiden Zweigen identisch.
 3. **Sicherungs-Flag mit umgestellt.** `backupLocalStoreBeforeFirstCloudAttempt()` wird nur noch im Nicht-Erweiterungs-Zweig aufgerufen, damit das app-gruppenweite Einmal-Flag `smartcart.preCloudBackupDone.v2` nicht von einer Erweiterung verbraucht wird, bevor die Haupt-App ihren ersten echten Cloud-Versuch macht.
 4. **Kommentar-Korrekturen.** Der bestehende Warnhinweis „And do NOT add per-process branching here either" (Z. 29-36) wird durch einen Vermerk ergänzt, der die Rücknahme dieser Festlegung datiert und begründet (Verweis auf dieses Issue), ohne den ursprünglichen Text zu löschen. Die Behauptung, `SmartCartApp.init()` werte das `[cloud]`-Präfix des Diagnose-Schlüssels aus, wird entfernt bzw. korrigiert — diese Logik existiert im Code nicht (siehe Analyse, Korrektur 1).
-5. **Zu verifizieren, nicht vorausgesetzt:** ob `ModelConfiguration` eine lesbare `cloudKitContainerIdentifier`-Eigenschaft anbietet, mit der sich im App-Prozess direkt prüfen lässt, dass die erste (erfolgreiche) Konfiguration die CloudKit-Variante ist. Falls nein, trägt der Cross-App-Nachweis (AC-5) diese Richtung allein.
+5. **Verifiziert am 20.09.2026 (war: „zu verifizieren, nicht vorausgesetzt"):** `ModelConfiguration` bietet mit `cloudKitContainerIdentifier` eine im iOS-27-SDK öffentlich lesbare Eigenschaft. Damit lässt sich im Unit-Test direkt prüfen, dass die erste (bevorzugte) Konfiguration im App-Prozess die CloudKit-Variante ist — AC-3 trägt seinen Nachweis selbst, der Cross-App-Nachweis (AC-5) muss diese Richtung nicht ersatzweise übernehmen.
 
 ## Expected Behavior
 
@@ -79,7 +79,7 @@ tags: [bugfix, cloudkit, share-extension, swiftdata]
 - Bekäme eine App-Erweiterung künftig ein eigenes iCloud-Entitlement, liefe sie trotzdem weiter nur lokal. Das wäre dann eine bewusste Folgeänderung, kein Fehler dieses Fixes.
 - Das Widget wird vom selben Fix mitgeheilt, in diesem Auftrag aber **nicht nachgewiesen** — sein Absturz ist nie aufgetreten (kein Absturzbericht vorhanden). Offen in Folge-Issue #6.
 - Das Speicherlimit von 120 MB für App-Erweiterungen bleibt unangetastet; es ist der zweite, bisher nicht ausgelöste Risikofaktor der Share Extension.
-- Ob sich die gewählte Store-Konfiguration im Unit-Test direkt auslesen lässt (AC-3), ist noch zu verifizieren. Falls nicht, trägt diesen Nachweis allein der Cross-App-Test AC-5.
+- ~~Ob sich die gewählte Store-Konfiguration im Unit-Test direkt auslesen lässt (AC-3), ist noch zu verifizieren.~~ **Erledigt, verifiziert am 20.09.2026:** `ModelConfiguration.cloudKitContainerIdentifier` ist im iOS-27-SDK öffentlich lesbar. AC-3 trägt seinen Nachweis damit selbst (`testMainAppStillPrefersTheCloudKitMirroredConfiguration`); die Rückfallregel „dann trägt AC-5 diese Richtung allein" greift nicht.
 
 ## Definition of Done
 
@@ -94,17 +94,17 @@ Fertig ist diese Änderung, wenn:
 ## Acceptance Criteria
 
 - **AC-1:** Given der App-Prozess (Unit-Test-Host `Restock.app`) / When die Erweiterungserkennung mit `Bundle.main.bundleURL` aufgerufen wird / Then liefert sie `false`.
-  - Test: *(wird nach der TDD-RED-Phase eingetragen)*
+  - Test: `RestockTests/SharedModelContainerExtensionDetectionTests.swift` — `testDetectionIsFalseForTheMainAppProcess`, `testDetectionIsFalseForAnAppBundlePath`
 - **AC-2:** Given eine `URL` mit der Pfad-Endung `.appex` / When die Erweiterungserkennung mit dieser `URL` aufgerufen wird / Then liefert sie `true`.
-  - Test: *(wird nach der TDD-RED-Phase eingetragen)*
-- **AC-3:** Given der App-Prozess / When `make()` aufgerufen wird / Then bleibt die CloudKit-Spiegelung aktiv (die erste, erfolgreiche Konfiguration ist die CloudKit-Variante — sofern `ModelConfiguration.cloudKitContainerIdentifier` lesbar ist; andernfalls trägt AC-5 diesen Nachweis).
-  - Test: *(wird nach der TDD-RED-Phase eingetragen)*
+  - Test: `RestockTests/SharedModelContainerExtensionDetectionTests.swift` — `testDetectionIsTrueForTheShareExtensionBundlePath`, `testDetectionIsTrueForTheWidgetBundlePath`, `testDetectionIgnoresTrailingSlash`
+- **AC-3:** Given der App-Prozess / When `make()` aufgerufen wird / Then bleibt die CloudKit-Spiegelung aktiv (die erste, erfolgreiche Konfiguration ist die CloudKit-Variante — sofern `ModelConfiguration.cloudKitContainerIdentifier` lesbar ist; andernfalls trägt AC-5 diesen Nachweis). Lesbarkeit am 20.09.2026 verifiziert — AC-3 trägt selbst.
+  - Test: `RestockTests/SharedModelContainerExtensionDetectionTests.swift` — `testMainAppStillPrefersTheCloudKitMirroredConfiguration`
 - **AC-4:** Given ein als App-Erweiterung erkannter Bundle-Pfad / When der `make()`-Ablauf für diesen Pfad ausgewertet wird / Then wird weder ein CloudKit-Konfigurationsversuch unternommen noch `backupLocalStoreBeforeFirstCloudAttempt()` ausgeführt, und der lokale App-Gruppen-Store wird direkt geöffnet.
-  - Test: *(wird nach der TDD-RED-Phase eingetragen)*
+  - Test: `RestockTests/SharedModelContainerExtensionDetectionTests.swift` — `testAppExtensionNeverBuildsACloudKitConfiguration`, `testExtensionAndAppOpenTheSameStoreLocation`, `testPreCloudBackupRunsOnlyInTheMainApp`
 - **AC-5:** Given die Fotos-App mit dem Testbild in der Bibliothek des Simulators (iPhone 17 / iOS 27.0) / When der Nutzer das letzte Bild über „Teilen" an „Restock" übergibt / Then zeigt die Erweiterung die Erfolgsansicht „N Positionen … erkannt", die Nutzlast liegt unter `pendingShareExtensionReceipt` in der App-Gruppe, und es entsteht kein neuer Absturzbericht `RestockShareExtension-*.ips`.
-  - Test: *(wird nach der TDD-RED-Phase eingetragen)*
+  - Test: `RestockUITests/ReceiptShareExtensionTests.swift` — `testSharingAReceiptPhotoReachesTheSuccessScreen`, ausgeführt über `scripts/run-share-extension-uitest.sh`
 - **AC-6:** Given die bestehenden Tests `SchemaCloudKitCompatibilityTests` und `ExistingDataSurvivesCloudEnableTests` / When sie nach der Änderung erneut ausgeführt werden / Then bleiben beide grün (keine Regression).
-  - Test: *(wird nach der TDD-RED-Phase eingetragen)*
+  - Test: `RestockTests/SchemaCloudKitCompatibilityTests.swift`, `RestockTests/ExistingDataSurvivesCloudEnableTests.swift`
 
 ## Test Plan
 
@@ -124,3 +124,4 @@ Fertig ist diese Änderung, wenn:
 ## Changelog
 
 - 2026-09-20: Initial spec created
+- 2026-09-20: Testzuordnung nach GREEN eingetragen; cloudKitContainerIdentifier als lesbar verifiziert (AC-3 trägt selbst)

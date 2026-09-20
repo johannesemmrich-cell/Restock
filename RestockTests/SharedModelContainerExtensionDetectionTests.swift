@@ -91,6 +91,36 @@ final class SharedModelContainerExtensionDetectionTests: XCTestCase {
         )
     }
 
+    /// Groß-/Kleinschreibung von Pfad-Endungen ist auf dem (case-insensitive) Dateisystem des
+    /// Simulators und auf iOS-Geräten nicht bedeutungstragend. Ein `.APPEX` ist dasselbe Bundle
+    /// wie ein `.appex` — würde es als Haupt-App durchgehen, liefe genau der abstürzende
+    /// CloudKit-Pfad wieder an. Der Code behandelt das bereits richtig; dieser Test hält es fest.
+    func testDetectionIsCaseInsensitive() {
+        let shouting = URL(
+            fileURLWithPath: "/private/var/containers/Bundle/Application/ABCDEF/Restock.app/PlugIns/RestockShareExtension.APPEX",
+            isDirectory: true
+        )
+        XCTAssertTrue(
+            SharedModelContainer.isAppExtension(bundleURL: shouting),
+            "Die Pfad-Endung .APPEX bezeichnet dasselbe Bundle wie .appex und muss ebenso erkannt werden."
+        )
+    }
+
+    /// Gegenprobe zur Groß-/Kleinschreibung: Entscheidend ist die Endung des Bundles SELBST,
+    /// nicht irgendein `.appex` weiter oben im Pfad. Läge eine App-Hülle innerhalb eines
+    /// Erweiterungs-Bundles, wäre sie trotzdem eine App — eine Erkennung über „enthält .appex"
+    /// würde hier fälschlich `true` liefern und der Haupt-App still die Spiegelung abschalten.
+    func testDetectionIgnoresAppexInAnIntermediatePathComponent() {
+        let nested = URL(
+            fileURLWithPath: "/private/var/containers/Bundle/Application/ABCDEF/Foo.appex/Contents/Bar.app",
+            isDirectory: true
+        )
+        XCTAssertFalse(
+            SharedModelContainer.isAppExtension(bundleURL: nested),
+            "Nur die Endung des Bundles selbst zählt — ein .appex weiter oben im Pfad darf nicht ausschlagen."
+        )
+    }
+
     /// Ein abschließender Schrägstrich ist bei Verzeichnis-URLs üblich und darf das Ergebnis
     /// nicht verändern — `Bundle.bundleURL` liefert genau solche Verzeichnis-URLs.
     func testDetectionIgnoresTrailingSlash() {

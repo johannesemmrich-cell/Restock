@@ -56,9 +56,16 @@ final class ReceiptShareExtensionTests: XCTestCase {
 
     func testSharingAReceiptPhotoReachesTheSuccessScreen() throws {
         let photos = XCUIApplication(bundleIdentifier: photosBundleID)
-        photos.launch()
 
         watchForSystemDialogs()
+        // Erst aufräumen, dann starten: Ein Systemdialog aus einem FRÜHEREN Lauf (typisch die
+        // Mitteilungsfrage, die die Teilen-Erweiterung stellt) liegt sonst noch über allem und
+        // schluckt jeden Tipp auf die Fotos-App. Genau daran sind am 20.09.2026 zwei von fünf
+        // Läufen gescheitert — der Runner startete neu, "Teilen an Restock" wurde nie erreicht.
+        dismissSystemAlerts()
+        photos.launch()
+        dismissSystemAlerts()
+
         openLibraryGrid(in: photos)
         openMostRecentPhoto(in: photos)
         tapShareButton(in: photos)
@@ -78,7 +85,20 @@ final class ReceiptShareExtensionTests: XCTestCase {
         //
         // Beides prüft `scripts/run-share-extension-uitest.sh` nach diesem Lauf. Dieser Test
         // stellt den Ablauf her, das Skript fällt das Urteil.
-        Thread.sleep(forTimeInterval: recognitionTimeout)
+        //
+        // Gewartet wird in Scheiben statt am Stück: Die Erweiterung fragt beim ersten Mal die
+        // Mitteilungserlaubnis (`ShareViewController.swift:220`, `await requestAuthorization`).
+        // Bleibt dieser Dialog unbeantwortet, hängt die Erweiterung an genau dieser Stelle —
+        // und der Dialog liegt danach noch da und kippt den NÄCHSTEN Lauf. Also währenddessen
+        // aktiv wegklicken. Es gibt keinen Weg, diese Erlaubnis von außen vorab zu erteilen:
+        // `xcrun simctl privacy` kennt in Xcode 27 die Dienste calendar/contacts/location/
+        // photos/media-library/microphone/motion/reminders/siri — kein `notifications`.
+        let deadline = Date().addingTimeInterval(recognitionTimeout)
+        while Date() < deadline {
+            dismissSystemAlerts()
+            Thread.sleep(forTimeInterval: 2)
+        }
+        dismissSystemAlerts()
     }
 
     // MARK: - Schritte durch die fremden Apps
@@ -86,6 +106,29 @@ final class ReceiptShareExtensionTests: XCTestCase {
     /// Systemdialoge (etwa die Mitteilungsfrage beim ersten Start) gehören SpringBoard, nicht
     /// der Fotos-App, und erscheinen in deren Element-Baum gar nicht. Der Unterbrechungs-
     /// Beobachter ist der offizielle Weg, sie trotzdem wegzuklicken.
+    /// Zweites, AKTIVES Netz gegen Systemdialoge — und das eigentlich tragende.
+    ///
+    /// Der Unterbrechungs-Beobachter unten feuert nur, wenn ein Zugriff auf die getestete App
+    /// tatsächlich blockiert wird, und selbst dann verlässlich erst nach dem nächsten
+    /// Interaktionsversuch. In zwei von fünf Läufen am 20.09.2026 reichte das nicht: Der Dialog
+    /// „«Restock» möchte dir Mitteilungen senden" lag über der Fotos-App, der Testlauf lief in
+    /// den Neustart des Runners („Restarting after unexpected exit"), und die Übergabe an
+    /// Restock wurde nie erreicht. Diese Methode greift den Dialog dort ab, wo er wirklich
+    /// lebt — in SpringBoard — und wird vor/zwischen den Schritten von Hand aufgerufen.
+    private func dismissSystemAlerts() {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        // Mehrfach, weil Dialoge gestapelt auftreten können (Mitteilungen, danach Fotozugriff).
+        for _ in 0..<3 {
+            let alert = springboard.alerts.firstMatch
+            guard alert.exists else { return }
+            let accepted = ["Erlauben", "Allow", "OK", "Zulassen", "Fortfahren", "Continue", "Weiter"]
+            guard let button = accepted.map({ alert.buttons[$0] }).first(where: { $0.exists && $0.isHittable }) else {
+                return
+            }
+            button.tap()
+        }
+    }
+
     private func watchForSystemDialogs() {
         addUIInterruptionMonitor(withDescription: "Systemdialog") { alert in
             for label in ["Erlauben", "Allow", "OK", "Fortfahren", "Continue"] where alert.buttons[label].exists {
@@ -127,6 +170,11 @@ final class ReceiptShareExtensionTests: XCTestCase {
         }
 
         let library = photos.buttons["LibraryTab"]
+        if !library.waitForExistence(timeout: 10) {
+            // Letzte Chance vor dem Urteil: Liegt doch noch ein Systemdialog darüber, ist die
+            // Fotos-App nicht „in einem unerwarteten Zustand", sondern nur verdeckt.
+            dismissSystemAlerts()
+        }
         XCTAssertTrue(
             library.waitForExistence(timeout: 15),
             "Das Mediathek-Register der Fotos-App ist nicht erreichbar — die App steckt in einem unerwarteten Zustand."
@@ -174,6 +222,7 @@ final class ReceiptShareExtensionTests: XCTestCase {
         let restock = photos.cells.matching(NSPredicate(format: "label == %@", "Restock")).firstMatch
 
         for attempt in 0..<4 {
+            dismissSystemAlerts()
             if restock.waitForExistence(timeout: 5) && restock.isHittable {
                 restock.tap()
                 return

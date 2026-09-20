@@ -58,12 +58,71 @@ if [ -n "$GROUP_PLIST" ]; then
   # Alte Nutzlast entfernen, damit ein Treffer nachher wirklich aus DIESEM Lauf stammt.
   /usr/libexec/PlistBuddy -c "Delete :$PAYLOAD_KEY" "$GROUP_PLIST" >/dev/null 2>&1 \
     && echo "→ Alte Nutzlast entfernt"
+  # Dasselbe fürs Sicherungsflag. Ohne diesen Schnitt ist ein späteres "gesetzt: ja" wertlos:
+  # Es könnte genauso gut von der Haupt-App aus einem früheren Lauf stammen — oder von einem
+  # Erweiterungslauf VOR dem Fix, der das Fenster verbraucht hat. Nur ein vorher gelöschtes
+  # Flag macht die Aussage "wer hat es gesetzt?" überhaupt belastbar.
+  # Nebenwirkung, gewollt und harmlos: Die Haupt-App legt beim nächsten Start noch einmal eine
+  # Sicherungskopie der Store-Dateien unter PreCloudBackup an — reine Kopie, kein Datenverlust.
+  /usr/libexec/PlistBuddy -c "Delete :$BACKUP_FLAG" "$GROUP_PLIST" >/dev/null 2>&1 \
+    && echo "→ Sicherungsflag zurückgesetzt"
   # Der Einstellungs-Dienst hält Werte im Speicher — ohne Neustart läse die Erweiterung
   # womöglich noch den alten Stand.
-  xcrun simctl spawn "$DEVICE" killall -9 cfprefsd >/dev/null 2>&1
+  #
+  # 20.09.2026, F004: Hier stand `killall -9 cfprefsd`. Das existiert im Simulator NICHT
+  # ("An error was encountered processing the command ... No such file or directory"), der
+  # Fehler wurde von `>/dev/null 2>&1` verschluckt, und cfprefsd lief unverändert weiter
+  # (PID 42170 über mehrere Läufe hinweg gemessen). Folge: Das oben per PlistBuddy AN cfprefsd
+  # VORBEI gelöschte Flag lebte in dessen Speicher weiter und wurde beim nächsten Schreibzugriff
+  # auf die Domain (die Erweiterung legt ihre Nutzlast ab) wieder mit in die Datei geflusht —
+  # es sah aus, als hätte der Lauf das Flag gesetzt. Hintergrund: Defaults werden seit OS X 10.8
+  # in cfprefsd im Speicher gehalten und verzögert geschrieben; direktes Editieren der plist wird
+  # überschrieben (https://stackoverflow.com/q/19234665), Abhilfe ist ein Neustart von cfprefsd
+  # (https://stackoverflow.com/q/19303958). Der im Simulator funktionierende Weg ist `launchctl kill`.
+  if ! xcrun simctl spawn "$DEVICE" launchctl kill 9 system/com.apple.cfprefsd.xpc.daemon 2>/dev/null; then
+    echo "WARNUNG: cfprefsd konnte nicht neu gestartet werden — Flag-Messung unten ist dann nicht belastbar." >&2
+  fi
+  sleep 2
 else
   echo "→ App-Gruppe noch nicht angelegt (Erweiterung lief auf diesem Simulator noch nie)"
 fi
+
+# Vorher-Zustand ausdrücklich protokollieren — er ist die halbe Aussage des Ergebnisblocks.
+BACKUP_BEFORE="nicht gesetzt (zurückgesetzt)"
+if [ -n "$GROUP_PLIST" ] && /usr/libexec/PlistBuddy -c "Print :$BACKUP_FLAG" "$GROUP_PLIST" >/dev/null 2>&1; then
+  BACKUP_BEFORE="GESETZT (Zurücksetzen fehlgeschlagen — ein 'ja' unten ist dann nicht aussagekräftig)"
+fi
+echo "→ Sicherungsflag vor dem Lauf: $BACKUP_BEFORE"
+
+# Zweite, härtere Spur als das bloße Flag: `backupLocalStoreBeforeFirstCloudAttempt()` legt
+# beim Sichern Kopien der Store-Dateien unter PreCloudBackup ab. Ein gesetztes Flag OHNE frische
+# Dateien dort bedeutet: Es hat keine Sicherung gegeben, das Flag kam von woanders her.
+GROUP_DIR=$(dirname "$(dirname "$GROUP_PLIST")" 2>/dev/null)
+BACKUP_DIR="$GROUP_DIR/Library/Application Support/PreCloudBackup"
+BACKUP_FILES_BEFORE=0
+[ -d "$BACKUP_DIR" ] && BACKUP_FILES_BEFORE=$(ls -1 "$BACKUP_DIR" 2>/dev/null | wc -l | tr -d ' ')
+echo "→ Sicherungskopien vor dem Lauf: $BACKUP_FILES_BEFORE Datei(en)"
+
+# Startzeitpunkt für die Prozessmessung unten (welche Prozesse laufen während des Tests?).
+LOG_START=$(date '+%Y-%m-%d %H:%M:%S')
+
+# --- Bekannten Ausgangszustand der Oberfläche herstellen ---
+# Zwei von fünf Läufen am 20.09.2026 scheiterten nicht am Produktivcode, sondern an einem
+# Systemdialog, der aus einem früheren Lauf noch über allem lag („«Restock» möchte dir
+# Mitteilungen senden" — die Erweiterung fragt das in ShareViewController.swift:220). Die
+# Fotos-App war dann unbedienbar und der Testrunner startete neu.
+#
+# Von außen vorab erlauben lässt sich das nicht: `xcrun simctl privacy` kennt in Xcode 27 nur
+# calendar, contacts(-limited), location(-always), photos(-add), media-library, microphone,
+# motion, reminders, siri und all — KEIN `notifications` (Beleg: `xcrun simctl privacy` ohne
+# Argumente). Also stattdessen aufräumen: Beteiligte Apps beenden und SpringBoard neu starten,
+# das räumt stehengebliebene Dialoge weg. Den Dialog dieses Laufs klickt der Test selbst weg
+# (`dismissSystemAlerts()`), sodass er nicht für den nächsten liegen bleibt.
+xcrun simctl terminate "$DEVICE" com.apple.mobileslideshow >/dev/null 2>&1
+xcrun simctl terminate "$DEVICE" com.johannesemmrich.Restock >/dev/null 2>&1
+xcrun simctl spawn "$DEVICE" launchctl kickstart -k system/com.apple.SpringBoard >/dev/null 2>&1 \
+  && echo "→ SpringBoard neu gestartet (stehengebliebene Systemdialoge entfernt)"
+sleep 8
 
 # --- Absturzberichte VOR dem Lauf festhalten ---
 BEFORE=$(ls "$CRASH_DIR" 2>/dev/null | grep -c "^RestockShareExtension-")
@@ -97,12 +156,42 @@ if [ -n "$GROUP_PLIST" ]; then
   /usr/libexec/PlistBuddy -c "Print :$BACKUP_FLAG" "$GROUP_PLIST" >/dev/null 2>&1 && BACKUP_CONSUMED="ja"
 fi
 
+# --- Gemessen statt unterstellt: Sicherungskopien und beteiligte Prozesse ---
+GROUP_DIR=$(dirname "$(dirname "$GROUP_PLIST")" 2>/dev/null)
+BACKUP_DIR="$GROUP_DIR/Library/Application Support/PreCloudBackup"
+BACKUP_FILES_AFTER=0
+BACKUP_NEWEST="—"
+if [ -d "$BACKUP_DIR" ]; then
+  BACKUP_FILES_AFTER=$(ls -1 "$BACKUP_DIR" 2>/dev/null | wc -l | tr -d ' ')
+  NEWEST=$(ls -t "$BACKUP_DIR" 2>/dev/null | head -1)
+  [ -n "$NEWEST" ] && BACKUP_NEWEST="$NEWEST ($(stat -f '%Sm' -t '%H:%M:%S' "$BACKUP_DIR/$NEWEST" 2>/dev/null))"
+fi
+
+# Welche Prozesse waren im Lauf überhaupt aktiv? Der Filter erfasst ausdrücklich AUCH das
+# Widget (`SmartCartWidgets` enthält kein "Restock" — ein Filter auf "Restock" übersieht es).
+PROCESSES=$(xcrun simctl spawn "$DEVICE" log show --start "$LOG_START" --style compact \
+  --predicate 'process CONTAINS[c] "Restock" OR process CONTAINS[c] "SmartCart"' 2>/dev/null \
+  | awk 'NR>1 {print $4}' | sed 's/\[.*//' | grep -v '^$' | sort -u | tr '\n' ' ')
+[ -z "$PROCESSES" ] && PROCESSES="(keine erfasst)"
+
 echo ""
 echo "=================== ERGEBNIS ==================="
 echo "Testlauf-Status:              $TEST_STATUS (0 = Ablauf hergestellt)"
 echo "Bon-Nutzlast in App-Gruppe:   $PAYLOAD   (muss nach dem Fix: ja)"
 echo "Neue Absturzberichte:         $NEW_CRASHES   (muss nach dem Fix: 0)"
-echo "Sicherungsflag gesetzt:       $BACKUP_CONSUMED   (nur die App darf es verbrauchen)"
+echo "Sicherungsflag vor dem Lauf:  $BACKUP_BEFORE"
+echo "Sicherungsflag nach dem Lauf: $BACKUP_CONSUMED   (nur die App darf es verbrauchen)"
+echo "Sicherungskopien vor/nach:    $BACKUP_FILES_BEFORE / $BACKUP_FILES_AFTER Datei(en), neueste: $BACKUP_NEWEST"
+echo "Prozesse im Lauf (gemessen):  $PROCESSES"
+# Kein Ursachensatz mehr an dieser Stelle. Die frühere Zeile behauptete, die Haupt-App habe
+# das Flag gesetzt — gemessen (F004, 20.09.2026) lief sie in keinem einzigen Lauf. Was das
+# Skript belegen kann, ist genau das, was oben steht: Flag vorher/nachher, Sicherungsdateien,
+# beteiligte Prozesse. Die Deutung bleibt dem Leser.
+if [ "$BACKUP_CONSUMED" = "ja" ] && [ "$BACKUP_FILES_AFTER" -le "$BACKUP_FILES_BEFORE" ]; then
+  echo "  ! Flag gesetzt, aber KEINE neuen Sicherungsdateien — dann hat kein Prozess gesichert."
+  echo "    Häufigste Ursache: cfprefsd hat einen alten, zwischengespeicherten Wert"
+  echo "    zurückgeschrieben (siehe Kommentar oben am cfprefsd-Neustart)."
+fi
 if [ "$NEW_CRASHES" -gt 0 ]; then
   echo "Neueste Berichte:"
   ls -t "$CRASH_DIR" | grep "^RestockShareExtension-" | head -"$NEW_CRASHES" | sed 's/^/  /'
