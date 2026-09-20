@@ -28,6 +28,15 @@ enum ReceiptShareHandoff {
 /// einen zweiten, praktisch identischen Typ zu pflegen.
 struct SharedReceiptPayload: Codable {
     var storeID: UUID?
+    /// `true` nur, wenn `AssignmentService.detectStore` den Laden tatsächlich aus dem Bon-Text
+    /// erkannt hat — `false`, wenn `storeID` nur der Besuchsfrequenz-Notnagel ist (kein Laden im
+    /// Bon-Text gefunden, oder gar keine Läden vorhanden). Ohne dieses Feld war `storeID` in
+    /// beiden Fällen identisch gesetzt, ein reiner Rate-Treffer war vom App-seitigen Review nicht
+    /// von einer echten Erkennung zu unterscheiden — der Nutzer bekam nie mitgeteilt, dass der
+    /// zugeordnete Laden nur geraten war, und hatte keine Möglichkeit, ihn dort zu korrigieren
+    /// (Nutzerbericht 20.09.2026: "keinerlei Feedback", "völlig intransparent"). Steuert die
+    /// Korrektur-Banner in `ReceiptScannerView` und den Erfolgstext hier und in der Extension.
+    var storeConfidentlyDetected: Bool
     var lines: [ResolvedReceiptLine]
     var rawLines: [String]
     var detectedTotal: Double?

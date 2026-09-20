@@ -31,7 +31,11 @@ struct ShareReceiptView: View {
 
     private enum LoadState {
         case loading
-        case success(storeName: String?, itemCount: Int)
+        /// `storeConfidentlyDetected` unterscheidet einen echten Treffer aus dem Bon-Text von
+        /// einem reinen Besuchsfrequenz-Notnagel — der Erfolgstext unten formuliert das jeweils
+        /// explizit aus, statt beide Fälle gleich "erkannt" klingen zu lassen (Nutzerbericht
+        /// 20.09.2026: intransparent, wenn die Zuordnung eigentlich nur geraten war).
+        case success(storeName: String?, storeConfidentlyDetected: Bool, itemCount: Int)
         case noItemsFound
         case error(String)
     }
@@ -53,14 +57,19 @@ struct ShareReceiptView: View {
                     .buttonStyle(.bordered)
                     .padding(.top, 8)
 
-            case .success(let storeName, let itemCount):
-                Image(systemName: "checkmark.circle.fill")
+            case .success(let storeName, let storeConfidentlyDetected, let itemCount):
+                Image(systemName: storeConfidentlyDetected ? "checkmark.circle.fill" : "questionmark.circle.fill")
                     .font(.system(size: 44))
-                    .foregroundStyle(.green)
-                Text(storeName.map { "\(itemCount) Positionen bei \($0) erkannt" }
-                     ?? "\(itemCount) Positionen erkannt")
+                    .foregroundStyle(storeConfidentlyDetected ? .green : .orange)
+                Text(successTitle(storeName: storeName, storeConfidentlyDetected: storeConfidentlyDetected, itemCount: itemCount))
                     .font(.headline)
                     .multilineTextAlignment(.center)
+                if !storeConfidentlyDetected {
+                    Text("Laden im Bon nicht sicher erkannt — bitte in Restock prüfen und ggf. korrigieren.")
+                        .font(.subheadline)
+                        .foregroundStyle(.orange)
+                        .multilineTextAlignment(.center)
+                }
                 // iOS erlaubt nur Today-Widgets offiziell, die eigene App per
                 // extensionContext?.open(...) zu öffnen — bei Share Extensions schlägt das in
                 // der Praxis unzuverlässig fehl (bestätigt: Apple DTS, mehrere Entwickler-Foren-
@@ -148,13 +157,14 @@ struct ShareReceiptView: View {
         }
         let context = container.mainContext
         let activeStores = (try? context.fetch(FetchDescriptor<Store>(predicate: #Predicate { $0.isActive }))) ?? []
-        // Kein reines "erstes Element" mehr als letzter Ausweg (reine Array-Reihenfolge, kein
-        // Bezug zum tatsächlichen Laden) — zumindest ein echtes Signal (Besuchsfrequenz) nutzen,
-        // wenn die Text-Erkennung keinen Treffer über der Schwelle findet. Löst das Problem nicht
-        // vollständig (siehe Backlog: fehlende Laden-Korrektur-Möglichkeit im Review-Screen bleibt
-        // offen), reduziert aber die rein zufällige Fehlzuordnung.
-        let detectedStore = AssignmentService.detectStore(fromReceiptLines: lines, candidates: activeStores)
-            ?? activeStores.max(by: { $0.visitsPerWeek < $1.visitsPerWeek })
+        // Echter Treffer aus dem Bon-Text vs. reiner Besuchsfrequenz-Notnagel, wenn die
+        // Text-Erkennung nichts über der Schwelle findet — `storeConfidentlyDetected` unten macht
+        // diesen Unterschied jetzt bis in die Erfolgsmeldung UND das App-seitige Review sichtbar,
+        // statt beide Fälle identisch als "erkannt" zu behandeln (Nutzerbericht 20.09.2026: keine
+        // Rückmeldung, wenn die Zuordnung eigentlich nur geraten war, keine Korrekturmöglichkeit).
+        let confidentStore = AssignmentService.detectStore(fromReceiptLines: lines, candidates: activeStores)
+        let detectedStore = confidentStore ?? activeStores.max(by: { $0.visitsPerWeek < $1.visitsPerWeek })
+        let storeConfidentlyDetected = confidentStore != nil
         let allRecords = (try? context.fetch(FetchDescriptor<PurchaseRecord>())) ?? []
 
         // Ohne irgendeinen konfigurierten Laden (seltener Fall — z. B. ganz frische Installation)
@@ -179,13 +189,35 @@ struct ShareReceiptView: View {
 
         let payload = SharedReceiptPayload(
             storeID: detectedStore?.id,
+            storeConfidentlyDetected: storeConfidentlyDetected,
             lines: resolvedLines,
             rawLines: lines,
             detectedTotal: ReceiptParserService.detectedTotal(from: lines)
         )
         ReceiptShareHandoff.store(payload)
-        scheduleOpenReminder(storeName: detectedStore?.name, itemCount: resolvedLines.count)
-        state = .success(storeName: detectedStore?.name, itemCount: resolvedLines.count)
+        await requestNotificationPermissionIfNeeded()
+        scheduleOpenReminder(storeName: detectedStore?.name, storeConfidentlyDetected: storeConfidentlyDetected, itemCount: resolvedLines.count)
+        state = .success(storeName: detectedStore?.name, storeConfidentlyDetected: storeConfidentlyDetected, itemCount: resolvedLines.count)
+    }
+
+    private func successTitle(storeName: String?, storeConfidentlyDetected: Bool, itemCount: Int) -> String {
+        guard let storeName else { return "\(itemCount) Positionen erkannt — kein Laden zugeordnet" }
+        return storeConfidentlyDetected
+            ? "\(itemCount) Positionen bei \(storeName) erkannt"
+            : "\(itemCount) Positionen erkannt — vermutlich \(storeName)"
+    }
+
+    /// Fragt die Notification-Berechtigung aktiv an, wenn noch nie danach gefragt wurde
+    /// (`.notDetermined`) — sonst schlägt `scheduleOpenReminder()`s `add(_:)` unten lautlos fehl,
+    /// ohne dass der Nutzer je ein Berechtigungs-Dialog gesehen hätte, und die einzige noch
+    /// verbleibende Rückmeldung ist die schon geschlossene Teilen-Ansicht hier (Nutzerbericht
+    /// 20.09.2026). Eine bereits erteilte ODER bereits abgelehnte Berechtigung wird nicht erneut
+    /// angefragt — iOS würde den System-Dialog bei `.denied` ohnehin nicht mehr zeigen.
+    private func requestNotificationPermissionIfNeeded() async {
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        guard settings.authorizationStatus == .notDetermined else { return }
+        _ = try? await center.requestAuthorization(options: [.alert, .sound, .badge])
     }
 
     /// Extensions dürfen die eigene App nicht öffnen (siehe openApp()), aber Apple erlaubt und
@@ -196,11 +228,17 @@ struct ShareReceiptView: View {
     /// Ohne erteilte Berechtigung schlägt `add` einfach lautlos fehl (kein Crash, kein Fehler
     /// sichtbar) — HomeView.checkPendingReceiptScan() bleibt so oder so der verlässliche Weg,
     /// sobald der Nutzer Restock von sich aus öffnet.
-    private func scheduleOpenReminder(storeName: String?, itemCount: Int) {
+    private func scheduleOpenReminder(storeName: String?, storeConfidentlyDetected: Bool, itemCount: Int) {
         let content = UNMutableNotificationContent()
-        content.title = "Bon erkannt"
-        content.body = storeName.map { "\(itemCount) Positionen bei \($0) — zum Bestätigen antippen." }
-            ?? "\(itemCount) Positionen erkannt — zum Bestätigen antippen."
+        content.title = storeConfidentlyDetected ? "Bon erkannt" : "Bon erkannt — Laden bitte prüfen"
+        switch (storeName, storeConfidentlyDetected) {
+        case (let name?, true):
+            content.body = "\(itemCount) Positionen bei \(name) — zum Bestätigen antippen."
+        case (let name?, false):
+            content.body = "\(itemCount) Positionen erkannt, Laden vermutlich \(name) — zum Prüfen antippen."
+        case (nil, _):
+            content.body = "\(itemCount) Positionen erkannt, kein Laden zugeordnet — zum Prüfen antippen."
+        }
         content.sound = .default
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2, repeats: false)

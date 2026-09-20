@@ -9,6 +9,11 @@ import UniformTypeIdentifiers
 private struct PendingReceiptScan: Identifiable {
     let id = UUID()
     let store: Store
+    /// `false`, wenn `store` hier nur der Besuchsfrequenz-Notnagel ist (die Extension konnte den
+    /// Laden nicht sicher aus dem Bon-Text erkennen, ODER die App löst `payload.storeID` nicht
+    /// mehr gegen einen aktiven Laden auf, z. B. nach Löschen/Deaktivieren zwischenzeitlich) —
+    /// steuert die Korrektur-Aufforderung in `ReceiptScannerView`.
+    let storeConfidentlyDetected: Bool
     let payload: SharedReceiptPayload
 }
 
@@ -187,7 +192,7 @@ struct HomeView: View {
                 StoreDetailView(store: store)
             }
             .sheet(item: $pendingReceiptScan) { pending in
-                ReceiptScannerView(store: pending.store, prefilled: pending.payload)
+                ReceiptScannerView(store: pending.store, prefilled: pending.payload, storeConfidentlyDetected: pending.storeConfidentlyDetected)
             }
             // Tap auf das Homescreen-Widget (außerhalb der Abhak-Buttons): öffnet die App
             // direkt beim angezeigten Laden. widgetURL-Links werden vom System immer an die
@@ -1558,13 +1563,23 @@ struct HomeView: View {
     // Vordergrund-Wechsel selbst nachschauen, ob eine Bon-Übergabe wartet — exakt das gleiche
     // Muster wie checkPendingQuickAdd() oben.
     private func checkPendingReceiptScan() {
-        guard pendingReceiptScan == nil, let payload = ReceiptShareHandoff.takePending() else { return }
+        // Ohne aktive Läden lässt sich `ReceiptScannerView` (braucht zwingend einen `Store`)
+        // ohnehin nicht öffnen — `takePending()` deshalb noch NICHT aufrufen, sonst würde die
+        // Nutzlast (Extension meldete bereits "N Positionen erkannt") hier endgültig verworfen,
+        // statt beim nächsten Öffnen mit dann vorhandenen Läden noch verfügbar zu sein
+        // (Nutzerbericht 20.09.2026: stiller Datenverlust).
+        guard pendingReceiptScan == nil, !activeStores.isEmpty,
+              let payload = ReceiptShareHandoff.takePending() else { return }
         // Kein reines "erstes Element" mehr (Array-Reihenfolge) — siehe identische Begründung in
         // ShareViewController.swift, wo der Store ursprünglich erkannt wird.
-        let resolvedStore = payload.storeID.flatMap { id in activeStores.first { $0.id == id } }
-            ?? activeStores.max(by: { $0.visitsPerWeek < $1.visitsPerWeek })
+        let matchedStore = payload.storeID.flatMap { id in activeStores.first { $0.id == id } }
+        // Confidence NUR, wenn die Extension selbst sicher war UND dieser Laden hier noch als
+        // aktiv existiert — ein zwischenzeitlich gelöschter/deaktivierter Laden macht aus einer
+        // ehemals sicheren Erkennung wieder einen reinen Notnagel-Rateversuch.
+        let confidentlyDetected = payload.storeConfidentlyDetected && matchedStore != nil
+        let resolvedStore = matchedStore ?? activeStores.max(by: { $0.visitsPerWeek < $1.visitsPerWeek })
         guard let resolvedStore else { return }
-        pendingReceiptScan = PendingReceiptScan(store: resolvedStore, payload: payload)
+        pendingReceiptScan = PendingReceiptScan(store: resolvedStore, storeConfidentlyDetected: confidentlyDetected, payload: payload)
     }
 
     private func refreshDueSoon() {

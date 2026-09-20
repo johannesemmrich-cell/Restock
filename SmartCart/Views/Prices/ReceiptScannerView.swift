@@ -92,10 +92,22 @@ struct EditableReceiptLine: Identifiable {
 // MARK: - Main Scanner View
 
 struct ReceiptScannerView: View {
-    @Bindable var store: Store
+    // `@State` statt `@Bindable`: kein Code in dieser Datei bindet über `$store.…` an einzelne
+    // Felder, `@State` erlaubt dafür — anders als `@Bindable` — das komplette AUSTAUSCHEN der
+    // Referenz aus einer Button-Action heraus (Store-Korrektur unten), Lesezugriffe auf
+    // `store.name` etc. bleiben über SwiftData/Observation trotzdem live nachverfolgt.
+    @State private var store: Store
+    /// `true`, solange der über die Share Extension übergebene Laden nur geraten war (siehe
+    /// `SharedReceiptPayload.storeConfidentlyDetected`) und der Nutzer das noch nicht bestätigt
+    /// oder korrigiert hat — steuert die Korrektur-Aufforderung unten in `reviewView`. Bleibt bei
+    /// einem normalen Kamera-/Foto-Scan (`init(store:)`) immer `false`, dort wählt der Nutzer den
+    /// Laden ohnehin schon vorher selbst (`StoreDetailView`).
+    @State private var storeNeedsConfirmation = false
+    @State private var showStoreCorrection = false
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
     @Query(sort: \PurchaseRecord.date, order: .reverse) private var allRecords: [PurchaseRecord]
 
     @State private var showCamera = false
@@ -123,15 +135,18 @@ struct ReceiptScannerView: View {
     enum Phase { case capture, processing, review }
 
     init(store: Store) {
-        self.store = store
+        _store = State(initialValue: store)
     }
 
     /// Einstiegspunkt für einen per Share Extension bereits erkannten Bon (siehe
     /// `ReceiptShareHandoff`) — startet direkt in `.review`, ohne Foto-Aufnahme/OCR-Schritt,
     /// mit denselben Feldern befüllt, die ein normaler Scan an diesem Punkt hätte. Gleiches
     /// Init-Muster wie `StoreDetailView.init` (State(initialValue:) für vorbefüllte @State).
-    init(store: Store, prefilled: SharedReceiptPayload) {
-        self.store = store
+    /// `storeConfidentlyDetected`: siehe `SharedReceiptPayload` — steuert, ob `store` hier unten
+    /// gleich als bestätigungspflichtiger Rate-Treffer markiert wird.
+    init(store: Store, prefilled: SharedReceiptPayload, storeConfidentlyDetected: Bool) {
+        _store = State(initialValue: store)
+        _storeNeedsConfirmation = State(initialValue: !storeConfidentlyDetected)
         _phase = State(initialValue: .review)
         _cameFromShareHandoff = State(initialValue: true)
         _parsedLines = State(initialValue: prefilled.lines.map { line in
@@ -179,8 +194,27 @@ struct ReceiptScannerView: View {
     /// Siehe `ChipToolbarItem`-Dokumentation (DesignSystem.swift): der Button muss immer
     /// deklariert bleiben, hier nur per `disabled`/`opacity` gesteuert werden — kein `if` um das
     /// ganze `ChipToolbarItem`.
+    ///
+    /// `!storeNeedsConfirmation`: OHNE diese Bedingung ließ sich „Speichern" antippen, während das
+    /// orange Banner unten noch unbeachtet stand — ein per Share Extension nur GERATENER Laden
+    /// (`storeConfidentlyDetected: false`) hätte dann still und ungefragt alle Positionen bekommen,
+    /// obwohl der Nutzer den Hinweis nie bestätigt oder korrigiert hat. Genau der Fall, den das
+    /// Banner eigentlich verhindern soll (Nutzerrückmeldung 20.09.2026: "keine falsch-Zuordnung...
+    /// sondern dies für die App offen gelassen" — das Banner allein war nur ein Hinweis, keine
+    /// erzwungene Entscheidung).
     private var canSave: Bool {
-        phase == .review && !parsedLines.filter(\.isIncluded).isEmpty
+        phase == .review && !storeNeedsConfirmation && !parsedLines.filter(\.isIncluded).isEmpty
+    }
+
+    /// Kandidaten für den Korrektur-Dialog — der aktuell angenommene Laden fehlt bewusst (Tippen
+    /// darauf wäre ein No-Op), gleiches Muster wie `otherStoresForCorrection` in HomeView.
+    private var otherStoresForCorrection: [Store] {
+        activeStores.filter { $0.id != store.id }
+    }
+
+    private func correctStore(to newStore: Store) {
+        store = newStore
+        storeNeedsConfirmation = false
     }
 
     var body: some View {
@@ -221,6 +255,18 @@ struct ReceiptScannerView: View {
             ImagePickerRepresentable(sourceType: .photoLibrary) { image in
                 guard let image else { return }
                 process(image)
+            }
+        }
+        // Gleiches Muster wie die Store-Korrektur in HomeView (`correctQuickAddStore`): eine
+        // `confirmationDialog` mit einem Button je aktivem Laden, statt eine eigene Picker-UI zu
+        // erfinden.
+        .confirmationDialog(
+            "Welcher Laden ist das?",
+            isPresented: $showStoreCorrection,
+            titleVisibility: .visible
+        ) {
+            ForEach(otherStoresForCorrection) { candidate in
+                Button("\(candidate.emoji) \(candidate.name)") { correctStore(to: candidate) }
             }
         }
         .devFeedback(context: debugRawLines.isEmpty
@@ -325,6 +371,56 @@ struct ReceiptScannerView: View {
                     }
                 }
             } else {
+                // Ganz oben, noch vor den Positionen: eine falsche Laden-Zuordnung betrifft ALLE
+                // Positionen zugleich (Preise landen im falschen Laden), muss also vor allem
+                // anderen aufgelöst werden. Nur sichtbar, solange der Laden aus der Share
+                // Extension noch ein unbestätigter Rate-Treffer ist (`storeNeedsConfirmation`).
+                //
+                // ZWEI explizite Aktionen statt nur "antippen zum Ändern": eine geratene Zuordnung
+                // kann ja auch zufällig stimmen, dann soll der Nutzer das aktiv bestätigen können,
+                // statt gezwungen zu sein, denselben Laden nochmal aus dem Korrektur-Dialog
+                // auszuwählen. Beide Wege setzen `storeNeedsConfirmation = false` und schalten
+                // damit „Speichern" (`canSave`) erst frei — reines Ignorieren des Banners speichert
+                // NICHT mehr stillschweigend beim geratenen Laden.
+                if storeNeedsConfirmation {
+                    Section {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Laden nicht sicher erkannt")
+                                        .font(.system(size: 14, weight: .semibold))
+                                    Text("Angenommen: \(store.emoji) \(store.name) — bitte bestätigen oder ändern, bevor du speicherst.")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: "questionmark.circle.fill")
+                                    .foregroundStyle(.orange)
+                            }
+                            HStack(spacing: 8) {
+                                Button {
+                                    storeNeedsConfirmation = false
+                                } label: {
+                                    Label("\(store.name) ist richtig", systemImage: "checkmark")
+                                        .font(.system(size: 13, weight: .medium))
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(.orange)
+
+                                Button {
+                                    showStoreCorrection = true
+                                } label: {
+                                    Text("Anderer Laden")
+                                        .font(.system(size: 13, weight: .medium))
+                                }
+                                .buttonStyle(.bordered)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowBackground(Color.orange.opacity(0.08))
+                }
+
                 Section {
                     ForEach($parsedLines) { $line in
                         ReceiptLineRow(line: $line)
