@@ -60,6 +60,22 @@ extension AssignmentService {
 
     // MARK: - Assign store
 
+    /// Normalisierter Vergleichs-Key für Ladennamen (getrimmt, klein geschrieben) — analog zu
+    /// `foldedLower` bei Artikelnamen. `PurchaseRecord.storeName` ist ein zum Kaufzeitpunkt
+    /// eingefrorener Text-Schnappschuss, kein Verweis auf das `Store`-Objekt: weicht er auch nur
+    /// in Groß-/Kleinschreibung oder einem Leerzeichen vom aktuellen `Store.name` ab (z. B. nach
+    /// einer Ladenumbenennung, einem über Bon-Scan erkannten Namen, oder einem über eine geteilte
+    /// Liste beigetretenen Store), zählte dieser Kauf vorher unter einem eigenen, separaten
+    /// Dictionary-Key und wurde bei der späteren Auswertung komplett übersehen — die Kaufhistorie
+    /// eines real genutzten Ladens konnte so effektiv auf null fallen und die Zuordnung fiel auf
+    /// die schwächere `visitsPerWeek`-Fallback-Stufe zurück (Nutzerbericht 20.09.2026: Artikel
+    /// landeten trotz ausschließlicher Lidl-Käufe dauerhaft bei einem anderen Laden). Ab jetzt wird
+    /// überall, wo Kaufhistorie pro Laden gezählt UND nachgeschlagen wird, konsequent dieser
+    /// normalisierte Key verwendet, statt nur beim finalen Rückverweis auf `Store` zu normalisieren.
+    private static func normalizedStoreKey(_ name: String) -> String {
+        name.trimmingCharacters(in: .whitespaces).lowercased()
+    }
+
     static func dominantStore(for itemName: String, in stores: [Store], purchaseRecords: [PurchaseRecord]) -> Store? {
         let relevant = purchaseRecords.filter {
             namesRepresentSameItem($0.itemName, itemName)
@@ -68,14 +84,14 @@ extension AssignmentService {
 
         var counts: [String: Int] = [:]
         for record in relevant {
-            counts[record.storeName, default: 0] += 1
+            counts[normalizedStoreKey(record.storeName), default: 0] += 1
         }
 
         let total = relevant.count
-        guard let (dominantName, dominantCount) = counts.max(by: { $0.value < $1.value }),
+        guard let (dominantKey, dominantCount) = counts.max(by: { $0.value < $1.value }),
               Double(dominantCount) / Double(total) > 0.5 else { return nil }
 
-        return stores.first { $0.name.lowercased() == dominantName.lowercased() }
+        return stores.first { normalizedStoreKey($0.name) == dominantKey }
     }
 
     static func assign(itemName: String, to activeStores: [Store], purchaseRecords: [PurchaseRecord] = []) -> Store? {
@@ -188,18 +204,18 @@ extension AssignmentService {
 
         var purchaseCounts: [String: Int] = [:]
         for record in purchaseRecords {
-            purchaseCounts[record.storeName, default: 0] += 1
+            purchaseCounts[normalizedStoreKey(record.storeName), default: 0] += 1
         }
 
-        let withEvidence = candidates.filter { (purchaseCounts[$0.name] ?? 0) > 0 }
+        let withEvidence = candidates.filter { (purchaseCounts[normalizedStoreKey($0.name)] ?? 0) > 0 }
         guard !withEvidence.isEmpty else {
             // Kein Kandidat hat je einen abgeschlossenen Kauf verzeichnet — einzig verfügbares
             // Signal ist dann noch visitsPerWeek.
             return bestByVisits(among: candidates, purchaseCounts: purchaseCounts)
         }
 
-        let topCount = withEvidence.map { purchaseCounts[$0.name] ?? 0 }.max()!
-        let tied = withEvidence.filter { (purchaseCounts[$0.name] ?? 0) == topCount }
+        let topCount = withEvidence.map { purchaseCounts[normalizedStoreKey($0.name)] ?? 0 }.max()!
+        let tied = withEvidence.filter { (purchaseCounts[normalizedStoreKey($0.name)] ?? 0) == topCount }
         guard tied.count > 1 else { return tied.first }
         // Gleichstand in der Kaufanzahl (z. B. je 1 früher Kauf an beiden) — visitsPerWeek
         // entscheidet als nächste Stufe, dann Name, dann `id` als garantiert eindeutiger
@@ -211,6 +227,9 @@ extension AssignmentService {
     /// zuvor `bestFallback` allein — jetzt als eigener letzter Entscheidungsschritt ausgelagert,
     /// damit `bestFallback` ihn sowohl bei fehlender Kaufhistorie als auch bei einem Gleichstand
     /// in der Kaufanzahl wiederverwenden kann, ohne die Tie-Breaker-Logik zu duplizieren.
+    /// `purchaseCounts` ist bereits über `normalizedStoreKey` (getrimmt, klein geschrieben)
+    /// geschlüsselt (siehe Aufrufer) — Zugriff hier deshalb ebenfalls darüber, sonst würde derselbe
+    /// Case-/Whitespace-Mismatch wie in `bestFallback` erneut echte Kaufanzahl-Treffer verstecken.
     private static func bestByVisits(among candidates: [Store], purchaseCounts: [String: Int]) -> Store? {
         guard let topVisits = candidates.map(\.visitsPerWeek).max() else { return nil }
         let tied = candidates.filter { $0.visitsPerWeek == topVisits }
@@ -220,8 +239,8 @@ extension AssignmentService {
         // Listen mit zufällig gleichem Namen). `id` (UUID) ist dagegen bei zwei verschiedenen
         // Store-Objekten immer verschieden — echter letzter Tie-Breaker.
         return tied.max(by: {
-            let countA = purchaseCounts[$0.name] ?? 0
-            let countB = purchaseCounts[$1.name] ?? 0
+            let countA = purchaseCounts[normalizedStoreKey($0.name)] ?? 0
+            let countB = purchaseCounts[normalizedStoreKey($1.name)] ?? 0
             if countA != countB { return countA < countB }
             if $0.name != $1.name { return $0.name > $1.name }
             return $0.id.uuidString > $1.id.uuidString
