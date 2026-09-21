@@ -130,7 +130,12 @@ echo "→ Absturzberichte der Erweiterung vor dem Lauf: $BEFORE"
 
 # --- Testlauf ---
 echo "→ Starte UI-Test …"
+# `TEST_RUNNER_RESTOCK_SHARE_E2E` ist das Signal an den Test, dass die Vorbereitung oben
+# gelaufen ist. xcodebuild reicht jede Variable mit dem Präfix `TEST_RUNNER_` an den
+# Testprozess durch und streift das Präfix ab. Ohne dieses Signal überspringt sich der Test —
+# so meldet die CI, die das ganze Target ohne dieses Skript startet, nicht falsch rot.
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
+TEST_RUNNER_RESTOCK_SHARE_E2E=1 \
 xcodebuild test \
   -scheme Restock \
   -project Restock.xcodeproj \

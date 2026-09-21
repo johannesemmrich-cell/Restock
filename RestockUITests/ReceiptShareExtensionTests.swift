@@ -47,8 +47,25 @@ final class ReceiptShareExtensionTests: XCTestCase {
     /// noch weit jenseits der ~4,5 s, nach denen der Absturz heute zuschlägt.
     private let recognitionTimeout: TimeInterval = 90
 
+    /// Signal des Vorbereitungsskripts. Gesetzt wird es beim Start über
+    /// `TEST_RUNNER_RESTOCK_SHARE_E2E=1` — `xcodebuild` reicht alles mit dem Präfix
+    /// `TEST_RUNNER_` an den Testprozess durch und streift das Präfix dabei ab.
+    private let preparedMarker = "RESTOCK_SHARE_E2E"
+
     override func setUpWithError() throws {
         continueAfterFailure = false
+
+        // Ohne die Vorbereitung von außen (Bon-Bild in der Mediathek, aufgeräumte Systemdialoge,
+        // zurückgesetztes Sicherungsflag) kann dieser Test nicht aussagekräftig laufen — er
+        // scheitert dann an der Fotos-Navigation statt an der Sache. Genau das passierte in der
+        // CI, die das ganze `RestockUITests`-Target ohne das Skript startet. Also hier ehrlich
+        // überspringen statt falsch rot melden. Der echte Lauf geht über
+        // `scripts/run-share-extension-uitest.sh`.
+        guard ProcessInfo.processInfo.environment[preparedMarker] == "1" else {
+            throw XCTSkip("""
+                Übersprungen: Dieser Test braucht die Vorbereitung durch                 scripts/run-share-extension-uitest.sh (Bon-Bild per `xcrun simctl addmedia` in                 der Mediathek des Simulators). Ein Testprozess kann das nicht selbst herstellen.                 Zum Ausführen: `bash scripts/run-share-extension-uitest.sh`.
+                """)
+        }
     }
 
 
