@@ -200,4 +200,17 @@ final class ReceiptParserLidlFullReceiptTests: XCTestCase {
         let broetchen = try XCTUnwrap(result.first { $0.name.lowercased().contains("brötchen") })
         XCTAssertEqual(broetchen.quantity, 2, accuracy: 0.001)
     }
+
+    /// Zusatzbefund aus Issue #9 (AC4): Auch hier trägt die Namenszeile ("Banane lose  0,82 A")
+    /// bereits den Gesamtpreis, die Gewichtszeile darunter ("0,638 kg x 1,29  EUR/kg") bestätigt ihn
+    /// nur — und wurde deshalb bisher komplett verworfen. Das Gewicht gehört als Gramm-Basis zur
+    /// Bananen-Position, der Preis bleibt der gedruckte.
+    func testWeightConfirmationLineAttachesGramBasisToBanana() throws {
+        let result = ReceiptParserService.parse(Self.lidlLines)
+
+        let banane = try XCTUnwrap(result.first { $0.name.lowercased().contains("banane") })
+        XCTAssertEqual(banane.price, 0.82, accuracy: 0.01)
+        XCTAssertEqual(banane.weightBasis ?? -1, 638, accuracy: 0.01, "AC4: 0,638 kg als Gramm-Basis")
+        XCTAssertEqual(banane.quantity, 1, accuracy: 0.001)
+    }
 }
