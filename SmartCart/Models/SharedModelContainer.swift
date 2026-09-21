@@ -3,7 +3,8 @@ import SwiftData
 
 /// The ONE shared way to open the app-group SwiftData store, used by every process that
 /// touches it: the main app (`SmartCartApp.init`), Siri intents (`AddShoppingItemIntent`)
-/// and the homescreen widget (`ShoppingListWidget` + `CheckOffWidgetItemIntent`).
+/// the homescreen widget (`ShoppingListWidget` + `CheckOffWidgetItemIntent`) and the share
+/// extension (`RestockShareExtension`).
 ///
 /// ⚠️ DO NOT change the schema declaration or the fallback order here without changing it
 /// for ALL of them at once — that's the whole point of this helper. Historically, an intent
