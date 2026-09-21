@@ -13,7 +13,7 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
              build 2>&1 | grep -E "error:|BUILD SUCCEEDED|BUILD FAILED"
 ```
 
-There are no automated tests. UI verification requires running in Xcode or Simulator.
+Unit tests live in `RestockTests/` and UI tests in `RestockUITests/`, both run via `xcodebuild test` (Xcode or Simulator). The Share Extension's cross-app flow additionally has `scripts/run-share-extension-uitest.sh`, which drives Photos → Share → Restock in the Simulator and checks the app-group container and crash logs directly, since a plain XCUITest cannot reach into the extension's own process.
 
 ## Adding new Swift files
 
@@ -41,6 +41,8 @@ Use 24-character hex UUIDs that don't conflict with existing ones. Use the `gene
 | `TodoItem` | Dev-mode todo/idea. SwiftData only. |
 
 `ModelContainer` is created in `SmartCartApp.init()` with all five models. **When adding a new `@Model`, it must be added to the `ModelContainer` initializer.**
+
+Every process that opens the shared store (main app, Siri intent, widget, Share Extension) must go through `SharedModelContainer.make()` (`SmartCart/Models/SharedModelContainer.swift`). It branches exactly once, on whether the calling process is an app extension (`isAppExtension(bundleURL:)`, detected via the `.appex` bundle suffix): extensions open the local app-group store only, the main app keeps CloudKit mirroring with a local fallback. Read the warning comment at the top of that file before changing the branching or fallback order — it documents a prior data-loss incident and a since-corrected crash (Issue #4).
 
 ### Services (`SmartCart/Services/`)
 
