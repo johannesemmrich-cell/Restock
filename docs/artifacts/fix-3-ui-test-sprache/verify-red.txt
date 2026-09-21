@@ -3,16 +3,16 @@ Simulator: Restock-UITest-Verify (64803776-A0BA-4209-89E5-B59887107CA4)
 Lauf 1 — Aufruf wie in der CI, ohne -testLanguage/-testRegion (AC-2, AC-4, AC-5)
         Gerätesprache: (en)
         Executed 5 tests, with 1 test skipped and 3 failures (0 unexpected) in 124.898 (125.090) seconds
-  [31mFAIL[0m  AC-2: Standardlauf zeigt 3 Fehlschläge statt 0.
+  FAIL  AC-2: Standardlauf zeigt 3 Fehlschläge statt 0.
         fehlgeschlagen: testAddStoreAndQuickAddItemShowsPriceWithoutCrash
         fehlgeschlagen: testJoinSharedListSheetIsScrollableAndUsable
         fehlgeschlagen: testJoinWithLegacySixCharacterCodeTriggersLookup
-  [31mFAIL[0m  AC-4: Texteingabe in die Schnelleingabe ist nicht belegt (Test nicht bestanden oder Fokus-Fehler im Protokoll).
-  [31mFAIL[0m  AC-5: Teilen-Knopf wird weiterhin über die Beschriftung gesucht (label CONTAINS 'person.2') statt über die Kennung.
+  FAIL  AC-4: Texteingabe in die Schnelleingabe ist nicht belegt (Test nicht bestanden oder Fokus-Fehler im Protokoll).
+  FAIL  AC-5: Teilen-Knopf wird weiterhin über die Beschriftung gesucht (label CONTAINS 'person.2') statt über die Kennung.
 
 Lauf 2 — Negativkontrolle mit -testLanguage en -testRegion US (AC-3)
         Executed 5 tests, with 1 test skipped and 3 failures (0 unexpected) in 109.618 (109.642) seconds
-  [32mPASS[0m  AC-3: Negativkontrolle zeigt exakt die drei ursprünglichen Fehlschläge.
+  PASS  AC-3: Negativkontrolle zeigt exakt die drei ursprünglichen Fehlschläge.
 
 Protokolle: docs/artifacts/fix-3-ui-test-sprache/run-default-language.txt
             docs/artifacts/fix-3-ui-test-sprache/run-negative-control-en.txt

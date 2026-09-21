@@ -9,6 +9,12 @@ import XCTest
 /// Foto-Bibliotheks-Berechtigung aus (HomeView triggert das nicht beim Erscheinen) und ruft
 /// keinen FoundationModels-Pfad auf (die sind laut Code-Review nur hinter explizit geöffneten
 /// Sheets für Rezept-Erkennung/Beleg-Scan erreichbar, nicht auf dem Home-Screen).
+///
+/// WICHTIG — Testsprache: Die Tests suchen Bedienelemente über deutsche Beschriftungen
+/// ("Läden einrichten", "Abbrechen", …). Dass der Simulator im Testlauf tatsächlich deutsch
+/// läuft, ist KEIN Zufall des Entwicklungsrechners, sondern in `Restock.xcscheme` am
+/// `<TestAction>` festgelegt (`language = "de"`, `region = "DE"`). Wer diese Attribute entfernt
+/// oder den Lauf mit `-testLanguage`/`-testRegion` übersteuert, bricht diese Tests.
 final class RestockUITests: XCTestCase {
 
     override func setUpWithError() throws {
@@ -145,7 +151,17 @@ final class RestockUITests: XCTestCase {
             addLidlButton.tap()
 
             app.buttons["Fertig"].tap() // BrowseStoresView schließen
-            app.swipeDown() // StoreSetupView-Sheet schließen (kein expliziter Dismiss-Button dort)
+
+            // StoreSetupView-Sheet schließen (kein expliziter Dismiss-Button dort). Ein blindes
+            // `app.swipeDown()` in der Bildschirmmitte trifft die List im Sheet und scrollt sie,
+            // statt das Sheet zu ziehen — belegt per Bildschirmaufnahme auf frischem Simulator:
+            // Sheet blieb offen, alles dahinter stand zwar in der Hierarchie, war aber nicht
+            // antippbar (Hit-Point {-1, -1}). Deshalb: erst warten, bis das Sheet wieder vorn
+            // liegt, dann von seiner Titelzeile aus bis zum unteren Rand ziehen.
+            let editButton = app.buttons["Bearbeiten"]
+            XCTAssertTrue(editButton.waitForExistence(timeout: 5), "StoreSetupView nach dem Schließen von BrowseStoresView nicht sichtbar")
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
+                .press(forDuration: 0.2, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
 
             XCTAssertTrue(app.staticTexts["Lidl"].waitForExistence(timeout: 5), "Lidl-Kachel nach dem Hinzufügen nicht auf dem Home-Screen gefunden")
         }
@@ -153,11 +169,21 @@ final class RestockUITests: XCTestCase {
         // ("Lidl, 2x pro Woche, Liste ist leer"), kein reiner "Lidl"-Text-Button.
         let lidlTile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Lidl,")).firstMatch
         XCTAssertTrue(lidlTile.waitForExistence(timeout: 5), "Lidl-Kachel nicht auf dem Home-Screen gefunden")
+        // Existenz reicht nicht: Solange ein Sheet darüber liegt, steht die Kachel in der
+        // Hierarchie, ein Tipp geht aber ins Leere und der Test landet im falschen Bildschirm.
+        expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: lidlTile)
+        waitForExpectations(timeout: 5)
         lidlTile.tap()
 
         let quickAddField = app.textFields["Schnell hinzufügen…"]
         XCTAssertTrue(quickAddField.waitForExistence(timeout: 5), "Schnelleingabe-Feld in StoreDetailView nicht gefunden")
         quickAddField.tap()
+        // Nicht sofort tippen: Die Section bricht beim Fokuswechsel neu um (ProductSuggestionChips
+        // blenden ein), der Fokus liegt erst danach am Feld. Ohne dieses Warten scheitert die
+        // Eingabe mit "Neither element nor any descendant has keyboard focus".
+        let hasKeyboardFocus = NSPredicate(format: "hasKeyboardFocus == true")
+        expectation(for: hasKeyboardFocus, evaluatedWith: quickAddField)
+        waitForExpectations(timeout: 10)
         quickAddField.typeText("Testartikel")
         app.keyboards.buttons["Fortfahren"].tap() // Submit-Label dieses Feldes ist "Fortfahren", nicht "Return"
 
@@ -168,7 +194,9 @@ final class RestockUITests: XCTestCase {
         // die neue Free-Plan-Limit-Verkabelung ab (PremiumService.canShareAdditionalList in
         // StoreDetailView.swift). Da debugAllFeaturesUnlocked aktuell `true` ist, wird direkt
         // StoreShareSheet erwartet, keine Paywall.
-        let shareButton = app.buttons.matching(NSPredicate(format: "label CONTAINS 'person.2'")).firstMatch
+        // Gesucht wird die sprachunabhaengige Kennung, nicht die Beschriftung: Das Element ist
+        // `identifier: 'person.2', label: 'Zwei Personen'` — der Symbolname steht nie im Label.
+        let shareButton = app.buttons.matching(NSPredicate(format: "identifier == 'person.2'")).firstMatch
         XCTAssertTrue(shareButton.waitForExistence(timeout: 5), "Teilen-Button in StoreDetailView nicht gefunden")
         shareButton.tap()
 

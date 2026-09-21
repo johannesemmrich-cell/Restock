@@ -45,13 +45,13 @@ Der CI-Job `ui-test` ist rot, weil die UI-Tests Bedienelemente über deutsche Be
 | File | Change Type | Description |
 |------|-------------|-------------|
 | `Restock.xcodeproj/xcshareddata/xcschemes/Restock.xcscheme` | MODIFY | `language = "de"` und `region = "DE"` am `<TestAction>`-Element ergänzen. |
-| `RestockUITests/RestockUITests.swift` | MODIFY | (a) Vor `typeText` auf den Tastaturfokus warten statt sofort zu tippen; (b) Teilen-Knopf über `identifier == "person.2"` statt über die Beschriftung suchen; (c) Kopfkommentar ergänzen, dass die deutschen Beschriftungen an die Testsprache im Scheme gekoppelt sind. |
+| `RestockUITests/RestockUITests.swift` | MODIFY | (a) Vor `typeText` auf den Tastaturfokus warten statt sofort zu tippen; (b) Teilen-Knopf über `identifier == "person.2"` statt über die Beschriftung suchen; (c) Kopfkommentar ergänzen, dass die deutschen Beschriftungen an die Testsprache im Scheme gekoppelt sind; (d) StoreSetupView-Sheet nicht mehr per `app.swipeDown()` schließen, sondern auf den „Bearbeiten"-Button warten und das Sheet per `press(forDuration:thenDragTo:)` von seiner Titelzeile bis zum unteren Rand ziehen, dazu vor `lidlTile.tap()` eine `isHittable == true`-Expectation (5 s) — siehe Implementation Details 3d. |
 
 **Ausdrücklich NICHT geändert:** `.github/workflows/ci.yml` und `scripts/run-share-extension-uitest.sh` — beide erben die Scheme-Einstellung; sie zusätzlich zu ändern schüfe zwei Wahrheiten. Kein Produktcode der App wird angefasst.
 
 ### Estimated Changes
-- Files: 2
-- LoC: +18/-4
+- Files: 3 (Scheme, `RestockUITests.swift`, diese Spec)
+- LoC: +35/-5 tatsächlich — Scheme +3/-1, `RestockUITests.swift` +30/-2, Spec +2/-2 (Timeout 3 s → 10 s). Ursprüngliche Schätzung +18/-4 über 2 Dateien; Differenz stammt aus Punkt (d), der erst im GREEN-Lauf sichtbar wurde.
 - Risiko: NIEDRIG — kein Produktcode, keine Abhängigkeit, keine Datenmigration. Das Scheme betrifft ausschließlich die Testaktion (Cmd+U), nicht Start/Debug/Archive.
 
 ## Implementation Details
@@ -69,14 +69,35 @@ Der CI-Job `ui-test` ist rot, weil die UI-Tests Bedienelemente über deutsche Be
 quickAddField.tap()
 let hasFocus = NSPredicate(format: "hasKeyboardFocus == true")
 expectation(for: hasFocus, evaluatedWith: quickAddField)
-waitForExpectations(timeout: 3)
+waitForExpectations(timeout: 10)
 quickAddField.typeText("...")
 
 // 3b: Teilen-Knopf über die sprachunabhängige Kennung statt über die Beschriftung
 let shareButton = app.buttons.matching(
     NSPredicate(format: "identifier == 'person.2'")
 ).firstMatch
+
+// 3d: StoreSetupView-Sheet deterministisch schließen statt blind zu wischen
+let editButton = app.buttons["Bearbeiten"]
+XCTAssertTrue(editButton.waitForExistence(timeout: 5), "...")
+app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
+    .press(forDuration: 0.2, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
+// ... und vor dem Tipp auf die Kachel sicherstellen, dass nichts mehr darüber liegt
+expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: lidlTile)
+waitForExpectations(timeout: 5)
+lidlTile.tap()
 ```
+
+**Zu 3d — Ergänzung nach dem GREEN-Lauf (nicht Teil der ursprünglichen Spec):** `app.swipeDown()` wischt in der
+Bildschirmmitte und traf dort die `List` im StoreSetupView-Sheet — die Liste scrollte, das Sheet blieb offen. Alle
+Elemente des Home-Screens dahinter (Lidl-Kachel, Schnelleingabe-Feld, später der Teilen-Knopf) standen zwar in der
+Accessibility-Hierarchie, waren aber nicht antippbar: XCUITest meldete `Computed hit point {-1, -1} after scrolling to
+visible`, der Tipp ging ins Leere, und die anschließende Fokus-Expectation lief in den Timeout. Beleg: Bildschirmaufnahme
+im xcresult des Laufs vom 21.09.2026 14:34 (letztes Bild zeigt das offene Sheet „Läden" mit Lidl) sowie Frame-Vergleich —
+das gefundene Textfeld hatte den HomeView-Frame `{{60.3, 299.0}, {245.7, 22.0}}`, identisch zum Start-Hierarchie-Dump,
+nicht den Frame des Feldes in StoreDetailView. Dieser Defekt war im RED-Lauf unsichtbar, weil der Test dort schon am
+ersten Schritt (`„Läden einrichten"` auf englischem Gerät nicht gefunden) abbrach und nie bis zum Sheet kam. Die
+Änderung betrifft ausschließlich den Testablauf, kein Produktverhalten.
 
 ## Expected Behavior
 
@@ -87,7 +108,7 @@ let shareButton = app.buttons.matching(
 ## Error Handling
 
 - Übersteuert jemand weiterhin explizit mit `-testLanguage en -testRegion US`, gilt laut `man xcodebuild` diese Kommandozeilenangabe statt der Scheme-Einstellung — die drei ursprünglichen Fehlschläge treten dann bewusst wieder auf. Das ist die in diesem Ticket geforderte Negativkontrolle, kein Fehlerfall.
-- Bekommt `quickAddField` innerhalb von 3 Sekunden weiterhin keinen Tastaturfokus, schlägt der Test mit einer klaren Timeout-Meldung der Expectation fehl statt mit der bisherigen sofortigen, kryptischen Meldung `Neither element nor any descendant has keyboard focus`.
+- Bekommt `quickAddField` innerhalb von 10 Sekunden weiterhin keinen Tastaturfokus, schlägt der Test mit einer klaren Timeout-Meldung der Expectation fehl statt mit der bisherigen sofortigen, kryptischen Meldung `Neither element nor any descendant has keyboard focus`.
 - Existiert kein Element mit `identifier == "person.2"`, schlägt der zugehörige Zugriff mit einer klaren „no matches found"-Meldung fehl; es gibt keinen stillen Rückfall auf die alte, sprachabhängige Suche über `label`.
 
 ## Known Limitations

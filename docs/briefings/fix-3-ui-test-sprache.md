@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/testing/ui-test-language.md
-spec_sha256: 69d95eae9090096ca2718642227a5df837cd3244a1d7ca716b09e149517b1473
+spec_sha256: fbfadac0a46ae9a42658332c0c07fec4f2874543ac087a5d570d25ddc5225c7f
 ---
 
 # PO-Briefing: fix-3-ui-test-sprache
@@ -11,22 +11,22 @@ spec_sha256: 69d95eae9090096ca2718642227a5df837cd3244a1d7ca716b09e149517b1473
 
 ## Was gebaut wird
 
-Automatische App-Prüfungen laufen wieder zuverlässig auf Deutsch, unabhängig davon, wo sie gestartet werden.
+Die App-Tests laufen künftig zuverlässig auf Deutsch, damit die Qualitätsprüfung nicht mehr grundlos rot meldet.
 
 ## Definition of Done
 
-Der automatische Prüflauf zeigt nach der Änderung keine Fehlschläge mehr, weder online noch lokal.
+Der automatische Testlauf zeigt keine Fehlschläge mehr, weder im Hintergrund noch bei wiederholten lokalen Läufen.
 
 ## Wie geprüft wird
 
-Automatische Testläufe bestätigen die Sprachumstellung samt Gegenprobe auf Englisch; sie prüfen keine sichtbaren App-Änderungen, weil keine gemacht wurden.
+Wiederholte automatische Testläufe auf Deutsch und Englisch belegen den Fix; ob die App über mehrere Sitzungen stabil bleibt, prüft das nicht.
 
 ## Kritische Anmerkungen
 
-- Spec behebt zusätzlich zwei weitere, im Ticket nicht genannte Testfehler – mehr Umfang als ursprünglich verlangt.
-- Empfohlene robustere Lösung (technische Kennungen statt Text) wird bewusst nicht umgesetzt, macht künftige Textänderungen wieder riskant.
-- Ob die Sprachumstellung auch den separaten Prozess der Teilen-Erweiterung erfasst, ist laut Spec unbewiesen.
+- Der neue Schließ-Mechanismus für das Läden-Fenster hat keinen eigenen Test, nur einen Screenshot-Beleg.
+- Das ursprünglich gemeldete Tipp-Problem (Kachel nicht klickbar) bleibt bewusst unbehoben, tritt nur bei lange genutzten Testgeräten auf.
+- Umfang wuchs seit letzter Prüfung: Änderungsmenge fast verdoppelt, ein vierter Korrekturpunkt kam nachträglich dazu.
 
 ## Freigabe-Frage
 
-Ist es akzeptabel, zwei zusätzliche Testfehler mit zu beheben und die dauerhaftere Lösung auf später zu verschieben?
+Reicht die Zuverlässigkeit auf einem frisch zurückgesetzten Testgerät, obwohl das alte Tipp-Problem bei länger genutzten Geräten bestehen bleibt?

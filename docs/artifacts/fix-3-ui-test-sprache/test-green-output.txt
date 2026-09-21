@@ -1,0 +1,18 @@
+Simulator: Restock-UITest-Verify (64803776-A0BA-4209-89E5-B59887107CA4)
+
+Lauf 1 — Aufruf wie in der CI, ohne -testLanguage/-testRegion (AC-2, AC-4, AC-5)
+        Gerätesprache: (en)
+        Executed 5 tests, with 1 test skipped and 0 failures (0 unexpected) in 101.822 (101.842) seconds
+  PASS  AC-2: Standardlauf ohne Sprachschalter zeigt 0 Fehlschläge.
+  PASS  AC-4: Schnelleingabe erhält den Tastaturfokus, Texteingabe gelingt.
+  PASS  AC-5: Teilen-Knopf wird über die sprachunabhängige Kennung gefunden.
+
+Lauf 2 — Negativkontrolle mit -testLanguage en -testRegion US (AC-3)
+        Executed 5 tests, with 1 test skipped and 3 failures (0 unexpected) in 109.186 (109.318) seconds
+  PASS  AC-3: Negativkontrolle zeigt exakt die drei ursprünglichen Fehlschläge.
+
+Protokolle: docs/artifacts/fix-3-ui-test-sprache/run-default-language.txt
+            docs/artifacts/fix-3-ui-test-sprache/run-negative-control-en.txt
+
+ERGEBNIS: alle geprüften Kriterien erfüllt (AC-2 bis AC-5).
+EXIT=0

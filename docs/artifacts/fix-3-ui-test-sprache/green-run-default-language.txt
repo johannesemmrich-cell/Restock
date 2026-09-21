@@ -1,0 +1,567 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project Restock.xcodeproj -scheme Restock -destination "platform=iOS Simulator,id=64803776-A0BA-4209-89E5-B59887107CA4" "-only-testing:RestockUITests" -skipMacroValidation CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES AD_HOC_CODE_SIGNING_ALLOWED=YES
+
+Build settings from command line:
+    AD_HOC_CODE_SIGNING_ALLOWED = YES
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+    CODE_SIGNING_REQUIRED = NO
+
+note: Using codesigning identity override: -
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCart/Assets.xcassets /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCart/Preview Content/Preview Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+Build description signature: 515809aa3a9d8993c35c91927348a891
+Build description path: /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/XCBuildData/515809aa3a9d8993c35c91927348a891.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension.debug.dylib normal (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -filelist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/Objects-normal/arm64/RestockShareExtension.LinkFileList -install_name @rpath/RestockShareExtension.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/../../Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/Objects-normal/arm64/RestockShareExtension_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/Objects-normal/arm64/RestockShareExtension_dependency_info.dat -fapplication-extension -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/Objects-normal/arm64/RestockShareExtension.swiftmodule -Xlinker -alias -Xlinker _NSExtensionMain -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension.debug.dylib
+
+ConstructStubExecutorLinkFileList /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension-ExecutorLinkFileList-normal-arm64.txt (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    construct-stub-executor-link-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library without Swift entry point. (in target 'RestockShareExtension' from project 'Restock')
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension normal (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/../../Frameworks -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_entry -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension-DebugEntryPoint-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension-ExecutorLinkFileList-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension.appex-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension.appex-Simulated.xcent.der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/__preview.dylib normal (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -install_name @rpath/RestockShareExtension.debug.dylib -Xlinker -dead_strip -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/Objects-normal/arm64/RestockShareExtension_dependency_info.dat -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension.appex-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension.appex-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/__preview.dylib
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockShareExtension/Info.plist (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockShareExtension/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist
+
+ExtractAppIntentsMetadata (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name RestockShareExtension --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 18.0 --bundle-identifier com.johannesemmrich.Restock.RestockShareExtension --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex --target-triple arm64-apple-ios18.0-simulator --binary-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension --dependency-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/Objects-normal/arm64/RestockShareExtension_dependency_info.dat --stringsdata-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/Objects-normal/arm64/RestockShareExtension.SwiftFileList --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension.DependencyMetadataFileList --static-metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension.DependencyStaticMetadataFileList --swift-const-vals-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/Objects-normal/arm64/RestockShareExtension.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-09-21 17:14:07.955 appintentsmetadataprocessor[2989:60478487] Starting appintentsmetadataprocessor export
+2026-09-21 17:14:07.961 appintentsmetadataprocessor[2989:60478487] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension.debug.dylib (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension.debug.dylib
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/__preview.dylib (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/__preview.dylib
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension.appex.xcent --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets.debug.dylib normal (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -filelist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/Objects-normal/arm64/SmartCartWidgets.LinkFileList -install_name @rpath/SmartCartWidgets.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/../../Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/Objects-normal/arm64/SmartCartWidgets_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/Objects-normal/arm64/SmartCartWidgets_dependency_info.dat -fapplication-extension -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/Objects-normal/arm64/SmartCartWidgets.swiftmodule -Xlinker -alias -Xlinker _NSExtensionMain -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets.debug.dylib
+
+ConstructStubExecutorLinkFileList /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets-ExecutorLinkFileList-normal-arm64.txt (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    construct-stub-executor-link-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'SmartCartWidgets' from project 'Restock')
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets normal (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/../../Frameworks -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_entry -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets-DebugEntryPoint-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets-ExecutorLinkFileList-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets.appex-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets.appex-Simulated.xcent.der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/__preview.dylib normal (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -install_name @rpath/SmartCartWidgets.debug.dylib -Xlinker -dead_strip -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/Objects-normal/arm64/SmartCartWidgets_dependency_info.dat -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets.appex-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets.appex-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/__preview.dylib
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCartWidgets/Info.plist (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCartWidgets/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist
+
+ExtractAppIntentsMetadata (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name SmartCartWidgets --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 18.0 --bundle-identifier com.johannesemmrich.Restock.SmartCartWidgets --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex --target-triple arm64-apple-ios18.0-simulator --binary-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets --dependency-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/Objects-normal/arm64/SmartCartWidgets_dependency_info.dat --stringsdata-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/Objects-normal/arm64/SmartCartWidgets.SwiftFileList --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets.DependencyMetadataFileList --static-metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets.DependencyStaticMetadataFileList --swift-const-vals-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/Objects-normal/arm64/SmartCartWidgets.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-09-21 17:14:08.667 appintentsmetadataprocessor[3009:60478594] Starting appintentsmetadataprocessor export
+2026-09-21 17:14:08.670 appintentsmetadataprocessor[3009:60478594] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets.debug.dylib (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets.debug.dylib
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/__preview.dylib (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/__preview.dylib
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets.appex.xcent --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib normal (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -filelist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock.LinkFileList -install_name @rpath/Restock.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock.swiftmodule -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib
+
+ConstructStubExecutorLinkFileList /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock-ExecutorLinkFileList-normal-arm64.txt (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    construct-stub-executor-link-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'Restock' from project 'Restock')
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock normal (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/Frameworks -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock-ExecutorLinkFileList-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.app-Simulated.xcent.der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib normal (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -install_name @rpath/Restock.debug.dylib -Xlinker -dead_strip -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock_dependency_info.dat -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.app-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks -remove-static-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks -remove-static-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+ExtractAppIntentsMetadata (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name Restock --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 18.0 --bundle-identifier com.johannesemmrich.Restock --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app --target-triple arm64-apple-ios18.0-simulator --binary-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock --dependency-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock_dependency_info.dat --stringsdata-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock.SwiftFileList --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.DependencyMetadataFileList --static-metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.DependencyStaticMetadataFileList --swift-const-vals-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-09-21 17:14:14.418 appintentsmetadataprocessor[3066:60479020] Starting appintentsmetadataprocessor export
+2026-09-21 17:14:14.456 appintentsmetadataprocessor[3066:60479020] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests normal (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -filelist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -bundle_loader /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock -Xlinker -object_path_lto -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests
+
+ExtractAppIntentsMetadata (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name RestockTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 18.0 --bundle-identifier com.johannesemmrich.Restock.RestockTests --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest --target-triple arm64-apple-ios18.0-simulator --binary-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests --dependency-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_dependency_info.dat --stringsdata-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests.DependencyMetadataFileList --static-metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-09-21 17:14:16.020 appintentsmetadataprocessor[3083:60479204] Starting appintentsmetadataprocessor export
+2026-09-21 17:14:16.182 appintentsmetadataprocessor[3083:60479204] Extracted no relevant App Intents symbols, skipping writing output
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.app.xcent --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app
+
+Validate /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-validationUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app -shallow-bundle -infoplist-subpath Info.plist
+
+ValidateEmbeddedBinary /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/usr/bin/embeddedBinaryValidationUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -signing-cert - -info-plist-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+ValidateEmbeddedBinary /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/usr/bin/embeddedBinaryValidationUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -signing-cert - -info-plist-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/ProductTypeInfoPlistAdditions.plist -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests normal (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -filelist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.xctest-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.xctest-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests
+
+ExtractAppIntentsMetadata (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name RestockUITests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 18.0 --bundle-identifier com.johannesemmrich.Restock.RestockUITests --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest --target-triple arm64-apple-ios18.0-simulator --binary-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --dependency-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_dependency_info.dat --stringsdata-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.DependencyMetadataFileList --static-metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-09-21 17:14:18.870 appintentsmetadataprocessor[3116:60479527] Starting appintentsmetadataprocessor export
+2026-09-21 17:14:18.872 appintentsmetadataprocessor[3116:60479527] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-09-21 17:14:40.919860+0200 RestockUITests-Runner[3206:60480867] [Default] Running tests...
+objc[3206]: Class UIAccessibilityLoaderWebShared is implemented in both /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.HEEukX/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x104d84398) and /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.HEEukX/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x107ee8310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'All tests' started at 2026-09-21 17:15:05.198.
+Test Suite 'RestockUITests.xctest' started at 2026-09-21 17:15:05.200.
+Test Suite 'ReceiptShareExtensionTests' started at 2026-09-21 17:15:05.200.
+Test Case '-[RestockUITests.ReceiptShareExtensionTests testSharingAReceiptPhotoReachesTheSuccessScreen]' started.
+    t =     0.01s Start Test at 2026-09-21 17:15:05.207
+    t =     0.54s Set Up
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockUITests/ReceiptShareExtensionTests.swift:65: -[RestockUITests.ReceiptShareExtensionTests testSharingAReceiptPhotoReachesTheSuccessScreen] : Test skipped - Übersprungen: Dieser Test braucht die Vorbereitung durch                 scripts/run-share-extension-uitest.sh (Bon-Bild per `xcrun simctl addmedia` in                 der Mediathek des Simulators). Ein Testprozess kann das nicht selbst herstellen.                 Zum Ausführen: `bash scripts/run-share-extension-uitest.sh`.
+    t =     0.67s Tear Down
+Test Case '-[RestockUITests.ReceiptShareExtensionTests testSharingAReceiptPhotoReachesTheSuccessScreen]' skipped (0.753 seconds).
+Test Suite 'ReceiptShareExtensionTests' passed at 2026-09-21 17:15:05.959.
+	 Executed 1 test, with 1 test skipped and 0 failures (0 unexpected) in 0.753 (0.759) seconds
+Test Suite 'RestockUITests' started at 2026-09-21 17:15:05.961.
+Test Case '-[RestockUITests.RestockUITests testAddStoreAndQuickAddItemShowsPriceWithoutCrash]' started.
+    t =     0.00s Start Test at 2026-09-21 17:15:05.962
+    t =     0.02s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+    t =     0.04s     Launch com.johannesemmrich.Restock
+2026-09-21 17:15:06.501 xcodebuild[2909:60477561] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-21 17:15:06.501 xcodebuild[2909:60477561] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     9.23s         Setting up automation session
+    t =    16.07s         Wait for com.johannesemmrich.Restock to idle
+    t =    18.51s Waiting 3.0s for "Lidl" StaticText to exist
+    t =    19.55s     Checking `Expect predicate `existsNoRetry == 1` for object "Lidl" StaticText`
+    t =    19.56s         Checking existence of `"Lidl" StaticText`
+    t =    19.94s         Capturing element debug description
+    t =    20.58s     Checking `Expect predicate `existsNoRetry == 1` for object "Lidl" StaticText`
+    t =    20.59s         Checking existence of `"Lidl" StaticText`
+    t =    20.66s         Capturing element debug description
+    t =    21.51s     Checking `Expect predicate `existsNoRetry == 1` for object "Lidl" StaticText`
+    t =    21.51s         Checking existence of `"Lidl" StaticText`
+    t =    21.56s         Capturing element debug description
+    t =    21.56s     Checking existence of `"Lidl" StaticText`
+    t =    21.61s Collecting debug information to assist test failure triage
+    t =    21.61s     Requesting snapshot of accessibility hierarchy for app with pid 3367
+    t =    21.72s Waiting 15.0s for "Läden einrichten" Button to exist
+    t =    22.75s     Checking `Expect predicate `existsNoRetry == 1` for object "Läden einrichten" Button`
+    t =    22.75s         Checking existence of `"Läden einrichten" Button`
+    t =    22.79s Tap "Läden einrichten" Button
+    t =    22.79s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.79s     Find the "Läden einrichten" Button
+    t =    22.83s     Check for interrupting elements affecting "Läden einrichten" Button
+    t =    23.06s     Synthesize event
+    t =    23.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.13s Waiting 5.0s for "Läden aus anderen Ländern hinzufügen" Button to exist
+    t =    25.18s     Checking `Expect predicate `existsNoRetry == 1` for object "Läden aus anderen Ländern hinzufügen" Button`
+    t =    25.18s         Checking existence of `"Läden aus anderen Ländern hinzufügen" Button`
+    t =    25.37s Tap "Läden aus anderen Ländern hinzufügen" Button
+    t =    25.37s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.38s     Find the "Läden aus anderen Ländern hinzufügen" Button
+    t =    25.45s     Check for interrupting elements affecting "Läden aus anderen Ländern hinzufügen" Button
+    t =    25.52s     Synthesize event
+    t =    25.87s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.13s Waiting 5.0s for "Laden suchen (alle Länder)" TextField to exist
+    t =    27.18s     Checking `Expect predicate `existsNoRetry == 1` for object "Laden suchen (alle Länder)" TextField`
+    t =    27.18s         Checking existence of `"Laden suchen (alle Länder)" TextField`
+    t =    27.36s Tap "Laden suchen (alle Länder)" TextField
+    t =    27.37s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.41s     Find the "Laden suchen (alle Länder)" TextField
+    t =    27.51s     Check for interrupting elements affecting "Laden suchen (alle Länder)" TextField
+    t =    27.63s     Synthesize event
+    t =    27.96s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.38s Type 'Lidl' into "Laden suchen (alle Länder)" TextField
+    t =    30.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.69s     Find the "Laden suchen (alle Länder)" TextField
+    t =    30.86s     Check for interrupting elements affecting "Laden suchen (alle Länder)" TextField
+    t =    30.96s     Synthesize event
+    t =    31.25s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.26s Waiting 5.0s for "plus.circle.fill" Button to exist
+    t =    32.31s     Checking `Expect predicate `existsNoRetry == 1` for object "plus.circle.fill" Button`
+    t =    32.31s         Checking existence of `"plus.circle.fill" Button`
+    t =    32.52s Tap "plus.circle.fill" Button
+    t =    32.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    32.53s     Find the "plus.circle.fill" Button
+    t =    32.70s     Check for interrupting elements affecting "plus.circle.fill" Button
+    t =    32.79s     Synthesize event
+<unknown>:0: warning: -[RestockUITests.RestockUITests testAddStoreAndQuickAddItemShowsPriceWithoutCrash] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    33.17s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.38s Tap "Fertig" Button
+    t =    33.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.42s     Find the "Fertig" Button
+    t =    33.61s     Check for interrupting elements affecting "Fertig" Button
+    t =    33.71s     Synthesize event
+    t =    34.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    34.57s Waiting 5.0s for "Bearbeiten" Button to exist
+    t =    35.60s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =    35.60s         Checking existence of `"Bearbeiten" Button`
+    t =    35.74s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.15] for 0.2 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.95] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    35.74s     Wait for com.johannesemmrich.Restock to idle
+    t =    35.74s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    35.80s     Check for interrupting elements affecting "Restock" Application
+    t =    35.86s     Synthesize event
+    t =    35.86s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    35.90s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    35.95s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    36.00s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    36.05s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    38.00s     Wait for com.johannesemmrich.Restock to idle
+    t =    38.38s Waiting 5.0s for "Lidl" StaticText to exist
+    t =    39.41s     Checking `Expect predicate `existsNoRetry == 1` for object "Lidl" StaticText`
+    t =    39.41s         Checking existence of `"Lidl" StaticText`
+    t =    39.45s Waiting 5.0s for Button (First Match) to exist
+    t =    40.48s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    40.48s         Checking existence of `Button (First Match)`
+    t =    41.55s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    41.56s     Find the Button (First Match)
+    t =    41.62s Tap "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    41.62s     Wait for com.johannesemmrich.Restock to idle
+    t =    41.62s     Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    41.67s     Check for interrupting elements affecting "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    41.71s     Synthesize event
+    t =    42.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    42.23s Waiting 5.0s for "Schnell hinzufügen…" TextField to exist
+    t =    43.32s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =    43.32s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =    43.39s Tap "Schnell hinzufügen…" TextField
+    t =    43.39s     Wait for com.johannesemmrich.Restock to idle
+    t =    43.40s     Find the "Schnell hinzufügen…" TextField
+    t =    43.45s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    43.50s     Synthesize event
+    t =    43.82s     Wait for com.johannesemmrich.Restock to idle
+    t =    44.97s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    44.97s     Find the "Schnell hinzufügen…" TextField
+    t =    45.04s Type 'Testartikel' into "Schnell hinzufügen…" TextField
+    t =    45.04s     Wait for com.johannesemmrich.Restock to idle
+    t =    45.05s     Find the "Schnell hinzufügen…" TextField
+    t =    45.11s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    45.16s     Synthesize event
+    t =    45.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    45.57s Tap "Fortfahren" Button
+    t =    45.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    45.58s     Find the "Fortfahren" Button
+    t =    45.65s     Check for interrupting elements affecting "Fortfahren" Button
+    t =    45.70s     Synthesize event
+    t =    46.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    46.50s Waiting 5.0s for "Testartikel" StaticText to exist
+    t =    47.59s     Checking `Expect predicate `existsNoRetry == 1` for object "Testartikel" StaticText`
+    t =    47.59s         Checking existence of `"Testartikel" StaticText`
+    t =    47.82s Waiting 5.0s for Button (First Match) to exist
+    t =    48.87s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    48.87s         Checking existence of `Button (First Match)`
+    t =    48.95s Tap Button (First Match)
+    t =    48.95s     Wait for com.johannesemmrich.Restock to idle
+    t =    48.96s     Find the Button (First Match)
+    t =    49.02s     Check for interrupting elements affecting "person.2" Button
+    t =    49.08s     Synthesize event
+    t =    49.39s     Wait for com.johannesemmrich.Restock to idle
+    t =    50.12s Waiting 5.0s for "Code generieren" Button to exist
+    t =    51.15s     Checking `Expect predicate `existsNoRetry == 1` for object "Code generieren" Button`
+    t =    51.15s         Checking existence of `"Code generieren" Button`
+    t =    51.21s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    51.42s Added attachment named 'StoreShareSheet'
+    t =    51.42s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    51.59s Added attachment named 'StoreDetailView-nach-QuickAdd'
+    t =    51.59s Tear Down
+Test Case '-[RestockUITests.RestockUITests testAddStoreAndQuickAddItemShowsPriceWithoutCrash]' passed (51.897 seconds).
+Test Case '-[RestockUITests.RestockUITests testAppLaunchesToHomeScreen]' started.
+    t =     0.00s Start Test at 2026-09-21 17:15:57.860
+    t =     0.07s Set Up
+    t =     0.07s Open com.johannesemmrich.Restock
+    t =     0.07s     Launch com.johannesemmrich.Restock
+    t =     0.08s         Terminate com.johannesemmrich.Restock:3367
+2026-09-21 17:15:58.966 xcodebuild[2909:60477561] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-21 17:15:58.966 xcodebuild[2909:60477561] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.33s         Setting up automation session
+    t =     6.93s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testAppLaunchesToHomeScreen] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     9.72s Waiting 15.0s for "Restock" StaticText to exist
+    t =    10.74s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock" StaticText`
+    t =    10.74s         Checking existence of `"Restock" StaticText`
+    t =    11.21s Tear Down
+Test Case '-[RestockUITests.RestockUITests testAppLaunchesToHomeScreen]' passed (11.444 seconds).
+Test Case '-[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable]' started.
+    t =     0.00s Start Test at 2026-09-21 17:16:09.306
+    t =     0.05s Set Up
+    t =     0.06s Open com.johannesemmrich.Restock
+    t =     0.06s     Launch com.johannesemmrich.Restock
+    t =     0.06s         Terminate com.johannesemmrich.Restock:3577
+2026-09-21 17:16:10.427 xcodebuild[2909:60477561] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-21 17:16:10.428 xcodebuild[2909:60477561] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.45s         Setting up automation session
+    t =     8.35s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    11.68s Waiting 15.0s for "Geteilter Liste beitreten" Button to exist
+    t =    12.69s     Checking `Expect predicate `existsNoRetry == 1` for object "Geteilter Liste beitreten" Button`
+    t =    12.69s         Checking existence of `"Geteilter Liste beitreten" Button`
+    t =    12.91s Tap "Geteilter Liste beitreten" Button
+    t =    12.91s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.92s     Find the "Geteilter Liste beitreten" Button
+    t =    12.96s     Check for interrupting elements affecting "Geteilter Liste beitreten" Button
+    t =    13.03s     Synthesize event
+    t =    13.36s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.80s Waiting 5.0s for TextField (First Match) to exist
+    t =    14.82s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =    14.82s         Checking existence of `TextField (First Match)`
+    t =    15.88s Find the TextField (First Match)
+    t =    15.99s Waiting 5.0s for "Abbrechen" Button to exist
+    t =    17.00s     Checking `Expect predicate `existsNoRetry == 1` for object "Abbrechen" Button`
+    t =    17.01s         Checking existence of `"Abbrechen" Button`
+    t =    17.05s Find the "Abbrechen" Button
+    t =    17.12s Tap "Z.B. ABCD-EFG-HIJ" TextField
+    t =    17.12s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.12s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    17.17s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    17.21s     Synthesize event
+    t =    17.51s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.40s Type 'TESTCODE12' into "Z.B. ABCD-EFG-HIJ" TextField
+    t =    18.40s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.72s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    18.87s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    18.92s     Synthesize event
+    t =    19.30s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.31s Waiting 15.0s for "Kein Store mit diesem Code gefunden." StaticText to exist
+    t =    20.32s     Checking `Expect predicate `existsNoRetry == 1` for object "Kein Store mit diesem Code gefunden." StaticText`
+    t =    20.32s         Checking existence of `"Kein Store mit diesem Code gefunden." StaticText`
+    t =    20.38s         Capturing element debug description
+    t =    21.40s     Checking `Expect predicate `existsNoRetry == 1` for object "Kein Store mit diesem Code gefunden." StaticText`
+    t =    21.40s         Checking existence of `"Kein Store mit diesem Code gefunden." StaticText`
+    t =    21.47s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    21.66s Added attachment named 'JoinStoreSheet-nach-ungueltigem-Code'
+    t =    21.66s Tap "Abbrechen" Button
+    t =    21.66s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.67s     Find the "Abbrechen" Button
+    t =    21.73s     Check for interrupting elements affecting "Abbrechen" Button
+    t =    21.78s     Synthesize event
+    t =    22.08s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.49s Waiting 5.0s for "Restock" StaticText to exist
+    t =    23.50s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock" StaticText`
+    t =    23.50s         Checking existence of `"Restock" StaticText`
+    t =    23.54s Tear Down
+Test Case '-[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable]' passed (23.803 seconds).
+Test Case '-[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup]' started.
+    t =     0.00s Start Test at 2026-09-21 17:16:33.109
+    t =     0.06s Set Up
+    t =     0.06s Open com.johannesemmrich.Restock
+    t =     0.06s     Launch com.johannesemmrich.Restock
+    t =     0.06s         Terminate com.johannesemmrich.Restock:3625
+2026-09-21 17:16:34.249 xcodebuild[2909:60477561] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-21 17:16:34.250 xcodebuild[2909:60477561] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.36s         Setting up automation session
+    t =     5.48s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     7.34s Waiting 15.0s for "Geteilter Liste beitreten" Button to exist
+    t =     8.37s     Checking `Expect predicate `existsNoRetry == 1` for object "Geteilter Liste beitreten" Button`
+    t =     8.37s         Checking existence of `"Geteilter Liste beitreten" Button`
+    t =     8.46s Tap "Geteilter Liste beitreten" Button
+    t =     8.46s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.46s     Find the "Geteilter Liste beitreten" Button
+    t =     8.48s     Check for interrupting elements affecting "Geteilter Liste beitreten" Button
+    t =     8.50s     Synthesize event
+    t =     8.79s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.28s Waiting 5.0s for TextField (First Match) to exist
+    t =    10.30s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =    10.30s         Checking existence of `TextField (First Match)`
+    t =    11.37s Tap TextField (First Match)
+    t =    11.37s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.38s     Find the TextField (First Match)
+    t =    11.43s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    11.45s     Synthesize event
+    t =    11.74s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.85s Type 'CGU5ZN' into "Z.B. ABCD-EFG-HIJ" TextField
+    t =    11.85s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.22s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    12.29s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    12.32s     Synthesize event
+    t =    12.63s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.63s Waiting 15.0s for "Kein Store mit diesem Code gefunden." StaticText to exist
+    t =    13.65s     Checking `Expect predicate `existsNoRetry == 1` for object "Kein Store mit diesem Code gefunden." StaticText`
+    t =    13.65s         Checking existence of `"Kein Store mit diesem Code gefunden." StaticText`
+    t =    13.69s Tear Down
+Test Case '-[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup]' passed (13.925 seconds).
+Test Suite 'RestockUITests' passed at 2026-09-21 17:16:47.035.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 101.069 (101.075) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-09-21 17:16:47.039.
+	 Executed 5 tests, with 1 test skipped and 0 failures (0 unexpected) in 101.822 (101.840) seconds
+Test Suite 'All tests' passed at 2026-09-21 17:16:47.041.
+	 Executed 5 tests, with 1 test skipped and 0 failures (0 unexpected) in 101.822 (101.842) seconds
+2026-09-21 17:26:47.804 xcodebuild[2909:60483041]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Timed out after 600.0 seconds while waiting for a response from the invoked process
+2026-09-21 17:26:47.859 xcodebuild[2909:60477561] [MT] IDETestOperationsObserverDebug: 748.414 elapsed -- Testing started completed.
+2026-09-21 17:26:47.859 xcodebuild[2909:60477561] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-21 17:26:47.859 xcodebuild[2909:60477561] [MT] IDETestOperationsObserverDebug: 748.415 sec, +748.415 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Logs/Test/Test-Restock-2026.09.21_17-14-02-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started
