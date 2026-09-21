@@ -15,6 +15,8 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
 
 Unit tests live in `RestockTests/` and UI tests in `RestockUITests/`, both run via `xcodebuild test` (Xcode or Simulator). The Share Extension's cross-app flow additionally has `scripts/run-share-extension-uitest.sh`, which drives Photos → Share → Restock in the Simulator and checks the app-group container and crash logs directly, since a plain XCUITest cannot reach into the extension's own process.
 
+The `Restock` scheme's Test Action pins `language="de"` / `region="DE"`, so UI tests always run in German regardless of the simulator's system language — relevant because the CI runner defaults to English. The tests assert on German label text, so this override is what makes them pass there; passing an explicit `-testLanguage`/`-testRegion` on the command line still overrides the scheme setting. `scripts/verify-ui-test-language.sh` proves this on a freshly erased, English-language simulator: one run without a language flag (expected 0 failures) and one with `-testLanguage en -testRegion US` as a negative control (expected the three known failures). Because the UI tests key off displayed text rather than `accessibilityIdentifier`s in the product code, copy changes can break them.
+
 ## Adding new Swift files
 
 Xcode does **not** auto-discover files on disk. Every new `.swift` file must be manually registered in `Restock.xcodeproj/project.pbxproj` in three places:
