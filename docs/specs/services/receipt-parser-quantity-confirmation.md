@@ -2,8 +2,8 @@
 entity_id: receipt-parser-quantity-confirmation
 type: bugfix
 created: 2026-09-21
-updated: 2026-09-21
-status: draft
+updated: 2026-09-22
+status: implemented
 workflow: fix-9-rewe-quantity-weight
 tags: [bugfix, receipt-parser, price-learning]
 ---
@@ -12,7 +12,7 @@ tags: [bugfix, receipt-parser, price-learning]
 
 ## Approval
 
-- [ ] Approved
+- [x] Approved
 
 ## Purpose
 
@@ -156,48 +156,48 @@ Spalten mit Währungssymbol) matchen auf Bestätigungszeilen — `classicCount`/
 
 ### Automated Tests (TDD RED)
 
-- [ ] **AC1 (RED vor dem Fix, GREEN danach):** GIVEN das Rewe-Fixture mit `"LAUGENBROETCHEN 1,56 B"`
+- [x] **AC1 (RED vor dem Fix, GREEN danach):** GIVEN das Rewe-Fixture mit `"LAUGENBROETCHEN 1,56 B"`
   gefolgt von `"4 Stk x 0,39"` WHEN `ReceiptParserService.parse` aufgerufen wird THEN hat die
   Brötchen-Position `quantity == 4`, `weightBasis == nil`, `price == 1.56` (unverändert).
   Test: `RestockTests/ReceiptParserReweTests.swift` —
   `testQuantityAndWeightFollowupLinesDoNotOverrideAlreadyKnownTotal`.
-- [ ] **AC2 (RED vor dem Fix, GREEN danach):** GIVEN das Rewe-Fixture mit
+- [x] **AC2 (RED vor dem Fix, GREEN danach):** GIVEN das Rewe-Fixture mit
   `"BANANE CHIQUITA 1,76 B"` gefolgt von `"0,706 kg x 2,49 EUR/kg"` WHEN `parse` aufgerufen wird
   THEN hat die Bananen-Position `weightBasis == 706`, `quantity == 1`, `price == 1.76`
   (unverändert). Test: `RestockTests/ReceiptParserReweTests.swift` —
   `testQuantityAndWeightFollowupLinesDoNotOverrideAlreadyKnownTotal`.
-- [ ] **AC3 (schon vor dem Fix GREEN, muss GREEN bleiben):** GIVEN das vollständige Rewe-Fixture
+- [x] **AC3 (schon vor dem Fix GREEN, muss GREEN bleiben):** GIVEN das vollständige Rewe-Fixture
   (14 echte Positionen + 2 Bestätigungszeilen + Kopf-/Fuß-/Steuerzeilen) WHEN `parse` aufgerufen
   wird THEN liefert das Ergebnis genau 14 Positionen (keine Phantom-Position durch den entfernten
   Vorfilter), alle übrigen Preise bleiben unverändert. Test:
   `RestockTests/ReceiptParserReweTests.swift` — `testAllFourteenPositionsAreRecognized`,
   `testItemNamesAndPricesAreCorrect`.
-- [ ] **AC4 (RED vor dem Fix, GREEN danach):** GIVEN das vollständige Lidl-Fixture mit
+- [x] **AC4 (RED vor dem Fix, GREEN danach):** GIVEN das vollständige Lidl-Fixture mit
   `"Banane lose  0,82 A"` gefolgt von `"0,638 kg x 1,29  EUR/kg"` WHEN `parse` aufgerufen wird
   THEN hat die Bananen-Position `weightBasis == 638`; alle bestehenden Lidl-Assertions
   (`maultaschen.quantity == 3`, `mandeln.quantity == 2`, `broetchen.quantity == 2`, Namen, Preise)
   bleiben unverändert. Test: `RestockTests/ReceiptParserLidlFullReceiptTests.swift` —
   `testMultiBuyLinesHaveCorrectQuantityInFullReceiptContext`.
-- [ ] **AC5 (schon vor dem Fix GREEN, muss GREEN bleiben):** GIVEN eine Namenszeile OHNE eigenen
+- [x] **AC5 (schon vor dem Fix GREEN, muss GREEN bleiben):** GIVEN eine Namenszeile OHNE eigenen
   Preis gefolgt von einer Gewichts-/Stückzahlzeile (`["Aufschnitt", "0,436 kg x 12,49"]`,
   `["Eier Freiland", "3 Stk x 0,79"]`) WHEN `parse` aufgerufen wird THEN bleibt das bestehende
   Verhalten erhalten: Gesamtpreis = Gewicht × Rate, `weightBasis`/`quantity` wie heute gesetzt.
   Test: `RestockTests/ReceiptParserPriceTests.swift` —
   `testDocumentedWeightLineWithoutSuffixComputesWeightTimesRate`,
   `testPieceCountLineSetsQuantityNotWeightBasis`.
-- [ ] **AC6 (heute GREEN durch den alten Vorfilter, muss nach dem Fix GREEN bleiben, jetzt mit
+- [x] **AC6 (heute GREEN durch den alten Vorfilter, muss nach dem Fix GREEN bleiben, jetzt mit
   anderem Mechanismus):** GIVEN `["Produkt  1,00 A", "3 Stk x 0,50"]` (3 × 0,50 = 1,50 ≠ 1,00, die
   Rechenprobe schlägt fehl) WHEN `parse` aufgerufen wird THEN entsteht genau 1 Position mit
   `quantity == 1`, `weightBasis == nil`, `price == 1.00` — die Bestätigungszeile wird konsumiert,
   aber nicht zugeschrieben und nicht als eigene Position angelegt. Test:
   `RestockTests/ReceiptParserPriceTests.swift` — neuer Test
   `testBareConfirmationLineWithFailedSanityCheckIsConsumedNotAttributed`.
-- [ ] **AC7 (heute GREEN durch den alten Vorfilter, muss nach dem Fix GREEN bleiben):** GIVEN eine
+- [x] **AC7 (heute GREEN durch den alten Vorfilter, muss nach dem Fix GREEN bleiben):** GIVEN eine
   Bestätigungszeile als allererste Zeile der Eingabe (`results` ist beim Erreichen der Zeile noch
   leer, kein `results.last`) WHEN `parse` aufgerufen wird THEN entsteht keine Position und der
   Aufruf stürzt nicht ab. Test: `RestockTests/ReceiptParserPriceTests.swift` — neuer Test
   `testBareConfirmationLineAsFirstLineDoesNotCrash`.
-- [ ] **AC8 (RED vor dem Fix, GREEN danach):** GIVEN dieselbe End-zu-Ende-Kette wie
+- [x] **AC8 (RED vor dem Fix, GREEN danach):** GIVEN dieselbe End-zu-Ende-Kette wie
   `assertLearnedPriceRoundTrip` (Parsing → `EditableReceiptLine.learningQuantity` →
   `perUnitPrice` → `store.learnedPrices` → `ShoppingItem.estimatedLineTotal`) für Brötchen
   (`["LAUGENBROETCHEN 1,56 B", "4 Stk x 0,39"]`) und Banane
@@ -208,22 +208,22 @@ Spalten mit Währungssymbol) matchen auf Bestätigungszeilen — `classicCount`/
 
 ## Acceptance Criteria
 
-- [ ] **AC1:** Rewe-Brötchen (`"LAUGENBROETCHEN 1,56 B"` + `"4 Stk x 0,39"`) → `quantity == 4`,
+- [x] **AC1:** Rewe-Brötchen (`"LAUGENBROETCHEN 1,56 B"` + `"4 Stk x 0,39"`) → `quantity == 4`,
   `weightBasis == nil`, `price == 1.56` unverändert.
-- [ ] **AC2:** Rewe-Banane (`"BANANE CHIQUITA 1,76 B"` + `"0,706 kg x 2,49 EUR/kg"`) →
+- [x] **AC2:** Rewe-Banane (`"BANANE CHIQUITA 1,76 B"` + `"0,706 kg x 2,49 EUR/kg"`) →
   `weightBasis == 706`, `quantity == 1`, `price == 1.76` unverändert.
-- [ ] **AC3:** Das vollständige Rewe-Fixture liefert weiterhin exakt 14 Positionen, alle übrigen
+- [x] **AC3:** Das vollständige Rewe-Fixture liefert weiterhin exakt 14 Positionen, alle übrigen
   Preise unverändert.
-- [ ] **AC4:** Lidl-Fixture (`"Banane lose  0,82 A"` + `"0,638 kg x 1,29  EUR/kg"`) →
+- [x] **AC4:** Lidl-Fixture (`"Banane lose  0,82 A"` + `"0,638 kg x 1,29  EUR/kg"`) →
   `weightBasis == 638`; alle bestehenden Lidl-Assertions (quantity 3/2/2, Namen, Preise)
   unverändert.
-- [ ] **AC5:** Lidl-Fall Namenszeile ohne Preis (`["Aufschnitt", "0,436 kg x 12,49"]`,
+- [x] **AC5:** Lidl-Fall Namenszeile ohne Preis (`["Aufschnitt", "0,436 kg x 12,49"]`,
   `["Eier Freiland", "3 Stk x 0,79"]`) — bestehendes Verhalten unverändert.
-- [ ] **AC6:** Negativfall (`["Produkt  1,00 A", "3 Stk x 0,50"]`, Rechenprobe schlägt fehl) →
+- [x] **AC6:** Negativfall (`["Produkt  1,00 A", "3 Stk x 0,50"]`, Rechenprobe schlägt fehl) →
   genau 1 Position, `quantity == 1`, `weightBasis == nil`, `price == 1.00`; die Bestätigungszeile
   wird konsumiert, nicht zugeschrieben, nicht zur eigenen Position.
-- [ ] **AC7:** Bestätigungszeile als allererste Zeile → keine Position, kein Absturz.
-- [ ] **AC8:** Preis-Lernen-Durchstich: Brötchen lernen 0,39 €/Stück, Banane lernt
+- [x] **AC7:** Bestätigungszeile als allererste Zeile → keine Position, kein Absturz.
+- [x] **AC8:** Preis-Lernen-Durchstich: Brötchen lernen 0,39 €/Stück, Banane lernt
   1,76/706 €/g (entspricht 2,49 €/kg).
 
 ## Alternativen (verworfen)
@@ -274,3 +274,4 @@ Spalten mit Währungssymbol) matchen auf Bestätigungszeilen — `classicCount`/
 ## Changelog
 
 - 2026-09-21: Initial spec created
+- 2026-09-22: Implementiert und validiert (144 Unit + 5 UI Tests grün, Adversary VERIFIED)

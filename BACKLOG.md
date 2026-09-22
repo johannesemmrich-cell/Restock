@@ -2,6 +2,12 @@
 
 ## Implementiert
 
+### Bon-Parser: Stückzahl/Gewicht aus Bestätigungszeilen (Issue #9, 2026-09-22)
+`droppingRedundantQuantityConfirmationLines` löschte Mengen-/Gewichts-Bestätigungszeilen ("4 Stk x 0,39", "0,706 kg x 2,49 EUR/kg") unter einer Rewe-Positionszeile mit eigenem Gesamtpreis ersatzlos — beim Preis-Lernen (`ReceiptScannerView.save()`) wurde dadurch der volle Zeilen-Gesamtpreis statt des Stück-/Gramm-Preises gelernt (z. B. 1,56 € statt 0,39 € pro Brötchen).
+
+- **`ReceiptParserService.parseClassic`**: neuer Zweig wertet die Bestätigungszeile jetzt aus und schreibt `quantity`/`weightBasis` der vorangehenden Position zu (Rechenprobe |Menge × Rate − Zeilenpreis| ≤ 0,01), ohne deren Preis zu ändern. Eine reine Bestätigungszeile ohne offene Namenszeile wird immer konsumiert, nie zur eigenen Position (Phantom-Schutz).
+- Details, Reproduktion und Test-Nachweis: `docs/specs/services/receipt-parser-quantity-confirmation.md`.
+
 ### "Zeit zum Nachkaufen" einklappbar + Laden-Zuordnung überarbeitet (2026-09-14)
 Nutzerbericht: Artikel landeten trotz nie dort getätigter Käufe immer bei Rewe statt beim tatsächlich genutzten Lidl.
 
@@ -14,6 +20,8 @@ Nutzerbericht: Artikel landeten trotz nie dort getätigter Käufe immer bei Rewe
 
 ### Offen (vertagt): Preis-Bug beim Bon-Scan — falscher Preis bei Eiern
 Nutzer berichtete (2026-09-14): bei einem gescannten Kassenbon zeigte Restock für Eier 3 € an, obwohl auf dem Bon ein anderer Preis stand. Kein Repro-Material (Bon-Foto/genaue Zahlen) verfügbar — `ReceiptParserService.swift` (1300+ Zeilen) ist bereits sehr fein auf viele dokumentierte Einzelfälle austariert; ein Fix auf Verdacht riskiert, andere bereits gelöste Fälle zu brechen. **Nächster Schritt, sobald der Bug erneut auftritt:** Bon-Foto (oder zumindest die genaue Artikelzeile + echter Preis + Laden) sichern, dann gezielt in `ReceiptParserService.parse`/`parseClassic` nachvollziehen.
+
+**Hinweis (2026-09-22):** Ein möglicher Mechanismus dafür ist mit Issue #9 behoben (Bestätigungszeile "N Stk x Preis" wurde verworfen, Gesamtpreis als Stückpreis gelernt) — ohne Bon-Repro aber nicht bestätigt.
 
 ### EU AI Act Art. 50 — geprüft, kein Änderungsbedarf (2026-08-06)
 Im Zuge einer App-übergreifenden EU-AI-Act-Prüfung (siehe auch `~/Developer/Lumio/BACKLOG.md` für die Sunwake-Änderungen) auch Restock durchleuchtet:

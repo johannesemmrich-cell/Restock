@@ -95,6 +95,67 @@ Deckt sich mit `docs/artifacts/fix-9-rewe-quantity-weight/test-green-output.txt`
     Beweis: selbst im Diff gelesen — alter Kommentar (gelöschter Hunk, Titel "Vorfilterung"/"droppen") vs. neuer Kommentar ("Nur hier greifen, wenn KEIN Name/Preis mehr offen", neuer Absatz zu Konsum/Rechenprobe/Toleranz/unangetastetem Preis) — inhaltlich verschoben und an den neuen Mechanismus angepasst, nicht ersatzlos gelöscht.
     Bewertung: **AKZEPTIERT**.
 
+### Runde 3
+
+**Datum:** 2026-09-22. **Grund:** Runde 1+2 (Verdict VERIFIED) sind formal abgelaufen (Alter > 60 min
+seit Freigabe). Der Code ist seit Runde 2 unverändert — belegt durch:
+
+```
+$ git log -1 --format=%H -- SmartCart/Services/ReceiptParserService.swift
+73bdc9edb8d47d7a728ad4d7e49dd7757a06af01
+$ git status --short
+?? docs/artifacts/fix-9-rewe-quantity-weight/validation-full-suite-output.txt
+```
+
+Kein Diff an `ReceiptParserService.swift` seit dem Commit, der Fix und Dialog gemeinsam trägt; die
+einzige Änderung im Arbeitsverzeichnis ist die neue, unversionierte Testprotokoll-Datei selbst.
+Diese Runde führt daher eine echte Neu-Prüfung anhand eines frischen, vollständigen Testlaufs durch
+(`docs/artifacts/fix-9-rewe-quantity-weight/validation-full-suite-output.txt`, xcodebuild test,
+2026-09-22 06:21–06:22), statt Runde 2 bloß zu bestätigen.
+
+**Beleg-Tabelle AC/INV → Protokollzeile bzw. Code-Zeile**
+
+| Punkt | Beleg | Zeile |
+|---|---|---|
+| AC1/AC2 | `Test Case '-[RestockTests.ReceiptParserReweTests testQuantityAndWeightFollowupLinesDoNotOverrideAlreadyKnownTotal]' passed (0.003 seconds).` | validation-full-suite-output.txt:417 |
+| AC3 | `Test Case '-[RestockTests.ReceiptParserReweTests testAllFourteenPositionsAreRecognized]' passed (0.003 seconds).` | validation-full-suite-output.txt:406 |
+| AC3 | `Test Case '-[RestockTests.ReceiptParserReweTests testItemNamesAndPricesAreCorrect]' passed (0.007 seconds).` | validation-full-suite-output.txt:413 |
+| AC4 | `Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testMultiBuyLinesHaveCorrectQuantityInFullReceiptContext]' passed (0.006 seconds).` | validation-full-suite-output.txt:349 |
+| AC4 | `Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testWeightConfirmationLineAttachesGramBasisToBanana]' passed (0.007 seconds).` | validation-full-suite-output.txt:360 |
+| AC5 | `Test Case '-[RestockTests.ReceiptParserPriceTests testDocumentedWeightLineWithoutSuffixComputesWeightTimesRate]' passed (0.001 seconds).` | validation-full-suite-output.txt:377 |
+| AC5 | `Test Case '-[RestockTests.ReceiptParserPriceTests testPieceCountLineSetsQuantityNotWeightBasis]' passed (0.001 seconds).` | validation-full-suite-output.txt:387 |
+| AC6 | `Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineWithFailedSanityCheckIsConsumedNotAttributed]' passed (0.001 seconds).` | validation-full-suite-output.txt:367 |
+| AC7 | `Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineAsFirstLineDoesNotCrash]' passed (0.001 seconds).` | validation-full-suite-output.txt:365 |
+| AC8 | `Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripForReweBroetchenAndBanane]' passed (0.001 seconds).` | validation-full-suite-output.txt:381 |
+| INV1 | Neuer Zweig enthält keine `.price =`-Zuweisung; der Vorzeilenpreis wird nur gelesen (`last.price`), nie geschrieben. Selbst gelesen. | `SmartCart/Services/ReceiptParserService.swift:374-384` |
+| INV2 | `git diff main...HEAD` zeigt an `parse()` nur die entfernte Anwendung des alten Vorfilters (`droppingRedundantQuantityConfirmationLines(...)` → `rawLines.map(repairSplitDecimals)`); die `classicCount`/`euroSuffixCount`-Ermittlung und die Weiche selbst sind nicht im Diff enthalten. Selbst per Diff nachvollzogen. | `git diff main...HEAD -- SmartCart/Services/ReceiptParserService.swift` (Hunk 2) |
+| INV3 | `continue` (Zeile 384) liegt syntaktisch außerhalb des inneren `if let`-Blocks (Zeilen 376–383) — wird also unabhängig vom Ausgang der Rechenprobe erreicht, sobald die äußere Bedingung (374–375) zutrifft. Selbst gelesen, Einrückung geprüft. | `SmartCart/Services/ReceiptParserService.swift:374-384` |
+| INV4 | Dritter Diff-Hunk (neuer Kommentar + neuer Zweig) endet vor dem `" x "`-Zweig; dessen eigener Code-Block (ab `if (lower.contains(" x ") ...` ) taucht im Diff nicht auf. Selbst per Diff nachvollzogen. | `SmartCart/Services/ReceiptParserService.swift:396` (Kontext, unverändert) |
+| INV5 | Alter Kommentar wurde im Diff komplett entfernt (`-`-Zeilen, Titel „Vorfilterung"), ein inhaltlich verwandter, an den neuen Mechanismus angepasster Kommentar erscheint unmittelbar vor dem neuen Zweig (`+`-Zeilen: „Nur hier greifen, wenn KEIN Name/Preis mehr offen ist …", „Die Zeile wird IMMER konsumiert … Stückzahl bzw. Gewicht werden der Vorposition nur dann zugeschrieben, wenn …"). Selbst per Diff gelesen — verschoben und angepasst, nicht ersatzlos gelöscht. | `SmartCart/Services/ReceiptParserService.swift:353-370` |
+| Regression (gesamte Suite) | `Executed 144 tests, with 0 failures (0 unexpected) in 0.622 (0.735) seconds` (RestockTests, zweimal identisch protokolliert für Test-Bundle und "Selected tests"); UI-Tests `Executed 5 tests, with 1 test skipped and 0 failures (0 unexpected) in 47.123 seconds`; abschließend `** TEST SUCCEEDED **`. | validation-full-suite-output.txt:548,550,750,752,761 |
+
+**Neubewertung der Befunde A–D:** Alle vier bleiben unverändert gültig und nicht-blockierend, weil
+der zugrundeliegende Code seit Runde 2 identisch ist (siehe `git log`/`git status` oben — keine
+neue Codeänderung, die einen der Befunde entschärfen oder verschärfen könnte):
+
+- **F-A** (formale Testorganisation, AC4-Assertion in eigener Methode statt Erweiterung der
+  bestehenden): unverändert LOW, nicht-blockierend — inhaltlich weiterhin durch
+  `testWeightConfirmationLineAttachesGramBasisToBanana` (validation-full-suite-output.txt:360)
+  vollständig bewiesen.
+- **F-B** (Fließkomma-Randbedingung bei exakt 0,01 Toleranz): unverändert LOW, nicht-blockierend —
+  betrifft keinen der realen Testfälle (AC2-Diff 0,00206, AC6-Diff 0,50 liegen beide klar außerhalb
+  der Grenze), keine Regression durch diese Runde eingeführt.
+- **F-C** (STORNO-Interaktion mit Bestätigungszeile, Phantom-Position im `" x "`-Zweig):
+  unverändert MEDIUM, nicht-blockierend — nachweislich vorbestehendes Verhalten außerhalb des
+  Fix-Scopes (INV4 bestätigt erneut: 0 Diff-Zeilen im `" x "`-Zweig selbst).
+  Weiterhin als Folge-Issue zu dokumentieren, kein Blocker für diesen Fix.
+- **F-D** (theoretischer Lidl-Mehrfachkauf + weitere Bestätigungszeile überschreibt quantity):
+  unverändert LOW, nicht-blockierend — kein reales Fixture oder AC betroffen, rein spekulativ.
+
+Kein neuer Befund in dieser Runde: Der frische Suite-Lauf (144/0, keine übersehene Kategorie) und
+der erneute Diff-/Code-Abgleich decken sich exakt mit dem Stand aus Runde 2. Keine Verletzung eines
+AC oder einer Invariante gefunden.
+
 ## Findings (Befunde A–D)
 
 ```json

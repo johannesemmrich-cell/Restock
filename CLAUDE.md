@@ -53,6 +53,7 @@ Every process that opens the shared store (main app, Siri intent, widget, Share 
 - **`HabitService`** — reads `PurchaseRecord`s, calls `consumptionPattern()` on each group, returns items due for repurchase. IQR outlier filtering in `PurchaseRecord.swift` removes vacation gaps from interval averages.
 - **`SeasonalService`** — returns seasonal suggestions per month. Controlled by `@AppStorage("seasonalSuggestionsEnabled")`.
 - **`RecipeRecognitionService`** — Vision OCR + Apple Intelligence (`FoundationModels`, iOS 26+) to extract ingredients from a photo.
+- **`ReceiptParserService`** — parses receipt lines (Vision OCR/PDF) into `ReceiptLine`s (name, price, `quantity`, `weightBasis`). Two formats (`parseClassic` with VAT suffix, `parseEuroSuffixStyle`); quantity/weight confirmation lines under an item line are attributed to the preceding line (sanity check, Issue #9), never created as their own position.
 - **`NotificationService`** — schedules local replenishment notifications.
 
 ### Views
