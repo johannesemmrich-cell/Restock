@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/views/receipt-review-card.md
-spec_sha256: 783bcf35cfaa3d0f78b3c376cbf15ef9e788df60f1ddecf385b87f13f8e5265e
+spec_sha256: 3f62fa3f46bdd273451c4aa0dc6c5b2bd68a3200941efc61c1390326f8df491c
 ---
 
 # PO-Briefing: feat-23-receipt-review-screen
@@ -11,22 +11,22 @@ spec_sha256: 783bcf35cfaa3d0f78b3c376cbf15ef9e788df60f1ddecf385b87f13f8e5265e
 
 ## Was gebaut wird
 
-Jede Bon-Position wird eine Karte: Original-Bontext sichtbar, wählbarer Artikelname, änderbarer Preis und Menge statt bisheriger unlesbarer Zeile.
+Jede erkannte Bon-Position wird eine Karte mit Original-Text, wählbarem Artikelnamen sowie änderbarem Preis und Menge.
 
 ## Definition of Done
 
-PO sieht pro Position eine Karte mit Bontext oben, einer Auswahlliste für den Namen und einer Preiszeile mit funktionierendem „Ändern"; alle Tests grün.
+Jede Position zeigt lesbar Bon-Text und gewählten Namen; Antippen ändert Namen, Preis oder Menge sofort sichtbar, ohne Abschneiden oder Umbruch-Fehler.
 
 ## Wie geprüft wird
 
-Automatisierte Unit- und Bildschirmtests decken alle zwölf Anforderungen ab; das Dimmen abgewählter Karten wird dabei nicht geprüft, nur Zähler und Summe.
+Automatisierte Tests prüfen Anzeige, Auswahl-Logik und Preisberechnung; sie zeigen nicht, ob Vorschläge inhaltlich passen (folgt in Issue #29).
 
 ## Kritische Anmerkungen
 
-- Testeinstieg (Issue #28) fehlt noch — Umsetzung startet nicht sofort nach Freigabe.
-- „Nur passende" Vorschläge kommen erst später — bis dahin bleiben teils unpassende Vorschläge sichtbar.
-- Umfang ist deutlich größer als üblich — von Ihnen am 22.9. bereits akzeptiert.
+- Kernbeschwerde aus dem Issue — unpassende Vorschläge — bleibt bestehen, nur Anzahl wird begrenzt; Qualität folgt erst in Issue #29.
+- Umfang reißt das übliche Limit deutlich (ca. 720 statt 250 Codezeilen); PO hat das bereits akzeptiert.
+- Mengenänderung (Stück/Gramm) ist eine Erweiterung über die ursprüngliche Meldung hinaus, vom PO nachträglich gewünscht.
 
 ## Freigabe-Frage
 
-Sind Karten-Aufbau, „nur passende Vorschläge später", und der Start erst nach der Testeinstieg-Vorarbeit so für Sie in Ordnung?
+Reicht dir die Karten-Darstellung mit Auswahl statt Tippen, obwohl unpassende Vorschläge erst in einem Folge-Schritt behoben werden?

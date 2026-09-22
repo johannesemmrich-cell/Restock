@@ -1,0 +1,314 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockTests/ReceiptReviewCardTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCart/Assets.xcassets /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCart/Preview Content/Preview Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+Build description signature: 6531153f22b2cd1db966362c07874643
+Build description path: /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/XCBuildData/6531153f22b2cd1db966362c07874643.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockShareExtension/Info.plist (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockShareExtension/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCartWidgets/Info.plist (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCartWidgets/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftConstValuesFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.LinkFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.LinkFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+SwiftDriver RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan -experimental-emit-module-separately -disable-cmo
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockTests (in target 'RestockTests' from project 'Restock')
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:55:37: error: cannot find type 'ReceiptNameOption' in scope
+ 53 |     /// Kurzform der Option für lesbare Fehlermeldungen: „treffer:Hafermilch", „ki:Milch",
+ 54 |     /// „aktuell:Milch", „eigener".
+ 55 |     private func describe(_ option: ReceiptNameOption) -> String {
+    |                                     `- error: cannot find type 'ReceiptNameOption' in scope
+ 56 |         switch option {
+ 57 |         case .listMatch(let suggestion): return "treffer:\(suggestion.name)"
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:64:39: error: cannot find type 'ReceiptNameOption' in scope
+ 62 |     }
+ 63 | 
+ 64 |     private func describe(_ options: [ReceiptNameOption]) -> String {
+    |                                       `- error: cannot find type 'ReceiptNameOption' in scope
+ 65 |         options.map(describe).joined(separator: ", ")
+ 66 |     }
+Failed frontend command:
+
+SwiftCompile normal arm64 (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -emit-module -experimental-skip-non-inlinable-function-bodies-without-types /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ExistingDataSurvivesCloudEnableTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SchemaCloudKitCompatibilityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptHistoryMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptKnownItemNamesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedItemDataPhotoRegressionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/PhotoCompressorTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptParserPriceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/PriceProvenanceMigrationTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptParserReweTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptParserLidlFullReceiptTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptNameAIResolverSanitizeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/AssignmentServiceDetectStoreTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptParserStornoTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptAbbreviationExpansionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/QuickAddParserTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ConsumptionPatternTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/StorePresetsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/AssignmentServiceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/PurchaseRecordDeletionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptParserSuggestionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptScannerReResolutionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/DateFixtures.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift -target arm64-apple-ios18.0-simulator -disable-cross-import-overlay-search -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/CoreData.swiftoverlay -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationModelsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationModelsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftDataMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftDataMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan -enable-anonymous-context-mangled-names -file-compilation-dir /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name RestockTests -const-gather-protocols-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -disable-clang-spi -clang-target arm64-apple-ios27.0-simulator -target-sdk-version 27.0 -target-sdk-name iphonesimulator27.0 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -emit-module-doc-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftdoc -emit-module-source-info-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftsourceinfo -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-primary-emit-module.dia -emit-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-primary-emit-module.d -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -emit-abi-descriptor-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.abi.json
+SwiftCompile normal arm64 Compiling\ ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift (in target 'RestockTests' from project 'Restock')
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:55:37: error: cannot find type 'ReceiptNameOption' in scope
+ 53 |     /// Kurzform der Option für lesbare Fehlermeldungen: „treffer:Hafermilch", „ki:Milch",
+ 54 |     /// „aktuell:Milch", „eigener".
+ 55 |     private func describe(_ option: ReceiptNameOption) -> String {
+    |                                     `- error: cannot find type 'ReceiptNameOption' in scope
+ 56 |         switch option {
+ 57 |         case .listMatch(let suggestion): return "treffer:\(suggestion.name)"
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:64:39: error: cannot find type 'ReceiptNameOption' in scope
+ 62 |     }
+ 63 | 
+ 64 |     private func describe(_ options: [ReceiptNameOption]) -> String {
+    |                                       `- error: cannot find type 'ReceiptNameOption' in scope
+ 65 |         options.map(describe).joined(separator: ", ")
+ 66 |     }
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:48:14: error: value of type 'EditableReceiptLine' has no member 'aiSuggestedName'
+ 46 |         line.matchedItemID = matchedItemID
+ 47 |         line.resolvedByAI = resolvedByAI
+ 48 |         line.aiSuggestedName = aiSuggestedName
+    |              `- error: value of type 'EditableReceiptLine' has no member 'aiSuggestedName'
+ 49 |         line.aiSuggestedMatchedItemID = aiSuggestedMatchedItemID
+ 50 |         return line
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:49:14: error: value of type 'EditableReceiptLine' has no member 'aiSuggestedMatchedItemID'
+ 47 |         line.resolvedByAI = resolvedByAI
+ 48 |         line.aiSuggestedName = aiSuggestedName
+ 49 |         line.aiSuggestedMatchedItemID = aiSuggestedMatchedItemID
+    |              `- error: value of type 'EditableReceiptLine' has no member 'aiSuggestedMatchedItemID'
+ 50 |         return line
+ 51 |     }
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:76:20: error: cannot find 'ReceiptReviewCard' in scope
+ 74 | 
+ 75 |     private func summary(_ line: EditableReceiptLine) -> String {
+ 76 |         normalized(ReceiptReviewCard.priceSummary(for: line))
+    |                    `- error: cannot find 'ReceiptReviewCard' in scope
+ 77 |     }
+ 78 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:98:23: error: cannot find 'ReceiptReviewCard' in scope
+ 96 |             aiSuggestedMatchedItemID: UUID())
+ 97 | 
+ 98 |         let options = ReceiptReviewCard.selectionOptions(for: line)
+    |                       `- error: cannot find 'ReceiptReviewCard' in scope
+ 99 | 
+100 |         XCTAssertEqual(options.count, 4, "Erwartet: KI-Zeile + zwei Treffer + eigener Name. Bekommen: \(describe(options))")
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:113:23: error: cannot find 'ReceiptReviewCard' in scope
+111 |         let line = makeLine(name: "Milch", price: 0.99, originalName: "MILCH", suggestions: suggestions)
+112 | 
+113 |         let options = ReceiptReviewCard.selectionOptions(for: line)
+    |                       `- error: cannot find 'ReceiptReviewCard' in scope
+114 | 
+115 |         let listMatches = options.filter { if case .listMatch = $0 { return true } else { return false } }
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:136:23: error: cannot find 'ReceiptReviewCard' in scope
+134 |             aiSuggestedMatchedItemID: UUID())
+135 | 
+136 |         let options = ReceiptReviewCard.selectionOptions(for: line)
+    |                       `- error: cannot find 'ReceiptReviewCard' in scope
+137 | 
+138 |         let aiRows = options.filter { if case .aiSuggestion = $0 { return true } else { return false } }
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:150:23: error: cannot find 'ReceiptReviewCard' in scope
+148 |         let line = makeLine(name: "Bio-Hackfleisch", price: 4.99, originalName: "BIO-HACKFLEISCH 400G", unit: "400g")
+149 | 
+150 |         let options = ReceiptReviewCard.selectionOptions(for: line)
+    |                       `- error: cannot find 'ReceiptReviewCard' in scope
+151 | 
+152 |         XCTAssertEqual(options.count, 2, "Erwartet: aktueller Name + eigener Name. Bekommen: \(describe(options))")
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:170:9: error: cannot find 'ReceiptReviewCard' in scope
+168 |         let suggestion = ReceiptSuggestion(name: "Buttermilch", itemID: itemID)
+169 | 
+170 |         ReceiptReviewCard.applySelection(&line, option: .listMatch(suggestion))
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+171 | 
+172 |         XCTAssertEqual(line.name, "Buttermilch")
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:186:9: error: cannot find 'ReceiptReviewCard' in scope
+184 |                             aiSuggestedMatchedItemID: aiItemID)
+185 | 
+186 |         ReceiptReviewCard.applySelection(&line, option: .listMatch(ReceiptSuggestion(name: "Hafermilch", itemID: UUID())))
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+187 |         ReceiptReviewCard.applySelection(&line, option: .aiSuggestion(name: "Frische Vollmilch"))
+188 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:187:9: error: cannot find 'ReceiptReviewCard' in scope
+185 | 
+186 |         ReceiptReviewCard.applySelection(&line, option: .listMatch(ReceiptSuggestion(name: "Hafermilch", itemID: UUID())))
+187 |         ReceiptReviewCard.applySelection(&line, option: .aiSuggestion(name: "Frische Vollmilch"))
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+188 | 
+189 |         XCTAssertTrue(line.resolvedByAI, "Nach Rückkehr zum KI-Vorschlag muss die Kennzeichnung wieder stehen.")
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:199:9: error: cannot find 'ReceiptReviewCard' in scope
+197 |                             matchedItemID: UUID(), resolvedByAI: true, aiSuggestedName: "Milch")
+198 | 
+199 |         ReceiptReviewCard.applyCustomName(&line, name: "Ziegenmilch")
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+200 | 
+201 |         XCTAssertEqual(line.name, "Ziegenmilch")
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:212:9: error: cannot find 'ReceiptReviewCard' in scope
+210 |                             resolvedByAI: true, aiSuggestedName: "Fischstäbchen")
+211 | 
+212 |         ReceiptReviewCard.applySelection(&line, option: .listMatch(ReceiptSuggestion(name: "Lachs", itemID: UUID())))
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+213 |         XCTAssertEqual(line.originalName, "FISCHSTAEBCHEN 15ST", "Bontext nach Treffer-Auswahl verändert.")
+214 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:215:9: error: cannot find 'ReceiptReviewCard' in scope
+213 |         XCTAssertEqual(line.originalName, "FISCHSTAEBCHEN 15ST", "Bontext nach Treffer-Auswahl verändert.")
+214 | 
+215 |         ReceiptReviewCard.applySelection(&line, option: .aiSuggestion(name: "Fischstäbchen"))
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+216 |         XCTAssertEqual(line.originalName, "FISCHSTAEBCHEN 15ST", "Bontext nach KI-Auswahl verändert.")
+217 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:218:9: error: cannot find 'ReceiptReviewCard' in scope
+216 |         XCTAssertEqual(line.originalName, "FISCHSTAEBCHEN 15ST", "Bontext nach KI-Auswahl verändert.")
+217 | 
+218 |         ReceiptReviewCard.applyCustomName(&line, name: "Seelachs")
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+219 |         XCTAssertEqual(line.originalName, "FISCHSTAEBCHEN 15ST", "Bontext nach eigener Eingabe verändert.")
+220 |     }
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:264:31: error: cannot find 'ReceiptReviewCard' in scope
+262 |     /// AC11 — die Kopfzeile fasst Anzahl, Auswahl und Summe zusammen.
+263 |     func testSectionHeaderTextShowsCountSelectedAndSum() {
+264 |         let text = normalized(ReceiptReviewCard.sectionHeaderText(count: 7, selected: 6, sum: 18.94))
+    |                               `- error: cannot find 'ReceiptReviewCard' in scope
+265 | 
+266 |         XCTAssertEqual(text, "7 Positionen · 6 ausgewählt · 18,94 €")
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:275:9: error: cannot find 'ReceiptReviewCard' in scope
+273 |         var line = makeLine(name: "Brötchen", price: 1.60, originalName: "BROETCHEN", weightBasis: 500)
+274 | 
+275 |         ReceiptReviewCard.applyQuantityEdit(&line, mode: .pieces, value: 4)
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+276 | 
+277 |         XCTAssertEqual(line.quantity, 4, accuracy: 0.001)
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:287:9: error: cannot find 'ReceiptReviewCard' in scope
+285 |         var line = makeLine(name: "Lachs", price: 7.99, originalName: "LACHS", quantity: 3)
+286 | 
+287 |         ReceiptReviewCard.applyQuantityEdit(&line, mode: .grams, value: 250)
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+288 | 
+289 |         XCTAssertEqual(line.weightBasis ?? -1, 250, accuracy: 0.001)
+
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-SwiftPerFileCompile ReceiptReviewCardTests.swift
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:298:9: error: cannot find 'ReceiptReviewCard' in scope
+296 |         var line = makeLine(name: "Brötchen", price: 1.60, originalName: "BROETCHEN", quantity: 4)
+297 | 
+298 |         ReceiptReviewCard.applyQuantityEdit(&line, mode: .pieces, value: 0)
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+299 | 
+300 |         XCTAssertEqual(line.quantity, 1, accuracy: 0.001, "Stückzahl darf nie unter eins fallen.")
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:308:9: error: cannot find 'ReceiptReviewCard' in scope
+306 |                             unit: "250g", weightBasis: 250)
+307 | 
+308 |         ReceiptReviewCard.applyQuantityEdit(&line, mode: .pieces, value: 2)
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+309 |         ReceiptReviewCard.applyQuantityEdit(&line, mode: .grams, value: 400)
+310 |         ReceiptReviewCard.applyQuantityEdit(&line, mode: .pieces, value: 1)
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptReviewCardTests.swift:309:9: error: cannot find 'ReceiptReviewCard' in scope
+307 | 
+308 |         ReceiptReviewCard.applyQuantityEdit(&line, mode: .pieces, value: 2)
+309 |         ReceiptReviewCard.applyQuantityEdit(&line, mode: .grams, value: 400)
+    |         `- error: cannot find 'ReceiptReviewCard' in scope
+310 |         ReceiptReviewCard.applyQuantityEdit(&line, mode: .pieces, value: 1)
+311 | 
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Logs/Test/Test-Restock-2026.09.22_20-35-29-+0200.xcresult
+
+Testing failed:
+	Cannot find type 'ReceiptNameOption' in scope
+	Cannot find type 'ReceiptNameOption' in scope
+	Testing cancelled because the build failed.
+
+** TEST FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 (in target 'RestockTests' from project 'Restock')
+	SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockTests (in target 'RestockTests' from project 'Restock')
+	Testing project Restock with scheme Restock
+(3 failures)
