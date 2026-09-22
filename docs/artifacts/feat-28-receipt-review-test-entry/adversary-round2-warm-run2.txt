@@ -1,0 +1,122 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=C809766B-5B9C-41A9-B1B7-F66B1C3EB162" "-only-testing:RestockUITests/ReceiptReviewUITests" test
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-09-22 16:44:21.763527+0200 RestockUITests-Runner[45480:63325798] [Default] Running tests...
+2026-09-22 16:44:21.843739+0200 RestockUITests-Runner[45480:63325989] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-09-22 16:44:21.886214+0200 RestockUITests-Runner[45480:63325982] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+objc[45480]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10bc74310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a930398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-22 16:44:32.447.
+Test Suite 'RestockUITests.xctest' started at 2026-09-22 16:44:32.448.
+Test Suite 'ReceiptReviewUITests' started at 2026-09-22 16:44:32.450.
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' started.
+    t =     0.00s Start Test at 2026-09-22 16:44:32.452
+    t =     0.77s Set Up
+    t =     0.79s Open com.johannesemmrich.Restock
+    t =     0.81s     Launch com.johannesemmrich.Restock
+2026-09-22 16:44:33.925 xcodebuild[45439:63325148] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 16:44:33.926 xcodebuild[45439:63325148] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    13.13s         Setting up automation session
+    t =    15.79s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    20.42s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =    20.42s Waiting 20.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =    21.48s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    21.48s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    21.90s Checking existence of `"receiptReview.line.0.originalName" StaticText`
+XCTExpectFailure: matcher accepted Assertion Failure at ReceiptReviewUITests.swift:102: XCTAssertTrue failed - Zeile 0: Bontext wird nicht angezeigt.
+ReceiptReviewUITests.swift:102: Expected failure in -[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]: XCTAssertTrue failed - Zeile 0: Bontext wird nicht angezeigt.Reason: (Bontext erst mit #23 sichtbar)
+    t =    22.59s Tear Down
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' passed (22.905 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' started.
+    t =     0.00s Start Test at 2026-09-22 16:44:55.357
+    t =     0.05s Set Up
+    t =     0.06s Open com.johannesemmrich.Restock
+    t =     0.08s     Launch com.johannesemmrich.Restock
+    t =     0.08s         Terminate com.johannesemmrich.Restock:45544
+2026-09-22 16:44:56.556 xcodebuild[45439:63325148] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 16:44:56.556 xcodebuild[45439:63325148] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.64s         Setting up automation session
+    t =     3.84s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     8.38s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     8.38s Waiting 20.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     9.44s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     9.44s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     9.73s Waiting 5.0s for "receiptReview.line.0.nameField" TextField to exist
+    t =    10.78s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.nameField" TextField`
+    t =    10.78s         Checking existence of `"receiptReview.line.0.nameField" TextField`
+    t =    10.83s Checking existence of `"receiptReview.line.0.priceField" TextField`
+    t =    10.87s Waiting 5.0s for "receiptReview.line.1.nameField" TextField to exist
+    t =    11.94s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.1.nameField" TextField`
+    t =    11.94s         Checking existence of `"receiptReview.line.1.nameField" TextField`
+    t =    12.03s Checking existence of `"receiptReview.line.1.priceField" TextField`
+    t =    12.11s Waiting 5.0s for "receiptReview.line.2.nameField" TextField to exist
+    t =    13.17s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.nameField" TextField`
+    t =    13.17s         Checking existence of `"receiptReview.line.2.nameField" TextField`
+    t =    13.29s Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =    13.38s Waiting 5.0s for "receiptReview.line.3.nameField" TextField to exist
+    t =    14.43s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.3.nameField" TextField`
+    t =    14.44s         Checking existence of `"receiptReview.line.3.nameField" TextField`
+    t =    14.51s Checking existence of `"receiptReview.line.3.priceField" TextField`
+    t =    14.60s Checking existence of `"receiptReview.line.0.aiMark" Other`
+    t =    14.69s Checking existence of `"receiptReview.line.0.aiMark" StaticText`
+    t =    14.77s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =    15.84s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =    15.84s         Checking existence of `"receiptReview.saveButton" Button`
+    t =    15.92s Find the "receiptReview.saveButton" Button
+    t =    16.05s Tear Down
+Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' passed (16.264 seconds).
+Test Suite 'ReceiptReviewUITests' passed at 2026-09-22 16:45:11.622.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 39.169 (39.172) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-09-22 16:45:11.623.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 39.169 (39.175) seconds
+Test Suite 'Selected tests' passed at 2026-09-22 16:45:11.624.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 39.169 (39.177) seconds
+2026-09-22 16:45:33.056 xcodebuild[45439:63325148] [MT] IDETestOperationsObserverDebug: 76.253 elapsed -- Testing started completed.
+2026-09-22 16:45:33.056 xcodebuild[45439:63325148] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-22 16:45:33.056 xcodebuild[45439:63325148] [MT] IDETestOperationsObserverDebug: 76.255 sec, +76.255 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Logs/Test/Test-Restock-2026.09.22_16-44-15-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

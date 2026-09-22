@@ -17,6 +17,8 @@ Unit tests live in `RestockTests/` and UI tests in `RestockUITests/`, both run v
 
 The `Restock` scheme's Test Action pins `language="de"` / `region="DE"`, so UI tests always run in German regardless of the simulator's system language — relevant because the CI runner defaults to English. The tests assert on German label text, so this override is what makes them pass there; passing an explicit `-testLanguage`/`-testRegion` on the command line still overrides the scheme setting. `scripts/verify-ui-test-language.sh` proves this on a freshly erased, English-language simulator: one run without a language flag (expected 0 failures) and one with `-testLanguage en -testRegion US` as a negative control (expected the three known failures). Because the UI tests key off displayed text rather than `accessibilityIdentifier`s in the product code, copy changes can break them.
 
+Some UI tests need a fixture screen that's normally only reachable via camera/OCR; these use DEBUG-only launch arguments in `SmartCartApp.swift` to seed the required data directly through the app's real data path. Because the app-group container persists across tests in the same `xcodebuild test` run, every test class that seeds data this way **must** remove it again in `tearDown()` via its own matching cleanup launch argument — otherwise leftover stores/items break other tests' assumptions, since the existing suite does not reset its own state.
+
 ## Adding new Swift files
 
 Xcode does **not** auto-discover files on disk. Every new `.swift` file must be manually registered in `Restock.xcodeproj/project.pbxproj` in three places:

@@ -137,6 +137,7 @@
 		399CF1332B66B0375C4CC7D2 /* DateFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB84990BF53C04B19AF3452 /* DateFixtures.swift */; };
 		4ABB3142671E3907EC867A62 /* RestockUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079C73B4452D6EED07DD471A /* RestockUITests.swift */; };
 		6B398E7EEE5549BE924E1540 /* ReceiptShareExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95312F3105014450B82B1EF5 /* ReceiptShareExtensionTests.swift */; };
+		7A31C4E2B90D45F1A6E30C11 /* ReceiptReviewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D82F0A7C14B49E28B7A6D33 /* ReceiptReviewUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -296,6 +297,7 @@
 		5AB84990BF53C04B19AF3452 /* DateFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFixtures.swift; sourceTree = "<group>"; };
 		079C73B4452D6EED07DD471A /* RestockUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestockUITests.swift; sourceTree = "<group>"; };
 		95312F3105014450B82B1EF5 /* ReceiptShareExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptShareExtensionTests.swift; sourceTree = "<group>"; };
+		5D82F0A7C14B49E28B7A6D33 /* ReceiptReviewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptReviewUITests.swift; sourceTree = "<group>"; };
 		E2ECD600D24B6ACC3CB50C74 /* RestockUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		634FBBE2D9633DD7732C8BAF /* RestockTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -590,6 +592,7 @@
 			children = (
 				079C73B4452D6EED07DD471A /* RestockUITests.swift */,
 				95312F3105014450B82B1EF5 /* ReceiptShareExtensionTests.swift */,
+				5D82F0A7C14B49E28B7A6D33 /* ReceiptReviewUITests.swift */,
 			);
 			path = RestockUITests;
 			sourceTree = "<group>";
@@ -916,6 +919,7 @@
 			files = (
 				4ABB3142671E3907EC867A62 /* RestockUITests.swift in Sources */,
 				6B398E7EEE5549BE924E1540 /* ReceiptShareExtensionTests.swift in Sources */,
+				7A31C4E2B90D45F1A6E30C11 /* ReceiptReviewUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

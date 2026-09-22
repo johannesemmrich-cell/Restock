@@ -1,0 +1,326 @@
+<title>Bon-Prüfzeile</title>
+<style>
+  :root {
+    --canvas: #F5F2E9; --surface: #FDFBF4; --ink: #201D16; --muted: #6F6A5B;
+    --hair: rgba(32,29,22,.16); --accent: #666F38; --accent-bg: rgba(102,111,56,.14); --amber: #A97F2E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --canvas: #141310; --surface: #1D1C16; --ink: #EBE7DA; --muted: #A29B8A;
+      --hair: rgba(235,231,218,.16); --accent: #A7AE6B; --accent-bg: rgba(167,174,107,.16); --amber: #C89A4A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --canvas: #141310; --surface: #1D1C16; --ink: #EBE7DA; --muted: #A29B8A;
+    --hair: rgba(235,231,218,.16); --accent: #A7AE6B; --accent-bg: rgba(167,174,107,.16); --amber: #C89A4A;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--canvas); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px; line-height: 1.5; padding-inline: 20px; padding-block: 32px 64px;
+  }
+  main { max-width: 1240px; margin: 0 auto; }
+  h1 { font-size: 30px; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 8px; text-wrap: balance; }
+  h2 { font-size: 21px; margin: 44px 0 6px; letter-spacing: -0.005em; }
+  h2 small { font-weight: 400; color: var(--muted); font-size: 15px; margin-left: 8px; }
+  p { max-width: 64ch; margin: 0 0 12px; }
+  .lede { font-size: 18px; color: var(--muted); max-width: 60ch; margin-bottom: 20px; }
+  .toolbar { display: flex; gap: 8px; align-items: center; margin: 8px 0 28px; flex-wrap: wrap; }
+  .toolbar span { color: var(--muted); font-size: 14px; }
+  .tbtn { font: inherit; font-size: 14px; font-weight: 600; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--hair); background: var(--surface); color: var(--ink); cursor: pointer; }
+  .tbtn[aria-pressed="true"] { background: var(--ink); color: var(--canvas); border-color: transparent; }
+  .tbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 36px 28px; align-items: start; }
+  .variants > figure { margin: 0; min-width: 0; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 12px; max-width: 46ch; line-height: 1.45; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+  .vh { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+  .vh h3 { font-size: 17px; margin: 0; }
+  .vh .tag { font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-bg); padding: 2px 8px; border-radius: 999px; }
+  .pros { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; font-size: 14px; }
+  .pros li { padding-left: 1.4em; text-indent: -1.4em; }
+  .pros li::before { content: "+"; display: inline-block; width: 1.4em; color: var(--accent); font-weight: 700; text-indent: 0; }
+  .pros li.con::before { content: "–"; color: var(--amber); }
+
+  /* ---------- iPhone-Mockup ---------- */
+  .phone {
+    width: 100%; max-width: 390px; border-radius: 30px; overflow: hidden; border: 1px solid var(--hair);
+    background: var(--p-canvas); color: var(--p-ink); font-size: 15px; line-height: 1.3;
+    --p-canvas: #141310; --p-surface: #1D1C16; --p-ink: #EBE7DA; --p-muted: #A29B8A;
+    --p-hair: rgba(235,231,218,.18); --p-accent: #A7AE6B; --p-accent-bg: rgba(167,174,107,.16);
+    --p-chip: #E8E4D6; --p-onchip: #201D16;
+  }
+  .phones.light .phone {
+    --p-canvas: #F5F2E9; --p-surface: #FDFBF4; --p-ink: #201D16; --p-muted: #6F6A5B;
+    --p-hair: rgba(32,29,22,.18); --p-accent: #666F38; --p-accent-bg: rgba(102,111,56,.14);
+    --p-chip: #201D16; --p-onchip: #F5F2E9;
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 18px 16px 10px; gap: 8px; }
+  .bar .title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; }
+  .tchip { font-size: 14px; font-weight: 600; padding: 8px 13px; border-radius: 999px; border: 1px solid var(--p-hair); white-space: nowrap; }
+  .tchip.prominent { background: var(--p-chip); color: var(--p-onchip); border-color: transparent; }
+  .sec { padding: 10px 16px 8px; font-size: 13px; color: var(--p-muted); }
+  .stack { display: flex; flex-direction: column; gap: 12px; padding: 0 16px 18px; }
+  .card { background: var(--p-surface); border: 1px solid var(--p-hair); border-radius: 14px; overflow: hidden; }
+  .card.off .part { opacity: .4; }
+  .part { padding: 14px 16px; }
+  .part + .part { border-top: 1px solid var(--p-hair); }
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .bon { font-size: 13px; color: var(--p-muted); letter-spacing: .02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .check { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px; border: 1.5px solid var(--p-muted); display: grid; place-items: center; }
+  .check.on { background: var(--p-accent); border-color: var(--p-accent); }
+  .check.on::after { content: ""; width: 7px; height: 13px; border: solid var(--p-canvas); border-width: 0 2.5px 2.5px 0; transform: translateY(-1px) rotate(45deg); }
+  .name { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .name .t { flex: 1 1 auto; min-width: 0; font-size: 20px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid var(--p-hair); padding-bottom: 3px; }
+  .ki { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--p-accent); background: var(--p-accent-bg); padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+  .ki::before { content: "✦"; font-size: 11px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip { min-height: 40px; display: inline-flex; align-items: center; font-size: 15px; font-weight: 500; color: var(--p-ink); background: var(--p-canvas); border: 1px solid var(--p-hair); border-radius: 10px; padding: 0 14px; white-space: nowrap; }
+  .chip.more { color: var(--p-muted); }
+  .price { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .price .v { font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--p-hair); padding-bottom: 3px; display: inline-block; }
+  .price .v.big { font-size: 22px; }
+  .price .l { font-size: 12px; color: var(--p-muted); margin-top: 4px; }
+  .price .ro .v { border-bottom-color: transparent; color: var(--p-muted); font-weight: 400; }
+  /* Variante B: Auswahlzeilen */
+  .opts { display: flex; flex-direction: column; margin: 4px -16px -14px; }
+  .opt { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px; border-top: 1px solid var(--p-hair); font-size: 17px; }
+  .opt .r { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--p-muted); flex: 0 0 auto; display: grid; place-items: center; }
+  .opt.sel .r { border-color: var(--p-accent); }
+  .opt.sel .r::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--p-accent); }
+  .opt .txt { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .opt.other { color: var(--p-muted); }
+  .opt .src { font-size: 12px; color: var(--p-muted); }
+  .prow { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 32px; }
+  .prow .v { font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .prow .d { font-size: 14px; color: var(--p-muted); font-variant-numeric: tabular-nums; }
+  .prow .edit { color: var(--p-accent); font-size: 15px; font-weight: 600; }
+  /* Variante C: Schritt für Schritt */
+  .step { padding: 6px 16px 0; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--p-muted); }
+  .dots { display: flex; gap: 5px; }
+  .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--p-hair); display: block; }
+  .dots i.done { background: var(--p-accent); }
+  .dots i.now { background: var(--p-ink); }
+  .focus { padding: 20px 16px 16px; }
+  .focus .bon { font-size: 14px; margin-bottom: 8px; }
+  .focus .big { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15; margin-bottom: 6px; }
+  .focus .ki { margin-bottom: 18px; }
+  .alts { display: flex; flex-direction: column; gap: 8px; }
+  .alt { min-height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-radius: 12px; border: 1px solid var(--p-hair); background: var(--p-surface); font-size: 17px; }
+  .alt.sel { border-color: var(--p-accent); box-shadow: inset 0 0 0 1px var(--p-accent); }
+  .alt .src { font-size: 12px; color: var(--p-muted); }
+  .focus .price { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--p-hair); }
+  .nav { display: flex; gap: 10px; padding: 10px 16px 18px; }
+  .nav .b { flex: 1 1 0; min-height: 50px; display: grid; place-items: center; border-radius: 12px; border: 1px solid var(--p-hair); font-size: 17px; font-weight: 600; }
+  .nav .b.primary { background: var(--p-chip); color: var(--p-onchip); border-color: transparent; }
+
+  .datatable { border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+  .datatable th, .datatable td { text-align: left; padding: 8px 14px 8px 0; border-bottom: 1px solid var(--hair); vertical-align: top; }
+  .datatable th { color: var(--muted); font-weight: 500; }
+  .note { border-left: 3px solid var(--amber); padding: 6px 14px; color: var(--muted); font-size: 14px; max-width: 64ch; margin: 24px 0 0; }
+  .reco { background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; padding: 18px 22px; max-width: 72ch; margin-top: 16px; }
+  .reco p:last-child { margin-bottom: 0; }
+  @media (max-width: 420px) { h1 { font-size: 26px; } }
+  @media (prefers-reduced-motion: no-preference) { .phone { transition: background .2s, color .2s; } }
+</style>
+
+<main>
+  <h1>Bon-Prüfzeile</h1>
+  <p class="lede">Zweiter Entwurf: größer, mit Luft für den Daumen. Jede Position ist eine Karte mit zwei Abschnitten – oben „Welcher Artikel?“, unten „Stimmt der Preis?“. Drei Varianten, eine Empfehlung.</p>
+
+  <div class="toolbar">
+    <span>Mockups anzeigen in</span>
+    <button class="tbtn" id="btn-dark" aria-pressed="true" type="button">Dunkel</button>
+    <button class="tbtn" id="btn-light" aria-pressed="false" type="button">Hell</button>
+  </div>
+
+  <div class="variants phones" id="phones">
+
+    <!-- ===================== Variante A ===================== -->
+    <figure>
+      <div class="vh"><h3>A · Karte mit zwei Abschnitten</h3><span class="tag">deine Idee</span></div>
+      <div class="phone" aria-label="Variante A">
+        <div class="bar"><span class="tchip">Abbrechen</span><span class="title">Bon prüfen — Lidl</span><span class="tchip prominent">Speichern</span></div>
+        <div class="sec">7 Positionen · 6 ausgewählt · 18,94 €</div>
+        <div class="stack">
+          <div class="card">
+            <div class="part">
+              <div class="head"><span class="bon">FISCHSTAEBCHEN 15ST</span><span class="check on"></span></div>
+              <div class="name"><span class="t">Fisch</span><span class="ki">KI-Vorschlag</span></div>
+              <div class="chips"><span class="chip">Fischstäbchen</span><span class="chip">Seelachsfilet</span><span class="chip more">Anders …</span></div>
+            </div>
+            <div class="part price">
+              <div><span class="v big">1,99 €</span><div class="l">Preis</div></div>
+              <div><span class="v">1 St.</span><div class="l">Menge</div></div>
+              <div class="ro"><span class="v">1,99 €</span><div class="l">je Stück</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="part">
+              <div class="head"><span class="bon">LACHSFILET 0,250 KG</span><span class="check on"></span></div>
+              <div class="name"><span class="t">Fisch</span><span class="ki">KI-Vorschlag</span></div>
+              <div class="chips"><span class="chip">Lachsfilet</span><span class="chip more">Anders …</span></div>
+            </div>
+            <div class="part price">
+              <div><span class="v big">7,99 €</span><div class="l">Preis</div></div>
+              <div><span class="v">250 g</span><div class="l">Gewicht</div></div>
+              <div class="ro"><span class="v">31,96 €</span><div class="l">je kg</div></div>
+            </div>
+          </div>
+          <div class="card off">
+            <div class="part">
+              <div class="head"><span class="bon">PINIENKERNE 50G</span><span class="check"></span></div>
+              <div class="name"><span class="t">Pinienkerne</span></div>
+            </div>
+            <div class="part price">
+              <div><span class="v big">4,49 €</span><div class="l">Preis</div></div>
+              <div><span class="v">50 g</span><div class="l">Größe</div></div>
+              <div class="ro"><span class="v">89,80 €</span><div class="l">je kg</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <b>Bontext → Name → drei Alternativen, darunter der Preisblock.</b> Name und Preis sind Eingabefelder (Linie darunter), die Alternativen sind 40 pt hohe Tasten, „Anders …“ öffnet die Tastatur. Abgewählte Karten (Pinienkerne) sind gedimmt.
+        <ul class="pros">
+          <li>Alles auf einen Blick, keine Ebene versteckt</li>
+          <li>Preis, Menge und Stück-/Kilopreis lesbar getrennt</li>
+          <li class="con">Zwei Wege für dasselbe (Feld tippen oder Alternative tippen) – nicht ganz eindeutig</li>
+          <li class="con">Kilopreis ist berechnet, nicht vom Bon – als Kontrolle nützlich, aber nicht änderbar</li>
+        </ul>
+      </figcaption>
+    </figure>
+
+    <!-- ===================== Variante B ===================== -->
+    <figure>
+      <div class="vh"><h3>B · Auswahl statt Tippen</h3><span class="tag">Empfehlung</span></div>
+      <div class="phone" aria-label="Variante B">
+        <div class="bar"><span class="tchip">Abbrechen</span><span class="title">Bon prüfen — Lidl</span><span class="tchip prominent">Speichern</span></div>
+        <div class="sec">7 Positionen · 6 ausgewählt · 18,94 €</div>
+        <div class="stack">
+          <div class="card">
+            <div class="part">
+              <div class="head"><span class="bon">FISCHSTAEBCHEN 15ST</span><span class="check on"></span></div>
+              <div class="opts">
+                <div class="opt sel"><span class="r"></span><span class="txt">Fischstäbchen</span><span class="src">auf deiner Liste</span></div>
+                <div class="opt"><span class="r"></span><span class="txt">Fisch</span><span class="ki">KI-Vorschlag</span></div>
+                <div class="opt"><span class="r"></span><span class="txt">Seelachsfilet</span><span class="src">auf deiner Liste</span></div>
+                <div class="opt other"><span class="r"></span><span class="txt">Anderer Name …</span></div>
+              </div>
+            </div>
+            <div class="part">
+              <div class="prow"><span class="v">1,99 €</span><span class="d">1 St. · 1,99 € je Stück</span><span class="edit">Ändern</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="part">
+              <div class="head"><span class="bon">LACHSFILET 0,250 KG</span><span class="check on"></span></div>
+              <div class="opts">
+                <div class="opt sel"><span class="r"></span><span class="txt">Lachsfilet</span><span class="src">auf deiner Liste</span></div>
+                <div class="opt"><span class="r"></span><span class="txt">Fisch</span><span class="ki">KI-Vorschlag</span></div>
+                <div class="opt other"><span class="r"></span><span class="txt">Anderer Name …</span></div>
+              </div>
+            </div>
+            <div class="part">
+              <div class="prow"><span class="v">7,99 €</span><span class="d">250 g · 31,96 € je kg</span><span class="edit">Ändern</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="part">
+              <div class="head"><span class="bon">GOUDA JUNG 400G</span><span class="check on"></span></div>
+              <div class="opts">
+                <div class="opt sel"><span class="r"></span><span class="txt">Gouda</span><span class="src">auf deiner Liste</span></div>
+                <div class="opt other"><span class="r"></span><span class="txt">Anderer Name …</span></div>
+              </div>
+            </div>
+            <div class="part">
+              <div class="prow"><span class="v">3,99 €</span><span class="d">400 g · 9,98 € je kg</span><span class="edit">Ändern</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <b>Der Artikel wird angetippt, nicht getippt.</b> Unter dem Bontext stehen bis zu vier Zeilen à 48 pt: die besten Treffer von deiner Liste, der KI-Vorschlag (gekennzeichnet) und „Anderer Name …“ für die Tastatur. Der beste Treffer ist vorausgewählt. Der Preisblock ist eine Zeile: Preis, daneben Menge und Stück-/Kilopreis, „Ändern“ öffnet die Eingabe.
+        <ul class="pros">
+          <li>Ein Tipp pro Position, große Ziele, keine Tastatur im Normalfall</li>
+          <li>Man sieht, woher ein Name kommt: Liste, KI oder selbst getippt</li>
+          <li>Passt der Treffer zur Liste, lernt die App den Preis am richtigen Artikel</li>
+          <li class="con">Karten werden hoch (bis vier Zeilen) – bei 20 Positionen wird es lang</li>
+        </ul>
+      </figcaption>
+    </figure>
+
+    <!-- ===================== Variante C ===================== -->
+    <figure>
+      <div class="vh"><h3>C · Eine Position nach der anderen</h3></div>
+      <div class="phone" aria-label="Variante C">
+        <div class="bar"><span class="tchip">Abbrechen</span><span class="title">Bon prüfen — Lidl</span><span class="tchip">Alle</span></div>
+        <div class="step"><span>Position 2 von 7</span><span class="dots"><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="focus">
+          <div class="bon">LACHSFILET 0,250 KG</div>
+          <div class="big">Lachsfilet</div>
+          <div class="ki">KI-Vorschlag war „Fisch“</div>
+          <div class="alts">
+            <div class="alt sel"><span>Lachsfilet</span><span class="src">auf deiner Liste</span></div>
+            <div class="alt"><span>Fisch</span><span class="src">✦ KI</span></div>
+            <div class="alt"><span>Anderer Name …</span><span class="src"></span></div>
+          </div>
+          <div class="price">
+            <div><span class="v big">7,99 €</span><div class="l">Preis</div></div>
+            <div><span class="v">250 g</span><div class="l">Gewicht</div></div>
+            <div class="ro"><span class="v">31,96 €</span><div class="l">je kg</div></div>
+          </div>
+        </div>
+        <div class="nav"><span class="b">Nicht speichern</span><span class="b primary">Weiter ✓</span></div>
+      </div>
+      <figcaption>
+        <b>Ein Bildschirm pro Position, wie beim Abhaken des Bons von oben nach unten.</b> Name in 28 pt, Alternativen als volle Tasten, Preisblock groß, unten „Weiter“ oder „Nicht speichern“. „Alle“ oben rechts zeigt die Übersicht.
+        <ul class="pros">
+          <li>Maximaler Platz, größte Ziele, nichts konkurriert</li>
+          <li>Führt durch den Bon – nichts wird übersehen</li>
+          <li class="con">Sieben Positionen = sieben Bildschirme; bei langen Bons mühsam, auch wenn meist nur „Weiter“ nötig ist</li>
+          <li class="con">Kein Überblick, ob die Summe stimmt, bis man durch ist</li>
+        </ul>
+      </figcaption>
+    </figure>
+  </div>
+
+  <h2>Empfehlung</h2>
+  <div class="reco">
+    <p><b>Variante B.</b> Sie setzt deine Aufteilung um – Bontext, dann der Name, dann Alternativen, darunter der Preis – und macht aus den drei Alternativen den Kern der Bedienung: Der Artikel wird mit einem Tipp gewählt, die Tastatur ist die Ausnahme. Das ist auf dem Handy schneller und sicherer als ein Textfeld mit Chips daneben (A), und im Gegensatz zu C bleibt der ganze Bon im Blick.</p>
+    <p>Wenn dir B zu hoch wird: A ist die kompakte Schwester – gleiche Aufteilung, aber Feld statt Auswahlliste. C empfiehlt sich, falls du erlebst, dass Positionen auf langen Bons übersehen werden.</p>
+  </div>
+
+  <h2>Preisblock <small>was der Bon-Parser heute liefert</small></h2>
+  <p>Der untere Abschnitt zeigt nur, was tatsächlich erkannt wurde – nichts wird geraten. Stück- und Kilopreis sind aus Preis und Menge berechnet und dienen der Kontrolle.</p>
+  <div style="overflow-x:auto">
+  <table class="datatable">
+    <tr><th>Bon-Zeile</th><th>Erkannt</th><th>Angezeigt</th></tr>
+    <tr><td>„FISCHSTAEBCHEN 15ST 1,99“</td><td>Preis 1,99 · Menge 1</td><td>1,99 € · 1 St. · 1,99 € je Stück</td></tr>
+    <tr><td>„GRIESSPUDDING 4 x 0,40 1,60“</td><td>Preis 1,60 · Menge 4</td><td>1,60 € · 4 St. · 0,40 € je Stück</td></tr>
+    <tr><td>„LACHSFILET 0,250 kg x 31,96 7,99“</td><td>Preis 7,99 · Gewicht 250 g</td><td>7,99 € · 250 g · 31,96 € je kg</td></tr>
+    <tr><td>„GOUDA JUNG 400G 3,99“</td><td>Preis 3,99 · Größe „400g“</td><td>3,99 € · 400 g · 9,98 € je kg</td></tr>
+    <tr><td>„MILCH 1,29“</td><td>Preis 1,29</td><td>1,29 € – ohne Menge, ohne Stückpreis</td></tr>
+  </table>
+  </div>
+
+  <p class="note">Die Bontexte in Großbuchstaben sind Beispiele – die echten Rohzeilen deines Lidl-Bons liegen nicht vor. Namen, Preise und Vorschläge folgen dem Screenshot aus Issue #23. Die Kennzeichnung „KI-Vorschlag“ bleibt in allen Varianten an dem Namen, den Apple Intelligence vorgeschlagen hat.</p>
+</main>
+
+<script>
+  (function () {
+    var phones = document.getElementById('phones');
+    var dark = document.getElementById('btn-dark');
+    var light = document.getElementById('btn-light');
+    function set(isLight) {
+      phones.classList.toggle('light', isLight);
+      dark.setAttribute('aria-pressed', String(!isLight));
+      light.setAttribute('aria-pressed', String(isLight));
+      try { localStorage.setItem('bonzeile-mode', isLight ? 'light' : 'dark'); } catch (e) {}
+    }
+    dark.addEventListener('click', function () { set(false); });
+    light.addEventListener('click', function () { set(true); });
+    try { if (localStorage.getItem('bonzeile-mode') === 'light') set(true); } catch (e) {}
+  })();
+</script>
