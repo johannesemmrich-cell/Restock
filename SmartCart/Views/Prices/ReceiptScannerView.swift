@@ -236,6 +236,7 @@ struct ReceiptScannerView: View {
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { save() } label: { Text("Speichern").toolbarChip(prominent: true) }
                         .buttonStyle(.pressable)
+                        .accessibilityIdentifier("receiptReview.saveButton")
                         .disabled(!canSave)
                         .opacity(phase == .review ? 1 : 0)
                         // Explizit statt sich auf automatisches Opacity-Ausblenden zu verlassen —
@@ -422,8 +423,12 @@ struct ReceiptScannerView: View {
                 }
 
                 Section {
-                    ForEach($parsedLines) { $line in
-                        ReceiptLineRow(line: $line)
+                    // Index zusätzlich zur Binding-Identität, damit jede Zeile ihre eigenen
+                    // `accessibilityIdentifier`-Suffixe bekommt (receiptReview.line.<index>.…).
+                    // Bewusst über `enumerated()` statt `indices` — die ForEach-Identität bleibt
+                    // die `Identifiable`-id der Zeile, nicht der reine Array-Index.
+                    ForEach(Array($parsedLines.enumerated()), id: \.element.id) { index, $line in
+                        ReceiptLineRow(line: $line, index: index)
                     }
                 } header: {
                     Text("Gefunden: \(parsedLines.count) Positionen")
@@ -666,6 +671,9 @@ struct ReceiptScannerView: View {
 
 private struct ReceiptLineRow: View {
     @Binding var line: EditableReceiptLine
+    /// Position dieser Zeile im Bon — nur für die `accessibilityIdentifier`s der UI-Tests
+    /// (`receiptReview.line.<index>.…`), keine Darstellungswirkung.
+    let index: Int
 
     /// "6 × 0,20 € · 1,5l" — Menge, Stückpreis und Größe aus dem Bon, falls erkannt.
     private var detailText: String? {
@@ -701,6 +709,7 @@ private struct ReceiptLineRow: View {
                             }
                         ))
                             .font(.system(size: 15))
+                            .accessibilityIdentifier("receiptReview.line.\(index).nameField")
                         Image(systemName: "pencil")
                             .font(.system(size: 10))
                             .foregroundStyle(.tertiary)
@@ -716,6 +725,7 @@ private struct ReceiptLineRow: View {
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
                                 .background(Color.accentContainer, in: Capsule())
+                                .accessibilityIdentifier("receiptReview.line.\(index).aiMark")
                         }
                     }
                     if let detailText {
@@ -737,6 +747,7 @@ private struct ReceiptLineRow: View {
                         .multilineTextAlignment(.trailing)
                         .frame(width: 62)
                         .font(.system(size: 14, weight: .medium))
+                        .accessibilityIdentifier("receiptReview.line.\(index).priceField")
                 }
                 .opacity(line.isIncluded ? 1 : 0.4)
             }

@@ -407,31 +407,33 @@ bekannter 10-Minuten-Diagnose-Hänger bei Parallelität, Issue #21) → Test 1 �
 
 ## Acceptance Criteria
 
-1. **AC-1:** Given der Seed-Aufruf mit `-seedReceiptReviewForUITests` / When die App startet /
-   Then öffnet sich automatisch der Bon-Prüf-Screen mit Navigationstitel „Bon scannen — Lidl".
-   Test: `testReviewSheetOpensFromShareHandoff`.
-2. **AC-2:** Given der geseedete Bon / When der Screen geöffnet ist / Then sind alle vier Zeilen
-   über `receiptReview.line.<i>.nameField` und `receiptReview.line.<i>.priceField` (i = 0…3)
-   auffindbar.
-   Test: `testReviewSheetOpensFromShareHandoff`.
-3. **AC-3:** Given Zeile 0 mit `resolvedByAI: true` / When der Screen geöffnet ist / Then ist
-   `receiptReview.line.0.aiMark` sichtbar. Test: `testReviewSheetOpensFromShareHandoff`.
-4. **AC-4:** Given `storeConfidentlyDetected: true` in der Nutzlast / When der Screen geöffnet ist
-   / Then ist `receiptReview.saveButton` `isHittable` (Ladenerkennung hat gegriffen, `canSave`
-   erfüllt). Test: `testReviewSheetOpensFromShareHandoff`.
-5. **AC-5:** Given die vier Fixture-Zeilen, jede mit `resolvedByAI == true` oder
-   `name != originalName` / When `reResolveAIIfNeeded()` beim Handoff läuft / Then bleibt jede
-   Zeile unverändert — kein Einfluss von Wörterbuch, Fuzzy-Match oder gelernten Aliassen. Test:
-   `testReviewSheetOpensFromShareHandoff` (implizit über die stabilen, per Namen erwarteten Werte
-   in den geprüften Feldern).
-6. **AC-6:** Given kein Startargument `-seedReceiptReviewForUITests` / When die bestehende
-   `RestockUITests`-Suite läuft / Then bleibt sie unverändert grün — der Seed hat ohne Argument
-   keine Wirkung. Test: bestehende Suite in `RestockUITests/RestockUITests.swift` (Negativkontrolle,
-   kein neuer Testcode).
-7. **AC-7:** Given das heutige Layout (`ReceiptLineRow` ohne Bontext-Anzeige) / When
-   `receiptReview.line.<i>.originalName` für jede Zeile geprüft wird / Then schlägt die Prüfung
-   fehl — belegt in `XCTExpectFailure("Bontext erst mit #23 sichtbar", strict: true)`. Test:
-   `testOriginalReceiptTextIsVisibleOnEveryLine`.
+- **AC-1:** Given der Seed-Aufruf mit `-seedReceiptReviewForUITests` / When die App startet /
+  Then öffnet sich automatisch der Bon-Prüf-Screen mit Navigationstitel „Bon scannen — Lidl".
+  Test: `testReviewSheetOpensFromShareHandoff`.
+- **AC-2:** Given der geseedete Bon / When der Screen geöffnet ist / Then sind alle vier Zeilen
+  über `receiptReview.line.<i>.nameField` und `receiptReview.line.<i>.priceField` (i = 0…3)
+  auffindbar.
+  Test: `testReviewSheetOpensFromShareHandoff`.
+- **AC-3:** Given Zeile 0 mit `resolvedByAI: true` / When der Screen geöffnet ist / Then ist
+  `receiptReview.line.0.aiMark` sichtbar. Test: `testReviewSheetOpensFromShareHandoff`.
+- **AC-4:** Given `storeConfidentlyDetected: true` in der Nutzlast / When der Screen geöffnet ist
+  / Then ist `receiptReview.saveButton` `isHittable` (Ladenerkennung hat gegriffen, `canSave`
+  erfüllt). Test: `testReviewSheetOpensFromShareHandoff`.
+- **AC-5:** Given die vier Fixture-Zeilen, jede mit `resolvedByAI == true` oder
+  `name != originalName` / When `reResolveAIIfNeeded()` beim Handoff läuft / Then bleibt jede
+  Zeile unverändert — kein Einfluss von Wörterbuch, Fuzzy-Match oder gelernten Aliassen. Nachweis:
+  Code-Lesung, nicht Wertprüfung im Test — `reResolveAIIfNeeded()` bricht am `guard
+  !indices.isEmpty` ab, weil `EditableReceiptLine.linesNeedingAIReresolution`
+  (`ReceiptScannerView.swift:68-72`) für diese Fixture leer ist. Die UI-Tests lesen ausschließlich
+  `exists`/`waitForExistence`, nie `XCUIElement.value` — sie belegen AC-5 also NICHT.
+- **AC-6:** Given kein Startargument `-seedReceiptReviewForUITests` / When die bestehende
+  `RestockUITests`-Suite läuft / Then bleibt sie unverändert grün — der Seed hat ohne Argument
+  keine Wirkung. Test: bestehende Suite in `RestockUITests/RestockUITests.swift` (Negativkontrolle,
+  kein neuer Testcode).
+- **AC-7:** Given das heutige Layout (`ReceiptLineRow` ohne Bontext-Anzeige) / When
+  `receiptReview.line.<i>.originalName` für jede Zeile geprüft wird / Then schlägt die Prüfung
+  fehl — belegt in `XCTExpectFailure("Bontext erst mit #23 sichtbar", strict: true)`. Test:
+  `testOriginalReceiptTextIsVisibleOnEveryLine`.
 
 ## Alternativen (verworfen)
 

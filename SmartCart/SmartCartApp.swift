@@ -27,6 +27,7 @@ struct SmartCartApp: App {
             SyncCoordinator.shared.modelContext = container.mainContext
             #if DEBUG
             Self.seedSharedAssignmentForScreenshotsIfNeeded(context: container.mainContext)
+            Self.seedReceiptReviewForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
 
@@ -179,6 +180,76 @@ struct SmartCartApp: App {
             context.insert(item)
         }
         try? context.save()
+    }
+
+    /// UI-test-only seed for the receipt review screen (Issue #28): that screen is otherwise only
+    /// reachable via camera OCR or a real Photos→Share jump, neither of which is deterministic in
+    /// the simulator. Seeds a store with items and hands a fixed four-line receipt over through
+    /// the REAL handoff path (`ReceiptShareHandoff` → `HomeView.checkPendingReceiptScan()`), so
+    /// the test exercises store matching and the confidence check just like a real share does —
+    /// no shortcut sheet presentation that would bypass exactly the logic #23 needs to test.
+    ///
+    /// Every fixture line satisfies `resolvedByAI == true` OR `name != originalName`, so
+    /// `EditableReceiptLine.linesNeedingAIReresolution` is empty and `reResolveAIIfNeeded()`
+    /// never runs — neither the abbreviation dictionary, a fuzzy match nor an alias learned in an
+    /// earlier run can change the fixture between runs.
+    /// Only runs on `-seedReceiptReviewForUITests`, DEBUG-only, never ships to users.
+    private static func seedReceiptReviewForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedReceiptReviewForUITests") else { return }
+        // Same reason as the screenshot seed above: the App-Group container survives test runs,
+        // so stores would otherwise pile up across runs.
+        if let existing = try? context.fetch(FetchDescriptor<Store>()) {
+            for s in existing { context.delete(s) }
+        }
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")
+        context.insert(store)
+
+        let milch = ShoppingItem(name: "Milch", quantity: "1", store: store)
+        let hafermilch = ShoppingItem(name: "Hafermilch", quantity: "1", store: store)
+        let buttermilch = ShoppingItem(name: "Buttermilch", quantity: "1", store: store)
+        let vollmilch = ShoppingItem(name: "Vollmilch", quantity: "1", store: store)
+        let hackfleisch = ShoppingItem(name: "Hackfleisch", quantity: "1", store: store)
+        let broetchen = ShoppingItem(name: "Brötchen", quantity: "1", store: store)
+        for item in [milch, hafermilch, buttermilch, vollmilch, hackfleisch, broetchen] {
+            context.insert(item)
+        }
+        // Erst speichern, dann die Nutzlast bauen: `matchedItemID`/`suggestions` referenzieren die
+        // soeben vergebenen `id`s der Artikel.
+        try? context.save()
+
+        let lines: [ResolvedReceiptLine] = [
+            ResolvedReceiptLine(
+                name: "Frische Vollmilch 3,5 %", originalName: "MILCH 3,5% FRISCH",
+                price: 1.19, quantity: 1, unit: "", weightBasis: nil,
+                suggestions: [], matchedItemID: vollmilch.id, resolvedByAI: true),
+            ResolvedReceiptLine(
+                name: "Bio-Hackfleisch gemischt Rind & Schwein 400 g",
+                originalName: "BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G",
+                price: 4.99, quantity: 1, unit: "400g", weightBasis: nil,
+                suggestions: [], matchedItemID: hackfleisch.id, resolvedByAI: false),
+            ResolvedReceiptLine(
+                name: "Milch", originalName: "MILCH",
+                price: 0.99, quantity: 1, unit: "", weightBasis: nil,
+                suggestions: [
+                    ReceiptSuggestion(name: "Hafermilch", itemID: hafermilch.id),
+                    ReceiptSuggestion(name: "Buttermilch", itemID: buttermilch.id),
+                    ReceiptSuggestion(name: "Vollmilch", itemID: vollmilch.id),
+                ], matchedItemID: milch.id, resolvedByAI: false),
+            ResolvedReceiptLine(
+                name: "Brötchen", originalName: "BROETCHEN",
+                price: 1.56, quantity: 4, unit: "", weightBasis: nil,
+                suggestions: [], matchedItemID: broetchen.id, resolvedByAI: false),
+        ]
+
+        // `storeConfidentlyDetected: true` ist Pflicht — sonst greift in
+        // `checkPendingReceiptScan()` der Besuchsfrequenz-Notnagel, das Banner "Laden nicht sicher
+        // erkannt" erscheint und "Speichern" bleibt via `storeNeedsConfirmation` gesperrt.
+        ReceiptShareHandoff.store(SharedReceiptPayload(
+            storeID: store.id,
+            storeConfidentlyDetected: true,
+            lines: lines,
+            rawLines: lines.map(\.originalName),
+            detectedTotal: lines.reduce(0) { $0 + $1.price }))
     }
     #endif
 

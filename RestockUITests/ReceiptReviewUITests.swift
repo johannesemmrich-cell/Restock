@@ -33,6 +33,23 @@ final class ReceiptReviewUITests: XCTestCase {
         return app
     }
 
+    /// Wartet, bis die App wirklich vorn und ansprechbar ist, BEVOR auf das Sheet gewartet wird.
+    ///
+    /// Nach einem kalten Install ist `launch()` allein kein verlässlicher Startpunkt: In einem
+    /// Prüflauf brauchte schon das Hochfahren bis „App idle" rund 9,5 s (Automations-Sitzung
+    /// 5,5 s, Idle-Warten weitere 2,5 s), sodass die anschließende Wartezeit auf die
+    /// Navigationsleiste fast vollständig vom Start selbst aufgebraucht wurde und der Test
+    /// durchfiel, obwohl das Sheet kurz darauf erschien. Gleiches defensives Muster wie das
+    /// `hasKeyboardFocus`-Warten in `RestockUITests.swift` (dort Z. 183-185): erst den
+    /// Vorbedingungs-Zustand abwarten, dann die eigentliche Prüfung.
+    ///
+    /// Reine Robustheit — geprüft wird danach exakt dasselbe wie vorher.
+    private func waitUntilSettled(_ app: XCUIApplication) {
+        let isForeground = NSPredicate(format: "state == %d", XCUIApplication.State.runningForeground.rawValue)
+        expectation(for: isForeground, evaluatedWith: app)
+        waitForExpectations(timeout: 20)
+    }
+
     /// Grundgerüst: Der Prüf-Screen erscheint von selbst und trägt alle vier Bon-Zeilen.
     ///
     /// Dass „Speichern" bedienbar ist, ist kein Beiwerk, sondern der Beweis, dass die
@@ -40,8 +57,9 @@ final class ReceiptReviewUITests: XCTestCase {
     /// sicher erkannt wurde (`storeNeedsConfirmation`).
     func testReviewSheetOpensFromShareHandoff() {
         let app = launchedApp()
+        waitUntilSettled(app)
 
-        XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 10),
+        XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 20),
                       "Das Bon-Prüf-Sheet ist nicht erschienen — Seed oder Handoff greift nicht.")
 
         for index in 0...3 {
@@ -74,8 +92,9 @@ final class ReceiptReviewUITests: XCTestCase {
     /// Test dort rot, weil der erwartete Fehlschlag ausbleibt.
     func testOriginalReceiptTextIsVisibleOnEveryLine() {
         let app = launchedApp()
+        waitUntilSettled(app)
 
-        XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 10),
+        XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 20),
                       "Das Bon-Prüf-Sheet ist nicht erschienen — Seed oder Handoff greift nicht.")
 
         XCTExpectFailure("Bontext erst mit #23 sichtbar", strict: true) {
