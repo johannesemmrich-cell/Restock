@@ -26,6 +26,22 @@ final class ReceiptReviewUITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    /// Räumt den Seed nach JEDEM Test wieder weg — sonst erbt die Bestandssuite ihn.
+    ///
+    /// Der App-Group-Container überlebt den einzelnen Test. Im gemeinsamen `xcodebuild
+    /// test`-Lauf startet `RestockUITests` direkt nach dieser Klasse und fand den geseedeten
+    /// Laden „Lidl" samt sechs Artikeln vor; `testAddStoreAndQuickAddItemShowsPriceWithoutCrash`
+    /// fiel daraufhin durch. Auf leerem Gerät ist derselbe Test grün — der Unterschied ist
+    /// allein der liegengebliebene Seed. Das Aufräumen gehört deshalb hierher, zu dem Test,
+    /// der die Daten anlegt, nicht in die fremde Testklasse.
+    override func tearDown() {
+        super.tearDown()
+        let cleaner = XCUIApplication()
+        cleaner.launchArguments = ["-hasCompletedOnboarding", "YES", "-clearReceiptReviewSeedForUITests"]
+        cleaner.launch()
+        cleaner.terminate()
+    }
+
     private func launchedApp() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewForUITests"]

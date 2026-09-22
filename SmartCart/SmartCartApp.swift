@@ -27,6 +27,7 @@ struct SmartCartApp: App {
             SyncCoordinator.shared.modelContext = container.mainContext
             #if DEBUG
             Self.seedSharedAssignmentForScreenshotsIfNeeded(context: container.mainContext)
+            Self.clearReceiptReviewSeedForUITestsIfNeeded(context: container.mainContext)
             Self.seedReceiptReviewForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
@@ -180,6 +181,31 @@ struct SmartCartApp: App {
             context.insert(item)
         }
         try? context.save()
+    }
+
+    /// Räumt die Daten des Bon-Prüf-Seeds wieder weg (Issue #28).
+    ///
+    /// Der App-Group-Container überlebt den einzelnen Test: Ohne dieses Aufräumen bleibt der
+    /// geseedete Laden „Lidl" samt sechs Artikeln liegen, und die Bestandssuite startet im
+    /// selben `xcodebuild test`-Lauf danach nicht mehr im leeren Zustand, den sie erwartet.
+    /// Belegt in `docs/artifacts/feat-28-receipt-review-test-entry/`: auf leerem Gerät grün
+    /// (`diag-a-baseline-erased.txt`), nach dem Seed rot im gemeinsamen Lauf
+    /// (`validation-full-suite-run1-aborted.txt` — `testAddStoreAndQuickAddItemShowsPriceWithoutCrash`
+    /// findet seinen Artikel nicht mehr und protokolliert davor „Lidl existiert bereits").
+    /// `ReceiptReviewUITests.tearDown()` startet die App einmal mit diesem Argument.
+    ///
+    /// Die noch offene Nutzlast wird mit konsumiert, damit kein Prüf-Sheet in einen späteren
+    /// Test hineinragt. Only runs on `-clearReceiptReviewSeedForUITests`, DEBUG-only.
+    private static func clearReceiptReviewSeedForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-clearReceiptReviewSeedForUITests") else { return }
+        if let items = try? context.fetch(FetchDescriptor<ShoppingItem>()) {
+            for item in items { context.delete(item) }
+        }
+        if let stores = try? context.fetch(FetchDescriptor<Store>()) {
+            for store in stores { context.delete(store) }
+        }
+        try? context.save()
+        _ = ReceiptShareHandoff.takePending()
     }
 
     /// UI-test-only seed for the receipt review screen (Issue #28): that screen is otherwise only

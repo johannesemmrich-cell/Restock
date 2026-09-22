@@ -36,6 +36,7 @@ Produktänderung — nur ein Test-Zugang und unsichtbare Identifier.
 - **File:** `SmartCart/SmartCartApp.swift` (neuer Seed), `RestockUITests/ReceiptReviewUITests.swift`
   (neu)
 - **Identifier:** `seedReceiptReviewForUITestsIfNeeded(context:)`,
+  `clearReceiptReviewSeedForUITestsIfNeeded(context:)`, `ReceiptReviewUITests.tearDown()`,
   `testReviewSheetOpensFromShareHandoff`, `testOriginalReceiptTextIsVisibleOnEveryLine`
 
 ## Dependencies
@@ -365,6 +366,17 @@ eingecheckten `pbxproj`.
 5. **`storeID` der Nutzlast trifft immer den geseedeten Laden** (`store.id`), und
    `storeConfidentlyDetected` ist immer `true` — sonst wäre `receiptReview.saveButton` gesperrt und
    der Grundgerüst-Test könnte die Ladenerkennung nicht als funktionierend nachweisen.
+6. **Der Seed hinterlässt keine Daten für nachfolgende Tests.** Der App-Group-Container überlebt
+   den einzelnen Test; ohne Aufräumen erbt die Bestandssuite im selben `xcodebuild test`-Lauf den
+   Laden „Lidl" samt sechs Artikeln und startet nicht mehr im leeren Zustand, den sie erwartet.
+   `ReceiptReviewUITests.tearDown()` startet die App deshalb nach jedem Testfall einmal mit
+   `-clearReceiptReviewSeedForUITests`; `clearReceiptReviewSeedForUITestsIfNeeded(context:)`
+   (DEBUG-only, ohne Argument wirkungslos) löscht Läden und Artikel und konsumiert eine noch
+   offene Handoff-Nutzlast, damit kein Prüf-Sheet in einen späteren Test hineinragt.
+   Nachgewiesen in Phase 7: vor dem Aufräumen fiel die Bestandssuite im gemeinsamen Lauf durch
+   (`validation-full-suite-run1-aborted.txt`), allein auf leerem Gerät war sie grün
+   (`diag-a-baseline-erased.txt`), nach dem Aufräumen 3/3 gemeinsame Läufe grün
+   (`validation-full-suite-fixed-run1…3.txt`).
 
 ## Test Plan
 
@@ -428,8 +440,11 @@ bekannter 10-Minuten-Diagnose-Hänger bei Parallelität, Issue #21) → Test 1 �
   `exists`/`waitForExistence`, nie `XCUIElement.value` — sie belegen AC-5 also NICHT.
 - **AC-6:** Given kein Startargument `-seedReceiptReviewForUITests` / When die bestehende
   `RestockUITests`-Suite läuft / Then bleibt sie unverändert grün — der Seed hat ohne Argument
-  keine Wirkung. Test: bestehende Suite in `RestockUITests/RestockUITests.swift` (Negativkontrolle,
-  kein neuer Testcode).
+  keine Wirkung. Das gilt **auch im gemeinsamen `xcodebuild test`-Lauf direkt hinter den neuen
+  Tests**, also mit dem Gerätezustand, den diese hinterlassen (Invariante 6). Test: bestehende
+  Suite in `RestockUITests/RestockUITests.swift` (Negativkontrolle, kein neuer Testcode); der
+  gemeinsame Lauf ist der bindende Nachweis, weil die getrennte Ausführung den Nebeneffekt nicht
+  sichtbar macht.
 - **AC-7:** Given das heutige Layout (`ReceiptLineRow` ohne Bontext-Anzeige) / When
   `receiptReview.line.<i>.originalName` für jede Zeile geprüft wird / Then schlägt die Prüfung
   fehl — belegt in `XCTExpectFailure("Bontext erst mit #23 sichtbar", strict: true)`. Test:

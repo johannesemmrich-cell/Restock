@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/testing/receipt-review-test-entry.md
-spec_sha256: 9726c9dc2722a13a5aecf9e1be2198c1930f8576a5c9e31f5e82bc45408f41b2
+spec_sha256: 58fac04cdee2f7f8581185dceca7755ed65509c55d63df2f9bb89bf471e6f511
 ---
 
 # PO-Briefing: feat-28-receipt-review-test-entry
