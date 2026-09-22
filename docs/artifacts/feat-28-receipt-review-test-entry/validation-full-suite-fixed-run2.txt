@@ -1,0 +1,1746 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-09-22 18:08:45.048515+0200 Restock[74698:63605721] [General] Failed to connect to linkd to request update AppShortcut parameters, error: Kommunikation mit der Hilfs-App nicht möglich.
+2026-09-22 18:08:45.139291+0200 Restock[74698:63605391] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-09-22 18:08:45.141387+0200 Restock[74698:63605391] [error] CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application Support/default.store', errno 2 / No such file or directory.
+CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application Support/default.store', errno 2 / No such file or directory.
+2026-09-22 18:08:45.141514+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.141612+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create denied
+CoreData: error:   Sandbox access to file-write-create denied
+2026-09-22 18:08:45.141681+0200 Restock[74698:63605391] [error] CoreData: error: Failed to statfs file; errno 2 / No such file or directory.
+CoreData: error: Failed to statfs file; errno 2 / No such file or directory.
+2026-09-22 18:08:45.141750+0200 Restock[74698:63605391] [error] CoreData: error: Information for file system
+CoreData: error: Information for file system
+2026-09-22 18:08:45.141797+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.141842+0200 Restock[74698:63605391] [error] CoreData: error:   File system type: 		0
+CoreData: error:   File system type: 		0
+2026-09-22 18:08:45.141905+0200 Restock[74698:63605391] [error] CoreData: error:   File system flags: 		0
+CoreData: error:   File system flags: 		0
+2026-09-22 18:08:45.142037+0200 Restock[74698:63605391] [error] CoreData: error:   Total data blocks: 		0
+CoreData: error:   Total data blocks: 		0
+2026-09-22 18:08:45.142090+0200 Restock[74698:63605391] [error] CoreData: error:   Free data blocks: 		0
+CoreData: error:   Free data blocks: 		0
+2026-09-22 18:08:45.142135+0200 Restock[74698:63605391] [error] CoreData: error:   Free blocks for nonsuperuser:	0
+CoreData: error:   Free blocks for nonsuperuser:	0
+2026-09-22 18:08:45.142229+0200 Restock[74698:63605391] [error] CoreData: error:   Total i-nodes: 			0
+CoreData: error:   Total i-nodes: 			0
+2026-09-22 18:08:45.142499+0200 Restock[74698:63605391] [error] CoreData: error:   File system ID: 		0, 0
+CoreData: error:   File system ID: 		0, 0
+2026-09-22 18:08:45.142604+0200 Restock[74698:63605391] [error] CoreData: error:   Free i-nodes: 			0
+CoreData: error:   Free i-nodes: 			0
+2026-09-22 18:08:45.142645+0200 Restock[74698:63605391] [error] CoreData: error:   Owner UID: 			0
+CoreData: error:   Owner UID: 			0
+2026-09-22 18:08:45.142688+0200 Restock[74698:63605391] [error] CoreData: error:   Filesystem type name:
+CoreData: error:   Filesystem type name: 		
+2026-09-22 18:08:45.142759+0200 Restock[74698:63605391] [error] CoreData: error:   Mount on name:
+CoreData: error:   Mount on name: 			
+2026-09-22 18:08:45.142829+0200 Restock[74698:63605391] [error] CoreData: error:   Mount from name:
+CoreData: error:   Mount from name: 		
+2026-09-22 18:08:45.142906+0200 Restock[74698:63605391] [error] CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application Support', errno 2 / No such file or directory.
+CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application Support', errno 2 / No such file or directory.
+2026-09-22 18:08:45.142966+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.143016+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create denied
+CoreData: error:   Sandbox access to file-write-create denied
+2026-09-22 18:08:45.143095+0200 Restock[74698:63605391] [error] CoreData: error: Failed to statfs file; errno 2 / No such file or directory.
+CoreData: error: Failed to statfs file; errno 2 / No such file or directory.
+2026-09-22 18:08:45.143260+0200 Restock[74698:63605391] [error] CoreData: error: Information for file system
+CoreData: error: Information for file system
+2026-09-22 18:08:45.143326+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.143406+0200 Restock[74698:63605391] [error] CoreData: error:   File system type: 		0
+CoreData: error:   File system type: 		0
+2026-09-22 18:08:45.143479+0200 Restock[74698:63605391] [error] CoreData: error:   File system flags: 		0
+CoreData: error:   File system flags: 		0
+2026-09-22 18:08:45.143536+0200 Restock[74698:63605391] [error] CoreData: error:   Total data blocks: 		0
+CoreData: error:   Total data blocks: 		0
+2026-09-22 18:08:45.143611+0200 Restock[74698:63605391] [error] CoreData: error:   Free data blocks: 		0
+CoreData: error:   Free data blocks: 		0
+2026-09-22 18:08:45.143648+0200 Restock[74698:63605391] [error] CoreData: error:   Free blocks for nonsuperuser:	0
+CoreData: error:   Free blocks for nonsuperuser:	0
+2026-09-22 18:08:45.143690+0200 Restock[74698:63605391] [error] CoreData: error:   Total i-nodes: 			0
+CoreData: error:   Total i-nodes: 			0
+2026-09-22 18:08:45.143781+0200 Restock[74698:63605391] [error] CoreData: error:   File system ID: 		0, 0
+CoreData: error:   File system ID: 		0, 0
+2026-09-22 18:08:45.143877+0200 Restock[74698:63605391] [error] CoreData: error:   Free i-nodes: 			0
+CoreData: error:   Free i-nodes: 			0
+2026-09-22 18:08:45.143924+0200 Restock[74698:63605391] [error] CoreData: error:   Owner UID: 			0
+CoreData: error:   Owner UID: 			0
+2026-09-22 18:08:45.143968+0200 Restock[74698:63605391] [error] CoreData: error:   Filesystem type name:
+CoreData: error:   Filesystem type name: 		
+2026-09-22 18:08:45.144016+0200 Restock[74698:63605391] [error] CoreData: error:   Mount on name:
+CoreData: error:   Mount on name: 			
+2026-09-22 18:08:45.144059+0200 Restock[74698:63605391] [error] CoreData: error:   Mount from name:
+CoreData: error:   Mount from name: 		
+2026-09-22 18:08:45.144125+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.144178+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library
+2026-09-22 18:08:45.144235+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.144298+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.144351+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.144409+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-22 18:08:45.144462+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358501697
+CoreData: error:   File inode: 		358501697
+2026-09-22 18:08:45.144511+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.144581+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.144619+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.144654+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.144697+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.144732+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.144816+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.144870+0200 Restock[74698:63605391] [error] CoreData: error: Information for file system
+CoreData: error: Information for file system
+2026-09-22 18:08:45.144905+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.144943+0200 Restock[74698:63605391] [error] CoreData: error:   File system type: 		0x1a
+CoreData: error:   File system type: 		0x1a
+2026-09-22 18:08:45.144979+0200 Restock[74698:63605391] [error] CoreData: error:   File system flags: 		0x4909080
+CoreData: error:   File system flags: 		0x4909080
+2026-09-22 18:08:45.145050+0200 Restock[74698:63605391] [error] CoreData: error:   MNT_JOURNALED
+CoreData: error:   MNT_JOURNALED
+2026-09-22 18:08:45.145097+0200 Restock[74698:63605391] [error] CoreData: error:   Total data blocks: 		120699413
+CoreData: error:   Total data blocks: 		120699413
+2026-09-22 18:08:45.145135+0200 Restock[74698:63605391] [error] CoreData: error:   Free data blocks: 		15634061
+CoreData: error:   Free data blocks: 		15634061
+2026-09-22 18:08:45.145170+0200 Restock[74698:63605391] [error] CoreData: error:   Free blocks for nonsuperuser:	15634061
+CoreData: error:   Free blocks for nonsuperuser:	15634061
+2026-09-22 18:08:45.145211+0200 Restock[74698:63605391] [error] CoreData: error:   Total i-nodes: 			629162627
+CoreData: error:   Total i-nodes: 			629162627
+2026-09-22 18:08:45.145269+0200 Restock[74698:63605391] [error] CoreData: error:   File system ID: 		0x1000012, 0x1a
+CoreData: error:   File system ID: 		0x1000012, 0x1a
+2026-09-22 18:08:45.145416+0200 Restock[74698:63605391] [error] CoreData: error:   Free i-nodes: 			625362440
+CoreData: error:   Free i-nodes: 			625362440
+2026-09-22 18:08:45.145506+0200 Restock[74698:63605391] [error] CoreData: error:   Owner UID: 			0
+CoreData: error:   Owner UID: 			0
+2026-09-22 18:08:45.145600+0200 Restock[74698:63605391] [error] CoreData: error:   Filesystem type name: 		apfs
+CoreData: error:   Filesystem type name: 		apfs
+2026-09-22 18:08:45.145671+0200 Restock[74698:63605391] [error] CoreData: error:   Mount on name: 			/System/Volumes/Data
+CoreData: error:   Mount on name: 			/System/Volumes/Data
+2026-09-22 18:08:45.145756+0200 Restock[74698:63605391] [error] CoreData: error:   Mount from name: 		/dev/disk3s5
+CoreData: error:   Mount from name: 		/dev/disk3s5
+2026-09-22 18:08:45.145849+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.145887+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61
+2026-09-22 18:08:45.145931+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.146006+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.146082+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.146124+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-22 18:08:45.146226+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358501695
+CoreData: error:   File inode: 		358501695
+2026-09-22 18:08:45.146332+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.146447+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.146518+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.146566+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.146628+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.146668+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.146761+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.146819+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.146861+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup
+2026-09-22 18:08:45.146926+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.146964+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.147004+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.147042+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		2336 bytes
+CoreData: error:   File Size: 		2336 bytes
+2026-09-22 18:08:45.147107+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358489412
+CoreData: error:   File inode: 		358489412
+2026-09-22 18:08:45.147177+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.147251+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.147292+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.147331+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.147370+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.147407+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.147491+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.147595+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.147632+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared
+2026-09-22 18:08:45.147681+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.147719+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.147755+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.147790+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-22 18:08:45.147839+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358488971
+CoreData: error:   File inode: 		358488971
+2026-09-22 18:08:45.147907+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.147980+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.148029+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.148088+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.148125+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.148173+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.148238+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.148291+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.148329+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers
+2026-09-22 18:08:45.148440+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.148487+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.148525+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.148601+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		224 bytes
+CoreData: error:   File Size: 		224 bytes
+2026-09-22 18:08:45.148673+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358488963
+CoreData: error:   File inode: 		358488963
+2026-09-22 18:08:45.148752+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.148797+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.148832+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.148867+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.148905+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.148943+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.149010+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.149058+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.149120+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data
+2026-09-22 18:08:45.149163+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.149197+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.149264+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.149333+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		416 bytes
+CoreData: error:   File Size: 		416 bytes
+2026-09-22 18:08:45.149418+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358488672
+CoreData: error:   File inode: 		358488672
+2026-09-22 18:08:45.149463+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.149508+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.149571+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.149641+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.149687+0200 Restock[74698:63605391] [error] CoreData: error:   775
+CoreData: error:   775
+2026-09-22 18:08:45.149734+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.149797+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.149845+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.149882+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7
+2026-09-22 18:08:45.149927+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.149963+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.149998+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.150034+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-22 18:08:45.150069+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358303817
+CoreData: error:   File inode: 		358303817
+2026-09-22 18:08:45.150105+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.150157+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.150205+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.150251+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.150294+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.150341+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.150410+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.150459+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.150495+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices
+2026-09-22 18:08:45.150533+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.150568+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.150603+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.150644+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		1760 bytes
+CoreData: error:   File Size: 		1760 bytes
+2026-09-22 18:08:45.150679+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		61848615
+CoreData: error:   File inode: 		61848615
+2026-09-22 18:08:45.150713+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.150751+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.150785+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.150818+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.150851+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.150884+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.150940+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.150986+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.151026+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator
+2026-09-22 18:08:45.151065+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.151098+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.151132+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.151170+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-22 18:08:45.151203+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		61848523
+CoreData: error:   File inode: 		61848523
+2026-09-22 18:08:45.151238+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.151272+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.151308+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.151342+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.151376+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.151411+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.151477+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.151557+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.151590+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer
+CoreData: error: Information for /Users/hem/Library/Developer
+2026-09-22 18:08:45.151636+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.151681+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.151728+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.151771+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		256 bytes
+CoreData: error:   File Size: 		256 bytes
+2026-09-22 18:08:45.151818+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		61843893
+CoreData: error:   File inode: 		61843893
+2026-09-22 18:08:45.151867+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.151913+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.151956+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.152001+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.152042+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.152098+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.152174+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.152222+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.152267+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library
+CoreData: error: Information for /Users/hem/Library
+2026-09-22 18:08:45.152313+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.152346+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.152389+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.152431+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		3776 bytes
+CoreData: error:   File Size: 		3776 bytes
+2026-09-22 18:08:45.152476+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		364216
+CoreData: error:   File inode: 		364216
+2026-09-22 18:08:45.152520+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.152590+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.152641+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.152688+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.152733+0200 Restock[74698:63605391] [error] CoreData: error:   700
+CoreData: error:   700
+2026-09-22 18:08:45.152776+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.152845+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.152891+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.152937+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem
+CoreData: error: Information for /Users/hem
+2026-09-22 18:08:45.152991+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.153028+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.153084+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.153131+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		2240 bytes
+CoreData: error:   File Size: 		2240 bytes
+2026-09-22 18:08:45.153182+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		352974
+CoreData: error:   File inode: 		352974
+2026-09-22 18:08:45.153220+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.153257+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.153313+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.153369+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.153417+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.153464+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.153515+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-22 18:08:45.153553+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.153590+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users
+CoreData: error: Information for /Users
+2026-09-22 18:08:45.153645+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.153679+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.153715+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.153749+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-22 18:08:45.153786+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		17011
+CoreData: error:   File inode: 		17011
+2026-09-22 18:08:45.153829+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		0
+CoreData: error:   File user ID: 		0
+2026-09-22 18:08:45.153866+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		80
+CoreData: error:   File group ID: 		80
+2026-09-22 18:08:45.153902+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.153963+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.153997+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.154033+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.154133+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create denied
+CoreData: error:   Sandbox access to file-write-create denied
+2026-09-22 18:08:45.154192+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.154255+0200 Restock[74698:63605391] [error] CoreData: error: Information for /
+CoreData: error: Information for /
+2026-09-22 18:08:45.154309+0200 Restock[74698:63605391] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-22 18:08:45.154341+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.154378+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.154440+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		704 bytes
+CoreData: error:   File Size: 		704 bytes
+2026-09-22 18:08:45.154509+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		2
+CoreData: error:   File inode: 		2
+2026-09-22 18:08:45.154544+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		0
+CoreData: error:   File user ID: 		0
+2026-09-22 18:08:45.154620+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		0
+CoreData: error:   File group ID: 		0
+2026-09-22 18:08:45.154657+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.154691+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.154741+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.154789+0200 Restock[74698:63605391] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-22 18:08:45.154849+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create denied
+CoreData: error:   Sandbox access to file-write-create denied
+2026-09-22 18:08:45.154940+0200 Restock[74698:63605391] [error] CoreData: error: Logging status information for directory path: /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application Support
+CoreData: error: Logging status information for directory path: /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application Support
+2026-09-22 18:08:45.154999+0200 Restock[74698:63605391] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-22 18:08:45.155045+0200 Restock[74698:63605391] [error] CoreData: error: Information for /
+CoreData: error: Information for /
+2026-09-22 18:08:45.155084+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.155172+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.155208+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		704 bytes
+CoreData: error:   File Size: 		704 bytes
+2026-09-22 18:08:45.155243+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		2
+CoreData: error:   File inode: 		2
+2026-09-22 18:08:45.155280+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		0
+CoreData: error:   File user ID: 		0
+2026-09-22 18:08:45.155315+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		0
+CoreData: error:   File group ID: 		0
+2026-09-22 18:08:45.155351+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.155387+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.155422+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.155456+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.155506+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.155553+0200 Restock[74698:63605391] [error] CoreData: error:   component is not writeable with errno 30
+CoreData: error:   component is not writeable with errno 30
+2026-09-22 18:08:45.155595+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users
+CoreData: error: Information for /Users
+2026-09-22 18:08:45.155637+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.155675+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.155716+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-22 18:08:45.155755+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		17011
+CoreData: error:   File inode: 		17011
+2026-09-22 18:08:45.155792+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		0
+CoreData: error:   File user ID: 		0
+2026-09-22 18:08:45.155830+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		80
+CoreData: error:   File group ID: 		80
+2026-09-22 18:08:45.155865+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.155912+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.156009+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.156054+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.156100+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.156150+0200 Restock[74698:63605391] [error] CoreData: error:   component is not writeable with errno 13
+CoreData: error:   component is not writeable with errno 13
+2026-09-22 18:08:45.156193+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem
+CoreData: error: Information for /Users/hem
+2026-09-22 18:08:45.156231+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.156295+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.156341+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		2240 bytes
+CoreData: error:   File Size: 		2240 bytes
+2026-09-22 18:08:45.156405+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		352974
+CoreData: error:   File inode: 		352974
+2026-09-22 18:08:45.156469+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.156534+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.156582+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.156625+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.156673+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.156730+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.156793+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.156840+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.156887+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library
+CoreData: error: Information for /Users/hem/Library
+2026-09-22 18:08:45.156922+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.156960+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.156994+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		3776 bytes
+CoreData: error:   File Size: 		3776 bytes
+2026-09-22 18:08:45.157053+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		364216
+CoreData: error:   File inode: 		364216
+2026-09-22 18:08:45.157099+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.157152+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.157208+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.157276+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.157340+0200 Restock[74698:63605391] [error] CoreData: error:   700
+CoreData: error:   700
+2026-09-22 18:08:45.157388+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.157454+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.157504+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.157549+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer
+CoreData: error: Information for /Users/hem/Library/Developer
+2026-09-22 18:08:45.157588+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.157624+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.157664+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		256 bytes
+CoreData: error:   File Size: 		256 bytes
+2026-09-22 18:08:45.157701+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		61843893
+CoreData: error:   File inode: 		61843893
+2026-09-22 18:08:45.157739+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.157777+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.157811+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.157846+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.157911+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.157994+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.158069+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.158114+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.158160+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator
+2026-09-22 18:08:45.158200+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.158251+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.158300+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-22 18:08:45.158346+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		61848523
+CoreData: error:   File inode: 		61848523
+2026-09-22 18:08:45.158417+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.158467+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.158517+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.158572+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.158633+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.158690+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.158756+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.158832+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.158901+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices
+2026-09-22 18:08:45.158969+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.159049+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.159095+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		1760 bytes
+CoreData: error:   File Size: 		1760 bytes
+2026-09-22 18:08:45.159141+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		61848615
+CoreData: error:   File inode: 		61848615
+2026-09-22 18:08:45.159186+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.159238+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.159284+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.159339+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.159387+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.159434+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.159501+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.159551+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.159623+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7
+2026-09-22 18:08:45.159661+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.159746+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.159782+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-22 18:08:45.159818+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358303817
+CoreData: error:   File inode: 		358303817
+2026-09-22 18:08:45.159879+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.159915+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.159948+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.159982+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.160030+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.160096+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.160150+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.160197+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.160247+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data
+2026-09-22 18:08:45.160284+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.160320+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.160390+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		416 bytes
+CoreData: error:   File Size: 		416 bytes
+2026-09-22 18:08:45.160443+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358488672
+CoreData: error:   File inode: 		358488672
+2026-09-22 18:08:45.160497+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.160530+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.160565+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.160601+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.160635+0200 Restock[74698:63605391] [error] CoreData: error:   775
+CoreData: error:   775
+2026-09-22 18:08:45.160670+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.160727+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.160787+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.160833+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers
+2026-09-22 18:08:45.160891+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.160940+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.160985+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		224 bytes
+CoreData: error:   File Size: 		224 bytes
+2026-09-22 18:08:45.161032+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358488963
+CoreData: error:   File inode: 		358488963
+2026-09-22 18:08:45.161099+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.161162+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.161212+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.161248+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.161315+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.161383+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.161459+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.161509+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.161583+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared
+2026-09-22 18:08:45.161621+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.161683+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.161720+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-22 18:08:45.161755+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358488971
+CoreData: error:   File inode: 		358488971
+2026-09-22 18:08:45.161793+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.161860+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.161926+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.161979+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.162045+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.162112+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.162169+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.162219+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.162280+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup
+2026-09-22 18:08:45.162329+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.162401+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.162435+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		2336 bytes
+CoreData: error:   File Size: 		2336 bytes
+2026-09-22 18:08:45.162473+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358489412
+CoreData: error:   File inode: 		358489412
+2026-09-22 18:08:45.162508+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.162562+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.162595+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.162688+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.162777+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.162827+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.162923+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.162972+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.163024+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61
+2026-09-22 18:08:45.163066+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.163104+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.163141+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-22 18:08:45.163180+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358501695
+CoreData: error:   File inode: 		358501695
+2026-09-22 18:08:45.163220+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.163257+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.163297+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.163331+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.163368+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.163405+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.163462+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.163515+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.163591+0200 Restock[74698:63605391] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library
+2026-09-22 18:08:45.163640+0200 Restock[74698:63605391] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-22 18:08:45.163705+0200 Restock[74698:63605391] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-22 18:08:45.163754+0200 Restock[74698:63605391] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-22 18:08:45.163791+0200 Restock[74698:63605391] [error] CoreData: error:   File inode: 		358501697
+CoreData: error:   File inode: 		358501697
+2026-09-22 18:08:45.163855+0200 Restock[74698:63605391] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-22 18:08:45.163911+0200 Restock[74698:63605391] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-22 18:08:45.163948+0200 Restock[74698:63605391] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-22 18:08:45.164006+0200 Restock[74698:63605391] [error] CoreData: error: d
+CoreData: error: d
+2026-09-22 18:08:45.164041+0200 Restock[74698:63605391] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-22 18:08:45.164080+0200 Restock[74698:63605391] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-22 18:08:45.164140+0200 Restock[74698:63605391] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-22 18:08:45.164193+0200 Restock[74698:63605391] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-22 18:08:45.164260+0200 Restock[74698:63605391] [error] CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application Support', errno 2 / No such file or directory.
+CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application Support', errno 2 / No such file or directory.
+2026-09-22 18:08:45.164346+0200 Restock[74698:63605391] [error] CoreData: error:   Sandbox access to file-write-create denied
+CoreData: error:   Sandbox access to file-write-create denied
+2026-09-22 18:08:45.165229+0200 Restock[74698:63605391] [error] CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (512)
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (512)
+2026-09-22 18:08:45.165436+0200 Restock[74698:63605391] [error] CoreData: error: userInfo:
+CoreData: error: userInfo:
+2026-09-22 18:08:45.165488+0200 Restock[74698:63605391] [error] CoreData: error: 	reason : Failed to create file; code = 2
+CoreData: error: 	reason : Failed to create file; code = 2
+2026-09-22 18:08:45.165530+0200 Restock[74698:63605391] [error] CoreData: error: storeType: SQLite
+CoreData: error: storeType: SQLite
+2026-09-22 18:08:45.165612+0200 Restock[74698:63605391] [error] CoreData: error: configuration: default
+CoreData: error: configuration: default
+2026-09-22 18:08:45.165698+0200 Restock[74698:63605391] [error] CoreData: error: URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application%20Support/default.store
+CoreData: error: URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application%20Support/default.store
+CoreData: annotation: options:
+CoreData: annotation: 	NSMigratePersistentStoresAutomaticallyOption : 1
+CoreData: annotation: 	NSPersistentStoreMirroringOptionsKey : {
+    NSPersistentStoreMirroringDelegateOptionKey = "<NSCloudKitMirroringDelegate: 0x1062ec1c0>";
+}
+CoreData: annotation: 	NSInferMappingModelAutomaticallyOption : 1
+CoreData: annotation: 	NSPersistentCloudKitContainerOptionsKey : <NSPersistentCloudKitContainerOptions: 0x1060a5920>
+CoreData: annotation: 	NSPersistentStoreRemoteChangeNotificationOptionKey : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+2026-09-22 18:08:45.166201+0200 Restock[74698:63605391] [error] CoreData: error: <NSPersistentStoreCoordinator: 0x106310100>: Attempting recovery from error encountered during addPersistentStore: 0x10606d5c0 Error Domain=NSCocoaErrorDomain Code=512 "Die Datei konnte nicht gesichert werden." UserInfo={reason=Failed to create file; code = 2}
+CoreData: error: <NSPersistentStoreCoordinator: 0x106310100>: Attempting recovery from error encountered during addPersistentStore: 0x10606d5c0 Error Domain=NSCocoaErrorDomain Code=512 "Die Datei konnte nicht gesichert werden." UserInfo={reason=Failed to create file; code = 2}
+2026-09-22 18:08:45.166317+0200 Restock[74698:63605391] [error] CoreData: error: During recovery, parent directory path reported as missing
+CoreData: error: During recovery, parent directory path reported as missing
+2026-09-22 18:08:45.178224+0200 Restock[74698:63605391] [error] CoreData: error: Recovery attempt while adding <NSPersistentStoreDescription: 0x10606d5c0> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application%20Support/default.store) was successful!
+CoreData: error: Recovery attempt while adding <NSPersistentStoreDescription: 0x10606d5c0> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application%20Support/default.store) was successful!
+2026-09-22 18:08:45.214453+0200 Restock[74698:63605391] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-09-22 18:08:45.283059+0200 Restock[74698:63605721] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1062ec1c0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x106284500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/EEACC9EF-FCB7-48AD-99BE-6ED301E41C61/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-22 18:08:45.283365+0200 Restock[74698:63605721] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1062ec1c0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-22 18:08:45.283606+0200 Restock[74698:63605721] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1062ec1c0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-09-22 18:08:45.388776+0200 Restock[74698:63605722] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+IOSurfaceClientSetSurfaceNotify failed e00002c7
+2026-09-22 18:08:45.536262+0200 Restock[74698:63605391] fopen failed for data file: errno = 2 (No such file or directory)
+2026-09-22 18:08:45.947484+0200 Restock[74698:63605391] fopen failed for data file: errno = 2 (No such file or directory)
+Test Suite 'All tests' started at 2026-09-22 18:08:47.042.
+Test Suite 'RestockTests.xctest' started at 2026-09-22 18:08:47.043.
+Test Suite 'AssignmentServiceDetectStoreTests' started at 2026-09-22 18:08:47.043.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_LidlFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_LidlFirst]' passed (0.009 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_NettoFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_NettoFirst]' passed (0.005 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_FrankfurtFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_FrankfurtFirst]' passed (0.006 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_LidlFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_LidlFirst]' passed (0.006 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testEmptyCandidatesReturnsNil]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testEmptyCandidatesReturnsNil]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testGenuineNettoReceiptStillDetectedViaHeader]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testGenuineNettoReceiptStillDetectedViaHeader]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNettoAloneDoesNotFalsePositiveOnVATTable]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNettoAloneDoesNotFalsePositiveOnVATTable]' passed (0.003 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNoMatchReturnsNilRatherThanGuessing]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNoMatchReturnsNilRatherThanGuessing]' passed (0.001 seconds).
+Test Suite 'AssignmentServiceDetectStoreTests' passed at 2026-09-22 18:08:47.097.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.031 (0.054) seconds
+Test Suite 'AssignmentServiceTests' started at 2026-09-22 18:08:47.098.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignAppliesSameTieBreakToHardwareStores]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignAppliesSameTieBreakToHardwareStores]' passed (0.003 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreIdWhenNamesAlsoCollide]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreIdWhenNamesAlsoCollide]' passed (0.003 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreNameWhenPurchaseCountsAreEqual]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreNameWhenPurchaseCountsAreEqual]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksHigherVisitsPerWeekStoreWithoutNeedingEvidence]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksHigherVisitsPerWeekStoreWithoutNeedingEvidence]' passed (0.109 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksTiedGroceryStoreWithPurchaseEvidence]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksTiedGroceryStoreWithPurchaseEvidence]' passed (0.004 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignReturnsNilWhenTiedGroceryStoresHaveNoPurchaseEvidence]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignReturnsNilWhenTiedGroceryStoresHaveNoPurchaseEvidence]' passed (0.002 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreDoesNotMatchUnrelatedCompoundWord]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreDoesNotMatchUnrelatedCompoundWord]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteDiacriticDifference]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteDiacriticDifference]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteQualifierPrefix]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteQualifierPrefix]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreStillMatchesExactNameCaseInsensitively]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreStillMatchesExactNameCaseInsensitively]' passed (0.001 seconds).
+Test Suite 'AssignmentServiceTests' passed at 2026-09-22 18:08:47.228.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.125 (0.131) seconds
+Test Suite 'ConsumptionPatternTests' started at 2026-09-22 18:08:47.229.
+Test Case '-[RestockTests.ConsumptionPatternTests testAveragesRegularPurchaseInterval]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testAveragesRegularPurchaseInterval]' passed (0.024 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutOneDayOut]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutOneDayOut]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutTwoDaysOut]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutTwoDaysOut]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsAboutFourDaysOut]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsAboutFourDaysOut]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsFarInTheFuture]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsFarInTheFuture]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testOutlierIntervalIsExcludedFromAverageWithEnoughSamples]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testOutlierIntervalIsExcludedFromAverageWithEnoughSamples]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testOverdueWhenEstimatedDateIsInThePast]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testOverdueWhenEstimatedDateIsInThePast]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testReturnsNilWithFewerThanTwoRecords]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testReturnsNilWithFewerThanTwoRecords]' passed (0.000 seconds).
+Test Suite 'ConsumptionPatternTests' passed at 2026-09-22 18:08:47.260.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.029 (0.031) seconds
+Test Suite 'ExistingDataSurvivesCloudEnableTests' started at 2026-09-22 18:08:47.260.
+Test Case '-[RestockTests.ExistingDataSurvivesCloudEnableTests testExistingLocalStoreSurvivesFirstCloudKitOpen]' started.
+2026-09-22 18:08:47.301209+0200 Restock[74698:63605391] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-09-22 18:08:47.347931+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[PFCloudKitSetupAssistant _checkAndInitializeMetadata:]_block_invoke(174): Failed to initialize CloudKit metadata: Error Domain=NSCocoaErrorDomain Code=134407 "Request '1DE31608-3E7C-4954-BA75-2F70AFFFAA35' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request '1DE31608-3E7C-4954-BA75-2F70AFFFAA35' was cancelled because the store was removed from the coordinator.}
+2026-09-22 18:08:47.348159+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x109106760>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x11464d540> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/CA802790-4786-4CA3-A7E4-1EA9529C7E78/tmp/migration-cktest-3E1DA284-0C6E-4658-831B-0ABB0D413599.store)
+Error Domain=NSCocoaErrorDomain Code=134407 "Request '1DE31608-3E7C-4954-BA75-2F70AFFFAA35' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request '1DE31608-3E7C-4954-BA75-2F70AFFFAA35' was cancelled because the store was removed from the coordinator.}
+2026-09-22 18:08:47.348472+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x109106760> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134407 "Request '1DE31608-3E7C-4954-BA75-2F70AFFFAA35' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request '1DE31608-3E7C-4954-BA75-2F70AFFFAA35' was cancelled because the store was removed from the coordinator.}
+2026-09-22 18:08:47.349003+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+Error Domain=NSCocoaErrorDomain Code=134407 "Request '1DE31608-3E7C-4954-BA75-2F70AFFFAA35' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request '1DE31608-3E7C-4954-BA75-2F70AFFFAA35' was cancelled because the store was removed from the coordinator.}
+Test Case '-[RestockTests.ExistingDataSurvivesCloudEnableTests testExistingLocalStoreSurvivesFirstCloudKitOpen]' passed (0.089 seconds).
+Test Suite 'ExistingDataSurvivesCloudEnableTests' passed at 2026-09-22 18:08:47.350.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.089 (0.089) seconds
+2026-09-22 18:08:47.349531+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x109106760>: Told to tear down with reason: Store Removed
+Test Suite 'PhotoCompressorTests' started at 2026-09-22 18:08:47.350.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorDownsizesLargeImage]' started.
+2026-09-22 18:08:47.350407+0200 Restock[74698:63605737] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.export.805501DF-4D49-4399-8BF0-2B88E56393D2
+2026-09-22 18:08:47.350412+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x109106760>: Told to t2026-09-22 18:08:47.350588+0200 Restock[74698:63605737] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.export.805501DF-4D49-4399-8BF0-2B88E56393D2: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+ear down with reason: Stores Changed
+2026-09-22 18:08:47.354541+0200 Restock[74698:63605737] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.import.805501DF-4D49-4399-8BF0-2B88E56393D2
+2026-09-22 18:08:47.355032+0200 Restock[74698:63605737] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.import.805501DF-4D49-4399-8BF0-2B88E56393D2: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+2026-09-22 18:08:47.356876+0200 Restock[74698:63605737] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.setup.805501DF-4D49-4399-8BF0-2B88E56393D2
+2026-09-22 18:08:47.357563+0200 Restock[74698:63605737] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.setup.805501DF-4D49-4399-8BF0-2B88E56393D2: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorDownsizesLargeImage]' passed (0.049 seconds).
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorLeavesSmallImageDimensionsUnchanged]' started.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorLeavesSmallImageDimensionsUnchanged]' passed (0.001 seconds).
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorProducesDataUnderSizeCap]' started.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorProducesDataUnderSizeCap]' passed (0.034 seconds).
+Test Suite 'PhotoCompressorTests' passed at 2026-09-22 18:08:47.435.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.085 (0.086) seconds
+Test Suite 'PriceProvenanceMigrationTests' started at 2026-09-22 18:08:47.435.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesLegitimatelyExpensiveLearnedPriceUntouched]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesLegitimatelyExpensiveLearnedPriceUntouched]' passed (0.051 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesPlausibleStoreLearnedPricesUntouched]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesPlausibleStoreLearnedPricesUntouched]' passed (0.008 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationRepairsCorruptedStoreLearnedPrice]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationRepairsCorruptedStoreLearnedPrice]' passed (0.012 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemAcceptsLegitimatelyExpensiveLearnedPrice]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemAcceptsLegitimatelyExpensiveLearnedPrice]' passed (0.001 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemPicksDeterministicWinnerWhenMultipleLearnedPricesMatchWithoutDates]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemPicksDeterministicWinnerWhenMultipleLearnedPricesMatchWithoutDates]' passed (0.001 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemRejectsImplausibleLearnedPriceAndFallsBackToEstimator]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemRejectsImplausibleLearnedPriceAndFallsBackToEstimator]' passed (0.001 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemStillUsesPlausibleLearnedPrice]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemStillUsesPlausibleLearnedPrice]' passed (0.001 seconds).
+Test Suite 'PriceProvenanceMigrationTests' passed at 2026-09-22 18:08:47.511.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.074 (0.076) seconds
+Test Suite 'PurchaseRecordDeletionTests' started at 2026-09-22 18:08:47.511.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testKnownProductSuggestionsSurviveItemDeletion]' started.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testKnownProductSuggestionsSurviveItemDeletion]' passed (0.020 seconds).
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesItemDeletion]' started.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesItemDeletion]' passed (0.008 seconds).
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesStoreDeletion]' started.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesStoreDeletion]' passed (0.007 seconds).
+Test Suite 'PurchaseRecordDeletionTests' passed at 2026-09-22 18:08:47.547.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.034 (0.035) seconds
+Test Suite 'QuickAddParserTests' started at 2026-09-22 18:08:47.547.
+Test Case '-[RestockTests.QuickAddParserTests testCommaDecimalWithSeparateUnitToken]' started.
+Test Case '-[RestockTests.QuickAddParserTests testCommaDecimalWithSeparateUnitToken]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testEmptyInputReturnsEmptyNameWithDefaultQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testEmptyInputReturnsEmptyNameWithDefaultQuantity]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testGermanWordNumberIsParsed]' started.
+Test Case '-[RestockTests.QuickAddParserTests testGermanWordNumberIsParsed]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testGluedNumberAndUnitSplitCorrectly]' started.
+Test Case '-[RestockTests.QuickAddParserTests testGluedNumberAndUnitSplitCorrectly]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testHalfWordNumberIsParsedAsFraction]' started.
+Test Case '-[RestockTests.QuickAddParserTests testHalfWordNumberIsParsedAsFraction]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testHintFormatsQuantityAndUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testHintFormatsQuantityAndUnit]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testHintReturnsNilForPlainNameWithoutQuantityOrUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testHintReturnsNilForPlainNameWithoutQuantityOrUnit]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testLeadingMultiplierSuffixSetsQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testLeadingMultiplierSuffixSetsQuantity]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testLeadingNumberSetsQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testLeadingNumberSetsQuantity]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testNumberOnlyInputIsTreatedAsNameNotQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testNumberOnlyInputIsTreatedAsNameNotQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testPlainNameWithoutQuantityDefaultsToOne]' started.
+Test Case '-[RestockTests.QuickAddParserTests testPlainNameWithoutQuantityDefaultsToOne]' passed (0.004 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsAreSortedByMostRecentFirst]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsAreSortedByMostRecentFirst]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsDedupeCaseInsensitiveKeepingFirstSeen]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsDedupeCaseInsensitiveKeepingFirstSeen]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsExcludeExactMatch]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsExcludeExactMatch]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFallBackToSubstringWhenPrefixMatchesAreFew]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFallBackToSubstringWhenPrefixMatchesAreFew]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFoldDiacriticsForMatching]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFoldDiacriticsForMatching]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsIncludeItemNamesNotOnlyPurchaseRecords]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsIncludeItemNamesNotOnlyPurchaseRecords]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsMatchByPrefixCaseInsensitive]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsMatchByPrefixCaseInsensitive]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRequireAtLeastTwoCharacters]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRequireAtLeastTwoCharacters]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRespectLimit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRespectLimit]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingGluedQuantityAndUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingGluedQuantityAndUnit]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingMultiplierSuffixWithoutUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingMultiplierSuffixWithoutUnit]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingPlainNumberWithoutUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingPlainNumberWithoutUnit]' passed (0.004 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingSeparateQuantityAndUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingSeparateQuantityAndUnit]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testUppercaseUnitTokenIsRecognized]' started.
+Test Case '-[RestockTests.QuickAddParserTests testUppercaseUnitTokenIsRecognized]' passed (0.001 seconds).
+Test Suite 'QuickAddParserTests' passed at 2026-09-22 18:08:47.587.
+	 Executed 25 tests, with 0 failures (0 unexpected) in 0.023 (0.040) seconds
+Test Suite 'ReceiptAbbreviationExpansionTests' started at 2026-09-22 18:08:47.587.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testFlBuersteExpandsToFlaschenbuersteAcrossDotAndSpaceVariants]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testFlBuersteExpandsToFlaschenbuersteAcrossDotAndSpaceVariants]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testPremExpandsToPremium]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testPremExpandsToPremium]' passed (0.005 seconds).
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testToiPaExpandsToToilettenpapier]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testToiPaExpandsToToilettenpapier]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testUnknownWordsReturnNil]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testUnknownWordsReturnNil]' passed (0.000 seconds).
+Test Suite 'ReceiptAbbreviationExpansionTests' passed at 2026-09-22 18:08:47.596.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
+Test Suite 'ReceiptHistoryMatchTests' started at 2026-09-22 18:08:47.596.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBelowThresholdReturnsNil]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBelowThresholdReturnsNil]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBestMatchWinsNotFirstInArray]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBestMatchWinsNotFirstInArray]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testFuzzyMatchFoundWhereContainsWouldFail]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testFuzzyMatchFoundWhereContainsWouldFail]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testStoreScopeStillEnforced]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testStoreScopeStillEnforced]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testTieBreaksDeterministicallyByAlphabeticallyEarlierName]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testTieBreaksDeterministicallyByAlphabeticallyEarlierName]' passed (0.000 seconds).
+Test Suite 'ReceiptHistoryMatchTests' passed at 2026-09-22 18:08:47.602.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.003 (0.006) seconds
+Test Suite 'ReceiptKnownItemNamesTests' started at 2026-09-22 18:08:47.602.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testCapsAtLimit]' started.
+2026-09-22 18:08:47.603168+0200 Restock[74698:63605391] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testCapsAtLimit]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testDeduplicatesCaseAndDiacriticInsensitively]' started.
+2026-09-22 18:08:47.609517+0200 Restock[74698:63605391] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testDeduplicatesCaseAndDiacriticInsensitively]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testIncludesPendingStoreItemsNotOnlyPurchaseHistory]' started.
+2026-09-22 18:08:47.616052+0200 Restock[74698:63605391] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testIncludesPendingStoreItemsNotOnlyPurchaseHistory]' passed (0.005 seconds).
+Test Suite 'ReceiptKnownItemNamesTests' passed at 2026-09-22 18:08:47.621.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
+Test Suite 'ReceiptNameAIResolverSanitizeTests' started at 2026-09-22 18:08:47.621.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testEmptyOrTooLongOrMultilineIsRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testEmptyOrTooLongOrMultilineIsRejected]' passed (0.012 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsCaseInsensitive]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsCaseInsensitive]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsRejected]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelWithWhitespaceAndQuotesIsRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelWithWhitespaceAndQuotesIsRejected]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNormalNamePassesThrough]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNormalNamePassesThrough]' passed (0.007 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testSentinelAsSubstringOfLongerTextIsNotRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testSentinelAsSubstringOfLongerTextIsNotRejected]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testWhitespaceAndQuotesAreTrimmed]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testWhitespaceAndQuotesAreTrimmed]' passed (0.001 seconds).
+Test Suite 'ReceiptNameAIResolverSanitizeTests' passed at 2026-09-22 18:08:47.644.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.021 (0.023) seconds
+Test Suite 'ReceiptParserLidlFullReceiptTests' started at 2026-09-22 18:08:47.645.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testAllFourteenRealItemsAreFound]' started.
+2026-09-22 18:08:47.656222+0200 Restock[74698:63605737] [CK] Could not validate account info cache. (This is a potential performance issue.)
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testAllFourteenRealItemsAreFound]' passed (0.013 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalFindsAmountNormally]' started.
+2026-09-22 18:08:47.659311+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x109107c60>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x11464f200> (URL: file:///dev/null)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-22 18:08:47.659494+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x109107c60> - Attempting recovery from error: Error DTest Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalFindsAmountNormally]' passed (0.004 seconds).
+omain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-22 18:08:47.667176+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x109107c60> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalStillFoundWhenZuZahlenLineIsMissing]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalStillFoundWhenZuZahlenLineIsMissing]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDiagnosticDumpOfCurrentParseResult]' started.
+PARSED: Banane lose | price=0.82 qty=1.0 weightBasis=638.0
+PARSED: Bioland Haferflocken | price=0.85 qty=1.0 weightBasis=-1.0
+PARSED: BistroBaguet. Salami | price=4.38 qty=1.0 weightBasis=-1.0
+PARSED: Brötchen Lauge | price=0.78 qty=2.0 weightBasis=-1.0
+PARSED: BürgerSchwä.Maultas. | price=6.87 qty=3.0 weightBasis=-1.0
+PARSED: Eier Hessen Freilan. | price=2.29 qty=1.0 weightBasis=-1.0
+PARSED: Gouda Scheiben 48% | price=2.45 qty=1.0 weightBasis=-1.0
+PARSED: Mandelkerne | price=4.98 qty=2.0 weightBasis=-1.0
+PARSED: Nektarinen | price=1.89 qty=1.0 weightBasis=-1.0
+PARSED: Olivenöle natur | price=4.99 qty=1.0 weightBasis=-1.0
+PARSED: Penne Rigate | price=0.69 qty=1.0 weightBasis=-1.0
+PARSED: Red Bull E. Original | price=6.49 qty=1.0 weightBasis=-1.0
+PARSED: Schlagsahne 30% | price=0.89 qty=1.0 weightBasis=-1.0
+PARSED: Spaghetti | price=0.69 qty=1.0 weightBasis=-1.0
+TOTAL POSITIONS: 14
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDiagnosticDumpOfCurrentParseResult]' passed (0.011 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testMultiBuyLinesHaveCorrectQuantityInFullReceiptContext]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testMultiBuyLinesHaveCorrectQuantityInFullReceiptContext]' passed (0.010 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testNoPhantomItemsFromVATTableOrTrailer]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testNoPhantomItemsFromVATTableOrTrailer]' passed (0.010 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testStillNoPhantomItemsWhenZuZahlenLineIsMissing]' started.
+2026-09-22 18:08:47.727994+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x109107b80>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1146f6800> (URL: file:///dev/null)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-22 18:08:47.728435+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x109107b80> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-22 18:08:47.728552+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x109107b80> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testStillNoPhantomItemsWhenZuZahlenLineIsMissing]' passed (0.009 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testWeightConfirmationLineAttachesGramBasisToBanana]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testWeightConfirmationLineAttachesGramBasisToBanana]' passed (0.012 seconds).
+Test Suite 'ReceiptParserLidlFullReceiptTests' passed at 2026-09-22 18:08:47.747.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.074 (0.103) seconds
+Test Suite 'ReceiptParserPriceTests' started at 2026-09-22 18:08:47.747.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineAsFirstLineDoesNotCrash]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineAsFirstLineDoesNotCrash]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineWithFailedSanityCheckIsConsumedNotAttributed]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineWithFailedSanityCheckIsConsumedNotAttributed]' passed (0.001 seconds).
+2026-09-22 18:08:47.803550+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1091078e0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1147d0640> (URL: file:///dev/null)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountDoesNotInterfereWithWeightBasedLine]' started.
+2026-09-22 18:08:47.822361+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1091078e0> - Attempting recovery from error: Error Domain=Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountDoesNotInterfereWithWeightBasedLine]' passed (0.001 seconds).
+NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-22 18:08:47.826507+0200 Restock[74698:63605736] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1091078e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountHandlesMandelkerneAndBroetchenFromRealLidlReceipt]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountHandlesMandelkerneAndBroetchenFromRealLidlReceipt]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountLearnsPerUnitPriceNotLineTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountLearnsPerUnitPriceNotLineTotal]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountSetsQuantityFromLidlMultiBuyLine]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountSetsQuantityFromLidlMultiBuyLine]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testDocumentedWeightLineWithoutSuffixComputesWeightTimesRate]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testDocumentedWeightLineWithoutSuffixComputesWeightTimesRate]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testFlatPricePackagedItemWithoutWeightLineLearnsCorrectPerGramPrice]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testFlatPricePackagedItemWithoutWeightLineLearnsCorrectPerGramPrice]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripForReweBroetchenAndBanane]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripForReweBroetchenAndBanane]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithHistoricalMatch]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithHistoricalMatch]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithoutHistoricalMatch]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithoutHistoricalMatch]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testPieceCountLineSetsQuantityNotWeightBasis]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testPieceCountLineSetsQuantityNotWeightBasis]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasedGrundpreisLineComputesCorrectTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasedGrundpreisLineComputesCorrectTotal]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasisFromNameHandlesKgLiterAndCentiliterUnits]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasisFromNameHandlesKgLiterAndCentiliterUnits]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineSetsGramWeightBasisNotQuantity]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineSetsGramWeightBasisNotQuantity]' passed (0.010 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithDecimalDotInsteadOfCommaComputesCorrectTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithDecimalDotInsteadOfCommaComputesCorrectTotal]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithMultiplicationSignInsteadOfXComputesCorrectTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithMultiplicationSignInsteadOfXComputesCorrectTotal]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithNoSeparateTotalFallsBackToComputedTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithNoSeparateTotalFallsBackToComputedTotal]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithSeparateTotalPriceLineIsNotOverridden]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithSeparateTotalPriceLineIsNotOverridden]' passed (0.001 seconds).
+Test Suite 'ReceiptParserPriceTests' passed at 2026-09-22 18:08:47.866.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.034 (0.119) seconds
+Test Suite 'ReceiptParserReweTests' started at 2026-09-22 18:08:47.866.
+Test Case '-[RestockTests.ReceiptParserReweTests testAllFourteenPositionsAreRecognized]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testAllFourteenPositionsAreRecognized]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptParserReweTests testItemNamesAndPricesAreCorrect]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testItemNamesAndPricesAreCorrect]' passed (0.005 seconds).
+Test Case '-[RestockTests.ReceiptParserReweTests testNoAdminOrTaxLinesLeakIntoResults]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testNoAdminOrTaxLinesLeakIntoResults]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptParserReweTests testQuantityAndWeightFollowupLinesDoNotOverrideAlreadyKnownTotal]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testQuantityAndWeightFollowupLinesDoNotOverrideAlreadyKnownTotal]' passed (0.005 seconds).
+Test Suite 'ReceiptParserReweTests' passed at 2026-09-22 18:08:47.886.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.018 (0.020) seconds
+Test Suite 'ReceiptParserStornoTests' started at 2026-09-22 18:08:47.905.
+Test Case '-[RestockTests.ReceiptParserStornoTests testCorrectItemsAndPricesSurvive]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testCorrectItemsAndPricesSurvive]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testOnlyTheThreeActuallyPurchasedItemsSurvive]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testOnlyTheThreeActuallyPurchasedItemsSurvive]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoedItemsDoNotAppear]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoedItemsDoNotAppear]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoWithoutPriorMatchIsHarmless]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoWithoutPriorMatchIsHarmless]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testVatSummaryRowWithNumericCodeIsNotMistakenForAnItem]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testVatSummaryRowWithNumericCodeIsNotMistakenForAnItem]' passed (0.004 seconds).
+Test Suite 'ReceiptParserStornoTests' passed at 2026-09-22 18:08:47.925.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.017 (0.019) seconds
+Test Suite 'ReceiptParserSuggestionTests' started at 2026-09-22 18:08:47.925.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesDefaultLimitIsFive]' started.
+2026-09-22 18:08:47.926032+0200 Restock[74698:63605391] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesDefaultLimitIsFive]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testResolutionServiceSuggestsFromPendingNotOnlyCompletedItems]' started.
+2026-09-22 18:08:47.934809+0200 Restock[74698:63605737] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testResolutionServiceSuggestsFromPendingNotOnlyCompletedItems]' passed (0.018 seconds).
+Test Suite 'ReceiptParserSuggestionTests' passed at 2026-09-22 18:08:47.950.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.024 (0.025) seconds
+Test Suite 'ReceiptScannerReResolutionTests' started at 2026-09-22 18:08:47.950.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testAlreadyResolvedByAILinesAreNotReResolvedAgain]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testAlreadyResolvedByAILinesAreNotReResolvedAgain]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testMergeAppliesAIResolvedNameSuggestionsAndFlagOnlyAtTargetedIndices]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testMergeAppliesAIResolvedNameSuggestionsAndFlagOnlyAtTargetedIndices]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testUnresolvedShareHandoffLinesAreSelectedForReResolution]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testUnresolvedShareHandoffLinesAreSelectedForReResolution]' passed (0.000 seconds).
+Test Suite 'ReceiptScannerReResolutionTests' passed at 2026-09-22 18:08:47.958.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.007 (0.008) seconds
+Test Suite 'SchemaCloudKitCompatibilityTests' started at 2026-09-22 18:08:47.958.
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testCloudKitMirroredContainerInitializesForRealSchema]' started.
+2026-09-22 18:08:47.959589+0200 Restock[74698:63605391] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testCloudKitMirroredContainerInitializesForRealSchema]' passed (0.011 seconds).
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testDemonstratesRedWithoutFix]' started.
+2026-09-22 18:08:47.989039+0200 Restock[74698:63605738] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x109107aa0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1146f6300> (URL: file:///dev/null)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-22 18:08:47.989683+0200 Restock[74698:63605391] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-09-22 18:08:47.990003+0200 Restock[74698:63605738] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x109107aa0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-22 18:08:47.990712+0200 Restock[74698:63605738] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x109107aa0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-09-22 18:08:47.990956+0200 Restock[7462026-09-22 18:08:47.993715+0200 Restock[74698:63605738] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x109107720>: Failed to set up CloudKit integration for store: (null)
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+98:63605391] [error] CoreData: error: Store failed to load.  <NSPersistentStoreDescription: 0x114895b90> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/CA802790-4786-4CA3-A7E4-1EA9529C7E78/tmp/broken-cktest-2EE88914-6A71-4339-9996-468772439A47.store) with error = Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+BrokenCloudKitModel: name} with userInfo {
+    NSLocalizedFailureReason = "CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:\nBrokenCloudKitModel: name";
+}
+2026-09-22 18:08:47.994211+0200 Restock[74698:63605738] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x109107720> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+CoreData: error: Store failed to load.  <NSPersistentStoreDescription: 0x114895b90> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/CA802790-4786-4CA3-A7E4-1EA9529C7E78/tmp/broken-cktest-2EE88914-6A71-4339-9996-468772439A47.store) with error = Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+BrokenCloudKitModel: name} with userInfo {
+    NSLocalizedFailureReason = "CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:\nBrokenCloudKitModel: name";
+}
+2026-09-22 18:08:47.996406+0200 Restock[74698:63605738] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-22 18:08:47.999722+0200 Restock[74698:63605391] [DataStore] Repair of Optional(file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/CA802790-4786-4CA3-A7E4-1EA9529C7E78/tmp/broken-cktest-2EE88914-6A71-4339-9996-468772439A47.store) was not required
+2026-09-22 18:08:48.000705+0200 Restock[74698:63605738] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1062ec7e0>: Failed to set up CloudKit integration for store: (null)
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-22 18:08:48.000977+0200 Restock[74698:63605738] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1062ec7e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-22 18:08:48.001125+0200 Restock[74698:63605738] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-22 18:08:48.002429+0200 Restock[74698:63605391] [DataStore] Unresolved error loading container Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+BrokenCloudKitModel: name}
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testDemonstratesRedWithoutFix]' passed (0.035 seconds).
+Test Suite 'SchemaCloudKitCompatibilityTests' passed at 2026-09-22 18:08:48.005.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.046 (0.047) seconds
+Test Suite 'SharedItemDataPhotoRegressionTests' started at 2026-09-22 18:08:48.005.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeItemsSetsHasPhotoTrueWhenPresent]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeItemsSetsHasPhotoTrueWhenPresent]' passed (0.004 seconds).
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeOldFormatJSONStillWorks]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeOldFormatJSONStillWorks]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeDecodeRoundTripPreservesHasPhoto]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeDecodeRoundTripPreservesHasPhoto]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeItemsWithoutPhotoAddsOnlyHasPhotoKey]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeItemsWithoutPhotoAddsOnlyHasPhotoKey]' passed (0.001 seconds).
+Test Suite 'SharedItemDataPhotoRegressionTests' passed at 2026-09-22 18:08:48.014.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
+Test Suite 'SharedModelContainerExtensionDetectionTests' started at 2026-09-22 18:08:48.014.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testAppExtensionNeverBuildsACloudKitConfiguration]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testAppExtensionNeverBuildsACloudKitConfiguration]' passed (0.002 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresAppexInAnIntermediatePathComponent]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresAppexInAnIntermediatePathComponent]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresTrailingSlash]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresTrailingSlash]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsCaseInsensitive]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsCaseInsensitive]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForAnAppBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForAnAppBundlePath]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForTheMainAppProcess]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForTheMainAppProcess]' passed (0.003 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheShareExtensionBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheShareExtensionBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheWidgetBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheWidgetBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testExtensionAndAppOpenTheSameStoreLocation]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testExtensionAndAppOpenTheSameStoreLocation]' passed (0.003 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testMainAppStillPrefersTheCloudKitMirroredConfiguration]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testMainAppStillPrefersTheCloudKitMirroredConfiguration]' passed (0.002 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testPreCloudBackupRunsOnlyInTheMainApp]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testPreCloudBackupRunsOnlyInTheMainApp]' passed (0.001 seconds).
+Test Suite 'SharedModelContainerExtensionDetectionTests' passed at 2026-09-22 18:08:48.040.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.015 (0.026) seconds
+Test Suite 'StorePresetsTests' started at 2026-09-22 18:08:48.040.
+Test Case '-[RestockTests.StorePresetsTests testIKEAIconMapsToSofaSymbol]' started.
+Test Case '-[RestockTests.StorePresetsTests testIKEAIconMapsToSofaSymbol]' passed (0.001 seconds).
+Test Case '-[RestockTests.StorePresetsTests testIKEAPresetExistsInEachSupportedCountry]' started.
+Test Case '-[RestockTests.StorePresetsTests testIKEAPresetExistsInEachSupportedCountry]' passed (0.002 seconds).
+Test Suite 'StorePresetsTests' passed at 2026-09-22 18:08:48.043.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.003 (0.003) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-09-22 18:08:48.044.
+	 Executed 144 tests, with 0 failures (0 unexpected) in 0.784 (1.001) seconds
+Test Suite 'All tests' passed at 2026-09-22 18:08:48.044.
+	 Executed 144 tests, with 0 failures (0 unexpected) in 0.784 (1.002) seconds
+2026-09-22 18:08:50.987435+0200 RestockUITests-Runner[74738:63606175] [Default] Running tests...
+objc[74738]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105fc0310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x105e5c398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'All tests' started at 2026-09-22 18:09:04.387.
+Test Suite 'RestockUITests.xctest' started at 2026-09-22 18:09:04.393.
+Test Suite 'ReceiptReviewUITests' started at 2026-09-22 18:09:04.394.
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' started.
+    t =     0.00s Start Test at 2026-09-22 18:09:04.397
+    t =     0.72s Set Up
+    t =     0.73s Open com.johannesemmrich.Restock
+    t =     0.73s     Launch com.johannesemmrich.Restock
+2026-09-22 18:09:06.373 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 18:09:06.374 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     3.91s         Setting up automation session
+    t =     7.24s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    12.11s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =    12.16s Waiting 20.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =    13.18s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    13.18s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    13.65s Checking existence of `"receiptReview.line.0.originalName" StaticText`
+XCTExpectFailure: matcher accepted Assertion Failure at ReceiptReviewUITests.swift:118: XCTAssertTrue failed - Zeile 0: Bontext wird nicht angezeigt.
+ReceiptReviewUITests.swift:118: Expected failure in -[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]: XCTAssertTrue failed - Zeile 0: Bontext wird nicht angezeigt.Reason: (Bontext erst mit #23 sichtbar)
+    t =    15.69s Tear Down
+    t =    15.69s     Open com.johannesemmrich.Restock
+    t =    15.71s         Launch com.johannesemmrich.Restock
+    t =    15.71s             Terminate com.johannesemmrich.Restock:74765
+2026-09-22 18:09:21.205 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 18:09:21.205 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    18.92s             Setting up automation session
+    t =    22.16s             Wait for com.johannesemmrich.Restock to idle
+    t =    24.14s     Terminate com.johannesemmrich.Restock:74797
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' passed (25.681 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' started.
+    t =     0.00s Start Test at 2026-09-22 18:09:30.079
+    t =     0.09s Set Up
+    t =     0.10s Open com.johannesemmrich.Restock
+    t =     0.11s     Launch com.johannesemmrich.Restock
+2026-09-22 18:09:30.209 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 18:09:30.209 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.12s         Setting up automation session
+    t =     3.48s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     8.41s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     8.52s Waiting 20.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     9.60s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     9.60s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    10.06s Waiting 5.0s for "receiptReview.line.0.nameField" TextField to exist
+    t =    11.14s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.nameField" TextField`
+    t =    11.14s         Checking existence of `"receiptReview.line.0.nameField" TextField`
+    t =    11.25s Checking existence of `"receiptReview.line.0.priceField" TextField`
+    t =    11.34s Waiting 5.0s for "receiptReview.line.1.nameField" TextField to exist
+    t =    12.41s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.1.nameField" TextField`
+    t =    12.41s         Checking existence of `"receiptReview.line.1.nameField" TextField`
+    t =    12.50s Checking existence of `"receiptReview.line.1.priceField" TextField`
+    t =    12.61s Waiting 5.0s for "receiptReview.line.2.nameField" TextField to exist
+    t =    13.69s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.nameField" TextField`
+    t =    13.69s         Checking existence of `"receiptReview.line.2.nameField" TextField`
+    t =    13.79s Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =    13.89s Waiting 5.0s for "receiptReview.line.3.nameField" TextField to exist
+    t =    14.95s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.3.nameField" TextField`
+    t =    14.95s         Checking existence of `"receiptReview.line.3.nameField" TextField`
+    t =    15.06s Checking existence of `"receiptReview.line.3.priceField" TextField`
+    t =    15.17s Checking existence of `"receiptReview.line.0.aiMark" Other`
+    t =    15.27s Checking existence of `"receiptReview.line.0.aiMark" StaticText`
+    t =    15.35s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =    16.43s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =    16.43s         Checking existence of `"receiptReview.saveButton" Button`
+    t =    16.53s Find the "receiptReview.saveButton" Button
+    t =    16.68s Tear Down
+    t =    16.68s     Open com.johannesemmrich.Restock
+    t =    16.68s         Launch com.johannesemmrich.Restock
+    t =    16.68s             Terminate com.johannesemmrich.Restock:74834
+2026-09-22 18:09:47.905 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 18:09:47.906 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    18.26s             Setting up automation session
+    t =    21.36s             Wait for com.johannesemmrich.Restock to idle
+    t =    23.92s     Terminate com.johannesemmrich.Restock:74860
+Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' passed (25.163 seconds).
+Test Suite 'ReceiptReviewUITests' passed at 2026-09-22 18:09:55.244.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 50.844 (50.850) seconds
+Test Suite 'ReceiptShareExtensionTests' started at 2026-09-22 18:09:55.247.
+Test Case '-[RestockUITests.ReceiptShareExtensionTests testSharingAReceiptPhotoReachesTheSuccessScreen]' started.
+    t =     0.00s Start Test at 2026-09-22 18:09:55.249
+    t =     0.06s Set Up
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockUITests/ReceiptShareExtensionTests.swift:65: -[RestockUITests.ReceiptShareExtensionTests testSharingAReceiptPhotoReachesTheSuccessScreen] : Test skipped - Übersprungen: Dieser Test braucht die Vorbereitung durch                 scripts/run-share-extension-uitest.sh (Bon-Bild per `xcrun simctl addmedia` in                 der Mediathek des Simulators). Ein Testprozess kann das nicht selbst herstellen.                 Zum Ausführen: `bash scripts/run-share-extension-uitest.sh`.
+    t =     0.13s Tear Down
+Test Case '-[RestockUITests.ReceiptShareExtensionTests testSharingAReceiptPhotoReachesTheSuccessScreen]' skipped (0.148 seconds).
+Test Suite 'ReceiptShareExtensionTests' passed at 2026-09-22 18:09:55.398.
+	 Executed 1 test, with 1 test skipped and 0 failures (0 unexpected) in 0.148 (0.151) seconds
+Test Suite 'RestockUITests' started at 2026-09-22 18:09:55.398.
+Test Case '-[RestockUITests.RestockUITests testAddStoreAndQuickAddItemShowsPriceWithoutCrash]' started.
+    t =     0.00s Start Test at 2026-09-22 18:09:55.400
+    t =     0.03s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+    t =     0.04s     Launch com.johannesemmrich.Restock
+2026-09-22 18:09:55.444 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 18:09:55.444 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.56s         Setting up automation session
+    t =     2.57s         Wait for com.johannesemmrich.Restock to idle
+    t =     4.75s Waiting 3.0s for "Lidl" StaticText to exist
+    t =     5.82s     Checking `Expect predicate `existsNoRetry == 1` for object "Lidl" StaticText`
+    t =     5.82s         Checking existence of `"Lidl" StaticText`
+    t =     5.99s         Capturing element debug description
+    t =     6.86s     Checking `Expect predicate `existsNoRetry == 1` for object "Lidl" StaticText`
+    t =     6.86s         Checking existence of `"Lidl" StaticText`
+    t =     6.91s         Capturing element debug description
+    t =     7.77s     Checking `Expect predicate `existsNoRetry == 1` for object "Lidl" StaticText`
+    t =     7.77s         Checking existence of `"Lidl" StaticText`
+    t =     7.80s         Capturing element debug description
+    t =     7.80s     Checking existence of `"Lidl" StaticText`
+    t =     7.83s Collecting debug information to assist test failure triage
+    t =     7.83s     Requesting snapshot of accessibility hierarchy for app with pid 74865
+    t =     7.91s Waiting 15.0s for "Läden einrichten" Button to exist
+    t =     8.97s     Checking `Expect predicate `existsNoRetry == 1` for object "Läden einrichten" Button`
+    t =     8.97s         Checking existence of `"Läden einrichten" Button`
+    t =     9.02s Tap "Läden einrichten" Button
+    t =     9.02s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.02s     Find the "Läden einrichten" Button
+    t =     9.07s     Check for interrupting elements affecting "Läden einrichten" Button
+    t =     9.17s     Synthesize event
+    t =     9.62s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.98s Waiting 5.0s for "Läden aus anderen Ländern hinzufügen" Button to exist
+    t =    11.04s     Checking `Expect predicate `existsNoRetry == 1` for object "Läden aus anderen Ländern hinzufügen" Button`
+    t =    11.04s         Checking existence of `"Läden aus anderen Ländern hinzufügen" Button`
+    t =    11.15s Tap "Läden aus anderen Ländern hinzufügen" Button
+    t =    11.15s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.15s     Find the "Läden aus anderen Ländern hinzufügen" Button
+    t =    11.21s     Check for interrupting elements affecting "Läden aus anderen Ländern hinzufügen" Button
+    t =    11.27s     Synthesize event
+    t =    11.59s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.82s Waiting 5.0s for "Laden suchen (alle Länder)" TextField to exist
+    t =    12.84s     Checking `Expect predicate `existsNoRetry == 1` for object "Laden suchen (alle Länder)" TextField`
+    t =    12.85s         Checking existence of `"Laden suchen (alle Länder)" TextField`
+    t =    13.00s Tap "Laden suchen (alle Länder)" TextField
+    t =    13.00s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.02s     Find the "Laden suchen (alle Länder)" TextField
+    t =    13.14s     Check for interrupting elements affecting "Laden suchen (alle Länder)" TextField
+    t =    13.24s     Synthesize event
+    t =    13.55s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.13s Type 'Lidl' into "Laden suchen (alle Länder)" TextField
+    t =    15.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.57s     Find the "Laden suchen (alle Länder)" TextField
+    t =    15.73s     Check for interrupting elements affecting "Laden suchen (alle Länder)" TextField
+    t =    15.84s     Synthesize event
+    t =    16.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.18s Waiting 5.0s for "plus.circle.fill" Button to exist
+    t =    17.26s     Checking `Expect predicate `existsNoRetry == 1` for object "plus.circle.fill" Button`
+    t =    17.26s         Checking existence of `"plus.circle.fill" Button`
+    t =    17.54s Tap "plus.circle.fill" Button
+    t =    17.54s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.54s     Find the "plus.circle.fill" Button
+    t =    17.74s     Check for interrupting elements affecting "plus.circle.fill" Button
+    t =    17.85s     Synthesize event
+<unknown>:0: warning: -[RestockUITests.RestockUITests testAddStoreAndQuickAddItemShowsPriceWithoutCrash] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    18.19s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.91s Tap "Fertig" Button
+    t =    18.91s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.92s     Find the "Fertig" Button
+    t =    19.06s     Check for interrupting elements affecting "Fertig" Button
+    t =    19.16s     Synthesize event
+    t =    19.50s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.23s Waiting 5.0s for "Bearbeiten" Button to exist
+    t =    21.31s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =    21.31s         Checking existence of `"Bearbeiten" Button`
+    t =    21.39s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.15] for 0.2 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.95] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    21.39s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.39s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    21.43s     Check for interrupting elements affecting "Restock" Application
+    t =    21.49s     Synthesize event
+    t =    21.50s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    21.54s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    21.59s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    21.62s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    21.67s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    23.55s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.93s Waiting 5.0s for "Lidl" StaticText to exist
+    t =    25.02s     Checking `Expect predicate `existsNoRetry == 1` for object "Lidl" StaticText`
+    t =    25.02s         Checking existence of `"Lidl" StaticText`
+    t =    25.05s Waiting 5.0s for Button (First Match) to exist
+    t =    26.12s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    26.12s         Checking existence of `Button (First Match)`
+    t =    27.21s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    27.21s     Find the Button (First Match)
+    t =    27.31s Tap "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    27.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.32s     Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    27.37s     Check for interrupting elements affecting "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    27.42s     Synthesize event
+    t =    27.74s     Wait for com.johannesemmrich.Restock to idle
+    t =    28.13s Waiting 5.0s for "Schnell hinzufügen…" TextField to exist
+    t =    29.22s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =    29.22s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =    29.31s Tap "Schnell hinzufügen…" TextField
+    t =    29.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.31s     Find the "Schnell hinzufügen…" TextField
+    t =    29.37s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    29.44s     Synthesize event
+    t =    29.76s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.00s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    31.00s     Find the "Schnell hinzufügen…" TextField
+    t =    31.12s Type 'Testartikel' into "Schnell hinzufügen…" TextField
+    t =    31.12s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.13s     Find the "Schnell hinzufügen…" TextField
+    t =    31.21s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    31.29s     Synthesize event
+    t =    31.72s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.72s Tap "Fortfahren" Button
+    t =    31.72s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.73s     Find the "Fortfahren" Button
+    t =    31.80s     Check for interrupting elements affecting "Fortfahren" Button
+    t =    31.88s     Synthesize event
+    t =    32.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.53s Waiting 5.0s for "Testartikel" StaticText to exist
+    t =    34.63s     Checking `Expect predicate `existsNoRetry == 1` for object "Testartikel" StaticText`
+    t =    34.63s         Checking existence of `"Testartikel" StaticText`
+    t =    34.84s Waiting 5.0s for Button (First Match) to exist
+    t =    35.85s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    35.87s         Checking existence of `Button (First Match)`
+    t =    36.01s Tap Button (First Match)
+    t =    36.01s     Wait for com.johannesemmrich.Restock to idle
+    t =    36.02s     Find the Button (First Match)
+    t =    36.25s     Check for interrupting elements affecting "person.2" Button
+    t =    36.50s     Synthesize event
+    t =    36.83s     Wait for com.johannesemmrich.Restock to idle
+    t =    37.14s Waiting 5.0s for "Code generieren" Button to exist
+    t =    38.21s     Checking `Expect predicate `existsNoRetry == 1` for object "Code generieren" Button`
+    t =    38.21s         Checking existence of `"Code generieren" Button`
+    t =    38.32s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    38.55s Added attachment named 'StoreShareSheet'
+    t =    38.55s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    38.72s Added attachment named 'StoreDetailView-nach-QuickAdd'
+    t =    38.73s Tear Down
+Test Case '-[RestockUITests.RestockUITests testAddStoreAndQuickAddItemShowsPriceWithoutCrash]' passed (39.061 seconds).
+Test Case '-[RestockUITests.RestockUITests testAppLaunchesToHomeScreen]' started.
+    t =     0.00s Start Test at 2026-09-22 18:10:34.467
+    t =     0.06s Set Up
+    t =     0.06s Open com.johannesemmrich.Restock
+    t =     0.06s     Launch com.johannesemmrich.Restock
+    t =     0.06s         Terminate com.johannesemmrich.Restock:74865
+2026-09-22 18:10:35.649 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 18:10:35.649 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.84s         Setting up automation session
+    t =     3.65s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testAppLaunchesToHomeScreen] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.32s Waiting 15.0s for "Restock" StaticText to exist
+    t =     7.37s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock" StaticText`
+    t =     7.38s         Checking existence of `"Restock" StaticText`
+    t =     7.55s Tear Down
+Test Case '-[RestockUITests.RestockUITests testAppLaunchesToHomeScreen]' passed (7.933 seconds).
+Test Case '-[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable]' started.
+    t =     0.00s Start Test at 2026-09-22 18:10:42.403
+    t =     0.09s Set Up
+    t =     0.09s Open com.johannesemmrich.Restock
+    t =     0.09s     Launch com.johannesemmrich.Restock
+    t =     0.09s         Terminate com.johannesemmrich.Restock:74964
+2026-09-22 18:10:43.640 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 18:10:43.640 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.89s         Setting up automation session
+    t =     4.28s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.81s Waiting 15.0s for "Geteilter Liste beitreten" Button to exist
+    t =     7.89s     Checking `Expect predicate `existsNoRetry == 1` for object "Geteilter Liste beitreten" Button`
+    t =     7.90s         Checking existence of `"Geteilter Liste beitreten" Button`
+    t =     8.16s Tap "Geteilter Liste beitreten" Button
+    t =     8.16s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.16s     Find the "Geteilter Liste beitreten" Button
+    t =     8.20s     Check for interrupting elements affecting "Geteilter Liste beitreten" Button
+    t =     8.29s     Synthesize event
+    t =     8.61s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.83s Waiting 5.0s for TextField (First Match) to exist
+    t =     9.88s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =     9.88s         Checking existence of `TextField (First Match)`
+    t =    10.97s Find the TextField (First Match)
+    t =    11.05s Waiting 5.0s for "Abbrechen" Button to exist
+    t =    12.12s     Checking `Expect predicate `existsNoRetry == 1` for object "Abbrechen" Button`
+    t =    12.12s         Checking existence of `"Abbrechen" Button`
+    t =    12.19s Find the "Abbrechen" Button
+    t =    12.22s Tap "Z.B. ABCD-EFG-HIJ" TextField
+    t =    12.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.22s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    12.26s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    12.28s     Synthesize event
+    t =    12.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.95s Type 'TESTCODE12' into "Z.B. ABCD-EFG-HIJ" TextField
+    t =    12.95s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.34s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    13.42s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    13.45s     Synthesize event
+    t =    13.83s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.84s Waiting 15.0s for "Kein Store mit diesem Code gefunden." StaticText to exist
+    t =    14.88s     Checking `Expect predicate `existsNoRetry == 1` for object "Kein Store mit diesem Code gefunden." StaticText`
+    t =    14.88s         Checking existence of `"Kein Store mit diesem Code gefunden." StaticText`
+    t =    14.95s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    15.07s Added attachment named 'JoinStoreSheet-nach-ungueltigem-Code'
+    t =    15.07s Tap "Abbrechen" Button
+    t =    15.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.07s     Find the "Abbrechen" Button
+    t =    15.11s     Check for interrupting elements affecting "Abbrechen" Button
+    t =    15.13s     Synthesize event
+    t =    15.42s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.81s Waiting 5.0s for "Restock" StaticText to exist
+    t =    16.86s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock" StaticText`
+    t =    16.87s         Checking existence of `"Restock" StaticText`
+    t =    16.91s Tear Down
+Test Case '-[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable]' passed (17.176 seconds).
+Test Case '-[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup]' started.
+    t =     0.00s Start Test at 2026-09-22 18:10:59.578
+    t =     0.04s Set Up
+    t =     0.04s Open com.johannesemmrich.Restock
+    t =     0.04s     Launch com.johannesemmrich.Restock
+    t =     0.04s         Terminate com.johannesemmrich.Restock:74973
+2026-09-22 18:11:00.651 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 18:11:00.652 xcodebuild[74375:63601038] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.50s         Setting up automation session
+    t =     3.00s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     5.15s Waiting 15.0s for "Geteilter Liste beitreten" Button to exist
+    t =     6.21s     Checking `Expect predicate `existsNoRetry == 1` for object "Geteilter Liste beitreten" Button`
+    t =     6.22s         Checking existence of `"Geteilter Liste beitreten" Button`
+    t =     6.35s Tap "Geteilter Liste beitreten" Button
+    t =     6.35s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.36s     Find the "Geteilter Liste beitreten" Button
+    t =     6.39s     Check for interrupting elements affecting "Geteilter Liste beitreten" Button
+    t =     6.42s     Synthesize event
+    t =     6.73s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.78s Waiting 5.0s for TextField (First Match) to exist
+    t =     7.84s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =     7.84s         Checking existence of `TextField (First Match)`
+    t =     8.91s Tap TextField (First Match)
+    t =     8.92s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.92s     Find the TextField (First Match)
+    t =     8.99s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =     9.04s     Synthesize event
+    t =     9.34s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.61s Type 'CGU5ZN' into "Z.B. ABCD-EFG-HIJ" TextField
+    t =     9.61s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.98s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    10.05s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    10.08s     Synthesize event
+    t =    10.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.38s Waiting 15.0s for "Kein Store mit diesem Code gefunden." StaticText to exist
+    t =    11.45s     Checking `Expect predicate `existsNoRetry == 1` for object "Kein Store mit diesem Code gefunden." StaticText`
+    t =    11.46s         Checking existence of `"Kein Store mit diesem Code gefunden." StaticText`
+    t =    11.52s Tear Down
+Test Case '-[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup]' passed (11.810 seconds).
+Test Suite 'RestockUITests' passed at 2026-09-22 18:11:11.388.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 75.980 (75.989) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-09-22 18:11:11.388.
+	 Executed 7 tests, with 1 test skipped and 0 failures (0 unexpected) in 126.971 (126.995) seconds
+Test Suite 'All tests' passed at 2026-09-22 18:11:11.388.
+	 Executed 7 tests, with 1 test skipped and 0 failures (0 unexpected) in 126.971 (127.001) seconds
+2026-09-22 18:11:28.697 xcodebuild[74375:63601038] [MT] IDETestOperationsObserverDebug: 203.977 elapsed -- Testing started completed.
+2026-09-22 18:11:28.697 xcodebuild[74375:63601038] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-22 18:11:28.697 xcodebuild[74375:63601038] [MT] IDETestOperationsObserverDebug: 203.978 sec, +203.978 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Logs/Test/Test-Restock-2026.09.22_18-08-03-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started
