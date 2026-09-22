@@ -165,40 +165,6 @@ enum ReceiptParserService {
 
     // MARK: - Parsing
 
-    /// Manche Bons (z. B. Rewes digitaler eBon) drucken den vollen Gesamtpreis DIREKT auf der
-    /// Namenszeile UND zusätzlich eine Mengen-/Gewichts-Bestätigungszeile direkt darunter
-    /// ("4 Stk x 0,39", "0,706 kg x 2,49 EUR/kg") — bei Lidl trägt die Namenszeile dagegen NUR
-    /// den bloßen Namen, der Gesamtpreis wird erst weiter unten AUS genau so einer Zeile
-    /// berechnet (siehe `weightTimesRate` in `parseClassic`). Ohne diese Vorfilterung würde eine
-    /// reine Bestätigungszeile als eigenständige Phantom-Position mit unsinnigem/leerem Namen
-    /// erkannt (beobachtet: "4 Stk x 0,39" wurde selbst zu einer "Position").
-    ///
-    /// Nur droppen, wenn die VORHERIGE Roh-Zeile bereits für sich allein ein vollständiger
-    /// Positions-Kandidat war (Name + Preis + Pflicht-MwSt-Kürzel) — genau dann ist die Menge
-    /// redundant. Bleibt die vorherige Zeile ein bloßer Name ohne Preis (Lidl-Fall), wird nichts
-    /// gedroppt: die Gewichtszeile bleibt dort die einzige Preisquelle. Bewusst NICHT
-    /// `isClassicVatItemCandidate` selbst (die verlangt 2+ Leerzeichen vor dem Preis, wie es
-    /// Visions Bounding-Box-Spaltenrekonstruktion liefert) — PDF-Textextraktion (Rewe-eBon) liefert
-    /// oft nur EIN Leerzeichen, daher hier dieselbe Prüfung mit der lockereren 1+-Leerzeichen-Form.
-    private static func isClassicVatItemCandidateLoose(_ rawLine: String) -> Bool {
-        let line = rawLine.trimmingCharacters(in: .whitespaces)
-        guard line.count >= 3, !isAdminLine(line.lowercased()) else { return false }
-        return line.range(of: #"^.+?\s+-?\d{1,4}[,\.]\d{2}\s*[ABM12E\*]\s*$"#, options: .regularExpression) != nil
-    }
-
-    private static func droppingRedundantQuantityConfirmationLines(_ lines: [String]) -> [String] {
-        var result: [String] = []
-        for line in lines {
-            if let previous = result.last,
-               isClassicVatItemCandidateLoose(previous),
-               isBareQuantityOrWeightConfirmationLine(line) {
-                continue
-            }
-            result.append(line)
-        }
-        return result
-    }
-
     private static func isBareQuantityOrWeightConfirmationLine(_ rawLine: String) -> Bool {
         let line = rawLine.trimmingCharacters(in: .whitespaces)
         return line.range(
@@ -208,7 +174,7 @@ enum ReceiptParserService {
     }
 
     static func parse(_ rawLines: [String]) -> [ReceiptLine] {
-        let lines = droppingRedundantQuantityConfirmationLines(rawLines.map(repairSplitDecimals))
+        let lines = rawLines.map(repairSplitDecimals)
         // Formaterkennung: mehrere POSITIONS-Zeilen mit Währungs-SUFFIX hinter dem Preis
         // (z. B. "…TOMATE ENTIER  2.50€") bedeuten einen südeuropäischen Bon
         // (Frankreich/Carrefour-Stil) mit eigener Struktur. Gezählt wird erst NACH dem
@@ -382,6 +348,39 @@ enum ReceiptParserService {
             if lower.contains("storno") {
                 pendingStornoCancel = true
                 pendingName = nil; pendingPrice = nil
+                continue
+            }
+
+            // Manche Bons (z. B. Rewes digitaler eBon) drucken den vollen Gesamtpreis DIREKT auf der
+            // Namenszeile UND zusätzlich eine Mengen-/Gewichts-Bestätigungszeile direkt darunter
+            // ("4 Stk x 0,39", "0,706 kg x 2,49 EUR/kg") — bei Lidl trägt die Namenszeile dagegen NUR
+            // den bloßen Namen, der Gesamtpreis wird erst weiter unten AUS genau so einer Zeile
+            // berechnet (siehe `weightTimesRate` im " x "-Zweig darunter). Ohne diese Behandlung
+            // würde eine reine Bestätigungszeile als eigenständige Phantom-Position mit
+            // unsinnigem/leerem Namen erkannt (beobachtet: "4 Stk x 0,39" wurde selbst zu einer
+            // "Position", Name "Stk x 0,39").
+            //
+            // Nur hier greifen, wenn KEIN Name/Preis mehr offen ist — die VORHERIGE Zeile war dann
+            // bereits für sich allein eine vollständige Position (Name + Preis, steht schon in
+            // `results`). Bleibt die vorherige Zeile ein bloßer Name ohne Preis (Lidl-Fall,
+            // `pendingName != nil`) oder eine reine Preiszeile (`pendingPrice != nil`), läuft die
+            // Zeile wie bisher in den " x "-Zweig: dort ist sie die einzige Preisquelle.
+            //
+            // Die Zeile wird IMMER konsumiert (nie eigene Position, Issue #9). Stückzahl bzw.
+            // Gewicht werden der Vorposition nur dann zugeschrieben, wenn die Rechenprobe
+            // Menge × Rate ≈ Zeilenpreis aufgeht (Toleranz 0,01 wegen Bon-Rundung: 0,706 × 2,49 =
+            // 1,75794, gedruckt 1,76) — andernfalls (OCR-Zahlendreher) wird nichts übernommen.
+            // Der bereits korrekte Preis der Vorposition bleibt in jedem Fall unangetastet.
+            if pendingName == nil, pendingPrice == nil, !pendingStornoCancel,
+               isBareQuantityOrWeightConfirmationLine(trimmed) {
+                if let last = results.last, let wr = weightTimesRate(in: trimmed),
+                   abs(wr.weight * wr.rate - last.price) <= 0.01 {
+                    if wr.unit == "kg" {
+                        results[results.count - 1].weightBasis = wr.weight * 1000
+                    } else if wr.unit == "stk" {
+                        results[results.count - 1].quantity = wr.weight
+                    }
+                }
                 continue
             }
 
