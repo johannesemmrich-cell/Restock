@@ -43,6 +43,7 @@
 		4875ED5EEB7BE1A728289FBA /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */; };
 		4C16FAE9DA52BB877ACC9BC3 /* ReceiptAliasService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F213D22060B00AE4751A8 /* ReceiptAliasService.swift */; };
 		4F223836DA8ED358DC718C1F /* ReceiptScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E205C058079CBDE7869B96F4 /* ReceiptScannerView.swift */; };
+		B47F2C9081DA4E6135C0A712 /* ReceiptReviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A61D4E27B48F0A5D31C86 /* ReceiptReviewCard.swift */; };
 		52AFCA1171068886BF74BF47 /* RecipeRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD924269EE28D045DBDAE33 /* RecipeRecognitionService.swift */; };
 		53580D0BF528C8409B394E47 /* LegalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59CED41FC8E666B11CC8C09 /* LegalView.swift */; };
 		5BA9390E49F89DCBF753FDA6 /* ShoppingListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7BD9F3BC448DE79398597F /* ShoppingListWidget.swift */; };
@@ -126,6 +127,7 @@
 		C7B6096DC9D528E2DCB41E7D /* ReceiptNameAIResolverSanitizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D63AAC972D8D8AE885106B /* ReceiptNameAIResolverSanitizeTests.swift */; };
 		6E145B653F8F40229AC35DED /* AssignmentServiceDetectStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB55A6EFE500AE80BCAB791 /* AssignmentServiceDetectStoreTests.swift */; };
 		D022D581762EA72A52910313 /* ReceiptParserStornoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9B48866D4E0411F89FC94E /* ReceiptParserStornoTests.swift */; };
+		7C2F58D1A9E34B0C61D8E440 /* ReceiptReviewCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E7A91C4B2D6408F5A1C77D2 /* ReceiptReviewCardTests.swift */; };
 		905C05C564BF1B61F276C508 /* ReceiptAbbreviationExpansionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE0143DE796992502CF38D3 /* ReceiptAbbreviationExpansionTests.swift */; };
 		DF69955CC809EAF24ADC4174 /* QuickAddParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD6412F9400E7E874C40688 /* QuickAddParserTests.swift */; };
 		71D26D6EF94B734658085600 /* ConsumptionPatternTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F566D87050A4B455E0DD862E /* ConsumptionPatternTests.swift */; };
@@ -264,6 +266,7 @@
 		D9E2BAE2A0C9CCD5623B0983 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		DF9DBA3F3FAF084DAE33A4F3 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		E205C058079CBDE7869B96F4 /* ReceiptScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScannerView.swift; sourceTree = "<group>"; };
+		C93A61D4E27B48F0A5D31C86 /* ReceiptReviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptReviewCard.swift; sourceTree = "<group>"; };
 		E27BD0C5EE55D1C2CCC616ED /* SchemaVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaVersions.swift; sourceTree = "<group>"; };
 		E46D46BF139B378E43E1466C /* QuickAddControlIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddControlIntent.swift; sourceTree = "<group>"; };
 		E59CED41FC8E666B11CC8C09 /* LegalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalView.swift; sourceTree = "<group>"; };
@@ -286,6 +289,7 @@
 		61D63AAC972D8D8AE885106B /* ReceiptNameAIResolverSanitizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptNameAIResolverSanitizeTests.swift; sourceTree = "<group>"; };
 		1FB55A6EFE500AE80BCAB791 /* AssignmentServiceDetectStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentServiceDetectStoreTests.swift; sourceTree = "<group>"; };
 		FA9B48866D4E0411F89FC94E /* ReceiptParserStornoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserStornoTests.swift; sourceTree = "<group>"; };
+		3E7A91C4B2D6408F5A1C77D2 /* ReceiptReviewCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptReviewCardTests.swift; sourceTree = "<group>"; };
 		9BE0143DE796992502CF38D3 /* ReceiptAbbreviationExpansionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptAbbreviationExpansionTests.swift; sourceTree = "<group>"; };
 		6AD6412F9400E7E874C40688 /* QuickAddParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddParserTests.swift; sourceTree = "<group>"; };
 		F566D87050A4B455E0DD862E /* ConsumptionPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumptionPatternTests.swift; sourceTree = "<group>"; };
@@ -319,6 +323,7 @@
 				AD050279AD19DB593A2AF6B1 /* ActualPriceEntryView.swift */,
 				A05C37F18C9CCDD9B805B616 /* PriceOverviewView.swift */,
 				E205C058079CBDE7869B96F4 /* ReceiptScannerView.swift */,
+				C93A61D4E27B48F0A5D31C86 /* ReceiptReviewCard.swift */,
 			);
 			path = Prices;
 			sourceTree = "<group>";
@@ -573,6 +578,7 @@
 				61D63AAC972D8D8AE885106B /* ReceiptNameAIResolverSanitizeTests.swift */,
 				1FB55A6EFE500AE80BCAB791 /* AssignmentServiceDetectStoreTests.swift */,
 				FA9B48866D4E0411F89FC94E /* ReceiptParserStornoTests.swift */,
+				3E7A91C4B2D6408F5A1C77D2 /* ReceiptReviewCardTests.swift */,
 				9BE0143DE796992502CF38D3 /* ReceiptAbbreviationExpansionTests.swift */,
 				6AD6412F9400E7E874C40688 /* QuickAddParserTests.swift */,
 				F566D87050A4B455E0DD862E /* ConsumptionPatternTests.swift */,
@@ -834,6 +840,7 @@
 				426FFE6DA2C0EFDE1E621225 /* ReceiptParserService.swift in Sources */,
 				7E0F9A1304D50BDA6BC9B811 /* ReceiptResolutionService.swift in Sources */,
 				4F223836DA8ED358DC718C1F /* ReceiptScannerView.swift in Sources */,
+				B47F2C9081DA4E6135C0A712 /* ReceiptReviewCard.swift in Sources */,
 				EFDC00E355EA647D21C911B4 /* ReceiptShareHandoff.swift in Sources */,
 				CCF05C1044554FC71B37CE85 /* RecipeImportView.swift in Sources */,
 				52AFCA1171068886BF74BF47 /* RecipeRecognitionService.swift in Sources */,
@@ -900,6 +907,7 @@
 				C7B6096DC9D528E2DCB41E7D /* ReceiptNameAIResolverSanitizeTests.swift in Sources */,
 				6E145B653F8F40229AC35DED /* AssignmentServiceDetectStoreTests.swift in Sources */,
 				D022D581762EA72A52910313 /* ReceiptParserStornoTests.swift in Sources */,
+				7C2F58D1A9E34B0C61D8E440 /* ReceiptReviewCardTests.swift in Sources */,
 				905C05C564BF1B61F276C508 /* ReceiptAbbreviationExpansionTests.swift in Sources */,
 				DF69955CC809EAF24ADC4174 /* QuickAddParserTests.swift in Sources */,
 				71D26D6EF94B734658085600 /* ConsumptionPatternTests.swift in Sources */,
@@ -1029,7 +1037,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SmartCartWidgets/SmartCartWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SmartCartWidgets/Info.plist;
@@ -1057,7 +1065,7 @@
 				CODE_SIGN_ENTITLEMENTS = SmartCart/SmartCart.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "SmartCart/Generated-Info.plist";
@@ -1148,7 +1156,7 @@
 				CODE_SIGN_ENTITLEMENTS = SmartCart/SmartCart.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "SmartCart/Generated-Info.plist";
@@ -1180,7 +1188,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SmartCartWidgets/SmartCartWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SmartCartWidgets/Info.plist;
@@ -1205,7 +1213,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = RestockShareExtension/RestockShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = RestockShareExtension/Info.plist;
@@ -1230,7 +1238,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = RestockShareExtension/RestockShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = RestockShareExtension/Info.plist;

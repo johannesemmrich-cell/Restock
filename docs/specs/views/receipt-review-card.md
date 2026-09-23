@@ -2,8 +2,8 @@
 entity_id: receipt-review-card
 type: feature
 created: 2026-09-22
-updated: 2026-09-22
-status: approved
+updated: 2026-09-23
+status: implemented
 workflow: feat-23-receipt-review-screen
 tags: [feature, ui, receipt-scanner]
 ---
@@ -280,80 +280,80 @@ auf die dort bereits gemergten Strings angeglichen (keine zwei parallelen Schema
 
 **Unit — `RestockTests/ReceiptReviewCardTests.swift`:**
 
-- [ ] **AC2/AC4:** GIVEN eine Zeile mit `resolvedByAI = true`, `aiSuggestedName` gesetzt und 2
+- [x] **AC2/AC4:** GIVEN eine Zeile mit `resolvedByAI = true`, `aiSuggestedName` gesetzt und 2
   `suggestions` WHEN `selectionOptions(for:)` aufgerufen wird THEN liefert es genau 4 Optionen:
   KI-Zeile + 2 Treffer + `.custom`, KI-Zeile zuerst (aktuell ausgewählt).
-- [ ] **AC2:** GIVEN eine Zeile mit 5 `suggestions`, kein KI-Vorschlag WHEN `selectionOptions(for:)`
+- [x] **AC2:** GIVEN eine Zeile mit 5 `suggestions`, kein KI-Vorschlag WHEN `selectionOptions(for:)`
   aufgerufen wird THEN liefert es genau 3 `.listMatch` + `.custom` (nicht 5).
-- [ ] **AC2:** GIVEN eine `suggestions`-Liste, deren erster Eintrag denselben Namen wie
+- [x] **AC2:** GIVEN eine `suggestions`-Liste, deren erster Eintrag denselben Namen wie
   `aiSuggestedName` trägt (case-insensitiv) WHEN `selectionOptions(for:)` aufgerufen wird THEN
   erscheint der Name nur einmal (als `.listMatch`, keine separate `.aiSuggestion`).
-- [ ] **AC2:** GIVEN eine Zeile ohne `suggestions` und ohne `aiSuggestedName` WHEN
+- [x] **AC2:** GIVEN eine Zeile ohne `suggestions` und ohne `aiSuggestedName` WHEN
   `selectionOptions(for:)` aufgerufen wird THEN liefert es genau `.currentName(line.name)` +
   `.custom` (2 Optionen).
-- [ ] **AC5:** GIVEN eine Zeile WHEN ein `.listMatch`-Callback mit einem `ReceiptSuggestion`
+- [x] **AC5:** GIVEN eine Zeile WHEN ein `.listMatch`-Callback mit einem `ReceiptSuggestion`
   aufgerufen wird THEN gilt `name == suggestion.name`, `matchedItemID == suggestion.itemID`,
   `resolvedByAI == false`, `originalName` unverändert.
-- [ ] **AC6:** GIVEN eine Zeile mit `resolvedByAI = true`, dann manuell auf einen Listen-Treffer
+- [x] **AC6:** GIVEN eine Zeile mit `resolvedByAI = true`, dann manuell auf einen Listen-Treffer
   umgeschaltet WHEN der `.aiSuggestion`-Callback erneut aufgerufen wird THEN gilt `resolvedByAI ==
   true`, `name == aiSuggestedName`, `matchedItemID == aiSuggestedMatchedItemID`.
-- [ ] **AC7:** GIVEN eine Zeile mit `matchedItemID` gesetzt WHEN der `.custom`-Callback mit einem
+- [x] **AC7:** GIVEN eine Zeile mit `matchedItemID` gesetzt WHEN der `.custom`-Callback mit einem
   neuen Namen aufgerufen wird THEN gilt `matchedItemID == nil`, `resolvedByAI == false`,
   `originalName` unverändert.
-- [ ] **AC8:** GIVEN `price = 1.99, quantity = 1, unit = "", originalName = "FISCHSTAEBCHEN 15ST"`,
+- [x] **AC8:** GIVEN `price = 1.99, quantity = 1, unit = "", originalName = "FISCHSTAEBCHEN 15ST"`,
   `weightBasis = nil` WHEN `priceSummary(for:)` aufgerufen wird THEN liefert es
   `"1,99 € · 1 St. · 1,99 € je Stück"` (Fall 4; „15ST" ist keine g/kg/l-Einheit, Regel erfindet
   nichts — vgl. `testWeightBasisFromName`-Negativfall in `ReceiptParserPriceTests.swift:236`).
-- [ ] **AC8:** GIVEN `price = 3.99, quantity = 1, unit = "400g", originalName = "GOUDA JUNG 400G"`,
+- [x] **AC8:** GIVEN `price = 3.99, quantity = 1, unit = "400g", originalName = "GOUDA JUNG 400G"`,
   `weightBasis = nil` WHEN `priceSummary(for:)` aufgerufen wird THEN liefert es
   `"3,99 € · 400g · 9,98 € je kg"` (Fall 3 über `weightBasisFromName`).
-- [ ] **AC8:** GIVEN `price = 1.29, quantity = 1, unit = "1,5l", originalName = "COLA 1,5L"` WHEN
+- [x] **AC8:** GIVEN `price = 1.29, quantity = 1, unit = "1,5l", originalName = "COLA 1,5L"` WHEN
   `priceSummary(for:)` aufgerufen wird THEN liefert es `"1,29 € · 1,5l · 0,86 € je l"` (Fall 3,
   Flüssigkeit → „je l").
-- [ ] **AC8:** GIVEN `price = 1.60, quantity = 4` WHEN `priceSummary(for:)` aufgerufen wird THEN
+- [x] **AC8:** GIVEN `price = 1.60, quantity = 4` WHEN `priceSummary(for:)` aufgerufen wird THEN
   liefert es `"1,60 € · 4 St. · 0,40 € je Stück"`.
-- [ ] **AC8:** GIVEN `price = 7.99, weightBasis = 250` WHEN `priceSummary(for:)` aufgerufen wird
+- [x] **AC8:** GIVEN `price = 7.99, weightBasis = 250` WHEN `priceSummary(for:)` aufgerufen wird
   THEN liefert es `"7,99 € · 250 g · 31,96 € je kg"`.
-- [ ] **AC11:** GIVEN `count = 7, selected = 6, sum = 18.94` WHEN `sectionHeaderText(...)`
+- [x] **AC11:** GIVEN `count = 7, selected = 6, sum = 18.94` WHEN `sectionHeaderText(...)`
   aufgerufen wird THEN liefert es `"7 Positionen · 6 ausgewählt · 18,94 €"`.
-- [ ] **AC9:** GIVEN `price = 1.60, quantity = 1` WHEN `applyQuantityEdit(mode: .pieces, value: 4)`
+- [x] **AC9:** GIVEN `price = 1.60, quantity = 1` WHEN `applyQuantityEdit(mode: .pieces, value: 4)`
   aufgerufen wird THEN gilt `quantity == 4`, `weightBasis == nil`, `price == 1.60` (unverändert)
   und `priceSummary` liefert `"1,60 € · 4 St. · 0,40 € je Stück"`.
-- [ ] **AC9:** GIVEN `price = 7.99, quantity = 3` WHEN `applyQuantityEdit(mode: .grams, value: 250)`
+- [x] **AC9:** GIVEN `price = 7.99, quantity = 3` WHEN `applyQuantityEdit(mode: .grams, value: 250)`
   aufgerufen wird THEN gilt `weightBasis == 250`, `quantity == 1` und `priceSummary` liefert
   `"7,99 € · 250 g · 31,96 € je kg"`.
-- [ ] **AC9:** GIVEN eine Zeile WHEN `applyQuantityEdit(mode: .pieces, value: 0)` aufgerufen wird
+- [x] **AC9:** GIVEN eine Zeile WHEN `applyQuantityEdit(mode: .pieces, value: 0)` aufgerufen wird
   THEN gilt `quantity == 1` (Untergrenze, kein Teilen durch null in `learningQuantity`).
-- [ ] **AC9:** GIVEN `weightBasis = 250, unit = "250g", originalName = "LACHS 250G"` WHEN
+- [x] **AC9:** GIVEN `weightBasis = 250, unit = "250g", originalName = "LACHS 250G"` WHEN
   `applyQuantityEdit` in beliebiger Reihenfolge aufgerufen wird THEN bleiben `unit` und
   `originalName` unverändert.
-- [ ] **Invariante 2:** GIVEN eine Zeile mit `originalName = "FISCHSTAEBCHEN 15ST"` WHEN
+- [x] **Invariante 2:** GIVEN eine Zeile mit `originalName = "FISCHSTAEBCHEN 15ST"` WHEN
   nacheinander alle drei Callback-Arten aufgerufen werden THEN bleibt `originalName` nach jedem
   Aufruf exakt `"FISCHSTAEBCHEN 15ST"`.
 
 **UI — `RestockUITests/ReceiptReviewUITests.swift`** (Einstieg über `-seedReceiptReviewForUITests`
 aus #28, fester Bon mit mind. einer KI-Zeile, langem Namen und ≥3 `suggestions`):
 
-- [ ] **AC1:** Bontext jeder Karte ist sichtbar und sein Label entspricht exakt dem gesäten
+- [x] **AC1:** Bontext jeder Karte ist sichtbar und sein Label entspricht exakt dem gesäten
   Rohtext — geprüft auch an der langen Bon-Zeile des Seeds aus #28 (≥ 40 Zeichen, so lang wie die
   längste Zeile eines Lidl-Bons); ein `XCUIElement.label`, das kürzer ist oder mit „…" endet,
   lässt den Test fehlschlagen.
-- [ ] **AC3:** Die KI-Marke an der KI-Optionszeile ist einzeilig (Frame-Höhe unter der einer
+- [x] **AC3:** Die KI-Marke an der KI-Optionszeile ist einzeilig (Frame-Höhe unter der einer
   2-zeiligen Darstellung) und sichtbar.
-- [ ] **AC2:** Eine Karte mit KI-Vorschlag und ≥3 Treffern zeigt höchstens 4 Auswahlzeilen
+- [x] **AC2:** Eine Karte mit KI-Vorschlag und ≥3 Treffern zeigt höchstens 4 Auswahlzeilen
   (`receiptReview.line.0.option.0` … `.option.3` existieren, `.option.4` existiert nicht).
-- [ ] **AC5:** Tippen auf eine Listen-Treffer-Zeile wählt sie aus (Radio-Zustand) und übernimmt den
+- [x] **AC5:** Tippen auf eine Listen-Treffer-Zeile wählt sie aus (Radio-Zustand) und übernimmt den
   Namen sichtbar in der Karte.
-- [ ] **AC7:** Tippen auf „Anderer Name …" zeigt ein fokussiertes Tastaturfeld
+- [x] **AC7:** Tippen auf „Anderer Name …" zeigt ein fokussiertes Tastaturfeld
   (`receiptReview.line.0.customNameField`).
-- [ ] **AC9:** Tippen auf „Ändern" zeigt Preis- und Mengenfeld samt Umschalter; nach Eingabe
+- [x] **AC9:** Tippen auf „Ändern" zeigt Preis- und Mengenfeld samt Umschalter; nach Eingabe
   eines neuen Preises zeigt die Preiszeile den neuen Betrag; nach Umschalten auf „Stück" und
   Eingabe „4" zeigt sie „4 St." und den neuen Stückpreis.
-- [ ] **AC10:** Häkchen einer Karte abwählen senkt „M ausgewählt" und die Summe im Section-Kopf um
+- [x] **AC10:** Häkchen einer Karte abwählen senkt „M ausgewählt" und die Summe im Section-Kopf um
   genau den Preis dieser Position.
-- [ ] **AC11:** Der Section-Kopf zeigt „N Positionen · M ausgewählt · Summe" mit den erwarteten
+- [x] **AC11:** Der Section-Kopf zeigt „N Positionen · M ausgewählt · Summe" mit den erwarteten
   Werten für den gesäten Bon.
-- [ ] **AC12 (Regression):** Speichern führt zu einem sichtbaren Preis am zugeordneten Artikel in
+- [x] **AC12 (Regression):** Speichern führt zu einem sichtbaren Preis am zugeordneten Artikel in
   `StoreDetailView` (gleicher Nachweisweg wie die bestehenden `save()`-Tests) — beweist, dass die
   neue Karte keine Semantik von `save()` verändert.
 
@@ -368,25 +368,25 @@ diese Spec GREEN macht.
 
 ## Acceptance Criteria
 
-- [ ] **AC1:** Jede Karte zeigt den vollständigen, unveränderten Bontext (`originalName`) —
+- **AC-1:** Jede Karte zeigt den vollständigen, unveränderten Bontext (`originalName`) —
   auch bei Überlänge umbrechend, nie abgeschnitten.
-- [ ] **AC2:** Jede Karte zeigt max. 4 Auswahlzeilen (max. 3 inhaltliche + „Anderer Name …").
-- [ ] **AC3:** Die KI-Marke ist an der KI-Options-Zeile sichtbar, einzeilig, nie umbrechend.
-- [ ] **AC4:** Der beste Treffer / aktuelle Zustand der Zeile ist vorausgewählt.
-- [ ] **AC5:** Wahl eines Listen-Treffers setzt `name`/`matchedItemID`/`resolvedByAI` exakt wie der
+- **AC-2:** Jede Karte zeigt max. 4 Auswahlzeilen (max. 3 inhaltliche + „Anderer Name …").
+- **AC-3:** Die KI-Marke ist an der KI-Options-Zeile sichtbar, einzeilig, nie umbrechend.
+- **AC-4:** Der beste Treffer / aktuelle Zustand der Zeile ist vorausgewählt.
+- **AC-5:** Wahl eines Listen-Treffers setzt `name`/`matchedItemID`/`resolvedByAI` exakt wie der
   heutige Chip-Tap.
-- [ ] **AC6:** Wahl des KI-Vorschlags stellt `resolvedByAI = true` und den KI-Namen wieder her,
+- **AC-6:** Wahl des KI-Vorschlags stellt `resolvedByAI = true` und den KI-Namen wieder her,
   auch nach zwischenzeitlich anderer Auswahl.
-- [ ] **AC7:** „Anderer Name …" öffnet ein Textfeld; Eingabe setzt `matchedItemID = nil`,
+- **AC-7:** „Anderer Name …" öffnet ein Textfeld; Eingabe setzt `matchedItemID = nil`,
   `resolvedByAI = false`, `originalName` bleibt unverändert.
-- [ ] **AC8:** Die Preiszeile zeigt Preis · Menge/Gewicht/Größe · je Stück/je kg/je l nach den in
+- **AC-8:** Die Preiszeile zeigt Preis · Menge/Gewicht/Größe · je Stück/je kg/je l nach den in
   `priceSummary` festgelegten Regeln (Gewichtszeile, Stückzahl > 1, gedruckte Füllmenge, 1 Stück)
   — dieselbe Basis, mit der `save()` den Preis lernt.
-- [ ] **AC9:** „Ändern" öffnet Preisfeld und Mengen-Editor (Zahl + Stück/Gramm); neuer Preis und
+- **AC-9:** „Ändern" öffnet Preisfeld und Mengen-Editor (Zahl + Stück/Gramm); neuer Preis und
   neue Menge erscheinen sofort in der Preiszeile, `unit`/`originalName` bleiben unverändert.
-- [ ] **AC10:** Häkchen abwählen dimmt die Karte und senkt „M ausgewählt"/Summe im Section-Kopf.
-- [ ] **AC11:** Section-Kopf zeigt „N Positionen · M ausgewählt · Summe" korrekt.
-- [ ] **AC12:** Speichern schreibt weiterhin über den unveränderten `save()`-Pfad (Regressionsschutz).
+- **AC-10:** Häkchen abwählen dimmt die Karte und senkt „M ausgewählt"/Summe im Section-Kopf.
+- **AC-11:** Section-Kopf zeigt „N Positionen · M ausgewählt · Summe" korrekt.
+- **AC-12:** Speichern schreibt weiterhin über den unveränderten `save()`-Pfad (Regressionsschutz).
 
 ## Alternativen (verworfen)
 
@@ -513,3 +513,4 @@ Beobachtbar für den PO, ohne Code zu lesen:
 - 2026-09-22: Initial spec created
 - 2026-09-22: Briefing-Fund — Bontext bricht um statt abzuschneiden; AC1-Test an der langen Seed-Zeile
 - 2026-09-22: PO-Korrektur — „Ändern" öffnet Preis und Menge (Stück/Gramm), nicht nur Preis; Preiszeile folgt `learningQuantity` inkl. gedruckter Füllmenge
+- 2026-09-23: Implementiert und gemergt (`ReceiptReviewCard.swift`, 18 Unit-Tests in `ReceiptReviewCardTests.swift`, 15 UI-Tests in `ReceiptReviewUITests.swift`); `ReceiptLineRow` aus `ReceiptScannerView.swift` entfernt. Status auf `implemented` gesetzt, Test Plan abgehakt.

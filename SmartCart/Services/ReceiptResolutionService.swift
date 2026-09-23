@@ -38,8 +38,9 @@ struct ResolvedReceiptLine: Codable {
     var suggestions: [ReceiptSuggestion]
     var matchedItemID: UUID?
     /// Gesetzt, wenn Stufe 5 (Apple Intelligence) diesen Namen vervollständigt hat — steuert die
-    /// Art.-50-Kennzeichnung im Review (ReceiptLineRow). Default `false`, damit ein bereits
-    /// gespeicherter, älterer `SharedReceiptPayload` ohne dieses Feld nicht am Decodieren scheitert.
+    /// Art.-50-Kennzeichnung im Review (`ReceiptReviewCard`, KI-Options-Zeile). Default `false`,
+    /// damit ein bereits gespeicherter, älterer `SharedReceiptPayload` ohne dieses Feld nicht am
+    /// Decodieren scheitert.
     var resolvedByAI: Bool = false
 }
 

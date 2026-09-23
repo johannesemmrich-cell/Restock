@@ -36,10 +36,18 @@ struct EditableReceiptLine: Identifiable {
     /// verknüpft.
     var matchedItemID: UUID? = nil
     /// Siehe `ResolvedReceiptLine.resolvedByAI` — steuert die Art.-50-Kennzeichnung in
-    /// `ReceiptLineRow`. Wird zurückgesetzt, sobald der Name manuell überschrieben wird (gleicher
+    /// `ReceiptReviewCard`. Wird zurückgesetzt, sobald der Name manuell überschrieben wird (gleicher
     /// Reset-Zeitpunkt wie `matchedItemID`), da die Kennzeichnung sonst fälschlich an einem vom
     /// Nutzer selbst eingetippten Text hängen bliebe.
     var resolvedByAI: Bool = false
+    /// KI-Vorschlag und die zugehörige Artikel-Zuordnung, unabhängig von der aktuellen Auswahl —
+    /// erlaubt, die KI-Options-Zeile der Prüf-Karte nach einer zwischenzeitlich anderen Auswahl
+    /// wieder exakt herzustellen (`resolvedByAI = true`, `matchedItemID` wie ursprünglich).
+    /// Gesetzt an allen drei Konstruktionsstellen, wann immer `resolvedByAI` dort true ist.
+    /// NIE Teil von `ResolvedReceiptLine`/`ReceiptSuggestion` (Wire-Format zur Share Extension) —
+    /// rein lokaler Anzeigezustand der Karte, ohne Prozessgrenze.
+    var aiSuggestedName: String? = nil
+    var aiSuggestedMatchedItemID: UUID? = nil
 
     /// Divisor fürs Preis-Lernen in `save()` — als Methode extrahiert (statt inline dort
     /// berechnet), damit Tests exakt diese Formel aufrufen statt sie nachzubilden. Ein Test, der
@@ -84,6 +92,11 @@ struct EditableReceiptLine: Identifiable {
             result[index].suggestions = r.suggestions
             result[index].matchedItemID = r.matchedItemID
             result[index].resolvedByAI = r.resolvedByAI
+            // Siehe `aiSuggestedName`: nur merken, wenn diese Auflösung wirklich von der KI kam.
+            if r.resolvedByAI {
+                result[index].aiSuggestedName = r.name
+                result[index].aiSuggestedMatchedItemID = r.matchedItemID
+            }
         }
         return result
     }
@@ -159,7 +172,9 @@ struct ReceiptScannerView: View {
                 weightBasis: line.weightBasis,
                 suggestions: line.suggestions,
                 matchedItemID: line.matchedItemID,
-                resolvedByAI: line.resolvedByAI
+                resolvedByAI: line.resolvedByAI,
+                aiSuggestedName: line.resolvedByAI ? line.name : nil,
+                aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil
             )
         })
         _debugRawLines = State(initialValue: prefilled.rawLines)
@@ -427,13 +442,36 @@ struct ReceiptScannerView: View {
                     // `accessibilityIdentifier`-Suffixe bekommt (receiptReview.line.<index>.…).
                     // Bewusst über `enumerated()` statt `indices` — die ForEach-Identität bleibt
                     // die `Identifiable`-id der Zeile, nicht der reine Array-Index.
-                    ForEach(Array($parsedLines.enumerated()), id: \.element.id) { index, $line in
-                        ReceiptLineRow(line: $line, index: index)
+                    // ALLE Karten in EINER Listenzeile, nicht eine Zeile je Position: `List`
+                    // erzeugt Zeilen erst, wenn sie in Sichtweite kommen. Die Karten sind
+                    // deutlich höher als die frühere einzeilige Darstellung, sodass schon die
+                    // vierte Position eines Bons nicht mehr existiert, bevor der Nutzer
+                    // gescrollt hat — weder für VoiceOver noch für einen Bildschirmtest.
+                    // Eine Zelle wird dagegen immer vollständig aufgebaut. Preis dafür: bei
+                    // sehr langen Bons entsteht die ganze Liste auf einmal (siehe „Risiken" der
+                    // Spec, Abschnitt Kartenhöhe).
+                    VStack(spacing: 12) {
+                        ForEach(Array($parsedLines.enumerated()), id: \.element.id) { index, $line in
+                            ReceiptReviewCard(line: $line, index: index)
+                        }
                     }
+                    // Jede Karte schwebt als eigene Fläche im Seitenfluss (Ebene 0,
+                    // DesignSystem §4) — ohne Listenhintergrund und ohne die Standard-
+                    // Trennlinie, die sonst quer durch die Karten liefe.
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
                 } header: {
-                    Text("Gefunden: \(parsedLines.count) Positionen")
+                    // Ersetzt „Gefunden: N Positionen" UND die frühere separate
+                    // „Ausgewählt"-Section: Anzahl, Auswahl und Summe an einer Stelle.
+                    Text(ReceiptReviewCard.sectionHeaderText(
+                        count: parsedLines.count,
+                        selected: parsedLines.filter(\.isIncluded).count,
+                        sum: selectedTotal))
+                        .textCase(nil)
+                        .accessibilityIdentifier("receiptReview.sectionHeader")
                 } footer: {
-                    Text("Tippe auf einen Namen um ihn zu korrigieren – z. B. \"MDHSZ\" → \"Mozzarella\" – oder tippe einen Vorschlag an.")
+                    Text("Tippe eine Zeile an, um den Artikel zu wählen, oder \"Anderer Name …\" für eine eigene Eingabe.")
                 }
 
                 if let totalMismatchWarning {
@@ -443,16 +481,6 @@ struct ReceiptScannerView: View {
                             .foregroundStyle(.orange)
                     }
                     .listRowBackground(Color.orange.opacity(0.08))
-                }
-
-                Section {
-                    HStack {
-                        Text("Ausgewählt")
-                            .fontWeight(.semibold)
-                        Spacer()
-                        Text(selectedTotal, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
-                            .fontWeight(.semibold)
-                    }
                 }
 
                 Section {
@@ -534,7 +562,9 @@ struct ReceiptScannerView: View {
                         weightBasis: line.weightBasis,
                         suggestions: line.suggestions,
                         matchedItemID: line.matchedItemID,
-                        resolvedByAI: line.resolvedByAI
+                        resolvedByAI: line.resolvedByAI,
+                        aiSuggestedName: line.resolvedByAI ? line.name : nil,
+                        aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil
                     )
                 }
                 phase = .review
@@ -564,7 +594,7 @@ struct ReceiptScannerView: View {
             // Substring basierende 7-Tage/Store-Suche über ALLE Datensätze als Fallback.
             //
             // `matchedItemID` ist oft bewusst nil: eine manuelle Namens-Korrektur im Review löscht
-            // sie extra (siehe ReceiptLineRow), damit ein automatischer Match/Chip-Tap nicht
+            // sie extra (siehe ReceiptReviewCard), damit ein automatischer Match/Chip-Tap nicht
             // fälschlich am alten, überschriebenen Namen hängen bleibt. Der gerade korrigierte
             // Name IST aber die verlässlichste verfügbare Evidenz an dieser Stelle — bevor auf die
             // unscharfe 7-Tage-Historie unten zurückgefallen wird, zusätzlich exakt (nicht nur
@@ -664,125 +694,6 @@ struct ReceiptScannerView: View {
         // Bon-Import löste nie eine Push-Notification für andere Mitglieder aus).
         SyncCoordinator.shared.pushInBackground(store)
         dismiss()
-    }
-}
-
-// MARK: - Receipt Line Row
-
-private struct ReceiptLineRow: View {
-    @Binding var line: EditableReceiptLine
-    /// Position dieser Zeile im Bon — nur für die `accessibilityIdentifier`s der UI-Tests
-    /// (`receiptReview.line.<index>.…`), keine Darstellungswirkung.
-    let index: Int
-
-    /// "6 × 0,20 € · 1,5l" — Menge, Stückpreis und Größe aus dem Bon, falls erkannt.
-    private var detailText: String? {
-        var parts: [String] = []
-        if line.quantity > 1 {
-            let unitPrice = line.price / line.quantity
-            let formatted = unitPrice.formatted(.currency(code: Locale.current.currency?.identifier ?? "EUR"))
-            parts.append("\(Int(line.quantity)) × \(formatted)")
-        }
-        if !line.unit.isEmpty { parts.append(line.unit) }
-        return parts.isEmpty ? nil : parts.joined(separator: " · ")
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 10) {
-                Toggle("", isOn: $line.isIncluded)
-                    .labelsHidden()
-
-                VStack(alignment: .leading, spacing: 1) {
-                    HStack(spacing: 4) {
-                        // Eigenes Binding statt $line.name direkt: eine manuelle Korrektur hier
-                        // löst die Artikel-Identität aus einem automatischen Match/Chip-Tap wieder
-                        // — sonst bliebe `matchedItemID` fälschlich mit dem alten, jetzt
-                        // überschriebenen Namen verknüpft, und save() würde den gelernten Preis
-                        // auf den falschen Artikel zurückschreiben.
-                        TextField("Artikelname", text: Binding(
-                            get: { line.name },
-                            set: { newValue in
-                                line.name = newValue
-                                line.matchedItemID = nil
-                                line.resolvedByAI = false
-                            }
-                        ))
-                            .font(.system(size: 15))
-                            .accessibilityIdentifier("receiptReview.line.\(index).nameField")
-                        Image(systemName: "pencil")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.tertiary)
-                        // Art.-50-Kennzeichnung: dieser Name wurde von Apple Intelligence
-                        // vervollständigt (ReceiptResolutionService Stufe 5), nicht nur per
-                        // Alias/Fuzzy-Match gefunden — muss laut EU-Kommissions-FAQ direkt an der
-                        // Stelle sichtbar sein, an der der Vorschlag erscheint, nicht nur in der
-                        // Datenschutzerklärung (siehe EU-AI-Act-Recherche).
-                        if line.resolvedByAI {
-                            Label("KI-Vorschlag", systemImage: "sparkles")
-                                .font(.system(size: 10, weight: .semibold))
-                                .foregroundStyle(Color.accent)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.accentContainer, in: Capsule())
-                                .accessibilityIdentifier("receiptReview.line.\(index).aiMark")
-                        }
-                    }
-                    if let detailText {
-                        Text(detailText)
-                            .font(.system(size: 11))
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .opacity(line.isIncluded ? 1 : 0.4)
-
-                Spacer()
-
-                HStack(spacing: 2) {
-                    Text(Locale.current.currencySymbol ?? "€")
-                        .font(.system(size: 13))
-                        .foregroundStyle(.secondary)
-                    TextField("0,00", value: $line.price, format: .number.precision(.fractionLength(2)))
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.trailing)
-                        .frame(width: 62)
-                        .font(.system(size: 14, weight: .medium))
-                        .accessibilityIdentifier("receiptReview.line.\(index).priceField")
-                }
-                .opacity(line.isIncluded ? 1 : 0.4)
-            }
-
-            // Antippbare Alternativen aus den gerade abgehakten Artikeln dieses Stores — nur
-            // sichtbar, wenn es einen plausiblen, noch nicht übernommenen Kandidaten gibt (siehe
-            // ReceiptParserService.completedItemCandidates). Gleiche Bausteine wie die
-            // Mengen-Vorschlags-Chips in HomeView (RCRadius.tag/Color.surface/.hairline,
-            // .buttonStyle(.pressable), Haptics.impact).
-            if !line.suggestions.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(line.suggestions) { suggestion in
-                            Button {
-                                line.name = suggestion.name
-                                line.matchedItemID = suggestion.itemID
-                                line.resolvedByAI = false
-                                Haptics.impact(.light)
-                            } label: {
-                                Text(suggestion.name)
-                                    .lineLimit(1)
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundStyle(Color.textSecondary)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 5)
-                                    .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.tag))
-                                    .overlay(RoundedRectangle(cornerRadius: RCRadius.tag).strokeBorder(Color.hairline))
-                            }
-                            .buttonStyle(.pressable)
-                        }
-                    }
-                }
-                .opacity(line.isIncluded ? 1 : 0.4)
-            }
-        }
     }
 }
 

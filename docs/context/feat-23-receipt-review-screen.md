@@ -318,3 +318,42 @@ Verbindliche Grundlage für die Spec (#23, Schritt B):
 - Preiszeile zeigt dieselbe Lernbasis wie `save()` (`learningQuantity`: Gewichtszeile → Stückzahl
   → gedruckte Füllmenge via `weightBasisFromName` → 1 Stück), damit der Nutzer den Stück-/Kilopreis
   sieht, den die App lernen wird.
+
+## Befunde aus der RED-Phase (2026-09-22, Phase 5)
+
+Drei Dinge, die beim Schreiben der Tests auffielen und die die Umsetzung (Phase 6) braucht.
+
+### 1. Regellücke: AC4 greift nicht, wenn der heutige Name kein Treffer ist
+
+`selectionOptions`-Regel 3 wählt die Option vor, deren Name `line.name` entspricht; Regel 5 baut
+nur dann ein `.currentName`, wenn es **gar keinen** inhaltlichen Kandidaten gibt. Dazwischen
+klafft ein Fall, den der Seed aus #28 tatsächlich enthält: Zeile 2 heißt „Milch" und hat die drei
+Treffer Hafermilch/Buttermilch/Vollmilch. Nach den Regeln stehen dort drei Treffer plus „Anderer
+Name …" — der aktuelle Name „Milch" ist weder vorausgewählt noch überhaupt wählbar, obwohl
+AC4 „der aktuelle Zustand der Zeile ist vorausgewählt" verlangt.
+
+**Umsetzung folgt vorerst wörtlich der Spec** (keine stillschweigende Regeländerung). Der Fall ist
+dem PO gemeldet; die Entscheidung — `.currentName` immer anbieten, wenn kein Kandidat dem heutigen
+Namen entspricht, oder AC4 einschränken — gehört vor den GREEN-Nachweis geklärt.
+
+### 2. Kappung von fünf auf drei ist im Bildschirmtest nicht belegbar
+
+Der feste Bon aus #28 hat keine Zeile mit KI-Vorschlag UND mindestens drei Treffern zugleich, und
+keine mit mehr als drei Treffern. Der Bildschirmtest prüft deshalb nur die Obergrenze von vier
+Auswahlzeilen (`option.0`…`option.3` da, `option.4` nicht). Dass aus fünf gelieferten Vorschlägen
+drei werden, belegen allein die Unit-Tests. Den Seed zu erweitern wäre eine Änderung an #28 und
+damit außerhalb des Umfangs dieser Spec.
+
+### 3. Zwei Zusatz-Funktionen, damit AC5/AC6/AC7 überhaupt prüfbar sind
+
+Die Spec beschreibt die drei Auswahl-Zuweisungen als „private Methoden in der View" — privat sind
+sie aus einem Unit-Test nicht erreichbar, der Test Plan verlangt sie aber einzeln. Die RED-Tests
+rufen deshalb zwei reine Funktionen im selben Muster wie das bereits spezifizierte
+`applyQuantityEdit`:
+
+- `ReceiptReviewCard.applySelection(_ line: inout EditableReceiptLine, option: ReceiptNameOption)`
+- `ReceiptReviewCard.applyCustomName(_ line: inout EditableReceiptLine, name: String)`
+
+Zusätzlich muss die gewählte Optionszeile das Bedienhilfen-Merkmal „ausgewählt"
+(`accessibilityAddTraits(.isSelected)`) tragen — ohne das ist die Einfachauswahl von außen nicht
+beobachtbar, weil der gewählte Name in Variante B an keiner zweiten Stelle steht.
