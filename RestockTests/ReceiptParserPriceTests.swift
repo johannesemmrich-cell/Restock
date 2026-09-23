@@ -55,8 +55,8 @@ final class ReceiptParserPriceTests: XCTestCase {
     }
 
     /// Der Gewichts-Divisor muss getrennt von `quantity` ankommen: `quantity` wird in der
-    /// Review-UI als "N × Preis" angezeigt (`ReceiptLineRow.detailText`) — 500 dort würde
-    /// "500 × ..." zeigen, als hätte der Nutzer 500 Stück gekauft.
+    /// Review-UI als "N St." angezeigt (`ReceiptReviewCard.priceSummary`) — 500 dort würde
+    /// "500 St." zeigen, als hätte der Nutzer 500 Stück gekauft.
     func testWeightLineSetsGramWeightBasisNotQuantity() throws {
         let lines = ["Skyr Natur 500g", "0,500 kg x 2,29"]
 

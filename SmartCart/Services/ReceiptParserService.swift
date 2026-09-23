@@ -12,8 +12,8 @@ struct ReceiptLine {
     var unit: String = ""    // Größenangabe aus dem Namen, z. B. "1,5l", "400g", "50cl"
     /// Bei Gewichtszeilen ("0,500 kg x 2,29") das erkannte Gewicht umgerechnet in Gramm (z. B.
     /// 500 für "0,500 kg") — bewusst NICHT in `quantity` abgelegt, weil `quantity` als Stückzahl
-    /// in der Review-UI angezeigt wird (`ReceiptLineRow.detailText`: "N × Preis") und dort ein
-    /// Gewichts-Divisor als "500× gekauft" erscheinen würde. Dient ausschließlich als
+    /// in der Review-UI angezeigt wird (`ReceiptReviewCard.priceSummary`: "N St. · … je Stück")
+    /// und dort ein Gewichts-Divisor als "500 St." erscheinen würde. Dient ausschließlich als
     /// verlässlicher Divisor beim Preis-Lernen (`ReceiptScannerView.save()`), unabhängig davon,
     /// ob ein historischer Artikel-Match existiert — der bisher (`match?.quantityAmount`) die
     /// einzige Quelle für einen korrekten Gewichts-Divisor war und bei einem ERSTEN Scan eines
@@ -423,8 +423,8 @@ enum ReceiptParserService {
                         weightBasis = match.weight * 1000
                     case "stk":
                         // Echte Stückzahl — anders als bei "kg" hier direkt `quantity` selbst
-                        // setzen: das ist zugleich der korrekte Wert für die "N × Preis"-Anzeige
-                        // in der Review-UI (ReceiptLineRow.detailText), keine Sonderrolle nötig.
+                        // setzen: das ist zugleich der korrekte Wert für die "N St."-Anzeige
+                        // in der Review-UI (ReceiptReviewCard.priceSummary), keine Sonderrolle nötig.
                         quantity = match.weight
                     default:
                         break
@@ -1078,7 +1078,7 @@ enum ReceiptParserService {
     /// eigentliche Problem bei Kassenbons ist aber Kürzung/Auslassung, nicht Verwechslung.
     /// Ehrlich gesagt: ein völlig beliebiger Code ohne jeden Bezug zur Buchstaben-Reihenfolge
     /// (z. B. "MDHSZ" für "Mozzarella") bleibt auch hiermit ein schwacher Score — dafür gibt es
-    /// die antippbaren Vorschlags-Chips im Review (ReceiptLineRow), nicht eine noch bessere Formel.
+    /// die antippbaren Auswahlzeilen im Review (`ReceiptReviewCard`), nicht eine noch bessere Formel.
     ///
     /// Nicht `private`: `ReceiptScannerView.save()` braucht dieselbe Bewertung auch für die laxe,
     /// namensbasierte Fallback-Suche über ALLE PurchaseRecords (nicht nur die abgehakten Artikel
