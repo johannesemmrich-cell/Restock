@@ -231,6 +231,17 @@ final class ReceiptReviewUITests: XCTestCase {
         return false
     }
 
+    /// Tippt genau die MITTE eines Elements an.
+    ///
+    /// `XCUIElement.tap()` tippt nicht die Mitte, sondern einen von XCUITest berechneten
+    /// „hittable point" — der darf auf einen Rand ausweichen. Genau das verdeckte die
+    /// Regression zu #23: Das Häkchen war im abgewählten Zustand nur noch auf seinem 1,5 pt
+    /// dünnen Rahmen antippbar, ein Tipp in die Mitte fiel ins Leere. Ein Test, der das
+    /// beweisen soll, muss deshalb die Mitte treffen und nicht den Rand.
+    private func tapCenter(of element: XCUIElement) {
+        element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    }
+
     /// Anteil der Bildpunkte eines Elements, die dunkler als 50 % Helligkeit sind.
     ///
     /// Das ist die einzige von außen belastbare Messung des Dimmens: Deckkraft steht in keiner
@@ -545,13 +556,23 @@ final class ReceiptReviewUITests: XCTestCase {
         XCTAssertTrue(header.exists, "Kopfzeile über den Positionen fehlt.")
         let checkbox = element(app, "receiptReview.line.\(line).checkbox")
         XCTAssertTrue(checkbox.exists, "Häkchen der KI-Zeile fehlt.")
-        checkbox.tap()
+        tapCenter(of: checkbox)
         waitUntilLabel(of: header, contains: "3 ausgewählt", what: "Kopfzeile nach dem Abwählen")
 
         let dimmed = darkPixelShare(of: priceRow)
         XCTAssertLessThan(dimmed, inked * 0.25,
                           "Die abgewählte Karte ist nicht sichtbar gedimmt — dunkle Bildpunkte "
                           + "vorher \(inked), nachher \(dimmed).")
+
+        // Gegenrichtung: Wiederanwählen hellt die Karte wieder auf. Ohne diese Prüfung bliebe
+        // eine Einbahnstraße unbemerkt — im abgewählten Zustand war das Häkchen nur noch auf
+        // seinem Rahmen antippbar, ein Tipp in die MITTE folgenlos.
+        tapCenter(of: checkbox)
+        waitUntilLabel(of: header, contains: "4 ausgewählt", what: "Kopfzeile nach dem Wiederanwählen")
+        let restored = darkPixelShare(of: priceRow)
+        XCTAssertGreaterThan(restored, inked * 0.75,
+                             "Die wieder angewählte Karte ist nicht wieder aufgehellt — dunkle "
+                             + "Bildpunkte am Anfang \(inked), nach dem Wiederanwählen \(restored).")
     }
 
     // MARK: - Speichern erst ab einer Auswahl (Expected Behavior, letzter Punkt)
@@ -618,6 +639,18 @@ final class ReceiptReviewUITests: XCTestCase {
                        + "eine einzige ausgewählte Position hätte er nichts abzuschließen.")
         XCTAssertTrue(normalized(header.label).lowercased().contains("0 ausgewählt"),
                       "Nach dem Tipp auf das gesperrte Speichern zeigt die Kopfzeile: \(header.label)")
+
+        // Gegenrichtung: Eine Position wieder anwählen gibt Speichern wieder frei — sonst wäre der
+        // Bon nach einem Fehlgriff endgültig unspeicherbar. Der Tipp geht in die MITTE des
+        // Häkchens, nicht auf seinen Rahmen: auf dem Rahmen war das abgewählte Häkchen auch vor
+        // dem Fix schon antippbar, in der Mitte nicht.
+        let firstCheckbox = element(app, "receiptReview.line.0.checkbox")
+        XCTAssertTrue(firstCheckbox.exists, "Häkchen der ersten Zeile fehlt.")
+        tapCenter(of: firstCheckbox)
+        waitUntilLabel(of: header, contains: "1 ausgewählt", what: "Kopfzeile nach dem Wiederanwählen")
+        XCTAssertTrue(saveButton.isEnabled,
+                      "Nach dem Wiederanwählen einer Position ist Speichern weiter gesperrt — das "
+                      + "Häkchen lässt sich also nur abwählen, nicht wieder anwählen.")
     }
 
     // MARK: - AC12: Speichern unverändert

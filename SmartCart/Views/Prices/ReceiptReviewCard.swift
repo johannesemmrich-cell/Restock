@@ -159,6 +159,12 @@ struct ReceiptReviewCard: View {
                         .foregroundStyle(Color.canvas)
                 }
             }
+            // Ohne diese Zeile ist das Häkchen eine Einbahnstraße: `.buttonStyle(.plain)` nimmt
+            // nur GEZEICHNETES als Trefferfläche, und im abgewählten Zustand ist die Füllung
+            // `Color.clear` — übrig bliebe allein der 1,5 pt dünne Rahmen, ein Tipp in die Mitte
+            // fiele ins Leere (nachgemessen: Abwählen ja, Wiederanwählen nein). Dasselbe Mittel
+            // benutzen die Auswahlzeilen dieser Karte schon.
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         // Der gewählte Name gehört ins Bedienhilfen-Label: Ein Bon hat vier bis zwanzig
