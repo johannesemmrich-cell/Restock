@@ -104,6 +104,44 @@ final class ReceiptReviewCardTests: XCTestCase {
                        "Der eigene Name muss immer die letzte Zeile sein. Bekommen: \(describe(options))")
     }
 
+    /// AC4 — auch ein reiner Listen-Treffer wird als Vorauswahl nach vorn sortiert, und zwar
+    /// unabhängig von der Schreibweise.
+    ///
+    /// Das ist der häufigere Fall als der KI-Fall darüber: Die Zeile trägt bereits den Namen
+    /// eines Artikels der Liste, die Vorschlagsliste des Dienstes führt ihn aber nicht an
+    /// erster Stelle. Stünde die Vorauswahl dann nicht oben, müsste der Nutzer an jeder
+    /// Position erst suchen, welche der drei Zeilen gerade gilt — die Karte behauptete eine
+    /// andere Vorauswahl als die, mit der `save()` rechnet. Die Schreibweise wird mitgeprüft,
+    /// weil gelernte Aliase und OCR-Namen klein-/großgeschrieben durcheinander auftreten
+    /// („vollmilch" gegen den Artikel „Vollmilch").
+    func testPreselectedListMatchIsSortedFirstRegardlessOfCase() {
+        let hafermilch = ReceiptSuggestion(name: "Hafermilch", itemID: UUID())
+        let vollmilch = ReceiptSuggestion(name: "Vollmilch", itemID: UUID())
+        let buttermilch = ReceiptSuggestion(name: "Buttermilch", itemID: UUID())
+        let line = makeLine(
+            name: "vollmilch",                      // klein — der Treffer heißt „Vollmilch"
+            price: 1.19,
+            originalName: "MILCH 3,5% FRISCH",
+            suggestions: [hafermilch, vollmilch, buttermilch],
+            matchedItemID: vollmilch.itemID)        // kein KI-Vorschlag im Spiel
+
+        let options = ReceiptReviewCard.selectionOptions(for: line)
+
+        XCTAssertEqual(options.count, 4, "Drei Treffer plus eigener Name. Bekommen: \(describe(options))")
+        guard case .listMatch(let first) = options[0] else {
+            return XCTFail("Die erste Zeile ist kein Listen-Treffer. Bekommen: \(describe(options))")
+        }
+        XCTAssertEqual(first.itemID, vollmilch.itemID,
+                       "Der vorausgewählte Treffer (Vollmilch, zweiter Vorschlag) muss an erster Stelle stehen. "
+                       + "Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[1]), "treffer:Hafermilch",
+                       "Die übrigen Treffer behalten ihre relative Reihenfolge. Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[2]), "treffer:Buttermilch",
+                       "Die übrigen Treffer behalten ihre relative Reihenfolge. Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[3]), "eigener",
+                       "Der eigene Name muss immer die letzte Zeile sein. Bekommen: \(describe(options))")
+    }
+
     /// AC2 — fünf Treffer werden auf drei gekappt; der Dienst liefert heute bis zu fünf.
     func testFiveSuggestionsAreCappedToThreeListMatches() {
         let suggestions = ["Hafermilch", "Buttermilch", "Vollmilch", "Kondensmilch", "Reismilch"]

@@ -368,25 +368,25 @@ diese Spec GREEN macht.
 
 ## Acceptance Criteria
 
-- [ ] **AC1:** Jede Karte zeigt den vollständigen, unveränderten Bontext (`originalName`) —
+- **AC-1:** Jede Karte zeigt den vollständigen, unveränderten Bontext (`originalName`) —
   auch bei Überlänge umbrechend, nie abgeschnitten.
-- [ ] **AC2:** Jede Karte zeigt max. 4 Auswahlzeilen (max. 3 inhaltliche + „Anderer Name …").
-- [ ] **AC3:** Die KI-Marke ist an der KI-Options-Zeile sichtbar, einzeilig, nie umbrechend.
-- [ ] **AC4:** Der beste Treffer / aktuelle Zustand der Zeile ist vorausgewählt.
-- [ ] **AC5:** Wahl eines Listen-Treffers setzt `name`/`matchedItemID`/`resolvedByAI` exakt wie der
+- **AC-2:** Jede Karte zeigt max. 4 Auswahlzeilen (max. 3 inhaltliche + „Anderer Name …").
+- **AC-3:** Die KI-Marke ist an der KI-Options-Zeile sichtbar, einzeilig, nie umbrechend.
+- **AC-4:** Der beste Treffer / aktuelle Zustand der Zeile ist vorausgewählt.
+- **AC-5:** Wahl eines Listen-Treffers setzt `name`/`matchedItemID`/`resolvedByAI` exakt wie der
   heutige Chip-Tap.
-- [ ] **AC6:** Wahl des KI-Vorschlags stellt `resolvedByAI = true` und den KI-Namen wieder her,
+- **AC-6:** Wahl des KI-Vorschlags stellt `resolvedByAI = true` und den KI-Namen wieder her,
   auch nach zwischenzeitlich anderer Auswahl.
-- [ ] **AC7:** „Anderer Name …" öffnet ein Textfeld; Eingabe setzt `matchedItemID = nil`,
+- **AC-7:** „Anderer Name …" öffnet ein Textfeld; Eingabe setzt `matchedItemID = nil`,
   `resolvedByAI = false`, `originalName` bleibt unverändert.
-- [ ] **AC8:** Die Preiszeile zeigt Preis · Menge/Gewicht/Größe · je Stück/je kg/je l nach den in
+- **AC-8:** Die Preiszeile zeigt Preis · Menge/Gewicht/Größe · je Stück/je kg/je l nach den in
   `priceSummary` festgelegten Regeln (Gewichtszeile, Stückzahl > 1, gedruckte Füllmenge, 1 Stück)
   — dieselbe Basis, mit der `save()` den Preis lernt.
-- [ ] **AC9:** „Ändern" öffnet Preisfeld und Mengen-Editor (Zahl + Stück/Gramm); neuer Preis und
+- **AC-9:** „Ändern" öffnet Preisfeld und Mengen-Editor (Zahl + Stück/Gramm); neuer Preis und
   neue Menge erscheinen sofort in der Preiszeile, `unit`/`originalName` bleiben unverändert.
-- [ ] **AC10:** Häkchen abwählen dimmt die Karte und senkt „M ausgewählt"/Summe im Section-Kopf.
-- [ ] **AC11:** Section-Kopf zeigt „N Positionen · M ausgewählt · Summe" korrekt.
-- [ ] **AC12:** Speichern schreibt weiterhin über den unveränderten `save()`-Pfad (Regressionsschutz).
+- **AC-10:** Häkchen abwählen dimmt die Karte und senkt „M ausgewählt"/Summe im Section-Kopf.
+- **AC-11:** Section-Kopf zeigt „N Positionen · M ausgewählt · Summe" korrekt.
+- **AC-12:** Speichern schreibt weiterhin über den unveränderten `save()`-Pfad (Regressionsschutz).
 
 ## Alternativen (verworfen)
 

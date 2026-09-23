@@ -1,32 +1,32 @@
 ---
 spec_file: docs/specs/views/receipt-review-card.md
-spec_sha256: 3f62fa3f46bdd273451c4aa0dc6c5b2bd68a3200941efc61c1390326f8df491c
+spec_sha256: b6a3eac7cbef76f29c298fe6d76d5cc0d8fa8fd67fed1e959f5ab04599581d1f
 ---
 
 # PO-Briefing: feat-23-receipt-review-screen
 
 - **Spec:** docs/specs/views/receipt-review-card.md
 - **Issue:** #23
-- **Erstellt:** 2026-09-22
+- **Erstellt:** 2026-09-23
 
 ## Was gebaut wird
 
-Jede erkannte Bon-Position wird eine Karte mit Original-Text, wählbarem Artikelnamen sowie änderbarem Preis und Menge.
+Jede Bon-Position wird eine Karte mit lesbarem Bontext, wählbarem Namen und änderbarem Preis/Menge.
 
 ## Definition of Done
 
-Jede Position zeigt lesbar Bon-Text und gewählten Namen; Antippen ändert Namen, Preis oder Menge sofort sichtbar, ohne Abschneiden oder Umbruch-Fehler.
+Jede Position zeigt vollständigen Bontext und gewählten Namen; Antippen wechselt Namen, Preis oder Menge sichtbar, ohne Abschneiden oder Umbruch-Fehler.
 
 ## Wie geprüft wird
 
-Automatisierte Tests prüfen Anzeige, Auswahl-Logik und Preisberechnung; sie zeigen nicht, ob Vorschläge inhaltlich passen (folgt in Issue #29).
+Automatisierte Tests prüfen Anzeige, Auswahl und Preisberechnung je Kriterium; sie belegen nicht, ob vorgeschlagene Namen inhaltlich passen.
 
 ## Kritische Anmerkungen
 
-- Kernbeschwerde aus dem Issue — unpassende Vorschläge — bleibt bestehen, nur Anzahl wird begrenzt; Qualität folgt erst in Issue #29.
-- Umfang reißt das übliche Limit deutlich (ca. 720 statt 250 Codezeilen); PO hat das bereits akzeptiert.
-- Mengenänderung (Stück/Gramm) ist eine Erweiterung über die ursprüngliche Meldung hinaus, vom PO nachträglich gewünscht.
+- Bei manchen Zeilen ist laut Spec keine Auswahl vorausgewählt (Name ohne Treffer) — Entscheidung steht noch aus.
+- Kernbeschwerde der Anfrage — unpassende Vorschläge — bleibt; nur Anzahl wird begrenzt, Qualität folgt erst später (Issue #29).
+- Umfang liegt deutlich über dem üblichen Limit (rund 720 statt 250 Zeilen); laut Spec vom PO akzeptiert.
 
 ## Freigabe-Frage
 
-Reicht dir die Karten-Darstellung mit Auswahl statt Tippen, obwohl unpassende Vorschläge erst in einem Folge-Schritt behoben werden?
+Reicht dir die Karten-Auswahl trotz offener Vorauswahl-Lücke und weiterhin unpassenden Vorschlägen bis Issue #29?

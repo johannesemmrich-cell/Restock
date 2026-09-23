@@ -43,6 +43,7 @@
 		4875ED5EEB7BE1A728289FBA /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */; };
 		4C16FAE9DA52BB877ACC9BC3 /* ReceiptAliasService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F213D22060B00AE4751A8 /* ReceiptAliasService.swift */; };
 		4F223836DA8ED358DC718C1F /* ReceiptScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E205C058079CBDE7869B96F4 /* ReceiptScannerView.swift */; };
+		B47F2C9081DA4E6135C0A712 /* ReceiptReviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A61D4E27B48F0A5D31C86 /* ReceiptReviewCard.swift */; };
 		52AFCA1171068886BF74BF47 /* RecipeRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD924269EE28D045DBDAE33 /* RecipeRecognitionService.swift */; };
 		53580D0BF528C8409B394E47 /* LegalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59CED41FC8E666B11CC8C09 /* LegalView.swift */; };
 		5BA9390E49F89DCBF753FDA6 /* ShoppingListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7BD9F3BC448DE79398597F /* ShoppingListWidget.swift */; };
@@ -265,6 +266,7 @@
 		D9E2BAE2A0C9CCD5623B0983 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		DF9DBA3F3FAF084DAE33A4F3 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		E205C058079CBDE7869B96F4 /* ReceiptScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScannerView.swift; sourceTree = "<group>"; };
+		C93A61D4E27B48F0A5D31C86 /* ReceiptReviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptReviewCard.swift; sourceTree = "<group>"; };
 		E27BD0C5EE55D1C2CCC616ED /* SchemaVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaVersions.swift; sourceTree = "<group>"; };
 		E46D46BF139B378E43E1466C /* QuickAddControlIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddControlIntent.swift; sourceTree = "<group>"; };
 		E59CED41FC8E666B11CC8C09 /* LegalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalView.swift; sourceTree = "<group>"; };
@@ -321,6 +323,7 @@
 				AD050279AD19DB593A2AF6B1 /* ActualPriceEntryView.swift */,
 				A05C37F18C9CCDD9B805B616 /* PriceOverviewView.swift */,
 				E205C058079CBDE7869B96F4 /* ReceiptScannerView.swift */,
+				C93A61D4E27B48F0A5D31C86 /* ReceiptReviewCard.swift */,
 			);
 			path = Prices;
 			sourceTree = "<group>";
@@ -837,6 +840,7 @@
 				426FFE6DA2C0EFDE1E621225 /* ReceiptParserService.swift in Sources */,
 				7E0F9A1304D50BDA6BC9B811 /* ReceiptResolutionService.swift in Sources */,
 				4F223836DA8ED358DC718C1F /* ReceiptScannerView.swift in Sources */,
+				B47F2C9081DA4E6135C0A712 /* ReceiptReviewCard.swift in Sources */,
 				EFDC00E355EA647D21C911B4 /* ReceiptShareHandoff.swift in Sources */,
 				CCF05C1044554FC71B37CE85 /* RecipeImportView.swift in Sources */,
 				52AFCA1171068886BF74BF47 /* RecipeRecognitionService.swift in Sources */,

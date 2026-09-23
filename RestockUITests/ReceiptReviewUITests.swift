@@ -1,4 +1,6 @@
 import XCTest
+// Für die Pixelmessung des Dimmens (`XCUIScreenshot.image` ist ein `UIImage`).
+import UIKit
 
 /// Einstieg in den Bon-Prüf-Screen OHNE Kamera und OHNE Texterkennung (Issue #28) und
 /// Prüfstrecke für den Karten-Umbau dieses Screens (Issue #23).
@@ -45,6 +47,12 @@ final class ReceiptReviewUITests: XCTestCase {
         static let suggestionLine = 2
         /// Name des zweiten Treffers an `suggestionLine` (Option 1).
         static let secondSuggestion = "Buttermilch"
+        /// Aufgelöster Name der KI-Zeile — steht im Bedienhilfen-Label ihres Häkchens.
+        static let aiLineName = "Frische Vollmilch 3,5 %"
+        /// Letzte Bon-Zeile und ihr Preis — Gegenprobe für „Speichern" mit genau einer
+        /// Auswahl; sie liegt am Listenende, wo das Abwählen aller Positionen endet.
+        static let lastLine = 3
+        static let lastLinePriceText = "1,56 €"
         /// Zugeordneter Artikel und Preis der Zeile `suggestionLine` — nach dem Speichern muss
         /// genau dieser Preis am Artikel in der Liste stehen (AC12).
         static let matchedItemName = "Milch"
@@ -144,6 +152,115 @@ final class ReceiptReviewUITests: XCTestCase {
             field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
         }
         field.typeText(newValue)
+    }
+
+    /// Tippt ein Element an und scrollt es vorher, falls nötig, in den Sichtbereich.
+    ///
+    /// Vier Karten mit je bis zu vier Auswahlzeilen sind höher als der Bildschirm — die letzte
+    /// Position existiert im Bedienhilfen-Baum (alle Karten liegen in EINER Listenzeile, siehe
+    /// Kommentar in `ReceiptScannerView.reviewView`), ist aber nicht antippbar, solange sie
+    /// unter dem Rand liegt. Nur Erreichbarkeit, keine Prüfung: Wird das Element nie
+    /// antippbar, schlägt der Test mit klarer Meldung fehl statt mit „failed to scroll".
+    private func tapScrollingIntoView(
+        _ app: XCUIApplication,
+        _ target: XCUIElement,
+        description: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertTrue(target.waitForExistence(timeout: 5), "\(description) fehlt.", file: file, line: line)
+        var swipes = 0
+        while !target.isHittable && swipes < 6 {
+            app.swipeUp()
+            swipes += 1
+        }
+        XCTAssertTrue(target.isHittable,
+                      "\(description) ist auch nach \(swipes) Wischern nicht antippbar.",
+                      file: file, line: line)
+        target.tap()
+    }
+
+    /// Holt ein nach oben weggescrolltes Element zurück in den Bedienhilfen-Baum.
+    ///
+    /// Die `List` wirft ihren Abschnittskopf aus dem Baum, sobald er weit genug nach oben
+    /// gescrollt ist — ein Zugriff auf `label` scheitert dann mit „No matches found", obwohl die
+    /// Kopfzeile sehr wohl existiert. Es wird nur so weit zurückgewischt, bis sie wieder da ist,
+    /// nicht bis zum Anschlag: Ein Wisch nach unten am oberen Listenende würde das Sheet zuziehen.
+    private func scrollBackUntilFound(
+        _ app: XCUIApplication,
+        _ target: XCUIElement,
+        description: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        var swipes = 0
+        while !target.exists && swipes < 6 {
+            app.swipeDown()
+            swipes += 1
+        }
+        XCTAssertTrue(target.exists,
+                      "\(description) ist nach \(swipes) Wischern nach oben nicht wieder auffindbar.",
+                      file: file, line: line)
+    }
+
+    /// Wartet, bis ein Element den erwarteten Textbaustein zeigt — und nennt im Fehlerfall den
+    /// tatsächlich gefundenen Text.
+    ///
+    /// Bewusst statt `expectation(for:)`: Deren Fehlermeldung nennt nur das unerfüllte Prädikat,
+    /// nicht den erreichten Zustand. Bei einer Kopfzeile wie „4 Positionen · 2 ausgewählt · …"
+    /// ist gerade dieser Zustand die Information, die den Fehler erklärt.
+    private func waitUntilLabel(
+        of element: XCUIElement,
+        contains fragment: String,
+        timeout: TimeInterval = 8,
+        what: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        if labelOf(element, contains: fragment, within: timeout) { return }
+        XCTFail("\(what): erwartet wurde \(fragment), angezeigt wird \(element.label)", file: file, line: line)
+    }
+
+    /// Wie `waitUntilLabel`, nur als Abfrage ohne Urteil.
+    private func labelOf(_ element: XCUIElement, contains fragment: String, within timeout: TimeInterval) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if element.label.localizedCaseInsensitiveContains(fragment) { return true }
+            usleep(200_000)
+        }
+        return false
+    }
+
+    /// Anteil der Bildpunkte eines Elements, die dunkler als 50 % Helligkeit sind.
+    ///
+    /// Das ist die einzige von außen belastbare Messung des Dimmens: Deckkraft steht in keiner
+    /// Bedienhilfen-Eigenschaft. Im Hellmodus ist die Schrift (`Color.ink`, Helligkeit ≈ 0,11)
+    /// auf der Kartenfläche (`Color.surface`, ≈ 0,98) klar unter der Schwelle; bei 40 %
+    /// Deckkraft mischt sie sich auf ≈ 0,64 und liegt damit eindeutig darüber. Der Anteil
+    /// dunkler Punkte fällt also von „Schrift vorhanden" auf „praktisch keine" — gemessen an
+    /// den echten Bildpunkten des Bildschirms, nicht an einem Ersatzmerkmal.
+    private func darkPixelShare(of element: XCUIElement) -> Double {
+        guard let cgImage = element.screenshot().image.cgImage else { return -1 }
+        let width = cgImage.width
+        let height = cgImage.height
+        guard width > 0, height > 0 else { return -1 }
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        guard let context = CGContext(
+            data: &pixels,
+            width: width, height: height,
+            bitsPerComponent: 8, bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return -1 }
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+        var dark = 0
+        for offset in stride(from: 0, to: pixels.count, by: 4) {
+            let luminance = (0.299 * Double(pixels[offset])
+                             + 0.587 * Double(pixels[offset + 1])
+                             + 0.114 * Double(pixels[offset + 2])) / 255
+            if luminance < 0.5 { dark += 1 }
+        }
+        return Double(dark) / Double(width * height)
     }
 
     // MARK: - Grundgerüst (#28, auf den Karten-Aufbau nachgezogen)
@@ -278,6 +395,56 @@ final class ReceiptReviewUITests: XCTestCase {
         waitForExpectations(timeout: 10)
     }
 
+    /// AC7 / Expected Behavior 3 — jeder Tastenanschlag im Feld „Anderer Name" wirkt sofort.
+    ///
+    /// Die Spec verlangt „jede Eingabe wird laufend übernommen (kein separater
+    /// ‚Übernehmen'-Schritt)". Geprüft wird das MITTEN im Wort und ohne jede Bestätigung: Die
+    /// Tastatur bleibt offen, es wird nichts anderes angetippt, keine Eingabetaste gedrückt.
+    /// Der Nachweis läuft über das Bedienhilfen-Label des Häkchens, das den Namen nennt, unter
+    /// dem die Position gespeichert wird (`line.name`) — der Feldinhalt selbst wäre kein
+    /// Beweis, weil er auch bei einer erst am Ende übernommenen Eingabe schon dort stünde.
+    func testTypingCustomNameIsAppliedWithEveryKeystroke() {
+        let app = openedReviewSheet()
+        let line = Seed.aiLine
+
+        let checkbox = element(app, "receiptReview.line.\(line).checkbox")
+        XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "Häkchen der KI-Zeile fehlt.")
+        XCTAssertTrue(checkbox.label.contains(Seed.aiLineName),
+                      "Vorbedingung: Das Häkchen nennt nicht den bisherigen Namen der Position — "
+                      + "bekommen: \(checkbox.label)")
+
+        let customOption = element(app, "receiptReview.line.\(line).option.1")
+        XCTAssertTrue(customOption.waitForExistence(timeout: 5), "Auswahlzeile für den eigenen Namen fehlt.")
+        customOption.tap()
+
+        let field = app.textFields["receiptReview.line.\(line).customNameField"]
+        XCTAssertTrue(field.waitForExistence(timeout: 5), "Textfeld für den eigenen Namen erscheint nicht.")
+        expectation(for: NSPredicate(format: "hasKeyboardFocus == true"), evaluatedWith: field)
+        waitForExpectations(timeout: 10)
+
+        // Das Feld ist mit dem bisherigen Namen vorbelegt — leeren, ohne es zu verlassen.
+        let existing = (field.value as? String) ?? ""
+        if !existing.isEmpty {
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
+        }
+
+        // Erste Hälfte des Wortes: schon jetzt, mitten in der Eingabe, muss der Name stehen.
+        field.typeText("Ziegen")
+        expectation(for: NSPredicate(format: "label CONTAINS %@", "Ziegen"), evaluatedWith: checkbox)
+        waitForExpectations(timeout: 5)
+        XCTAssertFalse(checkbox.label.contains(Seed.aiLineName),
+                       "Der alte Name steht noch an der Position — die Eingabe wurde nicht übernommen: \(checkbox.label)")
+
+        // Zweite Hälfte, weiterhin ohne Bestätigung — die Übernahme läuft mit.
+        field.typeText("milch")
+        expectation(for: NSPredicate(format: "label CONTAINS %@", "Ziegenmilch"), evaluatedWith: checkbox)
+        waitForExpectations(timeout: 5)
+
+        XCTAssertTrue(app.keyboards.firstMatch.exists,
+                      "Die Tastatur ist zu — dann wurde die Eingabe abgeschlossen und der Nachweis "
+                      + "der laufenden Übernahme ist keiner mehr.")
+    }
+
     // MARK: - AC9: Preis und Menge ändern
 
     /// AC9 — „Ändern" öffnet Preis- und Mengenfeld; beide wirken sofort auf die Preiszeile.
@@ -346,6 +513,111 @@ final class ReceiptReviewUITests: XCTestCase {
         waitForExpectations(timeout: 5)
         XCTAssertEqual(normalized(header.label).lowercased(), expected,
                        "Kopfzeile nach dem Abwählen falsch — erwartet: \(expected)")
+    }
+
+    /// AC10, erste Hälfte — die abgewählte Karte dimmt sich sichtbar, und zwar beide Wege.
+    ///
+    /// Gemessen an den echten Bildpunkten der Preiszeile: Die Karte legt 40 % Deckkraft über
+    /// ihren Inhalt, sobald das Häkchen aus ist. Deckkraft ist über die Bedienhilfen-
+    /// Schnittstelle nicht abfragbar (kein Merkmal, kein Wert) — ein Ersatzmerkmal („Häkchen
+    /// ist aus") würde dagegen nur den Auslöser prüfen, nicht die Wirkung, die der PO sieht.
+    /// Deshalb der Bildpunkt-Vergleich; die Zahlen dahinter stehen an `darkPixelShare`.
+    /// Bewusst im Hellmodus, wo Schrift dunkel auf heller Fläche steht.
+    ///
+    /// NICHT geprüft: das Aufhellen beim Wiederanwählen. Ein Tipp in die Mitte eines
+    /// abgewählten Häkchens bleibt heute wirkungslos (`Color.clear`-Füllung, siehe Befund zum
+    /// Häkchen in `ReceiptReviewCard.checkbox`); ein Tipp auf den 1,5 pt dünnen Rahmen wirkt.
+    /// Solange das so ist, wäre jeder Test der Gegenrichtung ein Test der Umgehung, nicht des
+    /// Verhaltens — die Lücke ist gemeldet, statt hier festgeschrieben zu werden.
+    func testUncheckingCardDimsItVisibly() {
+        XCUIDevice.shared.appearance = .light
+        let app = openedReviewSheet()
+        let line = Seed.aiLine
+
+        let priceRow = element(app, "receiptReview.line.\(line).price")
+        XCTAssertTrue(priceRow.waitForExistence(timeout: 5), "Preiszeile der KI-Zeile fehlt.")
+        let inked = darkPixelShare(of: priceRow)
+        XCTAssertGreaterThan(inked, 0.02,
+                             "Messung untauglich: In der Preiszeile steht kaum dunkle Schrift "
+                             + "(Anteil \(inked)) — ohne sie kann das Dimmen nicht gemessen werden.")
+
+        let header = element(app, "receiptReview.sectionHeader")
+        XCTAssertTrue(header.exists, "Kopfzeile über den Positionen fehlt.")
+        let checkbox = element(app, "receiptReview.line.\(line).checkbox")
+        XCTAssertTrue(checkbox.exists, "Häkchen der KI-Zeile fehlt.")
+        checkbox.tap()
+        waitUntilLabel(of: header, contains: "3 ausgewählt", what: "Kopfzeile nach dem Abwählen")
+
+        let dimmed = darkPixelShare(of: priceRow)
+        XCTAssertLessThan(dimmed, inked * 0.25,
+                          "Die abgewählte Karte ist nicht sichtbar gedimmt — dunkle Bildpunkte "
+                          + "vorher \(inked), nachher \(dimmed).")
+    }
+
+    // MARK: - Speichern erst ab einer Auswahl (Expected Behavior, letzter Punkt)
+
+    /// Ohne eine einzige ausgewählte Position darf „Speichern" nicht auslösbar sein — mit einer
+    /// wieder.
+    ///
+    /// Das ist die Bedingung `canSave` (`ReceiptScannerView.swift:220`) aus Nutzersicht: Ein
+    /// Bon, an dem alles abgewählt ist, hat nichts zu speichern; ein auslösbarer Knopf würde
+    /// den Screen kommentarlos schließen und den Bon verwerfen, ohne dass etwas gelernt wurde.
+    /// Geprüft werden beide Seiten der Grenze, damit der Test nicht schon dadurch grün wäre,
+    /// dass der Knopf immer gesperrt ist: mit GENAU EINER Position offen, mit keiner gesperrt.
+    /// Die Kopfzeile dient als Nachweis, dass wirklich der gedachte Zustand vorliegt — sonst
+    /// prüfte der Test einen anderen als den beschriebenen Fall.
+    func testSaveIsNotTriggerableWithoutAnySelectedPosition() {
+        let app = openedReviewSheet()
+
+        let header = element(app, "receiptReview.sectionHeader")
+        XCTAssertTrue(header.waitForExistence(timeout: 5), "Kopfzeile über den Positionen fehlt.")
+        let saveButton = app.buttons["receiptReview.saveButton"]
+        XCTAssertTrue(saveButton.waitForExistence(timeout: 5), "Speichern-Knopf fehlt.")
+        XCTAssertTrue(saveButton.isEnabled,
+                      "Vorbedingung: Mit allen vier Positionen ausgewählt muss Speichern offen sein.")
+
+        // Erst DREI der vier Positionen abwählen: An der Grenze „genau eine ausgewählt" muss
+        // Speichern offen bleiben — sonst wäre die Sperre unten kein Beweis, sondern nur der
+        // Normalzustand eines immer gesperrten Knopfes.
+        for index in 0..<(Seed.rawTexts.count - 1) {
+            tapScrollingIntoView(app, element(app, "receiptReview.line.\(index).checkbox"),
+                                 description: "Häkchen der Zeile \(index)")
+        }
+        scrollBackUntilFound(app, header, description: "Kopfzeile")
+        waitUntilLabel(of: header, contains: "1 ausgewählt",
+                       what: "Kopfzeile nach dem Abwählen der ersten drei Positionen")
+        XCTAssertEqual(normalized(header.label).lowercased(),
+                       "4 positionen · 1 ausgewählt · \(Seed.lastLinePriceText)".lowercased(),
+                       "Es liegt nicht der gedachte Zustand vor (genau eine Position ausgewählt).")
+        XCTAssertTrue(saveButton.isEnabled,
+                      "Mit einer ausgewählten Position muss Speichern offen sein — sonst ließe sich "
+                      + "ein Bon mit nur einer geprüften Position nie speichern.")
+
+        // Jetzt die letzte: Ab hier gibt es nichts mehr zu speichern.
+        tapScrollingIntoView(app, element(app, "receiptReview.line.\(Seed.lastLine).checkbox"),
+                             description: "Häkchen der letzten Zeile")
+        scrollBackUntilFound(app, header, description: "Kopfzeile")
+        waitUntilLabel(of: header, contains: "0 ausgewählt",
+                       what: "Kopfzeile nach dem Abwählen aller Positionen")
+        XCTAssertEqual(normalized(header.label).lowercased(), "4 positionen · 0 ausgewählt · 0,00 €",
+                       "Es liegt nicht der gedachte Zustand vor (keine Position ausgewählt).")
+
+        XCTAssertFalse(saveButton.isEnabled,
+                       "Speichern ist ohne ausgewählte Position weiterhin freigegeben.")
+
+        // `isHittable` ist hier kein Signal: SwiftUI hält einen per `.disabled(true)` gesperrten
+        // Knopf weiter sichtbar und damit geometrisch antippbar (im Lauf vom 23.09. nachgemessen).
+        // Also wird wirklich getippt — und der Tipp MUSS folgenlos bleiben. Das ist der eigentliche
+        // Nutzen-Nachweis: Der Prüf-Screen bleibt offen, statt den Bon ohne eine einzige geprüfte
+        // Position abzuschließen. Wäre der Knopf auslösbar, wäre das Sheet nach `save()` weg
+        // (der AC12-Test unten sieht den Home-Screen in gut einer Sekunde).
+        saveButton.tap()
+        let reviewBar = app.navigationBars["Bon scannen — Lidl"]
+        XCTAssertFalse(reviewBar.waitForNonExistence(timeout: 3),
+                       "Der Tipp auf das gesperrte Speichern hat den Prüf-Screen geschlossen — ohne "
+                       + "eine einzige ausgewählte Position hätte er nichts abzuschließen.")
+        XCTAssertTrue(normalized(header.label).lowercased().contains("0 ausgewählt"),
+                      "Nach dem Tipp auf das gesperrte Speichern zeigt die Kopfzeile: \(header.label)")
     }
 
     // MARK: - AC12: Speichern unverändert
