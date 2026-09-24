@@ -45,7 +45,8 @@ final class ReceiptReviewUITests: XCTestCase {
         /// fünf auf drei inhaltliche Optionen prüfen deshalb die Unit-Tests
         /// (`ReceiptReviewCardTests`), hier wird die Obergrenze von vier Zeilen geprüft.
         static let suggestionLine = 2
-        /// Name des zweiten Treffers an `suggestionLine` (Option 1).
+        /// Name des zweiten Listen-Treffers an `suggestionLine` — seit Issue #37 an Option 2
+        /// (Option 0 ist die vorausgewählte Zusatzzeile mit dem geltenden Namen "Milch").
         static let secondSuggestion = "Buttermilch"
         /// Aufgelöster Name der KI-Zeile — steht im Bedienhilfen-Label ihres Häkchens.
         static let aiLineName = "Frische Vollmilch 3,5 %"
@@ -375,10 +376,13 @@ final class ReceiptReviewUITests: XCTestCase {
     func testTappingListMatchSelectsThatOption() {
         let app = openedReviewSheet()
 
-        let option = element(app, "receiptReview.line.\(Seed.suggestionLine).option.1")
-        XCTAssertTrue(option.waitForExistence(timeout: 5), "Zweite Auswahlzeile fehlt.")
+        // Option 0 ist seit Issue #37 der geltende Name "Milch" (Regel 5 — keiner der drei
+        // Treffer entspricht ihm, deshalb vorausgewählte Zusatzzeile). Buttermilch rückt dadurch
+        // von Option 1 auf Option 2.
+        let option = element(app, "receiptReview.line.\(Seed.suggestionLine).option.2")
+        XCTAssertTrue(option.waitForExistence(timeout: 5), "Dritte Auswahlzeile fehlt.")
         XCTAssertTrue(option.label.contains(Seed.secondSuggestion),
-                      "Zweite Auswahlzeile trägt nicht den erwarteten Treffer \(Seed.secondSuggestion).")
+                      "Dritte Auswahlzeile trägt nicht den erwarteten Treffer \(Seed.secondSuggestion).")
         option.tap()
 
         XCTAssertTrue(option.isSelected,
