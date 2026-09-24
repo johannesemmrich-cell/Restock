@@ -99,7 +99,7 @@ enum ReceiptResolutionService {
                 let candidates = completedItems.isEmpty ? [] :
                     ReceiptParserService.completedItemCandidates(for: line.name, in: completedItems, linePrice: line.price)
                 let suggestionCandidates = suggestionPool.isEmpty ? [] :
-                    ReceiptParserService.completedItemCandidates(for: line.name, in: suggestionPool, linePrice: line.price)
+                    ReceiptParserService.completedItemCandidates(for: line.name, in: suggestionPool, linePrice: line.price, limit: 3)
 
                 if let alias = ReceiptAliasService.shared.resolve(line.name) {
                     resolvedNames[index] = alias
