@@ -1,0 +1,973 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme Restock -project Restock.xcodeproj -destination id=8F696920-4B9A-40A7-96F0-7697BE887CC7 "-only-testing:RestockTests/ReceiptParserStornoTests/testConfirmationLineAfterStornoDoesNotBecomePhantomPosition" test
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/frolicking-petting-feather/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-eihwfwthdhlbtldbhxlrwlojmprx/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-eihwfwthdhlbtldbhxlrwlojmprx/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-09-24 13:15:33.101639+0200 Restock[49967:68530440] [General] Failed to connect to linkd to request update AppShortcut parameters, error: Kommunikation mit der Hilfs-App nicht möglich.
+2026-09-24 13:15:33.275997+0200 Restock[49967:68530142] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-09-24 13:15:33.278201+0200 Restock[49967:68530142] [error] CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application Support/default.store', errno 2 / No such file or directory.
+CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application Support/default.store', errno 2 / No such file or directory.
+2026-09-24 13:15:33.278291+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.278381+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create denied
+CoreData: error:   Sandbox access to file-write-create denied
+2026-09-24 13:15:33.278426+0200 Restock[49967:68530142] [error] CoreData: error: Failed to statfs file; errno 2 / No such file or directory.
+CoreData: error: Failed to statfs file; errno 2 / No such file or directory.
+2026-09-24 13:15:33.278461+0200 Restock[49967:68530142] [error] CoreData: error: Information for file system
+CoreData: error: Information for file system
+2026-09-24 13:15:33.278490+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.278594+0200 Restock[49967:68530142] [error] CoreData: error:   File system type: 		0
+CoreData: error:   File system type: 		0
+2026-09-24 13:15:33.278634+0200 Restock[49967:68530142] [error] CoreData: error:   File system flags: 		0
+CoreData: error:   File system flags: 		0
+2026-09-24 13:15:33.278695+0200 Restock[49967:68530142] [error] CoreData: error:   Total data blocks: 		0
+CoreData: error:   Total data blocks: 		0
+2026-09-24 13:15:33.278756+0200 Restock[49967:68530142] [error] CoreData: error:   Free data blocks: 		0
+CoreData: error:   Free data blocks: 		0
+2026-09-24 13:15:33.278793+0200 Restock[49967:68530142] [error] CoreData: error:   Free blocks for nonsuperuser:	0
+CoreData: error:   Free blocks for nonsuperuser:	0
+2026-09-24 13:15:33.278864+0200 Restock[49967:68530142] [error] CoreData: error:   Total i-nodes: 			0
+CoreData: error:   Total i-nodes: 			0
+2026-09-24 13:15:33.278973+0200 Restock[49967:68530142] [error] CoreData: error:   File system ID: 		0, 0
+CoreData: error:   File system ID: 		0, 0
+2026-09-24 13:15:33.279106+0200 Restock[49967:68530142] [error] CoreData: error:   Free i-nodes: 			0
+CoreData: error:   Free i-nodes: 			0
+2026-09-24 13:15:33.279254+0200 Restock[49967:68530142] [error] CoreData: error:   Owner UID: 			0
+CoreData: error:   Owner UID: 			0
+2026-09-24 13:15:33.279351+0200 Restock[49967:68530142] [error] CoreData: error:   Filesystem type name:
+CoreData: error:   Filesystem type name: 		
+2026-09-24 13:15:33.279415+0200 Restock[49967:68530142] [error] CoreData: error:   Mount on name:
+CoreData: error:   Mount on name: 			
+2026-09-24 13:15:33.279507+0200 Restock[49967:68530142] [error] CoreData: error:   Mount from name:
+CoreData: error:   Mount from name: 		
+2026-09-24 13:15:33.279563+0200 Restock[49967:68530142] [error] CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application Support', errno 2 / No such file or directory.
+CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application Support', errno 2 / No such file or directory.
+2026-09-24 13:15:33.279608+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.279674+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create denied
+CoreData: error:   Sandbox access to file-write-create denied
+2026-09-24 13:15:33.279747+0200 Restock[49967:68530142] [error] CoreData: error: Failed to statfs file; errno 2 / No such file or directory.
+CoreData: error: Failed to statfs file; errno 2 / No such file or directory.
+2026-09-24 13:15:33.279806+0200 Restock[49967:68530142] [error] CoreData: error: Information for file system
+CoreData: error: Information for file system
+2026-09-24 13:15:33.279852+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.279908+0200 Restock[49967:68530142] [error] CoreData: error:   File system type: 		0
+CoreData: error:   File system type: 		0
+2026-09-24 13:15:33.279966+0200 Restock[49967:68530142] [error] CoreData: error:   File system flags: 		0
+CoreData: error:   File system flags: 		0
+2026-09-24 13:15:33.280024+0200 Restock[49967:68530142] [error] CoreData: error:   Total data blocks: 		0
+CoreData: error:   Total data blocks: 		0
+2026-09-24 13:15:33.280050+0200 Restock[49967:68530142] [error] CoreData: error:   Free data blocks: 		0
+CoreData: error:   Free data blocks: 		0
+2026-09-24 13:15:33.280081+0200 Restock[49967:68530142] [error] CoreData: error:   Free blocks for nonsuperuser:	0
+CoreData: error:   Free blocks for nonsuperuser:	0
+2026-09-24 13:15:33.280142+0200 Restock[49967:68530142] [error] CoreData: error:   Total i-nodes: 			0
+CoreData: error:   Total i-nodes: 			0
+2026-09-24 13:15:33.280170+0200 Restock[49967:68530142] [error] CoreData: error:   File system ID: 		0, 0
+CoreData: error:   File system ID: 		0, 0
+2026-09-24 13:15:33.280199+0200 Restock[49967:68530142] [error] CoreData: error:   Free i-nodes: 			0
+CoreData: error:   Free i-nodes: 			0
+2026-09-24 13:15:33.280240+0200 Restock[49967:68530142] [error] CoreData: error:   Owner UID: 			0
+CoreData: error:   Owner UID: 			0
+2026-09-24 13:15:33.280269+0200 Restock[49967:68530142] [error] CoreData: error:   Filesystem type name:
+CoreData: error:   Filesystem type name: 		
+2026-09-24 13:15:33.280298+0200 Restock[49967:68530142] [error] CoreData: error:   Mount on name:
+CoreData: error:   Mount on name: 			
+2026-09-24 13:15:33.280333+0200 Restock[49967:68530142] [error] CoreData: error:   Mount from name:
+CoreData: error:   Mount from name: 		
+2026-09-24 13:15:33.280402+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.280484+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library
+2026-09-24 13:15:33.280530+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.280558+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.280602+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.280696+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-24 13:15:33.280741+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360947730
+CoreData: error:   File inode: 		360947730
+2026-09-24 13:15:33.280771+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.280801+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.280863+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.280917+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.280971+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.281036+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.281128+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.281254+0200 Restock[49967:68530142] [error] CoreData: error: Information for file system
+CoreData: error: Information for file system
+2026-09-24 13:15:33.281308+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.281359+0200 Restock[49967:68530142] [error] CoreData: error:   File system type: 		0x1a
+CoreData: error:   File system type: 		0x1a
+2026-09-24 13:15:33.281452+0200 Restock[49967:68530142] [error] CoreData: error:   File system flags: 		0x4909080
+CoreData: error:   File system flags: 		0x4909080
+2026-09-24 13:15:33.281500+0200 Restock[49967:68530142] [error] CoreData: error:   MNT_JOURNALED
+CoreData: error:   MNT_JOURNALED
+2026-09-24 13:15:33.281551+0200 Restock[49967:68530142] [error] CoreData: error:   Total data blocks: 		120699413
+CoreData: error:   Total data blocks: 		120699413
+2026-09-24 13:15:33.281598+0200 Restock[49967:68530142] [error] CoreData: error:   Free data blocks: 		15555506
+CoreData: error:   Free data blocks: 		15555506
+2026-09-24 13:15:33.281644+0200 Restock[49967:68530142] [error] CoreData: error:   Free blocks for nonsuperuser:	15555506
+CoreData: error:   Free blocks for nonsuperuser:	15555506
+2026-09-24 13:15:33.281691+0200 Restock[49967:68530142] [error] CoreData: error:   Total i-nodes: 			626064515
+CoreData: error:   Total i-nodes: 			626064515
+2026-09-24 13:15:33.281754+0200 Restock[49967:68530142] [error] CoreData: error:   File system ID: 		0x1000012, 0x1a
+CoreData: error:   File system ID: 		0x1000012, 0x1a
+2026-09-24 13:15:33.281782+0200 Restock[49967:68530142] [error] CoreData: error:   Free i-nodes: 			622220240
+CoreData: error:   Free i-nodes: 			622220240
+2026-09-24 13:15:33.281807+0200 Restock[49967:68530142] [error] CoreData: error:   Owner UID: 			0
+CoreData: error:   Owner UID: 			0
+2026-09-24 13:15:33.281833+0200 Restock[49967:68530142] [error] CoreData: error:   Filesystem type name: 		apfs
+CoreData: error:   Filesystem type name: 		apfs
+2026-09-24 13:15:33.281882+0200 Restock[49967:68530142] [error] CoreData: error:   Mount on name: 			/System/Volumes/Data
+CoreData: error:   Mount on name: 			/System/Volumes/Data
+2026-09-24 13:15:33.281917+0200 Restock[49967:68530142] [error] CoreData: error:   Mount from name: 		/dev/disk3s5
+CoreData: error:   Mount from name: 		/dev/disk3s5
+2026-09-24 13:15:33.281960+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.282011+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91
+2026-09-24 13:15:33.282081+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.282107+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.282149+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.282219+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-24 13:15:33.282315+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360947728
+CoreData: error:   File inode: 		360947728
+2026-09-24 13:15:33.282355+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.282381+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.282406+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.282452+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.282485+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.282516+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.282574+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.282640+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.282668+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup
+2026-09-24 13:15:33.282694+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.282807+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.282857+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.282895+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		2336 bytes
+CoreData: error:   File Size: 		2336 bytes
+2026-09-24 13:15:33.282972+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360935871
+CoreData: error:   File inode: 		360935871
+2026-09-24 13:15:33.283039+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.283067+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.283122+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.283164+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.283199+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.283233+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.283351+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.283407+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.283481+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared
+2026-09-24 13:15:33.283521+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.283563+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.283590+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.283616+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-24 13:15:33.283642+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360935417
+CoreData: error:   File inode: 		360935417
+2026-09-24 13:15:33.283676+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.283754+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.283809+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.283836+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.283889+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.283954+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.284033+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.284092+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.284122+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers
+2026-09-24 13:15:33.284176+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.284239+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.284268+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.284325+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		224 bytes
+CoreData: error:   File Size: 		224 bytes
+2026-09-24 13:15:33.284377+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360935410
+CoreData: error:   File inode: 		360935410
+2026-09-24 13:15:33.284426+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.284478+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.284512+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.284558+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.284585+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.284625+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.284697+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.284822+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.284870+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data
+2026-09-24 13:15:33.284924+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.284951+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.285003+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.285052+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		416 bytes
+CoreData: error:   File Size: 		416 bytes
+2026-09-24 13:15:33.285078+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360935168
+CoreData: error:   File inode: 		360935168
+2026-09-24 13:15:33.285149+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.285195+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.285249+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.285294+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.285340+0200 Restock[49967:68530142] [error] CoreData: error:   775
+CoreData: error:   775
+2026-09-24 13:15:33.285366+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.285410+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.285493+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.285521+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7
+2026-09-24 13:15:33.285548+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.285575+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.285616+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.285653+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-24 13:15:33.285697+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		358303817
+CoreData: error:   File inode: 		358303817
+2026-09-24 13:15:33.285731+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.285776+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.285821+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.285871+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.285916+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.285967+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.286037+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.286094+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.286145+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices
+2026-09-24 13:15:33.286251+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.286310+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.286355+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.286405+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		1760 bytes
+CoreData: error:   File Size: 		1760 bytes
+2026-09-24 13:15:33.286452+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		61848615
+CoreData: error:   File inode: 		61848615
+2026-09-24 13:15:33.286506+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.286582+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.286679+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.286732+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.286782+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.286837+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.286905+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.286962+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.287013+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator
+2026-09-24 13:15:33.287120+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.287204+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.287233+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.287348+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-24 13:15:33.287450+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		61848523
+CoreData: error:   File inode: 		61848523
+2026-09-24 13:15:33.287512+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.287616+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.287818+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.287859+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.287908+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.287954+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.288063+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.288132+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.288164+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer
+CoreData: error: Information for /Users/hem/Library/Developer
+2026-09-24 13:15:33.288279+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.288357+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.288491+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.288572+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		256 bytes
+CoreData: error:   File Size: 		256 bytes
+2026-09-24 13:15:33.288650+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		61843893
+CoreData: error:   File inode: 		61843893
+2026-09-24 13:15:33.288742+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.288821+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.288907+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.288963+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.289011+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.289089+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.289184+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.289288+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.289345+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library
+CoreData: error: Information for /Users/hem/Library
+2026-09-24 13:15:33.289397+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.289447+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.289499+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.289549+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		3776 bytes
+CoreData: error:   File Size: 		3776 bytes
+2026-09-24 13:15:33.289594+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		364216
+CoreData: error:   File inode: 		364216
+2026-09-24 13:15:33.289633+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.289684+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.289731+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.289779+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.289833+0200 Restock[49967:68530142] [error] CoreData: error:   700
+CoreData: error:   700
+2026-09-24 13:15:33.289862+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.289998+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.290061+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.290131+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem
+CoreData: error: Information for /Users/hem
+2026-09-24 13:15:33.290183+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.290232+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.290273+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.290323+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		2240 bytes
+CoreData: error:   File Size: 		2240 bytes
+2026-09-24 13:15:33.290401+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		352974
+CoreData: error:   File inode: 		352974
+2026-09-24 13:15:33.290446+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.290499+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.290534+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.290580+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.290627+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.290652+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.290698+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create allowed
+CoreData: error:   Sandbox access to file-write-create allowed
+2026-09-24 13:15:33.290742+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.290790+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users
+CoreData: error: Information for /Users
+2026-09-24 13:15:33.290824+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.290859+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.290935+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.290981+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-24 13:15:33.291024+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		17011
+CoreData: error:   File inode: 		17011
+2026-09-24 13:15:33.291061+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		0
+CoreData: error:   File user ID: 		0
+2026-09-24 13:15:33.291105+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		80
+CoreData: error:   File group ID: 		80
+2026-09-24 13:15:33.291153+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.291200+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.291250+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.291295+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.291375+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create denied
+CoreData: error:   Sandbox access to file-write-create denied
+2026-09-24 13:15:33.291433+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.291485+0200 Restock[49967:68530142] [error] CoreData: error: Information for /
+CoreData: error: Information for /
+2026-09-24 13:15:33.291536+0200 Restock[49967:68530142] [error] CoreData: error: ---------------------------
+CoreData: error: ---------------------------
+2026-09-24 13:15:33.291617+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.291741+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.291797+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		704 bytes
+CoreData: error:   File Size: 		704 bytes
+2026-09-24 13:15:33.291847+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		2
+CoreData: error:   File inode: 		2
+2026-09-24 13:15:33.291874+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		0
+CoreData: error:   File user ID: 		0
+2026-09-24 13:15:33.291938+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		0
+CoreData: error:   File group ID: 		0
+2026-09-24 13:15:33.291963+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.291991+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.292036+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.292086+0200 Restock[49967:68530142] [error] CoreData: error:   file is not a symbolic link
+CoreData: error:   file is not a symbolic link
+2026-09-24 13:15:33.292161+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create denied
+CoreData: error:   Sandbox access to file-write-create denied
+2026-09-24 13:15:33.292218+0200 Restock[49967:68530142] [error] CoreData: error: Logging status information for directory path: /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application Support
+CoreData: error: Logging status information for directory path: /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application Support
+2026-09-24 13:15:33.292284+0200 Restock[49967:68530142] [error] CoreData: error: Executing as effective user 501
+CoreData: error: Executing as effective user 501
+2026-09-24 13:15:33.292326+0200 Restock[49967:68530142] [error] CoreData: error: Information for /
+CoreData: error: Information for /
+2026-09-24 13:15:33.292374+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.292432+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.292503+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		704 bytes
+CoreData: error:   File Size: 		704 bytes
+2026-09-24 13:15:33.292533+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		2
+CoreData: error:   File inode: 		2
+2026-09-24 13:15:33.292560+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		0
+CoreData: error:   File user ID: 		0
+2026-09-24 13:15:33.292588+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		0
+CoreData: error:   File group ID: 		0
+2026-09-24 13:15:33.292640+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.292692+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.292735+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.292790+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.292828+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.292887+0200 Restock[49967:68530142] [error] CoreData: error:   component is not writeable with errno 30
+CoreData: error:   component is not writeable with errno 30
+2026-09-24 13:15:33.292931+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users
+CoreData: error: Information for /Users
+2026-09-24 13:15:33.292982+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.293032+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.293152+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-24 13:15:33.293215+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		17011
+CoreData: error:   File inode: 		17011
+2026-09-24 13:15:33.293243+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		0
+CoreData: error:   File user ID: 		0
+2026-09-24 13:15:33.293271+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		80
+CoreData: error:   File group ID: 		80
+2026-09-24 13:15:33.293326+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.293380+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.293424+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.293457+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.293513+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.293569+0200 Restock[49967:68530142] [error] CoreData: error:   component is not writeable with errno 13
+CoreData: error:   component is not writeable with errno 13
+2026-09-24 13:15:33.293628+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem
+CoreData: error: Information for /Users/hem
+2026-09-24 13:15:33.293675+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.293708+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.293743+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		2240 bytes
+CoreData: error:   File Size: 		2240 bytes
+2026-09-24 13:15:33.293771+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		352974
+CoreData: error:   File inode: 		352974
+2026-09-24 13:15:33.293819+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.293870+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.293915+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.293959+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.294003+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.294030+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.294184+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.294247+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.294286+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library
+CoreData: error: Information for /Users/hem/Library
+2026-09-24 13:15:33.294314+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.294341+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.294367+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		3776 bytes
+CoreData: error:   File Size: 		3776 bytes
+2026-09-24 13:15:33.294419+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		364216
+CoreData: error:   File inode: 		364216
+2026-09-24 13:15:33.294462+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.294507+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.294530+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.294558+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.294600+0200 Restock[49967:68530142] [error] CoreData: error:   700
+CoreData: error:   700
+2026-09-24 13:15:33.294638+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.294700+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.294760+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.294797+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer
+CoreData: error: Information for /Users/hem/Library/Developer
+2026-09-24 13:15:33.294825+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.294878+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.294925+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		256 bytes
+CoreData: error:   File Size: 		256 bytes
+2026-09-24 13:15:33.294976+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		61843893
+CoreData: error:   File inode: 		61843893
+2026-09-24 13:15:33.295024+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.295091+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.295138+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.295184+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.295224+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.295277+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.295342+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.295391+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.295458+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator
+2026-09-24 13:15:33.295510+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.295536+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.295582+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-24 13:15:33.295621+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		61848523
+CoreData: error:   File inode: 		61848523
+2026-09-24 13:15:33.295671+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.295710+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.295739+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.295766+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.295821+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.295862+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.295920+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.295982+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.296038+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices
+2026-09-24 13:15:33.296091+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.296139+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.296184+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		1760 bytes
+CoreData: error:   File Size: 		1760 bytes
+2026-09-24 13:15:33.296260+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		61848615
+CoreData: error:   File inode: 		61848615
+2026-09-24 13:15:33.296333+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.296372+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.296406+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.296482+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.296510+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.296536+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.296576+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.296639+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.296717+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7
+2026-09-24 13:15:33.296782+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.296822+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.296992+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		160 bytes
+CoreData: error:   File Size: 		160 bytes
+2026-09-24 13:15:33.297053+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		358303817
+CoreData: error:   File inode: 		358303817
+2026-09-24 13:15:33.297136+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.297181+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.297227+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.297262+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.297303+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.297351+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.297409+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.297447+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.297495+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data
+2026-09-24 13:15:33.297543+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.297589+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.297640+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		416 bytes
+CoreData: error:   File Size: 		416 bytes
+2026-09-24 13:15:33.297693+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360935168
+CoreData: error:   File inode: 		360935168
+2026-09-24 13:15:33.297746+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.297774+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.297827+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.297853+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.297883+0200 Restock[49967:68530142] [error] CoreData: error:   775
+CoreData: error:   775
+2026-09-24 13:15:33.297919+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.297981+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.298017+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.298072+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers
+2026-09-24 13:15:33.298114+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.298149+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.298193+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		224 bytes
+CoreData: error:   File Size: 		224 bytes
+2026-09-24 13:15:33.298231+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360935410
+CoreData: error:   File inode: 		360935410
+2026-09-24 13:15:33.298282+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.298318+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.298344+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.298394+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.298508+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.298536+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.298603+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.298641+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.298709+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared
+2026-09-24 13:15:33.298794+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.298866+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.298980+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-24 13:15:33.299020+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360935417
+CoreData: error:   File inode: 		360935417
+2026-09-24 13:15:33.299090+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.299145+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.299192+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.299249+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.299388+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.299457+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.299601+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.299657+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.299719+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup
+2026-09-24 13:15:33.299755+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.299784+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.299812+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		2336 bytes
+CoreData: error:   File Size: 		2336 bytes
+2026-09-24 13:15:33.299839+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360935871
+CoreData: error:   File inode: 		360935871
+2026-09-24 13:15:33.299868+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.299897+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.299940+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.299994+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.300022+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.300095+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.300271+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.300406+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.300460+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91
+2026-09-24 13:15:33.300499+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.300550+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.300677+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-24 13:15:33.300759+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360947728
+CoreData: error:   File inode: 		360947728
+2026-09-24 13:15:33.300835+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.300887+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.300988+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.301071+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.301232+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.301297+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.301351+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.301433+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.301529+0200 Restock[49967:68530142] [error] CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library
+CoreData: error: Information for /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library
+2026-09-24 13:15:33.301583+0200 Restock[49967:68530142] [error] CoreData: error:   File Device ID: 	0
+CoreData: error:   File Device ID: 	0
+2026-09-24 13:15:33.301615+0200 Restock[49967:68530142] [error] CoreData: error:   Device ID: 		16777234
+CoreData: error:   Device ID: 		16777234
+2026-09-24 13:15:33.301836+0200 Restock[49967:68530142] [error] CoreData: error:   File Size: 		128 bytes
+CoreData: error:   File Size: 		128 bytes
+2026-09-24 13:15:33.301899+0200 Restock[49967:68530142] [error] CoreData: error:   File inode: 		360947730
+CoreData: error:   File inode: 		360947730
+2026-09-24 13:15:33.302026+0200 Restock[49967:68530142] [error] CoreData: error:   File user ID: 		501
+CoreData: error:   File user ID: 		501
+2026-09-24 13:15:33.302114+0200 Restock[49967:68530142] [error] CoreData: error:   File group ID: 		20
+CoreData: error:   File group ID: 		20
+2026-09-24 13:15:33.302331+0200 Restock[49967:68530142] [error] CoreData: error:   File Permissions:
+CoreData: error:   File Permissions: 	
+2026-09-24 13:15:33.302380+0200 Restock[49967:68530142] [error] CoreData: error: d
+CoreData: error: d
+2026-09-24 13:15:33.302429+0200 Restock[49967:68530142] [error] CoreData: error:   755
+CoreData: error:   755
+2026-09-24 13:15:33.302480+0200 Restock[49967:68530142] [error] CoreData: error:   component is not a symbolic link
+CoreData: error:   component is not a symbolic link
+2026-09-24 13:15:33.302535+0200 Restock[49967:68530142] [error] CoreData: error:   component is readable
+CoreData: error:   component is readable
+2026-09-24 13:15:33.302575+0200 Restock[49967:68530142] [error] CoreData: error:   component is writeable
+CoreData: error:   component is writeable
+2026-09-24 13:15:33.302611+0200 Restock[49967:68530142] [error] CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application Support', errno 2 / No such file or directory.
+CoreData: error: Failed to stat path '/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application Support', errno 2 / No such file or directory.
+2026-09-24 13:15:33.302720+0200 Restock[49967:68530142] [error] CoreData: error:   Sandbox access to file-write-create denied
+CoreData: error:   Sandbox access to file-write-create denied
+2026-09-24 13:15:33.303547+0200 Restock[49967:68530142] [error] CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (512)
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (512)
+2026-09-24 13:15:33.303633+0200 Restock[49967:68530142] [error] CoreData: error: userInfo:
+CoreData: error: userInfo:
+2026-09-24 13:15:33.303697+0200 Restock[49967:68530142] [error] CoreData: error: 	reason : Failed to create file; code = 2
+CoreData: error: 	reason : Failed to create file; code = 2
+2026-09-24 13:15:33.303725+0200 Restock[49967:68530142] [error] CoreData: error: storeType: SQLite
+CoreData: error: storeType: SQLite
+2026-09-24 13:15:33.303780+0200 Restock[49967:68530142] [error] CoreData: error: configuration: default
+CoreData: error: configuration: default
+2026-09-24 13:15:33.303845+0200 Restock[49967:68530142] [error] CoreData: error: URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application%20Support/default.store
+CoreData: error: URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application%20Support/default.store
+CoreData: annotation: options:
+CoreData: annotation: 	NSMigratePersistentStoresAutomaticallyOption : 1
+CoreData: annotation: 	NSPersistentStoreMirroringOptionsKey : {
+    NSPersistentStoreMirroringDelegateOptionKey = "<NSCloudKitMirroringDelegate: 0x1046dc1c0>";
+}
+CoreData: annotation: 	NSInferMappingModelAutomaticallyOption : 1
+CoreData: annotation: 	NSPersistentCloudKitContainerOptionsKey : <NSPersistentCloudKitContainerOptions: 0x1044a53e0>
+CoreData: annotation: 	NSPersistentStoreRemoteChangeNotificationOptionKey : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+2026-09-24 13:15:33.305296+0200 Restock[49967:68530142] [error] CoreData: error: <NSPersistentStoreCoordinator: 0x10459e600>: Attempting recovery from error encountered during addPersistentStore: 0x10446d590 Error Domain=NSCocoaErrorDomain Code=512 "Die Datei konnte nicht gesichert werden." UserInfo={reason=Failed to create file; code = 2}
+CoreData: error: <NSPersistentStoreCoordinator: 0x10459e600>: Attempting recovery from error encountered during addPersistentStore: 0x10446d590 Error Domain=NSCocoaErrorDomain Code=512 "Die Datei konnte nicht gesichert werden." UserInfo={reason=Failed to create file; code = 2}
+2026-09-24 13:15:33.305441+0200 Restock[49967:68530142] [error] CoreData: error: During recovery, parent directory path reported as missing
+CoreData: error: During recovery, parent directory path reported as missing
+2026-09-24 13:15:33.315542+0200 Restock[49967:68530142] [error] CoreData: error: Recovery attempt while adding <NSPersistentStoreDescription: 0x10446d590> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application%20Support/default.store) was successful!
+CoreData: error: Recovery attempt while adding <NSPersistentStoreDescription: 0x10446d590> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application%20Support/default.store) was successful!
+2026-09-24 13:15:33.373654+0200 Restock[49967:68530142] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-09-24 13:15:33.424647+0200 Restock[49967:68530440] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1046dc1c0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x104694500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1D616224-CBF4-47DB-B309-F4C0B42A9F91/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-24 13:15:33.424845+0200 Restock[49967:68530440] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1046dc1c0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-24 13:15:33.425020+0200 Restock[49967:68530440] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1046dc1c0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-09-24 13:15:33.489900+0200 Restock[49967:68530455] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+IOSurfaceClientSetSurfaceNotify failed e00002c7
+2026-09-24 13:15:33.684820+0200 Restock[49967:68530142] fopen failed for data file: errno = 2 (No such file or directory)
+2026-09-24 13:15:34.252207+0200 Restock[49967:68530142] fopen failed for data file: errno = 2 (No such file or directory)
+2026-09-24 13:15:34.303582+0200 Restock[49967:68530142] [error] building pipeline path_edges-hba15feba4 took 0.620215 seconds
+Test Suite 'Selected tests' started at 2026-09-24 13:15:35.395.
+Test Suite 'RestockTests.xctest' started at 2026-09-24 13:15:35.395.
+Test Suite 'ReceiptParserStornoTests' started at 2026-09-24 13:15:35.395.
+Test Case '-[RestockTests.ReceiptParserStornoTests testConfirmationLineAfterStornoDoesNotBecomePhantomPosition]' started.
+/Users/hem/Developer/Restock/.claude/worktrees/frolicking-petting-feather/RestockTests/ReceiptParserStornoTests.swift:87: error: -[RestockTests.ReceiptParserStornoTests testConfirmationLineAfterStornoDoesNotBecomePhantomPosition] : XCTAssertEqual failed: ("3") is not equal to ("2") - Erwartet: nur Gouda und Laugenbrötchen — die Bestätigungszeile nach STORNO darf keine eigene Position werden. Erkannt: ["-4 Stk x 0,39=1.56", "Gouda jung=1.65", "Laugenbroetchen=1.56"]
+/Users/hem/Developer/Restock/.claude/worktrees/frolicking-petting-feather/RestockTests/ReceiptParserStornoTests.swift:91: error: -[RestockTests.ReceiptParserStornoTests testConfirmationLineAfterStornoDoesNotBecomePhantomPosition] : XCTAssertFalse failed - Die Bestätigungszeile darf nicht als Positionsname auftauchen
+Test Case '-[RestockTests.ReceiptParserStornoTests testConfirmationLineAfterStornoDoesNotBecomePhantomPosition]' failed (0.552 seconds).
+Test Suite 'ReceiptParserStornoTests' failed at 2026-09-24 13:15:35.949.
+	 Executed 1 test, with 2 failures (0 unexpected) in 0.552 (0.554) seconds
+Test Suite 'RestockTests.xctest' failed at 2026-09-24 13:15:35.949.
+	 Executed 1 test, with 2 failures (0 unexpected) in 0.552 (0.554) seconds
+Test Suite 'Selected tests' failed at 2026-09-24 13:15:35.949.
+	 Executed 1 test, with 2 failures (0 unexpected) in 0.552 (0.555) seconds
+2026-09-24 13:16:21.053 xcodebuild[49542:68525437] [MT] IDETestOperationsObserverDebug: 93.079 elapsed -- Testing started completed.
+2026-09-24 13:16:21.054 xcodebuild[49542:68525437] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-24 13:16:21.054 xcodebuild[49542:68525437] [MT] IDETestOperationsObserverDebug: 93.080 sec, +93.080 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-eihwfwthdhlbtldbhxlrwlojmprx/Logs/Test/Test-Restock-2026.09.24_13-14-47-+0200.xcresult
+
+Failing tests:
+	ReceiptParserStornoTests.testConfirmationLineAfterStornoDoesNotBecomePhantomPosition()
+	ReceiptParserStornoTests.testConfirmationLineAfterStornoDoesNotBecomePhantomPosition()
+
+** TEST FAILED **
+
+Testing started

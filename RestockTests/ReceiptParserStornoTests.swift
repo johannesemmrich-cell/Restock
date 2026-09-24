@@ -76,4 +76,18 @@ final class ReceiptParserStornoTests: XCTestCase {
         let result = ReceiptParserService.parse(lines)
         XCTAssertTrue(result.isEmpty, "Eine Storno-Zeile ohne vorherige passende Position darf nichts hinzufügen")
     }
+
+    /// Regressionstest für Issue #24 (Adversary-Dialog zu #9, Finding F-C): folgt auf eine
+    /// STORNO-Zeile eine reine Mengen-/Gewichts-Bestätigungszeile ("-4 Stk x 0,39"), darf daraus
+    /// keine Phantom-Position mit dem Zeilentext als Namen entstehen — die Zeile läuft sonst am
+    /// `pendingStornoCancel`-Schutz vorbei in den `" x "`-Zweig.
+    func testConfirmationLineAfterStornoDoesNotBecomePhantomPosition() {
+        let lines = ["GOUDA JUNG 1,65 B", "LAUGENBROETCHEN 1,56 B", "STORNO", "-4 Stk x 0,39"]
+        let result = ReceiptParserService.parse(lines)
+        XCTAssertEqual(
+            result.count, 2,
+            "Erwartet: nur Gouda und Laugenbrötchen — die Bestätigungszeile nach STORNO darf keine eigene Position werden. Erkannt: \(result.map { "\($0.name)=\($0.price)" })"
+        )
+        XCTAssertFalse(result.contains { $0.name.contains("Stk x") }, "Die Bestätigungszeile darf nicht als Positionsname auftauchen")
+    }
 }
