@@ -1131,7 +1131,10 @@ enum ReceiptParserService {
     /// (z. B. "Apfel"/"Apfelsaft" ≈ 0,71) — bekannte, nicht in dieser Runde gelöste Grenze.
     static let completedItemAutoApplyThreshold: Double = 0.6
     /// Trotzdem als antippbaren Vorschlags-Chip anzeigen, auch ohne automatische Übernahme.
-    static let completedItemSuggestionFloor: Double = 0.2
+    /// 0,45 statt (früher) 0,2 — über den beobachteten Fehltreffern im Bon-Prüf-Screen
+    /// ("Fisch"/"Hafersahne" ≈ 0,40, siehe Issue #29), unter der Auto-Übernahme-Schwelle oben
+    /// und unter echten Kürzungen (0,57 aufwärts, siehe Kommentar zu `completedItemAutoApplyThreshold`).
+    static let completedItemSuggestionFloor: Double = 0.45
 
     /// Sucht unter den gerade abgehakten Artikeln DIESES Stores nach den plausibelsten Treffern
     /// für `token` (ein OCR-Bon-Text) — stärkeres Signal als `historyMatch`, weil es exakt das

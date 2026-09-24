@@ -57,4 +57,67 @@ final class ReceiptParserSuggestionTests: XCTestCase {
             "Ein noch offener (nicht abgehakter) Artikel muss trotzdem als Vorschlag auftauchen, gefunden: \(suggestionNames)"
         )
     }
+
+    // MARK: - (C) Nur passende Chips, max. 3 (Issue #29)
+
+    /// Reproduziert den in #23 beobachteten Fehltreffer: "Fisch" liegt bei der bisherigen
+    /// Schwelle 0,2 über dem Floor (LCS-Ratio 0,40 zu "Hafersahne"), erscheint also fälschlich
+    /// als Vorschlags-Chip. Nach der Anhebung auf 0,45 darf das nicht mehr passieren.
+    func testCompletedItemCandidatesExcludesLooseFalsePositives() throws {
+        let context = try makeInMemoryContext()
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#123456")
+        context.insert(store)
+        let names = ["Hafersahne", "Flammkuchenteig", "Rote Linsen"]
+        let items = names.map { name -> ShoppingItem in
+            let item = ShoppingItem(name: name, store: store)
+            item.isCompleted = true
+            context.insert(item)
+            return item
+        }
+
+        let candidates = ReceiptParserService.completedItemCandidates(for: "Fisch", in: items)
+
+        XCTAssertTrue(
+            candidates.isEmpty,
+            "Inhaltlich unpassende Namen dürfen nicht mehr als Chip erscheinen, gefunden: \(candidates.map(\.item.name))"
+        )
+    }
+
+    /// Nulllinie fürs Gegenteil: Eine echte, plausible Kürzung darf durch die angehobene Schwelle
+    /// nicht verloren gehen.
+    func testCompletedItemCandidatesKeepsPlausibleShortening() throws {
+        let context = try makeInMemoryContext()
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#123456")
+        context.insert(store)
+        let item = ShoppingItem(name: "Bananen", store: store)
+        item.isCompleted = true
+        context.insert(item)
+
+        let candidates = ReceiptParserService.completedItemCandidates(for: "Banane", in: [item])
+
+        XCTAssertEqual(candidates.map(\.item.name), ["Bananen"])
+    }
+
+    /// Die Vorschlags-Chips im Review-Screen sind auf 3 gedeckelt (statt des Default-Limits 5,
+    /// das für andere Aufrufer von `completedItemCandidates` unverändert bleibt, siehe
+    /// `testCompletedItemCandidatesDefaultLimitIsFive` oben).
+    func testResolutionServiceLimitsSuggestionsToThree() async throws {
+        let context = try makeInMemoryContext()
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#123456")
+        context.insert(store)
+        let names = ["Mandeln", "Mandarinen", "Mandelmilch", "Mandelmus", "Mandelöl"]
+        for name in names {
+            let item = ShoppingItem(name: name, store: store)
+            item.isCompleted = true
+            context.insert(item)
+        }
+        try context.save()
+
+        let parsed = [ReceiptLine(name: "Mand", price: 1.0)]
+        let resolved = await ReceiptResolutionService.resolve(
+            parsed: parsed, store: store, allRecords: [], allowAIResolution: false
+        )
+
+        XCTAssertLessThanOrEqual(resolved.first?.suggestions.count ?? 0, 3)
+    }
 }
