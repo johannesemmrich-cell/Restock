@@ -111,9 +111,9 @@ class Store {
         Color(hex: colorHex) ?? .blue
     }
 
-    /// Monochromes SF-Symbol für die Laden-Kacheln des Redesigns, abgeleitet vom (weiterhin
-    /// editierbaren) Emoji des Ladens — Supermarkt-Wagen, Drogerie-Tropfen, Werkzeug etc.
-    /// Fallback für unbekannte/eigene Emojis ist die generische Ladenfront.
+    /// Ehemals das monochrome SF-Symbol für die Laden-Kacheln — alle Views zeigen inzwischen
+    /// direkt `emoji` (z. B. IKEAs 🛋️ statt nur "sofa"). Nicht mehr von UI-Code genutzt, hier
+    /// nur noch für Referenz/Tests belassen.
     var iconSystemName: String {
         switch emoji {
         case "🛒": return "cart"

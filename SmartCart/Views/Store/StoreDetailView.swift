@@ -30,14 +30,7 @@ struct StoreDetailView: View {
     @State private var showConfetti = false
     @FocusState private var isQuickAddFocused: Bool
     @Query private var allRecords: [PurchaseRecord]
-    // Für das Free-Plan-Kontingent geteilter Listen (PremiumService.canShareAdditionalList) —
-    // `shareID` ist UserDefaults-backed, kein SwiftData-Attribut, deshalb hier alle Stores laden
-    // und in Swift filtern statt über ein #Predicate.
-    @Query private var allStoresForShareCount: [Store]
     @ObservedObject private var templateService = TemplateService.shared
-    @EnvironmentObject private var premium: PremiumService
-    @State private var showPaywall = false
-    @State private var paywallContext: PaywallContext = .premium(feature: "dieses Feature")
 
     // Local mirror of `store.groupByCategory` (which is UserDefaults-backed, so writing it alone
     // would never invalidate this view). The "···" menu toggle writes both: the Store property
@@ -287,18 +280,7 @@ struct StoreDetailView: View {
                             .scaleEffect(0.8)
                     }
                     Button {
-                        // Ein bereits geteilter Store (Verwalten/Beenden) ist nie vom Kontingent
-                        // betroffen — nur das STARTEN einer NEUEN geteilten Liste zählt gegen das
-                        // Free-Limit. `allStoresForShareCount` schließt diesen Store selbst mit
-                        // ein, ist an dieser Stelle aber irrelevant, weil `store.shareID == nil`
-                        // hier bereits geprüft wurde (der erste Zweig fängt den anderen Fall ab).
-                        let sharedListCount = allStoresForShareCount.filter { $0.shareID != nil }.count
-                        if store.shareID != nil || premium.canShareAdditionalList(currentSharedListCount: sharedListCount) {
-                            showShareSheet = true
-                        } else {
-                            paywallContext = .sharedLists
-                            showPaywall = true
-                        }
+                        showShareSheet = true
                         Haptics.impact(.light)
                     } label: {
                         Image(systemName: store.shareID != nil ? "person.2.fill" : "person.2")
@@ -320,43 +302,23 @@ struct StoreDetailView: View {
                         Divider()
                         if !store.completedItems.isEmpty {
                             Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
-                                if premium.hasPremiumAccess {
-                                    showReceiptScanner = true
-                                } else {
-                                    paywallContext = .premium(feature: "den Kassenbon-Scan")
-                                    showPaywall = true
-                                }
+                                showReceiptScanner = true
                                 Haptics.impact(.light)
                             }
                             Button("Preis eintragen", systemImage: "eurosign.circle") {
-                                if premium.hasPremiumAccess {
-                                    showActualPriceEntry = true
-                                } else {
-                                    paywallContext = .premium(feature: "das manuelle Eintragen von Preisen")
-                                    showPaywall = true
-                                }
+                                showActualPriceEntry = true
                                 Haptics.impact(.light)
                             }
                         }
                         Button("Als Vorlage speichern", systemImage: "plus.rectangle.on.folder") {
-                            if premium.hasPremiumAccess {
-                                templateName = store.name
-                                showSaveTemplateAlert = true
-                            } else {
-                                paywallContext = .premium(feature: "Vorlagen")
-                                showPaywall = true
-                            }
+                            templateName = store.name
+                            showSaveTemplateAlert = true
                             Haptics.impact(.light)
                         }
                         .disabled(pending.isEmpty)
                         if !templateService.templates.isEmpty {
                             Button("Vorlage laden", systemImage: "folder") {
-                                if premium.hasPremiumAccess {
-                                    showTemplatePicker = true
-                                } else {
-                                    paywallContext = .premium(feature: "Vorlagen")
-                                    showPaywall = true
-                                }
+                                showTemplatePicker = true
                                 Haptics.impact(.light)
                             }
                         }
@@ -384,7 +346,6 @@ struct StoreDetailView: View {
         .sheet(isPresented: $showShareSheet) { StoreShareSheet(store: store) }
         .sheet(isPresented: $showReceiptScanner) { ReceiptScannerView(store: store) }
         .sheet(isPresented: $showActualPriceEntry) { ActualPriceEntryView(store: store) }
-        .sheet(isPresented: $showPaywall) { PaywallView(context: paywallContext) }
         .sheet(item: $editingItem) { item in EditItemView(item: item) }
         .sheet(isPresented: $showTemplatePicker) {
             TemplatePickerSheet(service: templateService) { template in

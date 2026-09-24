@@ -61,9 +61,10 @@ struct HomeView: View {
     // the estimated date, which makes the item eligible for the banner again.
     @AppStorage("dismissedReplenishments") private var dismissedReplenishmentsData = Data()
     @AppStorage("replenishmentCollapsed") private var replenishmentCollapsed = false
+    @AppStorage("developerMode") private var developerMode = false
     @EnvironmentObject private var premium: PremiumService
     @State private var showPaywall = false
-    @State private var paywallContext: PaywallContext = .premium(feature: "dieses Feature")
+    @State private var paywallFeature: String = "dieses Feature"
     @State private var showStoreSetup = false
     @State private var storeToDelete: Store?
     @State private var showJoinStore = false
@@ -136,31 +137,11 @@ struct HomeView: View {
                 VStack(spacing: 20) {
                     headerCard
                     quickAddBar
-                    if !dueSoonItems.isEmpty {
-                        if premium.hasPremiumAccess {
-                            replenishmentBanner
-                        } else {
-                            premiumTeaser(
-                                icon: "arrow.clockwise.circle.fill",
-                                color: Color.amber,
-                                title: "\(dueSoonItems.count) Artikel bald fällig",
-                                subtitle: "Nachkauf-Erinnerungen mit Restock Pro",
-                                feature: "Nachkauf-Erinnerungen"
-                            )
-                        }
+                    if developerMode && !dueSoonItems.isEmpty {
+                        replenishmentBanner
                     }
                     if !seasonalSuggestions.isEmpty {
-                        if premium.hasPremiumAccess {
-                            seasonalBanner
-                        } else {
-                            premiumTeaser(
-                                icon: SeasonalService.seasonIcon,
-                                color: Color.accent,
-                                title: String(format: String(localized: "seasonal.count.suggestions"), seasonalSuggestions.count),
-                                subtitle: String(localized: "seasonal.premium.subtitle"),
-                                feature: String(localized: "seasonal.feature.label")
-                            )
-                        }
+                        seasonalBanner
                     }
                     storeSection
                 }
@@ -182,7 +163,7 @@ struct HomeView: View {
             .sheet(isPresented: $showAllItems) { AllItemsView() }
             .sheet(isPresented: $showStoreSetup) { NavigationStack { StoreSetupView() } }
             .sheet(isPresented: $showJoinStore) { JoinStoreSheet(prefilledCode: pendingJoinCode) }
-            .sheet(isPresented: $showPaywall) { PaywallView(context: paywallContext) }
+            .sheet(isPresented: $showPaywall) { PaywallView(feature: paywallFeature) }
             .navigationDestination(item: $deepLinkStore) { store in
                 StoreDetailView(store: store)
             }
@@ -546,9 +527,8 @@ struct HomeView: View {
                                         RoundedRectangle(cornerRadius: RCRadius.control)
                                             .fill(Color.accentContainer)
                                             .frame(width: 38, height: 38)
-                                        Image(systemName: store.iconSystemName)
-                                            .font(.system(size: 16, weight: .medium))
-                                            .foregroundStyle(Color.accent)
+                                        Text(store.emoji)
+                                            .font(.system(size: 17))
                                     }
                                     VStack(alignment: .leading, spacing: 3) {
                                         Text(store.name)
@@ -849,46 +829,6 @@ struct HomeView: View {
         .clipShape(RoundedRectangle(cornerRadius: RCRadius.card))
     }
 
-    // MARK: - Premium teaser
-
-    private func premiumTeaser(icon: String, color: Color, title: String, subtitle: String, feature: String) -> some View {
-        Button {
-            paywallContext = .premium(feature: feature)
-            showPaywall = true
-            Haptics.impact(.light)
-        } label: {
-            HStack(alignment: .top, spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: RCRadius.control)
-                        .fill(color)
-                        .frame(width: 34, height: 34)
-                    Image(systemName: icon)
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(Color.canvas)
-                }
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.system(size: 17, weight: .bold))
-                        .foregroundStyle(Color.ink)
-                    Text(subtitle)
-                        .font(.system(size: 13))
-                        .foregroundStyle(Color.textSecondary)
-                }
-                Spacer()
-                Text("PRO")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(color)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .overlay(RoundedRectangle(cornerRadius: RCRadius.tag).strokeBorder(color))
-            }
-            .padding(16)
-            .background(color.opacity(0.13))
-            .clipShape(RoundedRectangle(cornerRadius: RCRadius.card))
-        }
-        .buttonStyle(.pressable)
-    }
-
     // MARK: - Replenishment banner
 
     private var replenishmentBanner: some View {
@@ -1151,9 +1091,8 @@ struct HomeView: View {
         // UserDefaults-Zugriff) unten 5× einzeln neu aufzurufen.
         let pending = store.pendingItems
         return HStack(spacing: 14) {
-            Image(systemName: store.iconSystemName)
-                .font(.system(size: 18, weight: .medium))
-                .foregroundStyle(Color.ink)
+            Text(store.emoji)
+                .font(.system(size: 18))
                 .frame(width: 24)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
@@ -1408,7 +1347,12 @@ struct HomeView: View {
                         .foregroundStyle(Color.ink)
                 }
                 Button {
-                    showMenuPlan = true
+                    if premium.hasPremiumAccess {
+                        showMenuPlan = true
+                    } else {
+                        paywallFeature = "den Rezeptplan"
+                        showPaywall = true
+                    }
                 } label: {
                     Image(systemName: "fork.knife")
                         .font(.system(size: 17, weight: .regular))
@@ -1418,7 +1362,7 @@ struct HomeView: View {
                     if premium.hasPremiumAccess {
                         showPriceOverview = true
                     } else {
-                        paywallContext = .premium(feature: "die Ausgaben-Analyse")
+                        paywallFeature = "die Ausgaben-Analyse"
                         showPaywall = true
                     }
                 } label: {
@@ -1568,6 +1512,12 @@ struct HomeView: View {
     }
 
     private func refreshDueSoon() {
+        // Nachkauf-Erinnerungen sind kein Feature der normalen Version mehr — nur noch im
+        // Developer Mode sichtbar/aktiv (Banner oben in `body`, Benachrichtigungen hier).
+        guard developerMode else {
+            dueSoonItems = []
+            return
+        }
         let allPatterns = HabitService.dueSoonItems(allRecords: allRecords)
         let pendingNames = Set(
             activeStores.flatMap { $0.pendingItems.map { $0.name.lowercased() } }

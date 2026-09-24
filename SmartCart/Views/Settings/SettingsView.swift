@@ -23,7 +23,7 @@ struct SettingsView: View {
 
     @EnvironmentObject private var premium: PremiumService
     @State private var showPaywall = false
-    @State private var paywallContext: PaywallContext = .premium(feature: "alle Pro-Features")
+    @State private var paywallFeature: String = "alle Pro-Features"
     @State private var showFeedback = false
     @State private var showJoinStore = false
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
@@ -33,7 +33,7 @@ struct SettingsView: View {
     @State private var devPasswordInput = ""
     @State private var devPasswordError = false
 
-    private let devPasswordHash = "5636a8a19206c71e37f9c7ae5a1b9f241f6f303a6e9fb78b93732d4f84b36def"
+    private let devPasswordHash = "fab0966f3e9fa7a071e46259d2dfeaddbda732c8bce42a87987740cab51a7c86"
 
     var body: some View {
         NavigationStack {
@@ -117,7 +117,7 @@ struct SettingsView: View {
                 .listRowBackground(Color.surface)
 
                 Section {
-                    if premium.isPremiumUnlocked {
+                    if premium.hasPremiumAccess {
                         HStack(spacing: 12) {
                             Image(systemName: "checkmark.seal.fill")
                                 .font(.system(size: 20))
@@ -125,7 +125,7 @@ struct SettingsView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Pro aktiv")
                                     .font(.system(size: 15, weight: .medium))
-                                Text("Alle Features freigeschaltet")
+                                Text("Ausgaben-Analyse & Rezeptplan freigeschaltet")
                                     .font(.system(size: 12))
                                     .foregroundStyle(.secondary)
                             }
@@ -143,7 +143,7 @@ struct SettingsView: View {
                     } else {
                         Button {
                             Haptics.impact(.light)
-                            paywallContext = .premium(feature: "alle Pro-Features")
+                            paywallFeature = "alle Pro-Features"
                             showPaywall = true
                         } label: {
                             HStack(spacing: 12) {
@@ -155,7 +155,7 @@ struct SettingsView: View {
                                     Text("Restock Pro freischalten")
                                         .font(.system(size: 15, weight: .medium))
                                         .foregroundStyle(.primary)
-                                    Text("Kassenbon-Scan, Ausgaben-Analyse & mehr")
+                                    Text("Ausgaben-Analyse & Rezeptplan")
                                         .font(.system(size: 12))
                                         .foregroundStyle(.secondary)
                                 }
@@ -169,48 +169,6 @@ struct SettingsView: View {
                         .buttonStyle(.pressable)
                     }
 
-                    if premium.isSharedListsUnlocked {
-                        HStack(spacing: 12) {
-                            Image(systemName: "checkmark.seal.fill")
-                                .font(.system(size: 20))
-                                .foregroundStyle(Color.accent)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Geteilte Listen aktiv")
-                                    .font(.system(size: 15, weight: .medium))
-                                Text("Echtzeit-Sync mit anderen Personen")
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .padding(.vertical, 2)
-                    } else {
-                        Button {
-                            Haptics.impact(.light)
-                            paywallContext = .sharedLists
-                            showPaywall = true
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "person.2.fill")
-                                    .font(.system(size: 18))
-                                    .foregroundStyle(Color.accent)
-                                    .frame(width: 28)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Geteilte Listen freischalten")
-                                        .font(.system(size: 15, weight: .medium))
-                                        .foregroundStyle(.primary)
-                                    Text("Einmaliger Kauf · 4,99 €")
-                                        .font(.system(size: 12))
-                                        .foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 13, weight: .semibold))
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding(.vertical, 2)
-                        }
-                        .buttonStyle(.pressable)
-                    }
                     Button {
                         showJoinStore = true
                     } label: {
@@ -300,6 +258,11 @@ struct SettingsView: View {
 
                         Button(role: .destructive) {
                             developerMode = false
+                            // Nachkauf-Erinnerungen sind außerhalb des Dev-Mode kein Feature mehr
+                            // (siehe HomeView.refreshDueSoon) — bereits für frühere due-soon-Items
+                            // geplante, noch ausstehende Benachrichtigungen sonst würden trotzdem
+                            // feuern, obwohl das Feature jetzt komplett inaktiv sein soll.
+                            NotificationService.shared.cancelAll()
                             Haptics.impact(.medium)
                         } label: {
                             Label("Developer Mode deaktivieren", systemImage: "xmark.circle")
@@ -331,7 +294,7 @@ struct SettingsView: View {
                 }
             }
             .sheet(isPresented: $showJoinStore) { JoinStoreSheet() }
-            .sheet(isPresented: $showPaywall) { PaywallView(context: paywallContext) }
+            .sheet(isPresented: $showPaywall) { PaywallView(feature: paywallFeature) }
             .sheet(isPresented: $showFeedback) {
                 FeedbackView()
             }
@@ -423,20 +386,26 @@ struct NotificationSettingsView: View {
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
     @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
     private var autoSortByLearnedOrder = true
+    @AppStorage("developerMode") private var developerMode = false
 
     var body: some View {
         List {
             Section {
-                Toggle(String(localized: "settings.notifications.replenish"), isOn: $notificationsEnabled)
-                    .onChange(of: notificationsEnabled) { _, enabled in
-                        if enabled {
-                            Task {
-                                notificationsEnabled = await NotificationService.shared.requestPermission()
+                // Nachkauf-Erinnerungen sind kein Feature der normalen Version mehr — der Toggle
+                // (und die dahinterliegende Planung in HomeView.refreshDueSoon) existiert nur noch
+                // im Developer Mode.
+                if developerMode {
+                    Toggle(String(localized: "settings.notifications.replenish"), isOn: $notificationsEnabled)
+                        .onChange(of: notificationsEnabled) { _, enabled in
+                            if enabled {
+                                Task {
+                                    notificationsEnabled = await NotificationService.shared.requestPermission()
+                                }
+                            } else {
+                                NotificationService.shared.cancelAll()
                             }
-                        } else {
-                            NotificationService.shared.cancelAll()
                         }
-                    }
+                }
                 VStack(alignment: .leading, spacing: 2) {
                     Toggle("Automatisch nach Einkaufsreihenfolge sortieren", isOn: $autoSortByLearnedOrder)
                     Text("Restock merkt sich, in welcher Reihenfolge du Artikel abhakst, und sortiert die Liste beim nächsten Mal entsprechend.")

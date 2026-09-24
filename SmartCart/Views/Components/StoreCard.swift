@@ -17,9 +17,8 @@ struct StoreCard: View {
                 RoundedRectangle(cornerRadius: RCRadius.control)
                     .fill(Color.accentContainer)
                     .frame(width: 40, height: 40)
-                Image(systemName: store.iconSystemName)
-                    .font(.system(size: 17, weight: .medium))
-                    .foregroundStyle(Color.accent)
+                Text(store.emoji)
+                    .font(.system(size: 20))
                     .frame(width: 40, height: 40)
                 if store.isPaused {
                     Image(systemName: "moon.fill")

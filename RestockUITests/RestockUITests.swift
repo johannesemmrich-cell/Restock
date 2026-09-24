@@ -164,10 +164,9 @@ final class RestockUITests: XCTestCase {
         let itemText = app.staticTexts["Testartikel"].firstMatch
         XCTAssertTrue(itemText.waitForExistence(timeout: 5), "Neu hinzugefügter Artikel 'Testartikel' erscheint nicht in der Liste")
 
-        // Teilen-Button antippen (person.2/person.2.fill in der Navigationsleiste) — deckt live
-        // die neue Free-Plan-Limit-Verkabelung ab (PremiumService.canShareAdditionalList in
-        // StoreDetailView.swift). Da debugAllFeaturesUnlocked aktuell `true` ist, wird direkt
-        // StoreShareSheet erwartet, keine Paywall.
+        // Teilen-Button antippen (person.2/person.2.fill in der Navigationsleiste) — geteilte
+        // Listen sind seit der Abo-Umstellung uneingeschränkt im Free-Plan enthalten
+        // (StoreDetailView.swift öffnet StoreShareSheet direkt, keine Paywall mehr davor).
         let shareButton = app.buttons.matching(NSPredicate(format: "label CONTAINS 'person.2'")).firstMatch
         XCTAssertTrue(shareButton.waitForExistence(timeout: 5), "Teilen-Button in StoreDetailView nicht gefunden")
         shareButton.tap()
@@ -190,5 +189,64 @@ final class RestockUITests: XCTestCase {
         // App darf nach alldem nicht abgestürzt sein — der zuverlässigste Beweis dafür ist, dass
         // sie weiterhin auf Eingaben reagiert.
         XCTAssertTrue(app.state == .runningForeground, "App läuft nach dem Quick-Add nicht mehr im Vordergrund — Absturz-Verdacht")
+    }
+
+    /// Reproduziert den Nutzerbericht "Crasht die App, wenn ich Rezepte eingebe, z.B. Chili Con
+    /// Carne": Menüplan öffnen, einen Tag mit diesem Gericht anlegen, Zutaten laden lassen.
+    /// `-developerMode YES` überspringt die seit dieser Session premium-gepflichtige
+    /// Rezeptplan-Paywall (kein Kauf im Test-Simulator verfügbar).
+    func testAddingMenuPlanRecipeDoesNotCrash() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-developerMode", "YES"]
+        app.launch()
+
+        // Accessibility-`identifier` ist der rohe SF-Symbol-Name ("fork.knife"), das `label` ist
+        // je Symbol uneinheitlich lokalisiert (hier "Essen") — Identifier ist der verlässliche Weg.
+        let menuPlanButton = app.buttons["fork.knife"]
+        XCTAssertTrue(menuPlanButton.waitForExistence(timeout: 15), "Menüplan-Button (fork.knife) nicht gefunden")
+        menuPlanButton.tap()
+
+        let addDayButton = app.buttons["Tag hinzufügen"]
+        XCTAssertTrue(addDayButton.waitForExistence(timeout: 10), "\"Tag hinzufügen\"-Button im Menüplan nicht gefunden")
+        addDayButton.tap()
+
+        let mealField = app.textFields["Gericht eingeben…"]
+        XCTAssertTrue(mealField.waitForExistence(timeout: 10), "Gericht-Eingabefeld im AddDaySheet nicht gefunden")
+        mealField.tap()
+        mealField.typeText("Chili Con Carne")
+
+        // Mehrere "Hinzufügen"-Buttons existieren gleichzeitig (Plus-Icons im HomeView-Hintergrund)
+        // — auf die NavigationBar des AddDaySheet scopen, um eindeutig den Bestätigen-Button zu treffen.
+        let addButton = app.navigationBars["Tag hinzufügen"].buttons["Hinzufügen"]
+        XCTAssertTrue(addButton.waitForExistence(timeout: 5), "\"Hinzufügen\"-Button nicht gefunden")
+        addButton.tap()
+
+        // Nach dem Hinzufügen lädt fetchIngredients() asynchron (DB-Treffer oder KI-Pfad) —
+        // ausreichend Zeit geben, bevor auf Absturz geprüft wird.
+        sleep(3)
+        XCTAssertTrue(app.state == .runningForeground, "App läuft nach dem Anlegen von \"Chili Con Carne\" nicht mehr im Vordergrund — Absturz-Verdacht")
+
+        // Weiter im Flow: Zutaten der angelegten Zeile automatisch einer Liste zuordnen —
+        // deckt AssignmentService.assign/category und ShoppingItem.init für echte
+        // Zutatennamen ("Hackfleisch", "Kidneybohnen", ...) ab.
+        // .firstMatch: bei wiederholten Testläufen gegen denselben Simulator bleiben frühere
+        // "Chili Con Carne"-Tage in der UserDefaults-gestützten menuPlanJSON erhalten, es können
+        // also mehrere gleichnamige Zeilen existieren — für diesen Test ist jede von ihnen gültig.
+        let addToListMenu = app.buttons["+ Liste"].firstMatch
+        XCTAssertTrue(addToListMenu.waitForExistence(timeout: 10), "\"+ Liste\"-Menü für \"Chili Con Carne\" nicht gefunden")
+        addToListMenu.tap()
+
+        let autoAssign = app.buttons["Automatisch zuordnen"]
+        XCTAssertTrue(autoAssign.waitForExistence(timeout: 5), "\"Automatisch zuordnen\"-Menüeintrag nicht gefunden")
+        autoAssign.tap()
+
+        sleep(2)
+        XCTAssertTrue(app.state == .runningForeground, "App abgestürzt nach dem Hinzufügen der Chili-Con-Carne-Zutaten zur Liste")
+
+        let screenshot = app.screenshot()
+        let attachment = XCTAttachment(screenshot: screenshot)
+        attachment.name = "MenuPlanView-nach-ChiliConCarne"
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
 }

@@ -193,9 +193,8 @@ struct StoreRow: View {
                     showEmojiEdit = true
                     Haptics.impact(.light)
                 } label: {
-                    Image(systemName: store.iconSystemName)
-                        .font(.system(size: 17, weight: .medium))
-                        .foregroundStyle(Color.ink)
+                    Text(store.emoji)
+                        .font(.system(size: 17))
                         .frame(width: 24)
                 }
                 .buttonStyle(.pressable)

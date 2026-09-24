@@ -7,7 +7,6 @@ struct OnboardingView: View {
     @AppStorage("selectedCountry") private var selectedCountry = Locale.current.region?.identifier ?? "DE"
     @AppStorage(UserIdentity.storageKey, store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
     private var userDisplayName = ""
-    @AppStorage("notificationsEnabled") private var notificationsEnabled = true
 
     @State private var selectedStores: Set<String> = []
     @State private var presetStores: [Store] = []
@@ -311,9 +310,6 @@ struct OnboardingView: View {
         // Flush sofort, bevor HomeView direkt im Anschluss frisch gemountet wird — sonst könnte
         // dessen erster @Query-Fetch je nach Autosave-Timing noch den alten Stand sehen.
         try? context.save()
-        Task {
-            notificationsEnabled = await NotificationService.shared.requestPermission()
-        }
         hasCompletedOnboarding = true
     }
 }

@@ -5,10 +5,9 @@ import SwiftUI
 final class PremiumService: ObservableObject {
     static let shared = PremiumService()
 
-    static let monthlyID     = "com.johannesemmrich.smartcart.premium.monthly"
-    static let yearlyID      = "com.johannesemmrich.smartcart.premium.yearly"
-    static let lifetimeID    = "com.johannesemmrich.smartcart.premium.lifetime"
-    static let sharedListsID = "com.johannesemmrich.smartcart.sharedlists"
+    static let monthlyID  = "com.johannesemmrich.smartcart.premium.monthly"
+    static let yearlyID   = "com.johannesemmrich.smartcart.premium.yearly"
+    static let lifetimeID = "com.johannesemmrich.smartcart.premium.lifetime"
 
     @Published private(set) var products: [Product] = []
     @Published private(set) var purchasedProductIDs: Set<String> = []
@@ -16,7 +15,11 @@ final class PremiumService: ObservableObject {
 
     @AppStorage("developerMode") private var developerMode = false
 
-    var isPremiumUnlocked: Bool {
+    /// Restock Pro schaltet nur noch die Ausgaben-Statistik und den Rezeptplan frei — alle
+    /// anderen früheren Pro-Features (Kassenbon-Scan, manuelles Eintragen von Preisen, Vorlagen,
+    /// geteilte Listen, saisonale Vorschläge) sind seit der Abo-Umstellung im Free-Plan
+    /// enthalten und prüfen dieses Flag nicht mehr.
+    var hasPremiumAccess: Bool {
         #if DEBUG
         // Für Screenshot-Automation: Premium ohne Developer-Mode-UI freischalten.
         if ProcessInfo.processInfo.arguments.contains("-premiumForScreenshots") {
@@ -27,34 +30,6 @@ final class PremiumService: ObservableObject {
             || purchasedProductIDs.contains(Self.lifetimeID)
             || purchasedProductIDs.contains(Self.monthlyID)
             || purchasedProductIDs.contains(Self.yearlyID)
-    }
-
-    var isSharedListsUnlocked: Bool {
-        isPremiumUnlocked || purchasedProductIDs.contains(Self.sharedListsID)
-    }
-
-    // TEMPORÄR: schaltet alle Pro-Features für alle Nutzer frei, ohne den angezeigten
-    // Plan-Status (Settings, Paywall) zu verändern — der bleibt "Basic"/"nicht gekauft".
-    // Auf "false" setzen (oder die beiden Properties entfernen und die Call-Sites wieder
-    // auf isPremiumUnlocked/isSharedListsUnlocked zeigen lassen), um die Pro-Sperre
-    // wieder zu aktivieren. Siehe Backlog-Memory "Pro-Sperre temporär deaktiviert".
-    static let debugAllFeaturesUnlocked = true
-
-    var hasPremiumAccess: Bool {
-        Self.debugAllFeaturesUnlocked || isPremiumUnlocked
-    }
-
-    var hasSharedListsAccess: Bool {
-        Self.debugAllFeaturesUnlocked || isSharedListsUnlocked
-    }
-
-    /// Free-Plan-Kontingent: auch ohne Kauf dürfen bis zu `freeSharedListLimit` geteilte Listen
-    /// benutzt werden (eigene + beigetretene zusammen), erst darüber hinaus greift die Paywall.
-    /// Zentral hier statt in den einzelnen Views, damit die Zahl an genau einer Stelle steht.
-    static let freeSharedListLimit = 2
-
-    func canShareAdditionalList(currentSharedListCount: Int) -> Bool {
-        hasSharedListsAccess || currentSharedListCount < Self.freeSharedListLimit
     }
 
     func product(for id: String) -> Product? {
@@ -81,7 +56,7 @@ final class PremiumService: ObservableObject {
     deinit { transactionListener?.cancel() }
 
     func loadProducts() async {
-        let ids: Set<String> = [Self.monthlyID, Self.yearlyID, Self.lifetimeID, Self.sharedListsID]
+        let ids: Set<String> = [Self.monthlyID, Self.yearlyID, Self.lifetimeID]
         products = (try? await Product.products(for: ids)) ?? []
     }
 
