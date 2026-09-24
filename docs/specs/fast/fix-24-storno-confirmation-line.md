@@ -15,6 +15,11 @@
   (Zeile 374–385) bleibt unverändert — inkl. der Rechenprobe Menge × Rate ≈ Zeilenpreis.
 - Kein neues Datenfeld, keine API-Änderung.
 
+## Acceptance Criteria
+- **AC-1:** `ReceiptParserService.parseClassic` liefert für die Zeilenfolge `["GOUDA JUNG 1,65 B", "LAUGENBROETCHEN 1,56 B", "STORNO", "-4 Stk x 0,39"]` genau 2 Positionen (Gouda, Laugenbrötchen) — keine dritte Phantom-Position mit Name `"-4 Stk x 0,39"`.
+- **AC-2:** `pendingStornoCancel` bleibt nach einer direkt auf STORNO folgenden reinen Mengen-/Gewichts-Bestätigungszeile unverändert `true` (wird nicht verbraucht), damit die Storno-Erkennung beim nächsten passenden Namens-/Preis-Zeilenpaar weiterhin greift.
+- **AC-3:** Das bestehende Verhalten der Mengen-/Gewichts-Bestätigungszeile OHNE vorausgehendes STORNO (inkl. Rechenprobe Menge × Rate ≈ Zeilenpreis) bleibt unverändert — bestehender Regressionstest bleibt grün.
+
 ## Manuelle Test-Schritte
 entfällt — Fast Track, kein manuelles Testen (siehe CLAUDE.md/global rules).
 

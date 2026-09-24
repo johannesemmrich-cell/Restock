@@ -90,4 +90,16 @@ final class ReceiptParserStornoTests: XCTestCase {
         )
         XCTAssertFalse(result.contains { $0.name.contains("Stk x") }, "Die Bestätigungszeile darf nicht als Positionsname auftauchen")
     }
+
+    /// Die übersprungene Bestätigungszeile darf den Storno-Zustand nicht VERBRAUCHEN: die
+    /// eigentliche stornierende Namens-/Preiszeile folgt erst danach und muss die Position
+    /// weiterhin entfernen (sonst bliebe der stornierte Artikel auf der Liste stehen).
+    func testStornoStaysPendingAcrossSkippedConfirmationLine() {
+        let lines = ["GOUDA JUNG 1,65 B", "STORNO", "-4 Stk x 0,39", "GOUDA JUNG -1,65 B"]
+        let result = ReceiptParserService.parse(lines)
+        XCTAssertTrue(
+            result.isEmpty,
+            "Der Gouda muss durch die nachfolgende Storno-Zeile entfernt werden — die übersprungene Bestätigungszeile darf den Storno-Zustand nicht aufbrauchen. Erkannt: \(result.map { "\($0.name)=\($0.price)" })"
+        )
+    }
 }
