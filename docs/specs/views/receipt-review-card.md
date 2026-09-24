@@ -2,7 +2,7 @@
 entity_id: receipt-review-card
 type: feature
 created: 2026-09-22
-updated: 2026-09-23
+updated: 2026-09-24
 status: implemented
 workflow: feat-23-receipt-review-screen
 tags: [feature, ui, receipt-scanner]
@@ -12,7 +12,7 @@ tags: [feature, ui, receipt-scanner]
 
 ## Approval
 
-- [x] Approved
+- [ ] Approved
 
 ## Purpose
 
@@ -42,6 +42,13 @@ Tippen" (Dark und Light umschaltbar).
 **Reihenfolge, verbindlich:** A (#28, Testeinstieg) → B (#23, diese Spec) → C (#29,
 Vorschlags-Regel). #28 ist zum Zeitpunkt dieser Spec noch OPEN/nicht umgesetzt — siehe
 „Dependencies" und „Risiken".
+
+**Nachtrag Issue #37 (2026-09-24):** Die ursprüngliche Fassung dieser Spec (Regeln 3/5 in
+„Implementation Details" Abschnitt 2) ließ eine Lücke: Entspricht keiner der bis zu 3 angezeigten
+Kandidaten-Zeilen dem aktuell geltenden Namen der Position, war dieser Name weder anwählbar noch
+vorausgewählt — Widerspruch zu AC-4. Vollständige Ursachenanalyse und PO-Entscheidung dazu stehen in
+`docs/context/fix-37-receipt-name-preselect.md`. Diese Spec-Erweiterung schließt die Lücke; siehe
+neue Regel 5 unten, präzisiertes AC-4 und den erweiterten Test Plan.
 
 ## Dependencies
 
@@ -97,6 +104,22 @@ Vorschlags-Regel). #28 ist zum Zeitpunkt dieser Spec noch OPEN/nicht umgesetzt �
 - **`ReceiptResolutionService`/`ReceiptParserService`.** Keine Änderung an Auflösung, Schwellen
   oder Formaterkennung.
 
+### Scope-Erweiterung (Issue #37 — 2026-09-24)
+
+Korrektur der unter „Nachtrag Issue #37" beschriebenen Regellücke. Deutlich unterhalb des
+Standard-Scoping-Limits, da rein additive Bedingungserweiterung in einer bereits bestehenden,
+reinen Funktion.
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `SmartCart/Views/Prices/ReceiptReviewCard.swift` | MODIFY | Nur `selectionOptions(for:)`: neue Regel 5 (siehe „Implementation Details" Abschnitt 2) zwischen der bisherigen Kappung auf 3 (Regel 4) und dem Leer-Fallback (jetzt Regel 6). Keine andere Funktion/View betroffen. |
+| `RestockTests/ReceiptReviewCardTests.swift` | MODIFY | Zwei neue Testfälle (Kandidat-Mismatch mit gesetztem `line.name`; Kandidat-Mismatch mit leerem `line.name` als Regressionsschutz) sowie eine ergänzte Vorauswahl-Assertion im bestehenden Test `testFiveSuggestionsAreCappedToThreeListMatches`. |
+
+- Files: 2
+- LoC: ≈ **+25 / −5** — deutlich unter dem Standard-Scoping-Limit von ±250 LoC.
+- Risk Level: LOW — isolierte, bereits heute pure/testbare Funktion ohne SwiftUI-State, keine
+  Berührung von `save()`, `ReceiptResolutionService` oder Wire-Formaten.
+
 ## Implementation Details
 
 ### 1. Zwei neue, nicht-Codable Felder auf `EditableReceiptLine`
@@ -135,9 +158,20 @@ Regeln (deterministisch, unit-testbar ohne UI):
 3. Das Element, dessen Name case-insensitiv `line.name` entspricht, gilt als „vorausgewählt" und
    wird an die erste Stelle sortiert; die übrigen behalten ihre relative Reihenfolge.
 4. Die inhaltlichen Kandidaten werden auf **max. 3** gekappt (vorausgewählter Kandidat zählt mit).
-5. Gibt es nach Schritt 1-4 keinen einzigen inhaltlichen Kandidaten (kein Treffer, kein
-   KI-Vorschlag), wird stattdessen genau ein `.currentName(line.name)` gebildet.
-6. `.custom` wird immer als letztes Element angehängt → **max. 4 Optionen insgesamt.**
+5. **(Issue #37, 2026-09-24)** Entspricht nach Schritt 3/4 **kein** verbliebener Kandidat
+   case-insensitiv `line.name`, UND ist `line.name` **nicht leer**: `.currentName(line.name)` wird
+   zusätzlich als vorausgewählte Zeile an Position 0 eingefügt. Ist die Kandidatenliste dadurch
+   länger als 3, entfällt der letzte (schwächste, am weitesten hinten stehende) Kandidat, sodass es
+   bei max. 3 inhaltlichen Kandidaten bleibt (Invariante 5, AC-2 unverändert gültig). Ist
+   `line.name` leer, greift diese Regel nicht — weiter mit Regel 6 (heutiges Verhalten bleibt
+   unverändert). Ist `line.name` bereits unter den Kandidaten vertreten (Regel 3 greift bereits),
+   ändert sich ebenfalls nichts.
+6. Gibt es nach Schritt 1-5 keinen einzigen inhaltlichen Kandidaten (kein Treffer, kein
+   KI-Vorschlag, und Regel 5 hat mangels Kandidaten oder leerem `line.name` nicht gegriffen), wird
+   stattdessen genau ein `.currentName(line.name)` gebildet. *(Vormals Regel 5 der Ursprungsfassung
+   dieser Spec — inhaltlich unverändert.)*
+7. `.custom` wird immer als letztes Element angehängt → **max. 4 Optionen insgesamt.**
+   *(Vormals Regel 6 der Ursprungsfassung dieser Spec — inhaltlich unverändert.)*
 
 ### 3. `priceSummary(for:)`
 
@@ -272,7 +306,8 @@ auf die dort bereits gemergten Strings angeglichen (keine zwei parallelen Schema
    KI-Merk-Felder sind ausschließlich lokaler `EditableReceiptLine`-Zustand.
 5. **Die Karte zeigt höchstens 3 inhaltliche Auswahl-Optionen**, unabhängig davon, wie viele
    `suggestions` `ReceiptResolutionService` liefert (heute bis zu 5) — Regel 4 aus
-   `selectionOptions`.
+   `selectionOptions`. Bleibt durch die Issue-#37-Erweiterung (Regel 5) unverändert gültig: die
+   neue Regel fügt maximal eine Zeile ein und entfernt dafür eine bestehende.
 
 ## Test Plan
 
@@ -331,6 +366,27 @@ auf die dort bereits gemergten Strings angeglichen (keine zwei parallelen Schema
   nacheinander alle drei Callback-Arten aufgerufen werden THEN bleibt `originalName` nach jedem
   Aufruf exakt `"FISCHSTAEBCHEN 15ST"`.
 
+**Issue #37 — Regel 5 (`selectionOptions`, neu; TDD RED, wird in `/40-tdd-red` geschrieben):**
+
+- [ ] **AC-4 (Issue #37):** GIVEN eine Zeile `name: "Milch"` mit 3 `.listMatch`-Kandidaten
+  ("Hafermilch", "Buttermilch", "Vollmilch"), von denen keiner case-insensitiv `"Milch"` entspricht,
+  und keinem `aiSuggestedName` WHEN `selectionOptions(for:)` aufgerufen wird THEN ist `options[0]`
+  `.currentName("Milch")`, die drei ursprünglichen Treffer sind auf zwei reduziert (der zuletzt
+  gereihte, "Vollmilch", entfällt), und die Gesamtzahl bleibt bei 4 Optionen (3 inhaltliche
+  Kandidaten + `.custom`).
+- [ ] **Regression (Issue #37):** GIVEN eine Zeile mit leerem `name` (`""`) und denselben 3
+  `.listMatch`-Kandidaten wie oben, von denen keiner (naturgemäß) `line.name` entspricht WHEN
+  `selectionOptions(for:)` aufgerufen wird THEN bleibt die Kandidatenliste unverändert bei den 3
+  Treffern + `.custom` (4 Optionen) — keine zusätzliche `.currentName`-Zeile, heutiges Verhalten
+  (Regel 6, vormals Regel 5) bleibt unberührt.
+- [ ] **AC-4 (Issue #37, Ergänzung zu bestehendem Test):** Der bestehende Test
+  `testFiveSuggestionsAreCappedToThreeListMatches` (`name: "Milch"`, Treffer "Hafermilch/
+  Buttermilch/Vollmilch/Kondensmilch/Reismilch" — keiner entspricht `"Milch"`) wird um eine
+  Vorauswahl-Assertion ergänzt: THEN ist `options[0]` `.currentName("Milch")`, und für dieses
+  Element liefert die Auswahl-Logik der Karte (`isSelected`) `true`. Dieser Test konstruierte das
+  Symptom-Szenario aus Issue #37 bereits vor dieser Erweiterung, prüfte die Vorauswahl bisher aber
+  nicht.
+
 **UI — `RestockUITests/ReceiptReviewUITests.swift`** (Einstieg über `-seedReceiptReviewForUITests`
 aus #28, fester Bon mit mind. einer KI-Zeile, langem Namen und ≥3 `suggestions`):
 
@@ -372,7 +428,12 @@ diese Spec GREEN macht.
   auch bei Überlänge umbrechend, nie abgeschnitten.
 - **AC-2:** Jede Karte zeigt max. 4 Auswahlzeilen (max. 3 inhaltliche + „Anderer Name …").
 - **AC-3:** Die KI-Marke ist an der KI-Options-Zeile sichtbar, einzeilig, nie umbrechend.
-- **AC-4:** Der beste Treffer / aktuelle Zustand der Zeile ist vorausgewählt.
+- **AC-4:** Der beste Treffer / aktuelle Zustand der Zeile ist vorausgewählt. Entspricht keiner der
+  bis zu 3 angezeigten Kandidaten-Zeilen dem aktuell für die Position geltenden Namen (`line.name`)
+  UND ist `line.name` nicht leer, wird der geltende Name zusätzlich als eigene Zeile angeboten und
+  ist vorausgewählt — dafür entfällt der schwächste (am weitesten hinten stehende) der bisherigen
+  Kandidaten (Issue #37, Regel 5 in `selectionOptions`, siehe Implementation Details). Ist
+  `line.name` leer, bleibt das bisherige Verhalten unverändert.
 - **AC-5:** Wahl eines Listen-Treffers setzt `name`/`matchedItemID`/`resolvedByAI` exakt wie der
   heutige Chip-Tap.
 - **AC-6:** Wahl des KI-Vorschlags stellt `resolvedByAI = true` und den KI-Namen wieder her,
@@ -413,6 +474,13 @@ diese Spec GREEN macht.
 - **Freie Mengen-Einheit (Stück/g/kg/l/ml) im Editor**: Verworfen — `save()` kennt nur die
   Lernbasis „Stück" oder „Gramm-Äquivalent" (`learningQuantity`); mehr Einheiten im Editor würden
   Umrechnungslogik in die View holen, die es nirgends sonst gibt. Zwei Stellungen reichen.
+- **Issue #37 — Alternative A: AC-4 einschränken** (Karten ohne Vorauswahl zulassen): Verworfen
+  durch PO-Entscheidung 2026-09-24 — ehrlicher gegenüber dem lückenhaften Ist-Zustand, löst aber
+  das eigentliche Nutzerproblem (kein Weg, den geltenden Namen wiederzufinden) nicht.
+- **Issue #37 — Alternative B: geltenden Namen nur als Hinweistext in der Kopfzeile zeigen** (nicht
+  wählbar): Verworfen durch PO-Entscheidung 2026-09-24 — kostet keine Auswahlzeile, macht den
+  Zustand nach versehentlicher Auswahl einer anderen Option aber nicht mehr per Tipp
+  wiederherstellbar.
 
 ## Risiken
 
@@ -455,7 +523,9 @@ diese Spec GREEN macht.
   (`aiSuggestedName`/`aiSuggestedMatchedItemID`) auf `EditableReceiptLine`, um den KI-Namen nach
   einer Zwischenauswahl wiederherstellbar zu halten — sind oben unter „Implementation Details"
   vollständig begründet und über Invariante 3-4 sowie AC6 abgesichert. Ein separates ADR-Dokument
-  wäre für einen UI-Umbau dieses Umfangs unverhältnismäßig.
+  wäre für einen UI-Umbau dieses Umfangs unverhältnismäßig. Die Issue-#37-Erweiterung (2026-09-24)
+  ist eine reine Bedingungserweiterung innerhalb der bereits bestehenden, reinen Regel-Funktion
+  `selectionOptions` — ändert an dieser Einschätzung nichts, kein eigenes ADR nötig.
 
 ## Definition of Done
 
@@ -466,6 +536,9 @@ Beobachtbar für den PO, ohne Code zu lesen:
 - Ein Treffer aus der eigenen Liste ist vorausgewählt; ist er falsch, reicht ein Antippen einer
   anderen Zeile oder „Anderer Name …", um den Namen zu ändern — keine Tastatur im Normalfall
   nötig.
+- Passt keiner der angezeigten Treffer zum bereits eingetragenen Namen der Position, erscheint
+  dieser Name selbst zusätzlich als eigene, angehakte Zeile (Issue #37) — der Nutzer verliert den
+  aktuellen Stand nie aus den Augen.
 - Ein von der App vorgeschlagener Name ist als „KI-Vorschlag" erkennbar und bricht nicht mehr
   mitten im Wort um.
 - Unten in der Karte stehen Preis sowie, wo erkennbar, Menge/Gewicht und der daraus berechnete
@@ -507,6 +580,12 @@ Beobachtbar für den PO, ohne Code zu lesen:
   dieser Spec setzt voraus, dass #28 bereits gemerged ist.
 - Bei sehr vielen Positionen (z. B. 20+) wird der Screen deutlich länger als heute (Trade-off der
   PO-freigegebenen Variante B, siehe Alternativen/Risiken).
+- **Issue #37, ungelöster Randfall:** Sind nach Kappung auf 3 (Regel 4) weniger als 3 Kandidaten
+  vorhanden (1 oder 2), UND passt keiner zu `line.name`, fügt Regel 5 den geltenden Namen hinzu,
+  ohne dass ein Kandidat entfallen muss (die Kandidatenzahl bleibt dann unter 3) — dieser Teilfall
+  ist von der PO-Entscheidung implizit mitgetragen (Ziel „max. 3 inhaltliche Kandidaten" bleibt
+  gewahrt), aber nicht gesondert im Issue diskutiert worden, da das reproduzierte Symptom stets 3
+  Kandidaten zeigte.
 
 ## Changelog
 
@@ -514,3 +593,10 @@ Beobachtbar für den PO, ohne Code zu lesen:
 - 2026-09-22: Briefing-Fund — Bontext bricht um statt abzuschneiden; AC1-Test an der langen Seed-Zeile
 - 2026-09-22: PO-Korrektur — „Ändern" öffnet Preis und Menge (Stück/Gramm), nicht nur Preis; Preiszeile folgt `learningQuantity` inkl. gedruckter Füllmenge
 - 2026-09-23: Implementiert und gemergt (`ReceiptReviewCard.swift`, 18 Unit-Tests in `ReceiptReviewCardTests.swift`, 15 UI-Tests in `ReceiptReviewUITests.swift`); `ReceiptLineRow` aus `ReceiptScannerView.swift` entfernt. Status auf `implemented` gesetzt, Test Plan abgehakt.
+- 2026-09-24: Issue #37 — PO-Entscheidung: Entspricht keiner der bis zu 3 Kandidaten-Zeilen dem
+  aktuell geltenden Namen der Position und ist dieser nicht leer, wird er zusätzlich als eigene,
+  vorausgewählte Zeile angeboten (schwächster bisheriger Kandidat entfällt). AC-4 präzisiert, neue
+  Regel 5 in `selectionOptions` ergänzt (Implementation Details Abschnitt 2), Test Plan um zwei neue
+  Fälle plus Ergänzung des bestehenden Tests erweitert, Scope um die Issue-#37-Erweiterung ergänzt.
+  Approval auf offen zurückgesetzt, erneute Freigabe erforderlich.
+</content>
