@@ -3,7 +3,8 @@ import SwiftData
 
 /// The ONE shared way to open the app-group SwiftData store, used by every process that
 /// touches it: the main app (`SmartCartApp.init`), Siri intents (`AddShoppingItemIntent`)
-/// and the homescreen widget (`ShoppingListWidget` + `CheckOffWidgetItemIntent`).
+/// the homescreen widget (`ShoppingListWidget` + `CheckOffWidgetItemIntent`) and the share
+/// extension (`RestockShareExtension`).
 ///
 /// ⚠️ DO NOT change the schema declaration or the fallback order here without changing it
 /// for ALL of them at once — that's the whole point of this helper. Historically, an intent
@@ -34,42 +35,83 @@ enum SharedModelContainer {
     /// mirror against the same store create duplicate records. And do NOT add per-process
     /// branching here either: the fallback order IS the mechanism, and it must stay
     /// identical for every process (see the header warning above).
+    ///
+    /// 20.09.2026 — DIESE LETZTE FESTLEGUNG ("kein per-process branching") IST HIERMIT
+    /// AUSDRÜCKLICH ZURÜCKGENOMMEN (Issue #4). Grund: Die Annahme "der CloudKit-Versuch
+    /// scheitert in einer Erweiterung einfach und fällt auf `.none` zurück" stimmt nicht. In
+    /// der Share Extension bricht CloudKit den Prozess rund 4,5 s später per Assertion ab
+    /// (SIGTRAP auf `com.apple.coredata.cloudkit.queue`, Absturzbericht
+    /// `RestockShareExtension-2026-09-20-160807.ips`) — kein fangbarer Fehler, kein `catch`,
+    /// kein Rückfall. Der Versuch selbst IST der Absturz. Deshalb verzweigt `make()` jetzt
+    /// genau einmal, und zwar ausschließlich auf die Frage "läuft dieser Prozess als
+    /// App-Erweiterung?" (`isAppExtension(bundleURL:)`). NICHT verzweigt wird über das Schema
+    /// oder die Store-Adressierung — beides bleibt für alle Prozesse identisch, genau dafür
+    /// steht die Kopfwarnung oben, und genau dafür sorgt `storeConfigurations(forBundleAt:)`
+    /// als einzige Quelle beider Zweige.
+    ///
     /// Diagnostic key holding the most recent failure from `make()`, prefixed `[cloud]`/`[local]`
-    /// so callers can tell which stage failed — `SmartCartApp.init()` uses the `[cloud]` prefix
-    /// specifically to detect "local opened fine, but cloud never got a chance" (see there).
+    /// so a diagnostic screenshot shows which stage failed. (Korrektur 20.09.2026: Hier stand,
+    /// `SmartCartApp.init()` werte das `[cloud]`-Präfix aus, um "local öffnete, cloud kam nie zum
+    /// Zug" zu erkennen — diese Logik existiert im Code nicht. Der Schlüssel wird derzeit
+    /// nirgends gelesen, siehe Folge-Issue #5.)
     static let lastFailureKey = "smartcart.lastContainerError"
+
+    /// Läuft dieser Bundle-Pfad als App-Erweiterung? Reine Funktion auf einer ÜBERGEBENEN URL
+    /// (nicht auf `Bundle.main`), damit beide Richtungen ohne echten Extension-Prozess prüfbar
+    /// sind. Geprüft wird die Bundle-Hülle (`.appex`), nicht das tatsächliche Entitlement —
+    /// `SecTaskCopyValueForEntitlement` gibt es auf iOS nicht im öffentlichen SDK.
+    static func isAppExtension(bundleURL: URL) -> Bool {
+        bundleURL.standardizedFileURL.pathExtension.lowercased() == "appex"
+    }
+
+    /// Die Stufen, in denen der Store geöffnet wird — einzige Stelle, an der sich App-Prozess
+    /// und Erweiterung unterscheiden dürfen:
+    /// - Haupt-App: CloudKit-gespiegelt zuerst, lokaler App-Gruppen-Store als Rückfallebene.
+    /// - App-Erweiterung: nur der lokale App-Gruppen-Store — der CloudKit-Versuch wäre hier
+    ///   kein Fehlschlag, sondern der Absturz selbst (siehe Vermerk oben, Issue #4).
+    /// Ablageort (`groupContainer: .identifier(appGroupID)`) ist in allen Stufen identisch.
+    static func storeConfigurations(forBundleAt bundleURL: URL) -> [ModelConfiguration] {
+        let local = ModelConfiguration(
+            groupContainer: .identifier(appGroupID),
+            cloudKitDatabase: .none
+        )
+        guard !isAppExtension(bundleURL: bundleURL) else { return [local] }
+        let cloud = ModelConfiguration(
+            groupContainer: .identifier(appGroupID),
+            cloudKitDatabase: .private(cloudKitContainerID)
+        )
+        return [cloud, local]
+    }
+
+    /// Das einmalige, app-gruppenweite Sicherungsfenster gehört dem Prozess, der den Cloud-Pfad
+    /// tatsächlich betritt. Eine Erweiterung tut das nie — sie darf das Flag also auch nicht
+    /// verbrauchen, sonst stünde die Haupt-App bei ihrem ersten echten Cloud-Versuch ungesichert da.
+    static func shouldRunPreCloudBackup(forBundleAt bundleURL: URL) -> Bool {
+        !isAppExtension(bundleURL: bundleURL)
+    }
 
     static func make() -> ModelContainer? {
         let schema = Schema(versionedSchema: SchemaV1.self)
-        backupLocalStoreBeforeFirstCloudAttempt()
-        do {
-            let cloud = try ModelContainer(
-                for: schema,
-                configurations: ModelConfiguration(
-                    groupContainer: .identifier(appGroupID),
-                    cloudKitDatabase: .private(cloudKitContainerID)
-                )
-            )
-            // Erfolg löscht einen ggf. stehen gebliebenen Fehler von einem früheren Start —
-            // sonst würde SmartCartApp.init() einen veralteten "[cloud]"-Eintrag von VORHIN
-            // fälschlich auf DIESEN (eigentlich erfolgreichen) Aufruf beziehen.
-            UserDefaults.standard.removeObject(forKey: lastFailureKey)
-            return cloud
-        } catch {
-            logContainerFailure("cloud", error)
+        let bundleURL = Bundle.main.bundleURL
+        if shouldRunPreCloudBackup(forBundleAt: bundleURL) {
+            backupLocalStoreBeforeFirstCloudAttempt()
         }
-        do {
-            return try ModelContainer(
-                for: schema,
-                configurations: ModelConfiguration(
-                    groupContainer: .identifier(appGroupID),
-                    cloudKitDatabase: .none
-                )
-            )
-        } catch {
-            logContainerFailure("local", error)
-            return nil
+        for configuration in storeConfigurations(forBundleAt: bundleURL) {
+            let stage = configuration.cloudKitContainerIdentifier == nil ? "local" : "cloud"
+            do {
+                let container = try ModelContainer(for: schema, configurations: configuration)
+                if stage == "cloud" {
+                    // Erfolg löscht einen ggf. stehen gebliebenen Fehler von einem früheren Start,
+                    // damit ein Diagnose-Screenshot nicht einen veralteten "[cloud]"-Eintrag von
+                    // VORHIN auf DIESEN (eigentlich erfolgreichen) Aufruf bezieht.
+                    UserDefaults.standard.removeObject(forKey: lastFailureKey)
+                }
+                return container
+            } catch {
+                logContainerFailure(stage, error)
+            }
         }
+        return nil
     }
 
     /// `try?` verschluckte diese Fehler früher komplett — bei einem entfernten TestFlight-Tester

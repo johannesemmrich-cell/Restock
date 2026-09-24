@@ -40,3 +40,7 @@ fastlane/test_output
 # macOS
 .DS_Store
 *.swp
+
+# Claude Code — session-local state (workflow pointer, local settings)
+.claude/active_workflow
+.claude/settings.local.json

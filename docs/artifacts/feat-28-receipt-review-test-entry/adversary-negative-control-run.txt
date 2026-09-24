@@ -1,0 +1,707 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=C809766B-5B9C-41A9-B1B7-F66B1C3EB162" "-only-testing:RestockUITests/RestockUITests" test
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-09-22 16:25:00.178255+0200 RestockUITests-Runner[38409:63247653] [Default] Running tests...
+objc[38409]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10b98c310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a638398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-22 16:25:07.687.
+Test Suite 'RestockUITests.xctest' started at 2026-09-22 16:25:07.688.
+Test Suite 'RestockUITests' started at 2026-09-22 16:25:07.688.
+Test Case '-[RestockUITests.RestockUITests testAddStoreAndQuickAddItemShowsPriceWithoutCrash]' started.
+    t =     0.00s Start Test at 2026-09-22 16:25:07.689
+    t =     0.58s Set Up
+    t =     0.59s Open com.johannesemmrich.Restock
+    t =     0.61s     Launch com.johannesemmrich.Restock
+2026-09-22 16:25:08.884 xcodebuild[38242:63245453] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 16:25:08.884 xcodebuild[38242:63245453] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     4.75s         Setting up automation session
+    t =     7.21s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testAddStoreAndQuickAddItemShowsPriceWithoutCrash] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     9.82s Waiting 3.0s for "Lidl" StaticText to exist
+    t =    10.87s     Checking `Expect predicate `existsNoRetry == 1` for object "Lidl" StaticText`
+    t =    10.88s         Checking existence of `"Lidl" StaticText`
+DEBUG: Lidl existiert bereits aus vorherigem Lauf, überspringe Einrichtung
+    t =    11.12s Waiting 5.0s for Button (First Match) to exist
+    t =    12.16s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    12.16s         Checking existence of `Button (First Match)`
+    t =    13.25s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    13.25s     Find the Button (First Match)
+    t =    13.39s     Capturing element debug description
+    t =    15.25s         Requesting snapshot of accessibility hierarchy for app with pid 38472
+    t =    15.37s         Requesting snapshot of accessibility hierarchy for app with pid 38472
+    t =    15.47s         Find: Descendants matching type Button
+    t =    15.47s         Find: Elements matching predicate 'label BEGINSWITH "Lidl,"'
+    t =    15.47s         Requesting snapshot of accessibility hierarchy for app with pid 38472
+    t =    15.58s         Find: Descendants matching type Button
+    t =    15.58s         Requesting snapshot of accessibility hierarchy for app with pid 38472
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockUITests/RestockUITests.swift:175: error: -[RestockUITests.RestockUITests testAddStoreAndQuickAddItemShowsPriceWithoutCrash] : Asynchronous wait failed: Exceeded timeout of 5 seconds, with unfulfilled expectations: "Expect predicate `isHittable == 1` for object Button (First Match)".
+    t =    18.64s Tear Down
+Test Case '-[RestockUITests.RestockUITests testAddStoreAndQuickAddItemShowsPriceWithoutCrash]' failed (19.001 seconds).
+Test Case '-[RestockUITests.RestockUITests testAppLaunchesToHomeScreen]' started.
+    t =     0.00s Start Test at 2026-09-22 16:25:26.691
+    t =     0.06s Set Up
+    t =     0.08s Open com.johannesemmrich.Restock
+    t =     0.10s     Launch com.johannesemmrich.Restock
+    t =     0.11s         Terminate com.johannesemmrich.Restock:38472
+2026-09-22 16:25:27.918 xcodebuild[38242:63245453] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 16:25:27.918 xcodebuild[38242:63245453] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.27s         Setting up automation session
+    t =     4.96s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testAppLaunchesToHomeScreen] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     7.52s Waiting 15.0s for "Restock" StaticText to exist
+    t =     8.55s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock" StaticText`
+    t =     8.55s         Checking existence of `"Restock" StaticText`
+    t =     8.76s Tear Down
+Test Case '-[RestockUITests.RestockUITests testAppLaunchesToHomeScreen]' passed (8.999 seconds).
+Test Case '-[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable]' started.
+    t =     0.00s Start Test at 2026-09-22 16:25:35.700
+    t =     0.06s Set Up
+    t =     0.07s Open com.johannesemmrich.Restock
+    t =     0.09s     Launch com.johannesemmrich.Restock
+    t =     0.09s         Terminate com.johannesemmrich.Restock:38566
+2026-09-22 16:25:36.881 xcodebuild[38242:63245453] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 16:25:36.881 xcodebuild[38242:63245453] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.63s         Setting up automation session
+    t =     3.63s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     5.90s Waiting 15.0s for "Geteilter Liste beitreten" Button to exist
+    t =     6.93s     Checking `Expect predicate `existsNoRetry == 1` for object "Geteilter Liste beitreten" Button`
+    t =     6.93s         Checking existence of `"Geteilter Liste beitreten" Button`
+    t =     6.98s Tap "Geteilter Liste beitreten" Button
+    t =     6.98s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.00s     Find the "Geteilter Liste beitreten" Button
+    t =     7.03s     Check for interrupting elements affecting "Geteilter Liste beitreten" Button
+    t =     7.07s     Synthesize event
+    t =     7.46s         Scroll element to visible
+    t =     7.47s         Find the "Geteilter Liste beitreten" Button
+    t =     7.66s         Computed hit point {-1, -1} after scrolling to visible
+    t =     7.66s         Failed: Not hittable: Button, {{5.3, 226.3}, {59.7, 35.3}}, label: 'Geteilter Liste beitreten'
+    t =     8.67s     Retrying `Tap "Geteilter Liste beitreten" Button` (attempt #2)
+    t =     8.67s         Wait for com.johannesemmrich.Restock to idle
+    t =     8.76s         Find the "Geteilter Liste beitreten" Button
+    t =     8.92s         Check for interrupting elements affecting "Geteilter Liste beitreten" Button
+    t =     9.02s             Wait for henemm.Meditationstimer-iOS to idle
+    t =     9.69s         Open com.johannesemmrich.Restock
+    t =     9.75s             Activate com.johannesemmrich.Restock
+    t =     9.91s                 Wait for com.johannesemmrich.Restock to idle
+    t =    10.01s         Synthesize event
+    t =    10.15s             Failed: Failed to compute hit point for Button, {{16.0, 679.0}, {179.0, 106.0}}, label: 'Geteilter Liste beitreten': Activation point invalid and no suggested hit points based on element frame
+    t =    10.15s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    11.25s     Retrying `Tap "Geteilter Liste beitreten" Button` (attempt #3)
+    t =    11.25s         Wait for com.johannesemmrich.Restock to idle
+    t =    11.27s         Find the "Geteilter Liste beitreten" Button
+    t =    11.32s         Check for interrupting elements affecting "Geteilter Liste beitreten" Button
+    t =    11.36s         Synthesize event
+    t =    11.67s         Wait for com.johannesemmrich.Restock to idle
+    t =    11.80s Waiting 5.0s for TextField (First Match) to exist
+    t =    12.83s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =    12.83s         Checking existence of `TextField (First Match)`
+    t =    13.91s Find the TextField (First Match)
+    t =    13.98s Waiting 5.0s for "Abbrechen" Button to exist
+    t =    15.04s     Checking `Expect predicate `existsNoRetry == 1` for object "Abbrechen" Button`
+    t =    15.04s         Checking existence of `"Abbrechen" Button`
+    t =    15.58s Find the "Abbrechen" Button
+    t =    15.86s Tap "Z.B. ABCD-EFG-HIJ" TextField
+    t =    15.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.92s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    16.12s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    16.18s         Wait for henemm.Meditationstimer-iOS to idle
+    t =    17.18s     Found 1 interrupting element:
+    t =    17.18s         Find the "Health-Zugriff" Alert
+    t =    17.26s "Health-Zugriff" Alert from Application 'henemm.Meditationstimer-iOS'
+    t =    17.27s     Invoking UI interruption monitors for "Health-Zugriff" Alert from Application 'henemm.Meditationstimer-iOS'
+    t =    17.27s         Find the "Health-Zugriff" Alert
+    t =    17.37s         Checking existence of `Button (Elements matching predicate 'userTestingAttributes CONTAINS "cancel-button"')`
+    t =    17.58s         Get all elements bound by accessibility element for: Elements matching predicate 'userTestingAttributes CONTAINS "default-button"'
+    t =    17.69s         Checking existence of `"OK" Button`
+    t =    17.87s Default interruption handler attempting to dismiss alert by tapping "OK" Button.
+    t =    17.87s         Tap "OK" Button
+    t =    17.87s             Wait for henemm.Meditationstimer-iOS to idle
+    t =    17.90s             Find the "OK" Button
+    t =    17.98s             Check for interrupting elements affecting "OK" Button
+    t =    18.12s             Synthesize event
+    t =    18.49s             Wait for henemm.Meditationstimer-iOS to idle
+    t =    18.54s         Waiting 1.0s for "Health-Zugriff" Alert to not exist
+    t =    19.54s             Checking `Expect predicate `existsNoRetry == 0` for object "Health-Zugriff" Alert`
+    t =    19.54s                 Checking existence of `"Health-Zugriff" Alert`
+    t =    19.82s             Checking existence of `"Health-Zugriff" Alert`
+    t =    20.22s         Verifying handling...
+    t =    20.23s             Wait for henemm.Meditationstimer-iOS to idle
+    t =    20.40s Confirmed successful handling of interrupting element
+    t =    20.41s     Open com.johannesemmrich.Restock
+    t =    20.44s         Activate com.johannesemmrich.Restock
+    t =    20.63s             Wait for com.johannesemmrich.Restock to idle
+    t =    20.80s     Synthesize event
+    t =    21.16s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.18s Type 'TESTCODE12' into "Z.B. ABCD-EFG-HIJ" TextField
+    t =    21.18s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.19s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    21.26s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    21.31s         Wait for henemm.Meditationstimer-iOS to idle
+    t =    22.38s     Synthesize event
+    t =    22.39s         Get number of matches for: Elements containing elements matching predicate 'hasKeyboardFocus == 1'
+    t =    22.45s         Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    22.57s         Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    22.63s         Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    22.68s         Find: Descendants matching type TextField
+    t =    22.68s         Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    22.68s         Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    22.73s         Find: Descendants matching type TextField
+    t =    22.73s         Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    22.81s         Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    22.94s         Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    23.00s         Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    23.05s         Find: Descendants matching type TextField
+    t =    23.05s         Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    23.06s         Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    23.11s         Find: Descendants matching type TextField
+    t =    23.11s         Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    23.18s         Failed: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{52.0, 402.4}, {302.5, 33.6}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ'
+Element debug description:
+Attributes: TextField, 0x118942f80, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Element subtree:
+ →TextField, 0x118942f80, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Path to element:
+ →Application, 0x117fb2800, pid: 38590, label: 'Restock'
+  ↳Window (Main), 0x117fb3200, {{0.0, 0.0}, {402.0, 874.0}}
+   ↳Other, 0x118941040, {{0.0, 0.0}, {402.0, 874.0}}
+    ↳Other, 0x1189412c0, {{0.0, 62.0}, {402.0, 812.0}}
+     ↳Other, 0x118941400, {{0.0, 62.0}, {402.0, 812.0}}
+      ↳Other, 0x118941540, {{0.0, 62.0}, {402.0, 812.0}}
+       ↳Other, 0x118941680, {{0.0, 62.0}, {402.0, 812.0}}
+        ↳Other, 0x1189417c0, {{0.0, 62.0}, {402.0, 812.0}}
+         ↳Other, 0x118941900, {{0.0, 62.0}, {402.0, 812.0}}
+          ↳Other, 0x118942080, {{0.0, 62.0}, {402.0, 812.0}}
+           ↳Other, 0x1189421c0, {{0.0, 62.0}, {402.0, 812.0}}
+            ↳Other, 0x118942300, {{0.0, 62.0}, {402.0, 812.0}}
+             ↳Other, 0x118942440, {{0.0, 62.0}, {402.0, 812.0}}
+              ↳ScrollView, 0x118942580, {{0.0, 62.0}, {402.0, 812.0}}
+               ↳Other, 0x118942a80, {{0.0, 132.0}, {402.0, 360.0}}
+                ↳TextField, 0x118942f80, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Query chain:
+ →Find: Target Application 'com.johannesemmrich.Restock'
+  Output: {
+    Application, 0x118981e00, pid: 38590, label: 'Restock'
+  }
+  ↪︎Find: Descendants matching type TextField
+    Output: {
+      TextField, 0x1189735c0, {{60.3, 299.0}, {245.7, 22.0}}, placeholderValue: 'Schnell hinzufügen…', value: Schnell hinzufügen…
+      TextField, 0x118981540, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+    }
+    ↪︎Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+      Output: {
+        TextField, 0x1189717c0, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+      }
+      ↪︎Find: First Match
+        Output: {
+          TextField, 0x118945a40, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+        }
+
+    t =    23.18s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.20s     Retrying `Type 'TESTCODE12' into "Z.B. ABCD-EFG-HIJ" TextField` (attempt #2)
+    t =    24.20s         Wait for com.johannesemmrich.Restock to idle
+    t =    24.22s         Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    24.25s         Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    24.28s         Synthesize event
+    t =    24.29s             Get number of matches for: Elements containing elements matching predicate 'hasKeyboardFocus == 1'
+    t =    24.34s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    24.44s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    24.48s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    24.53s             Find: Descendants matching type TextField
+    t =    24.53s             Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    24.53s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    24.57s             Find: Descendants matching type TextField
+    t =    24.58s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    24.63s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    24.71s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    24.75s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    24.79s             Find: Descendants matching type TextField
+    t =    24.79s             Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    24.79s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    24.83s             Find: Descendants matching type TextField
+    t =    24.83s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    24.88s             Failed: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ'
+Element debug description:
+Attributes: TextField, 0x118945cc0, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Element subtree:
+ →TextField, 0x118945cc0, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Path to element:
+ →Application, 0x118996800, pid: 38590, label: 'Restock'
+  ↳Window (Main), 0x118996940, {{0.0, 0.0}, {402.0, 874.0}}
+   ↳Other, 0x1188dd7c0, {{0.0, 0.0}, {402.0, 874.0}}
+    ↳Other, 0x1188dd900, {{0.0, 62.0}, {402.0, 812.0}}
+     ↳Other, 0x1188dd400, {{0.0, 62.0}, {402.0, 812.0}}
+      ↳Other, 0x1188dd2c0, {{0.0, 62.0}, {402.0, 812.0}}
+       ↳Other, 0x1188dd180, {{0.0, 62.0}, {402.0, 812.0}}
+        ↳Other, 0x1188dd040, {{0.0, 62.0}, {402.0, 812.0}}
+         ↳Other, 0x1188dcf00, {{0.0, 62.0}, {402.0, 812.0}}
+          ↳Other, 0x118944280, {{0.0, 62.0}, {402.0, 812.0}}
+           ↳Other, 0x1189443c0, {{0.0, 62.0}, {402.0, 812.0}}
+            ↳Other, 0x118946080, {{0.0, 62.0}, {402.0, 812.0}}
+             ↳Other, 0x1189461c0, {{0.0, 62.0}, {402.0, 812.0}}
+              ↳ScrollView, 0x118944b40, {{0.0, 62.0}, {402.0, 812.0}}
+               ↳Other, 0x118945040, {{0.0, 132.0}, {402.0, 360.0}}
+                ↳TextField, 0x118945cc0, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Query chain:
+ →Find: Target Application 'com.johannesemmrich.Restock'
+  Output: {
+    Application, 0x11896dcc0, pid: 38590, label: 'Restock'
+  }
+  ↪︎Find: Descendants matching type TextField
+    Output: {
+      TextField, 0x1189d3200, {{60.3, 299.0}, {245.7, 22.0}}, placeholderValue: 'Schnell hinzufügen…', value: Schnell hinzufügen…
+      TextField, 0x118981b80, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+    }
+    ↪︎Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+      Output: {
+        TextField, 0x118970000, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+      }
+      ↪︎Find: First Match
+        Output: {
+          TextField, 0x1189a12c0, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+        }
+
+    t =    24.89s         Wait for com.johannesemmrich.Restock to idle
+    t =    25.90s     Retrying `Type 'TESTCODE12' into "Z.B. ABCD-EFG-HIJ" TextField` (attempt #3)
+    t =    25.90s         Wait for com.johannesemmrich.Restock to idle
+    t =    25.93s         Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    25.98s         Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    26.01s         Synthesize event
+    t =    26.02s             Get number of matches for: Elements containing elements matching predicate 'hasKeyboardFocus == 1'
+    t =    26.06s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    26.13s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    26.17s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    26.20s             Find: Descendants matching type TextField
+    t =    26.20s             Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    26.20s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    26.24s             Find: Descendants matching type TextField
+    t =    26.24s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    26.29s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    26.36s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    26.40s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    26.44s             Find: Descendants matching type TextField
+    t =    26.44s             Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    26.44s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    26.47s             Find: Descendants matching type TextField
+    t =    26.47s             Requesting snapshot of accessibility hierarchy for app with pid 38590
+    t =    26.52s             Failed: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ'
+Element debug description:
+Attributes: TextField, 0x118999e00, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Element subtree:
+ →TextField, 0x118999e00, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Path to element:
+ →Application, 0x1188dda40, pid: 38590, label: 'Restock'
+  ↳Window (Main), 0x1188de580, {{0.0, 0.0}, {402.0, 874.0}}
+   ↳Other, 0x11899b200, {{0.0, 0.0}, {402.0, 874.0}}
+    ↳Other, 0x11899af80, {{0.0, 62.0}, {402.0, 812.0}}
+     ↳Other, 0x11899ae40, {{0.0, 62.0}, {402.0, 812.0}}
+      ↳Other, 0x11899ad00, {{0.0, 62.0}, {402.0, 812.0}}
+       ↳Other, 0x11899a080, {{0.0, 62.0}, {402.0, 812.0}}
+        ↳Other, 0x118999b80, {{0.0, 62.0}, {402.0, 812.0}}
+         ↳Other, 0x11899b480, {{0.0, 62.0}, {402.0, 812.0}}
+          ↳Other, 0x11899b840, {{0.0, 62.0}, {402.0, 812.0}}
+           ↳Other, 0x11899b700, {{0.0, 62.0}, {402.0, 812.0}}
+            ↳Other, 0x11899aa80, {{0.0, 62.0}, {402.0, 812.0}}
+             ↳Other, 0x11899abc0, {{0.0, 62.0}, {402.0, 812.0}}
+              ↳ScrollView, 0x11899a800, {{0.0, 62.0}, {402.0, 812.0}}
+               ↳Other, 0x11899a580, {{0.0, 132.0}, {402.0, 360.0}}
+                ↳TextField, 0x118999e00, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Query chain:
+ →Find: Target Application 'com.johannesemmrich.Restock'
+  Output: {
+    Application, 0x118983ac0, pid: 38590, label: 'Restock'
+  }
+  ↪︎Find: Descendants matching type TextField
+    Output: {
+      TextField, 0x1189cb200, {{60.3, 299.0}, {245.7, 22.0}}, placeholderValue: 'Schnell hinzufügen…', value: Schnell hinzufügen…
+      TextField, 0x118980280, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+    }
+    ↪︎Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+      Output: {
+        TextField, 0x1189d1a40, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+      }
+      ↪︎Find: First Match
+        Output: {
+          TextField, 0x118996300, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+        }
+
+    t =    26.52s         Wait for com.johannesemmrich.Restock to idle
+    t =    26.53s     Requesting snapshot of accessibility hierarchy for app with pid 38590
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockUITests/RestockUITests.swift:73: error: -[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable] : Failed to synthesize event: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ'
+Element debug description:
+Attributes: TextField, 0x118999e00, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Element subtree:
+ →TextField, 0x118999e00, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Path to element:
+ →Application, 0x1188dda40, pid: 38590, label: 'Restock'
+  ↳Window (Main), 0x1188de580, {{0.0, 0.0}, {402.0, 874.0}}
+   ↳Other, 0x11899b200, {{0.0, 0.0}, {402.0, 874.0}}
+    ↳Other, 0x11899af80, {{0.0, 62.0}, {402.0, 812.0}}
+     ↳Other, 0x11899ae40, {{0.0, 62.0}, {402.0, 812.0}}
+      ↳Other, 0x11899ad00, {{0.0, 62.0}, {402.0, 812.0}}
+       ↳Other, 0x11899a080, {{0.0, 62.0}, {402.0, 812.0}}
+        ↳Other, 0x118999b80, {{0.0, 62.0}, {402.0, 812.0}}
+         ↳Other, 0x11899b480, {{0.0, 62.0}, {402.0, 812.0}}
+          ↳Other, 0x11899b840, {{0.0, 62.0}, {402.0, 812.0}}
+           ↳Other, 0x11899b700, {{0.0, 62.0}, {402.0, 812.0}}
+            ↳Other, 0x11899aa80, {{0.0, 62.0}, {402.0, 812.0}}
+             ↳Other, 0x11899abc0, {{0.0, 62.0}, {402.0, 812.0}}
+              ↳ScrollView, 0x11899a800, {{0.0, 62.0}, {402.0, 812.0}}
+               ↳Other, 0x11899a580, {{0.0, 132.0}, {402.0, 360.0}}
+                ↳TextField, 0x118999e00, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Query chain:
+ →Find: Target Application 'com.johannesemmrich.Restock'
+  Output: {
+    Application, 0x118983ac0, pid: 38590, label: 'Restock'
+  }
+  ↪︎Find: Descendants matching type TextField
+    Output: {
+      TextField, 0x1189cb200, {{60.3, 299.0}, {245.7, 22.0}}, placeholderValue: 'Schnell hinzufügen…', value: Schnell hinzufügen…
+      TextField, 0x118980280, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+    }
+    ↪︎Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+      Output: {
+        TextField, 0x1189d1a40, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+      }
+      ↪︎Find: First Match
+        Output: {
+          TextField, 0x118996300, {{48.0, 402.0}, {306.0, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+        }
+
+    t =    26.60s Tear Down
+Test Case '-[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable]' failed (26.817 seconds).
+Test Case '-[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup]' started.
+    t =     0.00s Start Test at 2026-09-22 16:26:02.515
+    t =     0.02s Set Up
+    t =     0.02s     Open com.johannesemmrich.Restock
+    t =     0.03s         Launch com.johannesemmrich.Restock
+    t =     0.03s             Terminate com.johannesemmrich.Restock:38590
+2026-09-22 16:26:03.671 xcodebuild[38242:63245453] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 16:26:03.671 xcodebuild[38242:63245453] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.57s             Setting up automation session
+    t =     2.75s             Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     4.74s     Waiting 15.0s for "Geteilter Liste beitreten" Button to exist
+    t =     5.78s         Checking `Expect predicate `existsNoRetry == 1` for object "Geteilter Liste beitreten" Button`
+    t =     5.78s             Checking existence of `"Geteilter Liste beitreten" Button`
+    t =     5.86s     Tap "Geteilter Liste beitreten" Button
+    t =     5.86s         Wait for com.johannesemmrich.Restock to idle
+    t =     5.88s         Find the "Geteilter Liste beitreten" Button
+    t =     5.89s         Check for interrupting elements affecting "Geteilter Liste beitreten" Button
+    t =     5.91s         Synthesize event
+    t =     6.21s         Wait for com.johannesemmrich.Restock to idle
+    t =     6.69s     Waiting 5.0s for TextField (First Match) to exist
+    t =     7.71s         Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =     7.71s             Checking existence of `TextField (First Match)`
+    t =     8.76s     Tap TextField (First Match)
+    t =     8.76s         Wait for com.johannesemmrich.Restock to idle
+    t =     8.79s         Find the TextField (First Match)
+    t =     8.83s         Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =     8.84s             Wait for henemm.Meditationstimer-iOS to idle
+    t =     9.08s         Open com.johannesemmrich.Restock
+    t =     9.12s             Activate com.johannesemmrich.Restock
+    t =     9.19s                 Wait for com.johannesemmrich.Restock to idle
+    t =     9.25s         Synthesize event
+    t =     9.61s         Wait for com.johannesemmrich.Restock to idle
+    t =     9.65s     Type 'CGU5ZN' into "Z.B. ABCD-EFG-HIJ" TextField
+    t =     9.65s         Wait for com.johannesemmrich.Restock to idle
+    t =     9.67s         Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =     9.71s         Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =     9.74s         Synthesize event
+    t =     9.75s             Get number of matches for: Elements containing elements matching predicate 'hasKeyboardFocus == 1'
+    t =     9.80s             Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =     9.89s             Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =     9.93s             Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =     9.98s             Find: Descendants matching type TextField
+    t =     9.98s             Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =     9.98s             Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    10.02s             Find: Descendants matching type TextField
+    t =    10.03s             Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    10.08s             Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    10.17s             Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    10.22s             Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    10.26s             Find: Descendants matching type TextField
+    t =    10.26s             Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    10.26s             Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    10.30s             Find: Descendants matching type TextField
+    t =    10.30s             Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    10.40s             Failed: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{53.7, 402.5}, {301.2, 33.5}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ'
+Element debug description:
+Attributes: TextField, 0x1188de1c0, {{49.3, 402.2}, {304.7, 33.9}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Element subtree:
+ →TextField, 0x1188de1c0, {{49.3, 402.2}, {304.7, 33.9}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Path to element:
+ →Application, 0x118997980, pid: 38651, label: 'Restock'
+  ↳Window (Main), 0x118996d00, {{1.5, 1.9}, {400.3, 870.3}}
+   ↳Other, 0x1189a4c80, {{1.5, 1.9}, {400.3, 870.3}}
+    ↳Other, 0x1189a48c0, {{1.5, 63.6}, {400.3, 808.5}}
+     ↳Other, 0x1189a4640, {{1.4, 63.4}, {400.6, 809.1}}
+      ↳Other, 0x1189a4780, {{1.4, 63.4}, {400.6, 809.1}}
+       ↳Other, 0x1188dcb40, {{1.4, 63.4}, {400.6, 809.1}}
+        ↳Other, 0x1188de580, {{1.4, 63.4}, {400.6, 809.1}}
+         ↳Other, 0x1188de6c0, {{1.4, 63.4}, {400.6, 809.1}}
+          ↳Other, 0x1188ded00, {{1.4, 63.4}, {400.6, 809.1}}
+           ↳Other, 0x1188ddcc0, {{1.2, 63.1}, {400.8, 809.5}}
+            ↳Other, 0x1188de800, {{1.2, 63.1}, {400.8, 809.5}}
+             ↳Other, 0x1188de300, {{1.2, 63.1}, {400.8, 809.5}}
+              ↳ScrollView, 0x1188dde00, {{1.2, 63.1}, {400.8, 809.5}}
+               ↳Other, 0x1188dc8c0, {{1.2, 132.9}, {400.8, 358.9}}
+                ↳TextField, 0x1188de1c0, {{49.3, 402.2}, {304.7, 33.9}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Query chain:
+ →Find: Target Application 'com.johannesemmrich.Restock'
+  Output: {
+    Application, 0x118aae440, pid: 38651, label: 'Restock'
+  }
+  ↪︎Find: Descendants matching type TextField
+    Output: {
+      TextField, 0x118aa7c00, {{60.4, 299.1}, {245.6, 22.0}}, placeholderValue: 'Schnell hinzufügen…', value: Schnell hinzufügen…
+      TextField, 0x118aadb80, {{48.1, 402.0}, {305.9, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+    }
+    ↪︎Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+      Output: {
+        TextField, 0x118aa5e00, {{48.1, 402.0}, {305.9, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+      }
+      ↪︎Find: First Match
+        Output: {
+          TextField, 0x1189a2080, {{48.1, 402.0}, {305.9, 34.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+        }
+
+    t =    10.41s         Wait for com.johannesemmrich.Restock to idle
+    t =    11.42s         Retrying `Type 'CGU5ZN' into "Z.B. ABCD-EFG-HIJ" TextField` (attempt #2)
+    t =    11.42s             Wait for com.johannesemmrich.Restock to idle
+    t =    11.43s             Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    11.49s             Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    11.52s                 Wait for henemm.Meditationstimer-iOS to idle
+    t =    12.76s             Open com.johannesemmrich.Restock
+    t =    12.80s                 Activate com.johannesemmrich.Restock
+    t =    12.86s                     Wait for com.johannesemmrich.Restock to idle
+    t =    12.96s             Synthesize event
+    t =    12.97s                 Get number of matches for: Elements containing elements matching predicate 'hasKeyboardFocus == 1'
+    t =    13.04s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    13.16s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    13.21s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    13.26s                 Find: Descendants matching type TextField
+    t =    13.26s                 Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    13.26s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    13.37s                 Find: Descendants matching type TextField
+    t =    13.37s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    13.43s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    13.52s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    13.57s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    13.61s                 Find: Descendants matching type TextField
+    t =    13.61s                 Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    13.61s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    13.65s                 Find: Descendants matching type TextField
+    t =    13.66s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    13.71s                 Failed: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{16.0, 134.0}, {102.0, 11.3}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ'
+Element debug description:
+Attributes: TextField, 0x1189a1540, {{168.2, 407.2}, {260.3, 28.9}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Element subtree:
+ →TextField, 0x1189a1540, {{168.2, 407.2}, {260.3, 28.9}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Path to element:
+ →Application, 0x118ab6e40, pid: 38651, label: 'Restock'
+  ↳Window (Main), 0x118ab70c0, {{127.4, 65.2}, {342.0, 743.6}}
+   ↳Other, 0x10b245400, {{111.1, 62.1}, {344.9, 749.8}}
+    ↳Other, 0x10b244b40, {{111.1, 115.3}, {344.9, 696.6}}
+     ↳Other, 0x10b244f00, {{111.1, 115.3}, {344.9, 696.6}}
+      ↳Other, 0x10b2452c0, {{111.1, 115.3}, {344.9, 696.6}}
+       ↳Other, 0x10b244dc0, {{111.1, 115.3}, {344.9, 696.6}}
+        ↳Other, 0x10b245540, {{96.7, 111.9}, {348.5, 704.0}}
+         ↳Other, 0x10b244640, {{96.7, 111.9}, {348.5, 704.0}}
+          ↳Other, 0x1189a0140, {{96.7, 111.9}, {348.5, 704.0}}
+           ↳Other, 0x1189a03c0, {{96.7, 111.9}, {348.5, 704.0}}
+            ↳Other, 0x1189a0500, {{83.8, 108.1}, {352.6, 712.3}}
+             ↳Other, 0x1189a0640, {{83.8, 108.1}, {352.6, 712.3}}
+              ↳ScrollView, 0x1189a0780, {{83.8, 108.1}, {352.6, 712.3}}
+               ↳Other, 0x1189a2800, {{83.8, 169.5}, {352.6, 315.8}}
+                ↳TextField, 0x1189a1540, {{168.2, 407.2}, {260.3, 28.9}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Query chain:
+ →Find: Target Application 'com.johannesemmrich.Restock'
+  Output: {
+    Application, 0x118a9ef80, pid: 38651, label: 'Restock'
+  }
+  ↪︎Find: Descendants matching type TextField
+    Output: {
+      TextField, 0x118aa6940, {{65.2, 301.0}, {242.1, 21.7}}, placeholderValue: 'Schnell hinzufügen…', value: Schnell hinzufügen…
+      TextField, 0x118a9f840, {{53.0, 402.5}, {301.6, 33.5}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+    }
+    ↪︎Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+      Output: {
+        TextField, 0x118aa5040, {{53.0, 402.5}, {301.6, 33.5}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+      }
+      ↪︎Find: First Match
+        Output: {
+          TextField, 0x1188de580, {{53.0, 402.5}, {301.6, 33.5}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+        }
+
+    t =    13.72s             Wait for com.johannesemmrich.Restock to idle
+    t =    14.73s         Retrying `Type 'CGU5ZN' into "Z.B. ABCD-EFG-HIJ" TextField` (attempt #3)
+    t =    14.73s             Wait for com.johannesemmrich.Restock to idle
+    t =    14.76s             Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    14.80s             Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    14.83s                 Wait for henemm.Meditationstimer-iOS to idle
+    t =    15.80s             Open com.johannesemmrich.Restock
+    t =    15.83s                 Activate com.johannesemmrich.Restock
+    t =    15.91s                     Wait for com.johannesemmrich.Restock to idle
+    t =    16.00s             Synthesize event
+    t =    16.02s                 Get number of matches for: Elements containing elements matching predicate 'hasKeyboardFocus == 1'
+    t =    16.08s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    16.20s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    16.26s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    16.31s                 Find: Descendants matching type TextField
+    t =    16.31s                 Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    16.31s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    16.42s                 Find: Descendants matching type TextField
+    t =    16.42s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    16.48s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    16.59s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    16.64s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    16.70s                 Find: Descendants matching type TextField
+    t =    16.70s                 Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+    t =    16.70s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    16.76s                 Find: Descendants matching type TextField
+    t =    16.76s                 Requesting snapshot of accessibility hierarchy for app with pid 38651
+    t =    16.83s                 Failed: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{16.0, 134.0}, {102.0, 11.3}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ'
+Element debug description:
+Attributes: TextField, 0x11896f480, {{168.0, 407.1}, {261.4, 29.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Element subtree:
+ →TextField, 0x11896f480, {{168.0, 407.1}, {261.4, 29.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Path to element:
+ →Application, 0x10b244780, pid: 38651, label: 'Restock'
+  ↳Window (Main), 0x10b244500, {{127.0, 63.7}, {343.4, 746.7}}
+   ↳Other, 0x118945900, {{127.0, 63.7}, {343.4, 746.7}}
+    ↳Other, 0x118944dc0, {{110.6, 113.5}, {346.8, 700.5}}
+     ↳Other, 0x118944f00, {{110.6, 113.5}, {346.8, 700.5}}
+      ↳Other, 0x118944b40, {{110.6, 113.5}, {346.8, 700.5}}
+       ↳Other, 0x118945400, {{110.6, 113.5}, {346.8, 700.5}}
+        ↳Other, 0x1189452c0, {{95.9, 109.8}, {350.7, 708.5}}
+         ↳Other, 0x1189443c0, {{95.9, 109.8}, {350.7, 708.5}}
+          ↳Other, 0x1189461c0, {{95.9, 109.8}, {350.7, 708.5}}
+           ↳Other, 0x1189457c0, {{95.9, 109.8}, {350.7, 708.5}}
+            ↳Other, 0x118944000, {{82.8, 105.6}, {355.2, 717.6}}
+             ↳Other, 0x118946080, {{82.8, 105.6}, {355.2, 717.6}}
+              ↳ScrollView, 0x118944140, {{82.8, 105.6}, {355.2, 717.6}}
+               ↳Other, 0x118944780, {{82.8, 167.5}, {355.2, 318.1}}
+                ↳TextField, 0x11896f480, {{168.0, 407.1}, {261.4, 29.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Query chain:
+ →Find: Target Application 'com.johannesemmrich.Restock'
+  Output: {
+    Application, 0x1188debc0, pid: 38651, label: 'Restock'
+  }
+  ↪︎Find: Descendants matching type TextField
+    Output: {
+      TextField, 0x118adef80, {{64.4, 300.8}, {242.5, 21.7}}, placeholderValue: 'Schnell hinzufügen…', value: Schnell hinzufügen…
+      TextField, 0x118a9da40, {{52.2, 402.4}, {302.1, 33.6}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+    }
+    ↪︎Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+      Output: {
+        TextField, 0x1189961c0, {{52.2, 402.4}, {302.1, 33.6}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+      }
+      ↪︎Find: First Match
+        Output: {
+          TextField, 0x118ab66c0, {{51.5, 402.4}, {302.7, 33.6}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+        }
+
+    t =    16.83s             Wait for com.johannesemmrich.Restock to idle
+    t =    16.85s         Requesting snapshot of accessibility hierarchy for app with pid 38651
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockUITests/RestockUITests.swift:111: error: -[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup] : Failed to synthesize event: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{16.0, 134.0}, {102.0, 11.3}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ'
+Element debug description:
+Attributes: TextField, 0x11896f480, {{168.0, 407.1}, {261.4, 29.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Element subtree:
+ →TextField, 0x11896f480, {{168.0, 407.1}, {261.4, 29.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Path to element:
+ →Application, 0x10b244780, pid: 38651, label: 'Restock'
+  ↳Window (Main), 0x10b244500, {{127.0, 63.7}, {343.4, 746.7}}
+   ↳Other, 0x118945900, {{127.0, 63.7}, {343.4, 746.7}}
+    ↳Other, 0x118944dc0, {{110.6, 113.5}, {346.8, 700.5}}
+     ↳Other, 0x118944f00, {{110.6, 113.5}, {346.8, 700.5}}
+      ↳Other, 0x118944b40, {{110.6, 113.5}, {346.8, 700.5}}
+       ↳Other, 0x118945400, {{110.6, 113.5}, {346.8, 700.5}}
+        ↳Other, 0x1189452c0, {{95.9, 109.8}, {350.7, 708.5}}
+         ↳Other, 0x1189443c0, {{95.9, 109.8}, {350.7, 708.5}}
+          ↳Other, 0x1189461c0, {{95.9, 109.8}, {350.7, 708.5}}
+           ↳Other, 0x1189457c0, {{95.9, 109.8}, {350.7, 708.5}}
+            ↳Other, 0x118944000, {{82.8, 105.6}, {355.2, 717.6}}
+             ↳Other, 0x118946080, {{82.8, 105.6}, {355.2, 717.6}}
+              ↳ScrollView, 0x118944140, {{82.8, 105.6}, {355.2, 717.6}}
+               ↳Other, 0x118944780, {{82.8, 167.5}, {355.2, 318.1}}
+                ↳TextField, 0x11896f480, {{168.0, 407.1}, {261.4, 29.0}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+Query chain:
+ →Find: Target Application 'com.johannesemmrich.Restock'
+  Output: {
+    Application, 0x1188debc0, pid: 38651, label: 'Restock'
+  }
+  ↪︎Find: Descendants matching type TextField
+    Output: {
+      TextField, 0x118adef80, {{64.4, 300.8}, {242.5, 21.7}}, placeholderValue: 'Schnell hinzufügen…', value: Schnell hinzufügen…
+      TextField, 0x118a9da40, {{52.2, 402.4}, {302.1, 33.6}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+    }
+    ↪︎Find: Elements matching predicate 'placeholderValue == "Z.B. ABCD-EFG-HIJ"'
+      Output: {
+        TextField, 0x1189961c0, {{52.2, 402.4}, {302.1, 33.6}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+      }
+      ↪︎Find: First Match
+        Output: {
+          TextField, 0x118ab66c0, {{51.5, 402.4}, {302.7, 33.6}}, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: Z.B. ABCD-EFG-HIJ
+        }
+
+    t =    16.92s Tear Down
+Test Case '-[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup]' failed (17.122 seconds).
+Test Suite 'RestockUITests' failed at 2026-09-22 16:26:19.636.
+	 Executed 4 tests, with 3 failures (0 unexpected) in 71.939 (71.948) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-09-22 16:26:19.637.
+	 Executed 4 tests, with 3 failures (0 unexpected) in 71.939 (71.949) seconds
+Test Suite 'Selected tests' failed at 2026-09-22 16:26:19.637.
+	 Executed 4 tests, with 3 failures (0 unexpected) in 71.939 (71.950) seconds
+2026-09-22 16:26:41.062 xcodebuild[38242:63245453] [MT] IDETestOperationsObserverDebug: 118.799 elapsed -- Testing started completed.
+2026-09-22 16:26:41.062 xcodebuild[38242:63245453] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-22 16:26:41.062 xcodebuild[38242:63245453] [MT] IDETestOperationsObserverDebug: 118.800 sec, +118.800 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Logs/Test/Test-Restock-2026.09.22_16-24-40-+0200.xcresult
+
+Failing tests:
+	RestockUITests.testAddStoreAndQuickAddItemShowsPriceWithoutCrash()
+	RestockUITests.testJoinSharedListSheetIsScrollableAndUsable()
+	RestockUITests.testJoinWithLegacySixCharacterCodeTriggersLookup()
+
+** TEST FAILED **
+
+Testing started

@@ -69,15 +69,21 @@ final class ReceiptParserReweTests: XCTestCase {
     /// bereits auf der Namenszeile stehenden Gesamtpreis nur bestätigt (4×0,39=1,56;
     /// 0,706kg×2,49€/kg≈1,76€) — anders als das Lidl-Format, wo der Gesamtpreis NUR aus dieser
     /// zweiten Zeile berechenbar ist. Der bereits korrekte Preis von der Namenszeile darf durch
-    /// die Zusatzzeile nicht verändert/verdoppelt werden.
+    /// die Zusatzzeile nicht verändert/verdoppelt werden — die Zeile darf aber auch nicht
+    /// verworfen werden (Issue #9): Stückzahl und Gewicht gehören der Position darüber
+    /// (AC1/AC2), sonst lernt `ReceiptScannerView.save()` 1,56 € pro Brötchen statt 0,39 €.
     func testQuantityAndWeightFollowupLinesDoNotOverrideAlreadyKnownTotal() throws {
         let result = ReceiptParserService.parse(Self.reweLines)
 
         let broetchen = try XCTUnwrap(result.first { $0.name.lowercased().contains("laugenbroetchen") })
         XCTAssertEqual(broetchen.price, 1.56, accuracy: 0.01)
+        XCTAssertEqual(broetchen.quantity, 4, accuracy: 0.001, "AC1: Stückzahl aus '4 Stk x 0,39' gehört zur Brötchen-Position")
+        XCTAssertNil(broetchen.weightBasis, "AC1: Stückzahl-Zeile setzt keinen Gewichts-Divisor")
 
         let banane = try XCTUnwrap(result.first { $0.name.lowercased().contains("banane") })
         XCTAssertEqual(banane.price, 1.76, accuracy: 0.01)
+        XCTAssertEqual(banane.weightBasis ?? -1, 706, accuracy: 0.01, "AC2: Gewicht aus '0,706 kg x 2,49 EUR/kg' als Gramm-Basis")
+        XCTAssertEqual(banane.quantity, 1, accuracy: 0.001, "AC2: Gewicht darf nicht als Stückzahl landen")
     }
 
     func testNoAdminOrTaxLinesLeakIntoResults() {

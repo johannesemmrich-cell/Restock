@@ -1,0 +1,293 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=3066F2CC-A9AD-40F9-A2E7-A29B1BEA6AD1" "-only-testing:RestockTests/SharedModelContainerExtensionDetectionTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCartWidgets/Info.plist (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCartWidgets/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockShareExtension/Info.plist (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockShareExtension/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftConstValuesFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.LinkFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.LinkFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json
+
+SwiftDriver RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan -experimental-emit-module-separately -disable-cmo
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockTests (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    
+
+SwiftCompile normal arm64 Compiling\ SharedModelContainerExtensionDetectionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift (in target 'RestockTests' from project 'Restock')
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:55:34: error: cannot convert value of type '_' to expected argument type 'Bool'
+ 53 |     func testDetectionIsFalseForTheMainAppProcess() {
+ 54 |         XCTAssertFalse(
+ 55 |             SharedModelContainer.isAppExtension(bundleURL: Bundle.main.bundleURL),
+    |                                  `- error: cannot convert value of type '_' to expected argument type 'Bool'
+ 56 |             """
+ 57 |             Der Unit-Test läuft im App-Prozess (TEST_HOST = Restock.app). Wird er hier als \
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:55:34: error: type 'SharedModelContainer' has no member 'isAppExtension'
+ 53 |     func testDetectionIsFalseForTheMainAppProcess() {
+ 54 |         XCTAssertFalse(
+ 55 |             SharedModelContainer.isAppExtension(bundleURL: Bundle.main.bundleURL),
+    |                                  `- error: type 'SharedModelContainer' has no member 'isAppExtension'
+ 56 |             """
+ 57 |             Der Unit-Test läuft im App-Prozess (TEST_HOST = Restock.app). Wird er hier als \
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:69:34: error: cannot convert value of type '_' to expected argument type 'Bool'
+ 67 |     func testDetectionIsFalseForAnAppBundlePath() {
+ 68 |         XCTAssertFalse(
+ 69 |             SharedModelContainer.isAppExtension(bundleURL: mainAppBundleURL),
+    |                                  `- error: cannot convert value of type '_' to expected argument type 'Bool'
+ 70 |             "Ein auf .app endender Bundle-Pfad ist die Haupt-App, keine Erweiterung."
+ 71 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:69:34: error: type 'SharedModelContainer' has no member 'isAppExtension'
+ 67 |     func testDetectionIsFalseForAnAppBundlePath() {
+ 68 |         XCTAssertFalse(
+ 69 |             SharedModelContainer.isAppExtension(bundleURL: mainAppBundleURL),
+    |                                  `- error: type 'SharedModelContainer' has no member 'isAppExtension'
+ 70 |             "Ein auf .app endender Bundle-Pfad ist die Haupt-App, keine Erweiterung."
+ 71 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:78:34: error: cannot convert value of type '_' to expected argument type 'Bool'
+ 76 |     func testDetectionIsTrueForTheShareExtensionBundlePath() {
+ 77 |         XCTAssertTrue(
+ 78 |             SharedModelContainer.isAppExtension(bundleURL: shareExtensionBundleURL),
+    |                                  `- error: cannot convert value of type '_' to expected argument type 'Bool'
+ 79 |             "RestockShareExtension.appex ist der Prozess, der in Issue #4 abstürzt — er MUSS erkannt werden."
+ 80 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:78:34: error: type 'SharedModelContainer' has no member 'isAppExtension'
+ 76 |     func testDetectionIsTrueForTheShareExtensionBundlePath() {
+ 77 |         XCTAssertTrue(
+ 78 |             SharedModelContainer.isAppExtension(bundleURL: shareExtensionBundleURL),
+    |                                  `- error: type 'SharedModelContainer' has no member 'isAppExtension'
+ 79 |             "RestockShareExtension.appex ist der Prozess, der in Issue #4 abstürzt — er MUSS erkannt werden."
+ 80 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:89:34: error: cannot convert value of type '_' to expected argument type 'Bool'
+ 87 |     func testDetectionIsTrueForTheWidgetBundlePath() {
+ 88 |         XCTAssertTrue(
+ 89 |             SharedModelContainer.isAppExtension(bundleURL: widgetBundleURL),
+    |                                  `- error: cannot convert value of type '_' to expected argument type 'Bool'
+ 90 |             "SmartCartWidgets.appex muss ebenfalls als Erweiterung erkannt werden."
+ 91 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:89:34: error: type 'SharedModelContainer' has no member 'isAppExtension'
+ 87 |     func testDetectionIsTrueForTheWidgetBundlePath() {
+ 88 |         XCTAssertTrue(
+ 89 |             SharedModelContainer.isAppExtension(bundleURL: widgetBundleURL),
+    |                                  `- error: type 'SharedModelContainer' has no member 'isAppExtension'
+ 90 |             "SmartCartWidgets.appex muss ebenfalls als Erweiterung erkannt werden."
+ 91 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:99:34: error: cannot convert value of type '_' to expected argument type 'Bool'
+ 97 |         let withSlash = URL(fileURLWithPath: shareExtensionBundleURL.path + "/", isDirectory: true)
+ 98 |         XCTAssertTrue(
+ 99 |             SharedModelContainer.isAppExtension(bundleURL: withSlash),
+    |                                  `- error: cannot convert value of type '_' to expected argument type 'Bool'
+100 |             "Ein abschließender Schrägstrich darf die Erkennung nicht kippen."
+101 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:99:34: error: type 'SharedModelContainer' has no member 'isAppExtension'
+ 97 |         let withSlash = URL(fileURLWithPath: shareExtensionBundleURL.path + "/", isDirectory: true)
+ 98 |         XCTAssertTrue(
+ 99 |             SharedModelContainer.isAppExtension(bundleURL: withSlash),
+    |                                  `- error: type 'SharedModelContainer' has no member 'isAppExtension'
+100 |             "Ein abschließender Schrägstrich darf die Erkennung nicht kippen."
+101 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:112:51: error: type 'SharedModelContainer' has no member 'storeConfigurations'
+110 |     /// Vergleich in `make()` nicht bemerken — dieser hier schon.
+111 |     func testMainAppStillPrefersTheCloudKitMirroredConfiguration() {
+112 |         let configurations = SharedModelContainer.storeConfigurations(forBundleAt: mainAppBundleURL)
+    |                                                   `- error: type 'SharedModelContainer' has no member 'storeConfigurations'
+113 | 
+114 |         XCTAssertEqual(
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:136:55: error: type 'SharedModelContainer' has no member 'storeConfigurations'
+134 |     func testAppExtensionNeverBuildsACloudKitConfiguration() {
+135 |         for (name, url) in [("Share Extension", shareExtensionBundleURL), ("Widget", widgetBundleURL)] {
+136 |             let configurations = SharedModelContainer.storeConfigurations(forBundleAt: url)
+    |                                                       `- error: type 'SharedModelContainer' has no member 'storeConfigurations'
+137 | 
+138 |             XCTAssertEqual(
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:154:45: error: type 'SharedModelContainer' has no member 'storeConfigurations'
+152 |     /// ausschließlich über die Spiegelung, niemals über den Store selbst.
+153 |     func testExtensionAndAppOpenTheSameStoreLocation() {
+154 |         let appLocal = SharedModelContainer.storeConfigurations(forBundleAt: mainAppBundleURL).last
+    |                                             `- error: type 'SharedModelContainer' has no member 'storeConfigurations'
+155 |         let extensionLocal = SharedModelContainer.storeConfigurations(forBundleAt: shareExtensionBundleURL).first
+156 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:155:51: error: type 'SharedModelContainer' has no member 'storeConfigurations'
+153 |     func testExtensionAndAppOpenTheSameStoreLocation() {
+154 |         let appLocal = SharedModelContainer.storeConfigurations(forBundleAt: mainAppBundleURL).last
+155 |         let extensionLocal = SharedModelContainer.storeConfigurations(forBundleAt: shareExtensionBundleURL).first
+    |                                                   `- error: type 'SharedModelContainer' has no member 'storeConfigurations'
+156 | 
+157 |         XCTAssertEqual(
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:157:9: error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+155 |         let extensionLocal = SharedModelContainer.storeConfigurations(forBundleAt: shareExtensionBundleURL).first
+156 | 
+157 |         XCTAssertEqual(
+    |         `- error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+158 |             appLocal?.url, extensionLocal?.url,
+159 |             "Erweiterung und Haupt-App müssen exakt dieselbe Store-Datei öffnen — nur mit bzw. ohne Spiegelung."
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:173:34: error: cannot convert value of type '_' to expected argument type 'Bool'
+171 |     func testPreCloudBackupRunsOnlyInTheMainApp() {
+172 |         XCTAssertTrue(
+173 |             SharedModelContainer.shouldRunPreCloudBackup(forBundleAt: mainAppBundleURL),
+    |                                  `- error: cannot convert value of type '_' to expected argument type 'Bool'
+174 |             "Die Haupt-App macht weiterhin die einmalige Sicherung vor ihrem ersten Cloud-Versuch."
+175 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:173:34: error: type 'SharedModelContainer' has no member 'shouldRunPreCloudBackup'
+171 |     func testPreCloudBackupRunsOnlyInTheMainApp() {
+172 |         XCTAssertTrue(
+173 |             SharedModelContainer.shouldRunPreCloudBackup(forBundleAt: mainAppBundleURL),
+    |                                  `- error: type 'SharedModelContainer' has no member 'shouldRunPreCloudBackup'
+174 |             "Die Haupt-App macht weiterhin die einmalige Sicherung vor ihrem ersten Cloud-Versuch."
+175 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:177:34: error: cannot convert value of type '_' to expected argument type 'Bool'
+175 |         )
+176 |         XCTAssertFalse(
+177 |             SharedModelContainer.shouldRunPreCloudBackup(forBundleAt: shareExtensionBundleURL),
+    |                                  `- error: cannot convert value of type '_' to expected argument type 'Bool'
+178 |             "Die Share Extension darf das einmalige Sicherungsfenster nicht verbrauchen — sie berührt den Cloud-Pfad nie."
+179 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:177:34: error: type 'SharedModelContainer' has no member 'shouldRunPreCloudBackup'
+175 |         )
+176 |         XCTAssertFalse(
+177 |             SharedModelContainer.shouldRunPreCloudBackup(forBundleAt: shareExtensionBundleURL),
+    |                                  `- error: type 'SharedModelContainer' has no member 'shouldRunPreCloudBackup'
+178 |             "Die Share Extension darf das einmalige Sicherungsfenster nicht verbrauchen — sie berührt den Cloud-Pfad nie."
+179 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:181:34: error: cannot convert value of type '_' to expected argument type 'Bool'
+179 |         )
+180 |         XCTAssertFalse(
+181 |             SharedModelContainer.shouldRunPreCloudBackup(forBundleAt: widgetBundleURL),
+    |                                  `- error: cannot convert value of type '_' to expected argument type 'Bool'
+182 |             "Gleiches gilt für das Widget."
+183 |         )
+
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift:181:34: error: type 'SharedModelContainer' has no member 'shouldRunPreCloudBackup'
+179 |         )
+180 |         XCTAssertFalse(
+181 |             SharedModelContainer.shouldRunPreCloudBackup(forBundleAt: widgetBundleURL),
+    |                                  `- error: type 'SharedModelContainer' has no member 'shouldRunPreCloudBackup'
+182 |             "Gleiches gilt für das Widget."
+183 |         )
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ExistingDataSurvivesCloudEnableTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SchemaCloudKitCompatibilityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptHistoryMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptKnownItemNamesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedItemDataPhotoRegressionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/PhotoCompressorTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptParserPriceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/PriceProvenanceMigrationTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptParserReweTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptParserLidlFullReceiptTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptNameAIResolverSanitizeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/AssignmentServiceDetectStoreTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptParserStornoTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptAbbreviationExpansionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/QuickAddParserTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ConsumptionPatternTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/StorePresetsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/AssignmentServiceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/PurchaseRecordDeletionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptParserSuggestionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/ReceiptScannerReResolutionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/DateFixtures.swift -primary-file /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift -emit-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedModelContainerExtensionDetectionTests.d -emit-const-values-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedModelContainerExtensionDetectionTests.swiftconstvalues -emit-reference-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedModelContainerExtensionDetectionTests.swiftdeps -serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedModelContainerExtensionDetectionTests.dia -target arm64-apple-ios18.0-simulator -disable-cross-import-overlay-search -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/CoreData.swiftoverlay -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationModelsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationModelsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftDataMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftDataMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan -enable-anonymous-context-mangled-names -file-compilation-dir /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name RestockTests -const-gather-protocols-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -disable-clang-spi -clang-target arm64-apple-ios27.0-simulator -target-sdk-version 27.0 -target-sdk-name iphonesimulator27.0 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedModelContainerExtensionDetectionTests.o -debug-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -index-unit-output-path /Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedModelContainerExtensionDetectionTests.o -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan
+    builtin-SwiftPerFileCompile SharedModelContainerExtensionDetectionTests.swift
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-bwqvkryccezmztgqsfprpvgrxnnq/Logs/Test/Test-Restock-2026.09.20_19-37-12-+0200.xcresult
+
+Testing failed:
+	Cannot convert value of type '_' to expected argument type 'Bool'
+	Type 'SharedModelContainer' has no member 'isAppExtension'
+	Cannot convert value of type '_' to expected argument type 'Bool'
+	Type 'SharedModelContainer' has no member 'isAppExtension'
+	Cannot convert value of type '_' to expected argument type 'Bool'
+	Type 'SharedModelContainer' has no member 'isAppExtension'
+	Cannot convert value of type '_' to expected argument type 'Bool'
+	Type 'SharedModelContainer' has no member 'isAppExtension'
+	Cannot convert value of type '_' to expected argument type 'Bool'
+	Type 'SharedModelContainer' has no member 'isAppExtension'
+	Type 'SharedModelContainer' has no member 'storeConfigurations'
+	Type 'SharedModelContainer' has no member 'storeConfigurations'
+	Type 'SharedModelContainer' has no member 'storeConfigurations'
+	Type 'SharedModelContainer' has no member 'storeConfigurations'
+	Failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+	Cannot convert value of type '_' to expected argument type 'Bool'
+	Type 'SharedModelContainer' has no member 'shouldRunPreCloudBackup'
+	Cannot convert value of type '_' to expected argument type 'Bool'
+	Type 'SharedModelContainer' has no member 'shouldRunPreCloudBackup'
+	Cannot convert value of type '_' to expected argument type 'Bool'
+	Type 'SharedModelContainer' has no member 'shouldRunPreCloudBackup'
+	Testing cancelled because the build failed.
+
+** TEST FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ SharedModelContainerExtensionDetectionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift (in target 'RestockTests' from project 'Restock')
+	SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/cheerful-fluttering-tarjan/RestockTests/SharedModelContainerExtensionDetectionTests.swift (in target 'RestockTests' from project 'Restock')
+	Testing project Restock with scheme Restock
+(3 failures)

@@ -41,10 +41,15 @@ final class LiveActivityService {
             return
         }
 
-        // Nach App-Neustart: vorhandene Live Activity wiederfinden statt neue starten
+        // Nach App-Neustart: vorhandene Live Activity wiederfinden statt neue starten. Nur eine
+        // noch AKTIVE Activity zählt als Treffer (Issue #40) — end() lässt eine beendete Activity
+        // wegen ihrer Dismissal-Gnadenfrist (siehe end() unten) noch bis zu 4s in `.activities`
+        // stehen. Ohne diesen Zustandscheck würde ein erneutes Öffnen der Liste innerhalb dieser
+        // Frist sich an die sterbende Activity hängen und nur `.update()` auf ihr aufrufen, was
+        // ActivityKit auf einer bereits beendeten Activity wirkungslos verwirft.
         if currentActivity == nil {
             currentActivity = Activity<ShoppingActivityAttributes>.activities
-                .first(where: { $0.attributes.storeName == store.name })
+                .first(where: { $0.attributes.storeName == store.name && $0.activityState == .active })
         }
 
         trackedStore = store

@@ -55,8 +55,8 @@ final class ReceiptParserPriceTests: XCTestCase {
     }
 
     /// Der Gewichts-Divisor muss getrennt von `quantity` ankommen: `quantity` wird in der
-    /// Review-UI als "N × Preis" angezeigt (`ReceiptLineRow.detailText`) — 500 dort würde
-    /// "500 × ..." zeigen, als hätte der Nutzer 500 Stück gekauft.
+    /// Review-UI als "N St." angezeigt (`ReceiptReviewCard.priceSummary`) — 500 dort würde
+    /// "500 St." zeigen, als hätte der Nutzer 500 Stück gekauft.
     func testWeightLineSetsGramWeightBasisNotQuantity() throws {
         let lines = ["Skyr Natur 500g", "0,500 kg x 2,29"]
 
@@ -302,5 +302,55 @@ final class ReceiptParserPriceTests: XCTestCase {
 
         let mandeln = try XCTUnwrap(result.first { $0.name.lowercased().contains("mandel") })
         XCTAssertEqual(mandeln.quantity, 2, accuracy: 0.001)
+    }
+    // MARK: - Issue #9: Bestätigungszeile unter einer Namenszeile MIT Preis (Rewe-eBon-Format)
+
+    /// AC6 — Rechenprobe schlägt fehl (3 × 0,50 = 1,50 ≠ 1,00, z. B. OCR-Zahlendreher): Die
+    /// Bestätigungszeile wird konsumiert, aber NICHT zugeschrieben — und sie wird auch nicht zur
+    /// eigenen Phantom-Position (beobachtet ohne Schutz: Name "Stk x 0,50").
+    func testBareConfirmationLineWithFailedSanityCheckIsConsumedNotAttributed() throws {
+        let result = ReceiptParserService.parse(["Produkt  1,00 A", "3 Stk x 0,50"])
+
+        XCTAssertEqual(result.count, 1, "Keine Phantom-Position aus der Bestätigungszeile. Erkannt: \(result.map(\.name))")
+        let produkt = try XCTUnwrap(result.first)
+        XCTAssertEqual(produkt.price, 1.00, accuracy: 0.001)
+        XCTAssertEqual(produkt.quantity, 1, accuracy: 0.001, "Unpassende Stückzahl darf nicht übernommen werden")
+        XCTAssertNil(produkt.weightBasis)
+    }
+
+    /// AC7 — Bestätigungszeile als allererste Zeile: keine Vorposition, an die sie gehören könnte.
+    /// Ergebnis: keine Position, kein Absturz.
+    func testBareConfirmationLineAsFirstLineDoesNotCrash() {
+        let result = ReceiptParserService.parse(["4 Stk x 0,39", "0,706 kg x 2,49 EUR/kg"])
+
+        XCTAssertTrue(result.isEmpty, "Bestätigungszeilen ohne Vorposition dürfen keine Position bilden. Erkannt: \(result.map(\.name))")
+    }
+
+    /// AC8 — Durchstich bis zum gelernten Preis, dieselbe Kette wie `assertLearnedPriceRoundTrip`
+    /// oben, nur mit den Rewe-Zeilen aus Issue #9: Brötchen lernen 0,39 €/Stück (nicht 1,56 €),
+    /// Banane lernt einen Gramm-Preis, der für 1 kg wieder 2,49 € ergibt (nicht 1,76 €/g).
+    func testLearnedPriceRoundTripForReweBroetchenAndBanane() throws {
+        func learnedPerUnit(_ lines: [String]) throws -> Double {
+            let receiptLine = try XCTUnwrap(ReceiptParserService.parse(lines).first)
+            let editableLine = EditableReceiptLine(
+                name: receiptLine.name,
+                price: receiptLine.price,
+                quantity: receiptLine.quantity,
+                unit: receiptLine.unit,
+                weightBasis: receiptLine.weightBasis
+            )
+            let quantity = editableLine.learningQuantity(matchQuantityAmount: nil)
+            return receiptLine.price / quantity
+        }
+
+        XCTAssertEqual(try learnedPerUnit(["LAUGENBROETCHEN 1,56 B", "4 Stk x 0,39"]), 0.39, accuracy: 0.001,
+                       "AC8: Stückpreis = 1,56 / 4")
+
+        let bananePerGram = try learnedPerUnit(["BANANE CHIQUITA 1,76 B", "0,706 kg x 2,49 EUR/kg"])
+        let store = Store(name: "Rewe", emoji: "🛒", colorHex: "#123456")
+        store.learnedPrices["banane chiquita"] = bananePerGram
+        let kilo = ShoppingItem(name: "Banane Chiquita", quantityAmount: 1000, unit: "g", store: store)
+        XCTAssertEqual(try XCTUnwrap(kilo.estimatedLineTotal), 2.49, accuracy: 0.01,
+                       "AC8: 1 kg Bananen kostet wieder den Bon-Kilopreis")
     }
 }

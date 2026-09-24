@@ -38,8 +38,9 @@ struct ResolvedReceiptLine: Codable {
     var suggestions: [ReceiptSuggestion]
     var matchedItemID: UUID?
     /// Gesetzt, wenn Stufe 5 (Apple Intelligence) diesen Namen vervollständigt hat — steuert die
-    /// Art.-50-Kennzeichnung im Review (ReceiptLineRow). Default `false`, damit ein bereits
-    /// gespeicherter, älterer `SharedReceiptPayload` ohne dieses Feld nicht am Decodieren scheitert.
+    /// Art.-50-Kennzeichnung im Review (`ReceiptReviewCard`, KI-Options-Zeile). Default `false`,
+    /// damit ein bereits gespeicherter, älterer `SharedReceiptPayload` ohne dieses Feld nicht am
+    /// Decodieren scheitert.
     var resolvedByAI: Bool = false
 }
 
@@ -98,7 +99,7 @@ enum ReceiptResolutionService {
                 let candidates = completedItems.isEmpty ? [] :
                     ReceiptParserService.completedItemCandidates(for: line.name, in: completedItems, linePrice: line.price)
                 let suggestionCandidates = suggestionPool.isEmpty ? [] :
-                    ReceiptParserService.completedItemCandidates(for: line.name, in: suggestionPool, linePrice: line.price)
+                    ReceiptParserService.completedItemCandidates(for: line.name, in: suggestionPool, linePrice: line.price, limit: 3)
 
                 if let alias = ReceiptAliasService.shared.resolve(line.name) {
                     resolvedNames[index] = alias

@@ -36,10 +36,18 @@ struct EditableReceiptLine: Identifiable {
     /// verknüpft.
     var matchedItemID: UUID? = nil
     /// Siehe `ResolvedReceiptLine.resolvedByAI` — steuert die Art.-50-Kennzeichnung in
-    /// `ReceiptLineRow`. Wird zurückgesetzt, sobald der Name manuell überschrieben wird (gleicher
+    /// `ReceiptReviewCard`. Wird zurückgesetzt, sobald der Name manuell überschrieben wird (gleicher
     /// Reset-Zeitpunkt wie `matchedItemID`), da die Kennzeichnung sonst fälschlich an einem vom
     /// Nutzer selbst eingetippten Text hängen bliebe.
     var resolvedByAI: Bool = false
+    /// KI-Vorschlag und die zugehörige Artikel-Zuordnung, unabhängig von der aktuellen Auswahl —
+    /// erlaubt, die KI-Options-Zeile der Prüf-Karte nach einer zwischenzeitlich anderen Auswahl
+    /// wieder exakt herzustellen (`resolvedByAI = true`, `matchedItemID` wie ursprünglich).
+    /// Gesetzt an allen drei Konstruktionsstellen, wann immer `resolvedByAI` dort true ist.
+    /// NIE Teil von `ResolvedReceiptLine`/`ReceiptSuggestion` (Wire-Format zur Share Extension) —
+    /// rein lokaler Anzeigezustand der Karte, ohne Prozessgrenze.
+    var aiSuggestedName: String? = nil
+    var aiSuggestedMatchedItemID: UUID? = nil
 
     /// Divisor fürs Preis-Lernen in `save()` — als Methode extrahiert (statt inline dort
     /// berechnet), damit Tests exakt diese Formel aufrufen statt sie nachzubilden. Ein Test, der
@@ -84,6 +92,11 @@ struct EditableReceiptLine: Identifiable {
             result[index].suggestions = r.suggestions
             result[index].matchedItemID = r.matchedItemID
             result[index].resolvedByAI = r.resolvedByAI
+            // Siehe `aiSuggestedName`: nur merken, wenn diese Auflösung wirklich von der KI kam.
+            if r.resolvedByAI {
+                result[index].aiSuggestedName = r.name
+                result[index].aiSuggestedMatchedItemID = r.matchedItemID
+            }
         }
         return result
     }
@@ -92,10 +105,22 @@ struct EditableReceiptLine: Identifiable {
 // MARK: - Main Scanner View
 
 struct ReceiptScannerView: View {
-    @Bindable var store: Store
+    // `@State` statt `@Bindable`: kein Code in dieser Datei bindet über `$store.…` an einzelne
+    // Felder, `@State` erlaubt dafür — anders als `@Bindable` — das komplette AUSTAUSCHEN der
+    // Referenz aus einer Button-Action heraus (Store-Korrektur unten), Lesezugriffe auf
+    // `store.name` etc. bleiben über SwiftData/Observation trotzdem live nachverfolgt.
+    @State private var store: Store
+    /// `true`, solange der über die Share Extension übergebene Laden nur geraten war (siehe
+    /// `SharedReceiptPayload.storeConfidentlyDetected`) und der Nutzer das noch nicht bestätigt
+    /// oder korrigiert hat — steuert die Korrektur-Aufforderung unten in `reviewView`. Bleibt bei
+    /// einem normalen Kamera-/Foto-Scan (`init(store:)`) immer `false`, dort wählt der Nutzer den
+    /// Laden ohnehin schon vorher selbst (`StoreDetailView`).
+    @State private var storeNeedsConfirmation = false
+    @State private var showStoreCorrection = false
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
     @Query(sort: \PurchaseRecord.date, order: .reverse) private var allRecords: [PurchaseRecord]
 
     @State private var showCamera = false
@@ -123,15 +148,18 @@ struct ReceiptScannerView: View {
     enum Phase { case capture, processing, review }
 
     init(store: Store) {
-        self.store = store
+        _store = State(initialValue: store)
     }
 
     /// Einstiegspunkt für einen per Share Extension bereits erkannten Bon (siehe
     /// `ReceiptShareHandoff`) — startet direkt in `.review`, ohne Foto-Aufnahme/OCR-Schritt,
     /// mit denselben Feldern befüllt, die ein normaler Scan an diesem Punkt hätte. Gleiches
     /// Init-Muster wie `StoreDetailView.init` (State(initialValue:) für vorbefüllte @State).
-    init(store: Store, prefilled: SharedReceiptPayload) {
-        self.store = store
+    /// `storeConfidentlyDetected`: siehe `SharedReceiptPayload` — steuert, ob `store` hier unten
+    /// gleich als bestätigungspflichtiger Rate-Treffer markiert wird.
+    init(store: Store, prefilled: SharedReceiptPayload, storeConfidentlyDetected: Bool) {
+        _store = State(initialValue: store)
+        _storeNeedsConfirmation = State(initialValue: !storeConfidentlyDetected)
         _phase = State(initialValue: .review)
         _cameFromShareHandoff = State(initialValue: true)
         _parsedLines = State(initialValue: prefilled.lines.map { line in
@@ -144,7 +172,9 @@ struct ReceiptScannerView: View {
                 weightBasis: line.weightBasis,
                 suggestions: line.suggestions,
                 matchedItemID: line.matchedItemID,
-                resolvedByAI: line.resolvedByAI
+                resolvedByAI: line.resolvedByAI,
+                aiSuggestedName: line.resolvedByAI ? line.name : nil,
+                aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil
             )
         })
         _debugRawLines = State(initialValue: prefilled.rawLines)
@@ -179,8 +209,27 @@ struct ReceiptScannerView: View {
     /// Siehe `ChipToolbarItem`-Dokumentation (DesignSystem.swift): der Button muss immer
     /// deklariert bleiben, hier nur per `disabled`/`opacity` gesteuert werden — kein `if` um das
     /// ganze `ChipToolbarItem`.
+    ///
+    /// `!storeNeedsConfirmation`: OHNE diese Bedingung ließ sich „Speichern" antippen, während das
+    /// orange Banner unten noch unbeachtet stand — ein per Share Extension nur GERATENER Laden
+    /// (`storeConfidentlyDetected: false`) hätte dann still und ungefragt alle Positionen bekommen,
+    /// obwohl der Nutzer den Hinweis nie bestätigt oder korrigiert hat. Genau der Fall, den das
+    /// Banner eigentlich verhindern soll (Nutzerrückmeldung 20.09.2026: "keine falsch-Zuordnung...
+    /// sondern dies für die App offen gelassen" — das Banner allein war nur ein Hinweis, keine
+    /// erzwungene Entscheidung).
     private var canSave: Bool {
-        phase == .review && !parsedLines.filter(\.isIncluded).isEmpty
+        phase == .review && !storeNeedsConfirmation && !parsedLines.filter(\.isIncluded).isEmpty
+    }
+
+    /// Kandidaten für den Korrektur-Dialog — der aktuell angenommene Laden fehlt bewusst (Tippen
+    /// darauf wäre ein No-Op), gleiches Muster wie `otherStoresForCorrection` in HomeView.
+    private var otherStoresForCorrection: [Store] {
+        activeStores.filter { $0.id != store.id }
+    }
+
+    private func correctStore(to newStore: Store) {
+        store = newStore
+        storeNeedsConfirmation = false
     }
 
     var body: some View {
@@ -202,6 +251,7 @@ struct ReceiptScannerView: View {
                 ChipToolbarItem(placement: .confirmationAction) {
                     Button { save() } label: { Text("Speichern").toolbarChip(prominent: true) }
                         .buttonStyle(.pressable)
+                        .accessibilityIdentifier("receiptReview.saveButton")
                         .disabled(!canSave)
                         .opacity(phase == .review ? 1 : 0)
                         // Explizit statt sich auf automatisches Opacity-Ausblenden zu verlassen —
@@ -221,6 +271,18 @@ struct ReceiptScannerView: View {
             ImagePickerRepresentable(sourceType: .photoLibrary) { image in
                 guard let image else { return }
                 process(image)
+            }
+        }
+        // Gleiches Muster wie die Store-Korrektur in HomeView (`correctQuickAddStore`): eine
+        // `confirmationDialog` mit einem Button je aktivem Laden, statt eine eigene Picker-UI zu
+        // erfinden.
+        .confirmationDialog(
+            "Welcher Laden ist das?",
+            isPresented: $showStoreCorrection,
+            titleVisibility: .visible
+        ) {
+            ForEach(otherStoresForCorrection) { candidate in
+                Button("\(candidate.emoji) \(candidate.name)") { correctStore(to: candidate) }
             }
         }
         .devFeedback(context: debugRawLines.isEmpty
@@ -325,14 +387,91 @@ struct ReceiptScannerView: View {
                     }
                 }
             } else {
-                Section {
-                    ForEach($parsedLines) { $line in
-                        ReceiptLineRow(line: $line)
+                // Ganz oben, noch vor den Positionen: eine falsche Laden-Zuordnung betrifft ALLE
+                // Positionen zugleich (Preise landen im falschen Laden), muss also vor allem
+                // anderen aufgelöst werden. Nur sichtbar, solange der Laden aus der Share
+                // Extension noch ein unbestätigter Rate-Treffer ist (`storeNeedsConfirmation`).
+                //
+                // ZWEI explizite Aktionen statt nur "antippen zum Ändern": eine geratene Zuordnung
+                // kann ja auch zufällig stimmen, dann soll der Nutzer das aktiv bestätigen können,
+                // statt gezwungen zu sein, denselben Laden nochmal aus dem Korrektur-Dialog
+                // auszuwählen. Beide Wege setzen `storeNeedsConfirmation = false` und schalten
+                // damit „Speichern" (`canSave`) erst frei — reines Ignorieren des Banners speichert
+                // NICHT mehr stillschweigend beim geratenen Laden.
+                if storeNeedsConfirmation {
+                    Section {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Laden nicht sicher erkannt")
+                                        .font(.system(size: 14, weight: .semibold))
+                                    Text("Angenommen: \(store.emoji) \(store.name) — bitte bestätigen oder ändern, bevor du speicherst.")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: "questionmark.circle.fill")
+                                    .foregroundStyle(.orange)
+                            }
+                            HStack(spacing: 8) {
+                                Button {
+                                    storeNeedsConfirmation = false
+                                } label: {
+                                    Label("\(store.name) ist richtig", systemImage: "checkmark")
+                                        .font(.system(size: 13, weight: .medium))
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(.orange)
+
+                                Button {
+                                    showStoreCorrection = true
+                                } label: {
+                                    Text("Anderer Laden")
+                                        .font(.system(size: 13, weight: .medium))
+                                }
+                                .buttonStyle(.bordered)
+                            }
+                        }
+                        .padding(.vertical, 4)
                     }
+                    .listRowBackground(Color.orange.opacity(0.08))
+                }
+
+                Section {
+                    // Index zusätzlich zur Binding-Identität, damit jede Zeile ihre eigenen
+                    // `accessibilityIdentifier`-Suffixe bekommt (receiptReview.line.<index>.…).
+                    // Bewusst über `enumerated()` statt `indices` — die ForEach-Identität bleibt
+                    // die `Identifiable`-id der Zeile, nicht der reine Array-Index.
+                    // ALLE Karten in EINER Listenzeile, nicht eine Zeile je Position: `List`
+                    // erzeugt Zeilen erst, wenn sie in Sichtweite kommen. Die Karten sind
+                    // deutlich höher als die frühere einzeilige Darstellung, sodass schon die
+                    // vierte Position eines Bons nicht mehr existiert, bevor der Nutzer
+                    // gescrollt hat — weder für VoiceOver noch für einen Bildschirmtest.
+                    // Eine Zelle wird dagegen immer vollständig aufgebaut. Preis dafür: bei
+                    // sehr langen Bons entsteht die ganze Liste auf einmal (siehe „Risiken" der
+                    // Spec, Abschnitt Kartenhöhe).
+                    VStack(spacing: 12) {
+                        ForEach(Array($parsedLines.enumerated()), id: \.element.id) { index, $line in
+                            ReceiptReviewCard(line: $line, index: index)
+                        }
+                    }
+                    // Jede Karte schwebt als eigene Fläche im Seitenfluss (Ebene 0,
+                    // DesignSystem §4) — ohne Listenhintergrund und ohne die Standard-
+                    // Trennlinie, die sonst quer durch die Karten liefe.
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
                 } header: {
-                    Text("Gefunden: \(parsedLines.count) Positionen")
+                    // Ersetzt „Gefunden: N Positionen" UND die frühere separate
+                    // „Ausgewählt"-Section: Anzahl, Auswahl und Summe an einer Stelle.
+                    Text(ReceiptReviewCard.sectionHeaderText(
+                        count: parsedLines.count,
+                        selected: parsedLines.filter(\.isIncluded).count,
+                        sum: selectedTotal))
+                        .textCase(nil)
+                        .accessibilityIdentifier("receiptReview.sectionHeader")
                 } footer: {
-                    Text("Tippe auf einen Namen um ihn zu korrigieren – z. B. \"MDHSZ\" → \"Mozzarella\" – oder tippe einen Vorschlag an.")
+                    Text("Tippe eine Zeile an, um den Artikel zu wählen, oder \"Anderer Name …\" für eine eigene Eingabe.")
                 }
 
                 if let totalMismatchWarning {
@@ -342,16 +481,6 @@ struct ReceiptScannerView: View {
                             .foregroundStyle(.orange)
                     }
                     .listRowBackground(Color.orange.opacity(0.08))
-                }
-
-                Section {
-                    HStack {
-                        Text("Ausgewählt")
-                            .fontWeight(.semibold)
-                        Spacer()
-                        Text(selectedTotal, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
-                            .fontWeight(.semibold)
-                    }
                 }
 
                 Section {
@@ -433,7 +562,9 @@ struct ReceiptScannerView: View {
                         weightBasis: line.weightBasis,
                         suggestions: line.suggestions,
                         matchedItemID: line.matchedItemID,
-                        resolvedByAI: line.resolvedByAI
+                        resolvedByAI: line.resolvedByAI,
+                        aiSuggestedName: line.resolvedByAI ? line.name : nil,
+                        aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil
                     )
                 }
                 phase = .review
@@ -463,7 +594,7 @@ struct ReceiptScannerView: View {
             // Substring basierende 7-Tage/Store-Suche über ALLE Datensätze als Fallback.
             //
             // `matchedItemID` ist oft bewusst nil: eine manuelle Namens-Korrektur im Review löscht
-            // sie extra (siehe ReceiptLineRow), damit ein automatischer Match/Chip-Tap nicht
+            // sie extra (siehe ReceiptReviewCard), damit ein automatischer Match/Chip-Tap nicht
             // fälschlich am alten, überschriebenen Namen hängen bleibt. Der gerade korrigierte
             // Name IST aber die verlässlichste verfügbare Evidenz an dieser Stelle — bevor auf die
             // unscharfe 7-Tage-Historie unten zurückgefallen wird, zusätzlich exakt (nicht nur
@@ -563,119 +694,6 @@ struct ReceiptScannerView: View {
         // Bon-Import löste nie eine Push-Notification für andere Mitglieder aus).
         SyncCoordinator.shared.pushInBackground(store)
         dismiss()
-    }
-}
-
-// MARK: - Receipt Line Row
-
-private struct ReceiptLineRow: View {
-    @Binding var line: EditableReceiptLine
-
-    /// "6 × 0,20 € · 1,5l" — Menge, Stückpreis und Größe aus dem Bon, falls erkannt.
-    private var detailText: String? {
-        var parts: [String] = []
-        if line.quantity > 1 {
-            let unitPrice = line.price / line.quantity
-            let formatted = unitPrice.formatted(.currency(code: Locale.current.currency?.identifier ?? "EUR"))
-            parts.append("\(Int(line.quantity)) × \(formatted)")
-        }
-        if !line.unit.isEmpty { parts.append(line.unit) }
-        return parts.isEmpty ? nil : parts.joined(separator: " · ")
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 10) {
-                Toggle("", isOn: $line.isIncluded)
-                    .labelsHidden()
-
-                VStack(alignment: .leading, spacing: 1) {
-                    HStack(spacing: 4) {
-                        // Eigenes Binding statt $line.name direkt: eine manuelle Korrektur hier
-                        // löst die Artikel-Identität aus einem automatischen Match/Chip-Tap wieder
-                        // — sonst bliebe `matchedItemID` fälschlich mit dem alten, jetzt
-                        // überschriebenen Namen verknüpft, und save() würde den gelernten Preis
-                        // auf den falschen Artikel zurückschreiben.
-                        TextField("Artikelname", text: Binding(
-                            get: { line.name },
-                            set: { newValue in
-                                line.name = newValue
-                                line.matchedItemID = nil
-                                line.resolvedByAI = false
-                            }
-                        ))
-                            .font(.system(size: 15))
-                        Image(systemName: "pencil")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.tertiary)
-                        // Art.-50-Kennzeichnung: dieser Name wurde von Apple Intelligence
-                        // vervollständigt (ReceiptResolutionService Stufe 5), nicht nur per
-                        // Alias/Fuzzy-Match gefunden — muss laut EU-Kommissions-FAQ direkt an der
-                        // Stelle sichtbar sein, an der der Vorschlag erscheint, nicht nur in der
-                        // Datenschutzerklärung (siehe EU-AI-Act-Recherche).
-                        if line.resolvedByAI {
-                            Label("KI-Vorschlag", systemImage: "sparkles")
-                                .font(.system(size: 10, weight: .semibold))
-                                .foregroundStyle(Color.accent)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.accentContainer, in: Capsule())
-                        }
-                    }
-                    if let detailText {
-                        Text(detailText)
-                            .font(.system(size: 11))
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .opacity(line.isIncluded ? 1 : 0.4)
-
-                Spacer()
-
-                HStack(spacing: 2) {
-                    Text(Locale.current.currencySymbol ?? "€")
-                        .font(.system(size: 13))
-                        .foregroundStyle(.secondary)
-                    TextField("0,00", value: $line.price, format: .number.precision(.fractionLength(2)))
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.trailing)
-                        .frame(width: 62)
-                        .font(.system(size: 14, weight: .medium))
-                }
-                .opacity(line.isIncluded ? 1 : 0.4)
-            }
-
-            // Antippbare Alternativen aus den gerade abgehakten Artikeln dieses Stores — nur
-            // sichtbar, wenn es einen plausiblen, noch nicht übernommenen Kandidaten gibt (siehe
-            // ReceiptParserService.completedItemCandidates). Gleiche Bausteine wie die
-            // Mengen-Vorschlags-Chips in HomeView (RCRadius.tag/Color.surface/.hairline,
-            // .buttonStyle(.pressable), Haptics.impact).
-            if !line.suggestions.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(line.suggestions) { suggestion in
-                            Button {
-                                line.name = suggestion.name
-                                line.matchedItemID = suggestion.itemID
-                                line.resolvedByAI = false
-                                Haptics.impact(.light)
-                            } label: {
-                                Text(suggestion.name)
-                                    .lineLimit(1)
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundStyle(Color.textSecondary)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 5)
-                                    .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.tag))
-                                    .overlay(RoundedRectangle(cornerRadius: RCRadius.tag).strokeBorder(Color.hairline))
-                            }
-                            .buttonStyle(.pressable)
-                        }
-                    }
-                }
-                .opacity(line.isIncluded ? 1 : 0.4)
-            }
-        }
     }
 }
 
