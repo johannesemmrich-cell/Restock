@@ -143,6 +143,11 @@ final class ReceiptReviewCardTests: XCTestCase {
     }
 
     /// AC2 — fünf Treffer werden auf drei gekappt; der Dienst liefert heute bis zu fünf.
+    ///
+    /// AC4 (Issue #37): Keiner der drei nach der Kappung verbliebenen Treffer entspricht dem
+    /// geltenden Namen „Milch" — der geltende Name wird deshalb zusätzlich vorausgewählt
+    /// eingefügt, und der schwächste der drei (zuletzt gereiht, „Vollmilch") entfällt dafür.
+    /// Insgesamt bleibt es bei drei inhaltlichen Kandidaten (zwei Treffer + der geltende Name).
     func testFiveSuggestionsAreCappedToThreeListMatches() {
         let suggestions = ["Hafermilch", "Buttermilch", "Vollmilch", "Kondensmilch", "Reismilch"]
             .map { ReceiptSuggestion(name: $0, itemID: UUID()) }
@@ -151,8 +156,56 @@ final class ReceiptReviewCardTests: XCTestCase {
         let options = ReceiptReviewCard.selectionOptions(for: line)
 
         let listMatches = options.filter { if case .listMatch = $0 { return true } else { return false } }
-        XCTAssertEqual(listMatches.count, 3, "Höchstens drei Treffer erlaubt. Bekommen: \(describe(options))")
-        XCTAssertEqual(options.count, 4, "Drei Treffer plus eigener Name. Bekommen: \(describe(options))")
+        XCTAssertEqual(listMatches.count, 2,
+                        "Zwei Treffer bleiben, der dritte weicht dem vorausgewählten geltenden Namen "
+                        + "(Issue #37). Bekommen: \(describe(options))")
+        XCTAssertEqual(options.count, 4, "Drei inhaltliche Kandidaten plus eigener Name. Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[0]), "aktuell:Milch",
+                       "Der geltende Name muss vorausgewählt an erster Stelle stehen (Issue #37, AC-4). "
+                       + "Bekommen: \(describe(options))")
+    }
+
+    /// AC4 (Issue #37) — passt keiner der Kandidaten zum aktuell geltenden Namen, wird dieser
+    /// zusätzlich als vorausgewählte Zeile angeboten; dafür entfällt der schwächste (zuletzt
+    /// gereihte) bisherige Kandidat, sodass es bei max. drei inhaltlichen Optionen bleibt.
+    func testCurrentNameIsOfferedAndPreselectedWhenNoCandidateMatches() {
+        let line = makeLine(
+            name: "Milch",
+            price: 0.99,
+            originalName: "MILCH",
+            suggestions: ["Hafermilch", "Buttermilch", "Vollmilch"]
+                .map { ReceiptSuggestion(name: $0, itemID: UUID()) })
+
+        let options = ReceiptReviewCard.selectionOptions(for: line)
+
+        XCTAssertEqual(options.count, 4, "Drei inhaltliche Kandidaten plus eigener Name. Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[0]), "aktuell:Milch",
+                       "Der geltende Name muss vorausgewählt an erster Stelle stehen. Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[1]), "treffer:Hafermilch", "Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[2]), "treffer:Buttermilch", "Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[3]), "eigener", "Bekommen: \(describe(options))")
+        XCTAssertFalse(options.contains { describe($0) == "treffer:Vollmilch" },
+                        "Der schwächste (zuletzt gereihte) Kandidat muss entfallen. Bekommen: \(describe(options))")
+    }
+
+    /// Regressionsschutz (Issue #37) — ist der geltende Name leer, ändert sich nichts: kein
+    /// zusätzlicher Kandidat, die drei Treffer bleiben unangetastet.
+    func testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches() {
+        let line = makeLine(
+            name: "",
+            price: 0.99,
+            originalName: "UNLESBARER BONTEXT",
+            suggestions: ["Hafermilch", "Buttermilch", "Vollmilch"]
+                .map { ReceiptSuggestion(name: $0, itemID: UUID()) })
+
+        let options = ReceiptReviewCard.selectionOptions(for: line)
+
+        let listMatches = options.filter { if case .listMatch = $0 { return true } else { return false } }
+        XCTAssertEqual(listMatches.count, 3,
+                        "Bei leerem Namen darf keine Zeile entfallen. Bekommen: \(describe(options))")
+        XCTAssertEqual(options.count, 4, "Drei Treffer plus eigener Name, keine zusätzliche Zeile. Bekommen: \(describe(options))")
+        XCTAssertFalse(options.contains { describe($0).hasPrefix("aktuell:") },
+                        "Bei leerem Namen darf keine `.currentName`-Zeile entstehen. Bekommen: \(describe(options))")
     }
 
     /// AC2 — trägt ein Treffer denselben Namen wie der KI-Vorschlag, erscheint er nur einmal.

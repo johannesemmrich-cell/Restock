@@ -419,10 +419,21 @@ struct ReceiptReviewCard: View {
         // 4. Auf drei kappen.
         candidates = Array(candidates.prefix(3))
 
-        // 5. Gar kein Kandidat: den heutigen Namen anbieten.
+        // 5. (Issue #37) Kein verbliebener Kandidat entspricht dem geltenden Namen, und er ist
+        //    nicht leer: ihn zusätzlich als vorausgewählte Zeile an Position 0 einfügen. Dafür
+        //    entfällt der schwächste (zuletzt gereihte) bisherige Kandidat, damit es bei max. drei
+        //    inhaltlichen Optionen bleibt (Invariante 5). Ist `line.name` leer, greift diese Regel
+        //    nicht — weiter mit Regel 6 (heutiges Verhalten).
+        if !line.name.isEmpty,
+           !candidates.contains(where: { $0.matchableName?.caseInsensitiveCompare(line.name) == .orderedSame }) {
+            if candidates.count >= 3 { candidates.removeLast() }
+            candidates.insert(.currentName(name: line.name), at: 0)
+        }
+
+        // 6. Gar kein Kandidat: den heutigen Namen anbieten.
         if candidates.isEmpty { candidates = [.currentName(name: line.name)] }
 
-        // 6. „Anderer Name …" immer als letzte Zeile.
+        // 7. „Anderer Name …" immer als letzte Zeile.
         return candidates + [.custom]
     }
 
