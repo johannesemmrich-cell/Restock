@@ -384,6 +384,15 @@ enum ReceiptParserService {
                 continue
             }
 
+            // Dieselbe Bestätigungszeile DIREKT nach einer STORNO-Zeile ("STORNO", "-4 Stk x 0,39"):
+            // der Block oben greift dort wegen `!pendingStornoCancel` nicht, die Zeile fiele sonst in
+            // den " x "-Zweig und würde zur Phantom-Position mit dem Zeilentext als Namen (Issue #24).
+            // `pendingStornoCancel` bleibt bewusst stehen — die eigentliche Storno-Verrechnung soll
+            // erst beim nächsten Namens-/Preis-Zeilenpaar greifen, diese Zeile verbraucht sie nicht.
+            if pendingStornoCancel, isBareQuantityOrWeightConfirmationLine(trimmed) {
+                continue
+            }
+
             // Gewichts-/Multiplikatorzeilen ("0,436 kg x 12,49", "…  0,584 kg x 1,29  EUR/Kg")
             // MÜSSEN vor dem allgemeinen Admin-Filter geprüft werden: die Mengeneinheit "EUR/Kg"
             // enthält "eur" (Admin-Schlüsselwort) und würde sonst JEDE Gewichtszeile — und damit
