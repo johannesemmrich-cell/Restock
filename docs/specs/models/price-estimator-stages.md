@@ -118,16 +118,16 @@ Fertig ist diese Änderung, wenn:
   Eintrag enthält, UND der Artikelname zusätzlich ein `specificPrices`-Keyword träfe / When ein
   `ShoppingItem` mit diesem Namen und Store angelegt wird / Then gewinnt der gelernte Preis
   (Stufe 1 vor Stufe 2), `estimatedPriceIsAutoDerived == false`.
-  - Test: `PriceEstimatorStagesTests.testLearnedPriceTakesPriorityOverProductKeywordAndCategory()`
+  - Test: *(wird nach der TDD-RED-Phase eingetragen)*
 - **AC-2:** Given kein Store bzw. kein fuzzy passender gelernter Preis, UND der Artikelname
   trifft ein `specificPrices`-Keyword / When ein `ShoppingItem` angelegt wird / Then wird der
   Produkt-Keyword-Preis verwendet, nicht die Kategorie-Pauschale (Stufe 2 vor Stufe 3),
   `estimatedPriceIsAutoDerived == true`.
-  - Test: `PriceEstimatorStagesTests.testProductKeywordTakesPriorityOverCategoryFallback()`
+  - Test: *(wird nach der TDD-RED-Phase eingetragen)*
 - **AC-3:** Given kein Store, kein Keyword-Treffer, aber eine bekannte Kategorie / When ein
   `ShoppingItem` angelegt wird / Then wird die Kategorie-Pauschale verwendet (Stufe 3),
   `estimatedPriceIsAutoDerived == true`.
-  - Test: `PriceEstimatorStagesTests.testCategoryFallbackUsedWhenNoLearnedPriceAndNoKeywordMatch()`
+  - Test: *(wird nach der TDD-RED-Phase eingetragen)*
 
 ## Test Plan
 
