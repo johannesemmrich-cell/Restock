@@ -45,7 +45,9 @@ struct ConsumptionPattern {
     let averageDaysBetweenPurchases: Double
     let averageQuantityPerPurchase: Double
     let lastPurchaseDate: Date
-    let estimatedNextPurchaseDate: Date
+    /// Nächster Termin. Hat „Hab noch“ (C1) ihn verschoben, ist das der verschobene Termin —
+    /// der errechnete steht dann in `originalEstimatedDate`.
+    var estimatedNextPurchaseDate: Date
     var mode: Mode = .interval
     /// Anzahl verschiedener Kauftage — mehrere Käufe am selben Tag zählen einmal (B6).
     var purchaseCount: Int = 0
@@ -57,16 +59,25 @@ struct ConsumptionPattern {
     /// Menge und Einheit, mit der ein übernommener Vorschlag auf die Liste kommt (B5).
     var typicalQuantity: Double = 1
     var unit: String = ""
+    /// C1: Der errechnete Termin, falls „Hab noch“ ihn verschoben hat, sonst `nil`.
+    var originalEstimatedDate: Date? = nil
 
-    /// Länge des aktuellen Zyklus in Tagen: letzter Kauf → errechneter Termin.
+    /// Der errechnete Termin ohne „Hab noch“-Verschiebung. Daran erkennt eine Verschiebung, ob
+    /// sie noch gilt: Ein neuer Kauf ändert ihn und beendet damit die Verschiebung.
+    var baseEstimatedDate: Date { originalEstimatedDate ?? estimatedNextPurchaseDate }
+
+    var isSnoozed: Bool { originalEstimatedDate != nil }
+
+    /// Länge des aktuellen Zyklus in Tagen: letzter Kauf → errechneter Termin (ohne „Hab noch“).
     var cycleDays: Double {
-        estimatedNextPurchaseDate.timeIntervalSince(lastPurchaseDate) / 86400
+        baseEstimatedDate.timeIntervalSince(lastPurchaseDate) / 86400
     }
 
     /// Vorlauf, ab dem ein Artikel als „bald fällig“ gilt. War fest 7, dann (Nutzerwunsch
     /// 24.08.2026, zu viele gleichzeitige Meldungen) fest 2 Tage. Seit Issue #30 (B3) 20 % des
     /// aktuellen Zyklus, mindestens 1 und höchstens 7 Tage: bei 10 Tagen also weiterhin 2 Tage,
-    /// bei 30 Tagen 6, bei 3 Tagen 1.
+    /// bei 30 Tagen 6, bei 3 Tagen 1. Eine „Hab noch“-Verschiebung (C1) vergrößert das Fenster
+    /// nicht, weil `cycleDays` vom errechneten Termin ausgeht.
     var dueWindowDays: Int {
         Int(max(1, min(7, (cycleDays * 0.2).rounded())))
     }

@@ -63,8 +63,14 @@ struct HomeView: View {
     private var autoSortByLearnedOrder = true
     // Persisted map itemName(lowercased) → dismissed estimatedNextPurchaseDate. A dismissal
     // hides the suggestion for its current purchase cycle only: the next real purchase shifts
-    // the estimated date, which makes the item eligible for the banner again.
+    // the estimated date, which makes the item eligible for the banner again. Since Issue #30 C1
+    // only written by A4 (accepted, then deleted without purchase) — the banner's ✕ menu uses
+    // ReplenishmentSnoozes („Hab noch“) and ReplenishmentBlocklist („Nicht mehr vorschlagen“).
     @AppStorage("dismissedReplenishments") private var dismissedReplenishmentsData = Data()
+    // Not read directly — observed so the banner refreshes when Settings (a sheet, so no
+    // onAppear here afterwards) un-blocks an item or resets a „Hab noch“ (Issue #30, C1).
+    @AppStorage(ReplenishmentBlocklist.defaultsKey) private var blockedReplenishmentsData = Data()
+    @AppStorage(ReplenishmentSnoozes.defaultsKey) private var snoozedReplenishmentsData = Data()
     // Persisted map ShoppingItem.id → suggestion it was accepted from (Issue #30, A4). Lets
     // refreshDueSoon() treat an accepted suggestion that is later deleted without a purchase like
     // a ✕ dismissal — see ReplenishmentFeedback.resolveAccepted.
@@ -288,6 +294,8 @@ struct HomeView: View {
                 }
             }
             .onChange(of: allRecords.count) { refreshDueSoon() }
+            .onChange(of: blockedReplenishmentsData) { refreshDueSoon() }
+            .onChange(of: snoozedReplenishmentsData) { refreshDueSoon() }
             .onChange(of: activeStores) {
                 // Nur synchronisieren, wenn gerade nicht gedraggt wird — sonst würde das
                 // @Query-Re-Sort die laufende Drag-Animation im Grid unterbrechen/flackern lassen.
@@ -906,14 +914,24 @@ struct HomeView: View {
                              : String(format: String(localized: "replenish.in.days"), pattern.daysUntilNeeded))
                             .font(.system(size: 12))
                             .foregroundStyle(Color.textSecondary)
-                        Button {
-                            dismissDueItem(pattern)
+                        // C1: ✕ unterscheidet „Hab noch“ (Termin verschieben) von „Nicht mehr
+                        // vorschlagen“ (dauerhaft ausblenden, in den Einstellungen umkehrbar).
+                        Menu {
+                            Button {
+                                snoozeDueItem(pattern)
+                            } label: {
+                                Label(String(localized: "replenish.snooze"), systemImage: "clock.arrow.circlepath")
+                            }
+                            Button(role: .destructive) {
+                                blockDueItem(pattern)
+                            } label: {
+                                Label(String(localized: "replenish.block"), systemImage: "nosign")
+                            }
                         } label: {
                             Image(systemName: "xmark.circle")
                                 .font(.system(size: 18))
                                 .foregroundStyle(Color.textSecondary.opacity(0.7))
                         }
-                        .buttonStyle(.pressable)
                     }
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
@@ -1542,7 +1560,14 @@ struct HomeView: View {
             dueSoonItems = []
             return
         }
-        let allPatterns = HabitService.dueSoonItems(allRecords: allRecords)
+        let snoozes = ReplenishmentSnoozes()
+        let patterns = HabitService.patterns(allRecords: allRecords)
+        snoozes.prune(keeping: patterns)
+        let allPatterns = HabitService.dueSoonItems(
+            from: patterns,
+            snoozes: snoozes.entries(),
+            blocked: ReplenishmentBlocklist().keys
+        )
         let pendingNames = Set(
             activeStores.flatMap { $0.pendingItems.map { $0.name.lowercased() } }
                 + storelessPending.map { $0.name.lowercased() }
@@ -1560,13 +1585,26 @@ struct HomeView: View {
         }
     }
 
-    private func dismissDueItem(_ pattern: ConsumptionPattern) {
-        var dismissed = dismissedReplenishments()
-        dismissed[pattern.itemName.lowercased()] = pattern.estimatedNextPurchaseDate.timeIntervalSince1970
-        persistDismissedReplenishments(dismissed)
-        ReplenishmentMetrics().record(.dismissed)
+    /// C1 „Hab noch“: verschiebt den Termin um den halben üblichen Abstand (1–14 Tage).
+    private func snoozeDueItem(_ pattern: ConsumptionPattern) {
+        ReplenishmentSnoozes().snooze(pattern)
+        ReplenishmentMetrics().record(.snoozed)
+        removeFromBanner(pattern)
+    }
+
+    /// C1 „Nicht mehr vorschlagen“: blendet den Artikel dauerhaft aus (umkehrbar in den
+    /// Einstellungen unter Developer → Ausgeblendete Vorschläge).
+    private func blockDueItem(_ pattern: ConsumptionPattern) {
+        ReplenishmentBlocklist().block(pattern.itemName)
+        ReplenishmentMetrics().record(.blocked)
+        removeFromBanner(pattern)
+    }
+
+    private func removeFromBanner(_ pattern: ConsumptionPattern) {
         NotificationService.shared.cancelReplenishment(itemName: pattern.itemName)
-        dueSoonItems.removeAll { $0.itemName == pattern.itemName }
+        withAnimation {
+            dueSoonItems.removeAll { $0.itemName == pattern.itemName }
+        }
         Haptics.impact(.light)
     }
 

@@ -58,10 +58,32 @@ struct HabitService {
     static func dueSoonItems(
         allRecords: [PurchaseRecord],
         now: Date = Date(),
-        closedDays: RetailClosedDays = .current
+        closedDays: RetailClosedDays = .current,
+        snoozes: [String: ReplenishmentSnooze] = [:],
+        blocked: Set<String> = []
     ) -> [ConsumptionPattern] {
-        patterns(allRecords: allRecords, closedDays: closedDays).filter {
-            isEligible($0, at: now) && ($0.isDueSoon(at: now) || $0.isOverdue(at: now))
+        dueSoonItems(
+            from: patterns(allRecords: allRecords, closedDays: closedDays),
+            now: now,
+            snoozes: snoozes,
+            blocked: blocked
+        )
+    }
+
+    /// C1: Artikel aus `blocked` („Nicht mehr vorschlagen“, Schlüssel klein geschrieben) fallen
+    /// ganz weg; gilt für einen Artikel noch ein „Hab noch“, zählt dessen verschobener Termin.
+    /// Die Eignung (B2/B4) wird weiterhin am errechneten Termin gemessen.
+    static func dueSoonItems(
+        from patterns: [ConsumptionPattern],
+        now: Date = Date(),
+        snoozes: [String: ReplenishmentSnooze] = [:],
+        blocked: Set<String> = []
+    ) -> [ConsumptionPattern] {
+        patterns.compactMap { pattern in
+            let key = pattern.itemName.lowercased()
+            guard !blocked.contains(key), isEligible(pattern, at: now) else { return nil }
+            let effective = snoozes[key].map { pattern.applying($0) } ?? pattern
+            return effective.isDueSoon(at: now) || effective.isOverdue(at: now) ? effective : nil
         }
     }
 
@@ -200,6 +222,151 @@ enum ReplenishmentFeedback {
     }
 }
 
+// MARK: - „Hab noch“ und „Nicht mehr vorschlagen“ (Issue #30, C1)
+
+/// Eine „Hab noch“-Verschiebung. Sie gilt nur, solange der errechnete Termin des Artikels noch
+/// `baseDate` ist — der nächste Kauf verschiebt den errechneten Termin und beendet sie damit.
+struct ReplenishmentSnooze: Codable, Equatable {
+    /// Artikelname wie im Banner (für die Anzeige in den Einstellungen).
+    let itemName: String
+    /// Errechneter Termin, für den die Verschiebung gilt (`timeIntervalSince1970`).
+    let baseDate: TimeInterval
+    /// Verschobener Termin (`timeIntervalSince1970`).
+    let snoozedUntil: TimeInterval
+}
+
+extension ConsumptionPattern {
+    /// Übernimmt eine „Hab noch“-Verschiebung, sofern sie noch zu diesem Termin gehört.
+    func applying(_ snooze: ReplenishmentSnooze) -> ConsumptionPattern {
+        guard snooze.baseDate == baseEstimatedDate.timeIntervalSince1970 else { return self }
+        var copy = self
+        copy.originalEstimatedDate = baseEstimatedDate
+        copy.estimatedNextPurchaseDate = Date(timeIntervalSince1970: snooze.snoozedUntil)
+        return copy
+    }
+}
+
+/// „Hab noch“ im Banner: verschiebt den Termin um die Hälfte des üblichen Abstands, mindestens
+/// 1 und höchstens 14 Tage (Entscheidung in Issue #30, Teil 4). Erneutes „Hab noch“ verschiebt
+/// nochmals um die Hälfte. Aus wiederholtem „Hab noch“ wird (noch) nicht gelernt.
+struct ReplenishmentSnoozes {
+    static let defaultsKey = "snoozedReplenishments"
+    static let minimumShiftDays = 1
+    static let maximumShiftDays = 14
+
+    let defaults: UserDefaults
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
+
+    static func shiftDays(for pattern: ConsumptionPattern) -> Int {
+        let half = Int((pattern.averageDaysBetweenPurchases / 2).rounded())
+        return max(minimumShiftDays, min(maximumShiftDays, half))
+    }
+
+    /// Klein geschriebener Artikelname → Verschiebung.
+    func entries() -> [String: ReplenishmentSnooze] {
+        guard let data = defaults.data(forKey: Self.defaultsKey) else { return [:] }
+        return (try? JSONDecoder().decode([String: ReplenishmentSnooze].self, from: data)) ?? [:]
+    }
+
+    /// Verschiebt ab dem angezeigten Termin — bei einem überfälligen Artikel ab jetzt, sonst
+    /// stünde er sofort wieder im Banner. Ein Sonntag/Feiertag wird wie in 4b auf den Tag davor
+    /// vorgezogen, aber nie auf oder vor den Ausgangstag.
+    @discardableResult
+    func snooze(
+        _ pattern: ConsumptionPattern,
+        now: Date = Date(),
+        closedDays: RetailClosedDays = .current,
+        calendar: Calendar = .current
+    ) -> Date {
+        let start = max(pattern.estimatedNextPurchaseDate, now)
+        let target = calendar.date(byAdding: .day, value: Self.shiftDays(for: pattern), to: start)
+            ?? start.addingTimeInterval(Double(Self.shiftDays(for: pattern)) * 86400)
+        var allowsSunday = false
+        if case .weekdays(let weekdays) = pattern.mode { allowsSunday = weekdays.contains(1) }
+        let until = closedDays.latestOpenDay(onOrBefore: target, after: start, allowSunday: allowsSunday, calendar: calendar)
+        var map = entries()
+        map[pattern.itemName.lowercased()] = ReplenishmentSnooze(
+            itemName: pattern.itemName,
+            baseDate: pattern.baseEstimatedDate.timeIntervalSince1970,
+            snoozedUntil: until.timeIntervalSince1970
+        )
+        persist(map)
+        return until
+    }
+
+    func remove(_ itemName: String) {
+        var map = entries()
+        map[itemName.lowercased()] = nil
+        persist(map)
+    }
+
+    func removeAll() {
+        defaults.removeObject(forKey: Self.defaultsKey)
+    }
+
+    /// Entfernt Verschiebungen, deren errechneter Termin nicht mehr gilt (Artikel inzwischen
+    /// gekauft) oder deren Artikel gar kein Muster mehr ergibt.
+    /// - Parameter patterns: alle Muster ohne Verschiebung (`HabitService.patterns`).
+    func prune(keeping patterns: [ConsumptionPattern]) {
+        let current = Dictionary(
+            patterns.map { ($0.itemName.lowercased(), $0.baseEstimatedDate.timeIntervalSince1970) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        let map = entries()
+        let kept = map.filter { current[$0.key] == $0.value.baseDate }
+        if kept.count != map.count { persist(kept) }
+    }
+
+    private func persist(_ map: [String: ReplenishmentSnooze]) {
+        defaults.set(try? JSONEncoder().encode(map), forKey: Self.defaultsKey)
+    }
+}
+
+/// „Nicht mehr vorschlagen“ im Banner: blendet einen Artikel dauerhaft aus, bis er in den
+/// Einstellungen (Developer → Ausgeblendete Vorschläge) wieder freigegeben wird. Gespeichert als
+/// JSON-`Data`, damit `HomeView` die Liste per `@AppStorage` beobachten kann.
+struct ReplenishmentBlocklist {
+    static let defaultsKey = "blockedReplenishments"
+
+    let defaults: UserDefaults
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
+
+    /// Artikelnamen wie beim Ausblenden angezeigt, alphabetisch.
+    func names() -> [String] {
+        guard let data = defaults.data(forKey: Self.defaultsKey),
+              let names = try? JSONDecoder().decode([String].self, from: data) else { return [] }
+        return names.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+    }
+
+    /// Klein geschriebene Namen, wie `HabitService.dueSoonItems(blocked:)` sie erwartet.
+    var keys: Set<String> { Set(names().map { $0.lowercased() }) }
+
+    func contains(_ itemName: String) -> Bool { keys.contains(itemName.lowercased()) }
+
+    func block(_ itemName: String) {
+        guard !contains(itemName) else { return }
+        persist(names() + [itemName])
+    }
+
+    func unblock(_ itemName: String) {
+        persist(names().filter { $0.lowercased() != itemName.lowercased() })
+    }
+
+    func removeAll() {
+        defaults.removeObject(forKey: Self.defaultsKey)
+    }
+
+    private func persist(_ names: [String]) {
+        defaults.set(try? JSONEncoder().encode(names), forKey: Self.defaultsKey)
+    }
+}
+
 // MARK: - Measurement (Issue #30, D1)
 
 struct ReplenishmentBacktest: Equatable {
@@ -226,8 +393,10 @@ struct ReplenishmentMetrics {
         case shown
         /// Per `+` oder „Alle hinzufügen“ übernommen.
         case accepted
-        /// Per ✕ weggeklickt.
-        case dismissed
+        /// „Hab noch“ (C1).
+        case snoozed
+        /// „Nicht mehr vorschlagen“ (C1).
+        case blocked
         /// Übernommen und ohne Kauf wieder von der Liste gelöscht (A4).
         case removedAfterAccept
     }

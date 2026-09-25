@@ -262,6 +262,12 @@ struct SettingsView: View {
                             Label("Nachkauf-Statistik", systemImage: "chart.bar.xaxis")
                         }
 
+                        NavigationLink {
+                            HiddenReplenishmentsView()
+                        } label: {
+                            Label("Ausgeblendete Vorschläge", systemImage: "eye.slash")
+                        }
+
                         Button(role: .destructive) {
                             developerMode = false
                             // Nachkauf-Erinnerungen sind außerhalb des Dev-Mode kein Feature mehr

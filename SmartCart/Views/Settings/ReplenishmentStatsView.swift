@@ -15,7 +15,10 @@ struct ReplenishmentStatsView: View {
         let metrics = ReplenishmentMetrics()
         let backtest = HabitService.backtest(allRecords: allRecords)
         let now = Date()
+        let snoozes = ReplenishmentSnoozes().entries()
+        let blocked = ReplenishmentBlocklist().keys
         let patterns = HabitService.patterns(allRecords: allRecords)
+            .map { pattern in snoozes[pattern.itemName.lowercased()].map { pattern.applying($0) } ?? pattern }
             .sorted { $0.itemName.localizedCaseInsensitiveCompare($1.itemName) == .orderedAscending }
         let shown = metrics.count(.shown)
 
@@ -23,7 +26,8 @@ struct ReplenishmentStatsView: View {
             Section {
                 statRow("Gezeigt", "\(shown)")
                 statRow("Übernommen", "\(metrics.count(.accepted))", detail: percent(metrics.count(.accepted), of: shown))
-                statRow("Weggeklickt (✕)", "\(metrics.count(.dismissed))", detail: percent(metrics.count(.dismissed), of: shown))
+                statRow("Hab noch", "\(metrics.count(.snoozed))", detail: percent(metrics.count(.snoozed), of: shown))
+                statRow("Nicht mehr vorschlagen", "\(metrics.count(.blocked))", detail: percent(metrics.count(.blocked), of: shown))
                 statRow("Übernommen, dann ohne Kauf gelöscht", "\(metrics.count(.removedAfterAccept))")
             } header: {
                 Text("Reaktionen im Banner")
@@ -52,7 +56,7 @@ struct ReplenishmentStatsView: View {
                         .foregroundStyle(.tertiary)
                 } else {
                     ForEach(patterns, id: \.itemName) { pattern in
-                        patternRow(pattern, now: now)
+                        patternRow(pattern, now: now, isBlocked: blocked.contains(pattern.itemName.lowercased()))
                     }
                 }
             } header: {
@@ -89,8 +93,10 @@ struct ReplenishmentStatsView: View {
         }
     }
 
-    private func patternRow(_ pattern: ConsumptionPattern, now: Date) -> some View {
-        let state = status(of: pattern, now: now)
+    private func patternRow(_ pattern: ConsumptionPattern, now: Date, isBlocked: Bool) -> some View {
+        let state: (label: String, color: Color) = isBlocked
+            ? (label: "ausgeblendet", color: .secondary)
+            : status(of: pattern, now: now)
         return VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(pattern.itemName)
@@ -116,6 +122,9 @@ struct ReplenishmentStatsView: View {
         case .irregular: return ("unregelmäßig", .secondary)
         case .habitEnded: return ("Gewohnheit beendet", .secondary)
         case nil:
+            if pattern.isSnoozed && !pattern.isDueSoon(at: now) && !pattern.isOverdue(at: now) {
+                return ("hab noch", .secondary)
+            }
             if pattern.isOverdue(at: now) { return ("überfällig", .danger) }
             if pattern.isDueSoon(at: now) { return ("fällig", .amber) }
             return ("aktiv", .accent)
