@@ -49,7 +49,7 @@ struct ConsumptionPattern {
 }
 
 extension Array where Element == PurchaseRecord {
-    func consumptionPattern(totalQuantityPerPurchase: Double = 1) -> ConsumptionPattern? {
+    func consumptionPattern() -> ConsumptionPattern? {
         guard count >= 2 else { return nil }
         let sorted = sorted { $0.date < $1.date }
 
@@ -63,12 +63,15 @@ extension Array where Element == PurchaseRecord {
         let avgInterval = cleaned.reduce(0, +) / Double(cleaned.count)
         let avgQty = sorted.map { $0.quantityAmount }.reduce(0, +) / Double(sorted.count)
         let last = sorted.last!.date
-        let scaledInterval = avgQty > 1 ? avgInterval * avgQty / totalQuantityPerPurchase : avgInterval
-        let nextDate = last.addingTimeInterval(scaledInterval * 86400)
+        // Der Kaufabstand wird bewusst NICHT mehr mit der Durchschnittsmenge multipliziert
+        // (Issue #30, A1): Abstand und Menge beschreiben denselben Verbrauch — wer alle 7 Tage
+        // 2 Stück kauft, braucht nach 7 Tagen wieder welche, nicht nach 14. Eine echte
+        // Verbrauchsrate (Menge ÷ Abstand) folgt als eigene Maßnahme (B5).
+        let nextDate = last.addingTimeInterval(avgInterval * 86400)
 
         return ConsumptionPattern(
             itemName: sorted.first!.itemName,
-            averageDaysBetweenPurchases: scaledInterval,
+            averageDaysBetweenPurchases: avgInterval,
             averageQuantityPerPurchase: avgQty,
             lastPurchaseDate: last,
             estimatedNextPurchaseDate: nextDate

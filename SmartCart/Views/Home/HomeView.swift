@@ -65,6 +65,10 @@ struct HomeView: View {
     // hides the suggestion for its current purchase cycle only: the next real purchase shifts
     // the estimated date, which makes the item eligible for the banner again.
     @AppStorage("dismissedReplenishments") private var dismissedReplenishmentsData = Data()
+    // Persisted map ShoppingItem.id → suggestion it was accepted from (Issue #30, A4). Lets
+    // refreshDueSoon() treat an accepted suggestion that is later deleted without a purchase like
+    // a ✕ dismissal — see ReplenishmentFeedback.resolveAccepted.
+    @AppStorage("acceptedReplenishments") private var acceptedReplenishmentsData = Data()
     @AppStorage("replenishmentCollapsed") private var replenishmentCollapsed = false
     @AppStorage("developerMode") private var developerMode = false
     @EnvironmentObject private var premium: PremiumService
@@ -1538,6 +1542,7 @@ struct HomeView: View {
             activeStores.flatMap { $0.pendingItems.map { $0.name.lowercased() } }
                 + storelessPending.map { $0.name.lowercased() }
         )
+        resolveAcceptedReplenishments(pendingNames: pendingNames, patterns: allPatterns)
         let dismissed = dismissedReplenishments()
         dueSoonItems = allPatterns.filter { pattern in
             guard !pendingNames.contains(pattern.itemName.lowercased()) else { return false }
@@ -1556,6 +1561,49 @@ struct HomeView: View {
         NotificationService.shared.cancelReplenishment(itemName: pattern.itemName)
         dueSoonItems.removeAll { $0.itemName == pattern.itemName }
         Haptics.impact(.light)
+    }
+
+    /// Issue #30, A4: accepted suggestions whose item has since been deleted without a purchase
+    /// count as dismissed for their estimated date.
+    private func resolveAcceptedReplenishments(pendingNames: Set<String>, patterns: [ConsumptionPattern]) {
+        let accepted = acceptedReplenishments()
+        guard !accepted.isEmpty else { return }
+        let trackedIDs = Array(accepted.keys)
+        // A failed fetch must not look like "all items deleted" — skip this round instead.
+        guard let existing = try? context.fetch(
+            FetchDescriptor<ShoppingItem>(predicate: #Predicate { trackedIDs.contains($0.id) })
+        ) else { return }
+        let result = ReplenishmentFeedback.resolveAccepted(
+            accepted,
+            existingItemIDs: Set(existing.map(\.id)),
+            pendingNames: pendingNames,
+            patterns: patterns
+        )
+        persistAcceptedReplenishments(result.stillTracked)
+        guard !result.dismissals.isEmpty else { return }
+        var dismissed = dismissedReplenishments()
+        dismissed.merge(result.dismissals) { _, new in new }
+        persistDismissedReplenishments(dismissed)
+        for name in result.dismissals.keys {
+            NotificationService.shared.cancelReplenishment(itemName: name)
+        }
+    }
+
+    private func trackAcceptedReplenishment(_ item: ShoppingItem, from pattern: ConsumptionPattern) {
+        var accepted = acceptedReplenishments()
+        accepted[item.id] = AcceptedReplenishment(
+            itemName: pattern.itemName,
+            estimatedNextPurchaseDate: pattern.estimatedNextPurchaseDate.timeIntervalSince1970
+        )
+        persistAcceptedReplenishments(accepted)
+    }
+
+    private func acceptedReplenishments() -> [UUID: AcceptedReplenishment] {
+        (try? JSONDecoder().decode([UUID: AcceptedReplenishment].self, from: acceptedReplenishmentsData)) ?? [:]
+    }
+
+    private func persistAcceptedReplenishments(_ map: [UUID: AcceptedReplenishment]) {
+        acceptedReplenishmentsData = (try? JSONEncoder().encode(map)) ?? Data()
     }
 
     private func dismissedReplenishments() -> [String: TimeInterval] {
@@ -1591,7 +1639,9 @@ struct HomeView: View {
         for pattern in dueSoonItems {
             let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
             let category = AssignmentService.category(for: pattern.itemName)
-            context.insert(ShoppingItem(name: pattern.itemName, category: category, store: store))
+            let item = ShoppingItem(name: pattern.itemName, category: category, store: store)
+            context.insert(item)
+            trackAcceptedReplenishment(item, from: pattern)
             touchedStores.append(store)
         }
         dueSoonItems = []
@@ -1601,7 +1651,9 @@ struct HomeView: View {
     private func addSingleDueItem(_ pattern: ConsumptionPattern) {
         let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
         let category = AssignmentService.category(for: pattern.itemName)
-        context.insert(ShoppingItem(name: pattern.itemName, category: category, store: store))
+        let item = ShoppingItem(name: pattern.itemName, category: category, store: store)
+        context.insert(item)
+        trackAcceptedReplenishment(item, from: pattern)
         dueSoonItems.removeAll { $0.itemName == pattern.itemName }
         Haptics.impact(.light)
         SyncCoordinator.shared.pushInBackground(store)
