@@ -256,6 +256,12 @@ struct SettingsView: View {
                             Label("Todos & Ideen", systemImage: "checklist")
                         }
 
+                        NavigationLink {
+                            ReplenishmentStatsView()
+                        } label: {
+                            Label("Nachkauf-Statistik", systemImage: "chart.bar.xaxis")
+                        }
+
                         Button(role: .destructive) {
                             developerMode = false
                             // Nachkauf-Erinnerungen sind außerhalb des Dev-Mode kein Feature mehr

@@ -892,9 +892,14 @@ struct HomeView: View {
                             }
                             .buttonStyle(.pressable)
                         }
-                        Text(pattern.itemName)
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(Color.ink)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(pattern.itemName)
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundStyle(Color.ink)
+                            Text(pattern.reasonText)
+                                .font(.system(size: 12))
+                                .foregroundStyle(Color.textSecondary)
+                        }
                         Spacer()
                         Text(pattern.isOverdue
                              ? String(localized: "replenish.overdue")
@@ -1549,6 +1554,7 @@ struct HomeView: View {
             return dismissed[pattern.itemName.lowercased()] != pattern.estimatedNextPurchaseDate.timeIntervalSince1970
         }
         pruneDismissedReplenishments(keeping: allPatterns)
+        ReplenishmentMetrics().recordShown(dueSoonItems)
         if notificationsEnabled {
             HabitService.scheduleReplenishmentNotifications(patterns: dueSoonItems)
         }
@@ -1558,6 +1564,7 @@ struct HomeView: View {
         var dismissed = dismissedReplenishments()
         dismissed[pattern.itemName.lowercased()] = pattern.estimatedNextPurchaseDate.timeIntervalSince1970
         persistDismissedReplenishments(dismissed)
+        ReplenishmentMetrics().record(.dismissed)
         NotificationService.shared.cancelReplenishment(itemName: pattern.itemName)
         dueSoonItems.removeAll { $0.itemName == pattern.itemName }
         Haptics.impact(.light)
@@ -1581,6 +1588,7 @@ struct HomeView: View {
         )
         persistAcceptedReplenishments(result.stillTracked)
         guard !result.dismissals.isEmpty else { return }
+        ReplenishmentMetrics().record(.removedAfterAccept, times: result.dismissals.count)
         var dismissed = dismissedReplenishments()
         dismissed.merge(result.dismissals) { _, new in new }
         persistDismissedReplenishments(dismissed)
@@ -1596,6 +1604,7 @@ struct HomeView: View {
             estimatedNextPurchaseDate: pattern.estimatedNextPurchaseDate.timeIntervalSince1970
         )
         persistAcceptedReplenishments(accepted)
+        ReplenishmentMetrics().record(.accepted)
     }
 
     private func acceptedReplenishments() -> [UUID: AcceptedReplenishment] {
@@ -1639,7 +1648,7 @@ struct HomeView: View {
         for pattern in dueSoonItems {
             let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
             let category = AssignmentService.category(for: pattern.itemName)
-            let item = ShoppingItem(name: pattern.itemName, category: category, store: store)
+            let item = makeReplenishmentItem(from: pattern, category: category, store: store)
             context.insert(item)
             trackAcceptedReplenishment(item, from: pattern)
             touchedStores.append(store)
@@ -1648,10 +1657,24 @@ struct HomeView: View {
         SyncCoordinator.shared.pushInBackground(touchedStores)
     }
 
+    /// B5: übernimmt die typische Menge und Einheit statt immer 1.
+    private func makeReplenishmentItem(from pattern: ConsumptionPattern, category: String, store: Store?) -> ShoppingItem {
+        let amount = pattern.typicalQuantity > 0 ? pattern.typicalQuantity : 1
+        let quantity = amount == amount.rounded() ? "\(Int(amount))" : String(format: "%.1f", amount)
+        return ShoppingItem(
+            name: pattern.itemName,
+            category: category,
+            quantity: quantity,
+            quantityAmount: amount,
+            unit: pattern.unit,
+            store: store
+        )
+    }
+
     private func addSingleDueItem(_ pattern: ConsumptionPattern) {
         let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
         let category = AssignmentService.category(for: pattern.itemName)
-        let item = ShoppingItem(name: pattern.itemName, category: category, store: store)
+        let item = makeReplenishmentItem(from: pattern, category: category, store: store)
         context.insert(item)
         trackAcceptedReplenishment(item, from: pattern)
         dueSoonItems.removeAll { $0.itemName == pattern.itemName }
