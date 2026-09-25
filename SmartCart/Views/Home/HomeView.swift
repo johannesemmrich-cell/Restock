@@ -534,6 +534,7 @@ struct HomeView: View {
                                             .frame(width: 38, height: 38)
                                         Text(store.emoji)
                                             .font(.system(size: 17))
+                                            .accessibilityHidden(true)
                                     }
                                     VStack(alignment: .leading, spacing: 3) {
                                         Text(store.name)
@@ -1099,6 +1100,7 @@ struct HomeView: View {
             Text(store.emoji)
                 .font(.system(size: 18))
                 .frame(width: 24)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
                     Text(store.name)
