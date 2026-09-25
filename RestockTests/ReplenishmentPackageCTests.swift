@@ -85,6 +85,21 @@ final class ReplenishmentPackageCTests: XCTestCase {
         XCTAssertTrue(due([raw], at: date(9, 28, hour: 18), snoozes: snoozes.entries()).isEmpty)
     }
 
+    func testSnoozeOfShortCycleOverdueItemDoesNotReappearImmediately() {
+        // Alle 3 Tage, zuletzt 15.09. → Termin 18.09., am 20.09. überfällig; Fenster 1 Tag.
+        // Halber Abstand (2 Tage) ab jetzt läge sofort wieder im Fenster — deshalb mindestens
+        // Fenster + 2 Tage: 23.09.
+        let raw = pattern(gap: 3, last: date(9, 15))
+        let snoozes = ReplenishmentSnoozes(defaults: defaults)
+        let until = snoozes.snooze(raw, now: date(9, 20), closedDays: .none, calendar: calendar)
+
+        XCTAssertEqual(until, date(9, 23))
+        let fiveMinutesLater = date(9, 20).addingTimeInterval(5 * 60)
+        XCTAssertTrue(due([raw], at: fiveMinutesLater, snoozes: snoozes.entries()).isEmpty, "Nicht sofort wieder im Banner.")
+        XCTAssertTrue(due([raw], at: date(9, 21, hour: 9), snoozes: snoozes.entries()).isEmpty)
+        XCTAssertEqual(due([raw], at: date(9, 22), snoozes: snoozes.entries()).count, 1, "Einen Tag vor dem verschobenen Termin wieder da.")
+    }
+
     func testSnoozeEndsWithTheNextPurchase() {
         let raw = pattern(gap: 10, last: date(9, 12))
         let snoozes = ReplenishmentSnoozes(defaults: defaults)

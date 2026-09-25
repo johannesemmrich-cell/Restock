@@ -18,11 +18,13 @@ final class ReplenishmentPackageATests: XCTestCase {
             record("Joghurt", daysAgo: 7, quantity: 2),
         ]
         let pattern = try XCTUnwrap(records.consumptionPattern())
-        XCTAssertEqual(pattern.averageDaysBetweenPurchases, 7, accuracy: 0.01)
+        // Toleranz 0,05 statt 0,01: `DateFixtures` rechnet in Kalendertagen der lokalen Zeitzone,
+        // liegt eine Zeitumstellung in den letzten 21 Tagen, ist ein Abstand 7 ± 1/24 Tage.
+        XCTAssertEqual(pattern.averageDaysBetweenPurchases, 7, accuracy: 0.05)
         XCTAssertEqual(pattern.averageQuantityPerPurchase, 2, accuracy: 0.01)
         XCTAssertEqual(
             pattern.estimatedNextPurchaseDate.timeIntervalSince(pattern.lastPurchaseDate) / 86400,
-            7, accuracy: 0.01
+            7, accuracy: 0.05
         )
     }
 

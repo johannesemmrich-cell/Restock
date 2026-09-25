@@ -118,6 +118,7 @@ extension Array where Element == PurchaseRecord {
 
         var mode = ConsumptionPattern.Mode.interval
         var gap = typicalInterval
+        var variation = cleaned.coefficientOfVariation()
         var next: Date
         if let weekdays = days.fixedWeekdays(calendar: calendar) {
             // 4a: Mo + Mi ergibt abwechselnd 2 und 5 Tage Abstand — jeder Mittelwert läge immer
@@ -125,7 +126,12 @@ extension Array where Element == PurchaseRecord {
             mode = .weekdays(weekdays)
             gap = Double(weekdays.longestCyclicGap)
             next = nextDate(after: last.date, onOneOf: weekdays, calendar: calendar)
-        } else if let daysPerUnit = days.daysPerUnit() {
+        } else if let rates = days.daysPerUnitRates() {
+            let daysPerUnit = rates.recencyWeightedMean()
+            // B2 misst die Regelmäßigkeit dessen, woraus vorhergesagt wird: wer abwechselnd 1
+            // und 6 Stück kauft, hat stark schwankende Abstände, aber einen gleichmäßigen
+            // Verbrauch — und soll deshalb nicht als „unregelmäßig“ herausfallen.
+            variation = rates.coefficientOfVariation()
             // B5: Verbrauchsrate statt Kaufabstand — wer diesmal 6 statt 2 kauft, braucht
             // entsprechend später wieder welche. Bei gleichbleibender Menge identisch mit dem
             // Kaufabstand (der Abstand wird NICHT zusätzlich mit der Menge multipliziert, A1).
@@ -146,7 +152,7 @@ extension Array where Element == PurchaseRecord {
             estimatedNextPurchaseDate: next,
             mode: mode,
             purchaseCount: days.count,
-            intervalVariation: cleaned.coefficientOfVariation(),
+            intervalVariation: variation,
             typicalGapDays: gap,
             typicalQuantity: typical.quantity,
             unit: typical.unit
@@ -229,12 +235,16 @@ extension Array where Element == PurchaseDay {
     /// B5: Tage pro Mengeneinheit, gewichtet und ohne Ausreißer. Nur wenn alle Käufe dieselbe
     /// Einheit haben — „500 g“ und „1 Stk“ lassen sich nicht in eine Rate umrechnen.
     func daysPerUnit() -> Double? {
+        daysPerUnitRates()?.recencyWeightedMean()
+    }
+
+    /// Tage pro Mengeneinheit je Abstand, ohne Ausreißer; `nil` bei gemischten Einheiten.
+    func daysPerUnitRates() -> [Double]? {
         guard count >= 2, Set(map(\.unitKey)).count == 1 else { return nil }
         let rates = zip(self, dropFirst()).map { previous, current in
             current.date.timeIntervalSince(previous.date) / 86400 / previous.quantity
         }
-        let cleaned = rates.count >= 4 ? rates.removingOutliers() : rates
-        return cleaned.recencyWeightedMean()
+        return rates.count >= 4 ? rates.removingOutliers() : rates
     }
 
     /// B5: Median der Menge der letzten 5 Käufe mit der Einheit des letzten Kaufs.
@@ -301,6 +311,19 @@ struct RetailClosedDays: Equatable {
                   !calendar.isDate(previous, inSameDayAs: lastPurchase) else { break }
             result = previous
             shifted = true
+        }
+        return result
+    }
+
+    /// Frühester offener Tag ab `date` (vorwärts) — für Fälle, in denen ein Vorziehen den
+    /// Termin zu nah an „jetzt“ brächte.
+    func earliestOpenDay(onOrAfter date: Date, allowSunday: Bool, calendar: Calendar) -> Date {
+        var result = date
+        var steps = 0
+        while steps < 7, isClosed(result, sundayAllowed: allowSunday, calendar: calendar),
+              let next = calendar.date(byAdding: .day, value: 1, to: result) {
+            result = next
+            steps += 1
         }
         return result
     }

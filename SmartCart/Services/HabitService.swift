@@ -286,7 +286,15 @@ struct ReplenishmentSnoozes {
             ?? start.addingTimeInterval(Double(Self.shiftDays(for: pattern)) * 86400)
         var allowsSunday = false
         if case .weekdays(let weekdays) = pattern.mode { allowsSunday = weekdays.contains(1) }
-        let until = closedDays.latestOpenDay(onOrBefore: target, after: start, allowSunday: allowsSunday, calendar: calendar)
+        var until = closedDays.latestOpenDay(onOrBefore: target, after: start, allowSunday: allowsSunday, calendar: calendar)
+        // Der Artikel erscheint wieder, sobald der verschobene Termin im Fenster liegt. Bei kurzen
+        // Zyklen (Fenster 1 Tag, Verschiebung 1–2 Tage) oder nach dem Vorziehen vor einen
+        // Sonntag läge er schon im Moment des Tippens wieder im Fenster und stünde sofort
+        // wieder im Banner. Deshalb liegt der verschobene Termin immer mindestens Fenster + 2
+        // Tage nach jetzt: so bleibt der Artikel mindestens einen Tag ausgeblendet.
+        if let earliest = calendar.date(byAdding: .day, value: pattern.dueWindowDays + 2, to: now), until < earliest {
+            until = closedDays.earliestOpenDay(onOrAfter: earliest, allowSunday: allowsSunday, calendar: calendar)
+        }
         var map = entries()
         map[pattern.itemName.lowercased()] = ReplenishmentSnooze(
             itemName: pattern.itemName,

@@ -11,7 +11,11 @@ struct HiddenReplenishmentsView: View {
 
     var body: some View {
         let blocked = ReplenishmentBlocklist().names()
+        // Abgelaufene Verschiebungen (Artikel steht wieder im Banner) nicht mehr anzeigen; der
+        // Eintrag selbst wird erst beim nächsten Kauf aufgeräumt (`ReplenishmentSnoozes.prune`).
+        let now = Date().timeIntervalSince1970
         let snoozes = ReplenishmentSnoozes().entries().values
+            .filter { $0.snoozedUntil >= now }
             .sorted { $0.snoozedUntil < $1.snoozedUntil }
 
         List {

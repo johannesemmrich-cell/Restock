@@ -87,6 +87,24 @@ final class ReplenishmentPackageBTests: XCTestCase {
         XCTAssertEqual(pattern.typicalQuantity, 2, "Median der letzten Käufe, nicht der Ausreißer 6.")
     }
 
+    func testAlternatingPackSizesAreNotIrregular() throws {
+        // Abwechselnd 1 Stück (reicht 2 Tage) und 6 Stück (reicht 12 Tage): die Abstände 2, 12,
+        // 2, 12 schwanken stark (VK ≈ 0,71), der Verbrauch ist aber konstant 2 Tage pro Stück.
+        let recs = [
+            record("Joghurt", 7, 1, quantity: 1),
+            record("Joghurt", 7, 3, quantity: 6),
+            record("Joghurt", 7, 15, quantity: 1),
+            record("Joghurt", 7, 17, quantity: 6),
+            record("Joghurt", 7, 29, quantity: 1),
+        ]
+        let pattern = try XCTUnwrap(recs.consumptionPattern(calendar: calendar))
+
+        XCTAssertEqual(pattern.mode, .interval)
+        XCTAssertEqual(pattern.intervalVariation, 0, accuracy: 0.01)
+        XCTAssertEqual(pattern.estimatedNextPurchaseDate, date(7, 31))
+        XCTAssertNil(HabitService.ineligibility(of: pattern, at: date(7, 30)))
+    }
+
     func testMixedUnitsFallBackToInterval() throws {
         let recs = [
             record("Hackfleisch", 7, 1, quantity: 500, unit: "g"),
