@@ -20,6 +20,7 @@ struct StoreCard: View {
                 Text(store.emoji)
                     .font(.system(size: 20))
                     .frame(width: 40, height: 40)
+                    .accessibilityHidden(true)
                 if store.isPaused {
                     Image(systemName: "moon.fill")
                         .font(.system(size: 8, weight: .semibold))
