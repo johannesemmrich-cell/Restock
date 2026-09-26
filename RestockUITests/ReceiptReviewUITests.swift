@@ -684,6 +684,50 @@ final class ReceiptReviewUITests: XCTestCase {
                       "Der gespeicherte Preis \(Seed.matchedItemPriceText) steht nicht am Artikel — save() schreibt ihn nicht mehr.")
     }
 
+    // MARK: - Issue #10: Kein Cent-Betrag durch eine Pro-Gramm-Rate
+
+    /// Der am 26.09.2026 im Simulator reproduzierte Fall, als Durchstich durch den echten Weg.
+    ///
+    /// Die Fixture-Zeile `BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G` kostet 4,99 € und trägt
+    /// ihre Packungsgröße im Namen. `save()` lernt daraus korrekt 0,0125 € pro Gramm — schreibt
+    /// den Wert aber ohne Bezugsgröße zurück und setzt ihn zugleich an den zugeordneten Artikel,
+    /// der keine Mengenangabe hat. Die Lidl-Liste zeigt daraufhin „0,01 €" (Beleg:
+    /// docs/artifacts/fix-10-preis-einheit/repro-heute-lidl-liste.png).
+    ///
+    /// Geprüft wird bewusst am Artikel selbst, nicht am Gesamtbetrag der Liste: Der Gesamtbetrag
+    /// enthält auch die übrigen Positionen und könnte zufällig stimmen.
+    ///
+    /// Spec: docs/specs/models/learned-price-unit-and-quantity-source.md — AC17.
+    func testSavedReceiptDoesNotProduceOneCentItemPrice() {
+        let app = openedReviewSheet()
+
+        let saveButton = app.buttons["receiptReview.saveButton"]
+        XCTAssertTrue(saveButton.waitForExistence(timeout: 5), "Speichern-Knopf fehlt.")
+        saveButton.tap()
+
+        let lidlTile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Lidl,")).firstMatch
+        XCTAssertTrue(lidlTile.waitForExistence(timeout: 10), "Nach dem Speichern ist der Home-Screen nicht sichtbar.")
+        expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: lidlTile)
+        waitForExpectations(timeout: 5)
+        lidlTile.tap()
+
+        XCTAssertTrue(app.staticTexts["Hackfleisch"].waitForExistence(timeout: 10),
+                      "Artikel Hackfleisch nicht in der Lidl-Liste gefunden.")
+
+        // `CONTAINS "0,01"` statt Gleichheit mit „0,01 €": Die Währungsformatierung setzt ein
+        // geschütztes Leerzeichen zwischen Zahl und Zeichen, ein Vergleich auf den ganzen Text
+        // ginge deshalb still daneben und der Test wäre grün, obwohl der Fehler dasteht (genau
+        // das passierte im ersten RED-Lauf). Gleiches Muster wie
+        // `testSavingStillWritesLearnedPriceToMatchedItem`, das auf „0,99" prüft. In dieser
+        // Liste kommt „0,01" in keinem anderen Preis vor (0,39 / 0,99 / 1,20 / 1,56).
+        let centPrice = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "0,01")).firstMatch
+        XCTAssertFalse(
+            centPrice.waitForExistence(timeout: 3),
+            "Die Lidl-Liste zeigt einen Cent-Betrag. Die pro Gramm gelernte Rate (4,99 € / 400 g) "
+            + "wurde als Stückpreis übernommen — genau der gemeldete Fehler."
+        )
+    }
+
     // MARK: - Dunkelmodus (der im Issue-Screenshot reproduzierte Fall)
 
     /// AC1 + AC3 im Dunkelmodus — der Screenshot zu #23 stammt genau daher.

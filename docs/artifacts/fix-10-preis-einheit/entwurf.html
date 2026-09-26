@@ -1,0 +1,701 @@
+<title>Der Gramm-Preis-Irrtum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --canvas:      #F5F2E9;
+    --surface:     #FDFBF4;
+    --ink:         #201D16;
+    --muted:       #6F6A5B;
+    --hairline:    rgba(32, 29, 22, 0.13);
+    --accent:      #666F38;
+    --accent-soft: #E7E4D4;
+    --amber:       #A97F2E;
+    --danger:      #A44E3D;
+    --shadow:      0 1px 2px rgba(32, 29, 22, 0.06), 0 8px 24px rgba(32, 29, 22, 0.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --canvas:      #141310;
+      --surface:     #1D1C16;
+      --ink:         #EBE7DA;
+      --muted:       #A29B8A;
+      --hairline:    rgba(235, 231, 218, 0.15);
+      --accent:      #A7AE6B;
+      --accent-soft: #2A2A1E;
+      --amber:       #C89A4A;
+      --danger:      #C4705D;
+      --shadow:      0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --canvas:      #141310;
+    --surface:     #1D1C16;
+    --ink:         #EBE7DA;
+    --muted:       #A29B8A;
+    --hairline:    rgba(235, 231, 218, 0.15);
+    --accent:      #A7AE6B;
+    --accent-soft: #2A2A1E;
+    --amber:       #C89A4A;
+    --danger:      #C4705D;
+    --shadow:      0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 48px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  h1 {
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(30px, 5.5vw, 46px);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 10px 0 0;
+  }
+
+  .lede {
+    margin: 14px 0 0;
+    max-width: 60ch;
+    font-size: 17px;
+    color: var(--muted);
+  }
+
+  h2 {
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(21px, 3.2vw, 27px);
+    line-height: 1.2;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  p { margin: 0; max-width: 64ch; }
+
+  section { display: flex; flex-direction: column; gap: 20px; }
+
+  .sechead { display: flex; flex-direction: column; gap: 8px; }
+
+  /* ---- Beweis-Block: echter Screenshot mit Markierung ---- */
+
+  .proof {
+    display: grid;
+    grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+  }
+
+  .shotframe {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow);
+    line-height: 0;
+  }
+
+  .shotframe img { width: 100%; height: auto; display: block; }
+
+  .marker {
+    position: absolute;
+    border: 2px solid var(--danger);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--danger) 12%, transparent);
+  }
+
+  .marker.row   { left: 4%; width: 92%; top: 68.2%; height: 6.4%; }
+  .marker.total { left: 4%; width: 92%; top: 40.3%; height: 4.4%; }
+
+  .shotcap {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.45;
+  }
+
+  .maths {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-left: 2px solid var(--accent);
+    padding-left: 18px;
+  }
+
+  .maths div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-block: 7px;
+    font-size: 15px;
+  }
+
+  .maths div + div { border-top: 1px solid var(--hairline); }
+
+  .maths b {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .maths span { color: var(--muted); }
+
+  .maths .out b { color: var(--danger); }
+
+  /* ---- Varianten ---- */
+
+  .variant {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 24px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+  }
+
+  .variant.pick {
+    border-color: var(--accent);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+
+  .vhead { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+
+  .vletter {
+    font-family: Fraunces, Georgia, serif;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .vtitle { font-size: 18px; font-weight: 600; }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .tag.warn { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+
+  .mocks { display: flex; flex-wrap: wrap; gap: 16px; }
+
+  .mockcol { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 7px; }
+
+  .mocklabel {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ---- Nachbau der echten Artikelzeile (ItemRow) ---- */
+
+  .mock {
+    --m-canvas:  #F5F2E9;
+    --m-surface: #FDFBF4;
+    --m-ink:     #201D16;
+    --m-muted:   #6F6A5B;
+    --m-faint:   #A29B8A;
+    --m-line:    rgba(32, 29, 22, 0.12);
+    --m-amber:   #A97F2E;
+    --m-danger:  #A44E3D;
+    background: var(--m-canvas);
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid var(--hairline);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  }
+
+  .mock[data-mode="dark"] {
+    --m-canvas:  #141310;
+    --m-surface: #1D1C16;
+    --m-ink:     #EBE7DA;
+    --m-muted:   #A29B8A;
+    --m-faint:   #6F6A5B;
+    --m-line:    rgba(235, 231, 218, 0.14);
+    --m-amber:   #C89A4A;
+    --m-danger:  #C4705D;
+  }
+
+  .mock .card {
+    background: var(--m-surface);
+    border-radius: 12px;
+    padding: 4px 14px;
+  }
+
+  .mock .r {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-block: 11px;
+  }
+
+  .mock .r + .r { border-top: 1px solid var(--m-line); }
+
+  .mock .chk {
+    flex: none;
+    width: 21px;
+    height: 21px;
+    border-radius: 6px;
+    border: 1.5px solid var(--m-faint);
+  }
+
+  .mock .txt { flex: 1 1 auto; min-width: 0; }
+
+  .mock .nm { font-size: 15px; color: var(--m-ink); }
+
+  .mock .sub {
+    font-size: 12px;
+    color: var(--m-muted);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .mock .sub .dot { color: var(--m-faint); }
+
+  .mock .qty { color: var(--m-ink); }
+
+  .mock .guess { color: var(--m-amber); }
+
+  .mock .pr {
+    flex: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--m-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mock .pr.wrong { color: var(--m-danger); font-weight: 600; }
+
+  .mock .pr.rate { font-size: 12px; }
+
+  .vnote { display: flex; flex-direction: column; gap: 10px; }
+
+  .vnote p { font-size: 14.5px; }
+
+  .cost {
+    font-size: 14px;
+    color: var(--muted);
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+  }
+
+  .cost::before {
+    content: "";
+    flex: none;
+    width: 7px;
+    height: 7px;
+    margin-top: 8px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  /* ---- Nebenwirkung ---- */
+
+  .side {
+    display: grid;
+    grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+    gap: 28px;
+    align-items: center;
+    padding: 24px;
+    border-radius: 16px;
+    background: var(--accent-soft);
+  }
+
+  /* ---- Entscheidung ---- */
+
+  .decide {
+    padding: 28px;
+    border-radius: 16px;
+    border: 1.5px solid var(--accent);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .settled { display: flex; flex-direction: column; gap: 12px; }
+
+  .settled li { font-size: 14.5px; color: var(--muted); }
+
+  ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 9px; }
+
+  strong { font-weight: 600; }
+
+  @media (max-width: 720px) {
+    .proof, .side { grid-template-columns: minmax(0, 1fr); }
+    .shotframe { max-width: 320px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Restock · Fehler 10 · Entwurf vor Spec</p>
+    <h1>Der Gramm-Preis-Irrtum</h1>
+    <p class="lede">
+      Ein Preis, den die App vom Kassenbon gelernt hat, merkt sich die Zahl — aber nicht,
+      worauf sie sich bezieht. Aus 4,99 € für eine Packung wird so ein Artikel für einen Cent.
+      Unten steht links, was die App heute zeigt, und rechts drei Wege, wie sie es künftig
+      zeigen könnte.
+    </p>
+  </header>
+
+  <section>
+    <div class="sechead">
+      <p class="eyebrow">Heute</p>
+      <h2>Der Fehler, eben im Simulator ausgelöst</h2>
+      <p>
+        Kein Entwurf, kein Nachbau: Das ist ein Bildschirmfoto aus der laufenden App,
+        aufgenommen unmittelbar nachdem ein Kassenbon gespeichert wurde.
+      </p>
+    </div>
+
+    <div class="proof">
+      <div>
+        <div class="shotframe">
+          <img src="repro-heute-lidl-liste.png"
+               alt="Lidl-Liste in Restock: Hackfleisch steht mit 0,01 € in der Liste, der geschätzte Gesamtbetrag lautet 4,98 €.">
+          <div class="marker total"></div>
+          <div class="marker row"></div>
+        </div>
+        <p class="shotcap">
+          Lidl-Liste, direkt nach dem Speichern des Bons. Markiert: der Artikelpreis und
+          der Gesamtbetrag, den er verdirbt.
+        </p>
+      </div>
+
+      <div class="maths">
+        <div><span>Auf dem Bon steht</span> <b>BIO-HACKFLEISCH … 400G — 4,99 €</b></div>
+        <div><span>Die App liest die Packungsgröße mit</span> <b>400 g</b></div>
+        <div><span>Sie merkt sich den Preis je Gramm</span> <b>4,99 € ÷ 400 = 0,0125 €</b></div>
+        <div><span>Gespeichert wird aber nur</span> <b>0,0125</b></div>
+        <div><span>Beim nächsten „Hackfleisch“ ohne Menge rechnet sie</span> <b>0,0125 × 1 Stück</b></div>
+        <div class="out"><span>und zeigt</span> <b>0,01 €</b></div>
+      </div>
+    </div>
+
+    <div class="mocks">
+      <div class="mockcol">
+        <p class="mocklabel">Hell — so sieht es jetzt aus</p>
+        <div class="mock" data-mode="light">
+          <div class="card">
+            <div class="r">
+              <span class="chk"></span>
+              <div class="txt">
+                <div class="nm">Hackfleisch</div>
+                <div class="sub"><span class="dot">·</span> Fleisch &amp; Wurst</div>
+              </div>
+              <div class="pr wrong">0,01 €</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mockcol">
+        <p class="mocklabel">Dunkel — so sieht es jetzt aus</p>
+        <div class="mock" data-mode="dark">
+          <div class="card">
+            <div class="r">
+              <span class="chk"></span>
+              <div class="txt">
+                <div class="nm">Hackfleisch</div>
+                <div class="sub"><span class="dot">·</span> Fleisch &amp; Wurst</div>
+              </div>
+              <div class="pr wrong">0,01 €</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <p class="eyebrow">Drei Wege</p>
+      <h2>Wie die Zeile künftig aussehen kann</h2>
+      <p>
+        Alle drei merken sich künftig, worauf sich ein gelernter Preis bezieht. Sie
+        unterscheiden sich darin, was auf der Liste sichtbar wird, wenn die App eine Menge
+        annehmen muss, die du nicht eingetippt hast.
+      </p>
+    </div>
+
+    <div class="variant pick">
+      <div class="vhead">
+        <span class="vletter">A</span>
+        <span class="vtitle">Die Menge steht am Artikel</span>
+        <span class="tag">Empfehlung</span>
+      </div>
+
+      <div class="mocks">
+        <div class="mockcol">
+          <p class="mocklabel">Hell</p>
+          <div class="mock" data-mode="light">
+            <div class="card">
+              <div class="r">
+                <span class="chk"></span>
+                <div class="txt">
+                  <div class="nm">Hackfleisch</div>
+                  <div class="sub"><span class="qty">400 g</span> <span class="dot">·</span> Fleisch &amp; Wurst</div>
+                </div>
+                <div class="pr">4,99 €</div>
+              </div>
+              <div class="r">
+                <span class="chk"></span>
+                <div class="txt">
+                  <div class="nm">Seitan</div>
+                  <div class="sub"><span class="dot">·</span> Fleisch &amp; Wurst</div>
+                </div>
+                <div class="pr rate">1,25 €/100 g</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mockcol">
+          <p class="mocklabel">Dunkel</p>
+          <div class="mock" data-mode="dark">
+            <div class="card">
+              <div class="r">
+                <span class="chk"></span>
+                <div class="txt">
+                  <div class="nm">Hackfleisch</div>
+                  <div class="sub"><span class="qty">400 g</span> <span class="dot">·</span> Fleisch &amp; Wurst</div>
+                </div>
+                <div class="pr">4,99 €</div>
+              </div>
+              <div class="r">
+                <span class="chk"></span>
+                <div class="txt">
+                  <div class="nm">Seitan</div>
+                  <div class="sub"><span class="dot">·</span> Fleisch &amp; Wurst</div>
+                </div>
+                <div class="pr rate">1,25 €/100 g</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vnote">
+        <p>
+          Die App trägt die Menge ein, die sie belegen kann — zuerst deine eigene Eingabe,
+          sonst die Menge, die du zuletzt in diesem Laden gekauft hast, sonst die Packungsgröße
+          vom Bon. Sie steht an derselben Stelle wie eine selbst eingetippte Menge und lässt
+          sich über „Bearbeiten“ ändern. Findet die App nichts, erfindet sie nichts: dann steht
+          statt eines Gesamtpreises der Preis je Menge da — zweite Zeile im Bild.
+        </p>
+        <p class="cost">
+          Preis dafür: Aus „Hackfleisch“ auf deiner Liste wird sichtbar „400 g Hackfleisch“,
+          auch wenn du nur den Namen eintippen wolltest.
+        </p>
+      </div>
+    </div>
+
+    <div class="variant">
+      <div class="vhead">
+        <span class="vletter">B</span>
+        <span class="vtitle">Die Annahme ist als Annahme markiert</span>
+      </div>
+
+      <div class="mocks">
+        <div class="mockcol">
+          <p class="mocklabel">Hell</p>
+          <div class="mock" data-mode="light">
+            <div class="card">
+              <div class="r">
+                <span class="chk"></span>
+                <div class="txt">
+                  <div class="nm">Hackfleisch</div>
+                  <div class="sub"><span class="guess">ca. 400 g</span> <span class="dot">·</span> Fleisch &amp; Wurst</div>
+                </div>
+                <div class="pr">≈ 4,99 €</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mockcol">
+          <p class="mocklabel">Dunkel</p>
+          <div class="mock" data-mode="dark">
+            <div class="card">
+              <div class="r">
+                <span class="chk"></span>
+                <div class="txt">
+                  <div class="nm">Hackfleisch</div>
+                  <div class="sub"><span class="guess">ca. 400 g</span> <span class="dot">·</span> Fleisch &amp; Wurst</div>
+                </div>
+                <div class="pr">≈ 4,99 €</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vnote">
+        <p>
+          Wie A, aber du siehst auf einen Blick, welche Menge von dir stammt und welche die App
+          geraten hat: „ca.“ und die getönte Schrift gehören nur den angenommenen Mengen. Tippst
+          du die Menge selbst ein, sieht die Zeile aus wie in A.
+        </p>
+        <p class="cost">
+          Preis dafür: Die App muss sich zusätzlich merken, woher jede Menge stammt, und die
+          Liste braucht eine neue Darstellungsregel. Das sprengt den Rahmen dieser Korrektur
+          und wäre eine eigene Aufgabe.
+        </p>
+      </div>
+    </div>
+
+    <div class="variant">
+      <div class="vhead">
+        <span class="vletter">C</span>
+        <span class="vtitle">Kein Preis statt eines angenommenen</span>
+        <span class="tag warn">Kippt eine frühere Festlegung</span>
+      </div>
+
+      <div class="mocks">
+        <div class="mockcol">
+          <p class="mocklabel">Hell</p>
+          <div class="mock" data-mode="light">
+            <div class="card">
+              <div class="r">
+                <span class="chk"></span>
+                <div class="txt">
+                  <div class="nm">Hackfleisch</div>
+                  <div class="sub"><span class="dot">·</span> Fleisch &amp; Wurst</div>
+                </div>
+                <div class="pr">3,20 €</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mockcol">
+          <p class="mocklabel">Dunkel</p>
+          <div class="mock" data-mode="dark">
+            <div class="card">
+              <div class="r">
+                <span class="chk"></span>
+                <div class="txt">
+                  <div class="nm">Hackfleisch</div>
+                  <div class="sub"><span class="dot">·</span> Fleisch &amp; Wurst</div>
+                </div>
+                <div class="pr">3,20 €</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vnote">
+        <p>
+          Die Liste sieht aus wie heute — nur eben ohne den Cent-Betrag. Passt der gelernte
+          Preis nicht zur Menge am Artikel, wirft die App ihn weg und schätzt wie bei einem
+          unbekannten Artikel. Keine Menge wird vorbelegt, nichts wird angenommen, nichts ändert
+          sich am Aussehen der Liste. Der Beispielbetrag oben ist eine solche Schätzung.
+        </p>
+        <p class="cost">
+          Preis dafür: Der echte, vom Bon gelernte Preis wird jedes Mal verworfen, obwohl die App
+          ihn kennt. Du kaufst dasselbe Hackfleisch zum vierten Mal und siehst weiter eine
+          Schätzung statt der 4,99 €, die auf deinem letzten Bon standen. Das kippt deine
+          Festlegung aus der Aufnahme, dass die Menge vorbelegt werden soll.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <p class="eyebrow">Nebenwirkung</p>
+      <h2>Einmalig werden Preise verschwinden</h2>
+    </div>
+    <div class="side">
+      <div class="mock" data-mode="light">
+        <div class="card">
+          <div class="r">
+            <span class="chk"></span>
+            <div class="txt">
+              <div class="nm">Skyr</div>
+              <div class="sub"><span class="dot">·</span> Milchprodukte</div>
+            </div>
+            <div class="pr">1,49 €</div>
+          </div>
+        </div>
+      </div>
+      <p>
+        Alle bisher gelernten Preise haben keine Bezugsgröße und werden deshalb nicht mehr
+        angewendet — so hast du es in der Aufnahme entschieden. Bis zum nächsten Bon-Scan zeigt
+        die Liste dort wieder Schätzwerte statt der zuletzt bezahlten Beträge. Das betrifft jeden
+        Artikel einmal, danach ist der Preis mit Bezugsgröße neu gelernt. Das nachträgliche
+        Reparieren der Altdaten bleibt eine eigene Aufgabe.
+      </p>
+    </div>
+  </section>
+
+  <section class="decide">
+    <div class="sechead">
+      <p class="eyebrow">Deine Entscheidung</p>
+      <h2>A, B oder C?</h2>
+    </div>
+    <p>
+      Ich empfehle <strong>A</strong>. Sie behebt den Fehler vollständig, kommt ohne ein neues
+      Bedienelement aus und bleibt im Rahmen dieser Korrektur. B ist das schönere Ziel, aber eine
+      eigene Aufgabe wert. C ist die ehrlichste kleine Lösung und zugleich die, die deinen
+      gelernten Preis am häufigsten wegwirft.
+    </p>
+    <ul class="settled">
+      <li>
+        Ob Gramm und Milliliter jetzt schon auseinandergehalten werden, entscheide ich technisch
+        und halte es in der Spezifikation fest — für diesen Fehler ist es nicht nötig.
+      </li>
+      <li>
+        Ein bestehender Test behauptet noch das Gegenteil deiner Festlegung zu den Altdaten. Ich
+        stelle ihn um, statt ihn zu löschen, und weise das in der Spezifikation aus.
+      </li>
+    </ul>
+  </section>
+
+</div>

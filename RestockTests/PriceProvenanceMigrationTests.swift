@@ -88,6 +88,39 @@ final class PriceProvenanceMigrationTests: XCTestCase {
         XCTAssertFalse(item.estimatedPriceIsAutoDerived, "Ein plausibler gelernter Preis gilt als 'echt', nicht als reine Schätzung")
     }
 
+    // MARK: - Issue #10: Eine Pro-Gramm-Rate darf nie als Stückpreis durchgehen
+    //
+    // Der am 25.09.2026 gemeldete Fall ("Seitan zeigt 0,01 €") und der am 26.09.2026 im
+    // Simulator reproduzierte Fall ("Hackfleisch zeigt 0,01 €", Beleg
+    // docs/artifacts/fix-10-preis-einheit/repro-heute-lidl-liste.png). Anders als der
+    // Skyr-Fall oben ist der gelernte Wert hier NICHT kaputt: 4,99 € für eine 400-g-Packung
+    // ergeben korrekt 0,0125 € pro Gramm. Kaputt ist, dass die Rate ihre Bezugsgröße nicht
+    // mitführt — beim Anlegen ohne Mengenangabe multipliziert `ShoppingItem.init` sie mit
+    // einem Stück. Die bestehende Plausibilitätsprüfung greift nicht: sie kennt nur eine
+    // Obergrenze (200 €), und 0,0125 liegt weit darunter.
+    //
+    // Spec: docs/specs/models/learned-price-unit-and-quantity-source.md — AC2.
+
+    func testLearnedGramPriceIsNotAppliedToItemWithoutQuantity() throws {
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")
+        let perGram = 4.99 / 400 // korrekt gelernte Rate aus "BIO-HACKFLEISCH … 400G"
+        store.learnedPrices["hackfleisch"] = perGram
+
+        // Wie beim Schnell-Hinzufügen: nur ein Name, keine Menge, keine Einheit.
+        let item = ShoppingItem(name: "Hackfleisch", category: "Fleisch & Wurst", store: store)
+
+        XCTAssertNotEqual(
+            item.estimatedLineTotal ?? 0, perGram, accuracy: 0.0001,
+            "Eine pro Gramm gelernte Rate darf nicht als Stückpreis übernommen werden — genau das "
+            + "erzeugt die gemeldeten 0,01 € auf der Liste."
+        )
+        XCTAssertTrue(
+            item.estimatedPriceIsAutoDerived,
+            "Passt die Bezugsgröße des gelernten Preises nicht zur Einheit des Artikels, muss der "
+            + "Preis verworfen und als Schätzung gekennzeichnet werden (PriceEstimator greift)."
+        )
+    }
+
     // MARK: - Verteidigungslinie 2: Migration repariert den gespeicherten Wert selbst
 
     @MainActor
