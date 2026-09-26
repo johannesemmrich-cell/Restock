@@ -294,6 +294,116 @@ final class ReplenishmentPackageCTests: XCTestCase {
 
     // MARK: - Helpers
 
+    // MARK: - C4: Vielleicht auch fällig (bis zum nächsten Besuch im Laden)
+
+    func testVisitGapIsMedianOfRecentVisitDays() {
+        // Wöchentlich, zwei Käufe am selben Tag zählen als ein Besuch.
+        let dates = [date(8, 1), date(8, 8), date(8, 8, hour: 18), date(8, 15), date(8, 22), date(8, 29)]
+        XCTAssertEqual(StoreVisitForecast.visitGapDays(purchaseDates: dates, visitsPerWeek: 3, calendar: calendar), 7)
+
+        // Früher alle 2 Tage, zuletzt 8 Besuche im Wochenabstand: nur die letzten Besuche zählen.
+        let old = (0..<6).map { date(6, 1 + 2 * $0) }
+        let recent = (0..<8).map { calendar.date(byAdding: .day, value: 7 * $0, to: date(7, 1))! }
+        XCTAssertEqual(StoreVisitForecast.visitGapDays(purchaseDates: old + recent, visitsPerWeek: 1, calendar: calendar), 7)
+    }
+
+    func testVisitGapFallsBackToVisitFrequencyAndIsClamped() {
+        let twoVisits = [date(9, 1), date(9, 8)]
+        XCTAssertEqual(StoreVisitForecast.visitGapDays(purchaseDates: twoVisits, visitsPerWeek: 2, calendar: calendar), 3.5)
+        XCTAssertEqual(StoreVisitForecast.visitGapDays(purchaseDates: [], visitsPerWeek: 0, calendar: calendar), 7)
+        XCTAssertEqual(StoreVisitForecast.visitGapDays(purchaseDates: [], visitsPerWeek: 0.1, calendar: calendar), 28, "Höchstens 4 Wochen.")
+        XCTAssertEqual(StoreVisitForecast.visitGapDays(purchaseDates: [], visitsPerWeek: 14, calendar: calendar), 1, "Mindestens 1 Tag.")
+    }
+
+    func testItemRunningOutBeforeNextVisitIsSuggestedEvenOutsideBannerWindow() {
+        // Alle 10 Tage, zuletzt 12.09. → Termin 22.09., Fenster 2 Tage: am 17.09. nicht im Banner.
+        let milk = pattern(gap: 10, last: date(9, 12))
+        XCTAssertTrue(due([milk], at: date(9, 17)).isEmpty, "Setup: nicht im Banner.")
+
+        XCTAssertEqual(alsoDue([milk], at: date(9, 17), visitGap: 7).map(\.itemName), ["Milch"],
+                       "Nächster Besuch 24.09. — Milch geht vorher aus.")
+        XCTAssertTrue(alsoDue([milk], at: date(9, 17), visitGap: 3).isEmpty,
+                      "Nächster Besuch 20.09. — Milch reicht noch.")
+        XCTAssertTrue(alsoDue([milk], at: date(9, 17), visitGap: 5).isEmpty,
+                      "Fällig genau am Tag des nächsten Besuchs — dann reicht es, dort zu kaufen.")
+    }
+
+    func testBannerItemsAreAlwaysIncluded() {
+        // Termin 22.09., am 21.09. im Banner; nächster Besuch schon am 22.09.
+        let milk = pattern(gap: 10, last: date(9, 12))
+        XCTAssertEqual(alsoDue([milk], at: date(9, 21), visitGap: 1).count, 1)
+        let overdue = pattern(name: "Brot", gap: 4, last: date(9, 12))
+        XCTAssertEqual(alsoDue([overdue], at: date(9, 18), visitGap: 1).map(\.itemName), ["Brot"])
+    }
+
+    func testAlsoDueUsesTheSameFiltersAsTheBanner() {
+        let milk = pattern(gap: 10, last: date(9, 12))
+        let now = date(9, 17)
+        XCTAssertTrue(alsoDue([milk], at: now, visitGap: 7, belongs: false).isEmpty, "Gehört in einen anderen Laden.")
+        XCTAssertTrue(alsoDue([milk], at: now, visitGap: 7, pendingNames: ["milch"]).isEmpty, "Steht schon auf einer Liste.")
+        XCTAssertTrue(alsoDue([milk], at: now, visitGap: 7, blocked: ["milch"]).isEmpty, "Nicht mehr vorschlagen.")
+        XCTAssertTrue(alsoDue([milk], at: now, visitGap: 7, dismissed: ["milch": milk.purchaseKey]).isEmpty, "A4-Ablehnung.")
+        XCTAssertEqual(alsoDue([milk], at: now, visitGap: 7, dismissed: ["milch": milk.purchaseKey - 86400]).count, 1,
+                       "Ablehnung eines früheren Kaufzyklus gilt nicht mehr.")
+
+        var twoPurchases = milk
+        twoPurchases.purchaseCount = 2
+        XCTAssertTrue(alsoDue([twoPurchases], at: now, visitGap: 7).isEmpty, "B2: erst ab 3 Käufen.")
+    }
+
+    func testAlsoDueIsSortedByDate() {
+        let later = pattern(name: "Milch", gap: 10, last: date(9, 12))   // 22.09.
+        let sooner = pattern(name: "Eier", gap: 8, last: date(9, 12))    // 20.09.
+        XCTAssertEqual(alsoDue([later, sooner], at: date(9, 17), visitGap: 7).map(\.itemName), ["Eier", "Milch"])
+    }
+
+    func testSnoozeInStoreListLastsAtLeastUntilNextVisit() {
+        let milk = pattern(gap: 10, last: date(9, 12))
+        let now = date(9, 17)
+        let nextVisit = StoreVisitForecast.nextVisit(after: now, gapDays: 13, calendar: calendar)
+        XCTAssertEqual(nextVisit, date(9, 30))
+
+        let snoozes = ReplenishmentSnoozes(defaults: defaults)
+        XCTAssertEqual(snoozes.snooze(milk, now: now, closedDays: .none, calendar: calendar), date(9, 27), "Ohne Mindestdatum wie im Banner.")
+        let until = snoozes.snooze(milk, now: now, notBefore: nextVisit, closedDays: .none, calendar: calendar)
+        XCTAssertEqual(until, date(9, 30))
+        XCTAssertTrue(alsoDue([milk], at: now, visitGap: 13, snoozes: snoozes.entries()).isEmpty,
+                      "Nach „Hab noch“ nicht sofort wieder in der Ladenliste.")
+    }
+
+    func testTrackAcceptedStoresSuggestionForA4AndCountsIt() throws {
+        let milk = pattern(gap: 10, last: date(9, 12))
+        let id = UUID()
+        ReplenishmentFeedback.trackAccepted(itemID: id, from: milk, defaults: defaults)
+
+        let data = try XCTUnwrap(defaults.data(forKey: ReplenishmentKeyMigration.acceptedKey))
+        let map = try JSONDecoder().decode([UUID: AcceptedReplenishment].self, from: data)
+        XCTAssertEqual(map, [id: AcceptedReplenishment(itemName: "Milch", purchaseKey: milk.purchaseKey)])
+        XCTAssertEqual(ReplenishmentMetrics(defaults: defaults).count(.accepted), 1)
+    }
+
+    private func alsoDue(
+        _ patterns: [ConsumptionPattern],
+        at now: Date,
+        visitGap: Double,
+        belongs: Bool = true,
+        snoozes: [String: ReplenishmentSnooze] = [:],
+        blocked: Set<String> = [],
+        dismissed: [String: TimeInterval] = [:],
+        pendingNames: Set<String> = []
+    ) -> [ConsumptionPattern] {
+        HabitService.dueBeforeNextVisit(
+            from: patterns,
+            visitGapDays: visitGap,
+            now: now,
+            calendar: calendar,
+            snoozes: snoozes,
+            blocked: blocked,
+            dismissed: dismissed,
+            pendingNames: pendingNames
+        ) { _ in belongs }
+    }
+
     private func due(
         _ patterns: [ConsumptionPattern],
         at now: Date,
