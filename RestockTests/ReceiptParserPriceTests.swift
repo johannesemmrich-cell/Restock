@@ -364,4 +364,157 @@ final class ReceiptParserPriceTests: XCTestCase {
         XCTAssertEqual(try XCTUnwrap(kilo.estimatedLineTotal), 2.49, accuracy: 0.01,
                        "AC8: 1 kg Bananen kostet wieder den Bon-Kilopreis")
     }
+
+    // MARK: - Issue #10: Preis UND Bezugsgröße werden gemeinsam gelernt
+
+    /// Spiegelt den Schreibblock aus `ReceiptScannerView.save()` (Zeile 669-680): Divisor und
+    /// Bezugsgröße kommen aus DENSELBEN Methoden derselben `EditableReceiptLine`-Instanz, die
+    /// `save()` selbst aufruft — keine nachgebaute Formel (siehe die Begründung an
+    /// `assertLearnedPriceRoundTrip`). `matchQuantityAmount`/`matchUnit` sind `nil`, weil im
+    /// reproduzierten Fall kein unbepreister Kaufdatensatz existiert (der zugeordnete Artikel ist
+    /// noch offen, also hat er keinen) — genau die Lage in `save()` bei diesem Bon.
+    private func learnLikeSave(_ line: EditableReceiptLine, into store: Store) {
+        let key = line.name.lowercased()
+        let quantity = line.learningQuantity(matchQuantityAmount: nil)
+        store.learnedPrices[key] = quantity > 0 ? line.price / quantity : line.price
+        store.learnedPriceUnits[key] = line.learningUnit(matchUnit: nil)
+        store.learnedPriceDates[key] = Date()
+    }
+
+    /// AC-1 am Schreibweg: Die Bon-Zeile des gemeldeten Falls legt Rate UND Bezugsgröße unter
+    /// demselben Schlüssel ab — beides in einem Zug geprüft, denn eine Rate ohne Bezugsgröße wird
+    /// von `ShoppingItem.init` nie mehr angewendet (PO-Entscheidung 1) und der Preis wäre still
+    /// verloren. Die Werte sind wörtlich die Fixture aus
+    /// `SmartCartApp.seedReceiptReviewForUITestsIfNeeded` (SmartCartApp.swift:245-257), also
+    /// dieselben, mit denen der Fehler am 26.09.2026 im Simulator reproduziert wurde.
+    /// Gegenprobe in derselben Methode: eine Zeile ohne Füllmenge im Namen lernt einen STÜCKpreis —
+    /// sonst wäre `"g"` auch dann richtig, wenn die Methode es pauschal zurückgäbe.
+    func testSavingReceiptStoresPriceAndUnitTogether() throws {
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")
+
+        let hackfleisch = EditableReceiptLine(
+            name: "Bio-Hackfleisch gemischt Rind & Schwein 400 g",
+            price: 4.99,
+            originalName: "BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G",
+            quantity: 1,
+            unit: "400g",
+            weightBasis: nil
+        )
+        let milch = EditableReceiptLine(
+            name: "Frische Vollmilch 3,5 %",
+            price: 1.19,
+            originalName: "MILCH 3,5% FRISCH",
+            quantity: 1,
+            unit: "",
+            weightBasis: nil
+        )
+
+        learnLikeSave(hackfleisch, into: store)
+        learnLikeSave(milch, into: store)
+
+        let hackKey = "bio-hackfleisch gemischt rind & schwein 400 g"
+        XCTAssertEqual(
+            try XCTUnwrap(store.learnedPrices[hackKey]), 4.99 / 400, accuracy: 0.000001,
+            "4,99 € für eine 400-g-Packung ergeben die Rate 0,0125 €/g"
+        )
+        XCTAssertEqual(
+            store.learnedPriceUnits[hackKey], "g",
+            "Zur Rate gehört ihre Bezugsgröße — ohne sie entstehen die gemeldeten 0,01 € auf der Liste"
+        )
+
+        let milchKey = "frische vollmilch 3,5 %"
+        XCTAssertEqual(
+            try XCTUnwrap(store.learnedPrices[milchKey]), 1.19, accuracy: 0.000001,
+            "Ohne Füllmenge im Namen ist der Zeilenpreis bereits der Preis pro Stück"
+        )
+        XCTAssertEqual(
+            store.learnedPriceUnits[milchKey], "stk",
+            "Ein Stückpreis darf nicht als Gewichts-Rate gelernt werden"
+        )
+    }
+
+    /// AC-9: `learningQuantity` und `learningUnit` müssen dieselben Bedingungen in derselben
+    /// Reihenfolge treffen — sonst lernt `save()` einen richtigen Preis unter einer falschen
+    /// Bezugsgröße, was schlimmer ist als gar kein Preis. Deshalb wird jeder der fünf Zweige an
+    /// DERSELBEN Instanz doppelt abgefragt, und die jeweils nicht zuständigen Quellen sind bewusst
+    /// mit abweichenden Werten belegt: ein Zweig, der zu früh oder zu spät greift, fällt auf.
+    func testLearningUnitMatchesLearningQuantityBranchForEveryCase() {
+        // 1) Gewichtszeile "0,436 kg x 12,49" — weightBasis schlägt alles andere.
+        let weighed = EditableReceiptLine(
+            name: "Aufschnitt", price: 5.44, originalName: "AUFSCHNITT 200G",
+            quantity: 3, unit: "", weightBasis: 436
+        )
+        XCTAssertEqual(weighed.learningQuantity(matchQuantityAmount: 250), 436, "Zweig 1: weightBasis")
+        XCTAssertEqual(weighed.learningUnit(matchUnit: "stk"), "g", "Zweig 1 gehört die Bezugsgröße g")
+
+        // 2) Mengenzeile "3 Stk x 0,79" — quantity > 1 schlägt Artikel-Match und Füllmenge im Namen.
+        let multiple = EditableReceiptLine(
+            name: "Eier Freiland", price: 2.37, originalName: "EIER FREILAND 300G",
+            quantity: 3, unit: "", weightBasis: nil
+        )
+        XCTAssertEqual(multiple.learningQuantity(matchQuantityAmount: 250), 3, "Zweig 2: quantity")
+        XCTAssertEqual(multiple.learningUnit(matchUnit: "g"), "stk", "Zweig 2 ist ein Stückpreis")
+
+        // 3) Abgehakter Artikel — die Bezugsgröße ist der Eimer SEINER Einheit, nicht eine
+        //    Konstante; deshalb drei Einheiten an derselben Zeile.
+        let matched = EditableReceiptLine(
+            name: "Mozzarella", price: 1.98, originalName: "MDHSZ",
+            quantity: 1, unit: "", weightBasis: nil
+        )
+        XCTAssertEqual(matched.learningQuantity(matchQuantityAmount: 250), 250, "Zweig 3: matchQuantityAmount")
+        XCTAssertEqual(matched.learningUnit(matchUnit: "g"), "g", "Zweig 3 übernimmt den Eimer des Artikels")
+        XCTAssertEqual(matched.learningUnit(matchUnit: "ml"), "g", "ml liegt im selben Eimer wie g")
+        XCTAssertEqual(matched.learningUnit(matchUnit: "Stück"), "stk", "Ein Stück-Artikel lernt einen Stückpreis")
+
+        // 4) Füllmenge im rohen Bon-Namen — greift erst, wenn es keinen Artikel-Match gibt.
+        let packaged = EditableReceiptLine(
+            name: "Skyr Natur", price: 2.29, originalName: "SKYR NATUR 500G",
+            quantity: 1, unit: "", weightBasis: nil
+        )
+        XCTAssertEqual(packaged.learningQuantity(matchQuantityAmount: nil), 500, "Zweig 4: Füllmenge im Namen")
+        XCTAssertEqual(packaged.learningUnit(matchUnit: nil), "g", "Eine Füllmenge in g ergibt eine Gramm-Rate")
+
+        // 5) Keine Quelle — Fallback 1, der Zeilenpreis IST der Stückpreis.
+        let plain = EditableReceiptLine(
+            name: "Seitan", price: 2.49, originalName: "SEITAN NATUR",
+            quantity: 1, unit: "", weightBasis: nil
+        )
+        XCTAssertEqual(plain.learningQuantity(matchQuantityAmount: nil), 1, "Zweig 5: Fallback 1")
+        XCTAssertEqual(plain.learningUnit(matchUnit: nil), "stk", "Zum Divisor 1 gehört der Stückpreis")
+    }
+
+    /// AC-10: `packageSizeFromName` ist die Anzeige-Schwester von `weightBasisFromName` — dieselbe
+    /// Zahl, aber mit der literalen Einheit, damit für eine 0,5-l-Flasche nicht „ca. 500 g" am
+    /// Artikel steht (sichtbar falsch).
+    func testPackageSizeFromNameReturnsLitreAsMillilitre() throws {
+        let cola = try XCTUnwrap(ReceiptParserService.packageSizeFromName("COLA 0,5L"))
+        XCTAssertEqual(cola.amount, 500, accuracy: 0.0001)
+        XCTAssertEqual(cola.unit, "ml", "Eine halbe Liter-Flasche sind 500 ml, nicht 500 g")
+
+        let skyr = try XCTUnwrap(ReceiptParserService.packageSizeFromName("SKYR NATUR 500G"))
+        XCTAssertEqual(skyr.amount, 500, accuracy: 0.0001)
+        XCTAssertEqual(skyr.unit, "g")
+
+        let wein = try XCTUnwrap(ReceiptParserService.packageSizeFromName("WEIN 75CL"))
+        XCTAssertEqual(wein.amount, 750, accuracy: 0.0001)
+        XCTAssertEqual(wein.unit, "ml", "Zentiliter sind ein Volumen")
+
+        XCTAssertNil(
+            ReceiptParserService.packageSizeFromName("Bio Eier 6er"),
+            "Ohne erkennbare Einheit darf keine Füllmenge erfunden werden"
+        )
+    }
+
+    /// AC-10, zweite Hälfte: Beide Funktionen müssen für denselben Namen denselben Zahlenwert
+    /// liefern — sonst zeigte die Anzeige eine andere Menge, als der Preis-Divisor benutzt.
+    func testPackageSizeFromNameAgreesWithWeightBasisFromName() throws {
+        for name in ["COLA 0,5L", "SKYR NATUR 500G", "WEIN 75CL", "Reis 1kg", "Cola 1,5l"] {
+            let package = try XCTUnwrap(ReceiptParserService.packageSizeFromName(name), name)
+            let basis = try XCTUnwrap(ReceiptParserService.weightBasisFromName(name), name)
+            XCTAssertEqual(
+                package.amount, basis, accuracy: 0.0001,
+                "Anzeige-Menge und Preis-Divisor müssen für '\(name)' dieselbe Zahl sein"
+            )
+        }
+    }
 }
