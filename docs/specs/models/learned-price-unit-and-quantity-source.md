@@ -246,8 +246,9 @@ HomeView-Vorschläge, StoreDetailView, SyncCoordinator) unverändert.
 
 > **Abschnitte 6 bis 8 gehören zu Issue #57**, nicht mehr zu diesem Ticket (PO-Entscheidung
 > 2026-09-26). Sie bleiben hier als Vorarbeit stehen, damit #57 nicht von vorn anfängt. Der Code
-> zu Abschnitt 7 (`ItemRow`) und 8 (`EditItemView`) ist in #10 schon geschrieben und läuft in der
-> grünen Suite mit; erreichbar wird er erst mit `suggestQuantity` aus Abschnitt 6.
+> zu Abschnitt 7 (`ItemRow`) und 8 (`EditItemView`) ist in #10 schon geschrieben, sein Verhalten
+> aber erst in #57 nachzuweisen — erreichbar wird er mit `suggestQuantity` aus Abschnitt 6.
+> Abschnitt 6 selbst ist in #10 **nicht** umgesetzt.
 
 ### 6. Vier Stufen in `AddItemView`
 
@@ -392,30 +393,21 @@ nur mittelbar über den Durchstich in der Oberfläche.
 | `testPackageSizeFromNameReturnsLitreAsMillilitre` | `"COLA 0,5L"` → `(500, "ml")`, `"SKYR NATUR 500G"` → `(500, "g")`, `"WEIN 75CL"` → `(750, "ml")`. |
 | `testPackageSizeFromNameAgreesWithWeightBasisFromName` | Beide Funktionen liefern für dieselben Namen denselben Zahlenwert. |
 
-### Unit-Tests — `RestockTests/AssignmentServiceQuantitySuggestionTests.swift` (neu)
+### Nach Issue #57 verschoben
 
-Deckt die vier Stufen der Mengen-Vorbelegung ab. Ohne diese Datei wären AC11 bis AC13 bloße
-Beschreibungen ohne Nachweis.
-
-| Test | Beweist |
-|---|---|
-| `testSuggestsQuantityFromLastPurchaseInSameStore` | Kaufhistorie mit 400 g bei „Lidl" → `("400", "g", "history")`. AC11, erster Teil. |
-| `testIgnoresPurchaseHistoryFromOtherStore` | Derselbe Artikel, 400 g bei „Rewe", Abfrage für „Lidl" → kein Treffer aus Stufe 2. AC11, zweiter Teil. |
-| `testFallsBackToPackageSizeInTypedName` | Ohne Historie, Name „Skyr Natur 500g" → `("500", "g", "package")`. AC12. |
-| `testFallsBackToLitrePackageSizeWithMillilitreUnit` | Name „Cola 0,5L" → `("500", "ml", "package")` — keine Gramm-Anzeige für Flüssiges. |
-| `testReturnsNoneWithoutAnyEvidence` | Weder Historie noch Füllmenge → `("", "", "none")`. AC13, erster Teil. |
-| `testAveragesRecentPurchasesLikeBefore` | Das bestehende Mittelungsverhalten über die letzten fünf Käufe (`AddItemView.swift:190-196`) bleibt beim Umzug unverändert. |
-| `testSuggestionIsNotConsultedWhenUserTypedQuantity` | Stufe 1 hat Vorrang: eine eingetippte Menge ergibt stets `"user"`. AC13, zweiter Teil. |
+Die Testdatei `RestockTests/AssignmentServiceQuantitySuggestionTests.swift` (sieben Tests zu den
+vier Stufen der Mengen-Vorbelegung, AC-11 bis AC-13) sowie vier UI-Tests
+(`testAssumedQuantityIsMarkedAsAssumptionInList` AC-14,
+`testAssumptionMarkIsReadableInDarkMode` AC-18,
+`testCorrectingQuantityRemovesAssumptionMarkAndRestoresTotal` AC-16,
+`testItemWithoutEvidenceShowsRateInsteadOfTotal` AC-15) sind mit ihren Anforderungen nach
+**Issue #57** gezogen und **nicht** Teil von #10. Ihre Beschreibungen stehen dort.
 
 ### UI-Tests — `RestockUITests/ReceiptReviewUITests.swift`
 
 | Test | Beweist |
 |---|---|
-| `testSavedReceiptDoesNotProduceOneCentItemPrice` | Durchstich des reproduzierten Falls: nach „Speichern" steht in der Lidl-Liste am Artikel „Hackfleisch" **kein** Betrag „0,01 €". AC17. |
-| `testAssumedQuantityIsMarkedAsAssumptionInList` | Ein Artikel mit angenommener Menge zeigt in der Zeile „ca. 400 g"; ein Artikel mit eingetippter Menge zeigt „400 g" ohne „ca.". AC14. |
-| `testAssumptionMarkIsReadableInDarkMode` | Dieselbe Markierung im Dunkelmodus (`XCUIDevice.shared.appearance = .dark`), Muster wie `testOriginalTextAndAiMarkAreReadableInDarkMode` (Zeile 690). AC18. |
-| `testCorrectingQuantityRemovesAssumptionMarkAndRestoresTotal` | Menge über „Bearbeiten" ändern und speichern → „ca." verschwindet aus der Zeile und es steht wieder ein Gesamtbetrag statt einer Rate. AC16. |
-| `testItemWithoutEvidenceShowsRateInsteadOfTotal` | Artikel ohne jede Mengen-Evidenz zeigt „€/100 g" statt eines Gesamtbetrags und gar keine Mengenangabe. AC15. |
+| `testSavedReceiptDoesNotProduceOneCentItemPrice` | Durchstich des reproduzierten Falls: nach „Speichern" steht in der Lidl-Liste am Artikel „Hackfleisch" **kein** Betrag „0,01 €". AC-17. |
 
 Die Tests laufen über die Test-Action des Schemas auf Deutsch (`language="de"`, `region="DE"`) und
 prüfen Anzeigetexte. Jede Klasse, die Daten sät, räumt in `tearDown()` über ihr eigenes
@@ -478,13 +470,21 @@ Zwei Gründe für die Trennung:
    und dunkel, mit mindestens einer Alternative. Für #10 gab es sie nicht; in #57 ist sie der
    erste Arbeitsschritt.
 
-**Achtung für #57:** Der Code zu AC-14 (`ItemRow`: „ca."-Präfix, `Color.amber`, keine
-Mengenangabe bei `"none"`) und AC-16 (`EditItemView` setzt `quantitySource = "user"`) ist in
-diesem Ticket **bereits geschrieben** und läuft in der grünen Suite mit. Er ist nur nicht
-erreichbar, solange niemand `quantitySource` auf `"history"` oder `"package"` setzt — das tut
-erst `suggestQuantity`. #57 ergänzt daher vor allem `suggestQuantity`, die Anbindung in
-`AddItemView`, AC-15 und die Tests. Der Code wurde bewusst stehen gelassen statt zurückgebaut:
-Er ist getestet, folgenlos und #57 braucht ihn ohnehin.
+**Achtung für #57 — und eine ehrliche Einschränkung:** Der Code zu AC-14 (`ItemRow`:
+„ca."-Präfix, `Color.amber`, keine Mengenangabe bei `"none"`) und AC-16 (`EditItemView` setzt
+`quantitySource = "user"`) ist in diesem Ticket **bereits geschrieben**, sein Verhalten in #10
+aber **nicht nachgewiesen** — die vier UI-Tests, die ihn erreichen würden, sind mit AC-14 bis
+AC-16 und AC-18 nach #57 gezogen. Belegt ist nur: Er compiliert und bricht keinen der 270
+Bestandstests. Mehr als das darf hier nicht behauptet werden.
+
+Erreichbar wird er erst, wenn `suggestQuantity` `quantitySource` auf `"history"` oder `"package"`
+setzt. #57 ergänzt daher `suggestQuantity`, die Anbindung in `AddItemView`, AC-15 **und die
+Nachweise für diesen schon vorhandenen Code**.
+
+Er wurde bewusst stehen gelassen statt zurückgebaut: Er ist folgenlos, solange `quantitySource`
+überall `"user"` bleibt, und #57 braucht ihn ohnehin. Ein Rückbau mit anschließendem Wiederaufbau
+wäre Arbeit gegen Arbeit — die Alternative, ihn zu entfernen, bleibt aber offen, falls #57 lange
+liegen bleibt und toter Code im Produktivzweig störender wiegt als die doppelte Arbeit.
 
 ## Alternativen (verworfen)
 
@@ -602,3 +602,12 @@ verschoben" unter den Acceptance Criteria.
   Entwurfsvorschau für die sichtbare Änderung an der Listenzeile, die die PO-Regel vom 2026-09-22
   vor der Spec verlangt. Verbleibender Umfang: 13 Anforderungen, ~203 LoC über sieben
   Produktdateien.
+- 2026-09-26: **Nachbesserung der Teilung**, nach unabhängigem Befund des po-briefer. Zwei
+  Widersprüche behoben, die die erste Bereinigung übersehen hatte: (1) Der Test Plan trug noch die
+  Testdatei `AssignmentServiceQuantitySuggestionTests.swift` und vier UI-Tests für die
+  verschobenen AC-14 bis AC-16 und AC-18 — wer strikt nach Test Plan umgesetzt hätte, hätte Tests
+  für Anforderungen gebaut, die laut AC-Liste und Scope nicht mehr zu #10 gehören. Die
+  Beschreibungen sind als Kommentar an #57 gesichert. (2) Die Aussage, der Code zu AC-14 und AC-16
+  „laufe in der grünen Suite mit", behauptete mehr als belegt war: Die Tests, die ihn erreichen
+  würden, sind selbst nach #57 gezogen. Belegt ist nur, dass er compiliert und keinen der 270
+  Bestandstests bricht.
