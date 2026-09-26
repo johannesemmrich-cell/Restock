@@ -32,6 +32,22 @@ struct StoreDetailView: View {
     @Query private var allRecords: [PurchaseRecord]
     @ObservedObject private var templateService = TemplateService.shared
 
+    // Issue #30, C4: „Vielleicht auch fällig“ — Nachkauf-Vorschläge dieses Ladens bis zum
+    // nächsten Besuch. Wie das Banner auf dem Startbildschirm nur im Developer Mode.
+    @AppStorage("developerMode") private var developerMode = false
+    @AppStorage("storeReplenishmentCollapsed") private var alsoDueCollapsed = false
+    // Nicht direkt gelesen — beobachtet, damit die Vorschläge nach „Hab noch“, „Nicht mehr
+    // vorschlagen“ (auch aus den Einstellungen) oder einer A4-Ablehnung neu berechnet werden.
+    @AppStorage(ReplenishmentBlocklist.defaultsKey) private var blockedReplenishmentsData = Data()
+    @AppStorage(ReplenishmentSnoozes.defaultsKey) private var snoozedReplenishmentsData = Data()
+    @AppStorage(ReplenishmentKeyMigration.dismissedKey) private var dismissedReplenishmentsData = Data()
+    // Gleiche Ladenauswahl wie `HomeView`, damit ein Vorschlag in genau dem Laden erscheint, in
+    // den `+` im Banner ihn legen würde.
+    @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
+    @Query(filter: #Predicate<ShoppingItem> { !$0.isCompleted }) private var allPendingItems: [ShoppingItem]
+    @State private var alsoDueItems: [ConsumptionPattern] = []
+    @State private var visitGapDays: Double = 7
+
     // Local mirror of `store.groupByCategory` (which is UserDefaults-backed, so writing it alone
     // would never invalidate this view). The "···" menu toggle writes both: the Store property
     // for persistence, and this @State so SwiftUI re-renders immediately.
@@ -176,6 +192,8 @@ struct StoreDetailView: View {
             }
             .listRowBackground(Color.surface)
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+
+            alsoDueSection
 
             let urgentItems = pending.filter { $0.isUrgent }
             let regularItems = pending.filter { !$0.isUrgent }
@@ -401,6 +419,14 @@ struct StoreDetailView: View {
                 }
             }
         }
+        .onAppear { refreshAlsoDue() }
+        .onChange(of: allRecords.count) { refreshAlsoDue() }
+        .onChange(of: allPendingItems.count) { refreshAlsoDue() }
+        .onChange(of: blockedReplenishmentsData) { refreshAlsoDue() }
+        .onChange(of: snoozedReplenishmentsData) { refreshAlsoDue() }
+        .onChange(of: dismissedReplenishmentsData) { refreshAlsoDue() }
+        .onChange(of: developerMode) { refreshAlsoDue() }
+        .onChange(of: store.visitsPerWeek) { refreshAlsoDue() }
         .onDisappear {
             LiveActivityService.shared.end(for: store)
             if store.shareID != nil {
@@ -453,6 +479,154 @@ struct StoreDetailView: View {
             }
         }
         return result
+    }
+
+    // MARK: - Also due before the next visit (Issue #30, C4)
+
+    @ViewBuilder
+    private var alsoDueSection: some View {
+        if developerMode && !alsoDueItems.isEmpty {
+            Section {
+                if !alsoDueCollapsed {
+                    ForEach(alsoDueItems, id: \.itemName) { pattern in
+                        alsoDueRow(pattern)
+                    }
+                }
+            } header: {
+                Button {
+                    Haptics.impact(.light)
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
+                        alsoDueCollapsed.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Text(String(localized: "store.replenish.title"))
+                            .font(.system(size: 12, weight: .semibold))
+                            .tracking(0.6)
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 11, weight: .semibold))
+                            .rotationEffect(.degrees(alsoDueCollapsed ? -90 : 0))
+                        Spacer()
+                        Text(Int(visitGapDays.rounded()) <= 1
+                             ? String(localized: "store.replenish.nextvisit.tomorrow")
+                             : String(format: String(localized: "store.replenish.nextvisit"), Int(visitGapDays.rounded())))
+                            .font(.system(size: 12))
+                            .textCase(nil)
+                    }
+                    .foregroundStyle(Color.amber)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+            .listRowBackground(Color.amber.opacity(0.12))
+        }
+    }
+
+    private func alsoDueRow(_ pattern: ConsumptionPattern) -> some View {
+        HStack(spacing: 10) {
+            Button {
+                addAlsoDue(pattern)
+            } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(Color.canvas)
+                    .frame(width: 26, height: 26)
+                    .background(pattern.isOverdue ? Color.danger : Color.amber, in: RoundedRectangle(cornerRadius: RCRadius.tag))
+            }
+            .buttonStyle(.borderless)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(pattern.itemName)
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(Color.ink)
+                Text(pattern.reasonText)
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color.textSecondary)
+            }
+            Spacer()
+            Text(pattern.isOverdue
+                 ? String(localized: "replenish.overdue")
+                 : String(format: String(localized: "replenish.in.days"), pattern.daysUntilNeeded))
+                .font(.system(size: 12))
+                .foregroundStyle(Color.textSecondary)
+            // Wie im Banner (C1): „Hab noch“ oder „Nicht mehr vorschlagen“.
+            Menu {
+                Button {
+                    snoozeAlsoDue(pattern)
+                } label: {
+                    Label(String(localized: "replenish.snooze"), systemImage: "clock.arrow.circlepath")
+                }
+                Button(role: .destructive) {
+                    blockAlsoDue(pattern)
+                } label: {
+                    Label(String(localized: "replenish.block"), systemImage: "nosign")
+                }
+            } label: {
+                Image(systemName: "xmark.circle")
+                    .font(.system(size: 18))
+                    .foregroundStyle(Color.textSecondary.opacity(0.7))
+            }
+            .buttonStyle(.borderless)
+        }
+    }
+
+    /// Berechnet „Vielleicht auch fällig“ neu. Gehört ein Artikel laut `AssignmentService` in
+    /// einen anderen Laden, erscheint er dort und nicht hier.
+    private func refreshAlsoDue() {
+        guard developerMode else {
+            alsoDueItems = []
+            return
+        }
+        let storeKey = store.name.lowercased()
+        visitGapDays = StoreVisitForecast.visitGapDays(
+            purchaseDates: allRecords.filter { $0.storeName.lowercased() == storeKey }.map(\.date),
+            visitsPerWeek: store.visitsPerWeek
+        )
+        let storeID = store.id
+        let stores = activeStores
+        let records = allRecords
+        alsoDueItems = HabitService.dueBeforeNextVisit(
+            from: HabitService.patterns(allRecords: records),
+            visitGapDays: visitGapDays,
+            snoozes: ReplenishmentSnoozes().entries(),
+            blocked: ReplenishmentBlocklist().keys,
+            dismissed: ReplenishmentFeedback.storedDismissals(),
+            pendingNames: Set(allPendingItems.map { $0.name.lowercased() })
+        ) { pattern in
+            AssignmentService.assign(itemName: pattern.itemName, to: stores, purchaseRecords: records)?.id == storeID
+        }
+        ReplenishmentMetrics().recordShown(alsoDueItems)
+    }
+
+    private func addAlsoDue(_ pattern: ConsumptionPattern) {
+        let item = pattern.makeReplenishmentItem(store: store)
+        context.insert(item)
+        ReplenishmentFeedback.trackAccepted(itemID: item.id, from: pattern)
+        removeAlsoDue(pattern)
+        syncPush()
+    }
+
+    /// „Hab noch“ heißt hier „reicht bis zum nächsten Besuch“: verschiebt wie im Banner, aber
+    /// mindestens bis zum nächsten Besuch in diesem Laden.
+    private func snoozeAlsoDue(_ pattern: ConsumptionPattern) {
+        ReplenishmentSnoozes().snooze(
+            pattern,
+            notBefore: StoreVisitForecast.nextVisit(after: Date(), gapDays: visitGapDays)
+        )
+        ReplenishmentMetrics().record(.snoozed)
+        removeAlsoDue(pattern)
+    }
+
+    private func blockAlsoDue(_ pattern: ConsumptionPattern) {
+        ReplenishmentBlocklist().block(pattern.itemName)
+        ReplenishmentMetrics().record(.blocked)
+        removeAlsoDue(pattern)
+    }
+
+    private func removeAlsoDue(_ pattern: ConsumptionPattern) {
+        withAnimation {
+            alsoDueItems.removeAll { $0.itemName == pattern.itemName }
+        }
+        Haptics.impact(.light)
     }
 
     // MARK: - Pending row

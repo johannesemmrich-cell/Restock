@@ -1647,13 +1647,7 @@ struct HomeView: View {
     }
 
     private func trackAcceptedReplenishment(_ item: ShoppingItem, from pattern: ConsumptionPattern) {
-        var accepted = acceptedReplenishments()
-        accepted[item.id] = AcceptedReplenishment(
-            itemName: pattern.itemName,
-            purchaseKey: pattern.purchaseKey
-        )
-        persistAcceptedReplenishments(accepted)
-        ReplenishmentMetrics().record(.accepted)
+        ReplenishmentFeedback.trackAccepted(itemID: item.id, from: pattern)
     }
 
     private func acceptedReplenishments() -> [UUID: AcceptedReplenishment] {
@@ -1696,8 +1690,7 @@ struct HomeView: View {
         var touchedStores: [Store?] = []
         for pattern in dueSoonItems {
             let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
-            let category = AssignmentService.category(for: pattern.itemName)
-            let item = makeReplenishmentItem(from: pattern, category: category, store: store)
+            let item = pattern.makeReplenishmentItem(store: store)
             context.insert(item)
             trackAcceptedReplenishment(item, from: pattern)
             touchedStores.append(store)
@@ -1706,24 +1699,9 @@ struct HomeView: View {
         SyncCoordinator.shared.pushInBackground(touchedStores)
     }
 
-    /// B5: übernimmt die typische Menge und Einheit statt immer 1.
-    private func makeReplenishmentItem(from pattern: ConsumptionPattern, category: String, store: Store?) -> ShoppingItem {
-        let amount = pattern.typicalQuantity > 0 ? pattern.typicalQuantity : 1
-        let quantity = amount == amount.rounded() ? "\(Int(amount))" : String(format: "%.1f", amount)
-        return ShoppingItem(
-            name: pattern.itemName,
-            category: category,
-            quantity: quantity,
-            quantityAmount: amount,
-            unit: pattern.unit,
-            store: store
-        )
-    }
-
     private func addSingleDueItem(_ pattern: ConsumptionPattern) {
         let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
-        let category = AssignmentService.category(for: pattern.itemName)
-        let item = makeReplenishmentItem(from: pattern, category: category, store: store)
+        let item = pattern.makeReplenishmentItem(store: store)
         context.insert(item)
         trackAcceptedReplenishment(item, from: pattern)
         dueSoonItems.removeAll { $0.itemName == pattern.itemName }

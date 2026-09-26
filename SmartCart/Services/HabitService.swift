@@ -116,6 +116,46 @@ struct HabitService {
         }
     }
 
+    // MARK: Before the next store visit (Issue #30, C4)
+
+    /// C4: „Vielleicht auch fällig“ in einer Ladenliste — Artikel dieses Ladens, die vor dem
+    /// nächsten Besuch dort ausgehen. Wer die Liste öffnet, plant den Einkauf, der gerade ansteht;
+    /// ein Artikel, der vor dem Besuch danach (jetzt + `visitGapDays`) ausgeht, gehört also schon
+    /// auf diesen Einkauf. Zusätzlich alles, was auch das Banner zeigt (Fenster oder überfällig),
+    /// damit die Ladenliste nie weniger vorschlägt als der Startbildschirm.
+    ///
+    /// Filter wie `notificationCandidates` (Sperrliste, „Hab noch“, A4-Ablehnung, schon offen)
+    /// plus Eignung (B2/B4). `belongsToStore` entscheidet, ob ein Artikel zu diesem Laden gehört
+    /// (in der App: `AssignmentService.assign`, also derselbe Laden, in den `+` im Banner ihn legt).
+    static func dueBeforeNextVisit(
+        from patterns: [ConsumptionPattern],
+        visitGapDays: Double,
+        now: Date = Date(),
+        calendar: Calendar = .current,
+        snoozes: [String: ReplenishmentSnooze] = [:],
+        blocked: Set<String> = [],
+        dismissed: [String: TimeInterval] = [:],
+        pendingNames: Set<String> = [],
+        belongsToStore: (ConsumptionPattern) -> Bool
+    ) -> [ConsumptionPattern] {
+        let nextVisit = StoreVisitForecast.nextVisit(after: now, gapDays: visitGapDays, calendar: calendar)
+        let nextVisitDay = calendar.startOfDay(for: nextVisit)
+        return notificationCandidates(
+            from: patterns,
+            snoozes: snoozes,
+            blocked: blocked,
+            dismissed: dismissed,
+            pendingNames: pendingNames
+        )
+        .filter { pattern in
+            guard isEligible(pattern, at: now) else { return false }
+            let runsOutBeforeVisit = calendar.startOfDay(for: pattern.estimatedNextPurchaseDate) < nextVisitDay
+            guard runsOutBeforeVisit || pattern.isDueSoon(at: now) || pattern.isOverdue(at: now) else { return false }
+            return belongsToStore(pattern)
+        }
+        .sorted { $0.estimatedNextPurchaseDate < $1.estimatedNextPurchaseDate }
+    }
+
     // MARK: Backtest (Issue #30, D1)
 
     /// Spielt die Vorhersage rückwirkend über die vorhandene Historie durch: für jeden Kauf, vor
@@ -229,6 +269,19 @@ enum ReplenishmentFeedback {
         return (try? JSONDecoder().decode([String: TimeInterval].self, from: data)) ?? [:]
     }
 
+    /// Merkt sich ein aus einem Vorschlag angelegtes `ShoppingItem` für A4 und zählt die Übernahme
+    /// (D1). Gemeinsam für das Banner (`HomeView`) und „Vielleicht auch fällig“ (C4,
+    /// `StoreDetailView`) — `HomeView` beobachtet denselben Schlüssel per `@AppStorage`.
+    static func trackAccepted(itemID: UUID, from pattern: ConsumptionPattern, defaults: UserDefaults = .standard) {
+        var accepted: [UUID: AcceptedReplenishment] = [:]
+        if let data = defaults.data(forKey: ReplenishmentKeyMigration.acceptedKey) {
+            accepted = (try? JSONDecoder().decode([UUID: AcceptedReplenishment].self, from: data)) ?? [:]
+        }
+        accepted[itemID] = AcceptedReplenishment(itemName: pattern.itemName, purchaseKey: pattern.purchaseKey)
+        defaults.set(try? JSONEncoder().encode(accepted), forKey: ReplenishmentKeyMigration.acceptedKey)
+        ReplenishmentMetrics(defaults: defaults).record(.accepted)
+    }
+
     /// Erkennt übernommene Vorschläge, deren `ShoppingItem` ohne Kauf wieder verschwunden ist,
     /// und wertet sie wie ✕ im Banner. Bewusst hier zentral statt an jeder Löschstelle
     /// (Swipe, Bearbeiten, „Erledigte löschen“, Sync von geteilten Listen …): entscheidend ist
@@ -264,6 +317,63 @@ enum ReplenishmentFeedback {
             }
         }
         return (stillTracked, dismissals)
+    }
+}
+
+extension ConsumptionPattern {
+    /// B5: Ein übernommener Vorschlag kommt mit typischer Menge und Einheit auf die Liste statt
+    /// immer mit 1. Für das Banner und „Vielleicht auch fällig“ (C4).
+    func makeReplenishmentItem(store: Store?) -> ShoppingItem {
+        let amount = typicalQuantity > 0 ? typicalQuantity : 1
+        let quantity = amount == amount.rounded() ? "\(Int(amount))" : String(format: "%.1f", amount)
+        return ShoppingItem(
+            name: itemName,
+            category: AssignmentService.category(for: itemName),
+            quantity: quantity,
+            quantityAmount: amount,
+            unit: unit,
+            store: store
+        )
+    }
+}
+
+// MARK: - Next store visit (Issue #30, C4)
+
+/// Schätzt, wann ein Laden das nächste Mal besucht wird — Grundlage für „Vielleicht auch
+/// fällig“ in der Ladenliste.
+enum StoreVisitForecast {
+    /// Ab so vielen verschiedenen Einkaufstagen in diesem Laden zählt die Historie statt der
+    /// Einstellung „Besuchshäufigkeit“ (`Store.visitsPerWeek`).
+    static let minimumVisitDays = 3
+    /// Nur die letzten Einkaufstage zählen, damit sich ein geänderter Rhythmus schnell auswirkt.
+    static let recentVisitDays = 8
+    /// Ein Abstand unter 1 Tag ergäbe nie einen Vorschlag über das Banner hinaus, über 4 Wochen
+    /// würde fast alles vorgeschlagen.
+    static let gapRange: ClosedRange<Double> = 1...28
+
+    /// Üblicher Abstand zwischen zwei Besuchen in Tagen: Median der Abstände zwischen den
+    /// letzten Einkaufstagen (mehrere Käufe an einem Tag sind ein Besuch). Mit zu wenig
+    /// Historie aus der eingestellten Besuchshäufigkeit.
+    /// - Parameter purchaseDates: Kaufzeitpunkte aller `PurchaseRecord`s dieses Ladens.
+    static func visitGapDays(purchaseDates: [Date], visitsPerWeek: Double, calendar: Calendar = .current) -> Double {
+        let visitDays = Set(purchaseDates.map { calendar.startOfDay(for: $0) }).sorted().suffix(recentVisitDays)
+        let gap: Double
+        if visitDays.count >= minimumVisitDays {
+            let gaps = zip(visitDays, visitDays.dropFirst())
+                .map { ($1.timeIntervalSince($0) / 86400).rounded() }
+                .sorted()
+            let middle = gaps.count / 2
+            gap = gaps.count % 2 == 0 ? (gaps[middle - 1] + gaps[middle]) / 2 : gaps[middle]
+        } else {
+            gap = visitsPerWeek > 0 ? 7 / visitsPerWeek : 7
+        }
+        return min(gapRange.upperBound, max(gapRange.lowerBound, gap))
+    }
+
+    /// Nächster Besuch nach dem gerade geplanten Einkauf.
+    static func nextVisit(after now: Date, gapDays: Double, calendar: Calendar = .current) -> Date {
+        calendar.date(byAdding: .day, value: Int(gapDays.rounded()), to: now)
+            ?? now.addingTimeInterval(gapDays.rounded() * 86400)
     }
 }
 
@@ -327,10 +437,15 @@ struct ReplenishmentSnoozes {
     /// Verschiebt ab dem angezeigten Termin — bei einem überfälligen Artikel ab jetzt, sonst
     /// stünde er sofort wieder im Banner. Ein Sonntag/Feiertag wird wie in 4b auf den Tag davor
     /// vorgezogen, aber nie auf oder vor den Ausgangstag.
+    ///
+    /// - Parameter notBefore: frühester verschobener Termin. C4: „Hab noch“ in einer Ladenliste
+    ///   heißt „reicht bis zum nächsten Besuch“ — sonst stünde der Artikel dort sofort wieder unter
+    ///   „Vielleicht auch fällig“.
     @discardableResult
     func snooze(
         _ pattern: ConsumptionPattern,
         now: Date = Date(),
+        notBefore: Date? = nil,
         closedDays: RetailClosedDays = .current,
         calendar: Calendar = .current
     ) -> Date {
@@ -347,6 +462,9 @@ struct ReplenishmentSnoozes {
         // Tage nach jetzt: so bleibt der Artikel mindestens einen Tag ausgeblendet.
         if let earliest = calendar.date(byAdding: .day, value: pattern.dueWindowDays + 2, to: now), until < earliest {
             until = closedDays.earliestOpenDay(onOrAfter: earliest, allowSunday: allowsSunday, calendar: calendar)
+        }
+        if let notBefore, calendar.startOfDay(for: until) < calendar.startOfDay(for: notBefore) {
+            until = closedDays.earliestOpenDay(onOrAfter: notBefore, allowSunday: allowsSunday, calendar: calendar)
         }
         var map = entries()
         map[pattern.itemName.lowercased()] = ReplenishmentSnooze(
