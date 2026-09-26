@@ -128,6 +128,127 @@ final class PriceProvenanceMigrationTests: XCTestCase {
         )
     }
 
+    /// AC-3: Der Gegenfall zum gemeldeten Fehler — passt die Bezugsgröße zur Einheit des Artikels,
+    /// muss die vom Bon gelernte Rate angewendet werden und exakt den bezahlten Betrag ergeben.
+    /// Ohne diesen Nachweis wäre die Entscheidungstabelle auch dann "grün", wenn sie gelernte
+    /// Preise pauschal verwirft — der Fehler wäre weg, der Nutzen auch.
+    func testLearnedGramPriceAppliesToItemWithGramQuantity() throws {
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")
+        store.learnedPrices["hackfleisch"] = 4.99 / 400 // Rate aus "BIO-HACKFLEISCH … 400G"
+        store.learnedPriceUnits["hackfleisch"] = "g"
+
+        let item = ShoppingItem(name: "Hackfleisch", quantityAmount: 400, unit: "g", store: store)
+
+        XCTAssertEqual(
+            try XCTUnwrap(item.estimatedLineTotal), 4.99, accuracy: 0.01,
+            "400 g zu 1,25 Cent je Gramm müssen genau die bezahlten 4,99 € ergeben"
+        )
+        XCTAssertFalse(
+            item.estimatedPriceIsAutoDerived,
+            "Ein angewendeter gelernter Preis ist ein echter Preis, keine Schätzung"
+        )
+    }
+
+    /// AC-4: Die Gegenrichtung — ein gelernter STÜCKpreis darf nie mit einer Grammzahl
+    /// multipliziert werden (0,39 € × 400 g = 156 € für eine Packung Eier).
+    func testLearnedPieceRateIsRejectedForWeightItem() {
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")
+        store.learnedPrices["eier"] = 0.39 // Preis pro Stück, vom Bon "4 Stk x 0,39"
+        store.learnedPriceUnits["eier"] = "stk"
+
+        let item = ShoppingItem(name: "Eier", category: "Eier", quantityAmount: 400, unit: "g", store: store)
+
+        XCTAssertTrue(
+            item.estimatedPriceIsAutoDerived,
+            "Ein Stückpreis passt nicht zu einem Artikel in Gramm — er muss verworfen werden und "
+            + "der PriceEstimator greifen"
+        )
+        XCTAssertNotEqual(
+            item.estimatedPrice ?? 0, 0.39, accuracy: 0.0001,
+            "Der verworfene Stückpreis darf nicht als Rate übernommen werden"
+        )
+        XCTAssertNotEqual(
+            item.estimatedLineTotal ?? 0, 0.39 * 400, accuracy: 0.01,
+            "Stückpreis × Grammzahl ist der Fehler in umgekehrter Richtung (156 € für Eier)"
+        )
+    }
+
+    /// AC-6: Zeile 5 der Entscheidungstabelle (PO-Entscheidung 2, Stufe 4). Ohne belegbare Menge
+    /// (`quantitySource == "none"`) bleibt die echte Bon-Rate erhalten — aber es entsteht KEIN
+    /// Gesamtpreis daraus, denn die stille `quantityAmount = 1` wäre geraten und ergäbe genau die
+    /// gemeldeten 0,01 €. `unit` wird auf die Bezugsgröße gesetzt, damit die Anzeige weiß, worauf
+    /// sich die Rate bezieht. `quantitySource` kommt hier direkt über den Konstruktor: In #10 gibt
+    /// es noch keinen Aufrufer, der den Wert setzt — die Weiche wird mit `suggestQuantity` in
+    /// Issue #57 erreichbar, muss aber jetzt schon nachweisbar richtig entscheiden.
+    func testLearnedGramRateWithoutEvidenceIsKeptAsRate() throws {
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")
+        let perGram = 4.99 / 400
+        store.learnedPrices["hackfleisch"] = perGram
+        store.learnedPriceUnits["hackfleisch"] = "g"
+
+        let item = ShoppingItem(
+            name: "Hackfleisch", category: "Fleisch & Wurst", store: store, quantitySource: "none"
+        )
+
+        XCTAssertEqual(
+            try XCTUnwrap(item.estimatedPrice), perGram, accuracy: 0.000001,
+            "Die echte Rate vom Bon bleibt erhalten, sie ist kein Schätzwert"
+        )
+        XCTAssertNil(
+            item.estimatedLineTotal,
+            "Ohne belegte Menge darf aus der Rate kein Gesamtbetrag entstehen — genau dieser "
+            + "Betrag war der gemeldete Fehler (0,01 €)"
+        )
+        XCTAssertEqual(item.unit, "g", "Die Anzeige muss wissen, worauf sich die Rate bezieht")
+        XCTAssertFalse(
+            item.estimatedPriceIsAutoDerived,
+            "Die Rate stammt vom Kassenbon, nicht vom Schätzer"
+        )
+    }
+
+    /// AC-7: Gramm und Kilogramm werden NIE stillschweigend ineinander umgerechnet. Der Test ist
+    /// so gebaut, dass eine Umrechnung um den Faktor 1000 sichtbar würde: die gelernte Rate ist
+    /// 0,99 €/1000 g; für "1 kg" wäre das umgerechnet genau 0,99 €. Stattdessen muss der Wert
+    /// verworfen werden (die Richtung der Umrechnung ist erst mit der g/ml-Trennung aus #15 sicher).
+    func testLearnedGramRateIsRejectedForKilogramItem() {
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")
+        let perGram = 0.99 / 1000 // 0,99 € für ein Kilo, gelernt als Rate pro Gramm
+        store.learnedPrices["mehl"] = perGram
+        store.learnedPriceUnits["mehl"] = "g"
+
+        let item = ShoppingItem(name: "Mehl", category: "Backen", quantityAmount: 1, unit: "kg", store: store)
+
+        XCTAssertTrue(
+            item.estimatedPriceIsAutoDerived,
+            "Eine Pro-Gramm-Rate passt nicht zu einem Artikel in Kilogramm — verwerfen, nicht raten"
+        )
+        XCTAssertNotEqual(
+            item.estimatedLineTotal ?? 0, 0.99, accuracy: 0.0001,
+            "Es darf NICHT um den Faktor 1000 umgerechnet werden (0,99 € wäre genau das Ergebnis "
+            + "einer solchen stillen Umrechnung)"
+        )
+        XCTAssertNotEqual(
+            item.estimatedPrice ?? 0, perGram, accuracy: 0.000001,
+            "Die unpassende Rate darf auch nicht unverändert übernommen werden"
+        )
+    }
+
+    /// AC-8: Die Eimer-Zuordnung selbst — sie entscheidet in jeder Zeile der Entscheidungstabelle,
+    /// ob "passt" oder "passt nicht". Nur zwei Eimer, weil die Quelle des gelernten Preises kg und
+    /// l auf denselben Faktor normiert (Trennung: Issue #15).
+    func testUnitBucketMapsSynonymsAndUnknownUnits() {
+        for unit in ["", "Stk", "Stück", "st", "STK.", "stueck"] {
+            XCTAssertEqual(ShoppingItem.unitBucket(unit), "stk", "'\(unit)' zählt Stücke")
+        }
+        for unit in ["g", "mg", "ml", "cl", "dl", "Gramm", " ml "] {
+            XCTAssertEqual(ShoppingItem.unitBucket(unit), "g", "'\(unit)' ist eine Sub-Einheit")
+        }
+        XCTAssertEqual(ShoppingItem.unitBucket("kg"), "kg", "kg bleibt ein eigener Eimer")
+        XCTAssertEqual(ShoppingItem.unitBucket("l"), "l", "l bleibt ein eigener Eimer")
+        XCTAssertEqual(ShoppingItem.unitBucket("el"), "el", "Unbekannte Einheiten bleiben sie selbst")
+        XCTAssertEqual(ShoppingItem.unitBucket("KG"), "kg", "Die Schreibweise darf nicht entscheiden")
+    }
+
     // MARK: - Verteidigungslinie 2: Migration repariert den gespeicherten Wert selbst
 
     @MainActor
