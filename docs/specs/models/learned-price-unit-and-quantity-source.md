@@ -115,27 +115,32 @@ Annahme markiert) und die Lieferung in einem Zug freigegeben.
 | `SmartCart/Models/ShoppingItem.swift` | MODIFY | `quantitySource: String = "user"`, `unitBucket(_:)`, Entscheidungstabelle in `init`, `estimatedLineTotal`-Gate | ~50 |
 | `SmartCart/Views/Prices/ReceiptScannerView.swift` | MODIFY | `EditableReceiptLine.learningUnit(matchUnit:)` + Schreibzeile in `save()` | ~22 |
 | `SmartCart/Views/Prices/ActualPriceEntryView.swift` | MODIFY | Einheit des Artikels beim manuellen Preis mitschreiben | ~5 |
-| `SmartCart/Services/AssignmentService.swift` | MODIFY | `suggestQuantity(itemName:storeName:purchaseRecords:)` — die vier Stufen als reine, testbare Funktion | ~32 |
-| `SmartCart/Views/Store/AddItemView.swift` | MODIFY | Ruft `suggestQuantity` auf, reicht `quantitySource` an den Konstruktor | ~18 |
-| `SmartCart/Views/Components/ItemRow.swift` | MODIFY | „ca."-Markierung, Ratenanzeige bei fehlender Evidenz | ~20 |
-| `SmartCart/Views/Store/EditItemView.swift` | MODIFY | Menge vom Nutzer geändert → `quantitySource = "user"` | ~5 |
+| `SmartCart/Views/Components/ItemRow.swift` | MODIFY | Mengenzeile beachtet `quantitySource` — Vorarbeit für #57, ohne `suggestQuantity` nicht erreichbar | ~9 |
+| `SmartCart/Views/Store/EditItemView.swift` | MODIFY | Menge vom Nutzer geändert → `quantitySource = "user"` | ~4 |
 | `SmartCart/Services/ReceiptParserService.swift` | MODIFY | `packageSizeFromName(_:) -> (amount: Double, unit: String)?` als Geschwister zu `weightBasisFromName` | ~14 |
 | `RestockTests/PriceProvenanceMigrationTests.swift` | MODIFY | Fixtures, eine geänderte Erwartung, neue Tests zur Entscheidungstabelle | ~90 |
-| `RestockTests/ReceiptParserPriceTests.swift` | MODIFY | Fixtures ergänzen | ~10 |
-| `RestockTests/AssignmentServiceQuantitySuggestionTests.swift` | CREATE | Nachweis der vier Stufen (AC11–AC13) | ~80 |
-| `RestockUITests/ReceiptReviewUITests.swift` | MODIFY | Durchstich nach dem Bon-Speichern, „ca."-Markierung hell und dunkel, Zurücksetzen beim Korrigieren | ~70 |
+| `RestockTests/ReceiptParserPriceTests.swift` | MODIFY | Fixtures ergänzen, `learningUnit` mitprüfen | ~12 |
+| `RestockTests/PriceEstimatorStagesTests.swift` | MODIFY | Fixture `learnedPriceUnits["milch"] = "stk"`, sonst ist die Stufen-Rangfolge nicht mehr messbar | ~4 |
+| `RestockUITests/ReceiptReviewUITests.swift` | MODIFY | Durchstich nach dem Bon-Speichern (AC-17) | ~30 |
 
-Produktivcode-Summe: **~180 LoC über 9 Produktdateien.**
+Produktivcode-Summe: **~203 LoC über 7 Produktdateien** (gemessen, nur hinzugefügte Zeilen).
 
-**Warum die vier Stufen nicht in `AddItemView` bleiben:** Als private Methode einer SwiftUI-View
-(`applySuggestedQuantity`, `AddItemView.swift:182-198`) sind sie automatisiert nicht nachweisbar —
-AC11 bis AC13 wären dann Beschreibungen ohne Beweis. Als statische Funktion auf `AssignmentService`
-(dort steht bereits die Logik, die aus Artikelname und Kaufhistorie eine Voreinstellung ableitet,
-`AssignmentService.swift:79-180`, mit eigener Testdatei `RestockTests/AssignmentServiceTests.swift`)
-sind sie eine reine Funktion über Werten und ohne SwiftUI-Umgebung prüfbar.
+Die drei Dateien der Mengen-Vorbelegung — `AssignmentService.swift` (`suggestQuantity`),
+`AddItemView.swift` (Anbindung) und `RestockTests/AssignmentServiceQuantitySuggestionTests.swift`
+(neu) — sind mit AC-11 bis AC-13 nach **Issue #57** gezogen und in diesem Ticket **unverändert**.
+Die dort festgehaltene Begründung gilt weiter: Als private Methode einer SwiftUI-View
+(`applySuggestedQuantity`, `AddItemView.swift:182-198`) wären die vier Stufen automatisiert nicht
+nachweisbar; als statische Funktion auf `AssignmentService` sind sie eine reine Funktion über
+Werten und ohne SwiftUI-Umgebung prüfbar.
 
 ### Out of scope
 
+- **Mengen-Vorbelegung und ihre Kennzeichnung in der Liste** → **Issue #57** (PO-Entscheidung
+  2026-09-26). Umfasst `AssignmentService.suggestQuantity`, die Anbindung in `AddItemView`, die
+  Ratenanzeige AC-15 und die Tests zu AC-11…AC-16 und AC-18. Ohne diese Vorbelegung entsteht kein
+  Artikel mit `quantitySource != "user"`, weshalb die Entscheidungstabelle in diesem Ticket
+  praktisch nur zwischen „anwenden" und „verwerfen" unterscheidet — genau das, was den gemeldeten
+  Fehler behebt.
 - **Schnell-Eingabe in `HomeView` und `AddItemIntent` (Siri)** bekommen die Stufenlogik nicht.
   Siri hat keinen Bildschirm, auf dem eine Annahme sichtbar und korrigierbar wäre; PO-Entscheidung
   3 verlangt aber genau das. Beide Pfade legen weiterhin mit `quantityAmount = 1`, `unit = ""`,
@@ -238,6 +243,11 @@ var quantitySource: String = "user"
 Neuer Konstruktor-Parameter `quantitySource: String = "user"` — der Standardwert lässt die über
 siebzehn bestehenden Erzeugungsstellen (Quick-Add, Siri-Intent, Widget, MenuPlan, RecipeImport,
 HomeView-Vorschläge, StoreDetailView, SyncCoordinator) unverändert.
+
+> **Abschnitte 6 bis 8 gehören zu Issue #57**, nicht mehr zu diesem Ticket (PO-Entscheidung
+> 2026-09-26). Sie bleiben hier als Vorarbeit stehen, damit #57 nicht von vorn anfängt. Der Code
+> zu Abschnitt 7 (`ItemRow`) und 8 (`EditItemView`) ist in #10 schon geschrieben und läuft in der
+> grünen Suite mit; erreichbar wird er erst mit `suggestQuantity` aus Abschnitt 6.
 
 ### 6. Vier Stufen in `AddItemView`
 
@@ -419,55 +429,62 @@ den Stückpreis-Pfad.
 
 ## Acceptance Criteria
 
-- [ ] **AC1:** Bon-Zeile `BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G` für 4,99 € → nach
+- **AC-1:** Bon-Zeile `BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G` für 4,99 € → nach
   `ReceiptScannerView.save()` gilt `store.learnedPrices["bio-hackfleisch gemischt rind & schwein 400 g"] == 4.99/400`
   **und** `store.learnedPriceUnits[...] == "g"`.
-- [ ] **AC2:** `ShoppingItem(name: "Hackfleisch", store: store)` ohne Mengenangabe und mit
+- **AC-2:** `ShoppingItem(name: "Hackfleisch", store: store)` ohne Mengenangabe und mit
   `quantitySource == "user"` übernimmt diese Rate **nicht**: `estimatedPriceIsAutoDerived == true`
   und `estimatedLineTotal != 0.0125`.
-- [ ] **AC3:** `ShoppingItem(name: "Hackfleisch", quantityAmount: 400, unit: "g", store: store)`
+- **AC-3:** `ShoppingItem(name: "Hackfleisch", quantityAmount: 400, unit: "g", store: store)`
   ergibt `estimatedLineTotal ≈ 4.99` (Genauigkeit 0,01).
-- [ ] **AC4:** Ein gelernter Stückpreis (`learnedPriceUnits == "stk"`) wird für einen Artikel mit
+- **AC-4:** Ein gelernter Stückpreis (`learnedPriceUnits == "stk"`) wird für einen Artikel mit
   `unit: "g"` verworfen; `estimatedPriceIsAutoDerived == true`.
-- [ ] **AC5:** Ein `learnedPrices`-Eintrag **ohne** zugehörigen `learnedPriceUnits`-Eintrag wird
+- **AC-5:** Ein `learnedPrices`-Eintrag **ohne** zugehörigen `learnedPriceUnits`-Eintrag wird
   nie angewendet, auch wenn Betrag und Menge plausibel sind (PO-Entscheidung 1).
-- [ ] **AC6:** `quantitySource == "none"` mit gelernter `"g"`-Rate → `estimatedPrice == 4.99/400`,
+- **AC-6:** `quantitySource == "none"` mit gelernter `"g"`-Rate → `estimatedPrice == 4.99/400`,
   `estimatedLineTotal == nil`, `unit == "g"`, `estimatedPriceIsAutoDerived == false`.
-- [ ] **AC7:** Eine `"g"`-Rate wird für einen Artikel mit `unit: "kg"` verworfen
+- **AC-7:** Eine `"g"`-Rate wird für einen Artikel mit `unit: "kg"` verworfen
   (`estimatedPriceIsAutoDerived == true`) — keine stille Umrechnung um den Faktor 1000.
-- [ ] **AC8:** `ShoppingItem.unitBucket` bildet `""`, `"Stk"`, `"Stück"`, `"st"` auf `"stk"` ab,
+- **AC-8:** `ShoppingItem.unitBucket` bildet `""`, `"Stk"`, `"Stück"`, `"st"` auf `"stk"` ab,
   `"g"`, `"mg"`, `"ml"`, `"cl"`, `"dl"` auf `"g"`, und lässt `"kg"`, `"l"`, `"el"` unverändert
   kleingeschrieben stehen.
-- [ ] **AC9:** Für jeden der fünf Zweige von `learningQuantity` liefert `learningUnit` den in der
+- **AC-9:** Für jeden der fünf Zweige von `learningQuantity` liefert `learningUnit` den in der
   Tabelle unter „Implementation Details 2" genannten Wert — geprüft über dieselbe Instanz von
   `EditableReceiptLine`, nicht über eine nachgebaute Formel.
-- [ ] **AC10:** `ReceiptParserService.packageSizeFromName` liefert `("COLA 0,5L") == (500, "ml")`,
+- **AC-10:** `ReceiptParserService.packageSizeFromName` liefert `("COLA 0,5L") == (500, "ml")`,
   `("SKYR NATUR 500G") == (500, "g")`, `("WEIN 75CL") == (750, "ml")`; der Zahlenwert stimmt für
   alle drei mit `weightBasisFromName` überein.
-- [ ] **AC11:** `AssignmentService.suggestQuantity` liefert für einen Artikel, der in diesem Laden
-  zuletzt mit 400 g gekauft wurde, `("400", "g", "history")` — dieselbe Abfrage mit einem Kauf
-  desselben Artikels in einem **anderen** Laden liefert keinen Treffer aus Stufe 2.
-- [ ] **AC12:** `AssignmentService.suggestQuantity` liefert ohne Kaufhistorie für den Namen
-  `"Skyr Natur 500g"` das Ergebnis `("500", "g", "package")` und für `"Cola 0,5L"` das Ergebnis
-  `("500", "ml", "package")`.
-- [ ] **AC13:** `AssignmentService.suggestQuantity` liefert ohne Historie und ohne Füllmenge
-  `("", "", "none")`; hat der Nutzer eine Menge eingetippt, wird die Funktion gar nicht erst
-  gerufen und der Artikel entsteht mit `quantitySource == "user"`.
-- [ ] **AC14:** In der Liste zeigt ein Artikel mit `quantitySource == "history"` oder `"package"`
-  den Text `"ca. 400 g"` in `Color.amber`; mit `quantitySource == "user"` den Text `"400 g"` wie
-  bisher; mit `quantitySource == "none"` gar keine Mengenangabe.
-- [ ] **AC15:** In der Liste zeigt ein Artikel mit `quantitySource == "none"` und `unit == "g"`
-  statt eines Gesamtpreises die Rate `"1,25 €/100 g"` (= `estimatedPrice × 100`).
-- [ ] **AC16:** Ändert der Nutzer die Menge in `EditItemView` und speichert, gilt
-  `quantitySource == "user"`, die „ca."-Markierung verschwindet und `estimatedLineTotal` liefert
-  wieder einen Betrag.
-- [ ] **AC17:** UI-Durchstich: Nach „Speichern" im Bon-Prüf-Screen enthält die Lidl-Liste am
+- **AC-17:** UI-Durchstich: Nach „Speichern" im Bon-Prüf-Screen enthält die Lidl-Liste am
   Artikel „Hackfleisch" **keinen** Betrag „0,01 €".
-- [ ] **AC18:** Die „ca."-Markierung ist im Dunkelmodus lesbar (eigener UI-Test).
-- [ ] **AC19:** `testSavingStillWritesLearnedPriceToMatchedItem` bleibt unverändert grün — der
+- **AC-19:** `testSavingStillWritesLearnedPriceToMatchedItem` bleibt unverändert grün — der
   Stückpreis-Pfad („Milch", 0,99 €) ist nicht betroffen.
-- [ ] **AC20:** Die gesamte Bestandssuite (Unit + UI) ist im **gemeinsamen** Lauf grün, nicht nur
+- **AC-20:** Die gesamte Bestandssuite (Unit + UI) ist im **gemeinsamen** Lauf grün, nicht nur
   je Testklasse einzeln.
+
+### Nach Issue #57 verschoben (PO-Entscheidung 2026-09-26)
+
+AC-11 bis AC-16 und AC-18 beschrieben die **Mengen-Vorbelegung** und ihre Darstellung in der
+Liste. Sie sind **nicht** Teil dieses Tickets mehr und stehen unverändert, mit derselben
+Nummerierung, in **Issue #57**. Die Nummern bleiben hier absichtlich frei, damit Verweise aus
+Kontext, Briefing und Protokollen weiter aufgehen.
+
+Zwei Gründe für die Trennung:
+
+1. **Umfang.** Zwanzig Anforderungen über neun Produktdateien sind das Doppelte einer normalen
+   Änderung; die Umfangsschranke des Workflows griff mitten in der Umsetzung (verschärft durch
+   die Fehlzählung aus #36).
+2. **Sichtbare Änderung ohne Entwurf.** AC-14 und AC-15 gestalten die Listenzeile neu. Nach der
+   PO-Regel vom 2026-09-22 muss dafür **vor** der Spec eine Entwurfsvorschau vorliegen — hell
+   und dunkel, mit mindestens einer Alternative. Für #10 gab es sie nicht; in #57 ist sie der
+   erste Arbeitsschritt.
+
+**Achtung für #57:** Der Code zu AC-14 (`ItemRow`: „ca."-Präfix, `Color.amber`, keine
+Mengenangabe bei `"none"`) und AC-16 (`EditItemView` setzt `quantitySource = "user"`) ist in
+diesem Ticket **bereits geschrieben** und läuft in der grünen Suite mit. Er ist nur nicht
+erreichbar, solange niemand `quantitySource` auf `"history"` oder `"package"` setzt — das tut
+erst `suggestQuantity`. #57 ergänzt daher vor allem `suggestQuantity`, die Anbindung in
+`AddItemView`, AC-15 und die Tests. Der Code wurde bewusst stehen gelassen statt zurückgebaut:
+Er ist getestet, folgenlos und #57 braucht ihn ohnehin.
 
 ## Alternativen (verworfen)
 
@@ -534,18 +551,19 @@ den Stückpreis-Pfad.
 
 - Ein Bon wird gescannt und gespeichert. Für jede übernommene Position merkt sich die App neben dem
   Preis, worauf er sich bezieht — auf ein Stück oder auf ein Gramm beziehungsweise Milliliter.
-- Wird derselbe Artikel später auf die Liste gesetzt, schlägt die App eine Menge vor, sobald sie
-  eine belegen kann: zuerst die zuletzt in diesem Laden gekaufte Menge, sonst die Füllmenge, die im
-  Namen steht. Die Vorbelegung erscheint im Hinzufügen-Formular und ist dort änderbar.
-- Auf der Liste steht eine angenommene Menge als „ca. 400 g" in der Warnfarbe. Eine selbst
-  eingetippte Menge steht dort wie bisher.
-- Lässt sich keine Menge belegen, zeigt die Liste keinen Gesamtpreis, sondern die Rate: „1,25 €/100 g".
+- Steht am Artikel eine passende Mengenangabe, rechnet die App aus Rate und Menge den Betrag —
+  400 g Hackfleisch zu 1,25 Cent je Gramm ergeben 4,99 €.
 - Passt die gelernte Bezugsgröße nicht zur Einheit des Artikels, wird der gelernte Preis gar nicht
-  benutzt; es erscheint die übliche Schätzung.
-- Wird die Menge nachträglich geändert, gilt sie als Eingabe des Nutzers: Die Markierung
-  verschwindet und aus Rate und Menge wird wieder ein Gesamtpreis.
+  benutzt; es erscheint die übliche Schätzung. Das gilt auch für einen Artikel ohne Mengenangabe:
+  Aus einem Gewichtspreis wird dort **kein** Stückpreis mehr — der gemeldete Fehler „0,01 €".
+- Gramm und Kilogramm werden nie stillschweigend ineinander umgerechnet; passt die Einheit nicht
+  genau, greift die Schätzung statt eines um Faktor 1000 falschen Betrags.
 - Einmalig verschwinden alle bisher gelernten Preise aus der Anzeige, weil ihnen die Bezugsgröße
   fehlt. Beim nächsten Bon-Scan werden sie mit Bezugsgröße neu gelernt.
+
+Die **Vorbelegung** der Menge aus Kaufhistorie oder Packungsgröße und ihre Kennzeichnung in der
+Liste („ca. 400 g", Rate statt Gesamtpreis) gehören zu **Issue #57** — siehe „Nach Issue #57
+verschoben" unter den Acceptance Criteria.
 
 ## Known Limitations
 
@@ -573,3 +591,14 @@ den Stückpreis-Pfad.
   Umfang dadurch neun Produktdateien / ~180 LoC, vom PO erneut freigegeben.
 - 2026-09-26: AC1 bekommt einen eigenen Nachweis am Schreibweg — `assertLearnedPriceRoundTrip`
   prüft Preis und Bezugsgröße gemeinsam, dazu ein eigener Test für Gewichts- und Stückfall.
+- 2026-09-26: AC-Bullets von `- [ ] **AC1:**` auf `- **AC-1:**` umgestellt. Rein formal, kein Wort
+  am Inhalt: `hook_utils.extract_ac_entries()` erkennt nur die zweite Form, wodurch `edit_gate.py`
+  jeden Code-Edit mit „`## Acceptance Criteria` has no AC-N entries" abwies.
+- 2026-09-26: **Ticket geteilt (PO-Entscheidung).** AC-11 bis AC-16 und AC-18 — die
+  Mengen-Vorbelegung und ihre Darstellung in der Liste — sind nach **Issue #57** gezogen. #10
+  trägt nur noch die Bezugsgröße am gelernten Preis und den Durchstich AC-17, also die Behebung
+  des gemeldeten Fehlers. Zwei Gründe: der doppelte Umfang (20 Anforderungen über neun Dateien,
+  Umfangsschranke griff mitten in der Umsetzung, verschärft durch #36) und die fehlende
+  Entwurfsvorschau für die sichtbare Änderung an der Listenzeile, die die PO-Regel vom 2026-09-22
+  vor der Spec verlangt. Verbleibender Umfang: 13 Anforderungen, ~203 LoC über sieben
+  Produktdateien.
