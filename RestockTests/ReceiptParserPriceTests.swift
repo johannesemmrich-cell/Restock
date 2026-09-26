@@ -137,7 +137,10 @@ final class ReceiptParserPriceTests: XCTestCase {
     /// kaputte Fall — gar keiner (`nil`, z. B. allererster Scan dieses Artikels). Vor der
     /// `weightBasis`-Änderung fiel der `nil`-Fall auf den Fallback `1` zurück und hätte 1,15 als
     /// Gramm-Preis gelernt (→ 575 € für einen künftigen 500g-Artikel statt 1,15 €).
-    private func assertLearnedPriceRoundTrip(matchQuantityAmount: Double?, line: String) throws {
+    /// `expectedUnit` prüft zusätzlich die Bezugsgröße (Issue #10): Preis und Bezugsgröße werden in
+    /// `ReceiptScannerView.save()` gemeinsam geschrieben, also müssen sie hier auch gemeinsam
+    /// geprüft werden — ein Preis ohne Bezugsgröße wird von `ShoppingItem.init` nie mehr angewendet.
+    private func assertLearnedPriceRoundTrip(matchQuantityAmount: Double?, line: String, expectedUnit: String = "g") throws {
         let lines = ["Skyr Natur 500g", line]
         let receiptLine = try XCTUnwrap(ReceiptParserService.parse(lines).first)
 
@@ -152,11 +155,15 @@ final class ReceiptParserPriceTests: XCTestCase {
         )
         let quantity = editableLine.learningQuantity(matchQuantityAmount: matchQuantityAmount)
         let perUnitPrice = receiptLine.price / quantity
+        // Dieselbe Instanz, dieselbe Methode wie in `save()` — keine nachgebaute Formel.
+        let learnedUnit = editableLine.learningUnit(matchUnit: matchQuantityAmount == nil ? nil : "g")
 
         let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#123456")
         store.learnedPrices["skyr natur 500g"] = perUnitPrice
+        store.learnedPriceUnits["skyr natur 500g"] = learnedUnit
         let item = ShoppingItem(name: "Skyr Natur 500g", quantityAmount: 500, unit: "g", store: store)
 
+        XCTAssertEqual(learnedUnit, expectedUnit, "Preis und Bezugsgröße müssen zusammen gelernt werden (Issue #10)")
         XCTAssertEqual(try XCTUnwrap(item.estimatedLineTotal), 1.15, accuracy: 0.01)
     }
 
@@ -218,10 +225,13 @@ final class ReceiptParserPriceTests: XCTestCase {
         // Allererster Scan dieses Artikels — kein historischer Match.
         let quantity = editableLine.learningQuantity(matchQuantityAmount: nil)
         XCTAssertEqual(quantity, 500, "Divisor muss aus der im Namen gedruckten Füllmenge (500G) kommen, nicht auf 1 zurückfallen")
+        XCTAssertEqual(editableLine.learningUnit(matchUnit: nil), "g",
+                       "Zum Divisor aus der Füllmenge gehört die Bezugsgröße 'g' (Issue #10)")
 
         let perUnitPrice = receiptLine.price / quantity
         let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#123456")
         store.learnedPrices["skyr natur 500g"] = perUnitPrice
+        store.learnedPriceUnits["skyr natur 500g"] = editableLine.learningUnit(matchUnit: nil)
         let item = ShoppingItem(name: "Skyr Natur 500g", quantityAmount: 500, unit: "g", store: store)
 
         XCTAssertEqual(try XCTUnwrap(item.estimatedLineTotal), 2.29, accuracy: 0.01)
@@ -349,6 +359,7 @@ final class ReceiptParserPriceTests: XCTestCase {
         let bananePerGram = try learnedPerUnit(["BANANE CHIQUITA 1,76 B", "0,706 kg x 2,49 EUR/kg"])
         let store = Store(name: "Rewe", emoji: "🛒", colorHex: "#123456")
         store.learnedPrices["banane chiquita"] = bananePerGram
+        store.learnedPriceUnits["banane chiquita"] = "g" // Gewichtszeile → Bezugsgröße g (Issue #10)
         let kilo = ShoppingItem(name: "Banane Chiquita", quantityAmount: 1000, unit: "g", store: store)
         XCTAssertEqual(try XCTUnwrap(kilo.estimatedLineTotal), 2.49, accuracy: 0.01,
                        "AC8: 1 kg Bananen kostet wieder den Bon-Kilopreis")

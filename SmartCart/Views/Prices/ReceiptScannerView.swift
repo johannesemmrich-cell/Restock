@@ -67,6 +67,31 @@ struct EditableReceiptLine: Identifiable {
         weightBasis ?? (quantity > 1 ? quantity : (matchQuantityAmount ?? ReceiptParserService.weightBasisFromName(originalName) ?? 1))
     }
 
+    /// Bezugsgröße des Preises, den `learningQuantity` gerade herleitet (`"g"` oder `"stk"`, siehe
+    /// `Store.learnedPriceUnits`) — Schwestermethode DIREKT neben der Divisor-Formel, nicht eine
+    /// Kopie der Verzweigung an der Aufrufstelle: beide müssen dieselben Bedingungen in derselben
+    /// Reihenfolge treffen, sonst lernt `save()` einen Preis unter einer falschen Bezugsgröße
+    /// (Issue #10). Ein Test prüft beide Methoden an derselben Instanz gegeneinander.
+    ///
+    /// | Divisor-Quelle in `learningQuantity` | Ergebnis hier |
+    /// |---|---|
+    /// | `weightBasis` (Gewichtszeile „0,706 kg x 2,49") | `"g"` |
+    /// | `quantity > 1` (Mengenzeile „4 Stk x 0,39") | `"stk"` |
+    /// | `matchQuantityAmount` (abgehakter Artikel) | Eimer von dessen Einheit |
+    /// | `weightBasisFromName(originalName)` („… 400G") | `"g"` |
+    /// | Fallback `1` | `"stk"` |
+    ///
+    /// `matchUnit` MUSS aus demselben `PurchaseRecord` stammen wie das `matchQuantityAmount`, das
+    /// `learningQuantity` bekommt (beide `match?.…`) — nur dann ist „Treffer vorhanden" in beiden
+    /// Methoden dieselbe Bedingung.
+    func learningUnit(matchUnit: String?) -> String {
+        if weightBasis != nil { return "g" }
+        if quantity > 1 { return "stk" }
+        if let matchUnit { return ShoppingItem.unitBucket(matchUnit) }
+        if ReceiptParserService.weightBasisFromName(originalName) != nil { return "g" }
+        return "stk"
+    }
+
     /// Indizes von Zeilen, die Stufe 5 (Apple Intelligence) noch NICHT durchlaufen haben — erkannt
     /// daran, dass ihr Name unverändert dem OCR-Rohtext entspricht UND `resolvedByAI` false ist
     /// (ein per Alias/Fuzzy-Match bereits aufgelöster Name wäre von `originalName` verschieden,
@@ -645,7 +670,13 @@ struct ReceiptScannerView: View {
             // `EditableReceiptLine.learningQuantity(matchQuantityAmount:)` für die Herleitung.
             let quantity = line.learningQuantity(matchQuantityAmount: match?.quantityAmount)
             let perUnitPrice = quantity > 0 ? line.price / quantity : line.price
+            // Bezugsgröße in EINEM Zug mitschreiben (Issue #10) — ohne sie ist der Preis später
+            // nicht anwendbar, weil eine Pro-Gramm-Rate von einem Stückpreis nicht zu
+            // unterscheiden wäre. `match?.unit` gehört zum selben Datensatz wie das
+            // `matchQuantityAmount` oben, siehe `learningUnit(matchUnit:)`.
+            let learnedUnit = line.learningUnit(matchUnit: match?.unit)
             store.learnedPrices[lineLower] = perUnitPrice
+            store.learnedPriceUnits[lineLower] = learnedUnit
             store.learnedPriceDates[lineLower] = Date()
 
             // Direkt auf den bereits gelisteten Artikel zurückschreiben — sonst lernt ein Scan nur
@@ -662,8 +693,25 @@ struct ReceiptScannerView: View {
             // Mandeln-Symptom.
             let itemToUpdate = matchedItem ?? match?.item
             if let itemToUpdate {
-                itemToUpdate.estimatedPrice = perUnitPrice
-                itemToUpdate.estimatedPriceIsAutoDerived = false
+                // Dieselbe Entscheidungstabelle wie in `ShoppingItem.init` (Issue #10): eine pro
+                // Gramm gelernte Rate darf auch hier nicht als Stückpreis an einen Artikel ohne
+                // Mengenangabe geschrieben werden — genau so entstanden die gemeldeten „0,01 €"
+                // am gerade gescannten Artikel, obwohl der Konstruktor sie verworfen hätte.
+                switch ShoppingItem.learnedRateUsage(
+                    learnedUnit: learnedUnit,
+                    itemUnit: itemToUpdate.unit,
+                    quantitySource: itemToUpdate.quantitySource
+                ) {
+                case .apply:
+                    itemToUpdate.estimatedPrice = perUnitPrice
+                    itemToUpdate.estimatedPriceIsAutoDerived = false
+                case .rateOnly:
+                    itemToUpdate.estimatedPrice = perUnitPrice
+                    itemToUpdate.unit = "g"
+                    itemToUpdate.estimatedPriceIsAutoDerived = false
+                case .reject:
+                    break // Der bisherige (geschätzte) Preis bleibt stehen — kein falscher Betrag.
+                }
             }
 
             if let match {

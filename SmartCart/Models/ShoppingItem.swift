@@ -52,6 +52,14 @@ class ShoppingItem {
     /// with a default, like `categoryManuallySet`/`completedBy` above, so SwiftData lightweight
     /// migration handles it without a schema-version bump.
     var estimatedPriceIsAutoDerived: Bool = true
+    /// Woher die Mengenangabe stammt: `"user"` (eingetippt oder korrigiert), `"history"` (letzter
+    /// Kauf desselben Artikels in diesem Laden), `"package"` (Füllmenge im Artikelnamen), `"none"`
+    /// (keine Evidenz — dann gibt es keinen Gesamtpreis, nur die Rate, siehe
+    /// `estimatedLineTotal`). Der Standardwert `"user"` hält alle bestehenden Erzeugungsstellen
+    /// (Quick-Add, Siri-Intent, Widget, MenuPlan, RecipeImport, HomeView-Vorschläge,
+    /// StoreDetailView, SyncCoordinator) unverändert; CloudKit verlangt den Standardwert ohnehin
+    /// (siehe Kopfkommentar oben). Issue #10.
+    var quantitySource: String = "user"
     var assignedTo: String = ""
     var addedBy: String = ""
     /// Display name of whoever checked the item off (empty while pending). Additive field with a
@@ -94,7 +102,8 @@ class ShoppingItem {
         quantityAmount: Double = 1,
         unit: String = "",
         note: String = "",
-        store: Store? = nil
+        store: Store? = nil,
+        quantitySource: String = "user"
     ) {
         self.id = UUID()
         self.name = name
@@ -102,6 +111,7 @@ class ShoppingItem {
         self.quantity = quantity
         self.quantityAmount = quantityAmount
         self.unit = unit
+        self.quantitySource = quantitySource
         self.isCompleted = false
         self.isUrgent = false
         self.addedDate = Date()
@@ -124,7 +134,7 @@ class ShoppingItem {
         // mehrfachem Prozess-Neustart nachgewiesen, dass der Bug so bestehen bliebe, nur
         // seltener. Deshalb zusätzlich der Key selbst (garantiert eindeutig, alphabetisch) als
         // letzte, immer entscheidende Instanz.
-        let rawLearnedPrice: Double? = {
+        let rawLearnedMatch: (price: Double, unit: String?)? = {
             guard let store else { return nil }
             let matchingKeys = store.learnedPrices.keys.filter { key in
                 key.count >= 3 && itemLower.count >= 3 &&
@@ -135,7 +145,11 @@ class ShoppingItem {
                 let dateB = store.learnedPriceDates[b] ?? .distantPast
                 return dateA != dateB ? dateA < dateB : a > b
             }
-            return bestKey.flatMap { store.learnedPrices[$0] }
+            guard let bestKey, let price = store.learnedPrices[bestKey] else { return nil }
+            // Die Bezugsgröße wird unter DEMSELBEN Schlüssel geführt (siehe
+            // `Store.learnedPriceUnits`). Fehlt sie, ist der Preis ein Altdatum — die
+            // Entscheidungstabelle unten verwirft ihn dann.
+            return (price, store.learnedPriceUnits[bestKey])
         }()
         // `learnedPrices` is supposed to hold a PER-UNIT rate (see `estimatedLineTotal` below), but
         // a corrupted/stale entry (e.g. a full line total saved under the wrong key before an
@@ -150,9 +164,86 @@ class ShoppingItem {
         // catch the reported bug's "off by the quantity factor" order-of-magnitude corruption,
         // not draw a tight realistic-price boundary.
         let plausibleQuantity = quantityAmount > 0 ? quantityAmount : 1
-        let learnedPrice = rawLearnedPrice.flatMap { $0 * plausibleQuantity <= PriceEstimator.maxPlausibleLearnedLineTotal ? $0 : nil }
-        self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category, unit: unit, quantityAmount: quantityAmount)
+        let plausibleMatch = rawLearnedMatch.flatMap {
+            $0.price * plausibleQuantity <= PriceEstimator.maxPlausibleLearnedLineTotal ? $0 : nil
+        }
+        // Zweite, unabhängige Prüfung NEBEN der Obergrenze oben (Issue #10): passt die
+        // Bezugsgröße des gelernten Preises nicht zur Einheit dieses Artikels, ist der Wert nicht
+        // verwendbar — eine pro Gramm gelernte Rate als Stückpreis ergibt die gemeldeten 0,01 €.
+        // Die Obergrenze allein fängt das nie ab, sie kennt nur zu HOHE Werte.
+        var learnedPrice: Double?
+        switch Self.learnedRateUsage(
+            learnedUnit: plausibleMatch?.unit, itemUnit: unit, quantitySource: quantitySource
+        ) {
+        case .apply:
+            learnedPrice = plausibleMatch?.price
+        case .rateOnly:
+            // Die Rate vom Bon ist echt und bleibt nützlich, auch wenn keine Menge belegbar ist —
+            // nur ein GESAMTpreis darf daraus nicht entstehen (`estimatedLineTotal` liefert bei
+            // `quantitySource == "none"` nil). `unit` wird auf die Bezugsgröße gesetzt, damit die
+            // Anzeige weiß, worauf sich die Rate bezieht ("… €/100 g" in `ItemRow`).
+            learnedPrice = plausibleMatch?.price
+            self.unit = "g"
+        case .reject:
+            learnedPrice = nil
+        }
+        self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category, unit: self.unit, quantityAmount: quantityAmount)
         self.estimatedPriceIsAutoDerived = (learnedPrice == nil)
+    }
+
+    /// Ergebnis der Entscheidungstabelle für einen gelernten Preis (Issue #10). Lebt als
+    /// gemeinsame Funktion, nicht inline in `init`, weil der Bon-Import (`ReceiptScannerView`
+    /// `save()`) denselben Preis direkt auf einen SCHON bestehenden Artikel zurückschreibt —
+    /// beide Wege müssen dieselbe Entscheidung treffen, sonst zeigt genau der eben gescannte
+    /// Artikel weiterhin den Cent-Betrag, den `init` verworfen hätte.
+    enum LearnedRateUsage {
+        /// Bezugsgröße passt zur Einheit des Artikels → Rate anwenden, Gesamtpreis = Rate × Menge.
+        case apply
+        /// Gewichts-Rate ohne belegte Menge → Rate anwenden, aber keinen Gesamtpreis bilden.
+        case rateOnly
+        /// Bezugsgröße fehlt oder passt nicht → gelernten Preis verwerfen, `PriceEstimator` greift.
+        case reject
+    }
+
+    /// Entscheidungstabelle (Spec `learned-price-unit-and-quantity-source.md`, Abschnitt 3):
+    ///
+    /// | gelernte Bezugsgröße | Eimer des Artikels | `quantitySource` | Ergebnis |
+    /// |---|---|---|---|
+    /// | fehlt (Altdaten) | beliebig | beliebig | `reject` |
+    /// | `"stk"` | `"stk"` | beliebig | `apply` |
+    /// | `"stk"` | `"g"`, `"kg"`, `"l"`, … | beliebig | `reject` |
+    /// | `"g"` | `"g"` | beliebig | `apply` |
+    /// | `"g"` | `"stk"` (auch `unit == ""`) | `"none"` | `rateOnly` |
+    /// | `"g"` | `"stk"` (auch `unit == ""`) | sonst | `reject` |
+    /// | sonstige (`"kg"`, `"l"`, …) | identischer Eimer | beliebig | `apply` |
+    /// | sonstige | abweichender Eimer | beliebig | `reject` |
+    ///
+    /// Grundsatz: Lieber kein Preis als ein falscher. Ein Preis pro Kilogramm oder Liter wird NICHT
+    /// auf Gramm umgerechnet — die Richtung der Umrechnung wäre nur mit der in #15 nachgezogenen
+    /// g/ml-Unterscheidung sicher.
+    static func learnedRateUsage(learnedUnit: String?, itemUnit: String, quantitySource: String) -> LearnedRateUsage {
+        guard let learnedUnit, !learnedUnit.trimmingCharacters(in: .whitespaces).isEmpty else { return .reject }
+        let learnedBucket = unitBucket(learnedUnit)
+        let itemBucket = unitBucket(itemUnit)
+        if learnedBucket == itemBucket { return .apply }
+        if learnedBucket == "g" && itemBucket == "stk" {
+            return quantitySource == "none" ? .rateOnly : .reject
+        }
+        return .reject
+    }
+
+    /// Bildet eine Einheit auf ihren Vergleichs-Eimer ab: Stückzählung (`""`, `"stk"`, `"stück"`,
+    /// `"st"`) auf `"stk"`, jede Gewichts-/Volumen-Subeinheit (`"g"`, `"mg"`, `"ml"`, `"cl"`,
+    /// `"dl"` samt Langformen) auf `"g"`, alles andere (`"kg"`, `"l"`, `"el"`, `"tl"`, …) auf sich
+    /// selbst, kleingeschrieben. Nur zwei Eimer statt literaler Einheiten, weil die Quelle des
+    /// gelernten Preises kg und l auf denselben Faktor normiert (siehe `Store.learnedPriceUnits`).
+    static func unitBucket(_ unit: String) -> String {
+        let normalized = unit.trimmingCharacters(in: .whitespaces).lowercased()
+        switch normalized {
+        case "", "stk", "stück", "stueck", "st", "stk.", "stück.": return "stk"
+        case "g", "gramm", "mg", "milligramm", "ml", "milliliter", "cl", "zentiliter", "dl", "deziliter": return "g"
+        default: return normalized
+        }
     }
 
     /// `estimatedPrice` is always a PER-UNIT rate (see the fuzzy `learnedPrices` lookup and
@@ -163,8 +254,13 @@ class ShoppingItem {
     /// which normalize to 1 if parsing yields 0 or less), but guard defensively anyway: a
     /// non-positive quantity falls back to treating the line as a single unit rather than
     /// zeroing out or negating the estimate.
+    /// Ohne belegte Mengenangabe (`quantitySource == "none"`, siehe dort) gibt es bewusst KEINEN
+    /// Gesamtpreis: die stille `quantityAmount = 1` wäre geraten, und aus einer Pro-Gramm-Rate
+    /// entstünde damit der gemeldete Cent-Betrag (Issue #10). `ItemRow` zeigt in diesem Fall die
+    /// Rate selbst ("1,25 €/100 g") statt eines erfundenen Betrags.
     var estimatedLineTotal: Double? {
-        estimatedPrice.map { $0 * (quantityAmount > 0 ? quantityAmount : 1) }
+        guard quantitySource != "none" else { return nil }
+        return estimatedPrice.map { $0 * (quantityAmount > 0 ? quantityAmount : 1) }
     }
 
     func markCompleted() {

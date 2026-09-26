@@ -917,6 +917,20 @@ enum ReceiptParserService {
         }
     }
 
+    /// Wie `weightBasisFromName`, gibt zusätzlich die ANZEIGE-Einheit zurück ("g" oder "ml").
+    /// Dieselbe Regex, dieselbe Normierung — `weightBasisFromName` bleibt der Durchreiche-Wert für
+    /// den Preis-Divisor, diese Variante liefert, was am Artikel angezeigt wird: „ca. 500 g" für
+    /// eine 0,5-l-Flasche wäre sichtbar falsch (Issue #10, Mengen-Vorbelegung Stufe 3).
+    static func packageSizeFromName(_ name: String) -> (amount: Double, unit: String)? {
+        guard let amount = weightBasisFromName(name), let rx = sizeInNameRegex else { return nil }
+        let range = NSRange(name.startIndex..., in: name)
+        guard let match = rx.matches(in: name, range: range).last,
+              let unitRange = Range(match.range(at: 2), in: name)
+        else { return nil }
+        let volume = ["ml", "cl", "dl", "l"].contains(name[unitRange].lowercased())
+        return (amount, volume ? "ml" : "g")
+    }
+
     private static func weightTimesRate(in line: String) -> (weight: Double, unit: String, rate: Double)? {
         guard let rx = weightTimesRateRegex,
               let match = rx.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)),

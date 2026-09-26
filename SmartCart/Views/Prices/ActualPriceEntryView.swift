@@ -161,6 +161,9 @@ struct ActualPriceEntryView: View {
         let key = item.name.lowercased()
         let perUnitPrice = item.quantityAmount > 0 ? itemActualTotal / item.quantityAmount : itemActualTotal
         store.learnedPrices[key] = perUnitPrice
+        // Bezugsgröße mitschreiben (Issue #10): hier ist sie vertrauenswürdig bekannt, weil oben
+        // exakt auf `item.quantityAmount` skaliert wurde — die Rate gilt also pro `item.unit`.
+        store.learnedPriceUnits[key] = ShoppingItem.unitBucket(item.unit)
         store.learnedPriceDates[key] = Date()
 
         // Direkt auf den Artikel selbst zurückschreiben (wie ReceiptScannerView.save()) — item ist

@@ -55,6 +55,11 @@ final class PriceProvenanceMigrationTests: XCTestCase {
         // allein als Tie-Breaker nicht reicht.
         store.learnedPrices["hackfleisch gemischt 500g"] = 3.49
         store.learnedPrices["rinderhackfleisch"] = 5.99
+        // Bezugsgröße (Issue #10): beides sind Stückpreise, sonst würden sie für den unten
+        // angelegten Artikel ohne Einheit gar nicht mehr angewendet und der Tie-Breaker wäre
+        // nicht mehr messbar. Aussage des Tests unverändert.
+        store.learnedPriceUnits["hackfleisch gemischt 500g"] = "stk"
+        store.learnedPriceUnits["rinderhackfleisch"] = "stk"
 
         let item = ShoppingItem(name: "Hackfleisch", category: "Fleisch & Wurst", store: store)
 
@@ -70,6 +75,7 @@ final class PriceProvenanceMigrationTests: XCTestCase {
     func testShoppingItemAcceptsLegitimatelyExpensiveLearnedPrice() throws {
         let store = Store(name: "Rewe", emoji: "🛒", colorHex: "#654321")
         store.learnedPrices["rinderfilet"] = 32.0 / 400.0 // korrekt: 0,08€/g für ein 400g-Filet
+        store.learnedPriceUnits["rinderfilet"] = "g" // Bezugsgröße (Issue #10)
 
         let item = ShoppingItem(name: "Rinderfilet", category: "Fleisch & Wurst", quantityAmount: 400, unit: "g", store: store)
 
@@ -81,6 +87,7 @@ final class PriceProvenanceMigrationTests: XCTestCase {
         // Non-Regression: ein korrekt gespeicherter Pro-Gramm-Preis muss weiterhin verwendet werden.
         let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#123456")
         store.learnedPrices["skyr"] = 2.29 / 500 // korrekt: Preis pro Gramm
+        store.learnedPriceUnits["skyr"] = "g" // Bezugsgröße (Issue #10)
 
         let item = ShoppingItem(name: "Skyr", category: "Milchprodukte", quantityAmount: 500, unit: "g", store: store)
 
@@ -150,10 +157,16 @@ final class PriceProvenanceMigrationTests: XCTestCase {
         let repairedPrice = try XCTUnwrap(repairedStore.learnedPrices["skyr natur 500g"])
         XCTAssertEqual(repairedPrice, 2.29 / 500, accuracy: 0.0001, "Migration muss den vollen Zeilenpreis durch den echten Pro-Gramm-Preis ersetzen")
 
-        // End-to-end: ein NEU angelegtes Item mit diesem Namen muss jetzt den richtigen
-        // Gesamtpreis zeigen, nicht mehr 1145€.
+        // End-to-end, mit Issue #10 bewusst umgestellt: Die Migration repariert den Zahlenwert
+        // weiterhin (Zusicherung oben, unveränderte Schutzwirkung), sie schreibt aber KEINEN
+        // `learnedPriceUnits`-Eintrag. Der reparierte Wert gilt damit als einheitenloses Altdatum
+        // und wird nicht mehr angewendet (PO-Entscheidung 1) — das neu angelegte Item bekommt
+        // einen Schätzpreis statt der 2,29 €. Reparatur der Altdaten: Issue #11.
         let newItem = ShoppingItem(name: "Skyr Natur 500g", quantityAmount: 500, unit: "g", store: repairedStore)
-        XCTAssertEqual(try XCTUnwrap(newItem.estimatedLineTotal), 2.29, accuracy: 0.01)
+        XCTAssertTrue(newItem.estimatedPriceIsAutoDerived,
+                      "Ein gelernter Preis ohne Bezugsgröße darf nie angewendet werden, auch nicht nach der Reparatur")
+        XCTAssertNotEqual(newItem.estimatedPrice ?? 0, 2.29 / 500, accuracy: 0.0001,
+                          "Der reparierte, aber einheitenlose Altwert darf nicht als Preis übernommen werden")
     }
 
     /// Derselbe von einem unabhängigen Review gefundene Fall wie oben, aber für Phase C der

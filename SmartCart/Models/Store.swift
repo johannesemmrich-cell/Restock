@@ -30,6 +30,26 @@ class Store {
     /// siehe `SharedStoreService.mergePrices`). Additiv wie `categoryManuallySet`/`completedBy`
     /// bei `ShoppingItem`, kein Schema-Versionsbump nötig.
     var learnedPriceDates: [String: Date] = [:]
+    /// Bezugsgröße pro `learnedPrices`-Eintrag: `"stk"` (Stückpreis) oder `"g"` (Gewichts- bzw.
+    /// Volumen-Subeinheit — g, mg, ml, cl, dl). Ohne diese Angabe ist ein gelernter Preis nicht
+    /// anwendbar: 4,99 € für eine 400-g-Packung ergeben korrekt 0,0125 €/g, als Stückpreis
+    /// gelesen aber 0,01 € auf der Liste (Issue #10). Additiv wie `learnedPriceDates` oben —
+    /// kein Schema-Versionsbump, CloudKit-tauglich, weil skalar mit Standardwert.
+    ///
+    /// Fehlt ein Schlüssel hier, stammt der Preis aus der Zeit vor dieser Änderung und wird von
+    /// `ShoppingItem.init` NIE angewendet (PO-Entscheidung; Reparatur der Altdaten: Issue #11).
+    ///
+    /// Gramm und Milliliter liegen bewusst im selben Eimer: die Quelle
+    /// (`ReceiptParserService.weightBasisFromName` bzw. der Gewichtszeilen-Zweig) normiert kg UND
+    /// l auf denselben Faktor 1000, aus dem gespeicherten Preis ist beides nicht mehr zu
+    /// unterscheiden. Eine dritte, literal genaue Einheit wäre vorgetäuschte Genauigkeit → #15.
+    ///
+    /// ACHTUNG: Diese Map wird noch NICHT über geteilte Listen synchronisiert —
+    /// `SharedStoreService.encodePrices`/`decodePrices` und `SyncCoordinator.apply` übertragen nur
+    /// `learnedPrices` + `learnedPriceDates` → **Issue #53**. Ein auf Gerät A gelernter Preis
+    /// kommt auf Gerät B ohne Bezugsgröße an und gilt dort wie ein Altdatum: er wird nicht
+    /// angewendet. Kein Falschpreis-Risiko, aber ein fehlender Preis.
+    var learnedPriceUnits: [String: String] = [:]
     var sortIndex: Int = 0
 
     // CloudKit verlangt für automatische Spiegelung, dass ALLE To-many-Relationships optional
@@ -105,6 +125,7 @@ class Store {
         self.itemOrderMap = [:]
         self.learnedPrices = [:]
         self.learnedPriceDates = [:]
+        self.learnedPriceUnits = [:]
     }
 
     var color: Color {
