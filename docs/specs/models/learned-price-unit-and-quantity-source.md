@@ -24,10 +24,19 @@ Bon-Scan korrekt als Rate **pro Gramm** gelernt wurde (`4,99 € ÷ 400 g = 0,01
 Anlegen eines gleichnamigen Artikels **ohne Mengenangabe** blind als Stückpreis übernommen und mit
 `quantityAmount = 1` multipliziert — die Liste zeigt **0,01 €**. Diese Spec gibt dem gelernten
 Preis seine Bezugsgröße (`"stk"` oder `"g"`), lässt `ShoppingItem.init` entscheiden, ob eine
-gelernte Rate zur Einheit des Artikels überhaupt passt, und belegt die Mengenangabe aus
-nachweisbarer Evidenz statt aus einer stillen `1`. Weil eine so belegte Menge eine Annahme der App
-ist und keine Eingabe des Nutzers, wird sie auf der Liste als Annahme kenntlich gemacht
-(„ca. 400 g") und bleibt korrigierbar.
+gelernte Rate zur Einheit des Artikels überhaupt passt, und lässt sie verwerfen, wenn sie nicht
+passt — dann greift die übliche Schätzung statt eines falschen Betrags.
+
+**Nicht mehr Teil dieser Spec:** Die Mengenangabe aus nachweisbarer Evidenz zu belegen (statt aus
+einer stillen `1`) und sie auf der Liste als Annahme kenntlich zu machen („ca. 400 g"). Das war
+ursprünglich Teil dieses Tickets — PO-Entscheidungen 2 und 3 aus dem Intake — und ist am
+2026-09-26 auf ausdrückliche Entscheidung des PO nach **Issue #57** gezogen worden. #10 liefert
+also **nur** die Preiskorrektur, nicht die sichtbare, korrigierbare Mengen-Annahme. Begründung und
+Umfang der Trennung: Abschnitt „Nach Issue #57 verschoben" unter den Acceptance Criteria.
+
+Ohne diese Vorbelegung bleibt `quantitySource` überall `"user"`, weshalb die Entscheidungstabelle
+in #10 praktisch nur zwischen „anwenden" und „verwerfen" unterscheidet. Genau das behebt den
+gemeldeten Fehler.
 
 ## Source
 
@@ -38,11 +47,12 @@ ist und keine Eingabe des Nutzers, wird sie auf der Liste als Annahme kenntlich 
 - **Weitere Dateien:** `SmartCart/Models/Store.swift`,
   `SmartCart/Views/Prices/ReceiptScannerView.swift`,
   `SmartCart/Views/Prices/ActualPriceEntryView.swift`,
-  `SmartCart/Services/AssignmentService.swift`,
   `SmartCart/Services/ReceiptParserService.swift`,
-  `SmartCart/Views/Store/AddItemView.swift`,
   `SmartCart/Views/Components/ItemRow.swift`,
   `SmartCart/Views/Store/EditItemView.swift`
+- **Nicht in #10:** `SmartCart/Services/AssignmentService.swift` und
+  `SmartCart/Views/Store/AddItemView.swift` — beide gehören mit der Mengen-Vorbelegung zu
+  **Issue #57** und bleiben hier unverändert.
 
 ## Problem und belegte Ursache
 
@@ -90,7 +100,12 @@ Zeile `BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G` für 4,99 €
 **Entwurfs-Grundlage:** `docs/artifacts/fix-10-preis-einheit/entwurf.html` (veröffentlicht unter
 https://claude.ai/artifact/AwBQGPWJAdch2aNkPMonUL) zeigt den Ist-Zustand neben drei Entwürfen in
 hell und dunkel. Der PO hat am 2026-09-26 **Variante B** gewählt (angenommene Menge sichtbar als
-Annahme markiert) und die Lieferung in einem Zug freigegeben.
+Annahme markiert) und die Lieferung zunächst in einem Zug freigegeben.
+
+Die Lieferung in einem Zug ist **überholt**: Am 2026-09-26 wurde das Ticket auf PO-Entscheidung
+geteilt, die Mengen-Vorbelegung samt der hier gewählten Variante B ist nach **Issue #57** gezogen.
+Der Entwurf bleibt gültig und ist dort die Grundlage — er muss nicht neu erstellt oder neu
+freigegeben werden.
 
 ## Dependencies
 
@@ -101,9 +116,12 @@ Annahme markiert) und die Lieferung in einem Zug freigegeben.
 | `ReceiptParserService.weightBasisFromName(_:)` (`ReceiptParserService.swift:903-918`) | function | Liefert die normierte Füllmenge aus einem Namen; Grundlage für Stufe 3, unverändert. |
 | `PriceEstimator.estimate(for:category:unit:quantityAmount:)` | function | Rückfallebene, sobald eine gelernte Rate verworfen wird — greift künftig häufiger. |
 | `PriceEstimator.maxPlausibleLearnedLineTotal` (200 €) | constant | Bestehende Obergrenze, unverändert; die neue Prüfung tritt daneben, nicht an ihre Stelle. |
-| `PurchaseRecord.storeName` / `.quantityAmount` / `.unit` (`PurchaseRecord.swift:11-13`) | properties | Evidenzquelle für Stufe 2. |
-| `Color.amber` (`DesignSystem.swift:22`) | token | Tönung der als Annahme markierten Mengenangabe. |
-| `QuantityStepperField` (`AddItemView.swift:72`) | view | Zeigt die Vorbelegung live und macht sie vor dem Hinzufügen korrigierbar — keine neue Oberfläche nötig. |
+| `PurchaseRecord.unit` (`PurchaseRecord.swift:13`) | property | Liefert die Bezugsgröße, wenn ein Bon einem bekannten Kauf zugeordnet ist (`learningUnit(matchUnit:)`). |
+| `Color.amber` (`DesignSystem.swift:22`) | token | Tönung der als Annahme markierten Mengenangabe — nur vom mitgelieferten, in #10 unerreichbaren `ItemRow`-Code benutzt, wirksam erst mit **#57**. |
+
+`PurchaseRecord.storeName` / `.quantityAmount` als Evidenzquelle für die Laden-Historie und
+`QuantityStepperField` (`AddItemView.swift:72`) als Ort der korrigierbaren Vorbelegung gehören zu
+**Issue #57** und werden in #10 nicht angefasst.
 
 ## Scope
 
@@ -460,15 +478,24 @@ Liste. Sie sind **nicht** Teil dieses Tickets mehr und stehen unverändert, mit 
 Nummerierung, in **Issue #57**. Die Nummern bleiben hier absichtlich frei, damit Verweise aus
 Kontext, Briefing und Protokollen weiter aufgehen.
 
-Zwei Gründe für die Trennung:
+**Grund für die Trennung — einer, nicht zwei:**
 
-1. **Umfang.** Zwanzig Anforderungen über neun Produktdateien sind das Doppelte einer normalen
-   Änderung; die Umfangsschranke des Workflows griff mitten in der Umsetzung (verschärft durch
-   die Fehlzählung aus #36).
-2. **Sichtbare Änderung ohne Entwurf.** AC-14 und AC-15 gestalten die Listenzeile neu. Nach der
-   PO-Regel vom 2026-09-22 muss dafür **vor** der Spec eine Entwurfsvorschau vorliegen — hell
-   und dunkel, mit mindestens einer Alternative. Für #10 gab es sie nicht; in #57 ist sie der
-   erste Arbeitsschritt.
+**Umfang.** Zwanzig Anforderungen über neun Produktdateien sind das Doppelte einer normalen
+Änderung. Die Umfangsschranke des Workflows griff mitten in der Umsetzung bei „Produktiv 255/250"
+(verschärft durch die Fehlzählung aus #36, die 32 Zeilen Testcode und 20 Zeilen dieser Spec-Datei
+als Produktivcode wertete). Der Fehlerfix war zu diesem Zeitpunkt fertig und grün, die
+Mengen-Vorbelegung noch nicht begonnen.
+
+**Richtigstellung (2026-09-26):** Als zweiter Grund war hier zunächst „sichtbare Änderung ohne
+Entwurfsvorschau" angeführt — das war **falsch**. Die Vorschau existiert:
+`docs/artifacts/fix-10-preis-einheit/entwurf.html` zeigt den Ist-Zustand neben drei Entwürfen in
+hell und dunkel, und der PO hat am 2026-09-26 **Variante B** gewählt (angenommene Menge sichtbar
+als Annahme markiert) — genau das, was AC-14 beschreibt. Die PO-Regel vom 2026-09-22 war also
+erfüllt, nicht verletzt. Der Irrtum entstand beim Zurückschneiden dieser Spec, weil der Abschnitt
+„Problem und belegte Ursache" nicht mitgelesen wurde.
+
+**Folge für #57:** Dort ist **keine** neue Entwurfsrunde nötig. Der freigegebene Entwurf und die
+gewählte Variante liegen vor und gelten weiter.
 
 **Achtung für #57 — und eine ehrliche Einschränkung:** Der Code zu AC-14 (`ItemRow`:
 „ca."-Präfix, `Color.amber`, keine Mengenangabe bei `"none"`) und AC-16 (`EditItemView` setzt
@@ -597,11 +624,9 @@ verschoben" unter den Acceptance Criteria.
 - 2026-09-26: **Ticket geteilt (PO-Entscheidung).** AC-11 bis AC-16 und AC-18 — die
   Mengen-Vorbelegung und ihre Darstellung in der Liste — sind nach **Issue #57** gezogen. #10
   trägt nur noch die Bezugsgröße am gelernten Preis und den Durchstich AC-17, also die Behebung
-  des gemeldeten Fehlers. Zwei Gründe: der doppelte Umfang (20 Anforderungen über neun Dateien,
-  Umfangsschranke griff mitten in der Umsetzung, verschärft durch #36) und die fehlende
-  Entwurfsvorschau für die sichtbare Änderung an der Listenzeile, die die PO-Regel vom 2026-09-22
-  vor der Spec verlangt. Verbleibender Umfang: 13 Anforderungen, ~203 LoC über sieben
-  Produktdateien.
+  des gemeldeten Fehlers. Grund ist der doppelte Umfang: 20 Anforderungen über neun Dateien, die
+  Umfangsschranke griff mitten in der Umsetzung bei 255/250, verschärft durch #36. Verbleibender
+  Umfang: 13 Anforderungen, ~203 LoC über sieben Produktdateien.
 - 2026-09-26: **Nachbesserung der Teilung**, nach unabhängigem Befund des po-briefer. Zwei
   Widersprüche behoben, die die erste Bereinigung übersehen hatte: (1) Der Test Plan trug noch die
   Testdatei `AssignmentServiceQuantitySuggestionTests.swift` und vier UI-Tests für die
@@ -611,3 +636,13 @@ verschoben" unter den Acceptance Criteria.
   „laufe in der grünen Suite mit", behauptete mehr als belegt war: Die Tests, die ihn erreichen
   würden, sind selbst nach #57 gezogen. Belegt ist nur, dass er compiliert und keinen der 270
   Bestandstests bricht.
+- 2026-09-26: **Falsche Begründung zurückgezogen.** Die Teilung war mit zwei Gründen begründet
+  worden; der zweite — „sichtbare Änderung ohne Entwurfsvorschau" — war sachlich falsch. Die
+  Vorschau existiert als `docs/artifacts/fix-10-preis-einheit/entwurf.html`, und der PO hat am
+  2026-09-26 Variante B daraus gewählt. Der Irrtum entstand, weil beim Zurückschneiden der Spec
+  der Abschnitt „Problem und belegte Ursache" nicht mitgelesen wurde, in dem die Entwurfsgrundlage
+  dokumentiert ist. Es bleibt **ein** Grund für die Teilung: der Umfang. Für #57 folgt daraus, dass
+  dort keine neue Entwurfsrunde nötig ist — die Korrektur ist auch an #57 kommentiert. Ebenfalls
+  bereinigt: „Purpose", „Source" und „Dependencies" führten die Mengen-Vorbelegung noch als Teil
+  von #10, obwohl Scope und AC-Liste sie längst nach #57 verwiesen; „Purpose" ist der Abschnitt,
+  den der PO zuerst liest.
