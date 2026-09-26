@@ -1,6 +1,80 @@
 import Foundation
 import SwiftData
 
+// MARK: - Gleichwertige Namen (Issue #30, C5)
+
+/// Legt fest, welche Kaufdatensätze zum selben Artikel gehören. Bewusst eng gefasst (Korrektur
+/// zu C5 in Issue #30): zusammengeführt werden nur Schreibvarianten DESSELBEN Produkts, nie
+/// ähnliche oder verwandte. „Milch“, „H-Milch“, „Hafermilch“ und „Buttermilch“ bleiben getrennt —
+/// ein fälschlich zusammengeführter Artikel verfälscht die Vorhersage beider, ein nicht
+/// zusammengeführter verliert nur einzelne Käufe. Genau zwei Fälle zählen:
+/// 1. Vom Nutzer bestätigte Bon-Zuordnungen (`ReceiptAliasService`): Wer „MILCH 1,5% 1L“ im
+///    Bon-Prüfscreen einmal als „Milch“ gespeichert hat, dessen ältere Datensätze mit dem rohen
+///    Bon-Text zählen ab dann zu „Milch“. Nur eine Stufe, keine Ketten.
+/// 2. Rein formale Unterschiede (`formalKey`): Groß-/Kleinschreibung, überzählige Leerzeichen und
+///    Satzzeichen am Rand.
+/// Kein Fuzzy-Matching, keine KI, keine Präfix- oder Wortstamm-Regeln.
+struct ReplenishmentItemIdentity {
+    /// Bestätigter Artikelname für einen Namen, falls er als Bon-Text gelernt wurde.
+    let resolveAlias: (String) -> String?
+
+    /// Mit den gelernten Bon-Zuordnungen der App.
+    static var current: ReplenishmentItemIdentity {
+        ReplenishmentItemIdentity { ReceiptAliasService.shared.resolve($0) }
+    }
+
+    /// Nur formale Unterschiede, ohne Bon-Zuordnungen.
+    static let formalOnly = ReplenishmentItemIdentity { _ in nil }
+
+    /// Satzzeichen, die nur am Rand ignoriert werden. Bewusst ohne Klammern, `%` und Ziffern —
+    /// „Eier (10)“ oder „Milch 1,5%“ tragen dort Inhalt. Im Wortinneren bleibt alles stehen:
+    /// „H-Milch“ ist nicht „H Milch“ und schon gar nicht „Milch“.
+    private static let edgeCharacters = CharacterSet.whitespacesAndNewlines
+        .union(CharacterSet(charactersIn: ".,;:!?*-–—\"'„“”‚‘’"))
+
+    /// Schlüssel für rein formale Unterschiede: klein geschrieben, Leerzeichenfolgen zu einem
+    /// Leerzeichen, Leerzeichen und Satzzeichen am Rand entfernt. Alle gespeicherten Nachkauf-
+    /// Einträge (Ablehnung, „Hab noch“, Sperrliste, Nachrichten, D1) hängen an diesem Schlüssel
+    /// des angezeigten Namens. Für Namen ohne solche Unterschiede ist er identisch mit dem
+    /// früheren `lowercased()`, bestehende Einträge bleiben also gültig.
+    static func formalKey(_ name: String) -> String {
+        let collapsed = name.lowercased()
+            .components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+        let trimmed = collapsed.trimmingCharacters(in: edgeCharacters)
+        return trimmed.isEmpty ? collapsed : trimmed
+    }
+
+    /// Name, unter dem ein Kauf gezählt wird: die bestätigte Bon-Zuordnung, sonst der Name selbst
+    /// (ohne Leerzeichen am Rand).
+    func canonicalName(_ name: String) -> String {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let alias = resolveAlias(trimmed)?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !alias.isEmpty else { return trimmed }
+        return alias
+    }
+
+    /// Artikelschlüssel für einen beliebigen Namen (Kaufdatensatz oder offener Listenartikel).
+    func key(_ name: String) -> String {
+        Self.formalKey(canonicalName(name))
+    }
+
+    /// Kaufdatensätze nach Artikel gruppiert. Angezeigt wird ein Artikel unter dem Namen seines
+    /// jüngsten Kaufs (nach Bon-Zuordnung) — dessen `formalKey` ist immer der Gruppenschlüssel.
+    func group(_ records: [PurchaseRecord]) -> [(name: String, records: [PurchaseRecord])] {
+        Dictionary(grouping: records) { key($0.itemName) }.values.compactMap { members -> (name: String, records: [PurchaseRecord])? in
+            guard let latest = members.max(by: { $0.date < $1.date }) else { return nil }
+            return (name: canonicalName(latest.itemName), records: members)
+        }
+    }
+}
+
+extension ConsumptionPattern {
+    /// Artikelschlüssel (C5) — ersetzt das frühere `itemName.lowercased()`.
+    var itemKey: String { ReplenishmentItemIdentity.formalKey(itemName) }
+}
+
 struct HabitService {
 
     // MARK: Eligibility (Issue #30, B2/B4)
@@ -40,16 +114,16 @@ struct HabitService {
 
     // MARK: Patterns
 
-    /// Ein Muster pro Artikel (Name ohne Groß-/Kleinschreibung), unabhängig davon, ob es gerade
-    /// vorgeschlagen würde.
+    /// Ein Muster pro Artikel (gleichwertige Namen zusammengeführt, C5), unabhängig davon, ob
+    /// es gerade vorgeschlagen würde.
     static func patterns(
         allRecords: [PurchaseRecord],
         closedDays: RetailClosedDays = .current,
-        calendar: Calendar = .current
+        calendar: Calendar = .current,
+        identity: ReplenishmentItemIdentity = .current
     ) -> [ConsumptionPattern] {
-        let grouped = Dictionary(grouping: allRecords) { $0.itemName.lowercased() }
-        return grouped.values.compactMap { records in
-            records.consumptionPattern(closedDays: closedDays, calendar: calendar)
+        identity.group(allRecords).compactMap { group in
+            group.records.consumptionPattern(itemName: group.name, closedDays: closedDays, calendar: calendar)
         }
     }
 
@@ -59,18 +133,19 @@ struct HabitService {
         allRecords: [PurchaseRecord],
         now: Date = Date(),
         closedDays: RetailClosedDays = .current,
+        identity: ReplenishmentItemIdentity = .current,
         snoozes: [String: ReplenishmentSnooze] = [:],
         blocked: Set<String> = []
     ) -> [ConsumptionPattern] {
         dueSoonItems(
-            from: patterns(allRecords: allRecords, closedDays: closedDays),
+            from: patterns(allRecords: allRecords, closedDays: closedDays, identity: identity),
             now: now,
             snoozes: snoozes,
             blocked: blocked
         )
     }
 
-    /// C1: Artikel aus `blocked` („Nicht mehr vorschlagen“, Schlüssel klein geschrieben) fallen
+    /// C1: Artikel aus `blocked` („Nicht mehr vorschlagen“, Schlüssel `itemKey`) fallen
     /// ganz weg; gilt für einen Artikel noch ein „Hab noch“, zählt dessen verschobener Termin.
     /// Die Eignung (B2/B4) wird weiterhin am errechneten Termin gemessen.
     static func dueSoonItems(
@@ -93,16 +168,17 @@ struct HabitService {
         blocked: Set<String> = []
     ) -> [ConsumptionPattern] {
         patterns.compactMap { pattern in
-            let key = pattern.itemName.lowercased()
+            let key = pattern.itemKey
             guard !blocked.contains(key) else { return nil }
             return snoozes[key].map { pattern.applying($0) } ?? pattern
         }
     }
 
     /// C3: Artikel, die in einer Sammelnachricht vorkommen dürfen — wie das Banner ohne
-    /// abgelehnte Vorschläge (A4, `dismissed`: klein geschriebener Name → `purchaseKey`) und ohne
-    /// Artikel, die schon offen auf einer Liste stehen, aber unabhängig vom Zeitfenster: Die
-    /// Nachricht für einen erst in fünf Tagen fälligen Artikel wird schon jetzt geplant.
+    /// abgelehnte Vorschläge (A4, `dismissed`: `itemKey` → `purchaseKey`) und ohne Artikel, die
+    /// schon offen auf einer Liste stehen (`pendingNames`: `ReplenishmentItemIdentity.key`), aber
+    /// unabhängig vom Zeitfenster: Die Nachricht für einen erst in fünf Tagen fälligen Artikel
+    /// wird schon jetzt geplant.
     static func notificationCandidates(
         from patterns: [ConsumptionPattern],
         snoozes: [String: ReplenishmentSnooze] = [:],
@@ -111,7 +187,7 @@ struct HabitService {
         pendingNames: Set<String> = []
     ) -> [ConsumptionPattern] {
         suggestionCandidates(from: patterns, snoozes: snoozes, blocked: blocked).filter { pattern in
-            let key = pattern.itemName.lowercased()
+            let key = pattern.itemKey
             return !pendingNames.contains(key) && dismissed[key] != pattern.purchaseKey
         }
     }
@@ -165,11 +241,11 @@ struct HabitService {
     static func backtest(
         allRecords: [PurchaseRecord],
         closedDays: RetailClosedDays = .current,
-        calendar: Calendar = .current
+        calendar: Calendar = .current,
+        identity: ReplenishmentItemIdentity = .current
     ) -> ReplenishmentBacktest {
         var result = ReplenishmentBacktest()
-        let grouped = Dictionary(grouping: allRecords) { $0.itemName.lowercased() }
-        for records in grouped.values {
+        for (_, records) in identity.group(allRecords) {
             let days = PurchaseDay.collapse(records, calendar: calendar)
             guard days.count > minimumPurchases else { continue }
             for index in minimumPurchases..<days.count {
@@ -192,9 +268,14 @@ struct HabitService {
     }
 
     // Returns the predicted store for an item based on purchase history
-    static func preferredStore(for itemName: String, allRecords: [PurchaseRecord], stores: [Store]) -> Store? {
-        let nameLower = itemName.lowercased()
-        let relevantRecords = allRecords.filter { $0.itemName.lowercased() == nameLower }
+    static func preferredStore(
+        for itemName: String,
+        allRecords: [PurchaseRecord],
+        stores: [Store],
+        identity: ReplenishmentItemIdentity = .current
+    ) -> Store? {
+        let key = identity.key(itemName)
+        let relevantRecords = allRecords.filter { identity.key($0.itemName) == key }
         guard !relevantRecords.isEmpty else { return nil }
 
         let storeCounts = Dictionary(grouping: relevantRecords) { $0.storeName }
@@ -233,7 +314,7 @@ struct OverdueNotificationLedger {
     }
 
     func shouldNotify(_ pattern: ConsumptionPattern) -> Bool {
-        notified()[pattern.itemName.lowercased()] != pattern.notificationKey
+        notified()[pattern.itemKey] != pattern.notificationKey
     }
 
     func markNotified(_ pattern: ConsumptionPattern) {
@@ -242,7 +323,7 @@ struct OverdueNotificationLedger {
 
     func markNotified(itemName: String, notificationKey: TimeInterval) {
         var map = notified()
-        map[itemName.lowercased()] = notificationKey
+        map[ReplenishmentItemIdentity.formalKey(itemName)] = notificationKey
         defaults.set(map, forKey: Self.defaultsKey)
     }
 
@@ -262,8 +343,8 @@ struct AcceptedReplenishment: Codable, Equatable {
 }
 
 enum ReplenishmentFeedback {
-    /// Abgelehnte Vorschläge (A4) wie in `HomeView` per `@AppStorage` gespeichert: klein
-    /// geschriebener Name → `purchaseKey`.
+    /// Abgelehnte Vorschläge (A4) wie in `HomeView` per `@AppStorage` gespeichert: `itemKey` →
+    /// `purchaseKey`.
     static func storedDismissals(defaults: UserDefaults = .standard) -> [String: TimeInterval] {
         guard let data = defaults.data(forKey: ReplenishmentKeyMigration.dismissedKey) else { return [:] }
         return (try? JSONDecoder().decode([String: TimeInterval].self, from: data)) ?? [:]
@@ -300,7 +381,7 @@ enum ReplenishmentFeedback {
         patterns: [ConsumptionPattern]
     ) -> (stillTracked: [UUID: AcceptedReplenishment], dismissals: [String: TimeInterval]) {
         let currentKeys = Dictionary(
-            patterns.map { ($0.itemName.lowercased(), $0.purchaseKey) },
+            patterns.map { ($0.itemKey, $0.purchaseKey) },
             uniquingKeysWith: { first, _ in first }
         )
         var stillTracked: [UUID: AcceptedReplenishment] = [:]
@@ -310,7 +391,7 @@ enum ReplenishmentFeedback {
                 stillTracked[id] = entry
                 continue
             }
-            let key = entry.itemName.lowercased()
+            let key = ReplenishmentItemIdentity.formalKey(entry.itemName)
             guard !pendingNames.contains(key) else { continue }
             if currentKeys[key] == entry.purchaseKey {
                 dismissals[key] = entry.purchaseKey
@@ -428,7 +509,7 @@ struct ReplenishmentSnoozes {
         return max(minimumShiftDays, min(maximumShiftDays, half))
     }
 
-    /// Klein geschriebener Artikelname → Verschiebung.
+    /// `itemKey` → Verschiebung.
     func entries() -> [String: ReplenishmentSnooze] {
         guard let data = defaults.data(forKey: Self.defaultsKey) else { return [:] }
         return (try? JSONDecoder().decode([String: ReplenishmentSnooze].self, from: data)) ?? [:]
@@ -467,7 +548,7 @@ struct ReplenishmentSnoozes {
             until = closedDays.earliestOpenDay(onOrAfter: notBefore, allowSunday: allowsSunday, calendar: calendar)
         }
         var map = entries()
-        map[pattern.itemName.lowercased()] = ReplenishmentSnooze(
+        map[pattern.itemKey] = ReplenishmentSnooze(
             itemName: pattern.itemName,
             purchaseKey: pattern.purchaseKey,
             snoozedUntil: until.timeIntervalSince1970
@@ -478,7 +559,7 @@ struct ReplenishmentSnoozes {
 
     func remove(_ itemName: String) {
         var map = entries()
-        map[itemName.lowercased()] = nil
+        map[ReplenishmentItemIdentity.formalKey(itemName)] = nil
         persist(map)
     }
 
@@ -491,7 +572,7 @@ struct ReplenishmentSnoozes {
     /// - Parameter patterns: alle Muster ohne Verschiebung (`HabitService.patterns`).
     func prune(keeping patterns: [ConsumptionPattern]) {
         let current = Dictionary(
-            patterns.map { ($0.itemName.lowercased(), $0.purchaseKey) },
+            patterns.map { ($0.itemKey, $0.purchaseKey) },
             uniquingKeysWith: { first, _ in first }
         )
         let map = entries()
@@ -523,10 +604,10 @@ struct ReplenishmentBlocklist {
         return names.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
     }
 
-    /// Klein geschriebene Namen, wie `HabitService.dueSoonItems(blocked:)` sie erwartet.
-    var keys: Set<String> { Set(names().map { $0.lowercased() }) }
+    /// Artikelschlüssel (`itemKey`), wie `HabitService.dueSoonItems(blocked:)` sie erwartet.
+    var keys: Set<String> { Set(names().map(ReplenishmentItemIdentity.formalKey)) }
 
-    func contains(_ itemName: String) -> Bool { keys.contains(itemName.lowercased()) }
+    func contains(_ itemName: String) -> Bool { keys.contains(ReplenishmentItemIdentity.formalKey(itemName)) }
 
     func block(_ itemName: String) {
         guard !contains(itemName) else { return }
@@ -534,7 +615,8 @@ struct ReplenishmentBlocklist {
     }
 
     func unblock(_ itemName: String) {
-        persist(names().filter { $0.lowercased() != itemName.lowercased() })
+        let key = ReplenishmentItemIdentity.formalKey(itemName)
+        persist(names().filter { ReplenishmentItemIdentity.formalKey($0) != key })
     }
 
     func removeAll() {
@@ -705,7 +787,7 @@ struct ReplenishmentMetrics {
         shown = shown.filter { now.timeIntervalSince1970 - $0.value < Self.shownRetention }
         var newlyShown = 0
         for pattern in patterns {
-            let key = Self.shownEntryKey(itemKey: pattern.itemName.lowercased(), purchaseKey: pattern.purchaseKey)
+            let key = Self.shownEntryKey(itemKey: pattern.itemKey, purchaseKey: pattern.purchaseKey)
             guard shown[key] == nil else { continue }
             shown[key] = now.timeIntervalSince1970
             newlyShown += 1

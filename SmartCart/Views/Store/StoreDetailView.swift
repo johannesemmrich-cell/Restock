@@ -584,13 +584,14 @@ struct StoreDetailView: View {
         let storeID = store.id
         let stores = activeStores
         let records = allRecords
+        let identity = ReplenishmentItemIdentity.current
         alsoDueItems = HabitService.dueBeforeNextVisit(
             from: HabitService.patterns(allRecords: records),
             visitGapDays: visitGapDays,
             snoozes: ReplenishmentSnoozes().entries(),
             blocked: ReplenishmentBlocklist().keys,
             dismissed: ReplenishmentFeedback.storedDismissals(),
-            pendingNames: Set(allPendingItems.map { $0.name.lowercased() })
+            pendingNames: Set(allPendingItems.map { identity.key($0.name) })
         ) { pattern in
             AssignmentService.assign(itemName: pattern.itemName, to: stores, purchaseRecords: records)?.id == storeID
         }

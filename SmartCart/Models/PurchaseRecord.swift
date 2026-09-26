@@ -118,7 +118,14 @@ extension Array where Element == PurchaseRecord {
     /// - Parameter closedDays: Tage, an denen Läden geschlossen haben; ein Termin darauf wird auf
     ///   den Tag davor vorgezogen (4b). Standard `.none`, damit die reine Rechnung unabhängig vom
     ///   Wochentag testbar bleibt — `HabitService` übergibt die Schließtage des gewählten Landes.
-    func consumptionPattern(closedDays: RetailClosedDays = .none, calendar: Calendar = .current) -> ConsumptionPattern? {
+    /// - Parameter itemName: angezeigter Name, wenn die Datensätze unter verschiedenen
+    ///   gleichwertigen Namen gespeichert sind (C5, `ReplenishmentItemIdentity`). Standard: Name
+    ///   des ersten Kaufs.
+    func consumptionPattern(
+        itemName: String? = nil,
+        closedDays: RetailClosedDays = .none,
+        calendar: Calendar = .current
+    ) -> ConsumptionPattern? {
         let days = PurchaseDay.collapse(self, calendar: calendar)
         guard days.count >= 2, let first = days.first, let last = days.last else { return nil }
 
@@ -156,7 +163,7 @@ extension Array where Element == PurchaseRecord {
 
         let typical = days.typicalQuantity()
         return ConsumptionPattern(
-            itemName: first.itemName,
+            itemName: itemName ?? first.itemName,
             averageDaysBetweenPurchases: typicalInterval,
             averageQuantityPerPurchase: days.map(\.quantity).reduce(0, +) / Double(days.count),
             lastPurchaseDate: last.date,

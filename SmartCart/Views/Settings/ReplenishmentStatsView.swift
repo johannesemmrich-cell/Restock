@@ -18,7 +18,7 @@ struct ReplenishmentStatsView: View {
         let snoozes = ReplenishmentSnoozes().entries()
         let blocked = ReplenishmentBlocklist().keys
         let patterns = HabitService.patterns(allRecords: allRecords)
-            .map { pattern in snoozes[pattern.itemName.lowercased()].map { pattern.applying($0) } ?? pattern }
+            .map { pattern in snoozes[pattern.itemKey].map { pattern.applying($0) } ?? pattern }
             .sorted { $0.itemName.localizedCaseInsensitiveCompare($1.itemName) == .orderedAscending }
         let shown = metrics.count(.shown)
 
@@ -56,7 +56,7 @@ struct ReplenishmentStatsView: View {
                         .foregroundStyle(.tertiary)
                 } else {
                     ForEach(patterns, id: \.itemName) { pattern in
-                        patternRow(pattern, now: now, isBlocked: blocked.contains(pattern.itemName.lowercased()))
+                        patternRow(pattern, now: now, isBlocked: blocked.contains(pattern.itemKey))
                     }
                 }
             } header: {
