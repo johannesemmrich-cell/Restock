@@ -263,10 +263,20 @@ siebzehn bestehenden Erzeugungsstellen (Quick-Add, Siri-Intent, Widget, MenuPlan
 HomeView-Vorschläge, StoreDetailView, SyncCoordinator) unverändert.
 
 > **Abschnitte 6 bis 8 gehören zu Issue #57**, nicht mehr zu diesem Ticket (PO-Entscheidung
-> 2026-09-26). Sie bleiben hier als Vorarbeit stehen, damit #57 nicht von vorn anfängt. Der Code
-> zu Abschnitt 7 (`ItemRow`) und 8 (`EditItemView`) ist in #10 schon geschrieben, sein Verhalten
-> aber erst in #57 nachzuweisen — erreichbar wird er mit `suggestQuantity` aus Abschnitt 6.
-> Abschnitt 6 selbst ist in #10 **nicht** umgesetzt.
+> 2026-09-26). Sie bleiben hier als Vorarbeit stehen, damit #57 nicht von vorn anfängt.
+>
+> **Was in #10 davon schon im Code steht — genau, nicht pauschal:**
+> - Abschnitt 7, **Mengenzeile** (AC-14: `"ca. "`-Präfix, `Color.amber`, keine Mengenangabe bei
+>   `"none"`): geschrieben.
+> - Abschnitt 7, **Preiszelle** (AC-15: Rate `estimatedPrice × 100` als „1,25 €/100 g" statt eines
+>   Gesamtbetrags): **NICHT geschrieben.** In `ItemRow` gibt es keinen solchen Fallback; die
+>   Preiszelle zeigt bei `estimatedLineTotal == nil` gar nichts. #57 muss das bauen.
+> - Abschnitt 8 (AC-16: `EditItemView` setzt `quantitySource = "user"`): geschrieben.
+> - Abschnitt 6 (`suggestQuantity`, AC-11 bis AC-13): **NICHT geschrieben.**
+>
+> Das Verhalten des geschriebenen Teils ist in #10 nicht nachgewiesen (die Tests dafür sind mit
+> nach #57 gezogen); belegt ist nur, dass er compiliert und keinen Bestandstest bricht. Erreichbar
+> wird er erst mit `suggestQuantity` aus Abschnitt 6.
 
 ### 6. Vier Stufen in `AddItemView`
 
