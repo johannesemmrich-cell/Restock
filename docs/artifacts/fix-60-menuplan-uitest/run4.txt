@@ -1,0 +1,157 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/RestockUITests/testAddingMenuPlanRecipeDoesNotCrash"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/tingly-nibbling-alpaca/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dehwhbtzjpalnjgoddettdugtujq/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dehwhbtzjpalnjgoddettdugtujq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-09-26 18:54:13.891606+0200 RestockUITests-Runner[74337:76459308] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-26 18:54:14.887.
+Test Suite 'RestockUITests.xctest' started at 2026-09-26 18:54:14.887.
+Test Suite 'RestockUITests' started at 2026-09-26 18:54:14.887.
+Test Case '-[RestockUITests.RestockUITests testAddingMenuPlanRecipeDoesNotCrash]' started.
+    t =     0.00s Start Test at 2026-09-26 18:54:14.888
+    t =     0.06s Set Up
+    t =     0.06s Open com.johannesemmrich.Restock
+    t =     0.06s     Launch com.johannesemmrich.Restock
+2026-09-26 18:54:15.175 xcodebuild[74286:76458831] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-26 18:54:15.175 xcodebuild[74286:76458831] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[74337]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x109d00310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x1091cc398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     1.05s         Setting up automation session
+    t =     2.48s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testAddingMenuPlanRecipeDoesNotCrash] : Set a .modelContext in view's environment to use Query
+    t =     4.52s Waiting 15.0s for "fork.knife" Button to exist
+    t =     5.55s     Checking `Expect predicate `existsNoRetry == 1` for object "fork.knife" Button`
+    t =     5.55s         Checking existence of `"fork.knife" Button`
+    t =     5.65s Tap "fork.knife" Button
+    t =     5.65s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.65s     Find the "fork.knife" Button
+    t =     5.67s     Check for interrupting elements affecting "fork.knife" Button
+    t =     5.70s     Synthesize event
+    t =     6.00s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.08s Waiting 10.0s for "Tag hinzufügen" Button to exist
+    t =     7.11s     Checking `Expect predicate `existsNoRetry == 1` for object "Tag hinzufügen" Button`
+    t =     7.11s         Checking existence of `"Tag hinzufügen" Button`
+    t =     7.17s Tap "Tag hinzufügen" Button
+    t =     7.17s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.18s     Find the "Tag hinzufügen" Button
+    t =     7.22s     Check for interrupting elements affecting "Tag hinzufügen" Button
+    t =     7.25s     Synthesize event
+    t =     7.54s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.59s Waiting 10.0s for "Gericht eingeben…" TextField to exist
+    t =     8.64s     Checking `Expect predicate `existsNoRetry == 1` for object "Gericht eingeben…" TextField`
+    t =     8.64s         Checking existence of `"Gericht eingeben…" TextField`
+    t =     8.75s Tap "Gericht eingeben…" TextField
+    t =     8.75s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.76s     Find the "Gericht eingeben…" TextField
+    t =     8.83s     Check for interrupting elements affecting "Gericht eingeben…" TextField
+    t =     8.88s     Synthesize event
+    t =     9.18s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.38s Type 'Chili Con Carne' into "Gericht eingeben…" TextField
+    t =    10.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.38s     Find the "Gericht eingeben…" TextField
+    t =    10.51s     Check for interrupting elements affecting "Gericht eingeben…" TextField
+    t =    10.61s     Synthesize event
+    t =    11.06s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.06s Waiting 5.0s for "Hinzufügen" Button to exist
+    t =    12.13s     Checking `Expect predicate `existsNoRetry == 1` for object "Hinzufügen" Button`
+    t =    12.14s         Checking existence of `"Hinzufügen" Button`
+    t =    12.21s Tap "Hinzufügen" Button
+    t =    12.21s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.21s     Find the "Hinzufügen" Button
+    t =    12.27s     Check for interrupting elements affecting "Hinzufügen" Button
+    t =    12.32s     Synthesize event
+    t =    12.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.12s Waiting 10.0s for "+ Liste" Button to exist
+    t =    17.19s     Checking `Expect predicate `existsNoRetry == 1` for object "+ Liste" Button`
+    t =    17.19s         Checking existence of `"+ Liste" Button`
+    t =    17.33s Tap "+ Liste" Button
+    t =    17.33s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.33s     Find the "+ Liste" Button
+    t =    17.44s     Check for interrupting elements affecting "+ Liste" Button
+    t =    17.50s     Synthesize event
+    t =    17.79s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.80s Waiting 5.0s for "Automatisch zuordnen" Button to exist
+    t =    18.87s     Checking `Expect predicate `existsNoRetry == 1` for object "Automatisch zuordnen" Button`
+    t =    18.87s         Checking existence of `"Automatisch zuordnen" Button`
+    t =    18.92s         Capturing element debug description
+    t =    19.87s     Checking `Expect predicate `existsNoRetry == 1` for object "Automatisch zuordnen" Button`
+    t =    19.87s         Checking existence of `"Automatisch zuordnen" Button`
+    t =    19.93s         Capturing element debug description
+    t =    20.89s     Checking `Expect predicate `existsNoRetry == 1` for object "Automatisch zuordnen" Button`
+    t =    20.89s         Checking existence of `"Automatisch zuordnen" Button`
+    t =    20.95s         Capturing element debug description
+    t =    21.81s     Checking `Expect predicate `existsNoRetry == 1` for object "Automatisch zuordnen" Button`
+    t =    21.81s         Checking existence of `"Automatisch zuordnen" Button`
+    t =    21.86s         Capturing element debug description
+    t =    22.81s     Checking `Expect predicate `existsNoRetry == 1` for object "Automatisch zuordnen" Button`
+    t =    22.81s         Checking existence of `"Automatisch zuordnen" Button`
+    t =    22.86s         Capturing element debug description
+    t =    22.86s     Checking existence of `"Automatisch zuordnen" Button`
+    t =    22.91s Collecting debug information to assist test failure triage
+    t =    22.91s     Requesting snapshot of accessibility hierarchy for app with pid 74360
+/Users/hem/Developer/Restock/.claude/worktrees/tingly-nibbling-alpaca/RestockUITests/RestockUITests.swift:290: error: -[RestockUITests.RestockUITests testAddingMenuPlanRecipeDoesNotCrash] : XCTAssertTrue failed - "Automatisch zuordnen"-Menüeintrag nicht gefunden
+    t =    23.18s Tear Down
+    t =    23.18s     Open com.johannesemmrich.Restock
+    t =    23.18s         Launch com.johannesemmrich.Restock
+    t =    23.18s             Terminate com.johannesemmrich.Restock:74360
+2026-09-26 18:54:39.158 xcodebuild[74286:76458831] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-26 18:54:39.158 xcodebuild[74286:76458831] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    24.69s             Setting up automation session
+    t =    25.73s             Wait for com.johannesemmrich.Restock to idle
+    t =    27.32s     Terminate com.johannesemmrich.Restock:74528
+Test Case '-[RestockUITests.RestockUITests testAddingMenuPlanRecipeDoesNotCrash]' failed (28.745 seconds).
+Test Suite 'RestockUITests' failed at 2026-09-26 18:54:43.634.
+	 Executed 1 test, with 1 failure (0 unexpected) in 28.745 (28.746) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-09-26 18:54:43.634.
+	 Executed 1 test, with 1 failure (0 unexpected) in 28.745 (28.747) seconds
+Test Suite 'Selected tests' failed at 2026-09-26 18:54:43.635.
+	 Executed 1 test, with 1 failure (0 unexpected) in 28.745 (28.748) seconds
+2026-09-26 19:04:44.147 xcodebuild[74286:76459036]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Timed out after 600.0 seconds while waiting for a response from the invoked process
+2026-09-26 19:04:44.211 xcodebuild[74286:76458831] [MT] IDETestOperationsObserverDebug: 632.201 elapsed -- Testing started completed.
+2026-09-26 19:04:44.211 xcodebuild[74286:76458831] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-26 19:04:44.211 xcodebuild[74286:76458831] [MT] IDETestOperationsObserverDebug: 632.202 sec, +632.202 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dehwhbtzjpalnjgoddettdugtujq/Logs/Test/Test-Restock-2026.09.26_18-54-11-+0200.xcresult
+
+Failing tests:
+	RestockUITests.testAddingMenuPlanRecipeDoesNotCrash()
+
+** TEST FAILED **
+
+Testing started
