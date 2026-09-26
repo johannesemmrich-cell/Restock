@@ -403,3 +403,47 @@ Grenze von 4–5 Dateien (auf 6–7) ausdrücklich freigegeben, nachdem ihm beid
 Kosten vorgelegt wurden. Die 250-LoC-Grenze bleibt bindend.
 
 Diese Freigabe gilt für Issue #10 und begründet keine allgemeine Anhebung der Grenze.
+
+---
+
+## Stand nach Phase 5 (TDD RED, 2026-09-26)
+
+### RED-Belege
+
+- `docs/artifacts/fix-10-preis-einheit/test-red-unit.txt` —
+  `testLearnedGramPriceIsNotAppliedToItemWithoutQuantity` schlägt fehl:
+  `XCTAssertNotEqualWithAccuracy 0.012475 == 0.012475` und
+  `XCTAssertTrue estimatedPriceIsAutoDerived` ebenfalls. `Executed 1 test, with 2 failures`.
+- `docs/artifacts/fix-10-preis-einheit/test-red-ui.txt` —
+  `testSavedReceiptDoesNotProduceOneCentItemPrice` schlägt fehl: nach dem Speichern steht
+  `0,01 €` am Artikel „Hackfleisch". `Executed 1 test, with 1 failure`.
+- Beide Läufe einzeln gefahren. Grund: im ersten gemeinsamen Lauf hängte sich der Unit-Testläufer
+  (`The test runner hung before establishing connection.`) und lief gar nicht — der UI-Test allein
+  wäre als „grün" durchgegangen. Bekannte Flakiness, vgl. Issue #21.
+
+### Stolperstein, der im ersten RED-Lauf fast durchgerutscht wäre
+
+Der UI-Test war zuerst auf `label == "0,01 €"` geprüft und bestand fälschlich. Die
+Währungsformatierung setzt ein **geschütztes Leerzeichen** zwischen Zahl und Zeichen. Richtig ist
+`label CONTAINS "0,01"`, wie es auch `testSavingStillWritesLearnedPriceToMatchedItem` mit „0,99"
+macht. Gilt für jeden weiteren Preis-Test in diesem Vorhaben.
+
+### Fremde Änderungen, die zwischenzeitlich eingetroffen sind — VOR der Umsetzung prüfen
+
+Beim Nachziehen auf den aktuellen Stand kamen vier Änderungen anderer Arbeitsstränge dazu
+(#30 Nachkauf-Vorhersage, #13 Preis-Stufenmodell). Zwei davon berühren diese Aufgabe:
+
+1. **`SmartCart/Models/ShoppingItem.swift` ist um 17 Zeilen gewachsen.** Alle Zeilenangaben in der
+   Spec zu dieser Datei (`:90-158`, `:127-146`, `:152-153`, `:166-168`, `:225-245`) sind damit
+   möglicherweise verschoben. **Vor jeder Änderung die echten Stellen nachschlagen, nicht den
+   Zeilenangaben der Spec vertrauen.** Dasselbe gilt für `SmartCart/SmartCartApp.swift`
+   (Seed-Fixture, in der Spec `:249-253`).
+2. **`docs/specs/models/price-estimator-stages.md` ist neu** (Issue #13, Preis-Stufenmodell mit
+   Charakterisierungstests in `RestockTests/PriceEstimatorStagesTests.swift`). Der `PriceEstimator`
+   ist in dieser Aufgabe die Rückfallebene, sobald eine gelernte Rate verworfen wird — durch
+   PO-Entscheidung 1 künftig deutlich häufiger. **Diese Spec vor der Umsetzung lesen** und prüfen,
+   ob die dortigen Charakterisierungstests durch das häufigere Zurückfallen betroffen sind.
+
+Die Spec selbst wurde deswegen NICHT nachgezogen: Sie ist freigegeben und das unabhängige Briefing
+ist per Prüfsumme an genau diese Fassung gebunden. Zeilenangaben sind Lesehilfen, nicht die
+Wahrheit — die Wahrheit steht im Code.
