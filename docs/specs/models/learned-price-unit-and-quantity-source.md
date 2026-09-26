@@ -185,11 +185,26 @@ Werten und ohne SwiftUI-Umgebung prüfbar.
 var learnedPriceUnits: [String: String] = [:]
 ```
 
-**Nur zwei Eimer, keine literalen Einheiten.** `weightBasisFromName`
-(`ReceiptParserService.swift:916-917`) und der Gewichtszeilen-Zweig
+**Zwei zusammengefasste Eimer — plus literale Einheiten für alles übrige.**
+`weightBasisFromName` (`ReceiptParserService.swift:916-917`) und der Gewichtszeilen-Zweig
 (`ReceiptParserService.swift:379,432`) normieren `kg` **und** `l` auf denselben Faktor 1000. Aus
 dem gespeicherten Preis lässt sich Gramm von Milliliter nicht mehr unterscheiden. Eine dritte,
-literal genaue Einheit auszuweisen wäre vorgetäuschte Genauigkeit. Die Trennung landet in #15.
+literal genaue Einheit für **diese** Fälle auszuweisen wäre vorgetäuschte Genauigkeit; die Trennung
+von g und ml landet in #15.
+
+Zusammengefasst werden daher nur zwei Gruppen: Stück-Synonyme (`""`, `"stk"`, `"stück"`, `"st"`, …)
+zu `"stk"` und Gewichts-/Volumen-Subeinheiten (`"g"`, `"mg"`, `"ml"`, `"cl"`, `"dl"` samt Langformen)
+zu `"g"`. **Jede andere Einheit bleibt literal erhalten**, kleingeschrieben — `"kg"`, `"l"`, `"el"`,
+`"tl"` landen unverändert in `learnedPriceUnits` (`ShoppingItem.unitBucket`, `default: return
+normalized`). Das ist gewollt und gefahrlos, weil literale Eimer nur exakt gegeneinander verglichen
+und nie ineinander umgerechnet werden — genau das verlangt AC-7 („keine stille Umrechnung um den
+Faktor 1000") und AC-8 führt die literalen Fälle ausdrücklich auf.
+
+*Hinweis auf eine Unschärfe im Code:* Der Doc-Kommentar über `unitBucket`
+(`ShoppingItem.swift`) beschreibt zuerst korrekt „alles andere … auf sich selbst", behauptet
+im Folgesatz aber „Nur zwei Eimer statt literaler Einheiten". Derselbe Widerspruch, den dieser
+Absatz hier hatte. Er ist inhaltlich folgenlos und wird bei der nächsten Berührung der Datei
+mitkorrigiert — vermerkt an **#15**, wo die Frage „literale Einheit oder Eimer" sachlich hingehört.
 
 ### 2. Einheit am Schreibort ermitteln
 
@@ -578,9 +593,13 @@ liegen bleibt und toter Code im Produktivzweig störender wiegt als die doppelte
 - **Rationale:** Die Entscheidung, die Bezugsgröße als additive Parallel-Map statt als
   Struct-Wert zu führen, folgt einem im Projekt bereits zweimal erprobten Muster
   (`learnedPriceDates`, `categoryManuallySet`) und vermeidet einen Schema-Bruch in einem Bereich
-  mit dokumentiertem Datenverlust. Die Entscheidung, nur zwei Eimer statt literaler Einheiten zu
-  führen, ist durch die Normierung in `ReceiptParserService.swift:916` erzwungen und in #15
-  auflösbar. Beide sind hier unter „Implementation Details" und „Alternativen (verworfen)"
+  mit dokumentiertem Datenverlust. Die Entscheidung, **Stück-Synonyme und Gewichts-/Volumen-Subeinheiten
+  zu je einem Eimer zusammenzufassen und jede andere Einheit literal zu erhalten** (`"kg"`, `"l"`,
+  `"el"`, `"tl"`), ist durch die Normierung in `ReceiptParserService.swift:916` erzwungen: Weil dort
+  `kg` und `l` auf denselben Faktor 1000 laufen, wäre eine literal genaue Trennung von Gramm und
+  Milliliter vorgetäuschte Genauigkeit — sie ist in #15 auflösbar. Für alle übrigen Einheiten gibt
+  es diesen Zwang nicht, deshalb bleiben sie wörtlich stehen und werden nur exakt gegeneinander
+  verglichen. Beide sind hier unter „Implementation Details" und „Alternativen (verworfen)"
   begründet und durch AC1, AC5, AC7, AC8 abgesichert; ein eigenes ADR-Dokument wäre für einen
   Bugfix dieses Umfangs unverhältnismäßig.
 
@@ -656,3 +675,20 @@ verschoben" unter den Acceptance Criteria.
   bereinigt: „Purpose", „Source" und „Dependencies" führten die Mengen-Vorbelegung noch als Teil
   von #10, obwohl Scope und AC-Liste sie längst nach #57 verwiesen; „Purpose" ist der Abschnitt,
   den der PO zuerst liest.
+- 2026-09-26: Umfangsangabe für #57 präzisiert (Adversary-Befund F003). Die pauschale Aussage, „der
+  Code zu Abschnitt 7 (`ItemRow`)" liege in #10 vor, traf nur die Mengenzeile (AC-14). Die
+  Preiszelle mit der Rate „1,25 €/100 g" (AC-15) fehlt vollständig — `ItemRow` hat keinen solchen
+  Fallback. Jetzt Teil für Teil aufgeführt, damit #57 den Aufwand nicht unterschätzt.
+- 2026-09-26: Falsche Absolutaussage „Nur zwei Eimer, keine literalen Einheiten" an **beiden**
+  Stellen berichtigt — „Implementation Details 1" und „Architektur-Entscheidung (ADR)". Richtig ist:
+  Zusammengefasst werden nur Stück-Synonyme zu `"stk"` und Gewichts-/Volumen-Subeinheiten zu `"g"`;
+  jede andere Einheit bleibt literal erhalten (`"kg"`, `"l"`, `"el"`, `"tl"` — `unitBucket`,
+  `default: return normalized`), was AC-7 und AC-8 auch verlangen. Der Zwang zur Zusammenfassung
+  gilt ausschließlich für g/ml, weil `ReceiptParserService.swift:916` `kg` und `l` auf denselben
+  Faktor 1000 normiert.
+
+  Zur Entstehung, damit sich das Muster nicht wiederholt: Die ADR-Stelle wurde erst in einer zweiten
+  Runde gefunden, weil zunächst nur die gemeldete Stelle korrigiert worden war. Das war innerhalb
+  dieses Tickets der **dritte** Fall derselben Art — punktuell statt über alle Vorkommen. Seither
+  gilt: vor jeder Korrektur einer Formulierung erst per Suche alle Fundstellen erheben und jede
+  einzeln beurteilen, statt nur die genannte anzufassen.
