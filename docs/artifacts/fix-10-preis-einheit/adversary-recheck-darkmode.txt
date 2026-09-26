@@ -1,0 +1,185 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/ReceiptReviewUITests/testChangeEditorWorksInDarkMode" test
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/tingly-nibbling-alpaca/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dehwhbtzjpalnjgoddettdugtujq/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dehwhbtzjpalnjgoddettdugtujq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-09-26 17:30:15.554896+0200 RestockUITests-Runner[34855:76195896] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-26 17:30:16.517.
+Test Suite 'RestockUITests.xctest' started at 2026-09-26 17:30:16.518.
+Test Suite 'ReceiptReviewUITests' started at 2026-09-26 17:30:16.518.
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' started.
+    t =     0.00s Start Test at 2026-09-26 17:30:16.518
+    t =     0.05s Set Up
+    t =     0.06s Setting appearance mode to Dark
+    t =     0.21s     Wait for com.apple.springboard to idle
+    t =     0.23s Open com.johannesemmrich.Restock
+    t =     0.24s     Launch com.johannesemmrich.Restock
+2026-09-26 17:30:17.148 xcodebuild[34817:76195414] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-26 17:30:17.149 xcodebuild[34817:76195414] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[34855]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10b4b0310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a0c8398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     1.48s         Setting up automation session
+    t =     2.11s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     4.94s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     4.94s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     5.96s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     5.96s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     6.06s         Capturing element debug description
+    t =     6.98s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     6.98s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     7.00s         Capturing element debug description
+    t =     8.02s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     8.02s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     8.03s         Capturing element debug description
+    t =     8.96s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     8.96s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     8.97s         Capturing element debug description
+    t =     9.99s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     9.99s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    10.02s         Capturing element debug description
+    t =    10.94s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    10.94s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    10.96s         Capturing element debug description
+    t =    11.98s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    11.98s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    12.01s         Capturing element debug description
+    t =    13.02s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    13.02s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    13.05s         Capturing element debug description
+    t =    13.97s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    13.98s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    14.00s         Capturing element debug description
+    t =    15.02s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    15.02s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    15.04s         Capturing element debug description
+    t =    15.96s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    15.96s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    15.98s         Capturing element debug description
+    t =    17.01s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    17.01s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    17.03s         Capturing element debug description
+    t =    17.96s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    17.96s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    17.99s         Capturing element debug description
+    t =    19.02s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    19.02s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    19.05s         Capturing element debug description
+    t =    19.97s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    19.98s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    20.00s         Capturing element debug description
+    t =    21.02s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    21.02s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    21.04s         Capturing element debug description
+    t =    21.97s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    21.97s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    21.99s         Capturing element debug description
+    t =    23.02s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    23.02s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    23.04s         Capturing element debug description
+    t =    23.97s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    23.97s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    23.99s         Capturing element debug description
+    t =    25.02s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    25.02s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    25.04s         Capturing element debug description
+    t =    25.96s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    25.96s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    25.97s         Capturing element debug description
+    t =    27.00s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    27.00s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    27.03s         Capturing element debug description
+    t =    27.95s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    27.95s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    27.97s         Capturing element debug description
+    t =    29.00s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    29.00s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    29.03s         Capturing element debug description
+    t =    29.95s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    29.95s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    29.97s         Capturing element debug description
+    t =    30.98s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    30.98s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    31.00s         Capturing element debug description
+    t =    32.03s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    32.03s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    32.06s         Capturing element debug description
+    t =    32.97s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    32.97s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    33.00s         Capturing element debug description
+    t =    34.02s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    34.02s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    34.05s         Capturing element debug description
+    t =    34.95s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    34.95s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    34.96s         Capturing element debug description
+    t =    34.96s     Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    34.98s Collecting debug information to assist test failure triage
+    t =    34.98s     Requesting snapshot of accessibility hierarchy for app with pid 34876
+/Users/hem/Developer/Restock/.claude/worktrees/tingly-nibbling-alpaca/RestockUITests/ReceiptReviewUITests.swift:752: error: -[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode] : XCTAssertTrue failed - Das Bon-Prüf-Sheet ist nicht erschienen — Seed oder Handoff greift nicht.
+    t =    35.09s Tear Down
+    t =    35.09s     Setting appearance mode to Light
+    t =    35.37s         Wait for com.johannesemmrich.Restock to idle
+    t =    35.86s     Open com.johannesemmrich.Restock
+    t =    35.86s         Launch com.johannesemmrich.Restock
+    t =    35.86s             Terminate com.johannesemmrich.Restock:34876
+2026-09-26 17:30:53.512 xcodebuild[34817:76195414] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-26 17:30:53.587 xcodebuild[34817:76195414] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    37.50s             Setting up automation session
+    t =    38.94s             Wait for com.johannesemmrich.Restock to idle
+    t =    40.74s     Terminate com.johannesemmrich.Restock:35285
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' failed (41.949 seconds).
+Test Suite 'ReceiptReviewUITests' failed at 2026-09-26 17:30:58.468.
+	 Executed 1 test, with 1 failure (0 unexpected) in 41.949 (41.950) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-09-26 17:30:58.468.
+	 Executed 1 test, with 1 failure (0 unexpected) in 41.949 (41.951) seconds
+Test Suite 'Selected tests' failed at 2026-09-26 17:30:58.468.
+	 Executed 1 test, with 1 failure (0 unexpected) in 41.949 (41.951) seconds
+2026-09-26 17:31:12.516 xcodebuild[34817:76195414] [MT] IDETestOperationsObserverDebug: 59.025 elapsed -- Testing started completed.
+2026-09-26 17:31:12.517 xcodebuild[34817:76195414] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-26 17:31:12.517 xcodebuild[34817:76195414] [MT] IDETestOperationsObserverDebug: 59.026 sec, +59.025 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dehwhbtzjpalnjgoddettdugtujq/Logs/Test/Test-Restock-2026.09.26_17-30-12-+0200.xcresult
+
+Failing tests:
+	ReceiptReviewUITests.testChangeEditorWorksInDarkMode()
+
+** TEST FAILED **
+
+Testing started
