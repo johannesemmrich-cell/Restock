@@ -1,3 +1,8 @@
+---
+spec_file: docs/specs/models/learned-price-unit-and-quantity-source.md
+spec_sha256: 7104c9999e21c0adf2bab6a6a3d1e540e8bc7c1f81a6114ede039af2a9565921
+---
+
 # PO-Briefing: fix-10-preis-einheit
 
 - **Spec:** docs/specs/models/learned-price-unit-and-quantity-source.md
