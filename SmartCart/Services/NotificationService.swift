@@ -22,67 +22,63 @@ class NotificationService {
         return settings.authorizationStatus == .authorized
     }
 
-    func scheduleReplenishment(patterns: [ConsumptionPattern]) async {
-        let center = UNUserNotificationCenter.current()
-        let overdueLedger = OverdueNotificationLedger()
+    /// Präfix aller Nachkauf-Nachrichten, auch der früheren pro Artikel (`replenish-<name>`).
+    static let replenishmentIdentifierPrefix = "replenish-"
 
-        for pattern in patterns {
-            let identifier = "replenish-\(pattern.itemName.lowercased().replacingOccurrences(of: " ", with: "-"))"
+    private var digestScheduling: Task<Void, Never>?
 
-            guard pattern.daysUntilNeeded >= 0 else {
-                // Overdue — fire immediately (or next reasonable time), but only once per item and
-                // estimated date (Issue #30, A3). An already-notified item is skipped BEFORE the
-                // pending request is removed: refreshDueSoon() often runs several times within
-                // the 5-second trigger delay, and removing it there would swallow the one push.
-                guard overdueLedger.shouldNotify(pattern) else { continue }
-                await center.removePendingNotificationRequests(withIdentifiers: [identifier])
-                await scheduleImmediate(pattern: pattern, identifier: identifier)
-                overdueLedger.markNotified(pattern)
-                continue
-            }
-
-            await center.removePendingNotificationRequests(withIdentifiers: [identifier])
-
-            let content = UNMutableNotificationContent()
-            content.title = String(localized: "notification.replenish.title")
-            content.body = String(format: String(localized: "notification.replenish.body"), pattern.itemName)
-            content.sound = .default
-            content.userInfo = ["itemName": pattern.itemName]
-
-            var components = Calendar.current.dateComponents(
-                [.year, .month, .day, .hour, .minute],
-                from: pattern.estimatedNextPurchaseDate
-            )
-            components.hour = 9
-            components.minute = 0
-
-            let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-            let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-
-            try? await center.add(request)
+    /// C3 (Issue #30): ersetzt alle geplanten Nachkauf-Nachrichten durch höchstens eine
+    /// Sammelnachricht pro Tag (`ReplenishmentDigestPlanner`). Aufrufe laufen nacheinander:
+    /// `refreshDueSoon()` feuert oft mehrmals kurz hintereinander, und zwei verschränkte Läufe
+    /// könnten sonst Nachrichten des jeweils anderen stehen lassen.
+    func scheduleReplenishmentDigests(candidates: [ConsumptionPattern], now: Date = Date()) async {
+        let previous = digestScheduling
+        let task = Task {
+            await previous?.value
+            await self.performDigestScheduling(candidates: candidates, now: now)
         }
+        digestScheduling = task
+        await task.value
     }
 
-    private func scheduleImmediate(pattern: ConsumptionPattern, identifier: String) async {
-        let content = UNMutableNotificationContent()
-        content.title = String(localized: "notification.overdue.title")
-        content.body = String(format: String(localized: "notification.overdue.body"), pattern.itemName)
-        content.sound = .default
-        content.userInfo = ["itemName": pattern.itemName]
+    private func performDigestScheduling(candidates: [ConsumptionPattern], now: Date) async {
+        let center = UNUserNotificationCenter.current()
+        let ledger = OverdueNotificationLedger()
+        let log = ReplenishmentDigestLog()
+        log.commitDelivered(now: now, to: ledger)
+        let digests = ReplenishmentDigestPlanner.plan(candidates: candidates, ledger: ledger, now: now)
 
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-        try? await UNUserNotificationCenter.current().add(request)
-    }
+        let stale = await center.pendingNotificationRequests()
+            .map(\.identifier)
+            .filter { $0.hasPrefix(Self.replenishmentIdentifierPrefix) }
+        center.removePendingNotificationRequests(withIdentifiers: stale)
 
-    /// Cancels the pending replenishment reminder for one item (e.g. after the user dismissed
-    /// its suggestion in the banner) without touching other scheduled reminders.
-    func cancelReplenishment(itemName: String) {
-        let identifier = "replenish-\(itemName.lowercased().replacingOccurrences(of: " ", with: "-"))"
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
+        var scheduled: [ReplenishmentDigest] = []
+        for digest in digests {
+            let content = UNMutableNotificationContent()
+            content.title = digest.title
+            content.body = digest.body
+            content.sound = .default
+            content.userInfo = ["itemNames": digest.itemNames]
+
+            let components = Calendar.current.dateComponents(
+                [.year, .month, .day, .hour, .minute],
+                from: digest.deliveryDate
+            )
+            let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+            let identifier = Self.replenishmentIdentifierPrefix
+                + "digest-\(components.year ?? 0)-\(components.month ?? 0)-\(components.day ?? 0)"
+            let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+            // Ohne Erlaubnis scheitert das — dann gilt der Artikel später auch nicht als gemeldet.
+            if (try? await center.add(request)) != nil {
+                scheduled.append(digest)
+            }
+        }
+        log.replace(with: scheduled)
     }
 
     func cancelAll() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        ReplenishmentDigestLog().removeAll()
     }
 }

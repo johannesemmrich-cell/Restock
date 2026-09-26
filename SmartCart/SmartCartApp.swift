@@ -323,8 +323,13 @@ struct SmartCartApp: App {
                         // gelöscht/umbenannt wurde — beim Verlassen der App zeigt das Widget
                         // den frischen Stand.
                         WidgetCenter.shared.reloadAllTimelines()
+                        // Issue #30, C3: Nachkauf-Nachrichten auch ohne App-Start neu planen.
+                        ReplenishmentBackgroundRefresh.schedule()
                     }
                 }
+        }
+        .backgroundTask(.appRefresh(ReplenishmentBackgroundRefresh.taskIdentifier)) { [container] in
+            await ReplenishmentBackgroundRefresh.run(container: container)
         }
     }
 }

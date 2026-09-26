@@ -1566,10 +1566,12 @@ struct HomeView: View {
         let patterns = HabitService.patterns(allRecords: allRecords)
         ReplenishmentKeyMigration.runIfNeeded(patterns: patterns)
         snoozes.prune(keeping: patterns)
+        let snoozeEntries = snoozes.entries()
+        let blocked = ReplenishmentBlocklist().keys
         let allPatterns = HabitService.dueSoonItems(
             from: patterns,
-            snoozes: snoozes.entries(),
-            blocked: ReplenishmentBlocklist().keys
+            snoozes: snoozeEntries,
+            blocked: blocked
         )
         let pendingNames = Set(
             activeStores.flatMap { $0.pendingItems.map { $0.name.lowercased() } }
@@ -1584,7 +1586,15 @@ struct HomeView: View {
         pruneDismissedReplenishments(keeping: allPatterns)
         ReplenishmentMetrics().recordShown(dueSoonItems)
         if notificationsEnabled {
-            HabitService.scheduleReplenishmentNotifications(patterns: dueSoonItems)
+            // C3: auch Artikel, die erst in einigen Tagen fällig werden — geplant wird eine
+            // Sammelnachricht pro Tag für die nächsten Tage, nicht nur für das heutige Banner.
+            HabitService.scheduleReplenishmentNotifications(candidates: HabitService.notificationCandidates(
+                from: patterns,
+                snoozes: snoozeEntries,
+                blocked: blocked,
+                dismissed: dismissed,
+                pendingNames: pendingNames
+            ))
         }
     }
 
@@ -1603,8 +1613,9 @@ struct HomeView: View {
         removeFromBanner(pattern)
     }
 
+    /// Die geplanten Nachrichten passt das anschließende `refreshDueSoon()` an (`onChange` der
+    /// Verschiebungen bzw. der Sperrliste).
     private func removeFromBanner(_ pattern: ConsumptionPattern) {
-        NotificationService.shared.cancelReplenishment(itemName: pattern.itemName)
         withAnimation {
             dueSoonItems.removeAll { $0.itemName == pattern.itemName }
         }
@@ -1633,9 +1644,6 @@ struct HomeView: View {
         var dismissed = dismissedReplenishments()
         dismissed.merge(result.dismissals) { _, new in new }
         persistDismissedReplenishments(dismissed)
-        for name in result.dismissals.keys {
-            NotificationService.shared.cancelReplenishment(itemName: name)
-        }
     }
 
     private func trackAcceptedReplenishment(_ item: ShoppingItem, from pattern: ConsumptionPattern) {

@@ -79,11 +79,40 @@ struct HabitService {
         snoozes: [String: ReplenishmentSnooze] = [:],
         blocked: Set<String> = []
     ) -> [ConsumptionPattern] {
+        suggestionCandidates(from: patterns, snoozes: snoozes, blocked: blocked).filter { pattern in
+            isEligible(pattern, at: now) && (pattern.isDueSoon(at: now) || pattern.isOverdue(at: now))
+        }
+    }
+
+    /// Alle Muster ohne „Nicht mehr vorschlagen“, mit „Hab noch“ — noch ohne Eignung und
+    /// Zeitfenster. Eine Verschiebung ändert die Eignung nicht (`cycleDays` geht vom errechneten
+    /// Termin aus).
+    static func suggestionCandidates(
+        from patterns: [ConsumptionPattern],
+        snoozes: [String: ReplenishmentSnooze] = [:],
+        blocked: Set<String> = []
+    ) -> [ConsumptionPattern] {
         patterns.compactMap { pattern in
             let key = pattern.itemName.lowercased()
-            guard !blocked.contains(key), isEligible(pattern, at: now) else { return nil }
-            let effective = snoozes[key].map { pattern.applying($0) } ?? pattern
-            return effective.isDueSoon(at: now) || effective.isOverdue(at: now) ? effective : nil
+            guard !blocked.contains(key) else { return nil }
+            return snoozes[key].map { pattern.applying($0) } ?? pattern
+        }
+    }
+
+    /// C3: Artikel, die in einer Sammelnachricht vorkommen dürfen — wie das Banner ohne
+    /// abgelehnte Vorschläge (A4, `dismissed`: klein geschriebener Name → `purchaseKey`) und ohne
+    /// Artikel, die schon offen auf einer Liste stehen, aber unabhängig vom Zeitfenster: Die
+    /// Nachricht für einen erst in fünf Tagen fälligen Artikel wird schon jetzt geplant.
+    static func notificationCandidates(
+        from patterns: [ConsumptionPattern],
+        snoozes: [String: ReplenishmentSnooze] = [:],
+        blocked: Set<String> = [],
+        dismissed: [String: TimeInterval] = [:],
+        pendingNames: Set<String> = []
+    ) -> [ConsumptionPattern] {
+        suggestionCandidates(from: patterns, snoozes: snoozes, blocked: blocked).filter { pattern in
+            let key = pattern.itemName.lowercased()
+            return !pendingNames.contains(key) && dismissed[key] != pattern.purchaseKey
         }
     }
 
@@ -134,23 +163,26 @@ struct HabitService {
         return stores.first { $0.name == preferredStoreName }
     }
 
-    // Schedules notifications for items due for repurchase
-    static func scheduleReplenishmentNotifications(patterns: [ConsumptionPattern]) {
+    /// Plant die Sammelnachrichten neu (C3). `candidates` aus `notificationCandidates`.
+    static func scheduleReplenishmentNotifications(candidates: [ConsumptionPattern]) {
         Task {
-            await NotificationService.shared.scheduleReplenishment(patterns: patterns)
+            await NotificationService.shared.scheduleReplenishmentDigests(candidates: candidates)
         }
     }
 }
 
 // MARK: - Overdue push deduplication (Issue #30, A3)
 
-/// Merkt sich pro Artikel, für welchen Kaufzyklus (`ConsumptionPattern.purchaseKey`) bereits
-/// eine sofortige „Überfällig“-Push-Nachricht geplant wurde. Vorher löste jedes `refreshDueSoon()`
-/// (App-Start, jede Änderung an offenen Artikeln oder Kaufdatensätzen) für jeden überfälligen
-/// Artikel eine neue Nachricht aus. Jetzt höchstens einmal pro Artikel und Zyklus: erst ein neuer
-/// Kauf macht den Artikel wieder meldefähig — ein Wechsel von Land oder Zeitzone, der nur den
-/// errechneten Termin verschiebt, dagegen nicht. Ein Eintrag pro Artikelname
-/// wird überschrieben, nie angehängt — die Map wächst also nur mit der Zahl verschiedener Artikel.
+/// Merkt sich pro Artikel, für welchen Kaufzyklus (`ConsumptionPattern.notificationKey`) bereits
+/// eine Push-Nachricht verschickt wurde. Vorher löste jedes `refreshDueSoon()` (App-Start, jede
+/// Änderung an offenen Artikeln oder Kaufdatensätzen) für jeden überfälligen Artikel eine neue
+/// Nachricht aus. Jetzt höchstens einmal pro Artikel und Zyklus: erst ein neuer Kauf (oder ein
+/// „Hab noch“, C1) macht den Artikel wieder meldefähig — ein Wechsel von Land oder Zeitzone, der
+/// nur den errechneten Termin verschiebt, dagegen nicht. Seit C3 gilt das für jede Nachricht,
+/// nicht nur für überfällige Artikel; Name und Schlüssel bleiben für bestehende Einträge gleich.
+/// Eingetragen wird erst nach der Zustellzeit (`ReplenishmentDigestLog.commitDelivered`). Ein
+/// Eintrag pro Artikelname wird überschrieben, nie angehängt — die Map wächst also nur mit der
+/// Zahl verschiedener Artikel.
 struct OverdueNotificationLedger {
     static let defaultsKey = "notifiedOverdueReplenishments"
 
@@ -161,12 +193,16 @@ struct OverdueNotificationLedger {
     }
 
     func shouldNotify(_ pattern: ConsumptionPattern) -> Bool {
-        notified()[pattern.itemName.lowercased()] != pattern.purchaseKey
+        notified()[pattern.itemName.lowercased()] != pattern.notificationKey
     }
 
     func markNotified(_ pattern: ConsumptionPattern) {
+        markNotified(itemName: pattern.itemName, notificationKey: pattern.notificationKey)
+    }
+
+    func markNotified(itemName: String, notificationKey: TimeInterval) {
         var map = notified()
-        map[pattern.itemName.lowercased()] = pattern.purchaseKey
+        map[itemName.lowercased()] = notificationKey
         defaults.set(map, forKey: Self.defaultsKey)
     }
 
@@ -186,6 +222,13 @@ struct AcceptedReplenishment: Codable, Equatable {
 }
 
 enum ReplenishmentFeedback {
+    /// Abgelehnte Vorschläge (A4) wie in `HomeView` per `@AppStorage` gespeichert: klein
+    /// geschriebener Name → `purchaseKey`.
+    static func storedDismissals(defaults: UserDefaults = .standard) -> [String: TimeInterval] {
+        guard let data = defaults.data(forKey: ReplenishmentKeyMigration.dismissedKey) else { return [:] }
+        return (try? JSONDecoder().decode([String: TimeInterval].self, from: data)) ?? [:]
+    }
+
     /// Erkennt übernommene Vorschläge, deren `ShoppingItem` ohne Kauf wieder verschwunden ist,
     /// und wertet sie wie ✕ im Banner. Bewusst hier zentral statt an jeder Löschstelle
     /// (Swipe, Bearbeiten, „Erledigte löschen“, Sync von geteilten Listen …): entscheidend ist
@@ -238,6 +281,14 @@ struct ReplenishmentSnooze: Codable, Equatable {
 }
 
 extension ConsumptionPattern {
+    /// Kennzeichnet eine Nachricht (A3/C3): ohne „Hab noch“ der Kaufzyklus (`purchaseKey`), mit
+    /// „Hab noch“ der gespeicherte verschobene Termin — so kommt am verschobenen Termin noch
+    /// einmal eine Nachricht, und jedes weitere „Hab noch“ erlaubt wieder eine. Beide Werte sind
+    /// gespeichert statt errechnet und verschieben sich deshalb nicht mit Land oder Zeitzone.
+    var notificationKey: TimeInterval {
+        isSnoozed ? estimatedNextPurchaseDate.timeIntervalSince1970 : purchaseKey
+    }
+
     /// Übernimmt eine „Hab noch“-Verschiebung, sofern sie noch zu diesem Kaufzyklus gehört.
     func applying(_ snooze: ReplenishmentSnooze) -> ConsumptionPattern {
         guard snooze.purchaseKey == purchaseKey else { return self }

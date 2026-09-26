@@ -56,6 +56,7 @@
 		6A8BB1A057222174ABCEEA9E /* ShoppingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859546BD22AB55E21A80A96 /* ShoppingActivityAttributes.swift */; };
 		6BA9AE00008A24FF621597EE /* ClashDisplay-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 984CA66C3B260EF487FA4218 /* ClashDisplay-Semibold.ttf */; };
 		708347169C9B1DF2C1D474FF /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ED485E807ADF771EE3C623 /* LiveActivityService.swift */; };
+		8568BF23172E656D6C164958 /* ReplenishmentDigest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58860961F63EEDA68162492D /* ReplenishmentDigest.swift */; };
 		716005436031FFBC9466BE23 /* HabitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B1060B802DB6BB5B27C69F /* HabitService.swift */; };
 		724971FF469D398F3392EE4D /* ProductSuggestionChips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04C3B4437166F2F65BE05DFA /* ProductSuggestionChips.swift */; };
 		76231DDEAAE5FCB046639E2C /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B54EB99B9957838C1031AD /* TodoItem.swift */; };
@@ -141,6 +142,7 @@
 		EF8C21EB5967679ED848C3D4 /* PurchaseRecordDeletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6606EC2F3B8BEC3DCCA21560 /* PurchaseRecordDeletionTests.swift */; };
 		ED4A2B7BCEEC8DCE758C68DE /* ReplenishmentPackageATests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0D6557AE1CDA492109BA11 /* ReplenishmentPackageATests.swift */; };
 		DC17A5F922E667FB184A13A3 /* ReplenishmentPackageBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E73C873F2A0F30106CAFCB /* ReplenishmentPackageBTests.swift */; };
+		2C51F766B539D5E10BE58B73 /* ReplenishmentDigestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */; };
 		3049DDB3309CFF24C36AB2E6 /* ReplenishmentPackageCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */; };
 		3D4E5F60718293A4B5C6D7E8 /* ReceiptParserSuggestionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */; };
 		4E5F60718293A4B5C6D7E8F9 /* ReceiptScannerReResolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */; };
@@ -268,6 +270,7 @@
 		BCD924269EE28D045DBDAE33 /* RecipeRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRecognitionService.swift; sourceTree = "<group>"; };
 		BD41AB8DD4E930B591A67F4C /* ReceiptShareHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptShareHandoff.swift; sourceTree = "<group>"; };
 		C6B1060B802DB6BB5B27C69F /* HabitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitService.swift; sourceTree = "<group>"; };
+		58860961F63EEDA68162492D /* ReplenishmentDigest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentDigest.swift; sourceTree = "<group>"; };
 		CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItem.swift; sourceTree = "<group>"; };
 		CEE064FA6DDAEBC63D60DD65 /* AddItemIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemIntent.swift; sourceTree = "<group>"; };
 		CF6EFC0DED7A8C344540C9E4 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -312,6 +315,7 @@
 		3A0D6557AE1CDA492109BA11 /* ReplenishmentPackageATests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentPackageATests.swift; sourceTree = "<group>"; };
 		94E73C873F2A0F30106CAFCB /* ReplenishmentPackageBTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentPackageBTests.swift; sourceTree = "<group>"; };
 		954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentPackageCTests.swift; sourceTree = "<group>"; };
+		CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentDigestTests.swift; sourceTree = "<group>"; };
 		7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserSuggestionTests.swift; sourceTree = "<group>"; };
 		8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScannerReResolutionTests.swift; sourceTree = "<group>"; };
 		5AB84990BF53C04B19AF3452 /* DateFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFixtures.swift; sourceTree = "<group>"; };
@@ -549,6 +553,7 @@
 				24448321D03F83A4CFD19BFD /* AssignmentService+Category.swift */,
 				236336393E480FD30FC90DC7 /* CloudPreferencesSync.swift */,
 				C6B1060B802DB6BB5B27C69F /* HabitService.swift */,
+				58860961F63EEDA68162492D /* ReplenishmentDigest.swift */,
 				15ED485E807ADF771EE3C623 /* LiveActivityService.swift */,
 				9B2A1EB22AD0811654C001D2 /* NotificationService.swift */,
 				D3B1B31D29D1EA4F2EFD3BDD /* PremiumService.swift */,
@@ -609,6 +614,7 @@
 				3A0D6557AE1CDA492109BA11 /* ReplenishmentPackageATests.swift */,
 				94E73C873F2A0F30106CAFCB /* ReplenishmentPackageBTests.swift */,
 				954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */,
+				CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */,
 				7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */,
 				8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */,
 				5AB84990BF53C04B19AF3452 /* DateFixtures.swift */,
@@ -844,6 +850,7 @@
 				161C7C6FBB0938E5EB79A1CB /* FeedbackListView.swift in Sources */,
 				0D82EF580C3A6433AD4D11E7 /* FeedbackView.swift in Sources */,
 				716005436031FFBC9466BE23 /* HabitService.swift in Sources */,
+				8568BF23172E656D6C164958 /* ReplenishmentDigest.swift in Sources */,
 				BFCE4CAEF3AF26A468B81FEB /* HomeView.swift in Sources */,
 				2861E90DF572FC0C3CFBA1C6 /* ItemRow.swift in Sources */,
 				53580D0BF528C8409B394E47 /* LegalView.swift in Sources */,
@@ -946,6 +953,7 @@
 				ED4A2B7BCEEC8DCE758C68DE /* ReplenishmentPackageATests.swift in Sources */,
 				DC17A5F922E667FB184A13A3 /* ReplenishmentPackageBTests.swift in Sources */,
 				3049DDB3309CFF24C36AB2E6 /* ReplenishmentPackageCTests.swift in Sources */,
+				2C51F766B539D5E10BE58B73 /* ReplenishmentDigestTests.swift in Sources */,
 				3D4E5F60718293A4B5C6D7E8 /* ReceiptParserSuggestionTests.swift in Sources */,
 				4E5F60718293A4B5C6D7E8F9 /* ReceiptScannerReResolutionTests.swift in Sources */,
 				399CF1332B66B0375C4CC7D2 /* DateFixtures.swift in Sources */,
@@ -1106,7 +1114,7 @@
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Restock needs photo library access to import recipe photos.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIBackgroundModes = "remote-notification";
+				INFOPLIST_KEY_UIBackgroundModes = "fetch remote-notification";
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -1197,7 +1205,7 @@
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Restock needs photo library access to import recipe photos.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIBackgroundModes = "remote-notification";
+				INFOPLIST_KEY_UIBackgroundModes = "fetch remote-notification";
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
