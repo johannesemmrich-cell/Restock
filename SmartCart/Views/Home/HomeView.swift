@@ -61,12 +61,12 @@ struct HomeView: View {
     // user flips the setting in SettingsView. Store-scoped, matching the key the Toggle writes to.
     @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
     private var autoSortByLearnedOrder = true
-    // Persisted map itemName(lowercased) → dismissed estimatedNextPurchaseDate. A dismissal
-    // hides the suggestion for its current purchase cycle only: the next real purchase shifts
-    // the estimated date, which makes the item eligible for the banner again. Since Issue #30 C1
+    // Persisted map itemName(lowercased) → dismissed ConsumptionPattern.purchaseKey (timestamp of
+    // the latest purchase). A dismissal hides the suggestion for its current purchase cycle only:
+    // the next real purchase changes the key, which makes the item eligible for the banner again. Since Issue #30 C1
     // only written by A4 (accepted, then deleted without purchase) — the banner's ✕ menu uses
     // ReplenishmentSnoozes („Hab noch“) and ReplenishmentBlocklist („Nicht mehr vorschlagen“).
-    @AppStorage("dismissedReplenishments") private var dismissedReplenishmentsData = Data()
+    @AppStorage(ReplenishmentKeyMigration.dismissedKey) private var dismissedReplenishmentsData = Data()
     // Not read directly — observed so the banner refreshes when Settings (a sheet, so no
     // onAppear here afterwards) un-blocks an item or resets a „Hab noch“ (Issue #30, C1).
     @AppStorage(ReplenishmentBlocklist.defaultsKey) private var blockedReplenishmentsData = Data()
@@ -74,7 +74,7 @@ struct HomeView: View {
     // Persisted map ShoppingItem.id → suggestion it was accepted from (Issue #30, A4). Lets
     // refreshDueSoon() treat an accepted suggestion that is later deleted without a purchase like
     // a ✕ dismissal — see ReplenishmentFeedback.resolveAccepted.
-    @AppStorage("acceptedReplenishments") private var acceptedReplenishmentsData = Data()
+    @AppStorage(ReplenishmentKeyMigration.acceptedKey) private var acceptedReplenishmentsData = Data()
     @AppStorage("replenishmentCollapsed") private var replenishmentCollapsed = false
     @AppStorage("developerMode") private var developerMode = false
     @EnvironmentObject private var premium: PremiumService
@@ -1564,6 +1564,7 @@ struct HomeView: View {
         }
         let snoozes = ReplenishmentSnoozes()
         let patterns = HabitService.patterns(allRecords: allRecords)
+        ReplenishmentKeyMigration.runIfNeeded(patterns: patterns)
         snoozes.prune(keeping: patterns)
         let allPatterns = HabitService.dueSoonItems(
             from: patterns,
@@ -1578,7 +1579,7 @@ struct HomeView: View {
         let dismissed = dismissedReplenishments()
         dueSoonItems = allPatterns.filter { pattern in
             guard !pendingNames.contains(pattern.itemName.lowercased()) else { return false }
-            return dismissed[pattern.itemName.lowercased()] != pattern.estimatedNextPurchaseDate.timeIntervalSince1970
+            return dismissed[pattern.itemName.lowercased()] != pattern.purchaseKey
         }
         pruneDismissedReplenishments(keeping: allPatterns)
         ReplenishmentMetrics().recordShown(dueSoonItems)
@@ -1611,7 +1612,7 @@ struct HomeView: View {
     }
 
     /// Issue #30, A4: accepted suggestions whose item has since been deleted without a purchase
-    /// count as dismissed for their estimated date.
+    /// count as dismissed for their purchase cycle.
     private func resolveAcceptedReplenishments(pendingNames: Set<String>, patterns: [ConsumptionPattern]) {
         let accepted = acceptedReplenishments()
         guard !accepted.isEmpty else { return }
@@ -1641,7 +1642,7 @@ struct HomeView: View {
         var accepted = acceptedReplenishments()
         accepted[item.id] = AcceptedReplenishment(
             itemName: pattern.itemName,
-            estimatedNextPurchaseDate: pattern.estimatedNextPurchaseDate.timeIntervalSince1970
+            purchaseKey: pattern.purchaseKey
         )
         persistAcceptedReplenishments(accepted)
         ReplenishmentMetrics().record(.accepted)

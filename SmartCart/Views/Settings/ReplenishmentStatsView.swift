@@ -32,7 +32,7 @@ struct ReplenishmentStatsView: View {
             } header: {
                 Text("Reaktionen im Banner")
             } footer: {
-                Text("Jeder Vorschlag (Artikel + Termin) zählt einmal als gezeigt. Gezählt wird ab dieser Version.")
+                Text("Jeder Vorschlag (Artikel + letzter Kauf) zählt einmal als gezeigt. Gezählt wird ab dieser Version.")
             }
 
             Section {

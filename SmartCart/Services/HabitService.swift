@@ -144,11 +144,12 @@ struct HabitService {
 
 // MARK: - Overdue push deduplication (Issue #30, A3)
 
-/// Merkt sich pro Artikel, für welchen errechneten Termin bereits eine sofortige
-/// „Überfällig“-Push-Nachricht geplant wurde. Vorher löste jedes `refreshDueSoon()` (App-Start,
-/// jede Änderung an offenen Artikeln oder Kaufdatensätzen) für jeden überfälligen Artikel eine
-/// neue Nachricht aus. Jetzt höchstens einmal pro Artikel und Termin: erst ein neuer Kauf
-/// verschiebt den Termin und macht den Artikel wieder meldefähig. Ein Eintrag pro Artikelname
+/// Merkt sich pro Artikel, für welchen Kaufzyklus (`ConsumptionPattern.purchaseKey`) bereits
+/// eine sofortige „Überfällig“-Push-Nachricht geplant wurde. Vorher löste jedes `refreshDueSoon()`
+/// (App-Start, jede Änderung an offenen Artikeln oder Kaufdatensätzen) für jeden überfälligen
+/// Artikel eine neue Nachricht aus. Jetzt höchstens einmal pro Artikel und Zyklus: erst ein neuer
+/// Kauf macht den Artikel wieder meldefähig — ein Wechsel von Land oder Zeitzone, der nur den
+/// errechneten Termin verschiebt, dagegen nicht. Ein Eintrag pro Artikelname
 /// wird überschrieben, nie angehängt — die Map wächst also nur mit der Zahl verschiedener Artikel.
 struct OverdueNotificationLedger {
     static let defaultsKey = "notifiedOverdueReplenishments"
@@ -160,12 +161,12 @@ struct OverdueNotificationLedger {
     }
 
     func shouldNotify(_ pattern: ConsumptionPattern) -> Bool {
-        notified()[pattern.itemName.lowercased()] != pattern.estimatedNextPurchaseDate.timeIntervalSince1970
+        notified()[pattern.itemName.lowercased()] != pattern.purchaseKey
     }
 
     func markNotified(_ pattern: ConsumptionPattern) {
         var map = notified()
-        map[pattern.itemName.lowercased()] = pattern.estimatedNextPurchaseDate.timeIntervalSince1970
+        map[pattern.itemName.lowercased()] = pattern.purchaseKey
         defaults.set(map, forKey: Self.defaultsKey)
     }
 
@@ -176,33 +177,34 @@ struct OverdueNotificationLedger {
 
 // MARK: - Accepted suggestions removed without purchase (Issue #30, A4)
 
-/// Ein aus dem Banner „Zeit zum Nachkaufen“ übernommener Vorschlag: Name und der Termin, für
-/// den er vorgeschlagen wurde (gleiches Format wie `dismissedReplenishments` in `HomeView`).
+/// Ein aus dem Banner „Zeit zum Nachkaufen“ übernommener Vorschlag: Name und der Kaufzyklus
+/// (`ConsumptionPattern.purchaseKey`), für den er vorgeschlagen wurde (gleiches Format wie
+/// `dismissedReplenishments` in `HomeView`).
 struct AcceptedReplenishment: Codable, Equatable {
     let itemName: String
-    let estimatedNextPurchaseDate: TimeInterval
+    let purchaseKey: TimeInterval
 }
 
 enum ReplenishmentFeedback {
     /// Erkennt übernommene Vorschläge, deren `ShoppingItem` ohne Kauf wieder verschwunden ist,
     /// und wertet sie wie ✕ im Banner. Bewusst hier zentral statt an jeder Löschstelle
     /// (Swipe, Bearbeiten, „Erledigte löschen“, Sync von geteilten Listen …): entscheidend ist
-    /// nur, dass das Item weg ist und sich der errechnete Termin nicht verschoben hat.
+    /// nur, dass das Item weg ist und es seitdem keinen neuen Kauf gab.
     ///
     /// - Item existiert noch (offen oder abgehakt) → weiter beobachten.
     /// - Item weg, aber ein anderes offenes Item gleichen Namens steht auf einer Liste → nicht
     ///   mehr beobachten, kein Signal (der Artikel ist ja weiterhin eingeplant).
-    /// - Item weg, Termin unverändert → Ablehnung für genau diesen Termin.
-    /// - Item weg, Termin verschoben oder kein Vorschlag mehr → es wurde gekauft (abgehakt oder
-    ///   per Bon), kein Signal.
+    /// - Item weg, letzter Kauf unverändert → Ablehnung für genau diesen Kaufzyklus.
+    /// - Item weg, neuer Kauf oder kein Vorschlag mehr → es wurde gekauft (abgehakt oder per
+    ///   Bon), kein Signal.
     static func resolveAccepted(
         _ accepted: [UUID: AcceptedReplenishment],
         existingItemIDs: Set<UUID>,
         pendingNames: Set<String>,
         patterns: [ConsumptionPattern]
     ) -> (stillTracked: [UUID: AcceptedReplenishment], dismissals: [String: TimeInterval]) {
-        let currentDates = Dictionary(
-            patterns.map { ($0.itemName.lowercased(), $0.estimatedNextPurchaseDate.timeIntervalSince1970) },
+        let currentKeys = Dictionary(
+            patterns.map { ($0.itemName.lowercased(), $0.purchaseKey) },
             uniquingKeysWith: { first, _ in first }
         )
         var stillTracked: [UUID: AcceptedReplenishment] = [:]
@@ -214,8 +216,8 @@ enum ReplenishmentFeedback {
             }
             let key = entry.itemName.lowercased()
             guard !pendingNames.contains(key) else { continue }
-            if currentDates[key] == entry.estimatedNextPurchaseDate {
-                dismissals[key] = entry.estimatedNextPurchaseDate
+            if currentKeys[key] == entry.purchaseKey {
+                dismissals[key] = entry.purchaseKey
             }
         }
         return (stillTracked, dismissals)
@@ -224,21 +226,21 @@ enum ReplenishmentFeedback {
 
 // MARK: - „Hab noch“ und „Nicht mehr vorschlagen“ (Issue #30, C1)
 
-/// Eine „Hab noch“-Verschiebung. Sie gilt nur, solange der errechnete Termin des Artikels noch
-/// `baseDate` ist — der nächste Kauf verschiebt den errechneten Termin und beendet sie damit.
+/// Eine „Hab noch“-Verschiebung. Sie gilt nur, solange der letzte Kauf des Artikels noch
+/// `purchaseKey` ist — der nächste Kauf beendet sie.
 struct ReplenishmentSnooze: Codable, Equatable {
     /// Artikelname wie im Banner (für die Anzeige in den Einstellungen).
     let itemName: String
-    /// Errechneter Termin, für den die Verschiebung gilt (`timeIntervalSince1970`).
-    let baseDate: TimeInterval
+    /// Kaufzyklus, für den die Verschiebung gilt (`ConsumptionPattern.purchaseKey`).
+    let purchaseKey: TimeInterval
     /// Verschobener Termin (`timeIntervalSince1970`).
     let snoozedUntil: TimeInterval
 }
 
 extension ConsumptionPattern {
-    /// Übernimmt eine „Hab noch“-Verschiebung, sofern sie noch zu diesem Termin gehört.
+    /// Übernimmt eine „Hab noch“-Verschiebung, sofern sie noch zu diesem Kaufzyklus gehört.
     func applying(_ snooze: ReplenishmentSnooze) -> ConsumptionPattern {
-        guard snooze.baseDate == baseEstimatedDate.timeIntervalSince1970 else { return self }
+        guard snooze.purchaseKey == purchaseKey else { return self }
         var copy = self
         copy.originalEstimatedDate = baseEstimatedDate
         copy.estimatedNextPurchaseDate = Date(timeIntervalSince1970: snooze.snoozedUntil)
@@ -298,7 +300,7 @@ struct ReplenishmentSnoozes {
         var map = entries()
         map[pattern.itemName.lowercased()] = ReplenishmentSnooze(
             itemName: pattern.itemName,
-            baseDate: pattern.baseEstimatedDate.timeIntervalSince1970,
+            purchaseKey: pattern.purchaseKey,
             snoozedUntil: until.timeIntervalSince1970
         )
         persist(map)
@@ -315,16 +317,16 @@ struct ReplenishmentSnoozes {
         defaults.removeObject(forKey: Self.defaultsKey)
     }
 
-    /// Entfernt Verschiebungen, deren errechneter Termin nicht mehr gilt (Artikel inzwischen
-    /// gekauft) oder deren Artikel gar kein Muster mehr ergibt.
+    /// Entfernt Verschiebungen, deren Kaufzyklus vorbei ist (Artikel inzwischen gekauft) oder
+    /// deren Artikel gar kein Muster mehr ergibt.
     /// - Parameter patterns: alle Muster ohne Verschiebung (`HabitService.patterns`).
     func prune(keeping patterns: [ConsumptionPattern]) {
         let current = Dictionary(
-            patterns.map { ($0.itemName.lowercased(), $0.baseEstimatedDate.timeIntervalSince1970) },
+            patterns.map { ($0.itemName.lowercased(), $0.purchaseKey) },
             uniquingKeysWith: { first, _ in first }
         )
         let map = entries()
-        let kept = map.filter { current[$0.key] == $0.value.baseDate }
+        let kept = map.filter { current[$0.key] == $0.value.purchaseKey }
         if kept.count != map.count { persist(kept) }
     }
 
@@ -375,6 +377,104 @@ struct ReplenishmentBlocklist {
     }
 }
 
+// MARK: - Migration: Termin → letzter Kauf (Issue #30, Teil 5, Punkt 1)
+
+/// Bis zu dieser Version hingen Ablehnung (A4), „Hab noch“ (C1), die Überfällig-Nachricht (A3)
+/// und die D1-Zählung „gezeigt“ am errechneten Termin, seitdem am letzten Kauf
+/// (`ConsumptionPattern.purchaseKey`). Rechnet die gespeicherten Einträge einmalig um: Ein
+/// Eintrag, dessen Termin noch dem aktuell errechneten entspricht, gehört zum laufenden
+/// Kaufzyklus und bekommt dessen Schlüssel; alle anderen waren ohnehin schon abgelaufen und
+/// entfallen (bei „gezeigt“ bleiben sie mit ihrem alten Schlüssel liegen, bis sie verfallen).
+enum ReplenishmentKeyMigration {
+    static let doneKey = "replenishmentKeysByPurchaseDate"
+    static let dismissedKey = "dismissedReplenishments"
+    static let acceptedKey = "acceptedReplenishments"
+
+    private struct LegacySnooze: Decodable {
+        let itemName: String
+        let baseDate: TimeInterval
+        let snoozedUntil: TimeInterval
+    }
+
+    private struct LegacyAccepted: Decodable {
+        let itemName: String
+        let estimatedNextPurchaseDate: TimeInterval
+    }
+
+    /// - Parameter patterns: alle Muster ohne Verschiebung (`HabitService.patterns`), mit
+    ///   denselben Schließtagen und demselben Kalender gerechnet wie vor dem Update.
+    static func runIfNeeded(patterns: [ConsumptionPattern], defaults: UserDefaults = .standard) {
+        guard !defaults.bool(forKey: doneKey) else { return }
+        var current: [String: (estimated: TimeInterval, purchase: TimeInterval)] = [:]
+        for pattern in patterns where current[pattern.itemName.lowercased()] == nil {
+            current[pattern.itemName.lowercased()] = (
+                pattern.estimatedNextPurchaseDate.timeIntervalSince1970,
+                pattern.purchaseKey
+            )
+        }
+        func key(for itemKey: String, estimated: TimeInterval) -> TimeInterval? {
+            guard let entry = current[itemKey], entry.estimated == estimated else { return nil }
+            return entry.purchase
+        }
+
+        if let data = defaults.data(forKey: dismissedKey),
+           let map = try? JSONDecoder().decode([String: TimeInterval].self, from: data) {
+            var migrated: [String: TimeInterval] = [:]
+            for (name, estimated) in map {
+                if let purchase = key(for: name, estimated: estimated) { migrated[name] = purchase }
+            }
+            defaults.set(try? JSONEncoder().encode(migrated), forKey: dismissedKey)
+        }
+
+        if let map = defaults.dictionary(forKey: OverdueNotificationLedger.defaultsKey) as? [String: TimeInterval] {
+            var migrated: [String: TimeInterval] = [:]
+            for (name, estimated) in map {
+                if let purchase = key(for: name, estimated: estimated) { migrated[name] = purchase }
+            }
+            defaults.set(migrated, forKey: OverdueNotificationLedger.defaultsKey)
+        }
+
+        if let data = defaults.data(forKey: ReplenishmentSnoozes.defaultsKey),
+           let map = try? JSONDecoder().decode([String: LegacySnooze].self, from: data) {
+            var migrated: [String: ReplenishmentSnooze] = [:]
+            for (name, snooze) in map {
+                guard let purchase = key(for: name, estimated: snooze.baseDate) else { continue }
+                migrated[name] = ReplenishmentSnooze(
+                    itemName: snooze.itemName,
+                    purchaseKey: purchase,
+                    snoozedUntil: snooze.snoozedUntil
+                )
+            }
+            defaults.set(try? JSONEncoder().encode(migrated), forKey: ReplenishmentSnoozes.defaultsKey)
+        }
+
+        if let data = defaults.data(forKey: acceptedKey),
+           let map = try? JSONDecoder().decode([UUID: LegacyAccepted].self, from: data) {
+            var migrated: [UUID: AcceptedReplenishment] = [:]
+            for (id, entry) in map {
+                // Ein Eintrag ohne passenden Termin wurde inzwischen gekauft — `resolveAccepted`
+                // hätte ihn beim nächsten Löschen ohnehin nicht als Ablehnung gewertet.
+                guard let purchase = key(for: entry.itemName.lowercased(), estimated: entry.estimatedNextPurchaseDate) else { continue }
+                migrated[id] = AcceptedReplenishment(itemName: entry.itemName, purchaseKey: purchase)
+            }
+            defaults.set(try? JSONEncoder().encode(migrated), forKey: acceptedKey)
+        }
+
+        if var shown = defaults.dictionary(forKey: ReplenishmentMetrics.shownKey) as? [String: TimeInterval] {
+            for (oldKey, shownAt) in shown {
+                guard let separator = oldKey.lastIndex(of: "|"),
+                      let estimated = TimeInterval(oldKey[oldKey.index(after: separator)...]) else { continue }
+                let itemKey = String(oldKey[..<separator])
+                guard let purchase = key(for: itemKey, estimated: estimated) else { continue }
+                shown[ReplenishmentMetrics.shownEntryKey(itemKey: itemKey, purchaseKey: purchase)] = shownAt
+            }
+            defaults.set(shown, forKey: ReplenishmentMetrics.shownKey)
+        }
+
+        defaults.set(true, forKey: doneKey)
+    }
+}
+
 // MARK: - Measurement (Issue #30, D1)
 
 struct ReplenishmentBacktest: Equatable {
@@ -397,7 +497,7 @@ struct ReplenishmentBacktest: Equatable {
 /// einzustellen.
 struct ReplenishmentMetrics {
     enum Event: String, CaseIterable {
-        /// Ein Vorschlag (Artikel + Termin) erschien im Banner — jeder nur einmal gezählt.
+        /// Ein Vorschlag (Artikel + Kaufzyklus) erschien im Banner — jeder nur einmal gezählt.
         case shown
         /// Per `+` oder „Alle hinzufügen“ übernommen.
         case accepted
@@ -436,13 +536,17 @@ struct ReplenishmentMetrics {
         shown = shown.filter { now.timeIntervalSince1970 - $0.value < Self.shownRetention }
         var newlyShown = 0
         for pattern in patterns {
-            let key = "\(pattern.itemName.lowercased())|\(pattern.estimatedNextPurchaseDate.timeIntervalSince1970)"
+            let key = Self.shownEntryKey(itemKey: pattern.itemName.lowercased(), purchaseKey: pattern.purchaseKey)
             guard shown[key] == nil else { continue }
             shown[key] = now.timeIntervalSince1970
             newlyShown += 1
         }
         defaults.set(shown, forKey: Self.shownKey)
         record(.shown, times: newlyShown)
+    }
+
+    static func shownEntryKey(itemKey: String, purchaseKey: TimeInterval) -> String {
+        "\(itemKey)|\(purchaseKey)"
     }
 
     func reset() {

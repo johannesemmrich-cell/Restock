@@ -75,7 +75,7 @@ final class ReplenishmentPackageATests: XCTestCase {
 
     // MARK: - A3
 
-    func testOverdueNotificationOnlyOncePerEstimatedDate() throws {
+    func testOverdueNotificationOnlyOncePerPurchaseCycle() throws {
         let suite = "ReplenishmentPackageATests-\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
@@ -87,7 +87,7 @@ final class ReplenishmentPackageATests: XCTestCase {
         XCTAssertFalse(ledger.shouldNotify(overdue), "Jeder weitere Refresh darf nicht erneut pushen.")
         XCTAssertFalse(ledger.shouldNotify(pattern("zahnpasta", nextInDays: -3, reference: overdue)), "Groß-/Kleinschreibung egal.")
 
-        // Neuer Kauf -> neuer Termin -> wieder meldefähig.
+        // Neuer Kauf -> neuer Zyklus -> wieder meldefähig.
         XCTAssertTrue(ledger.shouldNotify(pattern("Zahnpasta", nextInDays: -1)))
     }
 
@@ -100,7 +100,7 @@ final class ReplenishmentPackageATests: XCTestCase {
             [id: accepted(milk)], existingItemIDs: [], pendingNames: [], patterns: [milk]
         )
         XCTAssertTrue(result.stillTracked.isEmpty)
-        XCTAssertEqual(result.dismissals, ["milch": milk.estimatedNextPurchaseDate.timeIntervalSince1970])
+        XCTAssertEqual(result.dismissals, ["milch": milk.purchaseKey])
     }
 
     func testAcceptedSuggestionStillOnListIsKeptTracked() {
@@ -168,7 +168,7 @@ final class ReplenishmentPackageATests: XCTestCase {
     private func accepted(_ pattern: ConsumptionPattern) -> AcceptedReplenishment {
         AcceptedReplenishment(
             itemName: pattern.itemName,
-            estimatedNextPurchaseDate: pattern.estimatedNextPurchaseDate.timeIntervalSince1970
+            purchaseKey: pattern.purchaseKey
         )
     }
 }
