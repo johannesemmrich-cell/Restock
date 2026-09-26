@@ -61,7 +61,7 @@ struct HomeView: View {
     // user flips the setting in SettingsView. Store-scoped, matching the key the Toggle writes to.
     @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
     private var autoSortByLearnedOrder = true
-    // Persisted map itemName(lowercased) → dismissed ConsumptionPattern.purchaseKey (timestamp of
+    // Persisted map ConsumptionPattern.itemKey → dismissed ConsumptionPattern.purchaseKey (timestamp of
     // the latest purchase). A dismissal hides the suggestion for its current purchase cycle only:
     // the next real purchase changes the key, which makes the item eligible for the banner again. Since Issue #30 C1
     // only written by A4 (accepted, then deleted without purchase) — the banner's ✕ menu uses
@@ -1573,15 +1573,17 @@ struct HomeView: View {
             snoozes: snoozeEntries,
             blocked: blocked
         )
+        // C5: offene Artikel unter demselben Schlüssel wie die Kaufhistorie, damit „Milch “ oder
+        // ein bestätigter Bon-Name auf der Liste den Vorschlag „Milch“ ebenfalls unterdrückt.
+        let identity = ReplenishmentItemIdentity.current
         let pendingNames = Set(
-            activeStores.flatMap { $0.pendingItems.map { $0.name.lowercased() } }
-                + storelessPending.map { $0.name.lowercased() }
+            (activeStores.flatMap { $0.pendingItems.map(\.name) } + storelessPending.map(\.name)).map(identity.key)
         )
         resolveAcceptedReplenishments(pendingNames: pendingNames, patterns: allPatterns)
         let dismissed = dismissedReplenishments()
         dueSoonItems = allPatterns.filter { pattern in
-            guard !pendingNames.contains(pattern.itemName.lowercased()) else { return false }
-            return dismissed[pattern.itemName.lowercased()] != pattern.purchaseKey
+            guard !pendingNames.contains(pattern.itemKey) else { return false }
+            return dismissed[pattern.itemKey] != pattern.purchaseKey
         }
         pruneDismissedReplenishments(keeping: allPatterns)
         ReplenishmentMetrics().recordShown(dueSoonItems)
@@ -1669,7 +1671,7 @@ struct HomeView: View {
     /// Drops dismissal entries for items that no longer produce a pattern at all, so the map
     /// can't grow unboundedly over years of use.
     private func pruneDismissedReplenishments(keeping patterns: [ConsumptionPattern]) {
-        let valid = Set(patterns.map { $0.itemName.lowercased() })
+        let valid = Set(patterns.map(\.itemKey))
         let map = dismissedReplenishments().filter { valid.contains($0.key) }
         persistDismissedReplenishments(map)
     }

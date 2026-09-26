@@ -382,6 +382,100 @@ final class ReplenishmentPackageCTests: XCTestCase {
         XCTAssertEqual(ReplenishmentMetrics(defaults: defaults).count(.accepted), 1)
     }
 
+    // MARK: - C5: Gleichwertige Namen
+
+    /// Gelernte Bon-Zuordnungen wie in `ReceiptAliasService` (dort normalisiert nachgeschlagen).
+    private let aliases = ReplenishmentItemIdentity { name in
+        ["milch 1 5% 1l": "Milch"][name.lowercased().replacingOccurrences(of: ",", with: " ")]
+    }
+
+    func testFormalKeyIgnoresCaseSpacesAndEdgePunctuationOnly() {
+        let key = ReplenishmentItemIdentity.formalKey
+        XCTAssertEqual(key("Milch"), "milch")
+        XCTAssertEqual(key("  MILCH  "), "milch")
+        XCTAssertEqual(key("Frische   Milch"), "frische milch")
+        XCTAssertEqual(key("Milch."), "milch")
+        XCTAssertEqual(key("„Milch“"), "milch")
+        XCTAssertEqual(key("- Milch -"), "milch")
+        XCTAssertEqual(key("H-Milch"), "h-milch", "Satzzeichen im Wort bleiben.")
+        XCTAssertEqual(key("Milch 1,5%"), "milch 1,5%", "Inhaltliche Zeichen am Rand bleiben.")
+        XCTAssertEqual(key("Eier (10)"), "eier (10)")
+        XCTAssertEqual(key("..."), "...", "Nie ein leerer Schlüssel.")
+    }
+
+    func testDifferentProductsAreNeverMerged() {
+        let names = ["Milch", "H-Milch", "Hafermilch", "Buttermilch", "Milch 1,5%", "Vollmilch"]
+        let records = names.flatMap { name in [(9, 1), (9, 8), (9, 15)].map { record(name, $0.0, $0.1) } }
+        let patterns = HabitService.patterns(allRecords: records, closedDays: .none, calendar: calendar, identity: aliases)
+        XCTAssertEqual(Set(patterns.map(\.itemName)), Set(names))
+        XCTAssertTrue(patterns.allSatisfy { $0.purchaseCount == 3 })
+    }
+
+    func testFormalVariantsAreMergedUnderTheLatestName() throws {
+        let records = [record("milch", 9, 1), record("Milch ", 9, 8), record("  MILCH.", 9, 15), record("Milch", 9, 22)]
+        let patterns = HabitService.patterns(allRecords: records, closedDays: .none, calendar: calendar, identity: .formalOnly)
+        let milk = try XCTUnwrap(patterns.first)
+        XCTAssertEqual(patterns.count, 1)
+        XCTAssertEqual(milk.itemName, "Milch", "Angezeigt wird der jüngste Name.")
+        XCTAssertEqual(milk.purchaseCount, 4)
+        XCTAssertEqual(milk.itemKey, "milch")
+    }
+
+    func testConfirmedReceiptAliasCountsTowardsTheListName() throws {
+        let records = [record("MILCH 1,5% 1L", 9, 1), record("MILCH 1,5% 1L", 9, 8), record("Milch", 9, 15), record("Milch", 9, 22)]
+        XCTAssertEqual(
+            HabitService.patterns(allRecords: records, closedDays: .none, calendar: calendar, identity: .formalOnly).count, 2,
+            "Ohne bestätigte Zuordnung bleiben Bon-Text und Listenname getrennt."
+        )
+        let patterns = HabitService.patterns(allRecords: records, closedDays: .none, calendar: calendar, identity: aliases)
+        let milk = try XCTUnwrap(patterns.first)
+        XCTAssertEqual(patterns.count, 1)
+        XCTAssertEqual(milk.itemName, "Milch")
+        XCTAssertEqual(milk.purchaseCount, 4)
+    }
+
+    func testAliasTargetIsShownEvenIfOnlyReceiptRecordsExist() throws {
+        let records = [record("MILCH 1,5% 1L", 9, 1), record("MILCH 1,5% 1L", 9, 8), record("MILCH 1,5% 1L", 9, 15)]
+        let milk = try XCTUnwrap(HabitService.patterns(allRecords: records, closedDays: .none, calendar: calendar, identity: aliases).first)
+        XCTAssertEqual(milk.itemName, "Milch", "Ein übernommener Vorschlag kommt unter dem bestätigten Namen auf die Liste.")
+    }
+
+    func testBacktestUsesMergedHistory() {
+        let records = [record("Milch", 9, 1), record("milch ", 9, 8), record("MILCH 1,5% 1L", 9, 15), record("Milch", 9, 22)]
+        XCTAssertEqual(HabitService.backtest(allRecords: records, closedDays: .none, calendar: calendar, identity: aliases).evaluated, 1)
+        XCTAssertEqual(HabitService.backtest(allRecords: records, closedDays: .none, calendar: calendar, identity: .formalOnly).evaluated, 0)
+    }
+
+    func testPendingVariantSuppressesTheSuggestion() {
+        let milk = pattern(gap: 10, last: date(9, 12))
+        let pending = Set(["MILCH 1,5% 1L"].map(aliases.key))
+        XCTAssertTrue(HabitService.notificationCandidates(from: [milk], pendingNames: pending).isEmpty)
+        XCTAssertTrue(HabitService.notificationCandidates(from: [milk], pendingNames: [aliases.key(" milch ")]).isEmpty)
+        XCTAssertEqual(HabitService.notificationCandidates(from: [milk], pendingNames: [aliases.key("H-Milch")]).count, 1)
+    }
+
+    func testBlocklistAndSnoozeMatchFormalVariants() {
+        let blocklist = ReplenishmentBlocklist(defaults: defaults)
+        blocklist.block("Milch")
+        XCTAssertTrue(blocklist.contains(" milch "))
+        XCTAssertFalse(blocklist.contains("H-Milch"))
+        blocklist.unblock("MILCH.")
+        XCTAssertTrue(blocklist.names().isEmpty)
+
+        let milk = pattern(name: "Milch ", gap: 10, last: date(9, 12))
+        let snoozes = ReplenishmentSnoozes(defaults: defaults)
+        snoozes.snooze(milk, now: date(9, 21), closedDays: .none, calendar: calendar)
+        XCTAssertEqual(Array(snoozes.entries().keys), ["milch"])
+        snoozes.remove("MILCH")
+        XCTAssertTrue(snoozes.entries().isEmpty)
+    }
+
+    private func record(_ name: String, _ month: Int, _ day: Int) -> PurchaseRecord {
+        let record = PurchaseRecord(itemName: name, storeName: "Rewe")
+        record.date = date(month, day)
+        return record
+    }
+
     private func alsoDue(
         _ patterns: [ConsumptionPattern],
         at now: Date,

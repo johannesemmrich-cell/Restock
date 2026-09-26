@@ -183,8 +183,9 @@ enum ReplenishmentBackgroundRefresh {
               let pending = try? context.fetch(FetchDescriptor<ShoppingItem>(predicate: #Predicate<ShoppingItem> { !$0.isCompleted }))
         else { return }
         // Wie `HomeView`: offene Artikel in aktiven Läden und ohne Laden.
+        let identity = ReplenishmentItemIdentity.current
         let pendingNames = Set(
-            pending.filter { $0.store == nil || $0.store?.isActive == true }.map { $0.name.lowercased() }
+            pending.filter { $0.store == nil || $0.store?.isActive == true }.map { identity.key($0.name) }
         )
         let patterns = HabitService.patterns(allRecords: records)
         ReplenishmentKeyMigration.runIfNeeded(patterns: patterns)
