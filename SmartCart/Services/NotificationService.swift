@@ -24,16 +24,24 @@ class NotificationService {
 
     func scheduleReplenishment(patterns: [ConsumptionPattern]) async {
         let center = UNUserNotificationCenter.current()
+        let overdueLedger = OverdueNotificationLedger()
 
         for pattern in patterns {
             let identifier = "replenish-\(pattern.itemName.lowercased().replacingOccurrences(of: " ", with: "-"))"
-            await center.removePendingNotificationRequests(withIdentifiers: [identifier])
 
             guard pattern.daysUntilNeeded >= 0 else {
-                // Overdue — fire immediately (or next reasonable time)
+                // Overdue — fire immediately (or next reasonable time), but only once per item and
+                // estimated date (Issue #30, A3). An already-notified item is skipped BEFORE the
+                // pending request is removed: refreshDueSoon() often runs several times within
+                // the 5-second trigger delay, and removing it there would swallow the one push.
+                guard overdueLedger.shouldNotify(pattern) else { continue }
+                await center.removePendingNotificationRequests(withIdentifiers: [identifier])
                 await scheduleImmediate(pattern: pattern, identifier: identifier)
+                overdueLedger.markNotified(pattern)
                 continue
             }
+
+            await center.removePendingNotificationRequests(withIdentifiers: [identifier])
 
             let content = UNMutableNotificationContent()
             content.title = String(localized: "notification.replenish.title")

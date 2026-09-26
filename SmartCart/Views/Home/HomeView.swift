@@ -63,8 +63,18 @@ struct HomeView: View {
     private var autoSortByLearnedOrder = true
     // Persisted map itemName(lowercased) → dismissed estimatedNextPurchaseDate. A dismissal
     // hides the suggestion for its current purchase cycle only: the next real purchase shifts
-    // the estimated date, which makes the item eligible for the banner again.
+    // the estimated date, which makes the item eligible for the banner again. Since Issue #30 C1
+    // only written by A4 (accepted, then deleted without purchase) — the banner's ✕ menu uses
+    // ReplenishmentSnoozes („Hab noch“) and ReplenishmentBlocklist („Nicht mehr vorschlagen“).
     @AppStorage("dismissedReplenishments") private var dismissedReplenishmentsData = Data()
+    // Not read directly — observed so the banner refreshes when Settings (a sheet, so no
+    // onAppear here afterwards) un-blocks an item or resets a „Hab noch“ (Issue #30, C1).
+    @AppStorage(ReplenishmentBlocklist.defaultsKey) private var blockedReplenishmentsData = Data()
+    @AppStorage(ReplenishmentSnoozes.defaultsKey) private var snoozedReplenishmentsData = Data()
+    // Persisted map ShoppingItem.id → suggestion it was accepted from (Issue #30, A4). Lets
+    // refreshDueSoon() treat an accepted suggestion that is later deleted without a purchase like
+    // a ✕ dismissal — see ReplenishmentFeedback.resolveAccepted.
+    @AppStorage("acceptedReplenishments") private var acceptedReplenishmentsData = Data()
     @AppStorage("replenishmentCollapsed") private var replenishmentCollapsed = false
     @AppStorage("developerMode") private var developerMode = false
     @EnvironmentObject private var premium: PremiumService
@@ -284,6 +294,8 @@ struct HomeView: View {
                 }
             }
             .onChange(of: allRecords.count) { refreshDueSoon() }
+            .onChange(of: blockedReplenishmentsData) { refreshDueSoon() }
+            .onChange(of: snoozedReplenishmentsData) { refreshDueSoon() }
             .onChange(of: activeStores) {
                 // Nur synchronisieren, wenn gerade nicht gedraggt wird — sonst würde das
                 // @Query-Re-Sort die laufende Drag-Animation im Grid unterbrechen/flackern lassen.
@@ -889,23 +901,38 @@ struct HomeView: View {
                             }
                             .buttonStyle(.pressable)
                         }
-                        Text(pattern.itemName)
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(Color.ink)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(pattern.itemName)
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundStyle(Color.ink)
+                            Text(pattern.reasonText)
+                                .font(.system(size: 12))
+                                .foregroundStyle(Color.textSecondary)
+                        }
                         Spacer()
                         Text(pattern.isOverdue
                              ? String(localized: "replenish.overdue")
                              : String(format: String(localized: "replenish.in.days"), pattern.daysUntilNeeded))
                             .font(.system(size: 12))
                             .foregroundStyle(Color.textSecondary)
-                        Button {
-                            dismissDueItem(pattern)
+                        // C1: ✕ unterscheidet „Hab noch“ (Termin verschieben) von „Nicht mehr
+                        // vorschlagen“ (dauerhaft ausblenden, in den Einstellungen umkehrbar).
+                        Menu {
+                            Button {
+                                snoozeDueItem(pattern)
+                            } label: {
+                                Label(String(localized: "replenish.snooze"), systemImage: "clock.arrow.circlepath")
+                            }
+                            Button(role: .destructive) {
+                                blockDueItem(pattern)
+                            } label: {
+                                Label(String(localized: "replenish.block"), systemImage: "nosign")
+                            }
                         } label: {
                             Image(systemName: "xmark.circle")
                                 .font(.system(size: 18))
                                 .foregroundStyle(Color.textSecondary.opacity(0.7))
                         }
-                        .buttonStyle(.pressable)
                     }
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
@@ -1535,29 +1562,97 @@ struct HomeView: View {
             dueSoonItems = []
             return
         }
-        let allPatterns = HabitService.dueSoonItems(allRecords: allRecords)
+        let snoozes = ReplenishmentSnoozes()
+        let patterns = HabitService.patterns(allRecords: allRecords)
+        snoozes.prune(keeping: patterns)
+        let allPatterns = HabitService.dueSoonItems(
+            from: patterns,
+            snoozes: snoozes.entries(),
+            blocked: ReplenishmentBlocklist().keys
+        )
         let pendingNames = Set(
             activeStores.flatMap { $0.pendingItems.map { $0.name.lowercased() } }
                 + storelessPending.map { $0.name.lowercased() }
         )
+        resolveAcceptedReplenishments(pendingNames: pendingNames, patterns: allPatterns)
         let dismissed = dismissedReplenishments()
         dueSoonItems = allPatterns.filter { pattern in
             guard !pendingNames.contains(pattern.itemName.lowercased()) else { return false }
             return dismissed[pattern.itemName.lowercased()] != pattern.estimatedNextPurchaseDate.timeIntervalSince1970
         }
         pruneDismissedReplenishments(keeping: allPatterns)
+        ReplenishmentMetrics().recordShown(dueSoonItems)
         if notificationsEnabled {
             HabitService.scheduleReplenishmentNotifications(patterns: dueSoonItems)
         }
     }
 
-    private func dismissDueItem(_ pattern: ConsumptionPattern) {
-        var dismissed = dismissedReplenishments()
-        dismissed[pattern.itemName.lowercased()] = pattern.estimatedNextPurchaseDate.timeIntervalSince1970
-        persistDismissedReplenishments(dismissed)
+    /// C1 „Hab noch“: verschiebt den Termin um den halben üblichen Abstand (1–14 Tage).
+    private func snoozeDueItem(_ pattern: ConsumptionPattern) {
+        ReplenishmentSnoozes().snooze(pattern)
+        ReplenishmentMetrics().record(.snoozed)
+        removeFromBanner(pattern)
+    }
+
+    /// C1 „Nicht mehr vorschlagen“: blendet den Artikel dauerhaft aus (umkehrbar in den
+    /// Einstellungen unter Developer → Ausgeblendete Vorschläge).
+    private func blockDueItem(_ pattern: ConsumptionPattern) {
+        ReplenishmentBlocklist().block(pattern.itemName)
+        ReplenishmentMetrics().record(.blocked)
+        removeFromBanner(pattern)
+    }
+
+    private func removeFromBanner(_ pattern: ConsumptionPattern) {
         NotificationService.shared.cancelReplenishment(itemName: pattern.itemName)
-        dueSoonItems.removeAll { $0.itemName == pattern.itemName }
+        withAnimation {
+            dueSoonItems.removeAll { $0.itemName == pattern.itemName }
+        }
         Haptics.impact(.light)
+    }
+
+    /// Issue #30, A4: accepted suggestions whose item has since been deleted without a purchase
+    /// count as dismissed for their estimated date.
+    private func resolveAcceptedReplenishments(pendingNames: Set<String>, patterns: [ConsumptionPattern]) {
+        let accepted = acceptedReplenishments()
+        guard !accepted.isEmpty else { return }
+        let trackedIDs = Array(accepted.keys)
+        // A failed fetch must not look like "all items deleted" — skip this round instead.
+        guard let existing = try? context.fetch(
+            FetchDescriptor<ShoppingItem>(predicate: #Predicate { trackedIDs.contains($0.id) })
+        ) else { return }
+        let result = ReplenishmentFeedback.resolveAccepted(
+            accepted,
+            existingItemIDs: Set(existing.map(\.id)),
+            pendingNames: pendingNames,
+            patterns: patterns
+        )
+        persistAcceptedReplenishments(result.stillTracked)
+        guard !result.dismissals.isEmpty else { return }
+        ReplenishmentMetrics().record(.removedAfterAccept, times: result.dismissals.count)
+        var dismissed = dismissedReplenishments()
+        dismissed.merge(result.dismissals) { _, new in new }
+        persistDismissedReplenishments(dismissed)
+        for name in result.dismissals.keys {
+            NotificationService.shared.cancelReplenishment(itemName: name)
+        }
+    }
+
+    private func trackAcceptedReplenishment(_ item: ShoppingItem, from pattern: ConsumptionPattern) {
+        var accepted = acceptedReplenishments()
+        accepted[item.id] = AcceptedReplenishment(
+            itemName: pattern.itemName,
+            estimatedNextPurchaseDate: pattern.estimatedNextPurchaseDate.timeIntervalSince1970
+        )
+        persistAcceptedReplenishments(accepted)
+        ReplenishmentMetrics().record(.accepted)
+    }
+
+    private func acceptedReplenishments() -> [UUID: AcceptedReplenishment] {
+        (try? JSONDecoder().decode([UUID: AcceptedReplenishment].self, from: acceptedReplenishmentsData)) ?? [:]
+    }
+
+    private func persistAcceptedReplenishments(_ map: [UUID: AcceptedReplenishment]) {
+        acceptedReplenishmentsData = (try? JSONEncoder().encode(map)) ?? Data()
     }
 
     private func dismissedReplenishments() -> [String: TimeInterval] {
@@ -1593,17 +1688,35 @@ struct HomeView: View {
         for pattern in dueSoonItems {
             let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
             let category = AssignmentService.category(for: pattern.itemName)
-            context.insert(ShoppingItem(name: pattern.itemName, category: category, store: store))
+            let item = makeReplenishmentItem(from: pattern, category: category, store: store)
+            context.insert(item)
+            trackAcceptedReplenishment(item, from: pattern)
             touchedStores.append(store)
         }
         dueSoonItems = []
         SyncCoordinator.shared.pushInBackground(touchedStores)
     }
 
+    /// B5: übernimmt die typische Menge und Einheit statt immer 1.
+    private func makeReplenishmentItem(from pattern: ConsumptionPattern, category: String, store: Store?) -> ShoppingItem {
+        let amount = pattern.typicalQuantity > 0 ? pattern.typicalQuantity : 1
+        let quantity = amount == amount.rounded() ? "\(Int(amount))" : String(format: "%.1f", amount)
+        return ShoppingItem(
+            name: pattern.itemName,
+            category: category,
+            quantity: quantity,
+            quantityAmount: amount,
+            unit: pattern.unit,
+            store: store
+        )
+    }
+
     private func addSingleDueItem(_ pattern: ConsumptionPattern) {
         let store = AssignmentService.assign(itemName: pattern.itemName, to: activeStores, purchaseRecords: allRecords)
         let category = AssignmentService.category(for: pattern.itemName)
-        context.insert(ShoppingItem(name: pattern.itemName, category: category, store: store))
+        let item = makeReplenishmentItem(from: pattern, category: category, store: store)
+        context.insert(item)
+        trackAcceptedReplenishment(item, from: pattern)
         dueSoonItems.removeAll { $0.itemName == pattern.itemName }
         Haptics.impact(.light)
         SyncCoordinator.shared.pushInBackground(store)

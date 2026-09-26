@@ -191,6 +191,23 @@ class ShoppingItem {
     }
 
     func markPending() {
+        // Issue #30, A2: Das Zurücksetzen macht auch den Kaufdatensatz rückgängig, den das
+        // zugehörige `markCompleted()` angelegt hat — sonst zählt ein Verklicker als echter Kauf
+        // und erzeugt einen Kaufabstand von ≈ 0 Tagen, der die Nachkauf-Vorhersage verkürzt.
+        // Nur Datensätze ab `completedDate` (also aus genau diesem Abhaken) und ohne Bon-Preis:
+        // einer, dem ein Kassenbon inzwischen einen echten Preis zugeordnet hat, belegt einen
+        // tatsächlichen Kauf und bleibt. Ohne `completedDate` (z. B. per Sync abgehakt, dort
+        // entsteht kein Datensatz) wird nichts entfernt.
+        if let completedDate {
+            let undone = (purchaseRecords ?? []).filter { $0.date >= completedDate && $0.actualPrice == nil }
+            if !undone.isEmpty {
+                let undoneIDs = Set(undone.map(\.id))
+                purchaseRecords = (purchaseRecords ?? []).filter { !undoneIDs.contains($0.id) }
+                // Nur aus der Relationship lösen reicht nicht: `.nullify` ließe den Datensatz
+                // verwaist, aber weiterhin als Kauf im Store stehen.
+                for record in undone { modelContext?.delete(record) }
+            }
+        }
         isCompleted = false
         completedDate = nil
         completedBy = ""
