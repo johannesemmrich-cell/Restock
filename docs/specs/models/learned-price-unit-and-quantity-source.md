@@ -692,3 +692,25 @@ verschoben" unter den Acceptance Criteria.
   dieses Tickets der **dritte** Fall derselben Art — punktuell statt über alle Vorkommen. Seither
   gilt: vor jeder Korrektur einer Formulierung erst per Suche alle Fundstellen erheben und jede
   einzeln beurteilen, statt nur die genannte anzufassen.
+- 2026-09-26 (Phase 7): **AC-20 belegt, gemeinsamer Lauf grün.** RestockTests 264 Tests, 0 Fehler;
+  RestockUITests 22 Tests (1 übersprungen), 0 Fehler; `TEST SUCCEEDED`, ohne Hänger oder Neustart.
+  Beleg: `docs/artifacts/fix-10-preis-einheit/validation-full-suite.txt`.
+
+  Drei vorausgegangene Anläufe scheiterten an einem Umgebungsproblem, nicht am Code: „The test
+  runner hung before establishing connection" — der Test-Host wartet vergeblich auf das
+  Bereitschaftssignal von `testmanagerd` und läuft nach 300 s in `xcodebuild`s Startzeitgrenze. Kein
+  Absturzbericht. Bekanntes Xcode-26-Problem (Apple Developer Forums, Thread 805060). Gegenprobe:
+  RestockTests allein 264/264 grün
+  (`docs/artifacts/fix-10-preis-einheit/validation-unit-only.txt`). Belege der Fehlversuche:
+  `validation-attempt1-runner-hang.txt`, `validation-attempt2-runner-hang-und-darkmode.txt`,
+  `validation-attempt3-ui-gruen-unit-hang.txt` (alle unter demselben Ordner). Als eigenes Ticket
+  erfasst: **#63** (Messreihe 3 von 4 Anläufen betroffen, Vorschlag Wrapper-Skript mit einmaliger
+  Wiederholung genau dieses Falls, Alternative getrennte Suiten-Läufe).
+
+  Im zweiten Anlauf fiel zusätzlich `testChangeEditorWorksInDarkMode` aus (Preisfeld erschien
+  nicht); im dritten und vierten Anlauf auf aufgeräumter Umgebung lief er grün.
+
+  Der Prüfbefund „AC-5 ohne Testabdeckung" aus der Phase-7-Prüfung wurde widerlegt:
+  `testMigrationRepairsCorruptedStoreLearnedPrice` (`RestockTests/PriceProvenanceMigrationTests.swift:286-290`)
+  prüft genau diesen Fall — ein reparierter, aber einheitenloser Preis von 2,29 €/500 g wird für
+  einen 500-g-Artikel verworfen, obwohl Betrag und Menge plausibel sind.
