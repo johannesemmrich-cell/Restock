@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/models/learned-price-unit-and-quantity-source.md
-spec_sha256: a9d5df30c0dc699d73d8195fb29cf84b0477cc74e397310df6b91c5b949a34b8
+spec_sha256: f712b79773594198bc4bd7a5f2165c635a60918fbf678a6e841fc5bdb6ff4c65
 ---
 
 # PO-Briefing: fix-10-preis-einheit
@@ -19,13 +19,14 @@ Ein ohne Menge angelegter, pro Gramm gelernter Artikel zeigt keinen falschen Ein
 
 ## Wie geprüft wird
 
-264 Rechen- und 22 Oberflächentests belegen den Cent-Fehler behoben; die noch fehlende sichtbare Mengen-Annahme prüfen sie nicht.
+264 Rechen- und 22 Oberflächentests laufen im gemeinsamen Lauf grün und belegen den Cent-Fehler behoben; die Mengen-Annahme prüfen sie nicht.
 
 ## Kritische Anmerkungen
 
-- Mitgelieferter Code für die Mengen-Markierung liegt bereits vor, wirkt aber erst mit dem Folgeticket, ungetestet.
-- Die sichtbare, korrigierbare Mengen-Annahme aus der Anfrage ist komplett ins nächste Ticket verschoben, nicht in dieser Lieferung.
+- Der ursprünglich verlangte, sichtbare und korrigierbare Mengen-Vorschlag wird nicht geliefert, sondern folgt separat im nächsten Ticket.
+- Dafür bereits eingebauter Anzeige-Code ist ungetestet und bleibt wirkungslos, bis das Folgeticket ihn aktiviert.
+- Alle bisher gelernten Bon-Preise verschwinden einmalig aus der Anzeige, bis sie neu gelernt werden.
 
 ## Freigabe-Frage
 
-Reicht dir, dass nur der Cent-Fehler behoben wird und die sichtbare Mengen-Annahme komplett im nächsten Ticket folgt?
+Reicht dir weiterhin, dass nur der Cent-Fehler behoben ist und die sichtbare Mengen-Annahme komplett im nächsten Ticket folgt?
