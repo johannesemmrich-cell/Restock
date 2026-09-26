@@ -71,7 +71,7 @@ final class ReplenishmentPackageCTests: XCTestCase {
 
         XCTAssertEqual(until, date(10, 2), "27.09. + 5 Tage.")
         let entry = try XCTUnwrap(snoozes.entries()["milch"])
-        XCTAssertEqual(entry.baseDate, date(9, 22).timeIntervalSince1970, "Gilt weiter für den errechneten Termin.")
+        XCTAssertEqual(entry.purchaseKey, date(9, 12).timeIntervalSince1970, "Gilt weiter für denselben Kaufzyklus.")
     }
 
     func testSnoozeOfOverdueItemShiftsFromNow() {
@@ -112,9 +112,9 @@ final class ReplenishmentPackageCTests: XCTestCase {
         XCTAssertEqual(applied.estimatedNextPurchaseDate, date(10, 3))
 
         snoozes.prune(keeping: [raw])
-        XCTAssertNotNil(snoozes.entries()["milch"], "Termin unverändert → bleibt.")
+        XCTAssertNotNil(snoozes.entries()["milch"], "Kein neuer Kauf → bleibt.")
         snoozes.prune(keeping: [afterPurchase])
-        XCTAssertNil(snoozes.entries()["milch"], "Termin verschoben → aufgeräumt.")
+        XCTAssertNil(snoozes.entries()["milch"], "Neuer Kauf → aufgeräumt.")
     }
 
     func testSnoozeAvoidsSundayLikeFourB() {
@@ -176,6 +176,120 @@ final class ReplenishmentPackageCTests: XCTestCase {
         metrics.record(.blocked)
         XCTAssertEqual(metrics.count(.snoozed), 2)
         XCTAssertEqual(metrics.count(.blocked), 1)
+    }
+
+    // MARK: - Schlüssel am letzten Kauf (Issue #30, Teil 5, Punkt 1)
+
+    /// Milch alle 8 Tage, zuletzt Sa 19.09. → Termin So 27.09.; in Deutschland (4b) Sa 26.09.
+    /// (Alle 7 Tage ab einem Samstag landete wieder auf einem Samstag — dann gäbe es keinen
+    /// Unterschied zwischen den Ländern, und der Test prüfte nichts.)
+    private func milkRecords() -> [PurchaseRecord] {
+        [date(9, 3), date(9, 11), date(9, 19)].map { day in
+            let r = PurchaseRecord(itemName: "Milch", storeName: "Edeka")
+            r.date = day
+            return r
+        }
+    }
+
+    func testCountryChangeShiftsDateButKeepsPurchaseKey() throws {
+        let records = milkRecords()
+        let us = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("US"), calendar: calendar))
+        let de = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))
+        XCTAssertNotEqual(us.estimatedNextPurchaseDate, de.estimatedNextPurchaseDate, "Setup: Termin hängt vom Land ab.")
+        XCTAssertEqual(us.purchaseKey, de.purchaseKey)
+        XCTAssertEqual(de.purchaseKey, date(9, 19).timeIntervalSince1970)
+    }
+
+    func testTimeZoneChangeKeepsPurchaseKey() throws {
+        // 23:30 und 00:30 UTC am 18./19.09.: in UTC zwei Tage, in Berlin (UTC+2) ein Tag — der
+        // zusammengefasste letzte Kauftag beginnt je nach Zeitzone mit einem anderen Datensatz.
+        var records = milkRecords().dropLast().map { $0 }
+        for day in [date(9, 18, hour: 23).addingTimeInterval(30 * 60), date(9, 19, hour: 0).addingTimeInterval(30 * 60)] {
+            let r = PurchaseRecord(itemName: "Milch", storeName: "Edeka")
+            r.date = day
+            records.append(r)
+        }
+        var berlin = Calendar(identifier: .gregorian)
+        berlin.timeZone = TimeZone(identifier: "Europe/Berlin")!
+        let utc = try XCTUnwrap(records.consumptionPattern(calendar: calendar))
+        let local = try XCTUnwrap(records.consumptionPattern(calendar: berlin))
+        XCTAssertNotEqual(utc.lastPurchaseDate, local.lastPurchaseDate, "Setup: Tagesgrenze hängt von der Zeitzone ab.")
+        XCTAssertEqual(utc.purchaseKey, local.purchaseKey)
+    }
+
+    func testSnoozeSurvivesCountryChange() throws {
+        let records = milkRecords()
+        let us = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("US"), calendar: calendar))
+        let snoozes = ReplenishmentSnoozes(defaults: defaults)
+        snoozes.snooze(us, now: date(9, 26), closedDays: .none, calendar: calendar)
+
+        let de = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))
+        snoozes.prune(keeping: [de])
+        let entry = try XCTUnwrap(snoozes.entries()["milch"], "Landwechsel ist kein Kauf.")
+        XCTAssertTrue(de.applying(entry).isSnoozed)
+    }
+
+    func testOverdueNotificationNotRepeatedAfterCountryChange() throws {
+        let records = milkRecords()
+        let ledger = OverdueNotificationLedger(defaults: defaults)
+        ledger.markNotified(try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("US"), calendar: calendar)))
+        XCTAssertFalse(ledger.shouldNotify(try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))))
+
+        let r = PurchaseRecord(itemName: "Milch", storeName: "Edeka")
+        r.date = date(9, 26)
+        XCTAssertTrue(ledger.shouldNotify(try XCTUnwrap((records + [r]).consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))), "Neuer Kauf → wieder meldefähig.")
+    }
+
+    func testAcceptedSuggestionDeletedAfterCountryChangeIsStillDismissed() throws {
+        let records = milkRecords()
+        let us = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("US"), calendar: calendar))
+        let de = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))
+        let result = ReplenishmentFeedback.resolveAccepted(
+            [UUID(): AcceptedReplenishment(itemName: us.itemName, purchaseKey: us.purchaseKey)],
+            existingItemIDs: [], pendingNames: [], patterns: [de]
+        )
+        XCTAssertEqual(result.dismissals, ["milch": de.purchaseKey])
+    }
+
+    func testMigrationConvertsCurrentDateKeyedEntriesAndDropsStaleOnes() throws {
+        let milk = try XCTUnwrap(milkRecords().consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))
+        let estimated = milk.estimatedNextPurchaseDate.timeIntervalSince1970
+        let stale = date(9, 1).timeIntervalSince1970
+        let id = UUID()
+        let staleID = UUID()
+
+        defaults.set(try JSONEncoder().encode(["milch": estimated, "brot": stale]), forKey: ReplenishmentKeyMigration.dismissedKey)
+        defaults.set(["milch": estimated, "butter": stale], forKey: OverdueNotificationLedger.defaultsKey)
+        struct LegacySnooze: Encodable { let itemName: String; let baseDate: TimeInterval; let snoozedUntil: TimeInterval }
+        defaults.set(try JSONEncoder().encode([
+            "milch": LegacySnooze(itemName: "Milch", baseDate: estimated, snoozedUntil: date(10, 1).timeIntervalSince1970),
+        ]), forKey: ReplenishmentSnoozes.defaultsKey)
+        struct LegacyAccepted: Encodable { let itemName: String; let estimatedNextPurchaseDate: TimeInterval }
+        defaults.set(try JSONEncoder().encode([
+            id: LegacyAccepted(itemName: "Milch", estimatedNextPurchaseDate: estimated),
+            staleID: LegacyAccepted(itemName: "Milch", estimatedNextPurchaseDate: stale),
+        ]), forKey: ReplenishmentKeyMigration.acceptedKey)
+        defaults.set(["milch|\(estimated)": date(9, 25).timeIntervalSince1970], forKey: ReplenishmentMetrics.shownKey)
+
+        ReplenishmentKeyMigration.runIfNeeded(patterns: [milk], defaults: defaults)
+
+        let key = milk.purchaseKey
+        let dismissed = try JSONDecoder().decode([String: TimeInterval].self, from: try XCTUnwrap(defaults.data(forKey: ReplenishmentKeyMigration.dismissedKey)))
+        XCTAssertEqual(dismissed, ["milch": key])
+        XCTAssertFalse(OverdueNotificationLedger(defaults: defaults).shouldNotify(milk))
+        XCTAssertEqual(defaults.dictionary(forKey: OverdueNotificationLedger.defaultsKey) as? [String: TimeInterval], ["milch": key])
+        XCTAssertEqual(ReplenishmentSnoozes(defaults: defaults).entries()["milch"], ReplenishmentSnooze(itemName: "Milch", purchaseKey: key, snoozedUntil: date(10, 1).timeIntervalSince1970))
+        let accepted = try JSONDecoder().decode([UUID: AcceptedReplenishment].self, from: try XCTUnwrap(defaults.data(forKey: ReplenishmentKeyMigration.acceptedKey)))
+        XCTAssertEqual(accepted, [id: AcceptedReplenishment(itemName: "Milch", purchaseKey: key)])
+        let metrics = ReplenishmentMetrics(defaults: defaults)
+        metrics.recordShown([milk], now: date(9, 26))
+        XCTAssertEqual(metrics.count(.shown), 0, "Schon vor dem Update gezeigt — nicht doppelt zählen.")
+
+        // Läuft nur einmal: spätere Einträge werden nicht erneut umgerechnet.
+        defaults.set(try JSONEncoder().encode(["milch": estimated]), forKey: ReplenishmentKeyMigration.dismissedKey)
+        ReplenishmentKeyMigration.runIfNeeded(patterns: [milk], defaults: defaults)
+        let untouched = try JSONDecoder().decode([String: TimeInterval].self, from: try XCTUnwrap(defaults.data(forKey: ReplenishmentKeyMigration.dismissedKey)))
+        XCTAssertEqual(untouched, ["milch": estimated])
     }
 
     // MARK: - Helpers

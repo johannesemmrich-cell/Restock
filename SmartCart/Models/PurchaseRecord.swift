@@ -61,9 +61,20 @@ struct ConsumptionPattern {
     var unit: String = ""
     /// C1: Der errechnete Termin, falls „Hab noch“ ihn verschoben hat, sonst `nil`.
     var originalEstimatedDate: Date? = nil
+    /// Zeitpunkt des jüngsten Kaufdatensatzes, nicht auf Kalendertage zusammengefasst. `nil` →
+    /// `lastPurchaseDate` (nur für von Hand gebaute Muster in Tests).
+    var latestRecordDate: Date? = nil
 
-    /// Der errechnete Termin ohne „Hab noch“-Verschiebung. Daran erkennt eine Verschiebung, ob
-    /// sie noch gilt: Ein neuer Kauf ändert ihn und beendet damit die Verschiebung.
+    /// Kennzeichnet den aktuellen Kaufzyklus: Ablehnung (A4), „Hab noch“ (C1), die
+    /// Überfällig-Nachricht (A3) und die D1-Zählung hängen daran. Bewusst der gespeicherte
+    /// Zeitstempel des letzten Kaufs und nicht der errechnete Termin: Der Termin hängt vom Land
+    /// (Sonn- und Feiertage, 4b) und vom Kalender bzw. der Zeitzone ab (Tagesgrenzen für B6/4a)
+    /// und kann sich deshalb ohne neuen Kauf verschieben — dann ginge eine Ablehnung verloren
+    /// oder die Überfällig-Nachricht käme doppelt. Der Zeitstempel ändert sich nur durch einen
+    /// Kauf (neuer Datensatz, Bon-Scan) oder dessen Rückgängigmachen (A2).
+    var purchaseKey: TimeInterval { (latestRecordDate ?? lastPurchaseDate).timeIntervalSince1970 }
+
+    /// Der errechnete Termin ohne „Hab noch“-Verschiebung.
     var baseEstimatedDate: Date { originalEstimatedDate ?? estimatedNextPurchaseDate }
 
     var isSnoozed: Bool { originalEstimatedDate != nil }
@@ -155,7 +166,8 @@ extension Array where Element == PurchaseRecord {
             intervalVariation: variation,
             typicalGapDays: gap,
             typicalQuantity: typical.quantity,
-            unit: typical.unit
+            unit: typical.unit,
+            latestRecordDate: self.map(\.date).max()
         )
     }
 }
@@ -197,8 +209,8 @@ extension Array where Element == PurchaseDay {
     /// 4a: Fallen in den 8 Wochen bis zum letzten Kauf mindestens 80 % der Käufe auf höchstens
     /// 3 Wochentage, und kommt jeder davon in mindestens 2/3 der Wochen vor, sind das die festen
     /// Einkaufstage des Artikels. Braucht mindestens 4 Käufe über mindestens 2 Wochen.
-    /// Verankert am letzten Kauf, nicht an „heute“, damit der errechnete Termin stabil bleibt —
-    /// `dismissedReplenishments` und A3/A4 erkennen einen Termin an seinem exakten Wert.
+    /// Verankert am letzten Kauf, nicht an „heute“, damit der errechnete Termin zwischen zwei
+    /// Käufen stabil bleibt.
     func fixedWeekdays(calendar: Calendar) -> [Int]? {
         guard let last = last,
               let windowStart = calendar.date(byAdding: .day, value: -56, to: last.date) else { return nil }
