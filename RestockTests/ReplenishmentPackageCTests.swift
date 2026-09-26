@@ -180,9 +180,11 @@ final class ReplenishmentPackageCTests: XCTestCase {
 
     // MARK: - Schlüssel am letzten Kauf (Issue #30, Teil 5, Punkt 1)
 
-    /// Milch alle 7 Tage, zuletzt Sa 19.09. → Termin So 27.09.; in Deutschland (4b) Sa 26.09.
-    private func weeklyMilkRecords() -> [PurchaseRecord] {
-        [date(9, 5), date(9, 12), date(9, 19)].map { day in
+    /// Milch alle 8 Tage, zuletzt Sa 19.09. → Termin So 27.09.; in Deutschland (4b) Sa 26.09.
+    /// (Alle 7 Tage ab einem Samstag landete wieder auf einem Samstag — dann gäbe es keinen
+    /// Unterschied zwischen den Ländern, und der Test prüfte nichts.)
+    private func milkRecords() -> [PurchaseRecord] {
+        [date(9, 3), date(9, 11), date(9, 19)].map { day in
             let r = PurchaseRecord(itemName: "Milch", storeName: "Edeka")
             r.date = day
             return r
@@ -190,7 +192,7 @@ final class ReplenishmentPackageCTests: XCTestCase {
     }
 
     func testCountryChangeShiftsDateButKeepsPurchaseKey() throws {
-        let records = weeklyMilkRecords()
+        let records = milkRecords()
         let us = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("US"), calendar: calendar))
         let de = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))
         XCTAssertNotEqual(us.estimatedNextPurchaseDate, de.estimatedNextPurchaseDate, "Setup: Termin hängt vom Land ab.")
@@ -201,7 +203,7 @@ final class ReplenishmentPackageCTests: XCTestCase {
     func testTimeZoneChangeKeepsPurchaseKey() throws {
         // 23:30 und 00:30 UTC am 18./19.09.: in UTC zwei Tage, in Berlin (UTC+2) ein Tag — der
         // zusammengefasste letzte Kauftag beginnt je nach Zeitzone mit einem anderen Datensatz.
-        var records = weeklyMilkRecords().dropLast().map { $0 }
+        var records = milkRecords().dropLast().map { $0 }
         for day in [date(9, 18, hour: 23).addingTimeInterval(30 * 60), date(9, 19, hour: 0).addingTimeInterval(30 * 60)] {
             let r = PurchaseRecord(itemName: "Milch", storeName: "Edeka")
             r.date = day
@@ -216,7 +218,7 @@ final class ReplenishmentPackageCTests: XCTestCase {
     }
 
     func testSnoozeSurvivesCountryChange() throws {
-        let records = weeklyMilkRecords()
+        let records = milkRecords()
         let us = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("US"), calendar: calendar))
         let snoozes = ReplenishmentSnoozes(defaults: defaults)
         snoozes.snooze(us, now: date(9, 26), closedDays: .none, calendar: calendar)
@@ -228,7 +230,7 @@ final class ReplenishmentPackageCTests: XCTestCase {
     }
 
     func testOverdueNotificationNotRepeatedAfterCountryChange() throws {
-        let records = weeklyMilkRecords()
+        let records = milkRecords()
         let ledger = OverdueNotificationLedger(defaults: defaults)
         ledger.markNotified(try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("US"), calendar: calendar)))
         XCTAssertFalse(ledger.shouldNotify(try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))))
@@ -239,7 +241,7 @@ final class ReplenishmentPackageCTests: XCTestCase {
     }
 
     func testAcceptedSuggestionDeletedAfterCountryChangeIsStillDismissed() throws {
-        let records = weeklyMilkRecords()
+        let records = milkRecords()
         let us = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("US"), calendar: calendar))
         let de = try XCTUnwrap(records.consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))
         let result = ReplenishmentFeedback.resolveAccepted(
@@ -250,7 +252,7 @@ final class ReplenishmentPackageCTests: XCTestCase {
     }
 
     func testMigrationConvertsCurrentDateKeyedEntriesAndDropsStaleOnes() throws {
-        let milk = try XCTUnwrap(weeklyMilkRecords().consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))
+        let milk = try XCTUnwrap(milkRecords().consumptionPattern(closedDays: .forCountry("DE"), calendar: calendar))
         let estimated = milk.estimatedNextPurchaseDate.timeIntervalSince1970
         let stale = date(9, 1).timeIntervalSince1970
         let id = UUID()
