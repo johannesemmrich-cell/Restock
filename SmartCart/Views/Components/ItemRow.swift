@@ -82,10 +82,16 @@ struct ItemRow: View {
                 }
 
                 HStack(spacing: 6) {
-                    if item.quantity != "1" || !item.unit.isEmpty {
-                        Text("\(item.quantity)\(item.unit.isEmpty ? "" : " \(item.unit)")")
+                    // Ohne belegte Menge (`quantitySource == "none"`) wird gar keine Mengenangabe
+                    // gezeigt — dort stünde sonst die geratene „1" (Issue #10). Eine angenommene
+                    // Menge (Kaufhistorie oder Füllmenge im Namen) ist als Annahme markiert:
+                    // „ca. 400 g" in der Warnfarbe. Eine selbst eingetippte Menge sieht aus wie
+                    // bisher.
+                    if item.quantitySource != "none", item.quantity != "1" || !item.unit.isEmpty {
+                        let isAssumed = item.quantitySource == "history" || item.quantitySource == "package"
+                        Text("\(isAssumed ? "ca. " : "")\(item.quantity)\(item.unit.isEmpty ? "" : " \(item.unit)")")
                             .font(.system(size: 12))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(isAssumed ? Color.amber : .secondary)
                     }
                     if !displayCategory.isEmpty {
                         Text("·")

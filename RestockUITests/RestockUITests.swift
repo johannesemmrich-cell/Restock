@@ -17,8 +17,26 @@ import XCTest
 /// oder den Lauf mit `-testLanguage`/`-testRegion` übersteuert, bricht diese Tests.
 final class RestockUITests: XCTestCase {
 
+    /// Wird von `testAddingMenuPlanRecipeDoesNotCrash` gesetzt, damit nur dieser Test die
+    /// Aufräum-Runde in `tearDown()` auslöst und die übrigen Tests der Klasse keinen
+    /// zusätzlichen App-Start bezahlen müssen.
+    private var needsMenuPlanCleanup = false
+
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    /// Der Menüplan liegt in `UserDefaults` und überlebt den Test (Issue #60) — ohne dieses
+    /// Aufräumen sammeln sich die angelegten „Chili Con Carne"-Tage über die Läufe hinweg, bis
+    /// die Woche voll ist und „Tag hinzufügen" verschwindet (so sieht `MenuPlanView` es vor).
+    override func tearDown() {
+        super.tearDown()
+        guard needsMenuPlanCleanup else { return }
+        needsMenuPlanCleanup = false
+        let cleaner = XCUIApplication()
+        cleaner.launchArguments = ["-hasCompletedOnboarding", "YES", "-clearMenuPlanForUITests"]
+        cleaner.launch()
+        cleaner.terminate()
     }
 
     func testAppLaunchesToHomeScreen() throws {
@@ -223,9 +241,13 @@ final class RestockUITests: XCTestCase {
     /// Carne": Menüplan öffnen, einen Tag mit diesem Gericht anlegen, Zutaten laden lassen.
     /// `-developerMode YES` überspringt die seit dieser Session premium-gepflichtige
     /// Rezeptplan-Paywall (kein Kauf im Test-Simulator verfügbar).
+    /// `-clearMenuPlanForUITests` stellt die Voraussetzung dieses Tests her: „Tag hinzufügen"
+    /// existiert in `MenuPlanView` nur, solange weniger als sieben Tage verplant sind, und der
+    /// Plan liegt in `UserDefaults`, überlebt also frühere Läufe (Issue #60).
     func testAddingMenuPlanRecipeDoesNotCrash() throws {
+        needsMenuPlanCleanup = true
         let app = XCUIApplication()
-        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-developerMode", "YES"]
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-developerMode", "YES", "-clearMenuPlanForUITests"]
         app.launch()
 
         // Accessibility-`identifier` ist der rohe SF-Symbol-Name ("fork.knife"), das `label` ist
@@ -262,10 +284,23 @@ final class RestockUITests: XCTestCase {
         // also mehrere gleichnamige Zeilen existieren — für diesen Test ist jede von ihnen gültig.
         let addToListMenu = app.buttons["+ Liste"].firstMatch
         XCTAssertTrue(addToListMenu.waitForExistence(timeout: 10), "\"+ Liste\"-Menü für \"Chili Con Carne\" nicht gefunden")
-        addToListMenu.tap()
 
+        // Das SwiftUI-`Menu` verschluckt den Öffnen-Tap gelegentlich, während `fetchIngredients()`
+        // die Zeile im Hintergrund neu zeichnet: im vierten Nachweislauf war der Tap laut
+        // Protokoll synthetisiert, danach war die App aber nach 0,47 s wieder idle statt nach
+        // 1,2 s wie im geglückten Lauf — es gab also gar keine Menü-Präsentation
+        // (docs/artifacts/fix-60-menuplan-uitest/run4.txt gegen run3.txt, jeweils t ≈ 17 s).
+        // Deshalb bis zu dreimal öffnen; die Prüfung selbst bleibt scharf.
         let autoAssign = app.buttons["Automatisch zuordnen"]
-        XCTAssertTrue(autoAssign.waitForExistence(timeout: 5), "\"Automatisch zuordnen\"-Menüeintrag nicht gefunden")
+        var menuDidOpen = false
+        for _ in 1...3 {
+            addToListMenu.tap()
+            if autoAssign.waitForExistence(timeout: 5) {
+                menuDidOpen = true
+                break
+            }
+        }
+        XCTAssertTrue(menuDidOpen, "\"Automatisch zuordnen\"-Menüeintrag nicht gefunden")
         autoAssign.tap()
 
         sleep(2)

@@ -1,0 +1,18 @@
+Aufräum-Beleg zu Issue #60, 2026-09-26
+
+Vor der Reparatur (Gerätezustand auf Restock-Validate, 8F696920-4B9A-40A7-96F0-7697BE887CC7):
+
+  $ plutil -extract menuPlanJSON raw -o - .../Library/Preferences/com.johannesemmrich.Restock.plist
+  ["Chili Con Carne","Chili Con Carne","Chili Con Carne","Chili Con Carne","Chili Con Carne","Chili Con Carne","Chili Con Carne"]
+
+Sieben von sieben Tagen verplant -> plannedIndices.count == 7 -> "Tag hinzufügen" wird in
+MenuPlanView.swift:336 nicht gerendert. Genau der in #60 belegte Fehlschlag.
+(siehe repro-menuplanjson-vor-fix.txt)
+
+Nach Lauf 1 mit der Reparatur (tearDown startet die App einmal mit -clearMenuPlanForUITests):
+
+  $ plutil -p .../Library/Preferences/com.johannesemmrich.Restock.plist | grep -i menu
+  (keine Ausgabe, grep-Exitcode 1)
+
+Kein menuPlanJSON / menuIngredientsJSON / menuPortionsJSON / menuAddedDaysJSON mehr vorhanden —
+der Test hinterlässt keinen Menüplan-Zustand für nachfolgende Tests.

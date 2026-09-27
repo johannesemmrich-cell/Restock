@@ -28,6 +28,7 @@ struct SmartCartApp: App {
             #if DEBUG
             Self.seedSharedAssignmentForScreenshotsIfNeeded(context: container.mainContext)
             Self.clearReceiptReviewSeedForUITestsIfNeeded(context: container.mainContext)
+            Self.clearMenuPlanForUITestsIfNeeded()
             Self.seedReceiptReviewForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
@@ -206,6 +207,24 @@ struct SmartCartApp: App {
         }
         try? context.save()
         _ = ReceiptShareHandoff.takePending()
+    }
+
+    /// Leert den Menüplan der laufenden Woche (Issue #60).
+    ///
+    /// Der Menüplan liegt nicht in SwiftData, sondern in `UserDefaults.standard` (`@AppStorage`
+    /// in `MenuPlanView`) und überlebt damit den einzelnen Test genauso wie der
+    /// App-Group-Container. `MenuPlanView` zeigt „Tag hinzufügen" absichtlich nur, solange
+    /// weniger als sieben Tage verplant sind — nach genügend Läufen ist die Woche voll und
+    /// `testAddingMenuPlanRecipeDoesNotCrash` findet den Knopf nicht mehr, ohne dass am Produkt
+    /// etwas kaputt wäre. Dieses Argument stellt die Voraussetzung des Tests her, statt das
+    /// Produktverhalten dafür zu ändern; derselbe Test räumt damit in `tearDown()` wieder auf.
+    /// Only runs on `-clearMenuPlanForUITests`, DEBUG-only, never ships to users.
+    private static func clearMenuPlanForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-clearMenuPlanForUITests") else { return }
+        let defaults = UserDefaults.standard
+        for key in ["menuPlanJSON", "menuIngredientsJSON", "menuPortionsJSON", "menuAddedDaysJSON"] {
+            defaults.removeObject(forKey: key)
+        }
     }
 
     /// UI-test-only seed for the receipt review screen (Issue #28): that screen is otherwise only

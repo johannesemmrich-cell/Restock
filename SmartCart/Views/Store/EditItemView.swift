@@ -337,6 +337,10 @@ struct EditItemView: View {
         item.quantity = quantity.isEmpty ? "1" : quantity
         let rawQty = Double(quantity.replacingOccurrences(of: ",", with: ".")) ?? 1
         item.quantityAmount = (rawQty > 0 && !rawQty.isNaN) ? rawQty : 1
+        // Sobald der Nutzer die Menge über dieses Formular gespeichert hat, ist sie seine eigene:
+        // die „ca."-Markierung verschwindet und aus Rate und Menge wird wieder ein Gesamtpreis
+        // (Issue #10, `ShoppingItem.quantitySource`).
+        item.quantitySource = "user"
         let oldUnit = item.unit
         item.unit = unit
         item.note = note

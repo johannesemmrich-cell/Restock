@@ -18,6 +18,10 @@ final class PriceEstimatorStagesTests: XCTestCase {
         // "milch" träfe sowohl das specificPrices-Keyword (1.20€) als auch die
         // Kategorie-Pauschale "Milchprodukte" (2.00€) — der gelernte Preis muss trotzdem gewinnen.
         store.learnedPrices["milch"] = 1.50
+        // Bezugsgröße (Issue #10): ein Stückpreis, passend zum Artikel ohne Einheit. Ohne diesen
+        // Eintrag gilt der Preis als einheitenloses Altdatum und wird nicht mehr angewendet —
+        // die hier geprüfte Stufen-Rangfolge bliebe dann unmessbar.
+        store.learnedPriceUnits["milch"] = "stk"
 
         let item = ShoppingItem(name: "Milch", category: "Milchprodukte", store: store)
 
