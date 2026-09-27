@@ -71,6 +71,9 @@ final class ReceiptReviewUITests: XCTestCase {
         static let unresolvedLineExpectedName = "Butter"
         /// Zahl der Auswahlzeilen dieser Karte (drei inhaltliche Höchstgrenze + „Anderer Name …").
         static let maxOptionsPerCard = 4
+        /// Platzhalter des Feldes „Anderer Name …" — `XCUIElement.value` eines leeren `TextField`
+        /// liefert ihn statt einer leeren Zeichenkette.
+        static let customFieldPlaceholder = "Anderer Name …"
     }
 
     override func setUpWithError() throws {
@@ -881,8 +884,13 @@ final class ReceiptReviewUITests: XCTestCase {
 
         // Das Feld selbst bleibt bewusst leer (sonst könnte man nie einen neuen Namen tippen),
         // aber die Position behält den Namen, der vor dem Öffnen des Feldes galt.
-        XCTAssertEqual((field.value as? String) ?? "", "",
-                       "Vorbedingung: Das Feld ist nach dem Löschen nicht leer.")
+        //
+        // `value` eines LEEREN `TextField` ist in XCUITest nicht "", sondern der Platzhaltertext —
+        // beides gilt hier also als leer. Ohne diese Unterscheidung scheitert der Test an seiner
+        // eigenen Vorbedingung statt an der Sache (im RED-Lauf gemessen: "Anderer Name …").
+        let afterDelete = (field.value as? String) ?? ""
+        XCTAssertTrue(afterDelete.isEmpty || afterDelete == Seed.customFieldPlaceholder,
+                      "Vorbedingung: Das Feld ist nach dem Löschen nicht leer — bekommen: \(afterDelete)")
         XCTAssertTrue(checkbox.label.contains(Seed.aiLineName),
                       "Die Position steht mit einem leeren Namen da — "
                       + "bekommen: \(checkbox.label)")
