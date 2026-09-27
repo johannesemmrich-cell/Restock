@@ -79,7 +79,7 @@ keine neue Options-Zeile hinzu und verschiebt daher keinen `option.<k>`-Index. D
 | `ItemRow.swift:37-61` (Häkchen-Kreis) | View-Pattern | Vorlage für das 28-pt-Häkchen der Karte — gleiches visuelles Muster, andere Größe. |
 | `DesignSystem.swift` (`Color.ink/.textSecondary/.surface/.hairline/.accent/.accentContainer`, `RCRadius`, `cardStyle()`, `PressableButtonStyle`) | Design-Tokens | Einzige erlaubte Farb-/Radius-Quelle — keine neuen Tokens. |
 | `ReceiptParserService.weightBasisFromName` (`ReceiptParserService.swift:894-909`) und `EditableReceiptLine.learningQuantity` (`ReceiptScannerView.swift:58-60`) | Regel | Bestehende Regel für die im Bontext gedruckte Füllmenge — `priceSummary` nutzt sie unverändert, damit die Anzeige dieselbe Basis zeigt, mit der `save()` lernt. Keine Änderung an beiden. |
-| `ReceiptScannerView.save()` (`ReceiptScannerView.swift:600-…`) | Downstream Consumer | Semantik von `name`/`matchedItemID`/`resolvedByAI`/`originalName` darf sich durch diese Spec nicht ändern. **Seit Issue #50, Paket 1 (2026-09-27) eine gezielte Ausnahme:** `save()` bekommt einen Guard in `looseMatch`, der einen leeren Zeilennamen von vornherein ausschließt (siehe „Nachtrag Issue #50, Paket 1", Regel 11) — bewusste, punktuelle Änderung von Invariante 1, keine sonstige Berührung von `save()`. |
+| `ReceiptScannerView.save()` (`ReceiptScannerView.swift:600-…`) | Downstream Consumer | Semantik von `name`/`matchedItemID`/`resolvedByAI`/`originalName` darf sich durch diese Spec nicht ändern. **Seit Issue #50, Paket 1 (2026-09-27) eine gezielte Ausnahme:** `save()` überspringt eine Position mit leerem Namen vollständig (siehe „Nachtrag Issue #50, Paket 1", Regel 11) — bewusste, punktuelle Änderung von Invariante 1, keine sonstige Berührung von `save()`. |
 | `ResolvedReceiptLine`/`ReceiptSuggestion` (`ReceiptResolutionService.swift:8-44`) | Wire-Format | Unverändert. Die neuen `EditableReceiptLine`-Felder sind bewusst NICHT Teil dieser `Codable`-Typen (rein UI-lokaler Zustand, keine Prozessgrenze). |
 
 ## Scope
@@ -156,14 +156,14 @@ Herleitung, Regeln 9-11, Invarianten und den Test Plan.
 | File | Change Type | Description |
 |------|-------------|-------------|
 | `SmartCart/Views/Prices/ReceiptReviewCard.swift` | MODIFY | `.onChange(of: line.name)` führt die eingefrorenen `options` nach, wenn keine Option mehr zu `line.name` passt (Regel 9); neuer `@State private var previousSelectionBeforeCustom`, in `select(_:)` beim Betreten von `.custom` gesetzt (Regel 10); neue reine Funktion `applyCustomNameOrFallback(_:name:previousSelection:)` neben dem bestehenden `applyCustomName` (Regel 10); `customNameRow()`s `.onChange(of: customName)` ruft die neue Funktion statt `applyCustomName` direkt. |
-| `SmartCart/Views/Prices/ReceiptScannerView.swift` | MODIFY | Neue reine Guard-Funktion `looseMatchAllows(lineName:)` direkt neben `save()` (gleiches Muster wie `learningQuantity`/`learningUnit` neben ihrer Anwendungsstelle); `looseMatch` in `save()` nutzt sie (Regel 11). |
+| `SmartCart/Views/Prices/ReceiptScannerView.swift` | MODIFY | Neue reine Regel `EditableReceiptLine.isSavable(_:)` direkt neben `learningQuantity`/`learningUnit`; `save()`s Eingangsfilter (`parsedLines.filter { $0.isIncluded && $0.price > 0 }`, Z. 601) ruft sie statt der inline-Bedingung (Regel 11). |
 | `SmartCart/SmartCartApp.swift` | MODIFY | Neuer, eigenständiger DEBUG-Seed `seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context:)` — Testeinstieg für den reproduzierten Fall. Vollständig beschrieben in `docs/specs/testing/receipt-review-test-entry.md`, „Nachtrag Issue #50, Paket 1"; hier nur referenziert, weil diese Spec keine Testinfrastruktur-Entscheidungen trifft. |
 | `RestockTests/ReceiptReviewCardTests.swift` | MODIFY | Drei neue Tests für `applyCustomNameOrFallback`: `testApplyCustomNameOrFallbackRestoresPreviousSelectionOnEmptyName` (leerer Name fällt zurück), `testApplyCustomNameOrFallbackRestoresAIStateOnEmptyName` (KI-Zustand — `matchedItemID` UND `resolvedByAI` — wird mit zurückgeholt), `testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged` (nicht-leerer Name verhält sich wie bisher). |
-| `RestockTests/ReceiptScannerReResolutionTests.swift` | MODIFY | Zwei neue Tests für `looseMatchAllows`: `testLooseMatchAllowsRejectsEmptyLineName` (leerer Name → `false`) und `testLooseMatchAllowsAcceptsNonEmptyLineName` (nicht-leerer Name → `true`). |
+| `RestockTests/ReceiptScannerReResolutionTests.swift` | MODIFY | Zwei neue Tests für `isSavable`: `testIsSavableRejectsLineWithEmptyName` (leerer oder nur aus Leerzeichen bestehender Name → `false`) und `testIsSavableKeepsIncludedNamedLineAndRejectsOldCases` (nicht-leerer Name mit Preis → `true`; abgewählt oder Preis 0 → weiterhin `false`). |
 | `RestockUITests/ReceiptReviewUITests.swift` | MODIFY | Zwei neue Tests, `testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution` (derselbe Testname wie „Test 3" in `docs/specs/testing/receipt-review-test-entry.md` — es entsteht nur EIN Test) und `testClearingCustomNameFieldKeepsPreviousItemName`. Erster Test am reproduzierten Fall (BTR-Zeile über den neuen Seed): nach `reResolveAIIfNeeded()` ist genau eine Auswahlzeile markiert, und ihr Label zeigt den aufgelösten Namen. Neuer Test für den PO-Fund: vollständiges Leeren von „Anderer Name …" lässt das Häkchen-Label nie mit einem leeren Namen enden. |
 
 - Files: **6** — eine Datei über dem Ziel „max. 4-5 Dateien". Die Überschreitung kommt vom
-  `looseMatchAllows`-Unit-Test: er gehört inhaltlich zu `ReceiptScannerView` (`save()`s
+  `isSavable`-Unit-Test: er gehört inhaltlich zu `ReceiptScannerView` (`save()`s
   Fallback-Suche), nicht zur Karte — `ReceiptReviewCardTests.swift` prüft laut eigenem
   Kopfkommentar „ausschließlich die reinen Funktionen der Karte". Verworfene Alternative: beide
   Tests trotzdem in dieselbe Datei zwingen, um bei 5 Dateien zu bleiben — verworfen, weil das die
@@ -173,7 +173,7 @@ Herleitung, Regeln 9-11, Invarianten und den Test Plan.
   `EditableReceiptLine`/`ReceiptScannerView`-Regeln ohne SwiftUI und ist damit der treffendere,
   nicht der zusätzliche, Ort.
 - LoC: ≈ **+215 / −10** (≈ 225 gesamt) — über der ursprünglichen Schätzung von ≈ 150 LoC aus der
-  Analyse (die den `looseMatchAllows`-Test und dessen eigene Testdatei noch nicht vorsah), aber
+  Analyse (die den `isSavable`-Test und dessen eigene Testdatei noch nicht vorsah), aber
   innerhalb des Standard-Limits von ±250 LoC. Das LoC-Gate zählt Testcode als Produktivcode
   (Memory `loc-gate-zaehlt-testcode-als-produktiv`) — die Reihenfolge in `/50-implement` sieht
   deshalb einen grünen Zwischenstand vor: zuerst die drei Produktivcode-Änderungen (Card, Scanner,
@@ -383,8 +383,9 @@ unverändert gebliebene Ausnahme bei leerem Namen (Regel 6, unverändert seit Is
 PO-Hinweis 2026-09-27 (siehe Kontext-Dokument, „Nachtrag"): `select(.custom)` belegt das Feld mit
 `line.name` vor (Abschnitt 5, Z. 358-362); `customNameRow()`s `.onChange(of: customName)` ruft
 bisher unconditional `applyCustomName(&line, name: newValue)` — auch für `newValue == ""`. Leert
-der Nutzer das Feld vollständig, steht `line.name == ""`, und `save()`s `looseMatch` (Regel 11
-unten) kann dann einen beliebigen Kaufdatensatz dieses Ladens treffen.
+der Nutzer das Feld vollständig, steht `line.name == ""` — und `save()` legt für diese Position
+einen Kaufdatensatz OHNE Namen an und lernt einen Preis unter dem leeren Schlüssel (Regel 11
+unten, mit dem vollständigen Befund).
 
 **Entschieden: Rückfall**, nicht Sperre des Speicherns — hält den Screen bedienbar, statt den
 Nutzer vor eine gesperrte Schaltfläche zu stellen. Präzise beantwortet:
@@ -439,30 +440,56 @@ static func applyCustomNameOrFallback(
 name: newValue, previousSelection: previousSelectionBeforeCustom ?? (line.name, line.matchedItemID,
 line.resolvedByAI))` statt `Self.applyCustomName(&line, name: newValue)`.
 
-#### Regel 11 — Verteidigung in der Tiefe: `looseMatch`-Guard in `save()`
+#### Regel 11 — Verteidigung in der Tiefe: leere Position wird nicht gespeichert
 
-Bewusste, punktuelle Änderung von **Invariante 1** („`save()` bleibt unverändert"). Begründung:
-`ReceiptScannerView.save()`s laxe Fallback-Suche (`looseMatch`, siehe Kontext-Dokument
-„Nachtrag") vergleicht `record.itemName.lowercased().contains(lineLower) || lineLower.contains(
-record.itemName.lowercased())` — bei leerem `lineLower` ist der erste Vergleich IMMER wahr
-(nachgemessen, `docs/artifacts/fix-50-import-dialog-design/probe-empty-name.swift`). Ohne Guard
-würde ein leerer Name den erstbesten Kaufdatensatz dieses Ladens im 7-Tage-Fenster treffen und
-dessen Preis/Datum überschreiben.
+Bewusste, punktuelle Änderung von **Invariante 1** („`save()` bleibt unverändert").
 
-Neue, reine Guard-Funktion direkt neben `save()` (gleiches Muster wie `learningQuantity`/
-`learningUnit` neben ihrer Anwendungsstelle):
+**Korrektur der Analyse vom 2026-09-27 (festgestellt in `/40-tdd-red`, vor dem ersten Test):**
+Der Kontext-Nachtrag behauptete, ein leerer Name treffe über die laxe Fallback-Suche
+(`looseMatch`, `ReceiptScannerView.swift:646-651`) den erstbesten Kaufdatensatz dieses Ladens und
+überschreibe dessen Preis und Datum. **Das ist nicht der Fall.** `looseMatch` wird nirgends direkt
+benutzt, sondern ausschließlich über `match` (Z. 660-665), und dort steht eine
+Ähnlichkeitsschwelle davor: `ReceiptParserService.lcsSimilarity(line.name, looseMatch.itemName) >=
+completedItemAutoApplyThreshold` (0,6). `lcsSimilarity` bricht bei einem leeren Eingabestring
+sofort mit 0 ab (`guard !aChars.isEmpty, !bChars.isEmpty else { return 0 }`,
+`ReceiptParserService.swift:1113`). 0 < 0,6 → `match == nil`. Ein leerer Name kann also **keinen
+fremden Kaufdatensatz verfälschen**; die Probe
+`docs/artifacts/fix-50-import-dialog-design/probe-empty-name.swift` hat nur den `contains`-Teil
+gemessen und den nachgelagerten Filter übersehen.
+
+**Was bei leerem Namen wirklich passiert** (abgelesen an `save()`, `ReceiptScannerView.swift:600-760`):
+
+| Stelle | Wirkung bei leerem `line.name` | Bewertung |
+|---|---|---|
+| `ReceiptAliasService.learn` (Z. 612) | bricht ab (`guard key.count >= 3, !name.isEmpty`, `ReceiptAliasService.swift:35`) | bereits geschützt |
+| `matchedItem` (Z. 628-641) | kein Artikel trägt einen leeren Namen → `nil` | harmlos |
+| `match` (Z. 660-665) | `nil`, siehe Korrektur oben | harmlos |
+| `itemToUpdate` (Z. 692) | `nil` → kein Artikel bekommt einen falschen Preis | harmlos |
+| `store.learnedPrices[""]`, `learnedPriceUnits[""]`, `learnedPriceDates[""]` (Z. 678-680) | ein Preis wird unter dem **leeren Schlüssel** gelernt | Datenmüll im Laden, wird nie wieder angewandt |
+| `PurchaseRecord(itemName: "", …)` (Z. 731-737) | ein **namenloser Kaufdatensatz mit Preis** landet in der Ausgabenhistorie | echter Schaden: sichtbar in der Ausgaben-Ansicht, geht in die Nachkauf-Analyse ein |
+
+Der Guard gehört damit **nicht** in `looseMatch`, sondern an den Eingang von `save()`: eine
+Position ohne Namen wird gar nicht gespeichert. Das trifft beide echten Wirkungen in einem Zug
+und lässt die Fallback-Suche unberührt.
+
+Neue, reine Regel direkt neben `learningQuantity`/`learningUnit` auf `EditableReceiptLine` — dort,
+weil die Bedingung eine Aussage über die ZEILE ist, nicht über die View:
 
 ```swift
-/// Reine Prüf-Regel für `looseMatch` in `save()` (Issue #50, Paket 1, Verteidigung in der
-/// Tiefe): ein leerer Zeilenname darf nie einen Treffer liefern — `"".contains` ist in Swift für
-/// jeden String wahr.
-static func looseMatchAllows(lineName: String) -> Bool {
-    !lineName.trimmingCharacters(in: .whitespaces).isEmpty
+/// Darf diese Position gespeichert werden? (Issue #50, Paket 1, Verteidigung in der Tiefe.)
+///
+/// Trägt die bisher in `save()` inline stehende Bedingung (`isIncluded && price > 0`) und
+/// ergänzt sie um den leeren Namen: `save()` würde sonst einen `PurchaseRecord` OHNE Namen
+/// anlegen und einen Preis unter dem leeren Schlüssel lernen (siehe Regel 11 der Spec).
+static func isSavable(_ line: EditableReceiptLine) -> Bool {
+    line.isIncluded
+        && line.price > 0
+        && !line.name.trimmingCharacters(in: .whitespaces).isEmpty
 }
 ```
 
-`save()`: `let looseMatch = ReceiptScannerView.looseMatchAllows(lineName: lineLower) ?
-allRecords.first { … } : nil`.
+`save()`, Z. 601: `let included = parsedLines.filter { EditableReceiptLine.isSavable($0) }` statt
+`parsedLines.filter { $0.isIncluded && $0.price > 0 }`. Keine weitere Zeile von `save()` ändert sich.
 
 **Alternative, verworfen: Guard weglassen, weil Zusage 3 die Ursache in der Karte schon
 schließt.** Verworfen aus zwei Gründen: (1) `@State customActive` fällt beim Zellen-Recycling
@@ -497,10 +524,10 @@ auf die dort bereits gemergten Strings angeglichen (keine zwei parallelen Schema
 ## Invarianten
 
 1. **`save()` bleibt bis auf eine gezielte Ausnahme unverändert.** Seit Issue #50, Paket 1
-   (2026-09-27) bekommt `looseMatch` einen Guard, der einen leeren Zeilennamen von vornherein
-   ausschließt (Regel 11) — bewusste, begründete Abweichung von der ursprünglichen Fassung dieser
-   Invariante („keine Änderung an `ReceiptScannerView.swift`"). Keine andere Zeile von `save()`
-   ändert sich.
+   (2026-09-27) überspringt der Eingangsfilter von `save()` eine Position mit leerem Namen
+   (Regel 11) — bewusste, begründete Abweichung von der ursprünglichen Fassung dieser Invariante
+   („keine Änderung an `ReceiptScannerView.swift`"). Die Fallback-Suche `looseMatch` selbst bleibt
+   unangetastet; keine andere Zeile von `save()` ändert sich.
 2. **`originalName` wird durch keine Auswahl-Interaktion verändert** — nur `name`,
    `matchedItemID`, `resolvedByAI` ändern sich, wie heute.
 3. **Die Art.-50-Kennzeichnung („KI-Vorschlag", `sparkles`) bleibt immer an der Stelle sichtbar,
@@ -621,12 +648,16 @@ auf die dort bereits gemergten Strings angeglichen (keine zwei parallelen Schema
   `applyCustomName` (`matchedItemID == nil`, `resolvedByAI == false`, `originalName` unverändert)
   — der Rückfall greift ausschließlich beim leeren Zwischenstand.
   Test: `testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged`.
-- [ ] **AC-16 (`looseMatchAllows`, in `RestockTests/ReceiptScannerReResolutionTests.swift`):**
-  GIVEN `lineName == ""` WHEN `ReceiptScannerView.looseMatchAllows(lineName:)` aufgerufen wird
-  THEN liefert es `false`. Test: `testLooseMatchAllowsRejectsEmptyLineName`.
-- [ ] **AC-16 (Regression):** GIVEN `lineName == "milch"` WHEN `looseMatchAllows(lineName:)`
-  aufgerufen wird THEN liefert es `true` — ein echter Name bleibt für die Fallback-Suche nutzbar.
-  Test: `testLooseMatchAllowsAcceptsNonEmptyLineName`.
+- [ ] **AC-16 (`isSavable`, in `RestockTests/ReceiptScannerReResolutionTests.swift`):** GIVEN
+  eine angehakte Zeile mit `price == 1.99` und `name == ""` (und ebenso eine mit `name == "   "`)
+  WHEN `EditableReceiptLine.isSavable(_:)` aufgerufen wird THEN liefert es `false` — `save()`
+  überspringt diese Position und legt weder einen namenlosen Kaufdatensatz noch einen Lern-Eintrag
+  unter dem leeren Schlüssel an. Test: `testIsSavableRejectsLineWithEmptyName`.
+- [ ] **AC-16 (Regression, bisherige Bedingungen):** GIVEN eine angehakte Zeile mit
+  `name == "Butter"` und `price == 1.99` WHEN `isSavable(_:)` aufgerufen wird THEN liefert es
+  `true`; für dieselbe Zeile mit `isIncluded == false` bzw. `price == 0` weiterhin `false` —
+  beweist, dass die Regel die bisher inline stehende Bedingung unverändert mitträgt.
+  Test: `testIsSavableKeepsIncludedNamedLineAndRejectsOldCases`.
 
 **UI — `RestockUITests/ReceiptReviewUITests.swift`** (Einstieg über `-seedReceiptReviewForUITests`
 aus #28, fester Bon mit mind. einer KI-Zeile, langem Namen und ≥3 `suggestions`):
@@ -740,9 +771,10 @@ diese Spec GREEN macht.
   vollständig, fällt die Karte auf die Auswahl zurück, die unmittelbar zuvor galt (Name,
   `matchedItemID` UND `resolvedByAI` gemeinsam) — `line.name` wird nie leer geschrieben. Das
   sichtbare Textfeld selbst bleibt dabei leer, der Nutzer kann sofort weitertippen.
-- **AC-16 (Issue #50, Verteidigung in der Tiefe):** `ReceiptScannerView.save()`s laxe
-  Fallback-Suche (`looseMatch`) liefert bei leerem Zeilennamen nie einen Treffer — unabhängig
-  davon, ob ein leerer Name die Karte je erreicht (AC-15 schließt das für den bekannten Weg aus).
+- **AC-16 (Issue #50, Verteidigung in der Tiefe):** Eine Position mit leerem Namen wird beim
+  Speichern vollständig übersprungen — es entsteht kein Kaufdatensatz ohne Namen in der
+  Ausgabenhistorie und kein gelernter Preis unter dem leeren Schlüssel; unabhängig davon, ob ein
+  leerer Name die Karte je erreicht (AC-15 schließt das für den bekannten Weg aus).
 
 ## Alternativen (verworfen)
 
@@ -791,11 +823,17 @@ diese Spec GREEN macht.
   (`testTappingListMatchSelectsThatOption`, „Radio-Zustand nach Tap bleibt stehen") direkt
   zurücknehmen — die eben angetippte Zeile spränge unter dem Finger wieder nach vorn, sobald
   `selectionOptions`s Regel 3 sie nur wegen ihrer neuen Position umsortiert.
-- **Issue #50 — Alternative: `looseMatch`-Guard weglassen, weil Zusage 3 die Ursache in der Karte
-  schon schließt** (siehe Regel 11): Verworfen — `@State customActive` fällt beim
+- **Issue #50 — Alternative: den Guard in `save()` weglassen, weil Zusage 3 die Ursache in der
+  Karte schon schließt** (siehe Regel 11): Verworfen — `@State customActive` fällt beim
   Zellen-Recycling der `List` auf `false` zurück (ein bereits dokumentiertes Risiko dieser Karte),
   und eine künftige, andere Quelle für einen leeren Namen außerhalb dieser Karte würde den
-  Datenschaden sonst wieder zurückbringen. Vier Zeilen Guard sind billiger als diese Annahme.
+  Datenschaden sonst wieder zurückbringen. Eine Bedingung im bestehenden Eingangsfilter ist
+  billiger als diese Annahme.
+- **Issue #50 — Alternative: den Guard in `looseMatch` setzen** (die Fassung dieser Spec vor der
+  Korrektur in Regel 11): Verworfen, weil er dort nichts bewirkt — die Ähnlichkeitsschwelle vor
+  `match` fängt einen leeren Namen bereits ab, und die zwei echten Wirkungen (namenloser
+  Kaufdatensatz, Lern-Eintrag unter leerem Schlüssel) entstehen hinter dieser Stelle. Belegt in
+  Regel 11 mit Zeilennummern.
 
 ## Risiken
 
@@ -856,7 +894,8 @@ diese Spec GREEN macht.
   `selectionOptions` — ändert an dieser Einschätzung nichts, kein eigenes ADR nötig. Die
   Issue-#50-Erweiterung, Paket 1 (2026-09-27), ist ebenfalls kein eigenes ADR wert: Regel 9 führt
   einen bestehenden `@State` nach, statt ihn neu zu entwerfen; Regel 10 fügt eine reine Funktion
-  neben eine bestehende; Regel 11 ist ein vier Zeilen langer Guard in `save()`. Die einzige
+  neben eine bestehende; Regel 11 ergänzt eine Bedingung im bestehenden Eingangsfilter von
+  `save()`. Die einzige
   Invarianten-Änderung (Nr. 1) ist im Text selbst begründet und gegen eine Alternative
   abgewogen (siehe „Alternativen").
 
@@ -955,8 +994,10 @@ Beobachtbar für den PO, ohne Code zu lesen:
 - 2026-09-27: Issue #50, Paket 1 — PO-Entscheidung: eingefrorene Auswahlliste wird nachgeführt,
   wenn `line.name` sich von außen ändert und keine Option mehr passt (Regel 9); ein leeres Feld
   „Anderer Name …" fällt auf die vorherige Auswahl zurück statt `line.name` leer zu schreiben
-  (Regel 10); `save()`s `looseMatch` bekommt einen Guard gegen leere Namen (Regel 11, gezielte
-  Änderung von Invariante 1). Neue Invariante 6, AC-13 bis AC-16, Test Plan erweitert. Status auf
+  (Regel 10); `save()`s Eingangsfilter überspringt Positionen mit leerem Namen (Regel 11, gezielte
+  Änderung von Invariante 1 — die in der Analyse behauptete Wirkung über `looseMatch` wurde in
+  `/40-tdd-red` widerlegt und in Regel 11 richtiggestellt). Neue Invariante 6, AC-13 bis AC-16,
+  Test Plan erweitert. Status auf
   `draft` gesetzt, Approval erneut zurückgesetzt. Issue #50, Paket 2 (Bontext lesbar/kopierbar/
   wählbar) bleibt Issue #65 vorbehalten, nicht Teil dieser Erweiterung.
 </content>

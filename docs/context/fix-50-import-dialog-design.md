@@ -374,6 +374,17 @@ fest.
 
 ### Und die Folge beim Speichern ist schwerwiegender als gedacht
 
+> **⚠️ KORREKTUR (2026-09-27, in `/40-tdd-red` vor dem ersten Test):** Der folgende Abschnitt ist
+> in seiner Schlussfolgerung **falsch** und wurde in der Spec richtiggestellt — siehe
+> `docs/specs/views/receipt-review-card.md`, „Regel 11". Kurz: `looseMatch` wird nie direkt
+> benutzt, sondern nur über `match`, und davor steht eine Ähnlichkeitsschwelle
+> (`lcsSimilarity >= 0,6`), die bei leerem Namen sofort 0 liefert. Ein leerer Name kann deshalb
+> **keinen fremden Kaufdatensatz verfälschen**. Der echte Schaden ist ein anderer: `save()` legt
+> einen **namenlosen Kaufdatensatz** in der Ausgabenhistorie an und lernt einen Preis unter dem
+> **leeren Schlüssel**. Die Probe `probe-empty-name.swift` hat nur den `contains`-Teil gemessen
+> und den nachgelagerten Filter übersehen. Der Abschnitt bleibt als Herleitung stehen, seine
+> Schlussfolgerung gilt nicht.
+
 `ReceiptScannerView.save()` sucht den Artikel notfalls über eine Substring-Suche
 (`looseMatch`, Z. 644–650):
 

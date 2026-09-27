@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/views/receipt-review-card.md
-spec_sha256: 03629182559051595308098dade53ac37558be97d5da3a8675bda32c9fe1a57e
+spec_sha256: 234667dab0bd1b17035676ec5f86a6d65f4257dbd152d6d7cd21014251654245
 ---
 
 # PO-Briefing: fix-50-import-dialog-design
