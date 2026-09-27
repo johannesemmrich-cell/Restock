@@ -100,12 +100,10 @@ struct EditableReceiptLine: Identifiable {
     /// die Ausgabenhistorie schreiben und einen Preis unter dem leeren Schlüssel lernen. Bewusst
     /// hier neben `learningQuantity`/`learningUnit`, weil die Bedingung eine Aussage über die
     /// ZEILE ist, nicht über die View.
-    ///
-    /// ZWISCHENSTAND (TDD RED, Issue #50): die Namensbedingung fehlt noch — die Regel trägt
-    /// bislang nur die beiden bisherigen Bedingungen, damit der Test aus Regel 11 den heutigen
-    /// Zustand messen kann, statt am Compiler zu scheitern.
     static func isSavable(_ line: EditableReceiptLine) -> Bool {
-        line.isIncluded && line.price > 0
+        line.isIncluded
+            && line.price > 0
+            && !line.name.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     /// Indizes von Zeilen, die Stufe 5 (Apple Intelligence) noch NICHT durchlaufen haben — erkannt
@@ -614,7 +612,7 @@ struct ReceiptScannerView: View {
     }
 
     private func save() {
-        let included = parsedLines.filter { $0.isIncluded && $0.price > 0 }
+        let included = parsedLines.filter { EditableReceiptLine.isSavable($0) }
         let cutoff = Date().addingTimeInterval(-7 * 24 * 3600)
         let storeNameLower = store.name.lowercased()
 
