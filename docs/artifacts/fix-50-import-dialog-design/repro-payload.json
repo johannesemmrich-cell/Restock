@@ -1,0 +1,67 @@
+{
+  "storeID": "3F92F061-59B1-40C5-B213-5FDA985E4670",
+  "storeConfidentlyDetected": true,
+  "detectedTotal": 10.22,
+  "rawLines": [
+    "BTR",
+    "MILCH 3,5% FRISCH",
+    "BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G",
+    "MILCH",
+    "BROETCHEN"
+  ],
+  "lines": [
+    {
+      "name": "BTR",
+      "originalName": "BTR",
+      "price": 1.49,
+      "quantity": 1,
+      "unit": "",
+      "suggestions": [],
+      "resolvedByAI": false
+    },
+    {
+      "name": "Frische Vollmilch 3,5 %",
+      "originalName": "MILCH 3,5% FRISCH",
+      "price": 1.19,
+      "quantity": 1,
+      "unit": "",
+      "suggestions": [],
+      "matchedItemID": "5A6B0A63-4102-497A-BE69-AF4F7303450C",
+      "resolvedByAI": true
+    },
+    {
+      "name": "Bio-Hackfleisch gemischt Rind & Schwein 400 g",
+      "originalName": "BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G",
+      "price": 4.99,
+      "quantity": 1,
+      "unit": "400g",
+      "suggestions": [],
+      "matchedItemID": "D5EF4F79-F11E-4202-B3C1-C3E3F86FAF01",
+      "resolvedByAI": false
+    },
+    {
+      "name": "Milch",
+      "originalName": "MILCH",
+      "price": 0.99,
+      "quantity": 1,
+      "unit": "",
+      "suggestions": [
+        { "id": "11111111-1111-4111-8111-111111111111", "name": "Hafermilch", "itemID": "5DA8808E-1DA5-463E-8FC2-143FD39B59A9" },
+        { "id": "22222222-2222-4222-8222-222222222222", "name": "Buttermilch", "itemID": "78F80C32-9B33-4B1F-B930-3B81523CC7E2" },
+        { "id": "33333333-3333-4333-8333-333333333333", "name": "Vollmilch", "itemID": "5A6B0A63-4102-497A-BE69-AF4F7303450C" }
+      ],
+      "matchedItemID": "03C2066A-8A1A-422B-8B54-B11166F84CD3",
+      "resolvedByAI": false
+    },
+    {
+      "name": "Brötchen",
+      "originalName": "BROETCHEN",
+      "price": 1.56,
+      "quantity": 4,
+      "unit": "",
+      "suggestions": [],
+      "matchedItemID": "1DDA51AE-7EB4-44BD-A792-FCD58157BBC0",
+      "resolvedByAI": false
+    }
+  ]
+}
