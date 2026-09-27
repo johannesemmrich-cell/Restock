@@ -92,6 +92,22 @@ struct EditableReceiptLine: Identifiable {
         return "stk"
     }
 
+    /// Darf diese Position gespeichert werden? (Issue #50, Paket 1, Regel 11 —
+    /// `docs/specs/views/receipt-review-card.md`.)
+    ///
+    /// Trägt die bisher in `save()` inline stehende Bedingung (`isIncluded && price > 0`) und
+    /// ergänzt sie um den leeren Namen: `save()` würde sonst einen `PurchaseRecord` OHNE Namen in
+    /// die Ausgabenhistorie schreiben und einen Preis unter dem leeren Schlüssel lernen. Bewusst
+    /// hier neben `learningQuantity`/`learningUnit`, weil die Bedingung eine Aussage über die
+    /// ZEILE ist, nicht über die View.
+    ///
+    /// ZWISCHENSTAND (TDD RED, Issue #50): die Namensbedingung fehlt noch — die Regel trägt
+    /// bislang nur die beiden bisherigen Bedingungen, damit der Test aus Regel 11 den heutigen
+    /// Zustand messen kann, statt am Compiler zu scheitern.
+    static func isSavable(_ line: EditableReceiptLine) -> Bool {
+        line.isIncluded && line.price > 0
+    }
+
     /// Indizes von Zeilen, die Stufe 5 (Apple Intelligence) noch NICHT durchlaufen haben — erkannt
     /// daran, dass ihr Name unverändert dem OCR-Rohtext entspricht UND `resolvedByAI` false ist
     /// (ein per Alias/Fuzzy-Match bereits aufgelöster Name wäre von `originalName` verschieden,

@@ -403,4 +403,59 @@ final class ReceiptReviewCardTests: XCTestCase {
         XCTAssertEqual(line.unit, "250g", "Die gedruckte Größe ist Anzeige, kein Eingabefeld.")
         XCTAssertEqual(line.originalName, "LACHS 250G", "Der Bontext darf sich nie ändern.")
     }
+
+    // MARK: - Issue #50, Paket 1 — Regel 10: leerer Name ist kein speicherbarer Zustand
+
+    /// AC-15 — Leert der Nutzer das vorbelegte Feld „Anderer Name …", fällt die Zeile auf die
+    /// Auswahl zurück, die unmittelbar zuvor galt. `line.name` wird nie leer geschrieben, weil
+    /// `save()` daraus einen Kaufdatensatz ohne Namen machen würde.
+    func testApplyCustomNameOrFallbackRestoresPreviousSelectionOnEmptyName() {
+        let vollmilchID = UUID()
+        var line = makeLine(name: "Vollmilch", price: 1.19, originalName: "MILCH 3,5% FRISCH",
+                            matchedItemID: vollmilchID)
+
+        ReceiptReviewCard.applyCustomNameOrFallback(
+            &line, name: "",
+            previousSelection: (name: "Vollmilch", matchedItemID: vollmilchID, resolvedByAI: false))
+
+        XCTAssertEqual(line.name, "Vollmilch",
+                       "Der leere Zwischenstand darf nie in die Zeile geschrieben werden.")
+        XCTAssertEqual(line.matchedItemID, vollmilchID,
+                       "Die Artikel-Zuordnung der vorherigen Auswahl kommt mit zurück.")
+        XCTAssertFalse(line.resolvedByAI)
+    }
+
+    /// AC-15 — Alle drei Felder fallen zurück, nicht nur der Name: ein KI-Vorschlag käme sonst
+    /// ohne seine Art.-50-Kennzeichnung wieder, obwohl er sie vorher trug.
+    func testApplyCustomNameOrFallbackRestoresAIStateOnEmptyName() {
+        let aiID = UUID()
+        var line = makeLine(name: "Frische Vollmilch", price: 1.19, originalName: "MILCH 3,5%",
+                            matchedItemID: aiID, resolvedByAI: true,
+                            aiSuggestedName: "Frische Vollmilch", aiSuggestedMatchedItemID: aiID)
+
+        ReceiptReviewCard.applyCustomNameOrFallback(
+            &line, name: "",
+            previousSelection: (name: "Frische Vollmilch", matchedItemID: aiID, resolvedByAI: true))
+
+        XCTAssertEqual(line.name, "Frische Vollmilch")
+        XCTAssertTrue(line.resolvedByAI,
+                      "Die KI-Kennzeichnung gehört zur vorherigen Auswahl und muss mit zurückkommen.")
+        XCTAssertEqual(line.matchedItemID, aiID)
+    }
+
+    /// AC-15 (Regression) — Für jeden nicht-leeren Namen verhält sich die neue Funktion exakt wie
+    /// das bestehende `applyCustomName`: eigene Eingabe löst Artikel-Identität und KI-Kennzeichnung.
+    func testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged() {
+        var line = makeLine(name: "Vollmilch", price: 1.19, originalName: "MILCH 3,5% FRISCH",
+                            matchedItemID: UUID(), resolvedByAI: true)
+
+        ReceiptReviewCard.applyCustomNameOrFallback(
+            &line, name: "H-Milch",
+            previousSelection: (name: "Vollmilch", matchedItemID: UUID(), resolvedByAI: true))
+
+        XCTAssertEqual(line.name, "H-Milch")
+        XCTAssertNil(line.matchedItemID, "Ein selbst getippter Name trägt keine Artikel-Identität.")
+        XCTAssertFalse(line.resolvedByAI, "Ein selbst getippter Name ist kein KI-Vorschlag.")
+        XCTAssertEqual(line.originalName, "MILCH 3,5% FRISCH", "Der Bontext bleibt unangetastet.")
+    }
 }

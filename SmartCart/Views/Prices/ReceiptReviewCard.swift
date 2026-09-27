@@ -466,6 +466,25 @@ struct ReceiptReviewCard: View {
         line.resolvedByAI = false
     }
 
+    /// Eigener Name mit Rückfall auf die zuvor gewählte Option, wenn das Feld geleert wird
+    /// (Issue #50, Paket 1, Regel 10 — `docs/specs/views/receipt-review-card.md`).
+    ///
+    /// `applyCustomName` schreibt jeden Zwischenstand durch, also auch den leeren: `line.name`
+    /// stünde dann auf `""`, und `save()` legte für diese Position einen Kaufdatensatz ohne Namen
+    /// an. Diese Funktion fängt genau den leeren Zwischenstand ab; für jeden nicht-leeren Namen
+    /// verhält sie sich unverändert wie `applyCustomName`.
+    ///
+    /// ZWISCHENSTAND (TDD RED, Issue #50): die Rückfall-Verzweigung fehlt noch — die Funktion
+    /// delegiert bislang unverändert an `applyCustomName`, damit die Tests aus Regel 10 den
+    /// heutigen Zustand messen, statt am Compiler zu scheitern.
+    static func applyCustomNameOrFallback(
+        _ line: inout EditableReceiptLine,
+        name: String,
+        previousSelection: (name: String, matchedItemID: UUID?, resolvedByAI: Bool)
+    ) {
+        applyCustomName(&line, name: name)
+    }
+
     /// Preis · Menge/Gewicht/Größe · Stück-/Kilo-/Literpreis — in derselben Reihenfolge, die
     /// `EditableReceiptLine.learningQuantity` fürs Preis-Lernen benutzt. Der Nutzer sieht damit
     /// vor dem Speichern genau die Basis, mit der die App rechnen wird.
