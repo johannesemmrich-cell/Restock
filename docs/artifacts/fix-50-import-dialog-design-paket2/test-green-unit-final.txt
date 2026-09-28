@@ -1,0 +1,136 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockTests/ReceiptReviewCardTests" test
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-09-28 13:39:40.740717+0200 Restock[58673:81009921] [General] Failed to connect to linkd to request update AppShortcut parameters, error: Kommunikation mit der Hilfs-App nicht möglich.
+2026-09-28 13:39:40.928254+0200 Restock[58673:81009728] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-09-28 13:39:41.217488+0200 Restock[58673:81009728] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-09-28 13:39:41.245430+0200 Restock[58673:81009951] [CK] Could not validate account info cache. (This is a potential performance issue.)
+2026-09-28 13:39:41.378035+0200 Restock[58673:81009924] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x107eec1c0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x107e48500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1DCC318A-3AEB-4793-AA9F-2B25B14CB5CF/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 13:39:41.378568+0200 Restock[58673:81009924] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x107eec1c0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 13:39:41.380964+0200 Restock[58673:81009924] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x107eec1c0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-09-28 13:39:41.526895+0200 Restock[58673:81009955] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+[AppDelegate] push registration succeeded, token length: 80
+Test Suite 'Selected tests' started at 2026-09-28 13:39:42.343.
+Test Suite 'RestockTests.xctest' started at 2026-09-28 13:39:42.345.
+Test Suite 'ReceiptReviewCardTests' started at 2026-09-28 13:39:42.345.
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiLineWithTwoSuggestionsOffersFourOptionsWithAiFirst]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiLineWithTwoSuggestionsOffersFourOptionsWithAiFirst]' passed (0.010 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiSuggestionIsDroppedWhenAListMatchCarriesTheSameName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiSuggestionIsDroppedWhenAListMatchCarriesTheSameName]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackFallsBackToOriginalNameWhenPreviousSelectionIsWhitespaceOnly]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackFallsBackToOriginalNameWhenPreviousSelectionIsWhitespaceOnly]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresAIStateOnEmptyName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresAIStateOnEmptyName]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnEmptyName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnEmptyName]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnWhitespaceOnlyName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnWhitespaceOnlyName]' passed (0.017 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditFloorsPiecesAtOne]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditFloorsPiecesAtOne]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditNeverTouchesUnitOrOriginalName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditNeverTouchesUnitOrOriginalName]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithGramsSetsWeightAndResetsQuantity]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithGramsSetsWeightAndResetsQuantity]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithPiecesSetsQuantityAndClearsWeight]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithPiecesSetsQuantityAndClearsWeight]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingAiSuggestionRestoresAiStateAfterAnotherSelection]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingAiSuggestionRestoresAiStateAfterAnotherSelection]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingListMatchSetsNameAndItemAndClearsAiFlag]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingListMatchSetsNameAndItemAndClearsAiFlag]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingReceiptTextSetsNameAndClearsMatchAndAiFlag]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingReceiptTextSetsNameAndClearsMatchAndAiFlag]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testCurrentNameIsOfferedAndPreselectedWhenNoCandidateMatches]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testCurrentNameIsOfferedAndPreselectedWhenNoCandidateMatches]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testEnteringCustomNameClearsMatchAndAiFlag]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testEnteringCustomNameClearsMatchAndAiFlag]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testFiveSuggestionsAreCappedToThreeListMatches]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testFiveSuggestionsAreCappedToThreeListMatches]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testLineWithoutSuggestionsAndWithoutAiKeepsCurrentName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testLineWithoutSuggestionsAndWithoutAiKeepsCurrentName]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testNormalizedReceiptTextCapitalizesEachWord]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testNormalizedReceiptTextCapitalizesEachWord]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testNormalizedReceiptTextKeepsHyphenatedWordAsOneUnit]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testNormalizedReceiptTextKeepsHyphenatedWordAsOneUnit]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testOriginalNameSurvivesAllThreeSelectionPaths]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testOriginalNameSurvivesAllThreeSelectionPaths]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPreselectedListMatchIsSortedFirstRegardlessOfCase]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPreselectedListMatchIsSortedFirstRegardlessOfCase]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryFallsBackToSinglePiece]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryFallsBackToSinglePiece]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesLitrePriceForLiquids]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesLitrePriceForLiquids]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesPrintedGramSize]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesPrintedGramSize]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesQuantityWhenGreaterThanOne]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesQuantityWhenGreaterThanOne]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesWeightBasisFirst]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesWeightBasisFirst]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testSectionHeaderTextShowsCountSelectedAndSum]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testSectionHeaderTextShowsCountSelectedAndSum]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionAcceptsDifferingName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionAcceptsDifferingName]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionAcceptsEmptySelection]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionAcceptsEmptySelection]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionRejectsNameEqualToSelection]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionRejectsNameEqualToSelection]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionRejectsNamesBelowMinLength]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionRejectsNamesBelowMinLength]' passed (0.001 seconds).
+Test Suite 'ReceiptReviewCardTests' passed at 2026-09-28 13:39:42.428.
+	 Executed 33 tests, with 0 failures (0 unexpected) in 0.058 (0.083) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-09-28 13:39:42.429.
+	 Executed 33 tests, with 0 failures (0 unexpected) in 0.058 (0.084) seconds
+Test Suite 'Selected tests' passed at 2026-09-28 13:39:42.429.
+	 Executed 33 tests, with 0 failures (0 unexpected) in 0.058 (0.086) seconds
+2026-09-28 13:39:42.761 xcodebuild[58632:81009282] [MT] IDETestOperationsObserverDebug: 6.385 elapsed -- Testing started completed.
+2026-09-28 13:39:42.761 xcodebuild[58632:81009282] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-28 13:39:42.761 xcodebuild[58632:81009282] [MT] IDETestOperationsObserverDebug: 6.385 sec, +6.385 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Logs/Test/Test-Restock-2026.09.28_13-39-35-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

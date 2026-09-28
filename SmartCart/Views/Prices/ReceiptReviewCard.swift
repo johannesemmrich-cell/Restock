@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // MARK: - Auswahl-Optionen einer Bon-Position
 
@@ -17,6 +18,10 @@ enum ReceiptNameOption: Identifiable {
     case aiSuggestion(name: String)
     /// Rückfall, wenn es weder Treffer noch KI-Vorschlag gibt: der heutige Name der Zeile.
     case currentName(name: String)
+    /// Der gedruckte Bontext, wortweise großgeschrieben — Marke „wie auf dem Bon" (Issue #65).
+    /// Erscheint erst NACH den inhaltlichen Kandidaten (Regeln 1-6) und zählt nicht zu deren
+    /// Kappung auf max. 3 (Regel 4) — sie ist ein Add-on, immer unmittelbar vor „Anderer Name …".
+    case receiptText(name: String)
     /// „Anderer Name …" — immer die letzte Zeile.
     case custom
 
@@ -25,6 +30,7 @@ enum ReceiptNameOption: Identifiable {
         case .listMatch(let suggestion): return "listMatch-\(suggestion.id)"
         case .aiSuggestion(let name):    return "ai-\(name)"
         case .currentName(let name):     return "current-\(name)"
+        case .receiptText(let name):     return "bon-\(name)"
         case .custom:                    return "custom"
         }
     }
@@ -35,6 +41,7 @@ enum ReceiptNameOption: Identifiable {
         case .listMatch(let suggestion): return suggestion.name
         case .aiSuggestion(let name):    return name
         case .currentName(let name):     return name
+        case .receiptText(let name):     return name
         case .custom:                    return "Anderer Name …"
         }
     }
@@ -45,6 +52,7 @@ enum ReceiptNameOption: Identifiable {
         case .listMatch(let suggestion): return suggestion.name
         case .aiSuggestion(let name):    return name
         case .currentName(let name):     return name
+        case .receiptText(let name):     return name
         case .custom:                    return nil
         }
     }
@@ -131,13 +139,19 @@ struct ReceiptReviewCard: View {
             HStack(alignment: .top, spacing: 12) {
                 // Der gedruckte Bontext ist das eigentliche Prüfkriterium dieses Screens und wird
                 // deshalb NIE gekürzt — kein `lineLimit`, stattdessen Umbruch in eine zweite Zeile.
+                // Issue #65, Paket 2: lesbar (15 pt statt 13, `Color.ink` statt `textSecondary`)
+                // und kopierbar — der unveränderte Bontext wandert über das Kontextmenü in die
+                // Zwischenablage, nie der ausgewählte Name.
                 Text(line.originalName)
-                    .font(.system(size: 13))
-                    .foregroundStyle(Color.textSecondary)
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.ink)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .opacity(line.isIncluded ? 1 : 0.4)
                     .accessibilityIdentifier("receiptReview.line.\(index).originalName")
+                    .contextMenu {
+                        Button("Kopieren") { UIPasteboard.general.string = line.originalName }
+                    }
 
                 checkbox
             }
@@ -207,6 +221,14 @@ struct ReceiptReviewCard: View {
                         Spacer(minLength: 4)
                         if case .listMatch = option {
                             Text("auf deiner Liste")
+                                .font(.system(size: 11))
+                                .foregroundStyle(Color.textSecondary)
+                                .fixedSize()
+                        }
+                        // Issue #65, Paket 2: dieselbe Marken-Form wie „auf deiner Liste",
+                        // damit die Herkunft der Zeile ohne zweite Gestaltungssprache ablesbar ist.
+                        if case .receiptText = option {
+                            Text("wie auf dem Bon")
                                 .font(.system(size: 11))
                                 .foregroundStyle(Color.textSecondary)
                                 .fixedSize()
@@ -374,6 +396,8 @@ struct ReceiptReviewCard: View {
                 && line.name.caseInsensitiveCompare(line.aiSuggestedName ?? name) == .orderedSame
         case .currentName(let name):
             return !customActive && line.name.caseInsensitiveCompare(name) == .orderedSame
+        case .receiptText(let name):
+            return !customActive && line.name.caseInsensitiveCompare(name) == .orderedSame
         case .custom:
             return customActive
         }
@@ -449,8 +473,38 @@ struct ReceiptReviewCard: View {
         // 6. Gar kein Kandidat: den heutigen Namen anbieten.
         if candidates.isEmpty { candidates = [.currentName(name: line.name)] }
 
-        // 7. „Anderer Name …" immer als letzte Zeile.
+        // 7. (Issue #65) Bontext als eigene Auswahlzeile anbieten, sofern nicht unterdrückt.
+        if shouldOfferReceiptTextOption(originalName: line.originalName, selectedName: line.name) {
+            candidates.append(.receiptText(name: normalizedReceiptText(
+                line.originalName.trimmingCharacters(in: .whitespaces))))
+        }
+
+        // 8. „Anderer Name …" immer als letzte Zeile.
         return candidates + [.custom]
+    }
+
+    /// Wortweise Großschreibung des gedruckten Bontexts für die Auswahlzeile „wie auf dem Bon"
+    /// (Issue #65). Bewusst NICHT `ReceiptParserService.smartCapitalize` — die kapitalisiert nur
+    /// das erste Wort und wirkt nur bei durchgehender Großschreibung; ihre vier bestehenden
+    /// Aufrufstellen dort verfolgen eine andere Absicht (Normalform für Aliase/Matching, nicht
+    /// Anzeige). Feste Regel, kein Sprachmodell.
+    static func normalizedReceiptText(_ raw: String) -> String {
+        raw.split(separator: " ").map { word -> String in
+            guard let first = word.first else { return "" }
+            return String(first).uppercased() + word.dropFirst().lowercased()
+        }.joined(separator: " ")
+    }
+
+    /// Mindestlänge des gedruckten Bontexts, ab der die Bon-Zeile überhaupt angeboten wird —
+    /// „BTR" (3 Zeichen) ist das vom PO selbst genannte Unsinns-Beispiel und fällt damit heraus.
+    private static let receiptTextMinLength = 4
+
+    /// Zwei Bedingungen (Issue #65): Mindestlänge UND Namensungleichheit zum AKTUELL gewählten
+    /// Namen — nicht zu allen angezeigten Kandidaten.
+    static func shouldOfferReceiptTextOption(originalName: String, selectedName: String) -> Bool {
+        let trimmed = originalName.trimmingCharacters(in: .whitespaces)
+        guard trimmed.count >= receiptTextMinLength else { return false }
+        return normalizedReceiptText(trimmed).caseInsensitiveCompare(selectedName) != .orderedSame
     }
 
     /// Übernimmt eine gewählte Option in die Zeile — Zeichen für Zeichen dieselben Zuweisungen
@@ -469,6 +523,12 @@ struct ReceiptReviewCard: View {
             line.resolvedByAI = true
         case .currentName(let name):
             line.name = name
+        case .receiptText(let name):
+            // Gleiche Form wie `.currentName` — die Bon-Zeile trägt weder einen Listen- noch
+            // einen KI-Treffer (Issue #65).
+            line.name = name
+            line.matchedItemID = nil
+            line.resolvedByAI = false
         case .custom:
             break
         }

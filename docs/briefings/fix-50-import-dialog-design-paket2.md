@@ -1,31 +1,32 @@
 ---
 spec_file: docs/specs/views/receipt-review-card.md
-spec_sha256: 5cf7a0d2adde63e1a5d60e86bbacd14cfeb60a551bc173b8e686c511afc548cb
+spec_sha256: d85c75ac81ecd8e9b485a628a484e2e74767c257dc4d5f31ed7191ec158efd32
 ---
 
 # PO-Briefing: fix-50-import-dialog-design-paket2
 
-- **Spec:** docs/specs/views/receipt-review-card.md
-- **Issue:** #65 (Inhalt bereits freigegeben — hier nur eine Korrektur danach)
+- **Spec:** docs/specs/views/receipt-review-card.md (Korrektur AC-20)
+- **Issue:** #65 (Kontext-Dokument: docs/context/fix-50-import-dialog-design-paket2.md)
 - **Erstellt:** 2026-09-28
 
 ## Was gebaut wird
 
-Unverändert gegenüber der bereits freigegebenen Fassung: Bon-Text wird lesbarer, kopierbar, als eigene Auswahlzeile wählbar.
+Lange gedrückter Bontext im Bon-Prüf-Screen kopiert den gedruckten Namen in die Zwischenablage.
 
 ## Definition of Done
 
-Unverändert: Bon-Text größer, kopierbar, erscheint als Auswahl ab vier Zeichen Abweichung vom gewählten Namen.
+PO erkennt es daran, dass sich das Kontextmenü mit „Kopieren" per Test nachweisbar öffnet; ob der Text stimmt, bestätigt nur eine Codeprüfung.
 
 ## Wie geprüft wird
 
-Ein neuer Test verwies auf die falsche Zeilen-Position; jetzt korrekt auf die tatsächliche Reihenfolge der Auswahlzeilen ausgerichtet.
+Automatisierter Test zeigt nur: Menü öffnet sich, „Kopieren" ist da und antippbar; ob der kopierte Text stimmt, testet er nicht.
 
 ## Kritische Anmerkungen
 
-- Reine Korrektur eines Test-internen Zeilen-Index (kein Verhalten, kein Umfang geändert) — keine neue PO-Entscheidung nötig.
-- Inhalt und Umfang der Erweiterung selbst wurden hier nicht erneut geprüft (bereits freigegeben).
+- Ursprünglich als vollautomatisch testbar geplant; iOS verlangt seit Version 16 eine Nutzerbestätigung, die im Testlauf nie kommt.
+- Gleiche reduzierte Prüftiefe wie bereits bei der Schriftgröße (AC-19) in derselben Karte akzeptiert.
+- Funktion selbst unverändert — nur der automatisierte Nachweisweg ist eingeschränkt, nicht die App-Funktion.
 
 ## Freigabe-Frage
 
-Bestätigst du, dass diese reine Test-Index-Korrektur keine erneute inhaltliche Prüfung braucht und die vorherige Freigabe bestehen bleibt?
+Reicht eine Codeprüfung statt automatisiertem Test als Nachweis, dass der kopierte Text stimmt — wie schon bei der Schriftgröße akzeptiert?

@@ -1154,11 +1154,12 @@ und die Index-Assertion für `.custom`/`.currentName` angepasst, siehe Tabelle o
 **UI — `RestockUITests/ReceiptReviewUITests.swift`, neu** (Einstieg über den bestehenden
 `Seed.aiLine`, kein neuer Seed nötig — die Bon-Zeile erscheint dort bereits deterministisch):
 
-- [ ] **AC-20 (Kopieren via Kontextmenü):** GIVEN die Bontext-Zeile von `receiptReview.line.0`
-  (`Seed.aiLine`, Text „MILCH 3,5% FRISCH") WHEN lange auf sie gedrückt und „Kopieren" im
-  Kontextmenü angetippt wird THEN enthält `UIPasteboard.general.string` exakt
-  `"MILCH 3,5% FRISCH"` — der unveränderte, ungetrimmte `originalName`, nicht der normalisierte
-  Anzeigetext der Auswahlzeile.
+- [ ] **AC-20 (Kopieren via Kontextmenü, Verdrahtung):** GIVEN die Bontext-Zeile von
+  `receiptReview.line.0` (`Seed.aiLine`, Text „MILCH 3,5% FRISCH") WHEN lange auf sie gedrückt wird
+  THEN öffnet sich ein Kontextmenü mit einem antippbaren Eintrag „Kopieren"
+  (`app.buttons["Kopieren"]` — SwiftUIs `.contextMenu` rendert seine Einträge auf iOS als `Button`
+  in einer `CollectionView`-Zelle, NICHT als `.menuItem`). Der tatsächliche Pasteboard-Inhalt nach
+  dem Antippen wird NICHT über diesen Test geprüft — siehe „Nicht UI-testbar (AC-20)" unten.
   Test: `testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard`.
 - [ ] **AC-21 (Bon-Zeile als Auswahl, UI):** GIVEN `receiptReview.line.0.option.1` (die neue
   Bon-Zeile an `Seed.aiLine` — sie steht zwischen der KI-Zeile an `option.0` und „Anderer Name …",
@@ -1179,6 +1180,29 @@ den Bedienhilfen-Baum (Label, Existenz, Traits), nicht Schriftgröße oder Farbw
 Code-Review am `.font`/`.foregroundStyle`-Modifier in `ReceiptReviewCard.swift:134-136`, kein
 eigener UI-Test für Pixelwerte — dieselbe Prüftiefe, mit der diese Spec an anderer Stelle bereits
 reine Farb-/Token-Entscheidungen behandelt (siehe „Risiken", Dark Mode).
+
+**Nicht UI-testbar (AC-20, tatsächlicher Pasteboard-Inhalt):** Ein UI-Test kann `UIPasteboard.general`
+nach dem Antippen von „Kopieren" nicht zuverlässig automatisiert lesen. Grund: `<App>UITests-Runner`
+und `Restock` sind auf iOS unterschiedliche Prozesse (unterschiedliche Bundle-IDs); ein Lesezugriff
+des Runner-Prozesses auf einen vom App-Prozess geschriebenen Pasteboard-Inhalt ist seit iOS 16 ein
+dokumentierter Cross-App-Zugriff, den das System per Bestätigungsdialog „<Runner> möchte von <App>
+einsetzen" abfängt (Apple, WWDC 2022 Session 10096 „What's new in privacy", ab ca. 9:24). Der Dialog
+erscheint in einem automatisierten `xcodebuild test`-Lauf deterministisch bei jedem Durchlauf und
+wird nie bestätigt — der Testlauf hängt dadurch unbegrenzt (real reproduziert: >40 min ohne
+Fortschritt, kein bekannter ~10-min-Diagnose-Hänger). `addUIInterruptionMonitor(withDescription:
+handler:)`, der naheliegende Standardweg für Systemdialoge, ist für genau diesen SpringBoard-
+generierten Alert auf iOS 17+ nachweislich unzuverlässig — mehrere offene, ungelöste Apple-Forum-
+Threads (737880, 806849, 717322) bestätigen dasselbe Hängen ohne funktionierenden Workaround; kein
+Entitlement/Launch-Argument unterdrückt die Abfrage für Testläufe. **Entschieden:** Der UI-Test prüft
+nur die Verdrahtung (Menüeintrag existiert, ist antippbar); der eine, unverzweigte Zuweisungs-Ausdruck
+`UIPasteboard.general.string = line.originalName` selbst wird per Code-Review verifiziert — dieselbe
+Prüftiefe wie AC-19, aus demselben Grund (eine Plattform-Grenze macht die Automatisierung
+unzuverlässig, nicht ein fehlender Testwille). **Alternativen (verworfen):** (b)
+`addUIInterruptionMonitor` + SpringBoard-Fallback — verworfen, siehe oben, nachweislich
+unzuverlässig für diesen Dialogtyp, Risiko exakt desselben Hängens. (a) In-App-Bestätigungsbrücke
+(DEBUG-only Spiegel-Label, das den kopierten Text im Accessibility-Baum der App selbst zeigt) —
+verworfen als Scope-Erweiterung für eine einzeilige, durch Inspektion offensichtlich korrekte
+Zuweisung; keine neue Produktoberfläche nur für einen Testnachweis.
 
 **Bestehende Tests, unverändert (bestätigt für Paket 1):**
 `testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches`
@@ -1272,8 +1296,10 @@ diese Spec GREEN macht.
   in 15pt und `Color.ink` dargestellt (bisher 13pt/`Color.textSecondary`) — nicht eigenständig per
   UI-Test geprüft (Rendering-Attribut, siehe Test Plan), verifiziert per Code-Review.
 - **AC-20 (Issue #65, Paket 2 — kopierbar):** Ein langer Druck auf den Bontext öffnet ein
-  Kontextmenü mit „Kopieren"; danach enthält die Zwischenablage exakt `line.originalName`
-  (unverändert, ungetrimmt).
+  Kontextmenü mit „Kopieren" — per UI-Test geprüft (Verdrahtung: Menüeintrag existiert, ist
+  antippbar). Dass danach `UIPasteboard.general.string = line.originalName` (unverändert,
+  ungetrimmt) gilt, ist NICHT automatisiert testbar (siehe „Nicht UI-testbar" im Test Plan) und
+  wird per Code-Review verifiziert — dieselbe Prüftiefe wie AC-19.
 - **AC-21 (Issue #65, Paket 2 — Bon-Zeile als Auswahl):** Ist der wortweise großgeschriebene
   Bontext nicht case-insensitiv identisch mit dem aktuell geltenden Namen (`line.name`), erscheint
   er als eigene, antippbare Auswahlzeile „wie auf dem Bon" unmittelbar vor „Anderer Name …";
@@ -1650,3 +1676,22 @@ Einfügung) ergibt der Ablauf `[aiSuggestion, receiptText, custom]` — `option.
 Beide Stellen (GIVEN und die `isSelected`-Prüfung) auf `option.1` korrigiert. Kein weiterer Fund bei
 dieser Prüfung; die vier bereits korrigierten bestehenden UI-Tests (`option.1`→`option.2`) und alle
 übrigen Zeilenangaben blieben beim erneuten Nachrechnen bestätigt.
+
+### 2026-09-28 — Korrektur in `/50-implement`: AC-20 nicht automatisiert bis zum Pasteboard-Inhalt prüfbar
+
+GREEN-Lauf fand zwei echte, im RED-Test selbst liegende Fehler (nicht im Produktcode):
+
+1. `app.menuItems["Kopieren"]` traf nie — SwiftUIs `.contextMenu` rendert seine Einträge auf iOS als
+   `Button` in einer `CollectionView`-Zelle, nicht als `.menuItem` (per aufgezeichneter
+   Bedienhilfen-Hierarchie belegt). Zu `app.buttons["Kopieren"]` korrigiert.
+2. Nach dieser Korrektur hing der Testlauf reproduzierbar (>40 min, kein Fortschritt) an einem
+   iOS-Systemdialog „RestockUITests-Runner möchte von Restock einsetzen" — Recherche (WWDC 2022
+   Session 10096; Apple-Forum-Threads 737880, 806849, 717322, 684548) bestätigt: seit iOS 16
+   verlangt ein Cross-Process-Lesezugriff auf `UIPasteboard.general` eine Nutzerbestätigung, die in
+   `xcodebuild test` nie kommt; `addUIInterruptionMonitor` ist für diesen SpringBoard-Alert auf
+   iOS 17+ laut mehreren offenen, ungelösten Apple-Forum-Threads nachweislich unzuverlässig, kein
+   Entitlement/Launch-Argument unterdrückt die Abfrage. AC-20 und der zugehörige Test Plan-Eintrag
+   auf „Verdrahtung UI-testbar, Pasteboard-Inhalt per Code-Review" umgestellt — neuer Abschnitt
+   „Nicht UI-testbar (AC-20, tatsächlicher Pasteboard-Inhalt)" mit Quellen und zwei geprüften,
+   verworfenen Alternativen. Gleiche Prüftiefe wie AC-19, aus vergleichbarem Grund
+   (Plattform-Grenze statt fehlender Testwille). Kein Produktcode geändert.
