@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Gleicher Name, zwei Wege</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1b1a16;
+    --panel: #242219;
+    --panel-2: #2c2a1f;
+    --ink: #eeece2;
+    --ink-dim: #a79e8b;
+    --hair: rgba(238,236,226,0.12);
+    --accent: #a7ae6b;
+    --accent-ink: #1b1a16;
+    --problem: #cf7a54;
+    --problem-bg: rgba(207,122,84,0.14);
+    --good-bg: rgba(167,174,107,0.14);
+
+    /* App-Tokens (echte Farben aus Assets.xcassets, RC*.colorset) */
+    --app-canvas-l: #f5f2e9; --app-canvas-d: #141310;
+    --app-surface-l: #fdfbf4; --app-surface-d: #1d1c16;
+    --app-ink-l: #201d16; --app-ink-d: #ebe7da;
+    --app-sec-l: #6f6a5b; --app-sec-d: #a29b8a;
+    --app-hair-l: rgba(32,29,22,0.13); --app-hair-d: rgba(235,231,218,0.13);
+    --app-accent-l: #666f38; --app-accent-d: #a7ae6b;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); }
+  body {
+    margin: 0;
+    padding-inline: 20px;
+    padding-block: 48px 64px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Source Sans 3", system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .page { width: 100%; max-width: 1180px; display: flex; flex-direction: column; gap: 56px; }
+
+  /* ---------- Header ---------- */
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::before { content: "●"; font-size: 8px; }
+
+  h1 {
+    font-family: "Fraunces", serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.05;
+    margin: 14px 0 0;
+    text-wrap: balance;
+    max-width: 14ch;
+  }
+
+  .lede {
+    margin-top: 18px;
+    max-width: 62ch;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-dim);
+  }
+  .lede b { color: var(--ink); font-weight: 600; }
+  .lede code, .note code {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.88em;
+    background: rgba(238,236,226,0.08);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    color: var(--ink);
+  }
+
+  .scene {
+    margin-top: 26px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    color: var(--ink-dim);
+    background: var(--panel);
+    border: 1px solid var(--hair);
+    border-radius: 10px;
+    padding: 12px 16px;
+    max-width: fit-content;
+  }
+  .scene b { color: var(--ink); font-weight: 500; }
+
+  /* ---------- Theme toggle ---------- */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .toggle-label { font-size: 13px; color: var(--ink-dim); }
+  .toggle {
+    display: inline-flex;
+    background: var(--panel);
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .toggle button {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    color: var(--ink-dim);
+    padding: 7px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .toggle button.active { background: var(--accent); color: var(--accent-ink); }
+  .toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- Specimen row ---------- */
+  .row-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 18px;
+  }
+
+  .specimens {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+  @media (max-width: 900px) {
+    .specimens { grid-template-columns: 1fr; }
+  }
+
+  .specimen {
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border: 1px solid var(--hair);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .specimen.is-today { outline: 1px solid rgba(207,122,84,0.4); }
+  .specimen.is-recommended { outline: 1px solid rgba(167,174,107,0.55); }
+  .specimen.is-rejected { opacity: 0.55; }
+
+  .specimen-tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .specimen.is-today .specimen-tag { color: var(--problem); background: var(--problem-bg); }
+  .specimen.is-recommended .specimen-tag { color: var(--accent); background: var(--good-bg); }
+  .specimen.is-rejected .specimen-tag { color: var(--ink-dim); background: rgba(238,236,226,0.06); }
+  .pill-star { font-size: 10px; opacity: 0.85; }
+
+  /* ---------- Fix-flow (Anderer Name) ---------- */
+  .fix-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
+  }
+  @media (max-width: 800px) {
+    .fix-flow { flex-direction: column; }
+    .fix-arrow { transform: rotate(90deg); align-self: center; }
+  }
+  .fix-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border: 1px solid var(--hair);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .fix-step-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--good-bg);
+    padding: 10px 18px;
+  }
+  .fix-caption {
+    margin: 0;
+    padding: 16px 18px 18px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-dim);
+    border-top: 1px solid var(--hair);
+    flex: 1;
+  }
+  .fix-caption b { color: var(--ink); font-weight: 600; }
+  .fix-arrow {
+    align-self: center;
+    font-size: 22px;
+    color: var(--ink-dim);
+  }
+
+  .rr-option.is-custom-active { align-items: center; }
+  .rr-custom-field {
+    font-size: 14.5px;
+    flex: 1;
+  }
+  .phone[data-mode="light"] .rr-custom-field { color: var(--app-ink-l); }
+  .phone[data-mode="dark"]  .rr-custom-field { color: var(--app-ink-d); }
+  .rr-custom-field .caret {
+    display: inline-block;
+    margin-left: 1px;
+    animation: blink 1s step-end infinite;
+  }
+  .phone[data-mode="light"] .rr-custom-field .caret { color: var(--app-accent-l); }
+  .phone[data-mode="dark"]  .rr-custom-field .caret { color: var(--app-accent-d); }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* --- Phone frame (echte App-Farben) --- */
+  .phone {
+    padding: 18px 16px 22px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  }
+  .phone[data-mode="light"] {
+    background: var(--app-canvas-l);
+  }
+  .phone[data-mode="dark"] {
+    background: var(--app-canvas-d);
+  }
+
+  .rr-card {
+    border-radius: 14px;
+    border: 1px solid transparent;
+    overflow: hidden;
+  }
+  .phone[data-mode="light"] .rr-card { background: var(--app-surface-l); border-color: var(--app-hair-l); }
+  .phone[data-mode="dark"]  .rr-card { background: var(--app-surface-d); border-color: var(--app-hair-d); }
+
+  .rr-name-section { padding: 14px; }
+  .rr-top { display: flex; align-items: flex-start; gap: 12px; }
+  .rr-receipt-text {
+    flex: 1;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+  .phone[data-mode="light"] .rr-receipt-text { color: var(--app-ink-l); }
+  .phone[data-mode="dark"]  .rr-receipt-text { color: var(--app-ink-d); }
+
+  .rr-checkbox {
+    width: 28px; height: 28px; border-radius: 8px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .phone[data-mode="light"] .rr-checkbox { background: var(--app-accent-l); }
+  .phone[data-mode="dark"]  .rr-checkbox { background: var(--app-accent-d); }
+  .rr-checkbox svg { width: 13px; height: 13px; }
+  .phone[data-mode="light"] .rr-checkbox svg { stroke: var(--app-canvas-l); }
+  .phone[data-mode="dark"]  .rr-checkbox svg { stroke: var(--app-canvas-d); }
+
+  .rr-options { margin-top: 10px; display: flex; flex-direction: column; }
+  .rr-option {
+    display: flex; align-items: center; gap: 10px;
+    height: 44px;
+    border-bottom-width: 1px; border-bottom-style: solid;
+  }
+  .phone[data-mode="light"] .rr-option { border-color: var(--app-hair-l); }
+  .phone[data-mode="dark"]  .rr-option { border-color: var(--app-hair-d); }
+  .rr-option:last-child { border-bottom: none; }
+
+  .rr-radio {
+    width: 20px; height: 20px; border-radius: 50%;
+    border-width: 1.6px; border-style: solid;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .phone[data-mode="light"] .rr-radio { border-color: var(--app-sec-l); }
+  .phone[data-mode="dark"]  .rr-radio { border-color: var(--app-sec-d); }
+  .rr-radio.filled { border-color: var(--app-accent-l); }
+  .phone[data-mode="dark"] .rr-radio.filled { border-color: var(--app-accent-d); }
+  .rr-radio.filled::after {
+    content: ""; width: 11px; height: 11px; border-radius: 50%;
+    background: var(--app-accent-l);
+  }
+  .phone[data-mode="dark"] .rr-radio.filled::after { background: var(--app-accent-d); }
+
+  .rr-option-name { font-size: 14.5px; flex: 1; }
+  .phone[data-mode="light"] .rr-option-name { color: var(--app-ink-l); }
+  .phone[data-mode="dark"]  .rr-option-name { color: var(--app-ink-d); }
+  .rr-option.is-custom .rr-option-name { }
+  .phone[data-mode="light"] .rr-option.is-custom .rr-option-name { color: var(--app-sec-l); }
+  .phone[data-mode="dark"]  .rr-option.is-custom .rr-option-name { color: var(--app-sec-d); }
+
+  .rr-source {
+    font-size: 10.5px;
+    white-space: nowrap;
+  }
+  .phone[data-mode="light"] .rr-source { color: var(--app-sec-l); }
+  .phone[data-mode="dark"]  .rr-source { color: var(--app-sec-d); }
+
+  .rr-ai-mark {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 9.5px; font-weight: 600;
+    white-space: nowrap;
+  }
+  .phone[data-mode="light"] .rr-ai-mark { color: var(--app-accent-l); }
+  .phone[data-mode="dark"]  .rr-ai-mark { color: var(--app-accent-d); }
+
+  .callout {
+    padding: 16px 18px 18px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-dim);
+    border-top: 1px solid var(--hair);
+    flex: 1;
+  }
+  .callout b { color: var(--ink); font-weight: 600; }
+  .callout .verdict {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    font-family: "IBM Plex Mono", monospace;
+    color: var(--problem);
+  }
+  .specimen.is-a .callout .verdict,
+  .specimen.is-b .callout .verdict { color: var(--accent); }
+
+  /* ---------- Notes section ---------- */
+  .notes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 800px) { .notes { grid-template-columns: 1fr; } }
+
+  .note {
+    background: var(--panel-2);
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    padding: 20px 22px;
+  }
+  .note h3 {
+    font-family: "Fraunces", serif;
+    font-weight: 600;
+    font-size: 19px;
+    margin: 0 0 10px;
+  }
+  .note p { margin: 0 0 10px; font-size: 14.5px; line-height: 1.6; color: var(--ink-dim); }
+  .note p:last-child { margin-bottom: 0; }
+  .note p b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Recommendation ---------- */
+  .recommend {
+    background: var(--good-bg);
+    border: 1px solid rgba(167,174,107,0.45);
+    border-radius: 16px;
+    padding: 26px 28px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .recommend .stamp {
+    font-family: "Fraunces", serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent-ink);
+    background: var(--accent);
+    padding: 8px 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .recommend p { margin: 0; font-size: 15.5px; line-height: 1.65; color: var(--ink); max-width: 74ch; }
+  .recommend p + p { margin-top: 10px; }
+  @media (max-width: 640px) { .recommend { flex-direction: column; } }
+
+  footer {
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    font-family: "IBM Plex Mono", monospace;
+    border-top: 1px solid var(--hair);
+    padding-top: 18px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="eyebrow">Issue #66 · Bon-Prüf-Karte</div>
+    <h1>Gleicher Name,<br>zwei Wege</h1>
+    <p class="lede">
+      Löst die KI ein Bonkürzel auf denselben Namen auf, der schon unabgehakt auf der
+      Liste steht, zeigt die Karte heute <b>keinen markierten Kreis</b> — obwohl oben der
+      richtige Name steht. Alltagsfall: <b>„Butter“</b> steht unabgehakt auf der Liste,
+      die Bonzeile <code>BTR</code> wird von der KI zu „Butter“ vervollständigt.
+    </p>
+    <div class="scene">📍 Laden „Edeka“ &nbsp;·&nbsp; Bonzeile <b>„BTR“</b> &nbsp;·&nbsp; Liste enthält unabgehakt <b>„Butter“</b></div>
+
+    <div class="toggle-row">
+      <span class="toggle-label">App-Darstellung:</span>
+      <div class="toggle" role="group" aria-label="Hell/Dunkel umschalten">
+        <button type="button" class="active" data-mode="light">Hell</button>
+        <button type="button" data-mode="dark">Dunkel</button>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="row-label">Heute — und zwei Entwürfe zur Wahl</div>
+    <div class="specimens">
+
+      <!-- HEUTE -->
+      <div class="specimen is-today">
+        <div class="specimen-tag">Heute <span>⚠ kaputt</span></div>
+        <div class="phone" data-mode="light">
+          <div class="rr-card">
+            <div class="rr-name-section">
+              <div class="rr-top">
+                <div class="rr-receipt-text">BTR</div>
+                <div class="rr-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+              </div>
+              <div class="rr-options">
+                <div class="rr-option">
+                  <div class="rr-radio"></div>
+                  <div class="rr-option-name">Butter</div>
+                  <div class="rr-ai-mark">✨ KI-Vorschlag</div>
+                </div>
+                <div class="rr-option">
+                  <div class="rr-radio"></div>
+                  <div class="rr-option-name">Butter</div>
+                  <div class="rr-source">auf deiner Liste</div>
+                </div>
+                <div class="rr-option is-custom">
+                  <div class="rr-radio"></div>
+                  <div class="rr-option-name">Anderer Name …</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <b>Kein Kreis gefüllt.</b> Der Name stimmt, aber weder die KI-Zeile noch der
+          Listen-Treffer gelten als „ausgewählt“ — beide Markierungs-Bedingungen scheitern
+          gleichzeitig.
+          <span class="verdict">Punkt 4 aus #50, für den KI-Zweig nie geschlossen</span>
+        </div>
+      </div>
+
+      <!-- ENTWURF A -->
+      <div class="specimen is-a is-recommended">
+        <div class="specimen-tag">Entwurf A <span>★ Empfehlung</span></div>
+        <div class="phone" data-mode="light">
+          <div class="rr-card">
+            <div class="rr-name-section">
+              <div class="rr-top">
+                <div class="rr-receipt-text">BTR</div>
+                <div class="rr-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+              </div>
+              <div class="rr-options">
+                <div class="rr-option">
+                  <div class="rr-radio filled"></div>
+                  <div class="rr-option-name">Butter</div>
+                  <div class="rr-source">auf deiner Liste</div>
+                </div>
+                <div class="rr-option is-custom">
+                  <div class="rr-radio"></div>
+                  <div class="rr-option-name">Anderer Name …</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          Der Listen-Treffer gilt schon dann als markiert, wenn der Name passt — auch ohne
+          echte Verknüpfung zum Artikel. Für sich allein hieße „markiert“ dann nicht mehr
+          zuverlässig „Preis kommt automatisch auf die Liste zurück“. <b>Repariert wird das
+          über das aufgewertete „Anderer Name“-Feld weiter unten</b> — kein Doppel-Name,
+          kein zusätzlicher Anlass zum Tippen nötig.
+          <span class="verdict">einzige sichtbare Zeile, Reparatur sitzt im Feld darunter</span>
+        </div>
+      </div>
+
+      <!-- ENTWURF B -->
+      <div class="specimen is-b is-rejected">
+        <div class="specimen-tag">Entwurf B <span>verworfen</span></div>
+        <div class="phone" data-mode="light">
+          <div class="rr-card">
+            <div class="rr-name-section">
+              <div class="rr-top">
+                <div class="rr-receipt-text">BTR</div>
+                <div class="rr-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+              </div>
+              <div class="rr-options">
+                <div class="rr-option">
+                  <div class="rr-radio filled"></div>
+                  <div class="rr-option-name">Butter</div>
+                  <div class="rr-ai-mark">✨ KI-Vorschlag</div>
+                </div>
+                <div class="rr-option">
+                  <div class="rr-radio"></div>
+                  <div class="rr-option-name">Butter</div>
+                  <div class="rr-source">auf deiner Liste</div>
+                </div>
+                <div class="rr-option is-custom">
+                  <div class="rr-radio"></div>
+                  <div class="rr-option-name">Anderer Name …</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          Löst das Problem so, dass „markiert“ auch weiterhin „verknüpft“ heißt — kostet
+          aber eine zweite Zeile mit gleichem Namen, nur an der Quellenangabe rechts
+          unterscheidbar. <b>Dein Einwand: dafür ist der Platz da, aber ungenutzt lässt
+          sich er eleganter lösen</b> — siehe unten.
+          <span class="verdict">funktioniert, aber ein Name doppelt auf dem Bildschirm</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="row-label">Der ungenutzte Platz — „Anderer Name …“ wird zur Reparatur</div>
+    <div class="fix-flow">
+      <div class="fix-step">
+        <div class="fix-step-label">1 · Antippen</div>
+        <div class="phone" data-mode="light">
+          <div class="rr-card">
+            <div class="rr-name-section">
+              <div class="rr-top">
+                <div class="rr-receipt-text">BTR</div>
+                <div class="rr-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+              </div>
+              <div class="rr-options">
+                <div class="rr-option">
+                  <div class="rr-radio filled"></div>
+                  <div class="rr-option-name">Butter</div>
+                  <div class="rr-ai-mark">✨ KI-Vorschlag</div>
+                </div>
+                <div class="rr-option is-custom-active">
+                  <div class="rr-radio"></div>
+                  <div class="rr-custom-field">Butter<span class="caret">|</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="fix-caption">
+          „Anderer Name …“ war schon immer prefillbar — heute mit dem geltenden Namen. Bei
+          diesem Fall ist das bereits „Butter“: der sinnvolle Vorschlag, den du meinst.
+          Frei lösch- und überschreibbar, wie gewohnt.
+        </p>
+      </div>
+      <div class="fix-arrow">→</div>
+      <div class="fix-step">
+        <div class="fix-step-label">2 · Unverändert bestätigen</div>
+        <div class="phone" data-mode="light">
+          <div class="rr-card">
+            <div class="rr-name-section">
+              <div class="rr-top">
+                <div class="rr-receipt-text">BTR</div>
+                <div class="rr-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+              </div>
+              <div class="rr-options">
+                <div class="rr-option">
+                  <div class="rr-radio filled"></div>
+                  <div class="rr-option-name">Butter</div>
+                  <div class="rr-source">auf deiner Liste</div>
+                </div>
+                <div class="rr-option is-custom">
+                  <div class="rr-radio"></div>
+                  <div class="rr-option-name">Anderer Name …</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="fix-caption">
+          <b>Neu:</b> Trifft der bestätigte Text einen Vorschlag exakt, übernimmt er
+          dessen Verknüpfung zum Listenartikel — die KI-Kennzeichnung weicht der
+          Listen-Herkunft. Aus einem einzigen, ohnehin naheliegenden Tap wird die
+          Reparatur, ohne dass eine zweite Zeile je sichtbar war.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <div class="note">
+      <h3>Variante C — Wurzelfix im Hintergrund</h3>
+      <p>
+        Sieht auf dem Bildschirm <b>identisch zu Entwurf A</b> aus — der Unterschied liegt
+        unsichtbar im Hintergrund: die Verknüpfung zum Listenartikel würde schon bei der
+        Namensauflösung selbst hergestellt, nicht erst in der Karte korrigiert.
+      </p>
+      <p>
+        Dafür würde die Bon-Erkennung Preise künftig auch für unabgehakte Artikel
+        automatisch zuordnen — heute macht sie das bewusst nicht. Größerer Eingriff in das
+        Lernverhalten, kleinerer Eingriff in die Karte selbst.
+      </p>
+    </div>
+    <div class="note">
+      <h3>Unabhängig von der Wahl: eine Randlücke wird mitgeschlossen</h3>
+      <p>
+        Ändert sich im Hintergrund nur die Verknüpfung, nicht aber der angezeigte Name
+        selbst, prüft die Karte aktuell gar nicht neu, ob ihre Markierung noch stimmt.
+      </p>
+      <p>
+        Das wird unabhängig von A/B/C mitbehoben — reine Korrektheit, keine
+        Gestaltungsfrage.
+      </p>
+    </div>
+  </section>
+
+  <section class="recommend">
+    <div class="stamp">Empfehlung</div>
+    <div>
+      <p>
+        <b>Entwurf A, ergänzt um das aufgewertete „Anderer Name“-Feld.</b> Eine Zeile auf
+        dem Bildschirm, keine Doppel-Namen — und die Zusage „markiert = verknüpft“ bleibt
+        trotzdem reparierbar, weil das ohnehin vorhandene Feld die Reparatur übernimmt,
+        statt dass es dafür eine eigene, stets sichtbare zweite Zeile bräuchte.
+      </p>
+      <p>
+        Kein Eingriff in die automatische Preis-Zuordnung (anders als Variante C) — die
+        Verknüpfung entsteht nur, wenn der Nutzer selbst einen Namen bestätigt, nie
+        automatisch beim Einlesen des Bons.
+      </p>
+    </div>
+  </section>
+
+  <footer>docs/artifacts/fix-66-ai-resolved-name-selection/entwurf.html · Issue #66 · 2026-09-28</footer>
+
+</div>
+
+<script>
+  (function () {
+    var buttons = document.querySelectorAll('.toggle button');
+    var phones = document.querySelectorAll('.phone');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var mode = btn.getAttribute('data-mode');
+        buttons.forEach(function (b) { b.classList.toggle('active', b === btn); });
+        phones.forEach(function (p) { p.setAttribute('data-mode', mode); });
+      });
+    });
+  })();
+</script>
+</body>
+</html>

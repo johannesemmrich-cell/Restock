@@ -581,4 +581,159 @@ final class ReceiptReviewCardTests: XCTestCase {
         XCTAssertFalse(line.resolvedByAI,
                        "Der Bontext ist kein KI-Vorschlag.")
     }
+
+    // MARK: - Issue #66: Genau eine markierte Zeile, auch nach KI-Auflösung
+
+    /// AC-23 (F001, der eigentliche Fix) — genau der reproduzierte Zustand aus
+    /// `mergeAIReresolution`: Ein unabgehakter Artikel wird von der KI auf einen Namen aufgelöst,
+    /// der wörtlich einem eigenen Vorschlag entspricht. Vor Issue #66 lieferte `isSelected` hier
+    /// `false` für den `.listMatch` (wegen `!resolvedByAI`); seit #66 markiert `matchedItemID ==
+    /// nil` diesen Treffer zusätzlich.
+    func testIsSelectedMarksListMatchWhenMatchedItemIDIsNilAndNameEqualsSuggestion() {
+        let itemID = UUID()
+        let suggestion = ReceiptSuggestion(name: "vollmilch", itemID: itemID)
+        let line = makeLine(
+            name: "Vollmilch", price: 1.19,
+            suggestions: [suggestion],
+            matchedItemID: nil, resolvedByAI: true,
+            aiSuggestedName: "Vollmilch", aiSuggestedMatchedItemID: nil)
+
+        XCTAssertTrue(
+            ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+            "Der namensgleiche Listen-Treffer muss markiert sein, auch wenn die KI-Auflösung "
+            + "keine matchedItemID gesetzt hat (F001).")
+    }
+
+    /// AC-23, Regression zum vorbestehenden Randfall (Issue #37/#50, „Known Limitations"): Ein
+    /// GESETZTES, aber ABWEICHENDES `matchedItemID` (zwei verschiedene Artikel mit exakt gleichem
+    /// Namen) darf die Lockerung NICHT mit-markieren — sie greift ausschließlich bei `nil`.
+    func testIsSelectedDoesNotMarkListMatchWhenMatchedItemIDPointsToAnotherItem() {
+        let suggestion = ReceiptSuggestion(name: "Butter", itemID: UUID())
+        let line = makeLine(
+            name: "Butter", price: 1.09,
+            suggestions: [suggestion],
+            matchedItemID: UUID(), resolvedByAI: false)
+
+        XCTAssertFalse(
+            ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+            "Ein `matchedItemID`, das auf einen ANDEREN Artikel verweist, darf diesen "
+            + "Listen-Treffer nicht markieren.")
+    }
+
+    /// AC-23, Regression zum Regelfall (AC-5): exakte Zuweisung markiert unverändert.
+    func testIsSelectedStillMarksListMatchOnExactAssignment() {
+        let itemID = UUID()
+        let suggestion = ReceiptSuggestion(name: "Hafermilch", itemID: itemID)
+        let line = makeLine(
+            name: "Hafermilch", price: 1.49,
+            suggestions: [suggestion],
+            matchedItemID: itemID, resolvedByAI: false)
+
+        XCTAssertTrue(
+            ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+            "Der bisherige Regelfall (exakte matchedItemID-Zuweisung) muss weiterhin markieren.")
+    }
+
+    /// Reine Verhaltensgleichheit der Extraktion für die vier übrigen Fälle — Issue #66 ändert an
+    /// diesen Zweigen inhaltlich nichts.
+    func testIsSelectedMatchesPreviousBehaviorForAiSuggestionCurrentNameReceiptTextAndCustom() {
+        let aiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: true, aiSuggestedName: "Milch")
+        XCTAssertTrue(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: aiLine, customActive: false))
+        let notAiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: false, aiSuggestedName: "Milch")
+        XCTAssertFalse(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: notAiLine, customActive: false))
+
+        let currentNameLine = makeLine(name: "Milch", price: 0.99)
+        XCTAssertTrue(ReceiptReviewCard.isSelected(.currentName(name: "milch"), for: currentNameLine, customActive: false))
+
+        let receiptTextLine = makeLine(name: "Milch", price: 0.99, originalName: "MILCH")
+        XCTAssertTrue(ReceiptReviewCard.isSelected(.receiptText(name: "Milch"), for: receiptTextLine, customActive: false))
+
+        XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+        XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+                       "Während `customActive` gilt, darf keine andere Option markiert sein.")
+        XCTAssertFalse(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: false))
+    }
+
+    /// Struktur-Nachweis („Warum keine zweite Markierung möglich ist", Nachtrag Issue #66): über
+    /// eine Reihe repräsentativer Fixtures — darunter der F001-Zustand — trägt `selectionOptions`
+    /// nach der Lockerung weiterhin genau eine markierte Option je Zeile mit nicht-leerem Namen.
+    func testEveryNamedFixtureEndsWithExactlyOneMarkedOptionAfterIssue66() {
+        let vollmilchID = UUID()
+        let hafermilchID = UUID()
+        let fixtures: [EditableReceiptLine] = [
+            // F001: KI-aufgelöst, matchedItemID nil, namensgleicher Vorschlag.
+            makeLine(name: "Vollmilch", price: 1.19,
+                     suggestions: [ReceiptSuggestion(name: "vollmilch", itemID: vollmilchID)],
+                     matchedItemID: nil, resolvedByAI: true, aiSuggestedName: "Vollmilch"),
+            // Regelfall: exakte Zuweisung.
+            makeLine(name: "Hafermilch", price: 1.49,
+                     suggestions: [ReceiptSuggestion(name: "Hafermilch", itemID: hafermilchID)],
+                     matchedItemID: hafermilchID, resolvedByAI: false),
+            // Kein Kandidat passt: `.currentName`-Rückfall.
+            makeLine(name: "Bio-Hackfleisch", price: 4.99, originalName: "BIO-HACKFLEISCH 400G"),
+        ]
+
+        for (index, line) in fixtures.enumerated() {
+            let options = ReceiptReviewCard.selectionOptions(for: line)
+            let markedCount = options.filter {
+                ReceiptReviewCard.isSelected($0, for: line, customActive: false)
+            }.count
+            XCTAssertEqual(markedCount, 1,
+                           "Fixture \(index) (\(line.name)) hat \(markedCount) markierte Optionen "
+                           + "statt genau 1. Optionen: \(describe(options))")
+        }
+    }
+
+    /// AC-24 — Regel 9 hängt seit #66 zusätzlich an `matchedItemID`/`resolvedByAI`: Ändert eine
+    /// externe Auflösung eines der beiden Felder, OHNE `line.name` zu ändern, und passt danach
+    /// keine der eingefrorenen Zeilen mehr, muss der Guard das erkennen. Konkreter Zustand: eine
+    /// markierte `.aiSuggestion`-Zeile, deren `resolvedByAI` extern auf `false` zurückfällt (Name
+    /// UND `matchedItemID` bleiben unverändert `nil`) — kein `.listMatch`/`.currentName`-Kandidat
+    /// vertritt diesen Namen, die Karte stünde ohne die Erweiterung ohne markierte Zeile da.
+    func testStaleOptionsNoLongerMatchAfterMatchedItemIDAndResolvedByAIChangeWithoutNameChange() {
+        var line = makeLine(name: "Frische Vollmilch", price: 1.19,
+                            matchedItemID: nil, resolvedByAI: true,
+                            aiSuggestedName: "Frische Vollmilch")
+        let options = ReceiptReviewCard.selectionOptions(for: line)
+        XCTAssertTrue(options.contains { ReceiptReviewCard.isSelected($0, for: line, customActive: false) },
+                     "Vorbedingung: im alten Zustand muss etwas markiert sein.")
+
+        line.resolvedByAI = false // externe Änderung, `name`/`matchedItemID` bleiben gleich
+
+        XCTAssertFalse(
+            options.contains { ReceiptReviewCard.isSelected($0, for: line, customActive: false) },
+            "Nach der externen Änderung darf keine der EINGEFRORENEN Optionen mehr markiert sein — "
+            + "genau die Bedingung, unter der Regel 9 (seit #66 auch an `resolvedByAI` gehängt) neu "
+            + "berechnen muss.")
+    }
+
+    /// AC-25 — Reparatur über „Anderer Name …": ein bestätigter Name, der case-insensitiv exakt
+    /// einem eigenen Vorschlag entspricht, verknüpft `matchedItemID` statt ihn auf `nil` zu setzen.
+    func testApplyCustomNameLinksMatchedItemIDWhenNameEqualsASuggestion() {
+        let vollmilchID = UUID()
+        var line = makeLine(name: "BTR", price: 1.09, originalName: "BTR", suggestions: [
+            ReceiptSuggestion(name: "Vollmilch", itemID: vollmilchID),
+            ReceiptSuggestion(name: "Hafermilch", itemID: UUID()),
+        ])
+
+        ReceiptReviewCard.applyCustomName(&line, name: "vollmilch")
+
+        XCTAssertEqual(line.name, "vollmilch")
+        XCTAssertEqual(line.matchedItemID, vollmilchID,
+                       "Ein bestätigter Name, der zu einem eigenen Vorschlag passt, verknüpft sich.")
+        XCTAssertFalse(line.resolvedByAI, "Eine Nutzer-Bestätigung ist kein KI-Signal.")
+    }
+
+    /// AC-25, Regression — kein passender Vorschlag: unverändertes Verhalten (`matchedItemID ==
+    /// nil`), deckungsgleich mit `testEnteringCustomNameClearsMatchAndAiFlag`.
+    func testApplyCustomNameLeavesMatchedItemIDNilWhenNoSuggestionMatches() {
+        var line = makeLine(name: "BTR", price: 1.09, originalName: "BTR", suggestions: [
+            ReceiptSuggestion(name: "Vollmilch", itemID: UUID()),
+        ])
+
+        ReceiptReviewCard.applyCustomName(&line, name: "Ziegenmilch")
+
+        XCTAssertNil(line.matchedItemID,
+                     "Ohne passenden Vorschlag bleibt `matchedItemID` wie bisher `nil`.")
+    }
 }

@@ -1,0 +1,724 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockTests/ReceiptReviewCardTests" test
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCart/Assets.xcassets /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCart/Preview Content/Preview Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+Build description signature: afa9577af3c76979d35df746197b1f66
+Build description path: /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/XCBuildData/afa9577af3c76979d35df746197b1f66.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCartWidgets/Info.plist (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCartWidgets/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockShareExtension/Info.plist (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockShareExtension/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+SwiftDriver RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon -experimental-emit-module-separately -disable-cmo
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+SwiftCompile normal arm64 Compiling\ ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift (in target 'RestockTests' from project 'Restock')
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:602:31: error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+600 | 
+601 |         XCTAssertTrue(
+602 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                               `- error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+603 |             "Der namensgleiche Listen-Treffer muss markiert sein, auch wenn die KI-Auflösung "
+604 |             + "keine matchedItemID gesetzt hat (F001).")
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:602:31: error: 'isSelected' is inaccessible due to 'private' protection level
+600 | 
+601 |         XCTAssertTrue(
+602 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                               `- error: 'isSelected' is inaccessible due to 'private' protection level
+603 |             "Der namensgleiche Listen-Treffer muss markiert sein, auch wenn die KI-Auflösung "
+604 |             + "keine matchedItemID gesetzt hat (F001).")
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:602:41: error: extra arguments at positions #2, #3 in call
+600 | 
+601 |         XCTAssertTrue(
+602 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                                         `- error: extra arguments at positions #2, #3 in call
+603 |             "Der namensgleiche Listen-Treffer muss markiert sein, auch wenn die KI-Auflösung "
+604 |             + "keine matchedItemID gesetzt hat (F001).")
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:602:43: error: type 'ReceiptReviewCard' has no member 'listMatch'
+600 | 
+601 |         XCTAssertTrue(
+602 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                                           `- error: type 'ReceiptReviewCard' has no member 'listMatch'
+603 |             "Der namensgleiche Listen-Treffer muss markiert sein, auch wenn die KI-Auflösung "
+604 |             + "keine matchedItemID gesetzt hat (F001).")
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:618:31: error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+616 | 
+617 |         XCTAssertFalse(
+618 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                               `- error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+619 |             "Ein `matchedItemID`, das auf einen ANDEREN Artikel verweist, darf diesen "
+620 |             + "Listen-Treffer nicht markieren.")
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:618:31: error: 'isSelected' is inaccessible due to 'private' protection level
+616 | 
+617 |         XCTAssertFalse(
+618 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                               `- error: 'isSelected' is inaccessible due to 'private' protection level
+619 |             "Ein `matchedItemID`, das auf einen ANDEREN Artikel verweist, darf diesen "
+620 |             + "Listen-Treffer nicht markieren.")
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:618:41: error: extra arguments at positions #2, #3 in call
+616 | 
+617 |         XCTAssertFalse(
+618 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                                         `- error: extra arguments at positions #2, #3 in call
+619 |             "Ein `matchedItemID`, das auf einen ANDEREN Artikel verweist, darf diesen "
+620 |             + "Listen-Treffer nicht markieren.")
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:618:43: error: type 'ReceiptReviewCard' has no member 'listMatch'
+616 | 
+617 |         XCTAssertFalse(
+618 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                                           `- error: type 'ReceiptReviewCard' has no member 'listMatch'
+619 |             "Ein `matchedItemID`, das auf einen ANDEREN Artikel verweist, darf diesen "
+620 |             + "Listen-Treffer nicht markieren.")
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:633:31: error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+631 | 
+632 |         XCTAssertTrue(
+633 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                               `- error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+634 |             "Der bisherige Regelfall (exakte matchedItemID-Zuweisung) muss weiterhin markieren.")
+635 |     }
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:633:41: error: extra arguments at positions #2, #3 in call
+631 | 
+632 |         XCTAssertTrue(
+633 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                                         `- error: extra arguments at positions #2, #3 in call
+634 |             "Der bisherige Regelfall (exakte matchedItemID-Zuweisung) muss weiterhin markieren.")
+635 |     }
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:633:31: error: 'isSelected' is inaccessible due to 'private' protection level
+631 | 
+632 |         XCTAssertTrue(
+633 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                               `- error: 'isSelected' is inaccessible due to 'private' protection level
+634 |             "Der bisherige Regelfall (exakte matchedItemID-Zuweisung) muss weiterhin markieren.")
+635 |     }
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:633:43: error: type 'ReceiptReviewCard' has no member 'listMatch'
+631 | 
+632 |         XCTAssertTrue(
+633 |             ReceiptReviewCard.isSelected(.listMatch(suggestion), for: line, customActive: false),
+    |                                           `- error: type 'ReceiptReviewCard' has no member 'listMatch'
+634 |             "Der bisherige Regelfall (exakte matchedItemID-Zuweisung) muss weiterhin markieren.")
+635 |     }
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:641:41: error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+639 |     func testIsSelectedMatchesPreviousBehaviorForAiSuggestionCurrentNameReceiptTextAndCustom() {
+640 |         let aiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: true, aiSuggestedName: "Milch")
+641 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: aiLine, customActive: false))
+    |                                         `- error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+642 |         let notAiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: false, aiSuggestedName: "Milch")
+643 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: notAiLine, customActive: false))
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:641:51: error: extra arguments at positions #2, #3 in call
+639 |     func testIsSelectedMatchesPreviousBehaviorForAiSuggestionCurrentNameReceiptTextAndCustom() {
+640 |         let aiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: true, aiSuggestedName: "Milch")
+641 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: aiLine, customActive: false))
+    |                                                   `- error: extra arguments at positions #2, #3 in call
+642 |         let notAiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: false, aiSuggestedName: "Milch")
+643 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: notAiLine, customActive: false))
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:641:41: error: 'isSelected' is inaccessible due to 'private' protection level
+639 |     func testIsSelectedMatchesPreviousBehaviorForAiSuggestionCurrentNameReceiptTextAndCustom() {
+640 |         let aiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: true, aiSuggestedName: "Milch")
+641 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: aiLine, customActive: false))
+    |                                         `- error: 'isSelected' is inaccessible due to 'private' protection level
+642 |         let notAiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: false, aiSuggestedName: "Milch")
+643 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: notAiLine, customActive: false))
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:641:53: error: type 'ReceiptReviewCard' has no member 'aiSuggestion'
+639 |     func testIsSelectedMatchesPreviousBehaviorForAiSuggestionCurrentNameReceiptTextAndCustom() {
+640 |         let aiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: true, aiSuggestedName: "Milch")
+641 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: aiLine, customActive: false))
+    |                                                     `- error: type 'ReceiptReviewCard' has no member 'aiSuggestion'
+642 |         let notAiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: false, aiSuggestedName: "Milch")
+643 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: notAiLine, customActive: false))
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:643:42: error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+641 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: aiLine, customActive: false))
+642 |         let notAiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: false, aiSuggestedName: "Milch")
+643 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: notAiLine, customActive: false))
+    |                                          `- error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+644 | 
+645 |         let currentNameLine = makeLine(name: "Milch", price: 0.99)
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:643:52: error: extra arguments at positions #2, #3 in call
+641 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: aiLine, customActive: false))
+642 |         let notAiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: false, aiSuggestedName: "Milch")
+643 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: notAiLine, customActive: false))
+    |                                                    `- error: extra arguments at positions #2, #3 in call
+644 | 
+645 |         let currentNameLine = makeLine(name: "Milch", price: 0.99)
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:643:42: error: 'isSelected' is inaccessible due to 'private' protection level
+641 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: aiLine, customActive: false))
+642 |         let notAiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: false, aiSuggestedName: "Milch")
+643 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: notAiLine, customActive: false))
+    |                                          `- error: 'isSelected' is inaccessible due to 'private' protection level
+644 | 
+645 |         let currentNameLine = makeLine(name: "Milch", price: 0.99)
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:643:54: error: type 'ReceiptReviewCard' has no member 'aiSuggestion'
+641 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: aiLine, customActive: false))
+642 |         let notAiLine = makeLine(name: "Milch", price: 0.99, resolvedByAI: false, aiSuggestedName: "Milch")
+643 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.aiSuggestion(name: "Milch"), for: notAiLine, customActive: false))
+    |                                                      `- error: type 'ReceiptReviewCard' has no member 'aiSuggestion'
+644 | 
+645 |         let currentNameLine = makeLine(name: "Milch", price: 0.99)
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:646:41: error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+644 | 
+645 |         let currentNameLine = makeLine(name: "Milch", price: 0.99)
+646 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.currentName(name: "milch"), for: currentNameLine, customActive: false))
+    |                                         `- error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+647 | 
+648 |         let receiptTextLine = makeLine(name: "Milch", price: 0.99, originalName: "MILCH")
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:646:41: error: 'isSelected' is inaccessible due to 'private' protection level
+644 | 
+645 |         let currentNameLine = makeLine(name: "Milch", price: 0.99)
+646 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.currentName(name: "milch"), for: currentNameLine, customActive: false))
+    |                                         `- error: 'isSelected' is inaccessible due to 'private' protection level
+647 | 
+648 |         let receiptTextLine = makeLine(name: "Milch", price: 0.99, originalName: "MILCH")
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:646:51: error: extra arguments at positions #2, #3 in call
+644 | 
+645 |         let currentNameLine = makeLine(name: "Milch", price: 0.99)
+646 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.currentName(name: "milch"), for: currentNameLine, customActive: false))
+    |                                                   `- error: extra arguments at positions #2, #3 in call
+647 | 
+648 |         let receiptTextLine = makeLine(name: "Milch", price: 0.99, originalName: "MILCH")
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:646:53: error: type 'ReceiptReviewCard' has no member 'currentName'
+644 | 
+645 |         let currentNameLine = makeLine(name: "Milch", price: 0.99)
+646 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.currentName(name: "milch"), for: currentNameLine, customActive: false))
+    |                                                     `- error: type 'ReceiptReviewCard' has no member 'currentName'
+647 | 
+648 |         let receiptTextLine = makeLine(name: "Milch", price: 0.99, originalName: "MILCH")
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:649:41: error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+647 | 
+648 |         let receiptTextLine = makeLine(name: "Milch", price: 0.99, originalName: "MILCH")
+649 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.receiptText(name: "Milch"), for: receiptTextLine, customActive: false))
+    |                                         `- error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:649:51: error: extra arguments at positions #2, #3 in call
+647 | 
+648 |         let receiptTextLine = makeLine(name: "Milch", price: 0.99, originalName: "MILCH")
+649 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.receiptText(name: "Milch"), for: receiptTextLine, customActive: false))
+    |                                                   `- error: extra arguments at positions #2, #3 in call
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:649:41: error: 'isSelected' is inaccessible due to 'private' protection level
+647 | 
+648 |         let receiptTextLine = makeLine(name: "Milch", price: 0.99, originalName: "MILCH")
+649 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.receiptText(name: "Milch"), for: receiptTextLine, customActive: false))
+    |                                         `- error: 'isSelected' is inaccessible due to 'private' protection level
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:649:53: error: type 'ReceiptReviewCard' has no member 'receiptText'
+647 | 
+648 |         let receiptTextLine = makeLine(name: "Milch", price: 0.99, originalName: "MILCH")
+649 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.receiptText(name: "Milch"), for: receiptTextLine, customActive: false))
+    |                                                     `- error: type 'ReceiptReviewCard' has no member 'receiptText'
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:651:41: error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+649 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.receiptText(name: "Milch"), for: receiptTextLine, customActive: false))
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+    |                                         `- error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:651:51: error: extra arguments at positions #2, #3 in call
+649 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.receiptText(name: "Milch"), for: receiptTextLine, customActive: false))
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+    |                                                   `- error: extra arguments at positions #2, #3 in call
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:651:41: error: 'isSelected' is inaccessible due to 'private' protection level
+649 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.receiptText(name: "Milch"), for: receiptTextLine, customActive: false))
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+    |                                         `- error: 'isSelected' is inaccessible due to 'private' protection level
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:651:53: error: type 'ReceiptReviewCard' has no member 'custom'
+649 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.receiptText(name: "Milch"), for: receiptTextLine, customActive: false))
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+    |                                                     `- error: type 'ReceiptReviewCard' has no member 'custom'
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:652:42: error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+    |                                          `- error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+654 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: false))
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:652:42: error: 'isSelected' is inaccessible due to 'private' protection level
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+    |                                          `- error: 'isSelected' is inaccessible due to 'private' protection level
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+654 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: false))
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:652:52: error: extra arguments at positions #2, #3 in call
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+    |                                                    `- error: extra arguments at positions #2, #3 in call
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+654 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: false))
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:652:54: error: type 'ReceiptReviewCard' has no member 'currentName'
+650 | 
+651 |         XCTAssertTrue(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: true))
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+    |                                                      `- error: type 'ReceiptReviewCard' has no member 'currentName'
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+654 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: false))
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:654:42: error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+654 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: false))
+    |                                          `- error: cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+655 |     }
+656 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:654:42: error: 'isSelected' is inaccessible due to 'private' protection level
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+654 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: false))
+    |                                          `- error: 'isSelected' is inaccessible due to 'private' protection level
+655 |     }
+656 | 
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:654:52: error: extra arguments at positions #2, #3 in call
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+654 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: false))
+    |                                                    `- error: extra arguments at positions #2, #3 in call
+655 |     }
+656 | 
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:654:54: error: type 'ReceiptReviewCard' has no member 'custom'
+652 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.currentName(name: "Milch"), for: currentNameLine, customActive: true),
+653 |                        "Während `customActive` gilt, darf keine andere Option markiert sein.")
+654 |         XCTAssertFalse(ReceiptReviewCard.isSelected(.custom, for: currentNameLine, customActive: false))
+    |                                                      `- error: type 'ReceiptReviewCard' has no member 'custom'
+655 |     }
+656 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:679:35: error: 'isSelected' is inaccessible due to 'private' protection level
+677 |             let options = ReceiptReviewCard.selectionOptions(for: line)
+678 |             let markedCount = options.filter {
+679 |                 ReceiptReviewCard.isSelected($0, for: line, customActive: false)
+    |                                   `- error: 'isSelected' is inaccessible due to 'private' protection level
+680 |             }.count
+681 |             XCTAssertEqual(markedCount, 1,
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:679:45: error: extra arguments at positions #2, #3 in call
+677 |             let options = ReceiptReviewCard.selectionOptions(for: line)
+678 |             let markedCount = options.filter {
+679 |                 ReceiptReviewCard.isSelected($0, for: line, customActive: false)
+    |                                             `- error: extra arguments at positions #2, #3 in call
+680 |             }.count
+681 |             XCTAssertEqual(markedCount, 1,
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:679:46: error: cannot convert value of type 'ReceiptNameOption' to expected argument type 'ReceiptReviewCard'
+677 |             let options = ReceiptReviewCard.selectionOptions(for: line)
+678 |             let markedCount = options.filter {
+679 |                 ReceiptReviewCard.isSelected($0, for: line, customActive: false)
+    |                                              `- error: cannot convert value of type 'ReceiptNameOption' to expected argument type 'ReceiptReviewCard'
+680 |             }.count
+681 |             XCTAssertEqual(markedCount, 1,
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:679:35: error: cannot convert value of type '()' to closure result type 'Bool'
+677 |             let options = ReceiptReviewCard.selectionOptions(for: line)
+678 |             let markedCount = options.filter {
+679 |                 ReceiptReviewCard.isSelected($0, for: line, customActive: false)
+    |                                   `- error: cannot convert value of type '()' to closure result type 'Bool'
+680 |             }.count
+681 |             XCTAssertEqual(markedCount, 1,
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:698:60: error: cannot convert value of type '()' to closure result type 'Bool'
+696 |                             aiSuggestedName: "Frische Vollmilch")
+697 |         let options = ReceiptReviewCard.selectionOptions(for: line)
+698 |         XCTAssertTrue(options.contains { ReceiptReviewCard.isSelected($0, for: line, customActive: false) },
+    |                                                            `- error: cannot convert value of type '()' to closure result type 'Bool'
+699 |                      "Vorbedingung: im alten Zustand muss etwas markiert sein.")
+700 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:698:70: error: extra arguments at positions #2, #3 in call
+696 |                             aiSuggestedName: "Frische Vollmilch")
+697 |         let options = ReceiptReviewCard.selectionOptions(for: line)
+698 |         XCTAssertTrue(options.contains { ReceiptReviewCard.isSelected($0, for: line, customActive: false) },
+    |                                                                      `- error: extra arguments at positions #2, #3 in call
+699 |                      "Vorbedingung: im alten Zustand muss etwas markiert sein.")
+700 | 
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:698:71: error: cannot convert value of type 'ReceiptNameOption' to expected argument type 'ReceiptReviewCard'
+696 |                             aiSuggestedName: "Frische Vollmilch")
+697 |         let options = ReceiptReviewCard.selectionOptions(for: line)
+698 |         XCTAssertTrue(options.contains { ReceiptReviewCard.isSelected($0, for: line, customActive: false) },
+    |                                                                       `- error: cannot convert value of type 'ReceiptNameOption' to expected argument type 'ReceiptReviewCard'
+699 |                      "Vorbedingung: im alten Zustand muss etwas markiert sein.")
+700 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:698:60: error: 'isSelected' is inaccessible due to 'private' protection level
+696 |                             aiSuggestedName: "Frische Vollmilch")
+697 |         let options = ReceiptReviewCard.selectionOptions(for: line)
+698 |         XCTAssertTrue(options.contains { ReceiptReviewCard.isSelected($0, for: line, customActive: false) },
+    |                                                            `- error: 'isSelected' is inaccessible due to 'private' protection level
+699 |                      "Vorbedingung: im alten Zustand muss etwas markiert sein.")
+700 | 
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:704:50: error: cannot convert value of type '()' to closure result type 'Bool'
+702 | 
+703 |         XCTAssertFalse(
+704 |             options.contains { ReceiptReviewCard.isSelected($0, for: line, customActive: false) },
+    |                                                  `- error: cannot convert value of type '()' to closure result type 'Bool'
+705 |             "Nach der externen Änderung darf keine der EINGEFRORENEN Optionen mehr markiert sein — "
+706 |             + "genau die Bedingung, unter der Regel 9 (seit #66 auch an `resolvedByAI` gehängt) neu "
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:704:60: error: extra arguments at positions #2, #3 in call
+702 | 
+703 |         XCTAssertFalse(
+704 |             options.contains { ReceiptReviewCard.isSelected($0, for: line, customActive: false) },
+    |                                                            `- error: extra arguments at positions #2, #3 in call
+705 |             "Nach der externen Änderung darf keine der EINGEFRORENEN Optionen mehr markiert sein — "
+706 |             + "genau die Bedingung, unter der Regel 9 (seit #66 auch an `resolvedByAI` gehängt) neu "
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:704:61: error: cannot convert value of type 'ReceiptNameOption' to expected argument type 'ReceiptReviewCard'
+702 | 
+703 |         XCTAssertFalse(
+704 |             options.contains { ReceiptReviewCard.isSelected($0, for: line, customActive: false) },
+    |                                                             `- error: cannot convert value of type 'ReceiptNameOption' to expected argument type 'ReceiptReviewCard'
+705 |             "Nach der externen Änderung darf keine der EINGEFRORENEN Optionen mehr markiert sein — "
+706 |             + "genau die Bedingung, unter der Regel 9 (seit #66 auch an `resolvedByAI` gehängt) neu "
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:704:50: error: 'isSelected' is inaccessible due to 'private' protection level
+702 | 
+703 |         XCTAssertFalse(
+704 |             options.contains { ReceiptReviewCard.isSelected($0, for: line, customActive: false) },
+    |                                                  `- error: 'isSelected' is inaccessible due to 'private' protection level
+705 |             "Nach der externen Änderung darf keine der EINGEFRORENEN Optionen mehr markiert sein — "
+706 |             + "genau die Bedingung, unter der Regel 9 (seit #66 auch an `resolvedByAI` gehängt) neu "
+
+Restock.ReceiptReviewCard.isSelected:2:25: note: 'isSelected' declared here
+1 | struct ReceiptReviewCard {
+2 | @MainActor private func isSelected(_ option: Restock.ReceiptNameOption) -> Bool}
+  |                         `- note: 'isSelected' declared here
+3 | 
+Failed frontend command:
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile ReceiptReviewCardTests.swift
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ExistingDataSurvivesCloudEnableTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/SchemaCloudKitCompatibilityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptHistoryMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptKnownItemNamesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/SharedItemDataPhotoRegressionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PhotoCompressorTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserPriceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceProvenanceMigrationTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceEstimatorCategoryFallbackTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceEstimatorStagesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserReweTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserLidlFullReceiptTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptNameAIResolverSanitizeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/AssignmentServiceDetectStoreTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserStornoTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/LiveActivityServiceReattachTests.swift -primary-file /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptAbbreviationExpansionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/QuickAddParserTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ConsumptionPatternTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/StorePresetsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/AssignmentServiceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PurchaseRecordDeletionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentPackageATests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentPackageBTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentPackageCTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentDigestTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserSuggestionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptScannerReResolutionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/DateFixtures.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/SharedModelContainerExtensionDetectionTests.swift -emit-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.d -emit-const-values-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.swiftconstvalues -emit-reference-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.swiftdeps -serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.dia -target arm64-apple-ios18.0-simulator -disable-cross-import-overlay-search -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/CoreData.swiftoverlay -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationModelsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationModelsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftDataMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftDataMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon -enable-anonymous-context-mangled-names -file-compilation-dir /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name RestockTests -const-gather-protocols-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -disable-clang-spi -clang-target arm64-apple-ios27.0-simulator -target-sdk-version 27.0 -target-sdk-name iphonesimulator27.0 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.o -debug-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -index-unit-output-path /Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.o -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Index.noindex/DataStore -index-system-modules
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockTests (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Logs/Test/Test-Restock-2026.09.28_18-35-36-+0200.xcresult
+
+Testing failed:
+	Cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+	'isSelected' is inaccessible due to 'private' protection level
+	Extra arguments at positions #2, #3 in call
+	Type 'ReceiptReviewCard' has no member 'listMatch'
+	Cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+	'isSelected' is inaccessible due to 'private' protection level
+	Extra arguments at positions #2, #3 in call
+	Type 'ReceiptReviewCard' has no member 'listMatch'
+	Cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+	Extra arguments at positions #2, #3 in call
+	'isSelected' is inaccessible due to 'private' protection level
+	Type 'ReceiptReviewCard' has no member 'listMatch'
+	Cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+	Extra arguments at positions #2, #3 in call
+	'isSelected' is inaccessible due to 'private' protection level
+	Type 'ReceiptReviewCard' has no member 'aiSuggestion'
+	Cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+	Extra arguments at positions #2, #3 in call
+	'isSelected' is inaccessible due to 'private' protection level
+	Type 'ReceiptReviewCard' has no member 'aiSuggestion'
+	Cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+	'isSelected' is inaccessible due to 'private' protection level
+	Extra arguments at positions #2, #3 in call
+	Type 'ReceiptReviewCard' has no member 'currentName'
+	Cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+	Extra arguments at positions #2, #3 in call
+	'isSelected' is inaccessible due to 'private' protection level
+	Type 'ReceiptReviewCard' has no member 'receiptText'
+	Cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+	Extra arguments at positions #2, #3 in call
+	'isSelected' is inaccessible due to 'private' protection level
+	Type 'ReceiptReviewCard' has no member 'custom'
+	Cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+	'isSelected' is inaccessible due to 'private' protection level
+	Extra arguments at positions #2, #3 in call
+	Type 'ReceiptReviewCard' has no member 'currentName'
+	Cannot convert value of type '(ReceiptNameOption) -> Bool' to expected argument type 'Bool'
+	'isSelected' is inaccessible due to 'private' protection level
+	Extra arguments at positions #2, #3 in call
+	Type 'ReceiptReviewCard' has no member 'custom'
+	'isSelected' is inaccessible due to 'private' protection level
+	Extra arguments at positions #2, #3 in call
+	Cannot convert value of type 'ReceiptNameOption' to expected argument type 'ReceiptReviewCard'
+	Cannot convert value of type '()' to closure result type 'Bool'
+	Cannot convert value of type '()' to closure result type 'Bool'
+	Extra arguments at positions #2, #3 in call
+	Cannot convert value of type 'ReceiptNameOption' to expected argument type 'ReceiptReviewCard'
+	'isSelected' is inaccessible due to 'private' protection level
+	Cannot convert value of type '()' to closure result type 'Bool'
+	Extra arguments at positions #2, #3 in call
+	Cannot convert value of type 'ReceiptNameOption' to expected argument type 'ReceiptReviewCard'
+	'isSelected' is inaccessible due to 'private' protection level
+	Testing cancelled because the build failed.
+
+** TEST FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift (in target 'RestockTests' from project 'Restock')
+	SwiftCompile normal arm64 Compiling\ ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift (in target 'RestockTests' from project 'Restock')
+	Testing project Restock with scheme Restock
+(3 failures)
