@@ -1,0 +1,243 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/ReceiptReviewUITests/testTappingReceiptTextOptionSelectsNormalizedBonText" "-only-testing:RestockUITests/ReceiptReviewUITests/testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard" "-only-testing:RestockUITests/ReceiptReviewUITests/testCustomNameOptionOpensFocusedTextField" test
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+SwiftDriver RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver Restock normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Restock -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Objects-normal/arm64/Restock-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ PriceProvenanceMigrationTests.swift,\ PriceEstimatorCategoryFallbackTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceProvenanceMigrationTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceEstimatorCategoryFallbackTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceProvenanceMigrationTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile PriceProvenanceMigrationTests.swift
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceEstimatorCategoryFallbackTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile PriceEstimatorCategoryFallbackTests.swift
+
+SwiftCompile normal arm64 Compiling\ ReplenishmentPackageCTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentPackageCTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentPackageCTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile ReplenishmentPackageCTests.swift
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockTests (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    
+
+SwiftCompile normal arm64 Compiling\ ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift (in target 'RestockTests' from project 'Restock')
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:60:15: error: binary operator '~=' cannot be applied to two 'ReceiptNameOption' operands
+ 58 |         case .aiSuggestion(let name): return "ki:\(name)"
+ 59 |         case .currentName(let name): return "aktuell:\(name)"
+ 60 |         case .receiptText(let name): return "bon:\(name)"
+    |               `- error: binary operator '~=' cannot be applied to two 'ReceiptNameOption' operands
+ 61 |         case .custom: return "eigener"
+ 62 |         }
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:60:15: error: reference to member 'receiptText' cannot be resolved without a contextual type
+ 58 |         case .aiSuggestion(let name): return "ki:\(name)"
+ 59 |         case .currentName(let name): return "aktuell:\(name)"
+ 60 |         case .receiptText(let name): return "bon:\(name)"
+    |               `- error: reference to member 'receiptText' cannot be resolved without a contextual type
+ 61 |         case .custom: return "eigener"
+ 62 |         }
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:271:42: error: type 'ReceiptReviewCard' has no member 'normalizedReceiptText'
+269 |     /// Ausgangszustand (durchgehend groß, gemischt oder klein).
+270 |     func testNormalizedReceiptTextCapitalizesEachWord() {
+271 |         XCTAssertEqual(ReceiptReviewCard.normalizedReceiptText("MILCH 3,5% FRISCH"), "Milch 3,5% Frisch")
+    |                                          `- error: type 'ReceiptReviewCard' has no member 'normalizedReceiptText'
+272 |     }
+273 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:277:42: error: type 'ReceiptReviewCard' has no member 'normalizedReceiptText'
+275 |     /// Buchstabe des gesamten Worts wird groß, nicht jeder Teil rechts vom Bindestrich.
+276 |     func testNormalizedReceiptTextKeepsHyphenatedWordAsOneUnit() {
+277 |         XCTAssertEqual(ReceiptReviewCard.normalizedReceiptText("BIO-HACKFLEISCH 400G"), "Bio-hackfleisch 400g")
+    |                                          `- error: type 'ReceiptReviewCard' has no member 'normalizedReceiptText'
+278 |     }
+279 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:283:42: error: type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+281 |     /// unabhängig davon, wie sehr sich der Bontext vom gewählten Namen unterscheidet.
+282 |     func testShouldOfferReceiptTextOptionRejectsNamesBelowMinLength() {
+283 |         XCTAssertFalse(ReceiptReviewCard.shouldOfferReceiptTextOption(originalName: "BTR", selectedName: "Butter"))
+    |                                          `- error: type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+284 |     }
+285 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:289:42: error: type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+287 |     /// Namen, ist die Bon-Zeile redundant und wird unterdrückt.
+288 |     func testShouldOfferReceiptTextOptionRejectsNameEqualToSelection() {
+289 |         XCTAssertFalse(ReceiptReviewCard.shouldOfferReceiptTextOption(originalName: "MILCH", selectedName: "Milch"))
+    |                                          `- error: type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+290 |     }
+291 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:294:41: error: type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+292 |     /// AC-22 — Regelfall: Bontext lang genug und ungleich dem gewählten Namen → Angebot.
+293 |     func testShouldOfferReceiptTextOptionAcceptsDifferingName() {
+294 |         XCTAssertTrue(ReceiptReviewCard.shouldOfferReceiptTextOption(
+    |                                         `- error: type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+295 |             originalName: "MILCH 3,5% FRISCH", selectedName: "Frische Vollmilch"))
+296 |     }
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:303:41: error: type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+301 |     /// mit leerem Namen.
+302 |     func testShouldOfferReceiptTextOptionAcceptsEmptySelection() {
+303 |         XCTAssertTrue(ReceiptReviewCard.shouldOfferReceiptTextOption(
+    |                                         `- error: type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+304 |             originalName: "UNLESBARER BONTEXT", selectedName: ""))
+305 |     }
+
+/Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift:313:58: error: type 'ReceiptNameOption' has no member 'receiptText'
+311 |                             matchedItemID: UUID(), resolvedByAI: true, aiSuggestedName: "Milch")
+312 | 
+313 |         ReceiptReviewCard.applySelection(&line, option: .receiptText(name: "Milch 3,5% Frisch"))
+    |                                                          `- error: type 'ReceiptNameOption' has no member 'receiptText'
+314 | 
+315 |         XCTAssertEqual(line.name, "Milch 3,5% Frisch")
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ExistingDataSurvivesCloudEnableTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/SchemaCloudKitCompatibilityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptHistoryMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptKnownItemNamesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/SharedItemDataPhotoRegressionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PhotoCompressorTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserPriceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceProvenanceMigrationTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceEstimatorCategoryFallbackTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceEstimatorStagesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserReweTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserLidlFullReceiptTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptNameAIResolverSanitizeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/AssignmentServiceDetectStoreTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserStornoTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/LiveActivityServiceReattachTests.swift -primary-file /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptAbbreviationExpansionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/QuickAddParserTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ConsumptionPatternTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/StorePresetsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/AssignmentServiceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PurchaseRecordDeletionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentPackageATests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentPackageBTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentPackageCTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentDigestTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserSuggestionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptScannerReResolutionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/DateFixtures.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/SharedModelContainerExtensionDetectionTests.swift -emit-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.d -emit-const-values-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.swiftconstvalues -emit-reference-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.swiftdeps -serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.dia -target arm64-apple-ios18.0-simulator -disable-cross-import-overlay-search -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/CoreData.swiftoverlay -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationModelsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationModelsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftDataMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftDataMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon -enable-anonymous-context-mangled-names -file-compilation-dir /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name RestockTests -const-gather-protocols-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -disable-clang-spi -clang-target arm64-apple-ios27.0-simulator -target-sdk-version 27.0 -target-sdk-name iphonesimulator27.0 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.o -debug-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -index-unit-output-path /Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptReviewCardTests.o -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile ReceiptReviewCardTests.swift
+
+SwiftCompile normal arm64 Compiling\ LiveActivityServiceReattachTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/LiveActivityServiceReattachTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/LiveActivityServiceReattachTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile LiveActivityServiceReattachTests.swift
+
+SwiftCompile normal arm64 Compiling\ ReceiptParserStornoTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserStornoTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserStornoTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile ReceiptParserStornoTests.swift
+
+SwiftCompile normal arm64 Compiling\ QuickAddParserTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/QuickAddParserTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/QuickAddParserTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile QuickAddParserTests.swift
+
+SwiftCompile normal arm64 Compiling\ ReceiptAbbreviationExpansionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptAbbreviationExpansionTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptAbbreviationExpansionTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile ReceiptAbbreviationExpansionTests.swift
+
+SwiftCompile normal arm64 Compiling\ ReplenishmentDigestTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentDigestTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReplenishmentDigestTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile ReplenishmentDigestTests.swift
+
+SwiftCompile normal arm64 Compiling\ ReceiptParserSuggestionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserSuggestionTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptParserSuggestionTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile ReceiptParserSuggestionTests.swift
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ Restock (in target 'Restock' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    
+
+SwiftCompile normal arm64 Compiling\ PriceEstimatorStagesTests.swift,\ AssignmentServiceDetectStoreTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceEstimatorStagesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/AssignmentServiceDetectStoreTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/PriceEstimatorStagesTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile PriceEstimatorStagesTests.swift
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/AssignmentServiceDetectStoreTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile AssignmentServiceDetectStoreTests.swift
+
+SwiftDriverJobDiscovery normal arm64 Compiling LiveActivityServiceReattachTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ReceiptParserStornoTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 Compiling\ HomeView.swift,\ ItemRow.swift,\ LegalView.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCart/Views/Home/HomeView.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCart/Views/Components/ItemRow.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCart/Views/Settings/LegalView.swift (in target 'Restock' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCart/Views/Home/HomeView.swift (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile HomeView.swift
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCart/Views/Components/ItemRow.swift (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile ItemRow.swift
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/SmartCart/Views/Settings/LegalView.swift (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon
+    builtin-SwiftPerFileCompile LegalView.swift
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-hetfuxfljismjmgzbrgmojchgeyu/Logs/Test/Test-Restock-2026.09.28_12-28-36-+0200.xcresult
+
+Testing failed:
+	Binary operator '~=' cannot be applied to two 'ReceiptNameOption' operands
+	Reference to member 'receiptText' cannot be resolved without a contextual type
+	Type 'ReceiptReviewCard' has no member 'normalizedReceiptText'
+	Type 'ReceiptReviewCard' has no member 'normalizedReceiptText'
+	Type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+	Type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+	Type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+	Type 'ReceiptReviewCard' has no member 'shouldOfferReceiptTextOption'
+	Type 'ReceiptNameOption' has no member 'receiptText'
+	Testing cancelled because the build failed.
+
+** TEST FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift (in target 'RestockTests' from project 'Restock')
+	SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/rosy-gathering-shannon/RestockTests/ReceiptReviewCardTests.swift (in target 'RestockTests' from project 'Restock')
+	Testing project Restock with scheme Restock
+(3 failures)

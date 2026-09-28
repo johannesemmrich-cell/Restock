@@ -71,6 +71,17 @@ final class ReceiptReviewUITests: XCTestCase {
         static let unresolvedLineExpectedName = "Butter"
         /// Zahl der Auswahlzeilen dieser Karte (drei inhaltliche Höchstgrenze + „Anderer Name …").
         static let maxOptionsPerCard = 4
+
+        // MARK: Issue #65, Paket 2 — Bon-Zeile
+
+        /// `aiLine` hat keine `suggestions`, nur den KI-Vorschlag — die Bon-Zeile (Regel 7) steht
+        /// deshalb an Position 1, direkt nach der KI-Zeile. „Anderer Name …" rutscht dadurch von
+        /// `option.1` auf `option.2` (siehe `docs/specs/views/receipt-review-card.md`, Abschnitt
+        /// „Korrektur einer Falschannahme aus Issue #65").
+        static let aiLineReceiptTextOptionIndex = 1
+        static let aiLineCustomOptionIndex = 2
+        /// `normalizedReceiptText("MILCH 3,5% FRISCH")` — Anzeigetext der Bon-Zeile an `aiLine`.
+        static let aiLineReceiptText = "Milch 3,5% Frisch"
         /// Platzhalter des Feldes „Anderer Name …" — `XCUIElement.value` eines leeren `TextField`
         /// liefert ihn statt einer leeren Zeichenkette.
         static let customFieldPlaceholder = "Anderer Name …"
@@ -437,7 +448,9 @@ final class ReceiptReviewUITests: XCTestCase {
     func testCustomNameOptionOpensFocusedTextField() {
         let app = openedReviewSheet()
 
-        let customOption = element(app, "receiptReview.line.\(Seed.aiLine).option.1")
+        // Issue #65, Paket 2: Die neue Bon-Zeile besetzt option.1, "Anderer Name …" rutscht auf
+        // option.2 (Seed.aiLineCustomOptionIndex).
+        let customOption = element(app, "receiptReview.line.\(Seed.aiLine).option.\(Seed.aiLineCustomOptionIndex)")
         XCTAssertTrue(customOption.waitForExistence(timeout: 5), "Auswahlzeile für den eigenen Namen fehlt.")
         customOption.tap()
 
@@ -465,7 +478,9 @@ final class ReceiptReviewUITests: XCTestCase {
                       "Vorbedingung: Das Häkchen nennt nicht den bisherigen Namen der Position — "
                       + "bekommen: \(checkbox.label)")
 
-        let customOption = element(app, "receiptReview.line.\(line).option.1")
+        // Issue #65, Paket 2: Die neue Bon-Zeile besetzt option.1, "Anderer Name …" rutscht auf
+        // option.2 (Seed.aiLineCustomOptionIndex).
+        let customOption = element(app, "receiptReview.line.\(line).option.\(Seed.aiLineCustomOptionIndex)")
         XCTAssertTrue(customOption.waitForExistence(timeout: 5), "Auswahlzeile für den eigenen Namen fehlt.")
         customOption.tap()
 
@@ -867,7 +882,9 @@ final class ReceiptReviewUITests: XCTestCase {
                       "Vorbedingung: Das Häkchen nennt nicht den bisherigen Namen — "
                       + "bekommen: \(checkbox.label)")
 
-        let customOption = element(app, "receiptReview.line.\(line).option.1")
+        // Issue #65, Paket 2: Die neue Bon-Zeile besetzt option.1, "Anderer Name …" rutscht auf
+        // option.2 (Seed.aiLineCustomOptionIndex).
+        let customOption = element(app, "receiptReview.line.\(line).option.\(Seed.aiLineCustomOptionIndex)")
         XCTAssertTrue(customOption.waitForExistence(timeout: 5),
                       "Auswahlzeile für den eigenen Namen fehlt.")
         customOption.tap()
@@ -916,7 +933,9 @@ final class ReceiptReviewUITests: XCTestCase {
                       "Vorbedingung: Das Häkchen nennt nicht den bisherigen Namen — "
                       + "bekommen: \(checkbox.label)")
 
-        let customOption = element(app, "receiptReview.line.\(line).option.1")
+        // Issue #65, Paket 2: Die neue Bon-Zeile besetzt option.1, "Anderer Name …" rutscht auf
+        // option.2 (Seed.aiLineCustomOptionIndex).
+        let customOption = element(app, "receiptReview.line.\(line).option.\(Seed.aiLineCustomOptionIndex)")
         XCTAssertTrue(customOption.waitForExistence(timeout: 5),
                       "Auswahlzeile für den eigenen Namen fehlt.")
         customOption.tap()
@@ -950,5 +969,42 @@ final class ReceiptReviewUITests: XCTestCase {
         XCTAssertTrue(keptPreviousName,
                       "Die Position hat den vorherigen Namen nicht behalten — "
                       + "bekommen: \(label)")
+    }
+
+    // MARK: - Issue #65, Paket 2 — AC-20/AC-21: Bon-Zeile lesbar, kopierbar, wählbar
+
+    /// AC-20 — Verdrahtung: Kontextmenü „Kopieren" existiert und ist antippbar; der tatsächliche
+    /// Pasteboard-Inhalt ist aus Plattformgründen nicht automatisiert prüfbar, siehe Spec.
+    func testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard() {
+        let app = openedReviewSheet()
+
+        let bonText = element(app, "receiptReview.line.\(Seed.aiLine).originalName")
+        XCTAssertTrue(bonText.waitForExistence(timeout: 5), "Bontext-Zeile fehlt.")
+
+        bonText.press(forDuration: 1.0)
+
+        let copyItem = app.buttons["Kopieren"]
+        XCTAssertTrue(copyItem.waitForExistence(timeout: 5), "Kontextmenü-Eintrag \"Kopieren\" erscheint nicht.")
+        copyItem.tap()
+    }
+
+    /// AC-21 — Antippen der Bon-Zeile („wie auf dem Bon") übernimmt den wortweise normalisierten
+    /// Bontext als Namen der Position und markiert genau diese Zeile als ausgewählt.
+    func testTappingReceiptTextOptionSelectsNormalizedBonText() {
+        let app = openedReviewSheet()
+
+        let receiptTextOption = element(app, "receiptReview.line.\(Seed.aiLine).option.\(Seed.aiLineReceiptTextOptionIndex)")
+        XCTAssertTrue(receiptTextOption.waitForExistence(timeout: 5), "Bon-Zeilen-Auswahl fehlt.")
+        XCTAssertTrue(receiptTextOption.label.contains(Seed.aiLineReceiptText),
+                      "Die Bon-Zeile zeigt nicht den normalisierten Bontext — bekommen: \(receiptTextOption.label)")
+        receiptTextOption.tap()
+
+        let checkbox = element(app, "receiptReview.line.\(Seed.aiLine).checkbox")
+        XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "Häkchen der KI-Zeile fehlt.")
+        let tookOverNormalizedName = labelOf(checkbox, contains: Seed.aiLineReceiptText, within: 5)
+        XCTAssertTrue(tookOverNormalizedName,
+                      "Die Position hat den normalisierten Bontext nicht übernommen — bekommen: \(checkbox.label)")
+        XCTAssertTrue(receiptTextOption.isSelected,
+                      "Die angetippte Bon-Zeile ist danach nicht als ausgewählt gekennzeichnet.")
     }
 }

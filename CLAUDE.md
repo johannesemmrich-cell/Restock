@@ -66,7 +66,7 @@ Every process that opens the shared store (main app, Siri intent, widget, Share 
 
 **`StoreDetailView`** shows pending and completed items for one store. Items are sorted by `store.itemOrderMap` (learned aisle order from completion history). In developer mode it also shows „Vielleicht auch fällig“ (Issue #30, C4, see `HabitService`).
 
-**`ReceiptReviewCard`** (`SmartCart/Views/Prices/ReceiptReviewCard.swift`) renders each parsed receipt line in `ReceiptScannerView`'s review list as its own card: the unedited printed receipt text, up to four selectable name options (best list match, AI suggestion, or a custom name field), a price/quantity summary line, and an inline "Ändern" editor for price and quantity. Replaces the former single-row `ReceiptLineRow`.
+**`ReceiptReviewCard`** (`SmartCart/Views/Prices/ReceiptReviewCard.swift`) renders each parsed receipt line in `ReceiptScannerView`'s review list as its own card: the printed receipt text (15pt, `Color.ink`, copyable via `.contextMenu`), up to five selectable name options (best list match, AI suggestion, the receipt text itself when it differs from the current name — Issue #65 —, or a custom name field), a price/quantity summary line, and an inline "Ändern" editor for price and quantity. Replaces the former single-row `ReceiptLineRow`.
 
 **`SettingsView`** handles: country/language pickers, store setup, notification toggles, version tap (5× to unlock dev mode), dev section (Feedback + Todos).
 
