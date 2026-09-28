@@ -5,7 +5,7 @@ created: 2026-09-22
 updated: 2026-09-28
 status: draft
 workflow: fix-50-import-dialog-design
-workflow_history: [feat-23-receipt-review-screen, fix-37-receipt-name-preselect]
+workflow_history: [feat-23-receipt-review-screen, fix-37-receipt-name-preselect, fix-50-import-dialog-design-paket2]
 tags: [feature, ui, receipt-scanner]
 ---
 
@@ -69,6 +69,18 @@ sich Invariante 5 (max. 3 inhaltliche Optionen), was Paket 1 ausdrücklich NICHT
 keine neue Options-Zeile hinzu und verschiebt daher keinen `option.<k>`-Index. Details, Regeln
 9-11 und der erweiterte Test Plan: Abschnitt „Nachtrag Issue #50, Paket 1" unten.
 
+**Nachtrag Issue #65, Paket 2 (2026-09-28):** Setzt die oben vertagte Scope-Erweiterung um.
+Vollständiger Auftrag und die gegen den Live-Code verifizierten Fakten stehen in
+`docs/context/fix-50-import-dialog-design-paket2.md`. Drei Zusagen: Bontext von 13pt/
+`Color.textSecondary` auf 15pt/`Color.ink` (lesbar), ein `.contextMenu` „Kopieren" am Bontext
+(kopierbar), und der Bontext — wortweise großgeschrieben — als eigene, antippbare Auswahlzeile
+„wie auf dem Bon", die nur erscheint, wenn sie sich vom aktuell gewählten Namen unterscheidet und
+mindestens vier Zeichen lang ist. Dafür ändert sich Invariante 5 wie oben bereits angekündigt: aus
+„höchstens 3 inhaltliche Optionen" wird „höchstens 3 andere Kandidaten plus optional die
+Bon-Zeile" (max. 5 Optionen insgesamt inkl. „Anderer Name …"). Details, neue Regel 7 (Renumerierung
+der bisherigen Regel 7 auf 8), der erweiterte Test Plan und eine Korrektur einer falschen
+Testannahme aus Issue #65 selbst: Abschnitt „Nachtrag Issue #65 (Paket 2)" unten.
+
 ## Dependencies
 
 | Entity | Type | Purpose |
@@ -110,15 +122,13 @@ keine neue Options-Zeile hinzu und verschiebt daher keinen `option.<k>`-Index. D
   Karten-UI+Unit-Tests vs. UI-Test-Vertiefung erwägen.
 
 ### Out of Scope
-- **Issue #50, Paket 2 (Issue #65) — gehört ausdrücklich NICHT zu dieser Erweiterung:**
-  - Bontext von 13 pt / `Color.textSecondary` auf 15 pt / `Color.ink`.
-  - Kontextmenü „Kopieren" am Bontext.
-  - Bontext als eigene, antippbare Auswahlzeile „wie auf dem Bon" mit wortweiser Großschreibung.
-  - Jede Änderung an Invariante 5 („höchstens 3 inhaltliche Optionen") und an
-    `ReceiptParserService`.
-
-  Paket 1 fügt bewusst keine neue Options-Zeile hinzu und verschiebt daher keinen `option.<k>`-
-  Index — eine zusätzliche Auswahlzeile ist genau der Schnitt, der Paket 2 vorbehalten bleibt.
+- **Issue #50, Paket 2 (Issue #65) — zum Zeitpunkt der Paket-1-Erweiterung (2026-09-27) noch nicht
+  Teil dieser Spec; seit 2026-09-28 umgesetzt.** Bontext-Lesbarkeit (15pt/`Color.ink`), das
+  Kontextmenü „Kopieren" und die Bon-Zeile als eigene Auswahl mit wortweiser Großschreibung sind
+  jetzt Teil dieser Spec — siehe „Scope-Erweiterung (Issue #65 — 2026-09-28)" und „Nachtrag
+  Issue #65 (Paket 2)" unten. Paket 1 selbst fügte bewusst keine neue Options-Zeile hinzu und
+  verschob daher keinen `option.<k>`-Index; Paket 2 fügt jetzt genau eine hinzu (die Bon-Zeile,
+  immer unmittelbar vor „Anderer Name …") und ändert dafür Invariante 5.
 - **Größe (`unit`, z. B. „400g") editierbar machen.** Der Mengen-Editor ändert Stückzahl oder
   Gewicht; die im Bontext gedruckte Füllmenge bleibt Anzeige. Wer sie korrigieren will, wechselt
   auf „Gramm" und trägt das Gewicht ein (überschreibt die Füllmenge als Lernbasis, siehe
@@ -130,7 +140,9 @@ keine neue Options-Zeile hinzu und verschiebt daher keinen `option.<k>`-Index. D
 - **Testeinstieg selbst (#28).** Das Seed-Launch-Argument, das erste UI-Test-Grundgerüst und die
   ersten `accessibilityIdentifier`s werden hier vorausgesetzt, nicht gebaut.
 - **`ReceiptResolutionService`/`ReceiptParserService`.** Keine Änderung an Auflösung, Schwellen
-  oder Formaterkennung.
+  oder Formaterkennung — auch die neue Normalisierungsfunktion für die Bon-Zeile (Issue #65,
+  Paket 2) lebt bewusst als eigene, private/statische Funktion in `ReceiptReviewCard.swift`, nicht
+  in `ReceiptParserService` (siehe „Nachtrag Issue #65 (Paket 2)", Begründung dort).
 
 ### Scope-Erweiterung (Issue #37 — 2026-09-24)
 
@@ -215,6 +227,31 @@ zählt in Kopfzeile und Summe mit und wird beim Speichern still verworfen.
   `docs/specs/views/receipt-review-card-nachtrag-1b.md`; von diesem Nachtrag sind in die Hauptspec
   bewusst NUR die F002-Teile ((H), (I), (J), (P) und AC-18 aus (Q)) übernommen worden.
 
+### Scope-Erweiterung (Issue #65 — 2026-09-28)
+
+Setzt Paket 2 aus Issue #50 um (Bontext lesbar, kopierbar, als eigene Auswahlzeile „wie auf dem
+Bon"), vertagt am 2026-09-27 explizit auf ein eigenes Ticket (siehe „Nachtrag Issue #50, Paket 1"
+oben). Volle Herleitung, Regeln 7-8, Design-Entscheidungen und Test Plan in „Nachtrag Issue #65
+(Paket 2)" unten.
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `SmartCart/Views/Prices/ReceiptReviewCard.swift` | MODIFY | Neuer Fall `ReceiptNameOption.receiptText(name:)`; neue reine Funktionen `normalizedReceiptText(_:)` und `shouldOfferReceiptTextOption(originalName:selectedName:)`; neue Regel 7 in `selectionOptions(for:)` (bisherige Regel 7 „`.custom` anhängen" wird Regel 8); neuer Zweig in `isSelected(_:)` und `applySelection(_:option:)`; `nameSection`s Bontext-`Text` auf 15pt/`Color.ink` mit `.contextMenu("Kopieren")`; neuer `if case .receiptText`-Zweig in `optionRow` mit Marke „wie auf dem Bon" (gleiches Muster wie die bestehende „auf deiner Liste"-Marke, `ReceiptReviewCard.swift:208-213`). |
+| `RestockTests/ReceiptReviewCardTests.swift` | MODIFY | Vier bestehende Tests korrigiert (Index-Verschiebung durch die neue Options-Zeile, siehe Test Plan); neue Tests für `normalizedReceiptText`, `shouldOfferReceiptTextOption` (inkl. Mindestlänge und leerer `selectedName`) und den neuen `.receiptText`-Zweig in `selectionOptions`/`applySelection`. |
+| `RestockUITests/ReceiptReviewUITests.swift` | MODIFY | Vier bestehende Tests korrigiert (`option.1` → `option.2` an `Seed.aiLine`, siehe Test Plan); zwei neue Tests: Kopieren über das Kontextmenü (`UIPasteboard.general.string`), Antippen der Bon-Zeilen-Option — beide am bestehenden `Seed.aiLine`, kein neuer Seed. |
+
+- Files: **3** — innerhalb des Ziels „max. 4-5 Dateien".
+- LoC: ≈ **+175 gesamt** (`ReceiptReviewCard.swift` ≈ +56, `ReceiptReviewCardTests.swift` ≈ +85,
+  `ReceiptReviewUITests.swift` ≈ +34) — innerhalb des Standard-Limits von ±250 LoC, mit deutlicher
+  Reserve. Diese Schätzung ersetzt sowohl die ≈250-LoC-Schätzung aus Issue #65 als auch die
+  ≈210-LoC-Schätzung aus `docs/context/fix-50-import-dialog-design-paket2.md` — beide kannten die
+  unten dokumentierte Testkorrektur (vier andere Tests betroffen als von Issue #65 behauptet, siehe
+  „Nachtrag Issue #65 (Paket 2)") noch nicht.
+- Risk Level: **NIEDRIG.** Reine, unit-testbare Funktionen (`normalizedReceiptText`,
+  `shouldOfferReceiptTextOption`) neben bereits bestehenden reinen Funktionen derselben Datei; kein
+  Eingriff in `save()`, `ReceiptResolutionService` oder `ReceiptParserService`; keine neue
+  Wire-Format-Änderung.
+
 ## Implementation Details
 
 ### 1. Zwei neue, nicht-Codable Felder auf `EditableReceiptLine`
@@ -265,8 +302,16 @@ Regeln (deterministisch, unit-testbar ohne UI):
    KI-Vorschlag, und Regel 5 hat mangels Kandidaten oder leerem `line.name` nicht gegriffen), wird
    stattdessen genau ein `.currentName(line.name)` gebildet. *(Vormals Regel 5 der Ursprungsfassung
    dieser Spec — inhaltlich unverändert.)*
-7. `.custom` wird immer als letztes Element angehängt → **max. 4 Optionen insgesamt.**
-   *(Vormals Regel 6 der Ursprungsfassung dieser Spec — inhaltlich unverändert.)*
+7. **(Issue #65, Paket 2, 2026-09-28)** Bontext als eigene Auswahlzeile anbieten, sofern
+   `shouldOfferReceiptTextOption(originalName: line.originalName, selectedName: line.name)` `true`
+   liefert (Mindestlänge 4 UND normalisierter Bontext ≠ `line.name`, case-insensitiv — siehe
+   „Nachtrag Issue #65 (Paket 2)" unten): `.receiptText(name: normalizedReceiptText(...))` wird
+   angehängt. Zählt NICHT zu den „max. 3 inhaltlichen Kandidaten" aus Regel 4 — sie kommt add-on
+   obendrauf, immer unmittelbar vor `.custom` (Invariante 5 geändert, siehe unten).
+8. `.custom` wird immer als letztes Element angehängt → **max. 5 Optionen insgesamt** (bisher 4;
+   Issue #65, Paket 2, erhöht das Maximum um die optionale Bon-Zeile aus Regel 7).
+   *(Vormals Regel 6 der Ursprungsfassung dieser Spec, dann Regel 7 nach Issue #50, Paket 1 —
+   inhaltlich unverändert außer der neuen Obergrenze.)*
 
 ### 3. `priceSummary(for:)`
 
@@ -333,7 +378,10 @@ Optionszeilen aus `selectionOptions(for: line)`, je 48pt hoch, Radio-Punkt links
 Art.-50-Kennzeichnung bleibt an der Options-Zeile). `.custom` öffnet bei Tap ein `TextField`
 (`Color.hairline`-Unterlinie statt Radio-Punkt), das direkt fokussiert; Eingabe ruft die
 Custom-Auswahl-Logik pro Tastendruck auf (gleiches Live-Binding-Muster wie die heutige
-`TextField`-Binding-Closure in `ReceiptLineRow.swift:695-702`).
+`TextField`-Binding-Closure in `ReceiptLineRow.swift:695-702`). **Seit Issue #65, Paket 2
+(2026-09-28)** trägt der Bontext dieser Kopfzeile 15pt/`Color.ink` statt 13pt/`Color.textSecondary`
+und ein `.contextMenu` „Kopieren"; unter den Optionszeilen kann zusätzlich eine Bon-Zeile „wie auf
+dem Bon" erscheinen — siehe „Nachtrag Issue #65 (Paket 2)" unten für beide Details.
 
 **Abschnitt 2:** eine Zeile mit `priceSummary(for: line)` links und „Ändern" rechts
 (`Color.accent`, 15pt semibold). Tap auf „Ändern" setzt lokalen `@State isEditing = true` und
@@ -419,9 +467,9 @@ und „Known Limitations":
    #66**. Regel 9 führt die Liste in diesem Fall zwar nach, aber die Neuberechnung liefert
    dasselbe Ergebnis: Dedup-Regel 2 entfernt die KI-Zeile zugunsten des namensgleichen
    Listen-Treffers, Regel 5 greift mangels Namens-Mismatch nicht, und `isSelected(.listMatch)`
-   verweigert die Markierung wegen `!line.resolvedByAI`. Der Fix ist eine sichtbare
-   Gestaltungsentscheidung (zwei Zeilen mit demselben Namen) und deshalb #66 mit vorgeschaltetem
-   Design-Entwurf zugewiesen; ausformulierte Vorarbeit in
+   verweigert die Markierung wegen `!line.resolvedByAI` (`ReceiptReviewCard.swift:369`). Der Fix
+   ist eine sichtbare Gestaltungsentscheidung (zwei Zeilen mit demselben Namen) und deshalb #66 mit
+   vorgeschaltetem Design-Entwurf zugewiesen; ausformulierte Vorarbeit in
    `docs/specs/views/receipt-review-card-nachtrag-1b.md`.
 
 #### Regel 10 — Leerer Name ist kein speicherbarer Zustand (Zusage 3)
@@ -577,6 +625,190 @@ ihn noch zeigt. (2) Sunk-Cost-unabhängig: eine künftige, andere Quelle für ei
 Tickets) würde den Datenschaden sonst kommentarlos zurückbringen. Der Guard kostet vier Zeilen
 und macht `save()` robust gegen eine Annahme, die die Karte nur GERADE JETZT erfüllt.
 
+### Nachtrag Issue #65 (Paket 2, 2026-09-28): Bontext lesbar, kopierbar, wählbar
+
+Vollständiger Auftrag, gegen den Live-Code verifizierte Fakten und die berechnete Testkorrektur
+stehen in `docs/context/fix-50-import-dialog-design-paket2.md`. Drei Zusagen aus Issue #65
+(Punkte 1-3, siehe Nachtrag-Absatz oben), in dieser Erweiterung umgesetzt.
+
+#### Ein fünfter Fall: `ReceiptNameOption.receiptText`
+
+```swift
+/// Der gedruckte Bontext, wortweise großgeschrieben — Marke „wie auf dem Bon" (Issue #65).
+/// Erscheint erst NACH den inhaltlichen Kandidaten (Regeln 1-6) und zählt nicht zu deren
+/// Kappung auf max. 3 (Regel 4) — sie ist ein Add-on, immer unmittelbar vor „Anderer Name …".
+case receiptText(name: String)
+```
+
+- `id`: `"bon-\(name)"`
+- `displayName`: `name`
+- `matchableName`: `name` — für die Dedup-/Vorauswahl-Regeln 1-6 inert, weil der Fall dort noch
+  nicht existiert (er wird erst danach eingefügt, siehe Regel 7 unten); wird ausschließlich für
+  `isSelected(_:)` gebraucht.
+
+#### Normalisierung — eigene, wortweise Funktion (kein Sprachmodell, keine Wiederverwendung von `ReceiptParserService.smartCapitalize`)
+
+```swift
+/// Wortweise Großschreibung des gedruckten Bontexts für die Auswahlzeile „wie auf dem Bon"
+/// (Issue #65). Bewusst NICHT `ReceiptParserService.smartCapitalize` (`ReceiptParserService.swift:
+/// 1008`) — die kapitalisiert nur das erste Wort und wirkt nur bei durchgehender Großschreibung;
+/// ihre vier bestehenden Aufrufstellen dort verfolgen eine andere Absicht (Normalform für Aliase/
+/// Matching, nicht Anzeige). Feste Regel, kein Sprachmodell.
+static func normalizedReceiptText(_ raw: String) -> String {
+    raw.split(separator: " ").map { word -> String in
+        guard let first = word.first else { return "" }
+        return String(first).uppercased() + word.dropFirst().lowercased()
+    }.joined(separator: " ")
+}
+```
+
+**Alternative (verworfen): `ReceiptParserService.smartCapitalize` wiederverwenden.** Verworfen,
+weil diese bereits bestehende Funktion eine andere Absicht verfolgt: sie kapitalisiert nur das
+erste Wort eines mehrteiligen Namens und wirkt nur, wenn der gesamte String durchgehend
+großgeschrieben ist — beides passt nicht zur Anzeige-Absicht „jedes Wort einzeln großschreiben,
+unabhängig vom Ausgangszustand". Eine Verhaltensänderung an `smartCapitalize` selbst hätte ihre
+vier bestehenden, produktiv genutzten Aufrufstellen riskiert (Scope-Verstoß: keine Seiteneffekte
+außerhalb des Tickets).
+
+#### Unterdrückungs-Regel
+
+```swift
+private static let receiptTextMinLength = 4
+
+static func shouldOfferReceiptTextOption(originalName: String, selectedName: String) -> Bool {
+    let trimmed = originalName.trimmingCharacters(in: .whitespaces)
+    guard trimmed.count >= receiptTextMinLength else { return false }
+    return normalizedReceiptText(trimmed).caseInsensitiveCompare(selectedName) != .orderedSame
+}
+```
+
+Zwei Bedingungen, wie vom PO vorgeschlagen (Issue #65): Mindestlänge **4** UND Namensungleichheit
+zum **aktuell gewählten** Namen (`line.name`), nicht zu allen angezeigten Kandidaten-Namen.
+
+**Alternative (verworfen): Schwelle 3 statt 4.** Der PO nannte „BTR" (3 Zeichen) selbst als
+Unsinns-Beispiel, das unterdrückt gehört. Bei Schwelle 3 würde „BTR" genau NICHT unterdrückt
+(`count >= 3` ist erfüllt) — das widerspräche dem genannten Beispiel unmittelbar. Schwelle 4
+unterdrückt „BTR" (Länge 3 < 4) und lässt gleichzeitig die kürzeste im Seed vorkommende sinnvolle
+Bon-Zeile („MILCH", 5 Zeichen, normalisiert „Milch") unangetastet durch.
+
+**Design-Entscheidung — Verhalten bei leerem `line.name` (bisher nirgends explizit entschieden):**
+Ist `selectedName` (`line.name`) leer, bietet die Funktion die Bon-Zeile trotzdem an — implizit,
+weil `trimmed` (der Bontext) durch den `receiptTextMinLength`-Guard nie leer ist und der Vergleich
+`normalizedReceiptText(trimmed) != ""` praktisch immer `true` ist. **Entschieden: so belassen,
+nicht zusätzlich unterdrücken.** Begründung: Gerade wenn nichts sonst passt (leerer Name trotz
+vorhandener Vorschläge, siehe Testfall
+`testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches` in „Test Plan" unten), ist der
+rohe Bontext eine zusätzliche, nützliche Wahlmöglichkeit — und Regel 11/`isSavable` (Issue #50,
+Paket 1) verhindert ohnehin jedes Speichern mit leerem Namen; das Risiko aus Issue #50 wird dadurch
+nicht wieder geöffnet.
+
+**Alternative (verworfen): Bon-Zeile bei leerem `line.name` zusätzlich unterdrücken** (analog zum
+Guard in Regel 5). Verworfen, weil das dem Nutzer ausgerechnet in der Situation, in der ihm am
+wenigsten geholfen ist (nichts vorausgewählt), eine zusätzliche Option vorenthielte — ohne dass
+Issue #65 das verlangt oder ein Sicherheitsrisiko dagegen spricht (siehe `isSavable`).
+
+#### Einordnung in `selectionOptions(for:)` — neue Regel 7, Renumerierung der bisherigen Regel 7 auf 8
+
+Nach dem bestehenden Schritt 6 (Leer-Fallback) und VOR dem bisherigen Schritt 7 (`.custom`
+anhängen, jetzt Regel 8):
+
+```swift
+// 7. (Issue #65) Bontext als eigene Auswahlzeile anbieten, sofern nicht unterdrückt.
+if shouldOfferReceiptTextOption(originalName: line.originalName, selectedName: line.name) {
+    candidates.append(.receiptText(name: normalizedReceiptText(
+        line.originalName.trimmingCharacters(in: .whitespaces))))
+}
+
+// 8. „Anderer Name …" immer als letzte Zeile.
+return candidates + [.custom]
+```
+
+Die Bon-Zeile zählt NICHT zu den „max. 3 inhaltlichen Kandidaten" aus Regel 4 — sie kommt add-on
+obendrauf, immer unmittelbar vor `.custom`. **Invariante 5 ändert sich** von „höchstens 3
+inhaltliche Optionen" zu „höchstens 3 andere Kandidaten plus optional die Bon-Zeile" (= max. 4
+inhaltliche + `.custom` = **max. 5 Optionen insgesamt**, bisher 4). Beleg am freigegebenen Entwurf A
+(`docs/artifacts/fix-50-import-dialog-design/entwurf-bonkarte.html`, Zeilen 292-329): beide
+Beispiele zeigen `[bisherige Kandidaten] [Bon-Zeile] [Anderer Name …]` — die Bon-Zeile konkurriert
+nicht um einen der drei Plätze.
+
+#### `isSelected(_:)` — neuer Zweig (`ReceiptReviewCard.swift:366-380`)
+
+```swift
+case .receiptText(let name):
+    return !customActive && line.name.caseInsensitiveCompare(name) == .orderedSame
+```
+
+#### `applySelection(_:option:)` — neuer Zweig (`ReceiptReviewCard.swift:458-475`)
+
+```swift
+case .receiptText(let name):
+    line.name = name
+    line.matchedItemID = nil
+    line.resolvedByAI = false
+```
+
+Gleiche Form wie `.currentName` — die Bon-Zeile trägt weder einen Listen- noch einen KI-Treffer.
+
+#### Darstellung: lesbar (Punkt 1) und kopierbar (Punkt 2)
+
+In `nameSection` (`ReceiptReviewCard.swift:134-136`, die Bontext-Kopfzeile der Karte): Font
+`.system(size: 13)` → `.system(size: 15)`, `Color.textSecondary` → `Color.ink`. Neues
+`.contextMenu { Button("Kopieren") { UIPasteboard.general.string = line.originalName } }` am
+Bontext-`Text`. In `optionRow` (`ReceiptReviewCard.swift:191-…`): neuer `if case .receiptText`-Zweig
+mit Marke „wie auf dem Bon" — exakt dasselbe visuelle Muster wie die bestehende „auf deiner
+Liste"-Marke (`ReceiptReviewCard.swift:208-213`, `Text`, 11pt, `Color.textSecondary`,
+`.fixedSize()`), nur anderer Text, gleiche Stelle rechts an der Optionszeile.
+
+`originalName` bleibt durch keinen dieser Pfade verändert (Invariante 2 — auch dieser Weg ändert
+es nicht).
+
+#### Korrektur einer Falschannahme aus Issue #65 und dem Kontext-Dokument
+
+Beide behaupteten, folgende vier UI-Tests hingen an den verschobenen `option.<k>`-Indizes:
+`testCardShowsAtMostFourSelectionOptions`, `testTappingListMatchSelectsThatOption`,
+`testCustomNameOptionOpensFocusedTextField`, `testTypingCustomNameIsAppliedWithEveryKeystroke`. Am
+tatsächlichen Seed (`RestockUITests/ReceiptReviewUITests.swift:32-76`) berechnet, ist das für die
+ersten beiden **falsch**: Beide benutzen `Seed.suggestionLine` (Index 2, `originalName == "MILCH"`,
+`name == "Milch"`) — dort ist die Bon-Zeile wegen Namensgleichheit (case-insensitiv) unterdrückt,
+die Karte bleibt bei genau 4 Optionen. Betroffen sind stattdessen die zwei genannten UND zwei
+weitere, von Issue #65 gar nicht erwähnte Tests — alle vier an `Seed.aiLine` (Index 0,
+`originalName == "MILCH 3,5% FRISCH"`, `name == "Frische Vollmilch 3,5 %"`, normalisiert „Milch
+3,5% Frisch" ≠ „Frische Vollmilch 3,5 %" → Bon-Zeile erscheint):
+
+| Test | Datei:Zeile (vor Korrektur) | Änderung |
+|---|---|---|
+| `testCustomNameOptionOpensFocusedTextField` | `ReceiptReviewUITests.swift:440` | `Seed.aiLine.option.1` → `option.2` |
+| `testTypingCustomNameIsAppliedWithEveryKeystroke` | `ReceiptReviewUITests.swift:468` | `Seed.aiLine.option.1` → `option.2` |
+| `testClearingCustomNameFieldKeepsPreviousItemName` | `ReceiptReviewUITests.swift:870` | `Seed.aiLine.option.1` → `option.2` |
+| `testWhitespaceOnlyCustomNameKeepsPreviousItemName` | `ReceiptReviewUITests.swift:919` | `Seed.aiLine.option.1` → `option.2` |
+
+**Nicht betroffen, entgegen Issue #65:** `testCardShowsAtMostFourSelectionOptions`
+(`ReceiptReviewUITests.swift:392`) und `testTappingListMatchSelectsThatOption`
+(`ReceiptReviewUITests.swift:413`) — beide nutzen `Seed.suggestionLine`, bleiben unverändert
+korrekt. `testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution`
+(`ReceiptReviewUITests.swift:816`) nutzt `Seed.unresolvedLine` (`originalName == "BTR"`, Länge 3 <
+4) — die Mindestlängen-Schwelle greift, ebenfalls unverändert korrekt.
+
+Bestehende Unit-Tests in `RestockTests/ReceiptReviewCardTests.swift` — von Issue #65 GAR NICHT
+genannt, hier vollständig gegen `originalName`/`name` je Fixture berechnet:
+
+| Test | Zeile (Aufruf `selectionOptions`) | Auswirkung |
+|---|---|---|
+| `testAiLineWithTwoSuggestionsOffersFourOptionsWithAiFirst` | 98 | `originalName: "MILCH 3,5% FRISCH"`, `name: "Frische Vollmilch"` → normalisiert „Milch 3,5% Frisch" ≠ „Frische Vollmilch" → Bon-Zeile erscheint. `options.count` 4→5, `options[3]`-Assertion („eigener") → `options[4]`, neue Assertion für `options[3]` (Bon-Zeile). |
+| `testPreselectedListMatchIsSortedFirstRegardlessOfCase` | 128 | Gleiche `originalName`, `name: "vollmilch"` → Bon-Zeile erscheint. `options.count` 4→5, `options[3]` („eigener") → `options[4]`. |
+| `testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches` | 201 | `name: ""`, `originalName: "UNLESBARER BONTEXT"` → Bon-Zeile erscheint (siehe Design-Entscheidung oben). `options.count` 4→5. |
+| `testLineWithoutSuggestionsAndWithoutAiKeepsCurrentName` | 241 | `name: "Bio-Hackfleisch"`, `originalName: "BIO-HACKFLEISCH 400G"` → normalisiert „Bio-hackfleisch 400g" ≠ „Bio-Hackfleisch" → Bon-Zeile erscheint. `options.count` 2→3, `options[1]` („eigener") → `options[2]`. |
+
+**Unverändert korrekt** (Bon-Zeile unterdrückt wegen Namensgleichheit mit `line.name`):
+`testFiveSuggestionsAreCappedToThreeListMatches` (Zeile 156, `name: "Milch"`, `originalName:
+"MILCH"`), `testCurrentNameIsOfferedAndPreselectedWhenNoCandidateMatches` (Zeile 179, gleiche
+Werte).
+
+**Bekommt eine neue, bisher ungeprüfte Zeile, bleibt aber grün** (optional, keine
+Pflichtkorrektur): `testAiSuggestionIsDroppedWhenAListMatchCarriesTheSameName` (Zeile 227) —
+filtert nur auf `.aiSuggestion`/Namenssuffix, deckt die neue Bon-Zeile nicht ab, prüft aber auch
+nichts Falsches.
+
 ### `accessibilityIdentifier`-Schema (neu, koordiniert mit #28)
 
 | Element | Identifier |
@@ -596,7 +828,11 @@ und macht `save()` robust gegen eine Annahme, die die Karte nur GERADE JETZT erf
 
 Diese Tabelle ist die verbindliche Namensgrundlage für #23; sollte #28 zuerst abweichende
 Identifier für Bontext/Preis/KI-Marke/Speichern einführen, wird bei der Implementierung von #23
-auf die dort bereits gemergten Strings angeglichen (keine zwei parallelen Schemata).
+auf die dort bereits gemergten Strings angeglichen (keine zwei parallelen Schemata). Die
+Bon-Zeile aus Issue #65 (Paket 2) bekommt bewusst KEINEN eigenen Identifier-Eintrag: sie ist eine
+gewöhnliche Auswahlzeile und läuft über das bestehende `option.<k>`-Schema, wie die „auf deiner
+Liste"-Zeile auch keinen eigenen Marken-Identifier hat (nur die KI-Marke, weil AC-3 explizit ihr
+Umbruchverhalten prüft).
 
 ## Invarianten
 
@@ -613,12 +849,18 @@ auf die dort bereits gemergten Strings angeglichen (keine zwei parallelen Schema
    existiert; der KI-Name selbst bleibt über den Listen-Treffer weiterhin wählbar).
 4. **`ResolvedReceiptLine`/`ReceiptSuggestion` (Wire-Format) bekommen keine neuen Felder** — die
    KI-Merk-Felder sind ausschließlich lokaler `EditableReceiptLine`-Zustand.
-5. **Die Karte zeigt höchstens 3 inhaltliche Auswahl-Optionen**, unabhängig davon, wie viele
+5. **(Geändert durch Issue #65, Paket 2, 2026-09-28) Die Karte zeigt höchstens 3 andere
+   Auswahl-Optionen plus optional die Bon-Zeile „wie auf dem Bon"**, unabhängig davon, wie viele
    `suggestions` `ReceiptResolutionService` liefert (heute bis zu 5) — Regel 4 aus
-   `selectionOptions`. Bleibt durch die Issue-#37-Erweiterung (Regel 5) unverändert gültig: die
-   neue Regel fügt maximal eine Zeile ein und entfernt dafür eine bestehende. Paket 1 (Issue #50)
-   fügt KEINE neue Options-Zeile hinzu — diese Invariante und alle `option.<k>`-Indizes bleiben
-   unverändert; Paket 2 (Issue #65) wird diese Invariante ändern.
+   `selectionOptions` kappt weiterhin auf max. 3 inhaltliche Kandidaten (Listen-Treffer/
+   KI-Vorschlag/geltender Name); Regel 7 (Issue #65) fügt die Bon-Zeile add-on hinzu, sofern
+   `shouldOfferReceiptTextOption` greift — sie zählt NICHT zu den drei gekappten Kandidaten.
+   Zusammen mit `.custom` ergibt das **max. 5 Optionen insgesamt** (bisher max. 4). Bleibt durch
+   die Issue-#37-Erweiterung (Regel 5) unverändert gültig: die neue Regel fügt maximal eine Zeile
+   ein und entfernt dafür eine bestehende. Paket 1 (Issue #50) fügte KEINE neue Options-Zeile hinzu
+   — `option.<k>`-Indizes blieben unverändert; Paket 2 (Issue #65) fügt jetzt genau eine hinzu
+   (siehe „Nachtrag Issue #65 (Paket 2)" für die betroffenen `option.<k>`-Verschiebungen an
+   bestehenden Tests).
 6. **(Issue #50, Paket 1) Genau eine Option ist markiert, sofern `line.name` nicht leer ist —
    mit den unten benannten Ausnahmen.** Gilt für jede Zeile, deren `matchedItemID`/`resolvedByAI`
    aus einem der bekannten Zuweisungswege stammen (`applySelection`,
@@ -853,17 +1095,110 @@ Paket 1"):
   `RestockUITests/ReceiptReviewUITests.swift:947`). Grün belegt in `green-run2-ui.txt` und
   `green-run3b-suite.txt`.
 
+#### Issue #65, Paket 2 — neue und korrigierte Tests
+
+**Unit — `RestockTests/ReceiptReviewCardTests.swift`, neu:**
+
+- [ ] **AC-21 (`normalizedReceiptText`):** GIVEN `"MILCH 3,5% FRISCH"` WHEN
+  `normalizedReceiptText(_:)` aufgerufen wird THEN liefert es `"Milch 3,5% Frisch"` (wortweise
+  Großschreibung, Ziffern/Sonderzeichen bleiben unverändert).
+  Test: `testNormalizedReceiptTextCapitalizesEachWord`.
+- [ ] **AC-21 (`normalizedReceiptText`, Bindestrich-Wort):** GIVEN `"BIO-HACKFLEISCH 400G"` WHEN
+  `normalizedReceiptText(_:)` aufgerufen wird THEN liefert es `"Bio-hackfleisch 400g"` — nur der
+  erste Buchstabe des gesamten (bindestrich-verbundenen) Worts wird groß, nicht jeder Wortteil.
+  Test: `testNormalizedReceiptTextKeepsHyphenatedWordAsOneUnit`.
+- [ ] **AC-22 (`shouldOfferReceiptTextOption`, Mindestlänge):** GIVEN `originalName: "BTR"`
+  (3 Zeichen) und ein beliebiger abweichender `selectedName` WHEN
+  `shouldOfferReceiptTextOption(originalName:selectedName:)` aufgerufen wird THEN liefert es
+  `false` — genau das vom PO genannte Unsinns-Beispiel wird unterdrückt.
+  Test: `testShouldOfferReceiptTextOptionRejectsNamesBelowMinLength`.
+- [ ] **AC-22 (Namensgleichheit):** GIVEN `originalName: "MILCH"`, `selectedName: "Milch"` WHEN
+  `shouldOfferReceiptTextOption(originalName:selectedName:)` aufgerufen wird THEN liefert es
+  `false` (case-insensitiv gleich nach Normalisierung).
+  Test: `testShouldOfferReceiptTextOptionRejectsNameEqualToSelection`.
+- [ ] **AC-22 (Regelfall):** GIVEN `originalName: "MILCH 3,5% FRISCH"`, `selectedName: "Frische
+  Vollmilch"` WHEN `shouldOfferReceiptTextOption(originalName:selectedName:)` aufgerufen wird THEN
+  liefert es `true`.
+  Test: `testShouldOfferReceiptTextOptionAcceptsDifferingName`.
+- [ ] **AC-22 (leerer `selectedName`, Design-Entscheidung):** GIVEN `originalName: "UNLESBARER
+  BONTEXT"`, `selectedName: ""` WHEN `shouldOfferReceiptTextOption(originalName:selectedName:)`
+  aufgerufen wird THEN liefert es `true` — die Bon-Zeile bleibt bei leerem Namen ein Angebot (siehe
+  „Nachtrag Issue #65 (Paket 2)", Design-Entscheidung).
+  Test: `testShouldOfferReceiptTextOptionAcceptsEmptySelection`.
+- [ ] **AC-21 (`selectionOptions`-Integration, Regel 7/8):** GIVEN eine Zeile mit `originalName:
+  "MILCH 3,5% FRISCH"`, `name: "Frische Vollmilch"`, zwei `suggestions`, `aiSuggestedName:
+  "Frische Vollmilch"` WHEN `selectionOptions(for:)` aufgerufen wird THEN liefert es 5 Optionen:
+  KI-Zeile + 2 Treffer + Bon-Zeile (`options[3]`, `.receiptText("Milch 3,5% Frisch")`) +
+  `.custom` (`options[4]`) — Korrektur/Erweiterung von
+  `testAiLineWithTwoSuggestionsOffersFourOptionsWithAiFirst`.
+- [ ] **AC-21 (`selectionOptions`-Integration, Unterdrückung):** GIVEN eine Zeile mit
+  `originalName: "MILCH"`, `name: "Milch"` und drei `suggestions` (keiner davon `"Milch"`) WHEN
+  `selectionOptions(for:)` aufgerufen wird THEN bleibt die Optionsliste bei 4 Einträgen — keine
+  Bon-Zeile, weil `originalName` normalisiert `line.name` entspricht (Regressionsschutz für
+  `testFiveSuggestionsAreCappedToThreeListMatches`/
+  `testCurrentNameIsOfferedAndPreselectedWhenNoCandidateMatches`, bleiben unverändert grün).
+- [ ] **AC-21 (`applySelection`, `.receiptText`):** GIVEN eine Zeile mit gesetztem `matchedItemID`
+  und `resolvedByAI == true` WHEN der `.receiptText`-Callback mit einem Namen aufgerufen wird THEN
+  gilt `name == <der Name>`, `matchedItemID == nil`, `resolvedByAI == false`, `originalName`
+  unverändert — dieselbe Form wie `.currentName`.
+  Test: `testChoosingReceiptTextSetsNameAndClearsMatchAndAiFlag`.
+
+**Vier bestehende Unit-Tests korrigiert** (Index-Verschiebung durch die neue Bon-Zeile — siehe
+Tabelle „Korrektur einer Falschannahme" oben für die vollständige Herleitung):
+`testAiLineWithTwoSuggestionsOffersFourOptionsWithAiFirst` (Zeile 98),
+`testPreselectedListMatchIsSortedFirstRegardlessOfCase` (Zeile 128),
+`testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches` (Zeile 201),
+`testLineWithoutSuggestionsAndWithoutAiKeepsCurrentName` (Zeile 241) — jeweils `options.count`
+und die Index-Assertion für `.custom`/`.currentName` angepasst, siehe Tabelle oben.
+
+**UI — `RestockUITests/ReceiptReviewUITests.swift`, neu** (Einstieg über den bestehenden
+`Seed.aiLine`, kein neuer Seed nötig — die Bon-Zeile erscheint dort bereits deterministisch):
+
+- [ ] **AC-20 (Kopieren via Kontextmenü):** GIVEN die Bontext-Zeile von `receiptReview.line.0`
+  (`Seed.aiLine`, Text „MILCH 3,5% FRISCH") WHEN lange auf sie gedrückt und „Kopieren" im
+  Kontextmenü angetippt wird THEN enthält `UIPasteboard.general.string` exakt
+  `"MILCH 3,5% FRISCH"` — der unveränderte, ungetrimmte `originalName`, nicht der normalisierte
+  Anzeigetext der Auswahlzeile.
+  Test: `testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard`.
+- [ ] **AC-21 (Bon-Zeile als Auswahl, UI):** GIVEN `receiptReview.line.0.option.1` (die neue
+  Bon-Zeile an `Seed.aiLine` — sie steht zwischen der KI-Zeile an `option.0` und „Anderer Name …",
+  das dadurch von `option.1` auf `option.2` rutscht, siehe Tabelle oben) WHEN sie angetippt wird
+  THEN zeigt `receiptReview.line.0.checkbox` das Label „Position übernehmen: Milch 3,5% Frisch" und
+  `receiptReview.line.0.option.1` trägt danach `isSelected == true`.
+  Test: `testTappingReceiptTextOptionSelectsNormalizedBonText`.
+
+**Vier bestehende UI-Tests korrigiert** (`Seed.aiLine.option.1` → `option.2`, siehe Tabelle
+„Korrektur einer Falschannahme" oben): `testCustomNameOptionOpensFocusedTextField` (Zeile 440),
+`testTypingCustomNameIsAppliedWithEveryKeystroke` (Zeile 468),
+`testClearingCustomNameFieldKeepsPreviousItemName` (Zeile 870),
+`testWhitespaceOnlyCustomNameKeepsPreviousItemName` (Zeile 919).
+
+**Nicht UI-testbar (AC-19, Font/Farbe):** Die Erhöhung von 13pt auf 15pt und der Farbwechsel
+`Color.textSecondary` → `Color.ink` am Bontext sind reine Rendering-Attribute — `XCUITest` prüft
+den Bedienhilfen-Baum (Label, Existenz, Traits), nicht Schriftgröße oder Farbwerte. Geprüft über
+Code-Review am `.font`/`.foregroundStyle`-Modifier in `ReceiptReviewCard.swift:134-136`, kein
+eigener UI-Test für Pixelwerte — dieselbe Prüftiefe, mit der diese Spec an anderer Stelle bereits
+reine Farb-/Token-Entscheidungen behandelt (siehe „Risiken", Dark Mode).
+
 **Bestehende Tests, unverändert (bestätigt für Paket 1):**
 `testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches`
 (`RestockTests/ReceiptReviewCardTests.swift`) bleibt unverändert — er prüft die reine Funktion
 `selectionOptions` bei bereits leerem `line.name`, eine Eingangsbedingung, die Paket 1 nicht
 ändert. Regel 10 (Rückfall) verhindert nur, dass die VIEW `line.name` überhaupt erst leer setzt —
 sobald ein Aufrufer (wie dieser Test) direkt eine Zeile mit `name: ""` konstruiert, bleibt das
-Verhalten von `selectionOptions` exakt das aus Issue #37 (Regel 6). Alle vier Options-Index-Tests
-aus der Analyse-Risikoliste (`testCardShowsAtMostFourSelectionOptions`,
-`testTappingListMatchSelectsThatOption`, `testCustomNameOptionOpensFocusedTextField`,
-`testTypingCustomNameIsAppliedWithEveryKeystroke`) bleiben ebenfalls unverändert: Paket 1 fügt
-keine neue Options-Zeile hinzu, also verschiebt sich kein `option.<k>`-Index.
+Verhalten von `selectionOptions` exakt das aus Issue #37 (Regel 6). **Hinweis: Der Test selbst
+gewinnt seit Issue #65, Paket 2 eine neue Bon-Zeile (`options.count` 4→5, siehe Tabelle oben) —
+„unverändert" bezieht sich hier ausschließlich auf sein Leer-Namen-Verhalten, nicht auf die
+Anzahl der Optionen.** Alle vier Options-Index-Tests aus der Analyse-Risikoliste
+(`testCardShowsAtMostFourSelectionOptions`, `testTappingListMatchSelectsThatOption`,
+`testCustomNameOptionOpensFocusedTextField`, `testTypingCustomNameIsAppliedWithEveryKeystroke`)
+blieben für Paket 1 unverändert: Paket 1 fügte keine neue Options-Zeile hinzu, also verschob sich
+kein `option.<k>`-Index. **Seit Issue #65, Paket 2 (2026-09-28) gilt das nur noch für die ersten
+zwei** (`testCardShowsAtMostFourSelectionOptions`, `testTappingListMatchSelectsThatOption`, beide
+an `Seed.suggestionLine`, wo die neue Bon-Zeile wegen Namensgleichheit unterdrückt bleibt) — die
+anderen zwei sowie zwei zusätzliche, hier nicht genannte Tests sind jetzt betroffen, siehe
+„Nachtrag Issue #65 (Paket 2)" und den Unterabschnitt „Issue #65, Paket 2 — neue und korrigierte
+Tests" oben.
 
 **Dark/Light:** mindestens `AC1`, `AC3` und `AC9` zusätzlich einmal mit dem Launch-Argument
 `-AppleInterfaceStyle Dark` ausgeführt (zweiter Testlauf derselben Methoden oder parametrisierte
@@ -878,7 +1213,9 @@ diese Spec GREEN macht.
 
 - **AC-1:** Jede Karte zeigt den vollständigen, unveränderten Bontext (`originalName`) —
   auch bei Überlänge umbrechend, nie abgeschnitten.
-- **AC-2:** Jede Karte zeigt max. 4 Auswahlzeilen (max. 3 inhaltliche + „Anderer Name …").
+- **AC-2:** Jede Karte zeigt max. 5 Auswahlzeilen (max. 3 inhaltliche + optional die Bon-Zeile
+  „wie auf dem Bon" + „Anderer Name …") — Obergrenze seit Issue #65, Paket 2 (2026-09-28) von 4
+  auf 5 erhöht, siehe AC-21/Invariante 5.
 - **AC-3:** Die KI-Marke ist an der KI-Options-Zeile sichtbar, einzeilig, nie umbrechend.
 - **AC-4:** Der beste Treffer / aktuelle Zustand der Zeile ist vorausgewählt. Entspricht keiner der
   bis zu 3 angezeigten Kandidaten-Zeilen dem aktuell für die Position geltenden Namen (`line.name`)
@@ -931,6 +1268,20 @@ diese Spec GREEN macht.
   aus wie ein vollständig geleertes Feld. Es entsteht keine angehakte Position, die in Kopfzeile
   und Summe mitzählt, beim Speichern aber still verworfen wird; Regel 11 bleibt als Verteidigung
   in der Tiefe unverändert bestehen.
+- **AC-19 (Issue #65, Paket 2 — Bontext lesbar):** Der Bontext in der Kopfzeile jeder Karte wird
+  in 15pt und `Color.ink` dargestellt (bisher 13pt/`Color.textSecondary`) — nicht eigenständig per
+  UI-Test geprüft (Rendering-Attribut, siehe Test Plan), verifiziert per Code-Review.
+- **AC-20 (Issue #65, Paket 2 — kopierbar):** Ein langer Druck auf den Bontext öffnet ein
+  Kontextmenü mit „Kopieren"; danach enthält die Zwischenablage exakt `line.originalName`
+  (unverändert, ungetrimmt).
+- **AC-21 (Issue #65, Paket 2 — Bon-Zeile als Auswahl):** Ist der wortweise großgeschriebene
+  Bontext nicht case-insensitiv identisch mit dem aktuell geltenden Namen (`line.name`), erscheint
+  er als eigene, antippbare Auswahlzeile „wie auf dem Bon" unmittelbar vor „Anderer Name …";
+  Antippen setzt `name` auf den normalisierten Bontext, `matchedItemID = nil`,
+  `resolvedByAI = false`.
+- **AC-22 (Issue #65, Paket 2 — Unterdrückung):** Die Bon-Zeile erscheint NICHT, wenn der
+  getrimmte Bontext kürzer als 4 Zeichen ist ODER der normalisierte Bontext case-insensitiv dem
+  aktuell geltenden Namen entspricht.
 
 ## Alternativen (verworfen)
 
@@ -990,6 +1341,18 @@ diese Spec GREEN macht.
   `match` fängt einen leeren Namen bereits ab, und die zwei echten Wirkungen (namenloser
   Kaufdatensatz, Lern-Eintrag unter leerem Schlüssel) entstehen hinter dieser Stelle. Belegt in
   Regel 11 mit Zeilennummern.
+- **Issue #65, Paket 2 — Alternative: `ReceiptParserService.smartCapitalize` für die
+  Bon-Zeilen-Normalisierung wiederverwenden** statt einer eigenen Funktion: Verworfen — passt nicht
+  zur Absicht (kapitalisiert nur das erste Wort, wirkt nur bei durchgehender Großschreibung) und
+  hätte vier bestehende, produktiv genutzte Aufrufstellen mit einer anderen Absicht riskiert.
+- **Issue #65, Paket 2 — Alternative: Mindestlänge 3 statt 4** für
+  `shouldOfferReceiptTextOption`: Verworfen — das vom PO selbst genannte Unsinns-Beispiel „BTR" (3
+  Zeichen) würde bei Schwelle 3 gerade NICHT unterdrückt.
+- **Issue #65, Paket 2 — Alternative: Bon-Zeile bei leerem `line.name` zusätzlich unterdrücken**
+  (analog zum Guard in Regel 5): Verworfen — verwehrt dem Nutzer ausgerechnet in der Situation, in
+  der ihm am wenigsten geholfen ist, eine zusätzliche, nützliche Option, ohne dass Issue #65 das
+  verlangt oder ein Sicherheitsrisiko dagegen spricht (`isSavable`/Regel 11 verhindert ohnehin
+  jedes Speichern mit leerem Namen).
 
 ## Risiken
 
@@ -1032,6 +1395,12 @@ diese Spec GREEN macht.
   zeigen. Aktuell tut das kein bestehender Test; Details und die Parallel-Einschränkung des
   bestehenden Seeds (Apple-Intelligence-Verfügbarkeit) stehen in
   `docs/specs/testing/receipt-review-test-entry.md`.
+- **Issue #65, Paket 2 — Rendering-Attribute nicht UI-testbar.** Die Erhöhung von 13pt auf 15pt
+  und der Farbwechsel am Bontext (AC-19) sind über `XCUITest` nicht prüfbar (Bedienhilfen-Baum,
+  keine Rendering-Werte) — abgesichert über Code-Review, nicht über einen automatisierten Test.
+  Bricht keine bestehende Testing-Strategie, weil auch die bestehenden Design-Token-Entscheidungen
+  dieser Spec (z. B. Dark/Light-Farbwerte) nicht pixelgenau, sondern nur strukturell (Existenz,
+  Umbruchverhalten) geprüft werden.
 
 ## Architektur-Entscheidung (ADR)
 
@@ -1053,7 +1422,12 @@ diese Spec GREEN macht.
   neben eine bestehende; Regel 11 ergänzt eine Bedingung im bestehenden Eingangsfilter von
   `save()`. Die einzige
   Invarianten-Änderung (Nr. 1) ist im Text selbst begründet und gegen eine Alternative
-  abgewogen (siehe „Alternativen").
+  abgewogen (siehe „Alternativen"). Die Issue-#65-Erweiterung, Paket 2 (2026-09-28), ist ebenfalls
+  kein eigenes ADR wert: sie fügt einen fünften, strukturgleichen Fall zu einem bereits
+  bestehenden Enum hinzu und zwei reine Funktionen neben bereits bestehende reine Funktionen
+  derselben Datei — kein neues Architekturmuster. Die einzige Invarianten-Änderung dieser
+  Erweiterung (Nr. 5) ist im Text selbst begründet und gegen zwei Alternativen abgewogen (siehe
+  „Alternativen").
 
 ## Definition of Done
 
@@ -1085,6 +1459,9 @@ Beobachtbar für den PO, ohne Code zu lesen:
 - **(Issue #50, Paket 1 + 1b)** Leert man das Feld „Anderer Name …" versehentlich vollständig oder
   reduziert es auf reine Leerzeichen, bleibt die Position unter ihrem vorherigen Namen gespeichert,
   statt kommentarlos ohne Namen dazustehen.
+- **(Issue #65, Paket 2)** Der gedruckte Bontext jeder Karte ist besser lesbar (größere, dunklere
+  Schrift), lässt sich per langem Druck kopieren, und steht — wenn er vom gewählten Namen abweicht
+  — als eigene, antippbare Zeile „wie auf dem Bon" zur Auswahl.
 - Alle zugehörigen automatisierten Tests (Unit und UI, siehe Test Plan) sind grün; keine manuelle
   Nachprüfung durch den PO nötig.
 
@@ -1097,6 +1474,9 @@ Beobachtbar für den PO, ohne Code zu lesen:
   und aktualisiert `matchedItemID`/`resolvedByAI` entsprechend der Quelle der Auswahl.
 - Tippen auf „Anderer Name …" öffnet die Tastatur direkt an dieser Karte; jede Eingabe wird laufend
   übernommen (kein separater „Übernehmen"-Schritt), identisch zum heutigen Verhalten.
+- Ein langer Druck auf den Bontext einer Karte öffnet ein Kontextmenü mit „Kopieren" (Issue #65,
+  Paket 2); tippt der Nutzer stattdessen auf die Bon-Zeile „wie auf dem Bon" (sofern sie
+  erscheint), wechselt der Name der Karte sofort auf den wortweise großgeschriebenen Bontext.
 - Tippen auf „Ändern" bei der Preiszeile öffnet Preis- und Mengenfeld direkt an dieser Karte; die
   Anzeige darüber aktualisiert sich, sobald ein neuer Wert eingegeben oder Stück/Gramm umgeschaltet
   wird.
@@ -1244,3 +1624,29 @@ dieser Spec und am PO-Briefing. Drei Runden, neun Dokumenten-Befunde, alle gesch
 
 Kein Produktivcode und keine Testdatei wurde in diesem Korrekturgang berührt.
 
+### 2026-09-28 — Issue #65, Paket 2: Bontext lesbar, kopierbar, wählbar
+
+Setzt die in Paket 1 vertagte Scope-Erweiterung um (siehe „Nachtrag Issue #50, Paket 1", Absatz
+zu Issue #65). Bontext von 13pt/`Color.textSecondary` auf 15pt/`Color.ink`; `.contextMenu`
+„Kopieren" am Bontext; neuer Fall `ReceiptNameOption.receiptText`, neue reine Funktionen
+`normalizedReceiptText`/`shouldOfferReceiptTextOption`, neue Regel 7 in `selectionOptions`
+(bisherige Regel 7 wird Regel 8). Invariante 5 geändert (max. 5 statt 4 Optionen insgesamt);
+AC-2 angepasst, AC-19 bis AC-22 neu. Test Plan um „Issue #65, Paket 2" erweitert — inklusive
+Korrektur einer Falschannahme aus Issue #65 und `docs/context/fix-50-import-dialog-design-paket2.md`:
+tatsächlich betroffen sind vier andere bestehende UI-Tests als von Issue #65 behauptet (alle an
+`Seed.aiLine`, nicht an `Seed.suggestionLine`/`Seed.unresolvedLine`), plus vier bestehende
+Unit-Tests, die Issue #65 gar nicht nannte. Umfang neu geschätzt: 3 Dateien, ≈ +175 LoC (ersetzt die
+Schätzungen aus Issue #65 und dem Kontext-Dokument). Status auf `draft` gesetzt, Approval erneut
+zurückgesetzt.
+
+### 2026-09-28 — Korrektur beim Einstieg in `/40-tdd-red`: falscher Options-Index
+
+Beim Vorbereiten der RED-Tests am tatsächlichen `selectionOptions`-Ablauf nachgerechnet: Der neue
+UI-Test für AC-21 („Bon-Zeile als Auswahl") verwies auf `receiptReview.line.0.option.2` — das
+widersprach der eigenen Korrektur-Tabelle im selben Nachtrag, die „Anderer Name …" bereits von
+`option.1` auf `option.2` verschiebt (also muss die Bon-Zeile selbst `option.1` sein, nicht noch
+einmal `option.2`). Für `Seed.aiLine` (1 Kandidat: KI-Vorschlag, keine Kappung, keine Regel-5/6-
+Einfügung) ergibt der Ablauf `[aiSuggestion, receiptText, custom]` — `option.0`/`option.1`/`option.2`.
+Beide Stellen (GIVEN und die `isSelected`-Prüfung) auf `option.1` korrigiert. Kein weiterer Fund bei
+dieser Prüfung; die vier bereits korrigierten bestehenden UI-Tests (`option.1`→`option.2`) und alle
+übrigen Zeilenangaben blieben beim erneuten Nachrechnen bestätigt.

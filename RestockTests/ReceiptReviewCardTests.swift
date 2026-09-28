@@ -57,6 +57,7 @@ final class ReceiptReviewCardTests: XCTestCase {
         case .listMatch(let suggestion): return "treffer:\(suggestion.name)"
         case .aiSuggestion(let name): return "ki:\(name)"
         case .currentName(let name): return "aktuell:\(name)"
+        case .receiptText(let name): return "bon:\(name)"
         case .custom: return "eigener"
         }
     }
@@ -97,10 +98,15 @@ final class ReceiptReviewCardTests: XCTestCase {
 
         let options = ReceiptReviewCard.selectionOptions(for: line)
 
-        XCTAssertEqual(options.count, 4, "Erwartet: KI-Zeile + zwei Treffer + eigener Name. Bekommen: \(describe(options))")
+        // Issue #65, Paket 2: "MILCH 3,5% FRISCH" normalisiert zu "Milch 3,5% Frisch" und weicht
+        // vom gewählten Namen "Frische Vollmilch" ab — die Bon-Zeile kommt als Add-on VOR "Anderer
+        // Name …" hinzu, ohne die drei bisherigen Kandidaten zu verdrängen.
+        XCTAssertEqual(options.count, 5, "Erwartet: KI-Zeile + zwei Treffer + Bon-Zeile + eigener Name. Bekommen: \(describe(options))")
         XCTAssertEqual(describe(options[0]), "ki:Frische Vollmilch",
                        "Die aktuell gewählte KI-Zeile muss an erster Stelle stehen. Bekommen: \(describe(options))")
-        XCTAssertEqual(describe(options[3]), "eigener",
+        XCTAssertEqual(describe(options[3]), "bon:Milch 3,5% Frisch",
+                       "Die Bon-Zeile muss unmittelbar vor \"Anderer Name …\" stehen. Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[4]), "eigener",
                        "Der eigene Name muss immer die letzte Zeile sein. Bekommen: \(describe(options))")
     }
 
@@ -127,7 +133,9 @@ final class ReceiptReviewCardTests: XCTestCase {
 
         let options = ReceiptReviewCard.selectionOptions(for: line)
 
-        XCTAssertEqual(options.count, 4, "Drei Treffer plus eigener Name. Bekommen: \(describe(options))")
+        // Issue #65, Paket 2: "MILCH 3,5% FRISCH" normalisiert zu "Milch 3,5% Frisch" und weicht
+        // vom gewählten Namen "vollmilch" ab — die Bon-Zeile kommt als Add-on hinzu.
+        XCTAssertEqual(options.count, 5, "Drei Treffer plus Bon-Zeile plus eigener Name. Bekommen: \(describe(options))")
         guard case .listMatch(let first) = options[0] else {
             return XCTFail("Die erste Zeile ist kein Listen-Treffer. Bekommen: \(describe(options))")
         }
@@ -138,7 +146,9 @@ final class ReceiptReviewCardTests: XCTestCase {
                        "Die übrigen Treffer behalten ihre relative Reihenfolge. Bekommen: \(describe(options))")
         XCTAssertEqual(describe(options[2]), "treffer:Buttermilch",
                        "Die übrigen Treffer behalten ihre relative Reihenfolge. Bekommen: \(describe(options))")
-        XCTAssertEqual(describe(options[3]), "eigener",
+        XCTAssertEqual(describe(options[3]), "bon:Milch 3,5% Frisch",
+                       "Die Bon-Zeile muss unmittelbar vor \"Anderer Name …\" stehen. Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[4]), "eigener",
                        "Der eigene Name muss immer die letzte Zeile sein. Bekommen: \(describe(options))")
     }
 
@@ -203,7 +213,12 @@ final class ReceiptReviewCardTests: XCTestCase {
         let listMatches = options.filter { if case .listMatch = $0 { return true } else { return false } }
         XCTAssertEqual(listMatches.count, 3,
                         "Bei leerem Namen darf keine Zeile entfallen. Bekommen: \(describe(options))")
-        XCTAssertEqual(options.count, 4, "Drei Treffer plus eigener Name, keine zusätzliche Zeile. Bekommen: \(describe(options))")
+        // Issue #65, Paket 2: Die Bon-Zeile bleibt auch bei leerem `line.name` ein Angebot
+        // (Design-Entscheidung "Nachtrag Issue #65 (Paket 2)") — "UNLESBARER BONTEXT" normalisiert
+        // zu "Unlesbarer Bontext" und ist ungleich dem leeren gewählten Namen.
+        XCTAssertEqual(options.count, 5, "Drei Treffer plus Bon-Zeile plus eigener Name. Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[3]), "bon:Unlesbarer Bontext",
+                       "Die Bon-Zeile muss unmittelbar vor \"Anderer Name …\" stehen. Bekommen: \(describe(options))")
         XCTAssertFalse(options.contains { describe($0).hasPrefix("aktuell:") },
                         "Bei leerem Namen darf keine `.currentName`-Zeile entstehen. Bekommen: \(describe(options))")
     }
@@ -240,9 +255,67 @@ final class ReceiptReviewCardTests: XCTestCase {
 
         let options = ReceiptReviewCard.selectionOptions(for: line)
 
-        XCTAssertEqual(options.count, 2, "Erwartet: aktueller Name + eigener Name. Bekommen: \(describe(options))")
+        // Issue #65, Paket 2: "BIO-HACKFLEISCH 400G" normalisiert zu "Bio-hackfleisch 400g" und
+        // weicht vom gewählten Namen "Bio-Hackfleisch" ab — die Bon-Zeile kommt als Add-on hinzu.
+        XCTAssertEqual(options.count, 3, "Erwartet: aktueller Name + Bon-Zeile + eigener Name. Bekommen: \(describe(options))")
         XCTAssertEqual(describe(options[0]), "aktuell:Bio-Hackfleisch", "Bekommen: \(describe(options))")
-        XCTAssertEqual(describe(options[1]), "eigener", "Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[1]), "bon:Bio-hackfleisch 400g", "Bekommen: \(describe(options))")
+        XCTAssertEqual(describe(options[2]), "eigener", "Bekommen: \(describe(options))")
+    }
+
+    // MARK: - AC-21/AC-22 (Issue #65, Paket 2): Bon-Zeile
+
+    /// AC-21 — der gedruckte Bontext wird wortweise großgeschrieben, unabhängig vom
+    /// Ausgangszustand (durchgehend groß, gemischt oder klein).
+    func testNormalizedReceiptTextCapitalizesEachWord() {
+        XCTAssertEqual(ReceiptReviewCard.normalizedReceiptText("MILCH 3,5% FRISCH"), "Milch 3,5% Frisch")
+    }
+
+    /// AC-21 — ein bindestrich-verbundenes Wort wird als EIN Wort behandelt: nur der erste
+    /// Buchstabe des gesamten Worts wird groß, nicht jeder Teil rechts vom Bindestrich.
+    func testNormalizedReceiptTextKeepsHyphenatedWordAsOneUnit() {
+        XCTAssertEqual(ReceiptReviewCard.normalizedReceiptText("BIO-HACKFLEISCH 400G"), "Bio-hackfleisch 400g")
+    }
+
+    /// AC-22 — das vom PO selbst genannte Unsinns-Beispiel „BTR" (3 Zeichen) wird unterdrückt,
+    /// unabhängig davon, wie sehr sich der Bontext vom gewählten Namen unterscheidet.
+    func testShouldOfferReceiptTextOptionRejectsNamesBelowMinLength() {
+        XCTAssertFalse(ReceiptReviewCard.shouldOfferReceiptTextOption(originalName: "BTR", selectedName: "Butter"))
+    }
+
+    /// AC-22 — entspricht der normalisierte Bontext (case-insensitiv) bereits dem gewählten
+    /// Namen, ist die Bon-Zeile redundant und wird unterdrückt.
+    func testShouldOfferReceiptTextOptionRejectsNameEqualToSelection() {
+        XCTAssertFalse(ReceiptReviewCard.shouldOfferReceiptTextOption(originalName: "MILCH", selectedName: "Milch"))
+    }
+
+    /// AC-22 — Regelfall: Bontext lang genug und ungleich dem gewählten Namen → Angebot.
+    func testShouldOfferReceiptTextOptionAcceptsDifferingName() {
+        XCTAssertTrue(ReceiptReviewCard.shouldOfferReceiptTextOption(
+            originalName: "MILCH 3,5% FRISCH", selectedName: "Frische Vollmilch"))
+    }
+
+    /// AC-22 (Design-Entscheidung, „Nachtrag Issue #65 (Paket 2)") — ist `selectedName` leer,
+    /// bleibt die Bon-Zeile trotzdem ein Angebot: gerade wenn nichts sonst passt, hilft der rohe
+    /// Bontext als zusätzliche Wahlmöglichkeit; `isSavable` verhindert ohnehin jedes Speichern
+    /// mit leerem Namen.
+    func testShouldOfferReceiptTextOptionAcceptsEmptySelection() {
+        XCTAssertTrue(ReceiptReviewCard.shouldOfferReceiptTextOption(
+            originalName: "UNLESBARER BONTEXT", selectedName: ""))
+    }
+
+    /// AC-21 — Auswahl der Bon-Zeile setzt den normalisierten Bontext als Namen und löscht
+    /// Artikel-Zuordnung und KI-Kennzeichnung — gleiche Form wie `.currentName`.
+    func testChoosingReceiptTextSetsNameAndClearsMatchAndAiFlag() {
+        var line = makeLine(name: "Milch", price: 0.99, originalName: "MILCH 3,5% FRISCH",
+                            matchedItemID: UUID(), resolvedByAI: true, aiSuggestedName: "Milch")
+
+        ReceiptReviewCard.applySelection(&line, option: .receiptText(name: "Milch 3,5% Frisch"))
+
+        XCTAssertEqual(line.name, "Milch 3,5% Frisch")
+        XCTAssertNil(line.matchedItemID)
+        XCTAssertFalse(line.resolvedByAI)
+        XCTAssertEqual(line.originalName, "MILCH 3,5% FRISCH")
     }
 
     // MARK: - AC5/AC6/AC7: Auswahl übernehmen
