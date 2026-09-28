@@ -1,32 +1,32 @@
 ---
 spec_file: docs/specs/views/receipt-review-card.md
-spec_sha256: 234667dab0bd1b17035676ec5f86a6d65f4257dbd152d6d7cd21014251654245
+spec_sha256: 127ad63b32218e8199c9a6562227fbe8d954c5c61da27e6b640da808cde24461
 ---
 
 # PO-Briefing: fix-50-import-dialog-design
 
-- **Spec:** docs/specs/views/receipt-review-card.md (Abschnitt „Nachtrag Issue #50, Paket 1“) und docs/specs/testing/receipt-review-test-entry.md (Abschnitt „Nachtrag Issue #50, Paket 1“)
+- **Spec:** docs/specs/views/receipt-review-card.md (Pakete 1 und 1b)
 - **Issue:** #50
 - **Erstellt:** 2026-09-27
 
 ## Was gebaut wird
 
-Nach dem Zurückkehren aus einer geteilten App zeigt jede Bon-Position einen richtigen, markierten Namen, nie leer.
+Eine Bon-Position zeigt sichtbar genau einen markierten Namen — außer wenn die Auflösung einen Namen trifft, der wörtlich auf deiner Liste steht (offen, #66).
 
 ## Definition of Done
 
-Jede Position im Bon-Prüf-Screen hat nach dem Öffnen aus einer geteilten App sichtbar genau einen markierten Namen, nie einen leeren.
+Beim Öffnen aus einer geteilten App trägt eine Position den markierten Namen, außer im Fall #66; ein leeres oder nur mit Leerzeichen gefülltes Namensfeld kehrt zum vorherigen zurück.
 
 ## Wie geprüft wird
 
-Automatisierte Tests zeigen es an einer nachgebauten Übergabe, nicht am echten Fotos-Teilen-Weg; das Speichern wird separat abgesichert.
+Tests belegen den regelbasierten Weg und das geleerte Feld; den KI-Weg zeigt der Simulator nicht.
 
 ## Kritische Anmerkungen
 
-- Nur zwei der vier gemeldeten Punkte werden jetzt behoben, der Rest wandert in ein ungeprüftes Ticket #65.
-- Beim Speichern wird jetzt auch ein leerer Name verhindert — geht über die vier gemeldeten Punkte hinaus.
-- Der Nachweis simuliert den Rücksprung aus einer geteilten App, testet aber nicht den echten Fotos-Teilen-Weg.
+- Gemeldeter Fall offen: bei namensgleichem Vorschlag keine Markierung (#66, Entwurf zuerst).
+- Altlast: nach Wechsel auf den eigenen Namen kann der Preis am falschen Artikel landen (#67).
+- Bontext lesbar und wählbar folgt in #65.
 
 ## Freigabe-Frage
 
-Sollen die restlichen zwei gemeldeten Punkte (Überschrift, wählbarer Bontext) erst mit einem separaten, noch zu prüfenden Ticket folgen?
+Gibst du diesen Stand frei, obwohl ein gemeldeter Fall und zwei Darstellungspunkte in eigene Tickets gehen?

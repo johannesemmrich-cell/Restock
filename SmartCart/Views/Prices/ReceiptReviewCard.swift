@@ -494,8 +494,10 @@ struct ReceiptReviewCard: View {
         name: String,
         previousSelection: (name: String, matchedItemID: UUID?, resolvedByAI: Bool)
     ) {
-        guard !name.isEmpty else {
-            let fallback = previousSelection.name.isEmpty
+        // Paket 1b (F002): derselbe getrimmte Leer-Begriff wie in `EditableReceiptLine.isSavable` —
+        // ein Feld mit reinen Leerzeichen ist für den Nutzer leer und muss es auch hier sein.
+        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
+            let fallback = previousSelection.name.trimmingCharacters(in: .whitespaces).isEmpty
                 ? (name: line.originalName, matchedItemID: nil, resolvedByAI: false)
                 : previousSelection
             line.name = fallback.name

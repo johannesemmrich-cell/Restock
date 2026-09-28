@@ -895,4 +895,60 @@ final class ReceiptReviewUITests: XCTestCase {
                       "Die Position steht mit einem leeren Namen da — "
                       + "bekommen: \(checkbox.label)")
     }
+
+    /// AC-18 (Issue #50, Paket 1b, F002) — Ein Feld „Anderer Name …", das auf ein einzelnes
+    /// Leerzeichen reduziert wurde, verhält sich wie ein leeres Feld: die Position behält den
+    /// Namen, der vor dem Öffnen des Feldes galt.
+    ///
+    /// Gleiche Strecke wie `testClearingCustomNameFieldKeepsPreviousItemName`, nur wird das Feld
+    /// nicht vollständig geleert, sondern auf ein Leerzeichen reduziert. Vor Paket 1b guardete
+    /// Regel 10 auf `isEmpty`: `line.name` wurde " ", die Position blieb angehakt und zählte in
+    /// Kopfzeile und Summe mit, `save()` verwarf sie über Regel 11 aber still — ohne Rückmeldung.
+    /// Geprüft wird am Bedienhilfen-Label des Häkchens, das genau den Namen nennt, den `save()`
+    /// schreiben würde.
+    func testWhitespaceOnlyCustomNameKeepsPreviousItemName() {
+        let app = openedReviewSheet()
+        let line = Seed.aiLine
+
+        let checkbox = element(app, "receiptReview.line.\(line).checkbox")
+        XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "Häkchen der KI-Zeile fehlt.")
+        XCTAssertTrue(checkbox.label.contains(Seed.aiLineName),
+                      "Vorbedingung: Das Häkchen nennt nicht den bisherigen Namen — "
+                      + "bekommen: \(checkbox.label)")
+
+        let customOption = element(app, "receiptReview.line.\(line).option.1")
+        XCTAssertTrue(customOption.waitForExistence(timeout: 5),
+                      "Auswahlzeile für den eigenen Namen fehlt.")
+        customOption.tap()
+
+        let field = app.textFields["receiptReview.line.\(line).customNameField"]
+        XCTAssertTrue(field.waitForExistence(timeout: 5), "Textfeld für den eigenen Namen fehlt.")
+        expectation(for: NSPredicate(format: "hasKeyboardFocus == true"), evaluatedWith: field)
+        waitForExpectations(timeout: 10)
+
+        let existing = (field.value as? String) ?? ""
+        XCTAssertFalse(existing.isEmpty,
+                       "Vorbedingung: Das Feld ist nicht vorbelegt — dann prüft dieser Test nichts.")
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
+        // Genau der Unterschied zum bestehenden Test: das Feld bleibt nicht leer, es enthält ein
+        // einzelnes Leerzeichen.
+        field.typeText(" ")
+
+        // Bis zu 5 s Geduld: dasselbe Warten wie bei den anderen Label-Prüfungen dieser Klasse.
+        let keptPreviousName = labelOf(checkbox, contains: Seed.aiLineName, within: 5)
+        let label = checkbox.label
+        // Der Namensteil des Labels („Position übernehmen: <Name>"). Endet das Label auf „:",
+        // steht dort kein Name mehr — XCUITest liefert ein Label mit reinen Leerzeichen am Ende
+        // je nach OS-Version getrimmt oder ungetrimmt, beides gilt hier als leerer Name.
+        let trimmedLabel = label.trimmingCharacters(in: .whitespaces)
+        let namePart = trimmedLabel.hasSuffix(":")
+            ? ""
+            : (trimmedLabel.components(separatedBy: ": ").last ?? "")
+        XCTAssertFalse(namePart.trimmingCharacters(in: .whitespaces).isEmpty,
+                       "Die Position steht mit einem Namen aus reinen Leerzeichen da — "
+                       + "bekommen: \"\(label)\"")
+        XCTAssertTrue(keptPreviousName,
+                      "Die Position hat den vorherigen Namen nicht behalten — "
+                      + "bekommen: \(label)")
+    }
 }

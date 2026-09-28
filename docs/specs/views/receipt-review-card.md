@@ -2,7 +2,7 @@
 entity_id: receipt-review-card
 type: feature
 created: 2026-09-22
-updated: 2026-09-27
+updated: 2026-09-28
 status: draft
 workflow: fix-50-import-dialog-design
 workflow_history: [feat-23-receipt-review-screen, fix-37-receipt-name-preselect]
@@ -61,7 +61,8 @@ Teilen-Handoff, das NACH dem ersten Zeichnen der Karte läuft. Dabei entdeckt (P
 2026-09-27): derselbe Mechanismus lässt sich zweitens auch rein lokal auslösen, wenn der Nutzer
 das vorbelegte Feld „Anderer Name …" bis auf null Zeichen leert — Issue #50 bekommt dadurch eine
 dritte Zusage. Issue #50 ist zweigeteilt (PO-Entscheidung 2026-09-27): **Paket 1** (diese
-Erweiterung) behebt Punkt 2 und Punkt 4 sowie den PO-Fund; **Paket 2 (Issue #65, NICHT Teil
+Erweiterung) behebt Punkt 2 und Punkt 4 (Letzteres bis auf den als F001/#66 beschriebenen
+Eingang) sowie den PO-Fund; **Paket 2 (Issue #65, NICHT Teil
 dieser Erweiterung)** macht den Bontext lesbar (15 pt, `Color.ink`), kopierbar
 (`.contextMenu`) und als eigene, antippbare Auswahlzeile „wie auf dem Bon" verfügbar — dafür ändert
 sich Invariante 5 (max. 3 inhaltliche Optionen), was Paket 1 ausdrücklich NICHT tut: es fügt
@@ -149,7 +150,7 @@ reinen Funktion.
 
 ### Scope-Erweiterung (Issue #50, Paket 1 — 2026-09-27)
 
-Behebt Punkt 2 und Punkt 4 aus Issue #50 sowie den während der Analyse gefundenen dritten Fall
+Behebt Punkt 2 und Punkt 4 aus Issue #50 (Punkt 4 bis auf den als F001/#66 beschriebenen Eingang) sowie den während der Analyse gefundenen dritten Fall
 (leerer Name über „Anderer Name …"). Siehe „Nachtrag Issue #50, Paket 1" unten für die volle
 Herleitung, Regeln 9-11, Invarianten und den Test Plan.
 
@@ -160,7 +161,7 @@ Herleitung, Regeln 9-11, Invarianten und den Test Plan.
 | `SmartCart/SmartCartApp.swift` | MODIFY | Neuer, eigenständiger DEBUG-Seed `seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context:)` — Testeinstieg für den reproduzierten Fall. Vollständig beschrieben in `docs/specs/testing/receipt-review-test-entry.md`, „Nachtrag Issue #50, Paket 1"; hier nur referenziert, weil diese Spec keine Testinfrastruktur-Entscheidungen trifft. |
 | `RestockTests/ReceiptReviewCardTests.swift` | MODIFY | Drei neue Tests für `applyCustomNameOrFallback`: `testApplyCustomNameOrFallbackRestoresPreviousSelectionOnEmptyName` (leerer Name fällt zurück), `testApplyCustomNameOrFallbackRestoresAIStateOnEmptyName` (KI-Zustand — `matchedItemID` UND `resolvedByAI` — wird mit zurückgeholt), `testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged` (nicht-leerer Name verhält sich wie bisher). |
 | `RestockTests/ReceiptScannerReResolutionTests.swift` | MODIFY | Zwei neue Tests für `isSavable`: `testIsSavableRejectsLineWithEmptyName` (leerer oder nur aus Leerzeichen bestehender Name → `false`) und `testIsSavableKeepsIncludedNamedLineAndRejectsOldCases` (nicht-leerer Name mit Preis → `true`; abgewählt oder Preis 0 → weiterhin `false`). |
-| `RestockUITests/ReceiptReviewUITests.swift` | MODIFY | Zwei neue Tests, `testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution` (derselbe Testname wie „Test 3" in `docs/specs/testing/receipt-review-test-entry.md` — es entsteht nur EIN Test) und `testClearingCustomNameFieldKeepsPreviousItemName`. Erster Test am reproduzierten Fall (BTR-Zeile über den neuen Seed): nach `reResolveAIIfNeeded()` ist genau eine Auswahlzeile markiert, und ihr Label zeigt den aufgelösten Namen. Neuer Test für den PO-Fund: vollständiges Leeren von „Anderer Name …" lässt das Häkchen-Label nie mit einem leeren Namen enden. |
+| `RestockUITests/ReceiptReviewUITests.swift` | MODIFY | Zwei neue Tests, `testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution` (derselbe Testname wie „Test 3" in `docs/specs/testing/receipt-review-test-entry.md` — es entsteht nur EIN Test) und `testClearingCustomNameFieldKeepsPreviousItemName`. Erster Test am reproduzierten Fall (BTR-Zeile über den neuen Seed, **Wörterbuch-Zweig** — Apple Intelligence ist im Simulator nicht verfügbar): nach `reResolveAIIfNeeded()` ist genau eine Auswahlzeile markiert, und ihr Label zeigt den aufgelösten Namen. Der strukturgleiche KI-Zweig ist damit NICHT mitbewiesen; für den namensgleichen Fall bleibt er offen (F001, Issue #66). Neuer Test für den PO-Fund: vollständiges Leeren von „Anderer Name …" lässt das Häkchen-Label nie mit einem leeren Namen enden. |
 
 - Files: **6** — eine Datei über dem Ziel „max. 4-5 Dateien". Die Überschreitung kommt vom
   `isSavable`-Unit-Test: er gehört inhaltlich zu `ReceiptScannerView` (`save()`s
@@ -180,6 +181,39 @@ Herleitung, Regeln 9-11, Invarianten und den Test Plan.
   Seed) committen und bauen, danach die drei Testdateien.
 - Risk Level: MITTEL — isoliert auf einen bereits produktiven Screen, aber mit einem (kleinen,
   gezielten) Eingriff in `save()`, der aus Invariante 1 eine bewusste Ausnahme macht.
+
+### Scope-Erweiterung (Issue #50, Paket 1b — 2026-09-27)
+
+Behebt **ausschließlich** Befund F002 aus dem Adversary-Prüfdialog zu Paket 1
+(`docs/artifacts/fix-50-import-dialog-design/adversary-dialog.md`, Urteil AMBIGUOUS): Ein Name aus
+reinen Leerzeichen im Feld „Anderer Name …" umgeht den Rückfall aus Regel 10, weil Regel 10 auf
+`isEmpty` guardete, Regel 11 aber auf den getrimmten Namen — die Position bleibt sichtbar angehakt,
+zählt in Kopfzeile und Summe mit und wird beim Speichern still verworfen.
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `SmartCart/Views/Prices/ReceiptReviewCard.swift` | MODIFY | In `applyCustomNameOrFallback` beide Leer-Tests auf `trimmingCharacters(in: .whitespaces).isEmpty` umgestellt (Eingangs-Guard und `previousSelection.name`), plus erklärender Kommentar. Keine andere Funktion, kein anderer View-Zustand. |
+| `RestockTests/ReceiptReviewCardTests.swift` | MODIFY | Zwei neue Unit-Tests: `testApplyCustomNameOrFallbackRestoresPreviousSelectionOnWhitespaceOnlyName` und `testApplyCustomNameOrFallbackFallsBackToOriginalNameWhenPreviousSelectionIsWhitespaceOnly`. |
+| `RestockUITests/ReceiptReviewUITests.swift` | MODIFY | Ein neuer UI-Test für AC-18 (`testWhitespaceOnlyCustomNameKeepsPreviousItemName`), Einstieg über den BESTEHENDEN Seed — kein neuer Seed, keine Änderung an `SmartCartApp.swift`. |
+
+- Files: **3** — innerhalb des Ziels „max. 4-5 Dateien".
+- LoC: ≈ **+45 / −4** — weit unter dem Standard-Limit von ±250 LoC
+  (`ReceiptReviewCard.swift` ≈ +4/−2 inkl. Kommentar, `ReceiptReviewCardTests.swift` ≈ +28,
+  `ReceiptReviewUITests.swift` ≈ +15).
+- Risk Level: **NIEDRIG.** Die Änderung liegt in einer reinen, ohne SwiftUI testbaren Funktion
+  einer Datei; `save()`, `isSavable`, die Wire-Formate und alle Services bleiben unberührt. Der
+  getrimmte Leer-Begriff ist derselbe, den `EditableReceiptLine.isSavable` schon benutzt.
+- **Ausdrücklich NICHT geändert:** `ReceiptScannerView.swift` (auch nicht `isSavable`/`save()`),
+  `SmartCartApp.swift` (kein neuer Seed), `ReceiptResolutionService.swift`, `project.pbxproj`.
+- **F001 ist NICHT Teil von Paket 1b.** Der zweite Befund des Prüfdialogs (HIGH: nach der
+  KI-Auflösung kann eine Karte ohne markierte Zeile stehen; Lösung wäre eine neue Regel 12
+  `isSelectedIgnoringCustom` mit Dedup-/Einfüge-Regeln auf Markierungsbasis) verändert die
+  Zusammensetzung der sichtbaren Auswahlliste und ist deshalb per PO-Entscheidung vom 2026-09-27
+  einem eigenen Folge-Issue (**#66**) mit **vorgeschaltetem Design-Entwurf** zugewiesen. Die fertige Vorarbeit
+  dafür — Regel 12, Regel 2/5 auf Markierungsbasis, Invarianten 3/5/6 neu gefasst, AC-4/AC-14
+  präzisiert, AC-17, vollständiger Test Plan — liegt in
+  `docs/specs/views/receipt-review-card-nachtrag-1b.md`; von diesem Nachtrag sind in die Hauptspec
+  bewusst NUR die F002-Teile ((H), (I), (J), (P) und AC-18 aus (Q)) übernommen worden.
 
 ## Implementation Details
 
@@ -338,8 +372,10 @@ wird.
 Volle Herleitung in `docs/context/fix-50-import-dialog-design.md` (Abschnitte „Befund",
 „Analysis", „PO-Entscheidungen" und „Nachtrag"). Drei Zusagen, alle in derselben Erweiterung:
 
-1. Der aufgelöste Name steht sichtbar als markierte Zeile — nicht erst im Feld „Anderer Name …".
-2. Es ist immer genau eine Option markiert (für eine Zeile mit nicht-leerem `line.name`).
+1. Der aufgelöste Name steht sichtbar in der Auswahlliste (im Regelfall als markierte Zeile;
+   Ausnahme F001, siehe Zusage 2) — nicht erst im Feld „Anderer Name …".
+2. Es ist immer genau eine Option markiert (für eine Zeile mit nicht-leerem `line.name`) — mit
+   den in Invariante 6 benannten Ausnahmen, insbesondere F001 (offen, Issue #66).
 3. Ein leerer Name ist kein speicherbarer Zustand.
 
 #### Regel 9 — Optionen nachführen, nicht neu berechnen (Zusagen 1+2)
@@ -375,8 +411,18 @@ neue Name selbst als vorausgewählte `.currentName`-Zeile erscheint — Zusage 1
 Regel in `selectionOptions` erledigt, allein durch das Nachführen des `onAppear`-Aufrufers.
 
 **Reichweite von Zusage 2 („immer genau eine Option markiert"):** Gilt für jede Zeile mit
-nicht-leerem `line.name` — siehe Invariante 6 unten und „Known Limitations" für die bewusst
-unverändert gebliebene Ausnahme bei leerem Namen (Regel 6, unverändert seit Issue #37).
+nicht-leerem `line.name`, mit **zwei** ausdrücklich benannten Ausnahmen — siehe Invariante 6 unten
+und „Known Limitations":
+1. bei leerem `line.name` (Regel 6, bewusst unverändert seit Issue #37);
+2. wenn der aufgelöste Name wörtlich einem eigenen `suggestions`-Eintrag entspricht und die
+   Auflösung dabei `resolvedByAI = true` mit `matchedItemID = nil` setzt — **F001, offen, Issue
+   #66**. Regel 9 führt die Liste in diesem Fall zwar nach, aber die Neuberechnung liefert
+   dasselbe Ergebnis: Dedup-Regel 2 entfernt die KI-Zeile zugunsten des namensgleichen
+   Listen-Treffers, Regel 5 greift mangels Namens-Mismatch nicht, und `isSelected(.listMatch)`
+   verweigert die Markierung wegen `!line.resolvedByAI`. Der Fix ist eine sichtbare
+   Gestaltungsentscheidung (zwei Zeilen mit demselben Namen) und deshalb #66 mit vorgeschaltetem
+   Design-Entwurf zugewiesen; ausformulierte Vorarbeit in
+   `docs/specs/views/receipt-review-card-nachtrag-1b.md`.
 
 #### Regel 10 — Leerer Name ist kein speicherbarer Zustand (Zusage 3)
 
@@ -397,21 +443,39 @@ Nutzer vor eine gesperrte Schaltfläche zu stellen. Präzise beantwortet:
   **Alle drei Felder** werden restauriert, nicht nur der Name — sonst käme z. B. ein KI-Vorschlag
   nach dem Rückfall ohne seine Art.-50-Kennzeichnung zurück, obwohl er vorher genau diese trug.
 - **Wann greift der Rückfall:** bei JEDEM leeren Zwischenstand, sofort — nicht erst beim Verlassen
-  des Feldes. Konsistent mit dem bestehenden Muster dieser Karte, dass jeder Tastendruck sofort
-  wirkt (Abschnitt 5, „Eingabe ruft die Custom-Auswahl-Logik pro Tastendruck auf", Invariante 2
-  im Test Plan); ein Verlassen-des-Feldes-Hook existiert an dieser Stelle nicht, und ein Tipp
-  woanders hin (z. B. das Häkchen) könnte einen Zwischenzustand sonst ungeprüft übernehmen.
-- **Was NICHT zurückgesetzt wird:** das sichtbare Textfeld (`customName`) bleibt leer. Nur
-  `line.name`/`matchedItemID`/`resolvedByAI` fallen zurück. Würde auch `customName` befüllt,
-  könnte der Nutzer ab einem leeren Feld nie mehr einen neuen Namen eintippen, ohne dass das Feld
-  sich unter dem Finger sofort wieder mit dem alten Namen füllt.
+  des Feldes. „Leer" heißt seit Paket 1b **nach `trimmingCharacters(in: .whitespaces)`
+  leer**, also auch ein Feld aus reinen Leerzeichen (F002). Regel 10 und Regel 11 benutzen damit
+  denselben Leer-Begriff; vorher guardete Regel 10 auf `isEmpty` und Regel 11 getrimmt, sodass
+  ein einzelnes Leerzeichen zwischen beiden durchfiel. Konsistent mit dem bestehenden Muster
+  dieser Karte, dass jeder Tastendruck sofort wirkt; ein Verlassen-des-Feldes-Hook existiert hier
+  nicht.
+- **Was NICHT zurückgesetzt wird:** das sichtbare Textfeld (`customName`) bleibt unangetastet —
+  leer bzw. mit den eingetippten Leerzeichen. Nur `line.name`/`matchedItemID`/`resolvedByAI`
+  fallen zurück. Würde auch `customName` befüllt, könnte der Nutzer ab einem leeren Feld nie
+  mehr einen neuen Namen eintippen, ohne dass das Feld sich unter dem Finger sofort wieder mit
+  dem alten Namen füllt.
 - **Es gibt keine vorher gewählte Option, wenn …:** In der Praxis nicht erreichbar — `.custom`
-  wird ausschließlich durch Tippen auf eine bestehende, bereits benannte Auswahlzeile betreten
-  (Listen-Treffer/KI-Vorschlag/`.currentName` tragen alle einen nicht-leeren Namen), und ein
-  zuvor über diese Regel bereits zurückgefallener Zustand ist selbst wieder nicht-leer. Als reine
-  Verteidigungsmaßnahme (keine bekannte Auslösung): Ist der festgehaltene Name dennoch leer, fällt
-  `applyCustomNameOrFallback` stattdessen auf `line.originalName` zurück (`matchedItemID = nil`,
-  `resolvedByAI = false`) — der Bontext selbst ist nie leer, sobald eine Karte überhaupt existiert.
+  wird ausschließlich durch Tippen auf eine bestehende, bereits benannte Auswahlzeile betreten,
+  und ein zuvor über diese Regel zurückgefallener Zustand ist selbst wieder nicht-leer. Als reine
+  Verteidigungsmaßnahme: Ist der festgehaltene Name **getrimmt** leer, fällt
+  `applyCustomNameOrFallback` auf `line.originalName` zurück (`matchedItemID = nil`,
+  `resolvedByAI = false`) — der Bontext ist nie leer, sobald eine Karte überhaupt existiert. Der
+  getrimmte Test gilt seit Paket 1b auch hier, damit ein festgehaltenes Leerzeichen nicht als
+  gültiger Rückfall durchgeht.
+
+**Wirkung von Paket 1b auf die Datenlage:** Über die Karte entsteht ein Name aus reinen
+Leerzeichen nirgends mehr — weder in `line.name` noch in Kopfzeile, Summe oder `canSave`. Regel 11
+wird dadurch für den Karten-Weg von einer **erreichbaren Bedingung** zur **Verteidigung in der
+Tiefe**.
+
+**Eine Quelle bleibt offen (2026-09-27, im zweiten Prüfdialog gemessen):**
+`ReceiptNameAIResolver.sanitize` (`ReceiptParserService.swift:1327`) trimmt Leerraum **vor** dem
+Entfernen der Anführungszeichen. Antwortet das Sprachmodell mit `" "` (ein Leerzeichen in
+Anführungszeichen), passiert dieser Name die Bereinigung und landet über
+`ReceiptResolutionService.swift:175` und `mergeAIReresolution` in `line.name`. Regel 11 verwirft die
+Position dann beim Speichern — still, wie vor Paket 1b, nur ohne Datenschaden. Auslösung
+pathologisch, aber nicht ausgeschlossen; eigenes Folge-Issue (#69). Regel 11 ist für diesen Weg deshalb
+weiterhin eine erreichbare Bedingung, nicht bloß Verteidigung.
 
 Neue reine Funktion, NEBEN dem bestehenden `applyCustomName` (das für nicht-leere Namen
 unverändert bleibt und von der neuen Funktion aufgerufen wird — kein bestehender Aufrufer/Test
@@ -423,8 +487,10 @@ static func applyCustomNameOrFallback(
     name: String,
     previousSelection: (name: String, matchedItemID: UUID?, resolvedByAI: Bool)
 ) {
-    guard !name.isEmpty else {
-        let fallback = previousSelection.name.isEmpty
+    // Paket 1b (F002): derselbe getrimmte Leer-Begriff wie in `EditableReceiptLine.isSavable` —
+    // ein Feld mit reinen Leerzeichen ist für den Nutzer leer und muss es auch hier sein.
+    guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
+        let fallback = previousSelection.name.trimmingCharacters(in: .whitespaces).isEmpty
             ? (name: line.originalName, matchedItemID: nil, resolvedByAI: false)
             : previousSelection
         line.name = fallback.name
@@ -491,6 +557,17 @@ static func isSavable(_ line: EditableReceiptLine) -> Bool {
 `save()`, Z. 601: `let included = parsedLines.filter { EditableReceiptLine.isSavable($0) }` statt
 `parsedLines.filter { $0.isIncluded && $0.price > 0 }`. Keine weitere Zeile von `save()` ändert sich.
 
+**Stand seit Paket 1b (2026-09-27):** Regel 11 ist für den Karten-Weg Verteidigung in der Tiefe:
+der einzige **über die Karte** erreichbare Weg zu einem leeren oder nur aus Leerzeichen bestehenden
+`line.name` — das Feld „Anderer Name …" — ist seit dem getrimmten Guard aus Regel 10 geschlossen
+(F002). **Für den KI-Weg bleibt sie eine erreichbare Bedingung**: `ReceiptNameAIResolver.sanitize`
+kann `" "` durchlassen (siehe Regel 10, „Eine Quelle bleibt offen"; Folge-Issue #69). Der Filter bleibt
+trotzdem: `@State customActive` fällt beim Zellen-Recycling zurück, und eine künftige, andere
+Quelle für einen leeren Namen (Änderung an `ReceiptResolutionService`/`ReceiptParserService`)
+würde den Datenschaden sonst kommentarlos zurückbringen. Der zugehörige Test
+(`testIsSavableRejectsLineWithEmptyName`) bleibt unverändert gültig und wird damit zum
+Regressionswächter statt zum Nachweis einer erreichbaren Bedingung.
+
 **Alternative, verworfen: Guard weglassen, weil Zusage 3 die Ursache in der Karte schon
 schließt.** Verworfen aus zwei Gründen: (1) `@State customActive` fällt beim Zellen-Recycling
 der `List` auf `false` zurück (bestehendes, dokumentiertes Risiko dieser Karte, siehe Kontext-
@@ -542,11 +619,35 @@ auf die dort bereits gemergten Strings angeglichen (keine zwei parallelen Schema
    neue Regel fügt maximal eine Zeile ein und entfernt dafür eine bestehende. Paket 1 (Issue #50)
    fügt KEINE neue Options-Zeile hinzu — diese Invariante und alle `option.<k>`-Indizes bleiben
    unverändert; Paket 2 (Issue #65) wird diese Invariante ändern.
-6. **(Issue #50, Paket 1) Genau eine Option ist markiert, sofern `line.name` nicht leer ist.**
-   Gilt für jede Zeile, deren `matchedItemID`/`resolvedByAI` aus einem der bekannten
-   Zuweisungswege stammen (`applySelection`, `applyCustomName`/`applyCustomNameOrFallback`, oder
-   direkt aus `ReceiptResolutionService.resolve` über `mergeAIReresolution`) — sichergestellt
-   durch Regel 9 (Nachführen) zusammen mit den unveränderten Regeln 3/5/6. Ist `line.name` leer,
+6. **(Issue #50, Paket 1) Genau eine Option ist markiert, sofern `line.name` nicht leer ist —
+   mit den unten benannten Ausnahmen.** Gilt für jede Zeile, deren `matchedItemID`/`resolvedByAI`
+   aus einem der bekannten Zuweisungswege stammen (`applySelection`,
+   `applyCustomName`/`applyCustomNameOrFallback` oder `mergeAIReresolution`) — sichergestellt
+   durch Regel 9 (Nachführen) zusammen mit den unveränderten Regeln 3/5/6. `mergeAIReresolution`
+   ist ausdrücklich eingeschlossen: der reproduzierte Fall aus Issue #50 läuft über genau diesen
+   Weg (`linesNeedingAIReresolution` wählt die BTR-Zeile, `resolve` löst sie über
+   `expandAbbreviations` auf, `resolvedByAI` bleibt dabei false —
+   `ReceiptResolutionService.swift:104`, `ReceiptScannerView.swift:126`) und ist durch
+   `RestockUITests/ReceiptReviewUITests.swift:842` belegt. Ausgenommen ist allein die Konjunktion
+   aus diesem Weg UND Namensgleichheit, siehe unten.
+
+   **Ausdrücklich NICHT abgedeckt (F001, offen, Issue #66):** eine Zeile, deren Zustand direkt aus
+   `ReceiptResolutionService.resolve` über `mergeAIReresolution` stammt UND deren aufgelöster Name
+   wörtlich einem eigenen `suggestions`-Eintrag entspricht. `mergeAIReresolution` setzt
+   `resolvedByAI = true` mit `matchedItemID = nil` (`ReceiptScannerView.swift:130`); Dedup-Regel 2
+   entfernt dann die KI-Zeile zugunsten des namensgleichen Listen-Treffers, Regel 5 greift mangels
+   Namens-Mismatch nicht, und `isSelected(.listMatch)` verweigert die Markierung wegen
+   `!line.resolvedByAI` (`ReceiptReviewCard.swift:369`). Ergebnis: keine markierte Zeile trotz
+   nicht-leerem Namen — Punkt 4 aus Issue #50, für diesen einen Eingang unbehoben. Frühere
+   Fassungen dieser Invariante zählten `mergeAIReresolution` als abgedeckt auf und widersprachen
+   damit „Known Limitations"; dieser Selbstwiderspruch war der Grund, warum der erste Prüfdialog
+   kein Urteil fassen konnte (behoben 2026-09-27).
+
+   **Zweite Restlücke (offen, Teil von Issue #66):** Regel 9 hängt allein an `line.name`. Ändert
+   eine externe Auflösung `matchedItemID`/`resolvedByAI` und lässt den Namen byte-gleich, führt
+   sich nichts nach.
+
+   Ist `line.name` leer,
    bleibt das bestehende, durch Issue #37 bewusst unveränderte Verhalten gültig (siehe Known
    Limitations): keine Option ist automatisch markiert, bis der Nutzer selbst wählt — dieser Fall
    ist mit Regel 10 (Zusage 3) für den EINZIGEN produktiv erreichbaren Weg zu einem leeren Namen
@@ -610,50 +711,58 @@ auf die dort bereits gemergten Strings angeglichen (keine zwei parallelen Schema
   nacheinander alle drei Callback-Arten aufgerufen werden THEN bleibt `originalName` nach jedem
   Aufruf exakt `"FISCHSTAEBCHEN 15ST"`.
 
-**Issue #37 — Regel 5 (`selectionOptions`, neu; TDD RED, wird in `/40-tdd-red` geschrieben):**
+**Issue #37 — Regel 5 (`selectionOptions`); geschrieben und grün:**
 
-- [ ] **AC-4 (Issue #37):** GIVEN eine Zeile `name: "Milch"` mit 3 `.listMatch`-Kandidaten
+- [x] **AC-4 (Issue #37):** GIVEN eine Zeile `name: "Milch"` mit 3 `.listMatch`-Kandidaten
   ("Hafermilch", "Buttermilch", "Vollmilch"), von denen keiner case-insensitiv `"Milch"` entspricht,
   und keinem `aiSuggestedName` WHEN `selectionOptions(for:)` aufgerufen wird THEN ist `options[0]`
   `.currentName("Milch")`, die drei ursprünglichen Treffer sind auf zwei reduziert (der zuletzt
   gereihte, "Vollmilch", entfällt), und die Gesamtzahl bleibt bei 4 Optionen (3 inhaltliche
   Kandidaten + `.custom`).
-- [ ] **Regression (Issue #37):** GIVEN eine Zeile mit leerem `name` (`""`) und denselben 3
+- [x] **Regression (Issue #37):** GIVEN eine Zeile mit leerem `name` (`""`) und denselben 3
   `.listMatch`-Kandidaten wie oben, von denen keiner (naturgemäß) `line.name` entspricht WHEN
   `selectionOptions(for:)` aufgerufen wird THEN bleibt die Kandidatenliste unverändert bei den 3
   Treffern + `.custom` (4 Optionen) — keine zusätzliche `.currentName`-Zeile, heutiges Verhalten
   (Regel 6, vormals Regel 5) bleibt unberührt.
-- [ ] **AC-4 (Issue #37, Ergänzung zu bestehendem Test):** Der bestehende Test
+- [x] **AC-4 (Issue #37, Ergänzung zu bestehendem Test):** Der bestehende Test
   `testFiveSuggestionsAreCappedToThreeListMatches` (`name: "Milch"`, Treffer "Hafermilch/
-  Buttermilch/Vollmilch/Kondensmilch/Reismilch" — keiner entspricht `"Milch"`) wird um eine
-  Vorauswahl-Assertion ergänzt: THEN ist `options[0]` `.currentName("Milch")`, und für dieses
-  Element liefert die Auswahl-Logik der Karte (`isSelected`) `true`. Dieser Test konstruierte das
-  Symptom-Szenario aus Issue #37 bereits vor dieser Erweiterung, prüfte die Vorauswahl bisher aber
-  nicht.
+  Buttermilch/Vollmilch/Kondensmilch/Reismilch" — keiner entspricht `"Milch"`) wurde um die
+  Vorauswahl-Assertion ergänzt: THEN ist `options[0]` `.currentName("Milch")`
+  (`RestockTests/ReceiptReviewCardTests.swift:165`). Dieser Test konstruierte das Symptom-Szenario
+  aus Issue #37 bereits vor dieser Erweiterung, prüfte die Vorauswahl bisher aber nicht.
+- [ ] **AC-4 (Rest, verschoben nach Issue #66):** Die zweite, ursprünglich mitgeforderte Assertion
+  („für `options[0]` liefert die Auswahl-Logik der Karte `true`") ist in der Unit-Suite **nicht
+  schreibbar**: `isSelected(_:)` ist eine `private func` der View und hat keinen von außen
+  erreichbaren Einstieg — `grep -n "isSelected" RestockTests/ReceiptReviewCardTests.swift` liefert
+  keinen Treffer, die Markierungs-Logik wird heute ausschließlich über UI-Tests belegt
+  (`firstOption.isSelected`). Prüfbar wird sie erst, wenn Issue #66 die Markierungs-Regel als reine
+  Funktion `isSelectedIgnoringCustom(_:for:)` herauszieht (siehe Regel 12 der Vorarbeit in
+  `docs/specs/views/receipt-review-card-nachtrag-1b.md`). Bis dahin bewusst offen — der Punkt wird
+  NICHT als erfüllt geführt.
 
-**Issue #50, Paket 1 (neu; TDD RED, wird in `/40-tdd-red` geschrieben):**
+**Issue #50, Paket 1; geschrieben und grün:**
 
-- [ ] **AC-15 (`applyCustomNameOrFallback`):** GIVEN eine Zeile mit `matchedItemID` gesetzt und
+- [x] **AC-15 (`applyCustomNameOrFallback`):** GIVEN eine Zeile mit `matchedItemID` gesetzt und
   `previousSelection = (name: "Vollmilch", matchedItemID: <id>, resolvedByAI: false)` WHEN
   `applyCustomNameOrFallback(&line, name: "", previousSelection:)` aufgerufen wird THEN gilt
   `line.name == "Vollmilch"`, `line.matchedItemID == <id>`, `line.resolvedByAI == false` — der
   leere Zwischenstand wird nie in `line` geschrieben.
   Test: `testApplyCustomNameOrFallbackRestoresPreviousSelectionOnEmptyName`.
-- [ ] **AC-15 (KI-Zustand):** GIVEN `previousSelection = (name: "Frische Vollmilch", matchedItemID:
+- [x] **AC-15 (KI-Zustand):** GIVEN `previousSelection = (name: "Frische Vollmilch", matchedItemID:
   <aiID>, resolvedByAI: true)` WHEN mit leerem Namen aufgerufen wird THEN gilt `resolvedByAI ==
   true` UND `matchedItemID == <aiID>` — beweist, dass alle drei Felder zurückgeholt werden, nicht
   nur der Name. Test: `testApplyCustomNameOrFallbackRestoresAIStateOnEmptyName`.
-- [ ] **AC-15 (Regression, nicht-leerer Name):** GIVEN ein beliebiges `previousSelection` WHEN mit
+- [x] **AC-15 (Regression, nicht-leerer Name):** GIVEN ein beliebiges `previousSelection` WHEN mit
   einem nicht-leeren Namen aufgerufen wird THEN verhält sich die Funktion exakt wie das bestehende
   `applyCustomName` (`matchedItemID == nil`, `resolvedByAI == false`, `originalName` unverändert)
   — der Rückfall greift ausschließlich beim leeren Zwischenstand.
   Test: `testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged`.
-- [ ] **AC-16 (`isSavable`, in `RestockTests/ReceiptScannerReResolutionTests.swift`):** GIVEN
+- [x] **AC-16 (`isSavable`, in `RestockTests/ReceiptScannerReResolutionTests.swift`):** GIVEN
   eine angehakte Zeile mit `price == 1.99` und `name == ""` (und ebenso eine mit `name == "   "`)
   WHEN `EditableReceiptLine.isSavable(_:)` aufgerufen wird THEN liefert es `false` — `save()`
   überspringt diese Position und legt weder einen namenlosen Kaufdatensatz noch einen Lern-Eintrag
   unter dem leeren Schlüssel an. Test: `testIsSavableRejectsLineWithEmptyName`.
-- [ ] **AC-16 (Regression, bisherige Bedingungen):** GIVEN eine angehakte Zeile mit
+- [x] **AC-16 (Regression, bisherige Bedingungen):** GIVEN eine angehakte Zeile mit
   `name == "Butter"` und `price == 1.99` WHEN `isSavable(_:)` aufgerufen wird THEN liefert es
   `true`; für dieselbe Zeile mit `isIncluded == false` bzw. `price == 0` weiterhin `false` —
   beweist, dass die Regel die bisher inline stehende Bedingung unverändert mitträgt.
@@ -690,7 +799,7 @@ Seed `-seedReceiptReviewUnresolvedLineForUITests`; Details, Fixture und die bena
 Invariante 1 stehen in `docs/specs/testing/receipt-review-test-entry.md`, „Nachtrag Issue #50,
 Paket 1"):
 
-- [ ] **AC-13/AC-14 (der reproduzierte Fall):** GIVEN die fünfte Bon-Zeile des neuen Seeds
+- [x] **AC-13/AC-14 (der reproduzierte Fall):** GIVEN die fünfte Bon-Zeile des neuen Seeds
   (`name == originalName == "BTR"`, `resolvedByAI == false` — verletzt Invariante 1 des
   Testeinstiegs ABSICHTLICH, damit `reResolveAIIfNeeded()` tatsächlich läuft) WHEN der Prüf-Screen
   öffnet und die Namensauflösung (Wörterbuch-Stufe, „btr" → „Butter", ohne Apple Intelligence)
@@ -701,13 +810,48 @@ Paket 1"):
   Test: `testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution` — zeichengenau
   derselbe Testname wie „Test 3" in `docs/specs/testing/receipt-review-test-entry.md`; es
   entsteht nur EIN Test, hier aus Sicht der Karte, dort aus Sicht des Testeinstiegs beschrieben.
-- [ ] **AC-15 (PO-Fund, UI-Nachweis):** GIVEN die KI-Zeile des BESTEHENDEN Seeds
+- [x] **AC-15 (PO-Fund, UI-Nachweis):** GIVEN die KI-Zeile des BESTEHENDEN Seeds
   (`receiptReview.line.0`, Name „Frische Vollmilch 3,5 %") WHEN „Anderer Name …" angetippt, das
   vorbelegte Feld vollständig geleert (nicht neu befüllt) wird THEN zeigt
   `receiptReview.line.0.checkbox` weiterhin „Position übernehmen: Frische Vollmilch 3,5 %" — nie
   einen leeren Namen. Vor Regel 10 hätte jeder gelöschte Buchstabe den Namen live überschrieben,
   bis er bei vollständigem Leeren leer gewesen wäre.
   Test: `testClearingCustomNameFieldKeepsPreviousItemName`.
+
+#### Issue #50, Paket 1b (F002) — geschrieben und grün
+
+- [x] **AC-18 (`applyCustomNameOrFallback`, Name aus reinen Leerzeichen):** GIVEN eine Zeile mitten
+  in der Eingabe eines eigenen Namens (`name: "Vollm"`, `matchedItemID == nil`,
+  `resolvedByAI == false`) und `previousSelection = (name: "Frische Vollmilch",
+  matchedItemID: <aiID>, resolvedByAI: true)` WHEN
+  `applyCustomNameOrFallback(&line, name: "   ", previousSelection:)` aufgerufen wird THEN löst der
+  Name aus reinen Leerzeichen denselben Rückfall aus wie ein leerer: `line.name == "Frische
+  Vollmilch"`, `line.matchedItemID == <aiID>`, `line.resolvedByAI == true` — alle drei Felder
+  kommen zurück, nicht nur der Name.
+  Test: `testApplyCustomNameOrFallbackRestoresPreviousSelectionOnWhitespaceOnlyName`
+  (`RestockTests/ReceiptReviewCardTests.swift`). Grün belegt in
+  `docs/artifacts/fix-50-import-dialog-design/green-run1-unit.txt` und `green-run3b-suite.txt`
+  (`Test Case '-[RestockTests.ReceiptReviewCardTests
+  testApplyCustomNameOrFallbackRestoresPreviousSelectionOnWhitespaceOnlyName]' passed`).
+- [x] **AC-18 (Verteidigungs-Rückfall auf den Bontext):** GIVEN ein festgehaltenes
+  `previousSelection`, dessen `name` selbst reine Leerzeichen ist (`"  "`, mit gesetzter
+  `matchedItemID` und `resolvedByAI: true`) WHEN mit `name: " "` aufgerufen wird THEN gilt dieser
+  Rückfall nicht als gültig: `line.name == line.originalName` (`"BTR"`),
+  `line.matchedItemID == nil`, `line.resolvedByAI == false` — die Zeile bleibt nie ohne Namen
+  stehen.
+  Test: `testApplyCustomNameOrFallbackFallsBackToOriginalNameWhenPreviousSelectionIsWhitespaceOnly`
+  (`RestockTests/ReceiptReviewCardTests.swift`). Grün belegt in `green-run1-unit.txt` und
+  `green-run3b-suite.txt`.
+- [x] **AC-18 (Bildschirm-Nachweis):** GIVEN die KI-Zeile des BESTEHENDEN Seeds
+  (`receiptReview.line.0`, Name „Frische Vollmilch 3,5 %") WHEN „Anderer Name …" angetippt, das
+  vorbelegte Feld vollständig geleert und anschließend durch ein einzelnes Leerzeichen ersetzt wird
+  THEN endet das Label von `receiptReview.line.0.checkbox` nie mit einem Namen aus reinen
+  Leerzeichen, sondern nennt weiterhin „Frische Vollmilch 3,5 %".
+  Test: `testWhitespaceOnlyCustomNameKeepsPreviousItemName`
+  (`RestockUITests/ReceiptReviewUITests.swift`). RED-Nachweis: im RED-Lauf trug das Label
+  tatsächlich `"Position übernehmen:  "` (`test-red-ui-1b.txt`,
+  `RestockUITests/ReceiptReviewUITests.swift:947`). Grün belegt in `green-run2-ui.txt` und
+  `green-run3b-suite.txt`.
 
 **Bestehende Tests, unverändert (bestätigt für Paket 1):**
 `testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches`
@@ -761,20 +905,32 @@ diese Spec GREEN macht.
   `reResolveAIIfNeeded()` nach dem ersten Zeichnen der Karte), UND passt danach keine der
   bestehenden Auswahlzeilen mehr dazu, wird die Auswahlliste einmal neu berechnet (Regel 9) — der
   neue Name erscheint als eigene, vorausgewählte Zeile (Regel 5), nicht erst im Feld „Anderer
-  Name …". Passt eine bestehende Zeile weiterhin (z. B. nach einem Nutzer-Tap), bleibt die Liste
+  Name …". **Ausgenommen der Fall F001 (Issue #66):** Trägt ein verbliebener Kandidat denselben
+  Namen, verhindert Regel 5 die Einfügung (`ReceiptReviewCard.swift:443-447`), Regel 3 sortiert
+  den Listen-Treffer nur nach vorn, und `isSelected` verweigert die Markierung wegen
+  `!line.resolvedByAI` (`:369`) — die Karte bleibt dann ohne markierte Zeile. Passt eine bestehende Zeile weiterhin (z. B. nach einem Nutzer-Tap), bleibt die Liste
   unverändert stehen — das bewusste Einfrieren aus Abschnitt 5 bleibt für diesen Fall erhalten.
 - **AC-14 (Issue #50, Zusage 2):** Für jede Zeile mit nicht-leerem `line.name`, deren
-  `matchedItemID`/`resolvedByAI` aus einem der bekannten Zuweisungswege stammen, ist immer genau
-  eine Auswahlzeile markiert — beweisbar am reproduzierten Fall: „Karte zeigt genau einen
-  gefüllten Auswahlkreis, nie null und nie zwei." Siehe Invariante 6.
+  `matchedItemID`/`resolvedByAI` aus einem der bekannten Zuweisungswege stammen (`applySelection`,
+  `applyCustomName`/`applyCustomNameOrFallback` oder `mergeAIReresolution`), ist immer genau eine
+  Auswahlzeile markiert — beweisbar am reproduzierten Fall: „Karte zeigt genau einen gefüllten Auswahlkreis,
+  nie null und nie zwei." **Nicht abgedeckt:** eine Zeile aus `mergeAIReresolution`, deren
+  aufgelöster Name wörtlich einem eigenen `suggestions`-Eintrag entspricht (F001, offen, Issue
+  #66), und eine externe Änderung von `matchedItemID`/`resolvedByAI` bei byte-gleichem Namen.
+  Beide Ausnahmen sind in Invariante 6 und „Known Limitations" begründet.
 - **AC-15 (Issue #50, Zusage 3):** Leert der Nutzer das vorbelegte Feld „Anderer Name …"
-  vollständig, fällt die Karte auf die Auswahl zurück, die unmittelbar zuvor galt (Name,
-  `matchedItemID` UND `resolvedByAI` gemeinsam) — `line.name` wird nie leer geschrieben. Das
-  sichtbare Textfeld selbst bleibt dabei leer, der Nutzer kann sofort weitertippen.
+  vollständig **oder reduziert es auf reine Leerzeichen** (Paket 1b, F002), fällt die Karte auf
+  die Auswahl zurück, die unmittelbar zuvor galt (Name, `matchedItemID` UND `resolvedByAI`
+  gemeinsam) — `line.name` trägt danach nie einen leeren oder nur aus Leerzeichen bestehenden
+  Namen. Das sichtbare Textfeld selbst bleibt unangetastet, der Nutzer kann sofort weitertippen.
 - **AC-16 (Issue #50, Verteidigung in der Tiefe):** Eine Position mit leerem Namen wird beim
   Speichern vollständig übersprungen — es entsteht kein Kaufdatensatz ohne Namen in der
   Ausgabenhistorie und kein gelernter Preis unter dem leeren Schlüssel; unabhängig davon, ob ein
   leerer Name die Karte je erreicht (AC-15 schließt das für den bekannten Weg aus).
+- **AC-18 (Issue #50, Paket 1b, F002):** Ein Name aus reinen Leerzeichen löst denselben Rückfall
+  aus wie ein vollständig geleertes Feld. Es entsteht keine angehakte Position, die in Kopfzeile
+  und Summe mitzählt, beim Speichern aber still verworfen wird; Regel 11 bleibt als Verteidigung
+  in der Tiefe unverändert bestehen.
 
 ## Alternativen (verworfen)
 
@@ -922,9 +1078,13 @@ Beobachtbar für den PO, ohne Code zu lesen:
 - **(Issue #50, Paket 1)** Ändert sich der Namensvorschlag einer Karte NACH dem Öffnen (z. B. beim
   Zurückkommen aus einer geteilten App), zeigt die Karte den neuen Namen sofort als markierte
   Zeile — nicht mehr „Häkchen gesetzt, kein Kreis gefüllt", und der Name steht nicht mehr nur
-  versteckt im Feld „Anderer Name …".
-- **(Issue #50, Paket 1)** Leert man das Feld „Anderer Name …" versehentlich vollständig, bleibt
-  die Position unter ihrem vorherigen Namen gespeichert, statt kommentarlos ohne Namen dazustehen.
+  versteckt im Feld „Anderer Name …". **Eine Ausnahme bleibt offen (F001, Issue #66):** Trifft der
+  neue Name wörtlich einen Artikel, der bereits als Vorschlag dieser Position angeboten wird, steht
+  die Karte weiterhin ohne markierten Kreis. Alltagsfall: der Artikel steht unabgehakt auf der
+  Liste. Der Fix ist eine sichtbare Gestaltungsentscheidung und braucht zuerst einen Entwurf.
+- **(Issue #50, Paket 1 + 1b)** Leert man das Feld „Anderer Name …" versehentlich vollständig oder
+  reduziert es auf reine Leerzeichen, bleibt die Position unter ihrem vorherigen Namen gespeichert,
+  statt kommentarlos ohne Namen dazustehen.
 - Alle zugehörigen automatisierten Tests (Unit und UI, siehe Test Plan) sind grün; keine manuelle
   Nachprüfung durch den PO nötig.
 
@@ -978,6 +1138,40 @@ Beobachtbar für den PO, ohne Code zu lesen:
   trotz nicht-leerem Namen. Vorbestehend seit Issue #37 (Regel 3/5 unverändert), von Paket 1 weder
   eingeführt noch behoben; Invariante 6 ist deshalb ausdrücklich auf Zeilen beschränkt, deren
   `matchedItemID`/`resolvedByAI` aus einem der bekannten Zuweisungswege stammen.
+- **F104 (LOW, Issue #69): `.whitespaces` deckt Zeilenumbrüche nicht ab.** Regel 10
+  (`applyCustomNameOrFallback`) und Regel 11 (`isSavable`) trimmen beide mit
+  `trimmingCharacters(in: .whitespaces)` — gemessen erfasst das Tabulator, U+00A0, alle
+  Zs-Leerzeichen und U+200B, **nicht** aber U+000A/U+000B. Ein Name, der nur aus einem
+  Zeilenumbruch besteht, passiert deshalb beide Regeln **symmetrisch**: AC-18 ist unverletzt (die
+  beiden Regeln fallen nicht auseinander, es entsteht keine still verschwindende Position), aber
+  AC-16 ist nur dem Buchstaben nach erfüllt — eine optisch leere Position würde gespeichert.
+  Erreichbarkeit über das einzeilige Textfeld der Karte ist unbewiesen; über den KI-Weg aus #69
+  nicht ausgeschlossen. Beim Umstellen auf `.whitespacesAndNewlines` muss die Symmetrie zwischen
+  `ReceiptScannerView.swift:106` und `ReceiptReviewCard.swift:499-500` erhalten bleiben.
+- **F001 (Issue #50, Paket 1b bewusst NICHT behoben — Folge-Issue #66 mit vorgeschaltetem
+  Design-Entwurf):** Löst die Namensauflösung eine Position nachträglich auf einen Namen auf, der
+  wörtlich einem ihrer eigenen Vorschläge entspricht (`resolvedByAI == true`,
+  `matchedItemID == nil`), entfernt Dedup-Regel 2 die KI-Zeile, und der namensgleiche
+  Listen-Treffer kann die Markierung nicht tragen — die Karte steht dann ganz OHNE markierte Zeile,
+  obwohl `line.name` nicht leer ist (Punkt 4 aus Issue #50). Paket 1b behebt nur F002; der PO hat
+  am 2026-09-27 entschieden, F001 einem eigenen Ticket mit vorgeschaltetem Design-Entwurf
+  zuzuweisen, weil die Lösung die Zusammensetzung der Auswahlliste sichtbar verändert (erhaltene
+  KI-Zeile, Doppelnennung eines Namens). Die vollständige Vorarbeit — Regel 12
+  (`isSelectedIgnoringCustom`), Regel 2/5 auf Markierungsbasis, AC-17, Test Plan — liegt fertig
+  formuliert in `docs/specs/views/receipt-review-card-nachtrag-1b.md` und ist bis zur Freigabe
+  dieses Folge-Issues (#66) NICHT Bestandteil dieser Spec. Solange gilt die Einschränkung von
+  Invariante 6 und AC-14 auf die bekannten Zuweisungswege unverändert weiter.
+- **F003 (LOW, vorbestehend seit Issue #37, Folge-Issue #67):** `applySelection` setzt im
+  `.currentName`-Zweig NUR `line.name` (`ReceiptReviewCard.swift:470-471`) und lässt eine zuvor
+  gesetzte, fremde `matchedItemID` stehen. Wer zuerst einen Listen-Treffer und danach die
+  `.currentName`-Zeile antippt, behält dessen Artikel-Identität; `save()` schreibt den Preis dann
+  über `matchedItem` auf den falschen Artikel (`ReceiptScannerView.swift:642-645`, `:709`). Von
+  Paket 1b nicht berührt.
+- **F004 (LOW, vorbestehend, Folge-Issue #68):** Solange `customActive` gilt, ersetzt `optionRow` die
+  `.custom`-Zeile durch das Textfeld; der `.isSelected`-Trait und der gefüllte Radiopunkt hängen
+  nur an den Nicht-Custom-Zeilen. Während der Eingabe eines eigenen Namens trägt deshalb KEINE
+  Zeile den `.isSelected`-Trait, obwohl die Eingabe inhaltlich die geltende Auswahl ist
+  (`isSelected(.custom) == true`). Von Paket 1b nicht berührt.
 
 ## Changelog
 
@@ -1000,4 +1194,53 @@ Beobachtbar für den PO, ohne Code zu lesen:
   Test Plan erweitert. Status auf
   `draft` gesetzt, Approval erneut zurückgesetzt. Issue #50, Paket 2 (Bontext lesbar/kopierbar/
   wählbar) bleibt Issue #65 vorbehalten, nicht Teil dieser Erweiterung.
-</content>
+- 2026-09-27: Issue #50, Paket 1b — nur Befund F002 aus dem Adversary-Prüfdialog behoben: Regel 10
+  benutzt denselben getrimmten Leer-Begriff wie `isSavable`, ein Feld aus reinen Leerzeichen löst
+  damit denselben Rückfall aus wie ein vollständig geleertes Feld (Eingangs-Guard UND
+  Verteidigungs-Rückfall auf `line.originalName`). AC-15 entsprechend präzisiert, AC-18 neu, Regel
+  11 ausdrücklich zur Verteidigung in der Tiefe erklärt, Scope-Erweiterung Paket 1b ergänzt. Befund
+  F001 (Regel 12, Dedup/Markierung) ist per PO-Entscheidung NICHT Teil von Paket 1b, sondern einem
+  Folge-Issue #66 mit vorgeschaltetem Design-Entwurf zugewiesen; die Vorarbeit liegt in
+  `docs/specs/views/receipt-review-card-nachtrag-1b.md`. F003/F004 als bekannte, offene Lücken in
+  „Known Limitations" aufgenommen.
+
+### 2026-09-27 — Nachtrag Paket 1b, Nachzug (Issue #50)
+
+Folge-Issue-Nummern eingetragen (#66 für F001, #67 für F003, #68 für F004), nachdem die Tickets
+angelegt waren. Test Plan nachgezogen: neun Punkte aus Issue #37 und Issue #50, Paket 1, von offen
+auf erfüllt gesetzt — jeder gegen einen `passed`-Fund in den Nachweisprotokollen belegt, nicht aus
+dem Gedächtnis. Neuer Unterabschnitt „Issue #50, Paket 1b (F002) — geschrieben und grün" mit den
+drei neuen Tests. Zwei Abschnittsüberschriften, die noch „wird in `/40-tdd-red` geschrieben" sagten,
+auf „geschrieben und grün" korrigiert. Der Punkt „AC-4, Ergänzung zu bestehendem Test" wurde
+aufgeteilt: die umgesetzte Hälfte (`options[0]` ist `.currentName`) ist erfüllt, die nie geschriebene
+`isSelected`-Assertion bleibt ausdrücklich offen und geht nach #66 — sie ist in der Unit-Suite erst
+schreibbar, wenn die Markierungs-Regel dort als reine Funktion vorliegt. Eine versehentlich
+mitkopierte Fremdzeile (`</content>`) am Dateiende entfernt; sie stammte aus einer früheren Sitzung.
+Keine Änderung an Produktivcode oder Tests durch diesen Nachzug.
+
+### 2026-09-28 — Korrekturgang nach dem zweiten und dritten Prüfdialog (Issue #50)
+
+Der zweite Prüfdialog urteilte BROKEN — nicht am Code, der vollständig bewiesen ist, sondern an
+dieser Spec und am PO-Briefing. Drei Runden, neun Dokumenten-Befunde, alle geschlossen:
+
+- **F101/F106/F107 (Selbstwiderspruch):** Invariante 6, AC-13, AC-14, der Reichweiten-Satz zu
+  Regel 9, die Zusagen 1 und 2 im Nachtrag Paket 1, „Expected Behavior", die Scope-Tabelle und die
+  beiden „behebt Punkt 4"-Stellen versprachen „genau eine Option markiert", ohne die Ausnahme F001
+  zu nennen. Alle tragen sie jetzt, mit Verweis auf Issue #66.
+- **F105 (Gegenrichtung, im dritten Durchgang gefunden):** Der erste Korrekturversuch strich
+  `mergeAIReresolution` KOMPLETT aus der positiven Aufzählung der abgedeckten Zuweisungswege —
+  und schoss damit über das Ziel hinaus: der reproduzierte Fall aus Issue #50 läuft über genau
+  diesen Weg, mit `resolvedByAI == false` (`expandAbbreviations`), und ist durch
+  `RestockUITests/ReceiptReviewUITests.swift:842` belegt. AC-14 widersprach sich dadurch selbst.
+  `mergeAIReresolution` steht wieder in der Aufzählung; ausgenommen ist allein die Konjunktion aus
+  diesem Weg UND Namensgleichheit.
+- **F103 (widerlegte Aussage):** „Ein Name aus reinen Leerzeichen entsteht nirgends mehr" gilt nur
+  über die Karte. `ReceiptNameAIResolver.sanitize` trimmt vor dem Entfernen der Anführungszeichen
+  und lässt `" "` durch (Issue #69). Regel 11 bleibt für den KI-Weg eine erreichbare Bedingung.
+- **F104** als Known Limitation aufgenommen (Issue #69).
+- **F102:** Das Briefing versprach in „Was gebaut wird" und in der Definition of Done „auch nach
+  nachträglicher Namensauflösung" — genau den offenen Fall. Beide Sätze tragen die Ausnahme jetzt
+  im Satz selbst, mit Ticketnummer.
+
+Kein Produktivcode und keine Testdatei wurde in diesem Korrekturgang berührt.
+

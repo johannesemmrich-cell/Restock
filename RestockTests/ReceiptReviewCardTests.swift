@@ -458,4 +458,54 @@ final class ReceiptReviewCardTests: XCTestCase {
         XCTAssertFalse(line.resolvedByAI, "Ein selbst getippter Name ist kein KI-Vorschlag.")
         XCTAssertEqual(line.originalName, "MILCH 3,5% FRISCH", "Der Bontext bleibt unangetastet.")
     }
+
+    // MARK: - Issue #50, Paket 1b — F002: ein Name aus reinen Leerzeichen ist leer
+
+    /// AC-18 — Ein Feld, in dem nur noch Leerzeichen stehen, ist für den Nutzer leer und löst
+    /// denselben Rückfall aus wie ein vollständig geleertes Feld: Name, `matchedItemID` UND
+    /// `resolvedByAI` der vorherigen Auswahl kommen gemeinsam zurück.
+    ///
+    /// Vor Paket 1b guardete Regel 10 auf `isEmpty`, Regel 11 (`isSavable`) dagegen auf den
+    /// getrimmten Namen — ein einzelnes Leerzeichen fiel zwischen beiden durch: `line.name` wurde
+    /// " ", die Position zählte in Kopfzeile und Summe weiter mit, `save()` verwarf sie still.
+    func testApplyCustomNameOrFallbackRestoresPreviousSelectionOnWhitespaceOnlyName() {
+        let vollmilchID = UUID()
+        // Zustand während der Eingabe eines eigenen Namens: `applyCustomName` hat Artikel-Identität
+        // und KI-Kennzeichnung schon gelöscht — beide müssen mit dem Namen zurückkommen.
+        var line = makeLine(name: "Vollm", price: 1.19, originalName: "MILCH 3,5% FRISCH",
+                            matchedItemID: nil, resolvedByAI: false,
+                            aiSuggestedName: "Frische Vollmilch", aiSuggestedMatchedItemID: vollmilchID)
+
+        ReceiptReviewCard.applyCustomNameOrFallback(
+            &line, name: "   ",
+            previousSelection: (name: "Frische Vollmilch", matchedItemID: vollmilchID, resolvedByAI: true))
+
+        XCTAssertEqual(line.name, "Frische Vollmilch",
+                       "Ein Name aus reinen Leerzeichen darf nie in die Zeile geschrieben werden — "
+                       + "bekommen: \"\(line.name)\"")
+        XCTAssertEqual(line.matchedItemID, vollmilchID,
+                       "Die Artikel-Zuordnung der vorherigen Auswahl kommt mit zurück.")
+        XCTAssertTrue(line.resolvedByAI,
+                      "Die KI-Kennzeichnung gehört zur vorherigen Auswahl und muss mit zurückkommen.")
+    }
+
+    /// AC-18 (Verteidigungs-Rückfall) — Ist der festgehaltene `previousSelection.name` selbst
+    /// reine Leerzeichen, gilt er nicht als gültiger Rückfall: die Zeile fällt auf ihren Bontext
+    /// (`originalName`) zurück, ohne Artikel-Identität und ohne KI-Kennzeichnung.
+    func testApplyCustomNameOrFallbackFallsBackToOriginalNameWhenPreviousSelectionIsWhitespaceOnly() {
+        var line = makeLine(name: "Butter", price: 1.19, originalName: "BTR",
+                            matchedItemID: nil, resolvedByAI: false)
+
+        ReceiptReviewCard.applyCustomNameOrFallback(
+            &line, name: " ",
+            previousSelection: (name: "  ", matchedItemID: UUID(), resolvedByAI: true))
+
+        XCTAssertEqual(line.name, "BTR",
+                       "Ein festgehaltenes Leerzeichen ist kein gültiger Rückfall — dann gilt der "
+                       + "Bontext. Bekommen: \"\(line.name)\"")
+        XCTAssertNil(line.matchedItemID,
+                     "Der Bontext trägt keine Artikel-Identität.")
+        XCTAssertFalse(line.resolvedByAI,
+                       "Der Bontext ist kein KI-Vorschlag.")
+    }
 }
