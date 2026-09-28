@@ -43,4 +43,39 @@ final class ReceiptScannerReResolutionTests: XCTestCase {
         XCTAssertEqual(merged[1].suggestions.map(\.name), ["Mozzarella"])
         XCTAssertTrue(merged[1].resolvedByAI)
     }
+
+    // MARK: - Issue #50, Paket 1 — Regel 11: leere Position wird nicht gespeichert
+
+    /// AC-16 — `save()` überspringt eine Position ohne Namen vollständig. Ohne diese Regel legt
+    /// `save()` einen `PurchaseRecord` OHNE Namen in der Ausgabenhistorie an und lernt einen Preis
+    /// unter dem leeren Schlüssel des Ladens.
+    func testIsSavableRejectsLineWithEmptyName() {
+        var empty = EditableReceiptLine(name: "", price: 1.99, originalName: "BTR")
+        empty.isIncluded = true
+        var blank = EditableReceiptLine(name: "   ", price: 1.99, originalName: "BTR")
+        blank.isIncluded = true
+
+        XCTAssertFalse(EditableReceiptLine.isSavable(empty),
+                       "Eine Position ohne Namen darf nicht gespeichert werden.")
+        XCTAssertFalse(EditableReceiptLine.isSavable(blank),
+                       "Ein Name aus reinen Leerzeichen ist genauso wenig ein Name.")
+    }
+
+    /// AC-16 (Regression) — Die Regel trägt die bisher in `save()` inline stehende Bedingung
+    /// unverändert mit: angehakt und mit Preis wird gespeichert, abgewählt oder ohne Preis nicht.
+    func testIsSavableKeepsIncludedNamedLineAndRejectsOldCases() {
+        var savable = EditableReceiptLine(name: "Butter", price: 1.99, originalName: "BTR")
+        savable.isIncluded = true
+        var excluded = savable
+        excluded.isIncluded = false
+        var priceless = savable
+        priceless.price = 0
+
+        XCTAssertTrue(EditableReceiptLine.isSavable(savable),
+                      "Eine angehakte Position mit Namen und Preis muss weiterhin gespeichert werden.")
+        XCTAssertFalse(EditableReceiptLine.isSavable(excluded),
+                       "Abgewählte Positionen blieben schon bisher außen vor.")
+        XCTAssertFalse(EditableReceiptLine.isSavable(priceless),
+                       "Positionen ohne Preis blieben schon bisher außen vor.")
+    }
 }

@@ -84,6 +84,10 @@ struct ReceiptReviewCard: View {
     /// jeden Folgezustand.
     @State private var options: [ReceiptNameOption] = []
     @State private var customActive = false
+    /// Die Auswahl, die unmittelbar VOR dem Öffnen von „Anderer Name …" galt (Issue #50, Paket 1,
+    /// Regel 10) — Ziel des Rückfalls, wenn der Nutzer das vorbelegte Feld vollständig leert.
+    /// Alle drei Felder gemeinsam, damit ein KI-Vorschlag mit seiner Kennzeichnung zurückkommt.
+    @State private var previousSelectionBeforeCustom: (name: String, matchedItemID: UUID?, resolvedByAI: Bool)?
     @State private var customName = ""
     @State private var isEditing = false
     @State private var priceText = ""
@@ -107,6 +111,14 @@ struct ReceiptReviewCard: View {
         .overlay(RoundedRectangle(cornerRadius: RCRadius.card).strokeBorder(Color.hairline))
         .onAppear {
             if options.isEmpty { options = Self.selectionOptions(for: line) }
+        }
+        // Regel 9 (Issue #50, Paket 1): Ändert sich `line.name` von AUSSEN und passt danach keine
+        // der bestehenden Zeilen mehr dazu, wird die Liste EINMAL nachgeführt. Nach einem
+        // Nutzer-Tap passt die angetippte Zeile weiterhin — der Guard hält das bewusste
+        // Einfrieren für diesen Fall aufrecht, die Zeile springt nicht unter dem Finger weg.
+        .onChange(of: line.name) { _, _ in
+            guard !options.contains(where: { isSelected($0) }) else { return }
+            options = Self.selectionOptions(for: line)
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("receiptReview.line.\(index).card")
@@ -256,7 +268,9 @@ struct ReceiptReviewCard: View {
                 .submitLabel(.done)
                 .accessibilityIdentifier("receiptReview.line.\(index).customNameField")
                 .onChange(of: customName) { _, newValue in
-                    Self.applyCustomName(&line, name: newValue)
+                    Self.applyCustomNameOrFallback(&line, name: newValue,
+                                                   previousSelection: previousSelectionBeforeCustom
+                                                       ?? (line.name, line.matchedItemID, line.resolvedByAI))
                 }
             Spacer(minLength: 0)
         }
@@ -368,6 +382,8 @@ struct ReceiptReviewCard: View {
     private func select(_ option: ReceiptNameOption) {
         Haptics.impact(.light)
         if case .custom = option {
+            // Regel 10: die geltende Auswahl festhalten, BEVOR das Feld sie überschreiben kann.
+            previousSelectionBeforeCustom = (line.name, line.matchedItemID, line.resolvedByAI)
             customName = line.name
             customActive = true
             // Das Feld existiert erst nach diesem State-Wechsel — Fokus deshalb im nächsten
@@ -464,6 +480,32 @@ struct ReceiptReviewCard: View {
         line.name = name
         line.matchedItemID = nil
         line.resolvedByAI = false
+    }
+
+    /// Eigener Name mit Rückfall auf die zuvor gewählte Option, wenn das Feld geleert wird
+    /// (Issue #50, Paket 1, Regel 10 — `docs/specs/views/receipt-review-card.md`).
+    ///
+    /// `applyCustomName` schreibt jeden Zwischenstand durch, also auch den leeren: `line.name`
+    /// stünde dann auf `""`, und `save()` legte für diese Position einen Kaufdatensatz ohne Namen
+    /// an. Diese Funktion fängt genau den leeren Zwischenstand ab; für jeden nicht-leeren Namen
+    /// verhält sie sich unverändert wie `applyCustomName`.
+    static func applyCustomNameOrFallback(
+        _ line: inout EditableReceiptLine,
+        name: String,
+        previousSelection: (name: String, matchedItemID: UUID?, resolvedByAI: Bool)
+    ) {
+        // Paket 1b (F002): derselbe getrimmte Leer-Begriff wie in `EditableReceiptLine.isSavable` —
+        // ein Feld mit reinen Leerzeichen ist für den Nutzer leer und muss es auch hier sein.
+        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
+            let fallback = previousSelection.name.trimmingCharacters(in: .whitespaces).isEmpty
+                ? (name: line.originalName, matchedItemID: nil, resolvedByAI: false)
+                : previousSelection
+            line.name = fallback.name
+            line.matchedItemID = fallback.matchedItemID
+            line.resolvedByAI = fallback.resolvedByAI
+            return
+        }
+        applyCustomName(&line, name: name)
     }
 
     /// Preis · Menge/Gewicht/Größe · Stück-/Kilo-/Literpreis — in derselben Reihenfolge, die

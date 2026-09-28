@@ -2,9 +2,11 @@
 entity_id: receipt-review-test-entry
 type: feature
 created: 2026-09-22
-updated: 2026-09-22
+updated: 2026-09-27
 status: draft
-version: "1.0"
+version: "1.1"
+workflow: fix-50-import-dialog-design
+workflow_history: [feat-28-receipt-review-test-entry]
 tags: [ui-tests, testing, receipt, debug-seed]
 test_targets: [RestockUITests]
 ---
@@ -31,6 +33,16 @@ dreiteiligen Aufteilung von Issue #23 (A = #28 → B = #23 → C = #29): ohne ei
 Einstieg gibt es für #23 keinen automatisierten RED-Nachweis. Es entsteht keine sichtbare
 Produktänderung — nur ein Test-Zugang und unsichtbare Identifier.
 
+**Nachtrag Issue #50, Paket 1 (2026-09-27):** Issue #50, Punkt 2/4 („Anderer Name zeigt den
+Vorschlag erst nach Auswahl" / „keine Option markiert") tritt nur ein, wenn
+`ReceiptScannerView.reResolveAIIfNeeded()` NACH dem ersten Zeichnen der Karte tatsächlich läuft
+— also NUR für eine Zeile, die „Invariante 1 — Fixture-Determinismus" unten VERLETZT
+(`resolvedByAI == false` UND `name == originalName`). Der bestehende Seed dieser Spec schließt
+diesen Fall für alle vier Zeilen bewusst aus (das ist der Zweck der Invariante). Für den
+automatisierten Nachweis von Issue #50 braucht es deshalb einen ZWEITEN, ausdrücklich
+gegenläufigen Seed — beschrieben im Abschnitt „Nachtrag Issue #50, Paket 1" unten —, ohne die
+Determinismus-Garantie für den bestehenden Seed und seine 17 Tests aufzugeben.
+
 ## Source
 
 - **File:** `SmartCart/SmartCartApp.swift` (neuer Seed), `RestockUITests/ReceiptReviewUITests.swift`
@@ -38,6 +50,9 @@ Produktänderung — nur ein Test-Zugang und unsichtbare Identifier.
 - **Identifier:** `seedReceiptReviewForUITestsIfNeeded(context:)`,
   `clearReceiptReviewSeedForUITestsIfNeeded(context:)`, `ReceiptReviewUITests.tearDown()`,
   `testReviewSheetOpensFromShareHandoff`, `testOriginalReceiptTextIsVisibleOnEveryLine`
+- **Nachtrag Issue #50, Paket 1:** zusätzlich `seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context:)`
+  (neuer, zweiter Seed in `SmartCart/SmartCartApp.swift`; nutzt zum Aufräumen das bestehende
+  `clearReceiptReviewSeedForUITestsIfNeeded(context:)` mit — siehe „Nachtrag Issue #50, Paket 1").
 
 ## Dependencies
 
@@ -77,6 +92,25 @@ eingecheckten `pbxproj`, gleiches Vorgehen hier).
 - Risiko: NIEDRIG — rein additiv (DEBUG-Startargument, unsichtbare Identifier, neue Testdatei);
   einziger Eingriff in bestehendes Verhalten ist die Index-Durchreichung im `ForEach`.
 
+### Scope-Erweiterung (Issue #50, Paket 1 — 2026-09-27)
+
+Zweiter, ausdrücklich gegenläufiger Seed für den Nachweis von Issue #50 (siehe „Nachtrag Issue
+#50, Paket 1" unten für die volle Begründung). Gehört inhaltlich zum Testeinstieg dieser Spec
+(nicht zur Karte selbst), deshalb hier und nicht in `docs/specs/views/receipt-review-card.md`
+geführt.
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `SmartCart/SmartCartApp.swift` | MODIFY | Neuer, eigenständiger DEBUG-Seed `seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context:)`, Guard auf `-seedReceiptReviewUnresolvedLineForUITests`, Aufruf im `init`-`defer` neben dem bestehenden Seed-Aufruf. Bewusst KEIN Refactoring des bestehenden `seedReceiptReviewForUITestsIfNeeded` in eine gemeinsame Hilfsfunktion (siehe „Alternativen"). |
+| `RestockUITests/ReceiptReviewUITests.swift` | MODIFY | Neuer Seed-`Fixture`-Eintrag (`Seed.unresolvedLineIndex`/`-RawText`/`-ExpectedName`), ein neuer `launchedAppWithUnresolvedLine()`/`openedReviewSheetWithUnresolvedLine()`-Helferpaar (Muster der bestehenden `launchedApp()`/`openedReviewSheet()`), ein neuer Test am reproduzierten Fall (Nachweis in `docs/specs/views/receipt-review-card.md`, AC-13/AC-14). |
+
+- Files: 2
+- LoC: ≈ **+75 / −0** — `SmartCartApp.swift` bekommt praktisch eine zweite Kopie des bestehenden
+  Seeds (Store + sechs Artikel + vier Basiszeilen) plus eine fünfte Zeile; siehe „Alternativen"
+  für die bewusste Entscheidung gegen eine gemeinsame Hilfsfunktion.
+- Risiko: NIEDRIG — additiv, eigenes Startargument, kein Eingriff in den bestehenden Seed oder
+  seine 17 Tests.
+
 ### Out of Scope
 
 - **Das Karten-Layout selbst** (neue `ReceiptReviewCard`-View, Auswahlzeilen, Mengen-Editor) —
@@ -85,8 +119,14 @@ eingecheckten `pbxproj`, gleiches Vorgehen hier).
   die heutige Lücke über den RED-Test.
 - **Preis-Themen** (#10–#15).
 - **`ReceiptResolutionService`, `ReceiptShareHandoff`, `HomeView`** — keine Änderung an Auflösung,
-  Handoff-Mechanik oder Konsumpfad.
+  Handoff-Mechanik oder Konsumpfad. Der neue Seed (Issue #50, Paket 1) ruft `ReceiptResolutionService`
+  nur über den bestehenden `reResolveAIIfNeeded()`-Pfad auf, unverändert.
 - **Vorschlags-Regel** (Floor/Limit, #29).
+- **Die Auswahl-Logik selbst** (Nachführen der Optionen, Rückfall bei leerem Namen, `save()`-Guard)
+  — gehört zu `docs/specs/views/receipt-review-card.md`, Issue #50, Paket 1. Diese Spec liefert
+  ausschließlich den Testeinstieg dafür.
+- **Issue #50, Paket 2 (Issue #65)** — Bontext lesbar/kopierbar/wählbar machen — betrifft diesen
+  Testeinstieg nicht.
 
 ## Implementation Details
 
@@ -348,11 +388,69 @@ Zwei neue, mit den bestehenden UUIDs nicht kollidierende 24-stellige Hex-UUIDs (
 `RestockUITests`-Target; die bestehenden UI-Test-Dateien leben bereits ausschließlich im
 eingecheckten `pbxproj`.
 
+### Nachtrag Issue #50, Paket 1 (2026-09-27): zweiter Seed für den gegenläufigen Fall
+
+Volle Ursachenanalyse in `docs/context/fix-50-import-dialog-design.md` (Abschnitte „Befund",
+„Analysis", „Nachtrag"). Kurz: Issue #50, Punkt 2/4 tritt nur ein, wenn
+`reResolveAIIfNeeded()` (Implementation Details Abschnitt, Fixture-Determinismus oben) tatsächlich
+läuft — und Invariante 1 unten ist so gebaut, dass sie für den bestehenden Seed NIE läuft. Der
+Nachweis für Issue #50 braucht also eine Zeile, die Invariante 1 ABSICHTLICH verletzt.
+
+#### 7. Seed-Funktion `seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context:)`
+
+DEBUG-only, Guard auf `-seedReceiptReviewUnresolvedLineForUITests`, im selben `init`-`defer` neben
+`seedReceiptReviewForUITestsIfNeeded`. Baut denselben Laden „Lidl" mit denselben sechs Artikeln und
+denselben vier Basiszeilen wie der bestehende Seed (Implementation Details Abschnitt 1) — PLUS
+eine fünfte Zeile, die Invariante 1 gezielt verletzt:
+
+```swift
+ResolvedReceiptLine(
+    name: "BTR", originalName: "BTR",
+    price: 1.09, quantity: 1, unit: "", weightBasis: nil,
+    suggestions: [], matchedItemID: nil, resolvedByAI: false),
+```
+
+`rawLines` und `detectedTotal` erweitern sich entsprechend um diese fünfte Zeile
+(`detectedTotal = 1.19 + 4.99 + 0.99 + 1.56 + 1.09 = 9.82`).
+
+**Warum „BTR" und kein anderes Kürzel:** `ReceiptParserService.expandAbbreviations` (Stufe 2 der
+Auflösung, `ReceiptParserService.swift:1033-1048`) enthält den statischen Eintrag `"btr":
+"Butter"` — die Zeile löst sich damit deterministisch, ohne Apple Intelligence (im Simulator
+ohnehin nicht verfügbar) und ohne von der Fuzzy-Suche gegen abgehakte Artikel abzuhängen (keiner
+der sechs Seed-Artikel ist abgehakt, `store.completedItems` bleibt für diese Zeile leer, Stufe 3
+greift also nie). Stufe 1 (gelernter Alias) käme davor — solange kein anderer Test je einen Alias
+für den Bontext „BTR" lernt, bleibt das ohne Wirkung (siehe Risiken).
+
+**Warum kein Refactoring des bestehenden Seeds in eine gemeinsame Hilfsfunktion:** Der bestehende
+`seedReceiptReviewForUITestsIfNeeded` ist produktiv und von 17 Tests abhängig. Eine Extraktion
+„Laden + sechs Artikel anlegen" in eine gemeinsame private Funktion würde dessen bereits
+funktionierenden Code anfassen, ohne dass Issue #50 das verlangt — ein Drive-by-Refactoring
+außerhalb des Tickets (siehe globale Scoping-Regel „keine Seitenwirkungen außerhalb des Tickets").
+Die knapp 15 duplizierten Zeilen (Store + sechs `ShoppingItem`s + `try? context.save()`) sind
+billiger als dieses Risiko.
+
+**Aufräumen — bewusst KEIN neues Argument:** Das bestehende
+`clearReceiptReviewSeedForUITestsIfNeeded(context:)` (Implementation Details, siehe
+`SmartCartApp.swift`) löscht bereits vollständig generisch ALLE `Store`s und `ShoppingItem`s und
+konsumiert jede offene Handoff-Nutzlast — unabhängig davon, welcher Seed sie angelegt hat. Der neue
+Seed braucht deshalb KEIN eigenes Aufräum-Argument; `ReceiptReviewUITests.tearDown()` (unverändert)
+räumt ihn über das bestehende `-clearReceiptReviewSeedForUITests` mit auf. Ein zweites,
+funktionsgleiches Aufräum-Argument einzuführen wäre reine Doppelung ohne Nutzen.
+
 ## Invarianten
 
 1. **Fixture-Determinismus** (siehe Implementation Details Abschnitt 2): Jede Bon-Zeile erfüllt
    `resolvedByAI == true` oder `name != originalName`, damit `reResolveAIIfNeeded()` beim Handoff
    nie ausgeführt wird und die Fixture unverändert bleibt.
+   **Benannte Ausnahme (Issue #50, Paket 1, 2026-09-27):** Die fünfte Zeile des ZWEITEN Seeds
+   (`seedReceiptReviewUnresolvedLineForUITestsIfNeeded`, Implementation Details Abschnitt 7,
+   Bontext „BTR") verletzt diese Invariante ABSICHTLICH — das ist ihr gesamter Zweck: nur so läuft
+   `reResolveAIIfNeeded()` überhaupt, und nur so lässt sich Issue #50 (Punkt 2/4) automatisiert
+   nachweisen. Die Ausnahme gilt AUSSCHLIESSLICH für diese eine Zeile dieses einen Seeds — die
+   vier Basiszeilen desselben Seeds und alle vier Zeilen des BESTEHENDEN Seeds
+   (`seedReceiptReviewForUITestsIfNeeded`) erfüllen Invariante 1 unverändert vollständig
+   (redundant sogar, siehe Tabelle unten). Kein bestehender Test verliert dadurch seine
+   Determinismus-Garantie.
 2. **Der Seed wirkt ausschließlich mit explizitem Startargument.** Ohne
    `-seedReceiptReviewForUITests` löscht/erstellt die Funktion nichts — bestehende Läden, Artikel
    und ein eventuell anstehender echter Handoff bleiben unberührt. Belegt durch die Negativkontrolle
@@ -376,7 +474,18 @@ eingecheckten `pbxproj`.
    Nachgewiesen in Phase 7: vor dem Aufräumen fiel die Bestandssuite im gemeinsamen Lauf durch
    (`validation-full-suite-run1-aborted.txt`), allein auf leerem Gerät war sie grün
    (`diag-a-baseline-erased.txt`), nach dem Aufräumen 3/3 gemeinsame Läufe grün
-   (`validation-full-suite-fixed-run1…3.txt`).
+   (`validation-full-suite-fixed-run1…3.txt`). **Gilt seit Issue #50, Paket 1 (2026-09-27) auch
+   für den zweiten Seed:** `clearReceiptReviewSeedForUITestsIfNeeded` löscht ALLE `Store`s/
+   `ShoppingItem`s und konsumiert jede offene Handoff-Nutzlast unabhängig davon, welcher der
+   beiden Seeds sie angelegt hat — kein eigenes Aufräum-Argument nötig (Implementation Details
+   Abschnitt 7).
+7. **(Issue #50, Paket 1) Determinismus der fünften Zeile hängt von einer Annahme außerhalb
+   dieser Spec ab.** `ReceiptResolutionService.resolve` prüft Stufe 1 (gelernter Alias über
+   `ReceiptAliasService`) VOR Stufe 2 (Abkürzungswörterbuch). Solange kein anderer Test je einen
+   Alias für den Bontext „BTR" lernt, löst sich die Zeile deterministisch über Stufe 2 zu „Butter"
+   auf. Aktuell lernt kein bestehender Test diesen Alias — sollte ein künftiger Test das tun,
+   müsste diese Invariante erneut geprüft werden (parallele Einschränkung zur bestehenden
+   Apple-Intelligence-Abhängigkeit, siehe „Known Limitations").
 
 ## Test Plan
 
@@ -417,6 +526,31 @@ eingecheckten `pbxproj`.
 bekannter 10-Minuten-Diagnose-Hänger bei Parallelität, Issue #21) → Test 1 → Test 2 → vollständige
 `RestockUITests`-Suite ohne das neue Startargument als Negativkontrolle.
 
+**Issue #50, Paket 1 (neu, 2026-09-27):**
+
+- [ ] **Test 3 — `testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution`**
+  (in `docs/specs/views/receipt-review-card.md` als AC-13/AC-14 geführt, hier nur der
+  Testeinstieg dafür beschrieben)
+  - *Vorbedingung:* Frischer Start, Launch-Argumente `-hasCompletedOnboarding YES
+    -seedReceiptReviewUnresolvedLineForUITests`.
+  - *Schritte:* App starten → auf Navigationstitel „Bon scannen — Lidl" warten → auf das Label von
+    `receiptReview.line.4.option.0` warten, bis es „Butter" enthält (Beweis:
+    `reResolveAIIfNeeded()` ist durchgelaufen und hat Stufe 2 des Wörterbuchs getroffen) → prüfen,
+    dass `receiptReview.line.4.option.0` `isSelected == true` ist → über alle
+    `receiptReview.line.4.option.<k>` (k = 0…3) zählen, wie viele `isSelected == true` sind.
+  - *Erwartung:* Genau eine Zeile ist markiert. Vor Regel 9 (siehe Card-Spec) blieb `option.0` auf
+    dem Bontext „BTR" stehen (die eingefrorene Liste kennt den neuen Namen nicht) und KEINE Zeile
+    war markiert — das ist der RED-Zustand, den dieser Test gegen den heutigen Code zeigen muss.
+  - **Aufräumen:** `ReceiptReviewUITests.tearDown()` (unverändert) — siehe Invariante 6.
+
+- [ ] **Negativ-Nachweis (kein neuer Test, Beobachtung am bestehenden Lauf):** Test 1 und Test 2
+  bleiben unverändert grün, wenn sie NACH Test 3 im selben `xcodebuild test`-Lauf laufen — beweist,
+  dass der zweite Seed keine Daten für den ersten Seed hinterlässt (Invariante 6, jetzt für beide
+  Seeds).
+
+**Reihenfolge des Nachweises (ergänzt):** … → Test 3 → vollständige `RestockUITests`-Suite ohne
+irgendein Seed-Startargument als Negativkontrolle.
+
 ## Acceptance Criteria
 
 - **AC-1:** Given der Seed-Aufruf mit `-seedReceiptReviewForUITests` / When die App startet /
@@ -449,6 +583,15 @@ bekannter 10-Minuten-Diagnose-Hänger bei Parallelität, Issue #21) → Test 1 �
   `receiptReview.line.<i>.originalName` für jede Zeile geprüft wird / Then schlägt die Prüfung
   fehl — belegt in `XCTExpectFailure("Bontext erst mit #23 sichtbar", strict: true)`. Test:
   `testOriginalReceiptTextIsVisibleOnEveryLine`.
+- **AC-8 (Issue #50, Paket 1):** Given der Seed-Aufruf mit
+  `-seedReceiptReviewUnresolvedLineForUITests` / When die App startet / Then öffnet sich der
+  Bon-Prüf-Screen mit fünf Zeilen (0-4): Zeilen 0-3 identisch zur Fixture des bestehenden Seeds,
+  Zeile 4 mit Bontext „BTR". Test: `testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution`.
+- **AC-9 (Issue #50, Paket 1):** Given dieselbe Zeile 4 (`name == originalName == "BTR"`,
+  `resolvedByAI == false`) / When `reResolveAIIfNeeded()` beim Handoff durchläuft / Then trägt die
+  Zeile danach den Namen „Butter" (Stufe 2, Abkürzungswörterbuch) — deterministisch, ohne Apple
+  Intelligence. Test: `testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution`
+  (Namensprüfung über `option.0`s Label, siehe Test Plan).
 
 ## Alternativen (verworfen)
 
@@ -467,6 +610,16 @@ bekannter 10-Minuten-Diagnose-Hänger bei Parallelität, Issue #21) → Test 1 �
   erst in #23" hätte vor #23 keinen automatisierten Nachweis der Lücke geliefert. Beide verworfen
   zugunsten von `XCTExpectFailure(strict: true)`, das die CI von #28 grün hält und #23 zwingt, die
   Erwartung explizit zu entfernen.
+- **(d, Issue #50, Paket 1) Gemeinsame Hilfsfunktion für Laden+Artikel beider Seeds extrahieren**
+  statt der ~15 Zeilen Duplikat in `seedReceiptReviewUnresolvedLineForUITestsIfNeeded`: Verworfen
+  — würde den bestehenden, produktiven `seedReceiptReviewForUITestsIfNeeded` anfassen, obwohl
+  Issue #50 das nicht verlangt (Drive-by-Refactoring außerhalb des Tickets, siehe globale
+  Scoping-Regel). Die Duplizierung ist der günstigere, risikoärmere Weg.
+- **(e, Issue #50, Paket 1) Eigenes Aufräum-Argument für den zweiten Seed** (z. B.
+  `-clearReceiptReviewUnresolvedLineForUITests`, nach dem 1:1-Namensschema der bestehenden Seeds):
+  Verworfen — das bestehende `clearReceiptReviewSeedForUITestsIfNeeded` löscht bereits vollständig
+  generisch alle `Store`s/`ShoppingItem`s und konsumiert jede offene Handoff-Nutzlast, unabhängig
+  vom erzeugenden Seed. Ein zweites, inhaltsgleiches Argument wäre reine Doppelung.
 
 ## Risiken
 
@@ -487,6 +640,15 @@ bekannter 10-Minuten-Diagnose-Hänger bei Parallelität, Issue #21) → Test 1 �
 - **Simulator-Läufe nie parallel.** Bekannt aus Memory `ui-test-nachweis-laeufe`: ein paralleler
   zweiter Simulator-Lauf führt zu einem 10-Minuten-Diagnose-Hänger (Issue #21). Der Nachweis dieser
   Spec muss auf einem exklusiv genutzten Simulator laufen.
+- **(Issue #50, Paket 1) Determinismus der fünften Zeile hängt an Stufe 1 der Auflösung.** Ein
+  gelernter Alias für den Bontext „BTR" (aus einem künftigen, hier nicht vorhergesehenen Test)
+  würde vor dem Abkürzungswörterbuch greifen und die erwartete Auflösung „Butter" verändern (siehe
+  Invariante 7). Aktuell lernt kein Test diesen Alias.
+- **(Issue #50, Paket 1) Zwei Seeds im selben `init`-`defer`.** Beide Guard-Bedingungen sind
+  exklusiv (unterschiedliche Startargumente), ein Testlauf setzt nie beide gleichzeitig — trotzdem
+  gilt: sollte ein künftiger Test beide Argumente versehentlich kombinieren, würde der zweite Seed
+  den ersten überschreiben (beide löschen zuerst alle `Store`s). Keine bekannte Ursache, die das
+  auslösen würde; hier nur der Vollständigkeit halber benannt.
 
 ## Architektur-Entscheidung (ADR)
 
@@ -499,7 +661,10 @@ bekannter 10-Minuten-Diagnose-Hänger bei Parallelität, Issue #21) → Test 1 �
   — ist unter „Alternativen (verworfen), (a)" begründet: Ein Sonderpfad hätte eine frühere
   Entscheidung nicht gekippt (es gab noch keinen Testeinstieg), aber er hätte für #23 dauerhaft
   einen zweiten, ungetesteten Konsumpfad neben dem echten geschaffen. Kein bestehendes ADR wird
-  durch diese Spec zurückgenommen.
+  durch diese Spec zurückgenommen. Die Issue-#50-Erweiterung (Paket 1, 2026-09-27) — ein zweiter
+  Seed, der bewusst eine Fixture-Invariante verletzt — ist ebenfalls kein eigenes ADR wert: sie
+  fügt keinen neuen Konsumpfad hinzu (derselbe Handoff-Weg wie der bestehende Seed), sondern eine
+  zusätzliche, bewusst gegenläufige Fixture. Begründet unter „Alternativen (verworfen), (d)/(e)".
 
 ## Definition of Done
 
@@ -514,6 +679,9 @@ Beobachtbar für den PO, ohne Code zu lesen:
   wieder rot, falls #23 den Text einführt, ohne den Testeinstieg dafür zu nutzen.
 - Beide neuen Tests sind grün; die bestehende Testsuite bleibt unverändert grün, wenn das neue
   Startargument nicht gesetzt wird.
+- **(Issue #50, Paket 1)** Der Fall, den der bestehende Seed absichtlich ausschließt — eine Position,
+  deren Name sich erst NACH dem Öffnen des Bildschirms auflöst —, lässt sich jetzt ebenfalls
+  automatisiert auslösen und prüfen, ohne den bestehenden, deterministischen Seed anzutasten.
 
 ## Expected Behavior
 
@@ -525,6 +693,13 @@ Beobachtbar für den PO, ohne Code zu lesen:
   bestehenden Screenshot-Seed). Der Handoff-Key `pendingShareExtensionReceipt` wird überschrieben
   und beim ersten `checkPendingReceiptScan()`-Aufruf einmalig konsumiert (gelöscht). Ohne das
   Startargument passiert keine dieser Nebenwirkungen (Invariante 2).
+- **(Issue #50, Paket 1) Input:** Launch-Argumente `["-hasCompletedOnboarding", "YES",
+  "-seedReceiptReviewUnresolvedLineForUITests"]`.
+- **(Issue #50, Paket 1) Output:** Wie oben, aber mit einer fünften Bon-Zeile (Bontext „BTR"), die
+  sich erst NACH dem ersten Zeichnen der Karte auf „Butter" auflöst (Implementation Details
+  Abschnitt 7).
+- **(Issue #50, Paket 1) Side effects:** Identisch zum bestehenden Seed; kein eigenes
+  Aufräum-Argument (siehe Invariante 6).
 
 ## Known Limitations
 
@@ -543,7 +718,20 @@ Beobachtbar für den PO, ohne Code zu lesen:
 - `accessibilityIdentifier`s existieren nach dieser Spec ausschließlich in `ReceiptScannerView` und
   nur für die vier hier genannten Elemente — der Rest des Produktcodes hat weiterhin keine
   Identifier (siehe `docs/specs/testing/ui-test-language.md`, „Known Limitations").
+- **(Issue #50, Paket 1)** Die Determinismus-Garantie der fünften Zeile setzt zusätzlich voraus,
+  dass kein anderer Test je einen Alias für den Bontext „BTR" lernt (Invariante 7) — eine
+  Einschränkung, die es für den bestehenden Seed in dieser Form nicht gibt, weil dessen vier
+  Zeilen `reResolveAIIfNeeded()` gar nicht erst durchlaufen.
+- **(Issue #50, Paket 1)** Der zweite Seed dupliziert bewusst ~15 Zeilen des bestehenden Seeds
+  (Laden + sechs Artikel), statt eine gemeinsame Hilfsfunktion zu extrahieren — siehe
+  „Alternativen (verworfen), (d)".
 
 ## Changelog
 
 - 2026-09-22: Initial spec created
+- 2026-09-27: Issue #50, Paket 1 — zweiter, ausdrücklich gegenläufiger DEBUG-Seed
+  (`seedReceiptReviewUnresolvedLineForUITestsIfNeeded`, Startargument
+  `-seedReceiptReviewUnresolvedLineForUITests`) für den Nachweis von Issue #50 (Punkt 2/4):
+  Basisfixture plus eine fünfte Zeile, die Invariante 1 absichtlich verletzt. Benannte Ausnahme in
+  Invariante 1, neue Invariante 7, neuer Test 3, AC-8/AC-9. Kein eigenes Aufräum-Argument — nutzt
+  das bestehende `-clearReceiptReviewSeedForUITests` mit. Version auf „1.1" angehoben.

@@ -1,0 +1,1869 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockTests" "-only-testing:RestockUITests/ReceiptReviewUITests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/tingly-nibbling-alpaca/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dehwhbtzjpalnjgoddettdugtujq/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dehwhbtzjpalnjgoddettdugtujq/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-09-28 08:06:00.921738+0200 Restock[36065:80208345] [General] Failed to connect to linkd to request update AppShortcut parameters, error: Kommunikation mit der Hilfs-App nicht möglich.
+2026-09-28 08:06:00.988605+0200 Restock[36065:80208245] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-09-28 08:06:01.013992+0200 Restock[36065:80208347] [CK] Could not validate account info cache. (This is a potential performance issue.)
+2026-09-28 08:06:01.021455+0200 Restock[36065:80208345] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1046e01c0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x104634500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1DCC318A-3AEB-4793-AA9F-2B25B14CB5CF/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:01.021522+0200 Restock[36065:80208345] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1046e01c0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:01.021572+0200 Restock[36065:80208345] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1046e01c0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-09-28 08:06:01.057021+0200 Restock[36065:80208245] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-09-28 08:06:01.169739+0200 Restock[36065:80208350] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+[AppDelegate] push registration succeeded, token length: 80
+Test Suite 'All tests' started at 2026-09-28 08:06:02.188.
+Test Suite 'RestockTests.xctest' started at 2026-09-28 08:06:02.189.
+Test Suite 'AssignmentServiceDetectStoreTests' started at 2026-09-28 08:06:02.189.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_LidlFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_LidlFirst]' passed (0.006 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_NettoFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_NettoFirst]' passed (0.003 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_FrankfurtFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_FrankfurtFirst]' passed (0.004 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_LidlFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_LidlFirst]' passed (0.004 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testEmptyCandidatesReturnsNil]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testEmptyCandidatesReturnsNil]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testGenuineNettoReceiptStillDetectedViaHeader]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testGenuineNettoReceiptStillDetectedViaHeader]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNettoAloneDoesNotFalsePositiveOnVATTable]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNettoAloneDoesNotFalsePositiveOnVATTable]' passed (0.002 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNoMatchReturnsNilRatherThanGuessing]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNoMatchReturnsNilRatherThanGuessing]' passed (0.001 seconds).
+Test Suite 'AssignmentServiceDetectStoreTests' passed at 2026-09-28 08:06:02.228.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.020 (0.039) seconds
+Test Suite 'AssignmentServiceTests' started at 2026-09-28 08:06:02.228.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignAppliesSameTieBreakToHardwareStores]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignAppliesSameTieBreakToHardwareStores]' passed (0.003 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreIdWhenNamesAlsoCollide]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreIdWhenNamesAlsoCollide]' passed (0.002 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreNameWhenPurchaseCountsAreEqual]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreNameWhenPurchaseCountsAreEqual]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksHigherVisitsPerWeekStoreWithoutNeedingEvidence]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksHigherVisitsPerWeekStoreWithoutNeedingEvidence]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksTiedGroceryStoreWithPurchaseEvidence]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksTiedGroceryStoreWithPurchaseEvidence]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignReturnsNilWhenTiedGroceryStoresHaveNoPurchaseEvidence]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignReturnsNilWhenTiedGroceryStoresHaveNoPurchaseEvidence]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreDoesNotMatchUnrelatedCompoundWord]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreDoesNotMatchUnrelatedCompoundWord]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteDiacriticDifference]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteDiacriticDifference]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteQualifierPrefix]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteQualifierPrefix]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreStillMatchesExactNameCaseInsensitively]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreStillMatchesExactNameCaseInsensitively]' passed (0.000 seconds).
+Test Suite 'AssignmentServiceTests' passed at 2026-09-28 08:06:02.240.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.010 (0.012) seconds
+Test Suite 'ConsumptionPatternTests' started at 2026-09-28 08:06:02.240.
+Test Case '-[RestockTests.ConsumptionPatternTests testAveragesRegularPurchaseInterval]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testAveragesRegularPurchaseInterval]' passed (0.002 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutOneDayOut]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutOneDayOut]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutTwoDaysOut]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutTwoDaysOut]' passed (0.000 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsAboutFourDaysOut]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsAboutFourDaysOut]' passed (0.000 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsFarInTheFuture]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsFarInTheFuture]' passed (0.000 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testOutlierIntervalIsExcludedFromAverageWithEnoughSamples]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testOutlierIntervalIsExcludedFromAverageWithEnoughSamples]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testOverdueWhenEstimatedDateIsInThePast]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testOverdueWhenEstimatedDateIsInThePast]' passed (0.000 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testReturnsNilWithFewerThanTwoRecords]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testReturnsNilWithFewerThanTwoRecords]' passed (0.000 seconds).
+Test Suite 'ConsumptionPatternTests' passed at 2026-09-28 08:06:02.249.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.007 (0.009) seconds
+Test Suite 'ExistingDataSurvivesCloudEnableTests' started at 2026-09-28 08:06:02.249.
+Test Case '-[RestockTests.ExistingDataSurvivesCloudEnableTests testExistingLocalStoreSurvivesFirstCloudKitOpen]' started.
+2026-09-28 08:06:02.276153+0200 Restock[36065:80208245] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-09-28 08:06:02.301613+0200 Restock[36065:80208351] [CloudKit] CoreData+CloudKit: -[PFCloudKitSetupAssistant _checkAndInitializeMetadata:]_block_invoke(174): Failed to initialize CloudKit metadata: Error Domain=NSCocoaErrorDomain Code=134407 "Request '392A0202-367A-42F0-8A47-4BB3090AEF69' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request '392A0202-367A-42F0-8A47-4BB3090AEF69' was cancelled because the store was removed from the coordinator.}
+2026-09-28 08:06:02.301728+0200 Restock[36065:80208351] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1089133a0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1141e9680> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/DA1A208D-07EA-4C58-A568-B6DF4CCFCBD2/tmp/migration-cktest-A88F55DE-3D14-4664-9256-D7131A8BDCD6.store)
+Error Domain=NSCocoaErrorDomain Code=134407 "Request '392A0202-367A-42F0-8A47-4BB3090AEF69' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request '392A0202-367A-42F0-8A47-4BB3090AEF69' was cancelled because the store was removed from the coordinator.}
+2026-09-28 08:06:02.301780+0200 Restock[36065:80208351] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1089133a0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134407 "Request '392A0202-367A-42F0-8A47-4BB3090AEF69' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request '392A0202-367A-42F0-8A47-4BB3090AEF69' was cancelled because the store was removed from the coordinator.}
+2026-09-28 08:06:02.301892+0200 Restock[36065:80208351] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate resetAfterError:andKeepContainer:](589): <NSCloudKitMirroringDelegate: 0x1089133a0> - resetting internal state after error: Error Domain=NSCocoaErrorDomain Code=134407 "Request '392A0202-367A-42F0-8A47-4BB3090AEF69' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request '392A0202-367A-42F0-8A47-4BB3090AEF69' was cancelled because the store was removed from the coordinator.}
+2026-09-28 08:06:02.301946+0200 Restock[36065:80208351] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1089133a0> - Failed to recover from error: NSCocoaErrorDomain:134407
+Recovery encountered the following error: (null):0
+2026-09-28 08:06:02.302230+0200 Restock[36065:80208351] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x1089133a0>: Told to tear down with reason: Store Removed
+2026-09-28 08:06:02.302381+0200 Restock[36065:80208347] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.export.03D22A44-7DC9-47DE-BC69-B59917F1192D
+2026-09-28 08:06:02.302754+0200 Restock[36065:80208347] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.export.03D22A44-7DC9-47DE-BC69-B59917F1192D: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+Test Case '-[RestockTests.ExistingDataSurvivesCloudEnableTests testExistingLocalStoreSurvivesFirstCloudKitOpen]' passed (0.054 seconds).
+Test Suite 'ExistingDataSurvivesCloudEnableTests' passed at 2026-09-28 08:06:02.303.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.054 (0.054) seconds
+Test Suite 'LiveActivityServiceReattachTests' started at 2026-09-28 08:06:02.303.
+Test Case '-[RestockTests.LiveActivityServiceReattachTests testReopeningWithinDismissalGracePeriodStartsAFreshActiveActivity]' started.
+2026-09-28 08:06:02.303892+0200 Restock[36065:80208347] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.import.03D22A44-7DC9-47DE-BC69-B59917F1192D
+2026-09-28 08:06:02.303957+0200 Restock[36065:80208347] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.import.03D22A44-7DC9-47DE-BC69-B59917F1192D: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+2026-09-28 08:06:02.304201+0200 Restock[36065:80208347] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.setup.03D22A44-7DC9-47DE-BC69-B59917F1192D
+2026-09-28 08:06:02.304305+0200 Restock[36065:80208347] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.setup.03D22A44-7DC9-47DE-BC69-B59917F1192D: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+[AppDelegate] push registration succeeded, token length: 80
+2026-09-28 08:06:02.746864+0200 Restock[36065:80208350] [api] Updating content for activity B3958855-F64C-441C-A1AF-F157CC8704BA
+Test Case '-[RestockTests.LiveActivityServiceReattachTests testReopeningWithinDismissalGracePeriodStartsAFreshActiveActivity]' passed (1.262 seconds).
+Test Suite 'LiveActivityServiceReattachTests' passed at 2026-09-28 08:06:03.565.
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.262 (1.262) seconds
+Test Suite 'PhotoCompressorTests' started at 2026-09-28 08:06:03.565.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorDownsizesLargeImage]' started.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorDownsizesLargeImage]' passed (0.039 seconds).
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorLeavesSmallImageDimensionsUnchanged]' started.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorLeavesSmallImageDimensionsUnchanged]' passed (0.001 seconds).
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorProducesDataUnderSizeCap]' started.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorProducesDataUnderSizeCap]' passed (0.024 seconds).
+Test Suite 'PhotoCompressorTests' passed at 2026-09-28 08:06:03.629.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.063 (0.064) seconds
+Test Suite 'PriceEstimatorCategoryFallbackTests' started at 2026-09-28 08:06:03.629.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testAllCategoryFallbackPricesAreDistinct]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testAllCategoryFallbackPricesAreDistinct]' passed (0.002 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testBabybedarfGruppeIstDifferenziert]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testBabybedarfGruppeIstDifferenziert]' passed (0.001 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testElektronikGruppeIstDifferenziert]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testElektronikGruppeIstDifferenziert]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testMilchproduktGruppeIstDifferenziert]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testMilchproduktGruppeIstDifferenziert]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testObstUndGemueseDiffersFromLebensmittel]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testObstUndGemueseDiffersFromLebensmittel]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testSpecificPricesBleibenUnveraendert]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testSpecificPricesBleibenUnveraendert]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testUnbekannteKategorieLiefertNil]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testUnbekannteKategorieLiefertNil]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testVerbleibendePaareSindDifferenziert]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testVerbleibendePaareSindDifferenziert]' passed (0.000 seconds).
+Test Suite 'PriceEstimatorCategoryFallbackTests' passed at 2026-09-28 08:06:03.635.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.005 (0.006) seconds
+Test Suite 'PriceEstimatorStagesTests' started at 2026-09-28 08:06:03.636.
+Test Case '-[RestockTests.PriceEstimatorStagesTests testCategoryFallbackUsedWhenNoLearnedPriceAndNoKeywordMatch]' started.
+Test Case '-[RestockTests.PriceEstimatorStagesTests testCategoryFallbackUsedWhenNoLearnedPriceAndNoKeywordMatch]' passed (0.004 seconds).
+Test Case '-[RestockTests.PriceEstimatorStagesTests testLearnedPriceTakesPriorityOverProductKeywordAndCategory]' started.
+Test Case '-[RestockTests.PriceEstimatorStagesTests testLearnedPriceTakesPriorityOverProductKeywordAndCategory]' passed (0.003 seconds).
+Test Case '-[RestockTests.PriceEstimatorStagesTests testProductKeywordTakesPriorityOverCategoryFallback]' started.
+Test Case '-[RestockTests.PriceEstimatorStagesTests testProductKeywordTakesPriorityOverCategoryFallback]' passed (0.000 seconds).
+Test Suite 'PriceEstimatorStagesTests' passed at 2026-09-28 08:06:03.643.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.007 (0.007) seconds
+Test Suite 'PriceProvenanceMigrationTests' started at 2026-09-28 08:06:03.643.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramPriceAppliesToItemWithGramQuantity]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramPriceAppliesToItemWithGramQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramPriceIsNotAppliedToItemWithoutQuantity]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramPriceIsNotAppliedToItemWithoutQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramRateIsRejectedForKilogramItem]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramRateIsRejectedForKilogramItem]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramRateWithoutEvidenceIsKeptAsRate]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramRateWithoutEvidenceIsKeptAsRate]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedPieceRateIsRejectedForWeightItem]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedPieceRateIsRejectedForWeightItem]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesLegitimatelyExpensiveLearnedPriceUntouched]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesLegitimatelyExpensiveLearnedPriceUntouched]' passed (0.029 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesPlausibleStoreLearnedPricesUntouched]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesPlausibleStoreLearnedPricesUntouched]' passed (0.004 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationRepairsCorruptedStoreLearnedPrice]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationRepairsCorruptedStoreLearnedPrice]' passed (0.005 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemAcceptsLegitimatelyExpensiveLearnedPrice]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemAcceptsLegitimatelyExpensiveLearnedPrice]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemPicksDeterministicWinnerWhenMultipleLearnedPricesMatchWithoutDates]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemPicksDeterministicWinnerWhenMultipleLearnedPricesMatchWithoutDates]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemRejectsImplausibleLearnedPriceAndFallsBackToEstimator]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemRejectsImplausibleLearnedPriceAndFallsBackToEstimator]' passed (0.001 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemStillUsesPlausibleLearnedPrice]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemStillUsesPlausibleLearnedPrice]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testUnitBucketMapsSynonymsAndUnknownUnits]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testUnitBucketMapsSynonymsAndUnknownUnits]' passed (0.000 seconds).
+Test Suite 'PriceProvenanceMigrationTests' passed at 2026-09-28 08:06:03.688.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.043 (0.045) seconds
+Test Suite 'PurchaseRecordDeletionTests' started at 2026-09-28 08:06:03.688.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testKnownProductSuggestionsSurviveItemDeletion]' started.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testKnownProductSuggestionsSurviveItemDeletion]' passed (0.011 seconds).
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesItemDeletion]' started.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesItemDeletion]' passed (0.004 seconds).
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesStoreDeletion]' started.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesStoreDeletion]' passed (0.004 seconds).
+Test Suite 'PurchaseRecordDeletionTests' passed at 2026-09-28 08:06:03.707.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.018) seconds
+Test Suite 'QuickAddParserTests' started at 2026-09-28 08:06:03.707.
+Test Case '-[RestockTests.QuickAddParserTests testCommaDecimalWithSeparateUnitToken]' started.
+Test Case '-[RestockTests.QuickAddParserTests testCommaDecimalWithSeparateUnitToken]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testEmptyInputReturnsEmptyNameWithDefaultQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testEmptyInputReturnsEmptyNameWithDefaultQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testGermanWordNumberIsParsed]' started.
+Test Case '-[RestockTests.QuickAddParserTests testGermanWordNumberIsParsed]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testGluedNumberAndUnitSplitCorrectly]' started.
+Test Case '-[RestockTests.QuickAddParserTests testGluedNumberAndUnitSplitCorrectly]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testHalfWordNumberIsParsedAsFraction]' started.
+Test Case '-[RestockTests.QuickAddParserTests testHalfWordNumberIsParsedAsFraction]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testHintFormatsQuantityAndUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testHintFormatsQuantityAndUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testHintReturnsNilForPlainNameWithoutQuantityOrUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testHintReturnsNilForPlainNameWithoutQuantityOrUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testLeadingMultiplierSuffixSetsQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testLeadingMultiplierSuffixSetsQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testLeadingNumberSetsQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testLeadingNumberSetsQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testNumberOnlyInputIsTreatedAsNameNotQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testNumberOnlyInputIsTreatedAsNameNotQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testPlainNameWithoutQuantityDefaultsToOne]' started.
+Test Case '-[RestockTests.QuickAddParserTests testPlainNameWithoutQuantityDefaultsToOne]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsAreSortedByMostRecentFirst]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsAreSortedByMostRecentFirst]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsDedupeCaseInsensitiveKeepingFirstSeen]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsDedupeCaseInsensitiveKeepingFirstSeen]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsExcludeExactMatch]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsExcludeExactMatch]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFallBackToSubstringWhenPrefixMatchesAreFew]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFallBackToSubstringWhenPrefixMatchesAreFew]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFoldDiacriticsForMatching]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFoldDiacriticsForMatching]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsIncludeItemNamesNotOnlyPurchaseRecords]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsIncludeItemNamesNotOnlyPurchaseRecords]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsMatchByPrefixCaseInsensitive]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsMatchByPrefixCaseInsensitive]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRequireAtLeastTwoCharacters]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRequireAtLeastTwoCharacters]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRespectLimit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRespectLimit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingGluedQuantityAndUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingGluedQuantityAndUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingMultiplierSuffixWithoutUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingMultiplierSuffixWithoutUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingPlainNumberWithoutUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingPlainNumberWithoutUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingSeparateQuantityAndUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingSeparateQuantityAndUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testUppercaseUnitTokenIsRecognized]' started.
+Test Case '-[RestockTests.QuickAddParserTests testUppercaseUnitTokenIsRecognized]' passed (0.000 seconds).
+Test Suite 'QuickAddParserTests' passed at 2026-09-28 08:06:03.723.
+	 Executed 25 tests, with 0 failures (0 unexpected) in 0.009 (0.016) seconds
+Test Suite 'ReceiptAbbreviationExpansionTests' started at 2026-09-28 08:06:03.723.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testFlBuersteExpandsToFlaschenbuersteAcrossDotAndSpaceVariants]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testFlBuersteExpandsToFlaschenbuersteAcrossDotAndSpaceVariants]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testPremExpandsToPremium]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testPremExpandsToPremium]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testToiPaExpandsToToilettenpapier]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testToiPaExpandsToToilettenpapier]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testUnknownWordsReturnNil]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testUnknownWordsReturnNil]' passed (0.000 seconds).
+Test Suite 'ReceiptAbbreviationExpansionTests' passed at 2026-09-28 08:06:03.727.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+Test Suite 'ReceiptHistoryMatchTests' started at 2026-09-28 08:06:03.727.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBelowThresholdReturnsNil]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBelowThresholdReturnsNil]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBestMatchWinsNotFirstInArray]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBestMatchWinsNotFirstInArray]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testFuzzyMatchFoundWhereContainsWouldFail]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testFuzzyMatchFoundWhereContainsWouldFail]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testStoreScopeStillEnforced]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testStoreScopeStillEnforced]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testTieBreaksDeterministicallyByAlphabeticallyEarlierName]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testTieBreaksDeterministicallyByAlphabeticallyEarlierName]' passed (0.000 seconds).
+Test Suite 'ReceiptHistoryMatchTests' passed at 2026-09-28 08:06:03.730.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'ReceiptKnownItemNamesTests' started at 2026-09-28 08:06:03.730.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testCapsAtLimit]' started.
+2026-09-28 08:06:03.731004+0200 Restock[36065:80208245] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testCapsAtLimit]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testDeduplicatesCaseAndDiacriticInsensitively]' started.
+2026-09-28 08:06:03.734750+0200 Restock[36065:80208245] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testDeduplicatesCaseAndDiacriticInsensitively]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testIncludesPendingStoreItemsNotOnlyPurchaseHistory]' started.
+2026-09-28 08:06:03.737952+0200 Restock[36065:80208245] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testIncludesPendingStoreItemsNotOnlyPurchaseHistory]' passed (0.003 seconds).
+Test Suite 'ReceiptKnownItemNamesTests' passed at 2026-09-28 08:06:03.740.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.010 (0.010) seconds
+Test Suite 'ReceiptNameAIResolverSanitizeTests' started at 2026-09-28 08:06:03.741.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testEmptyOrTooLongOrMultilineIsRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testEmptyOrTooLongOrMultilineIsRejected]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsCaseInsensitive]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsCaseInsensitive]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsRejected]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelWithWhitespaceAndQuotesIsRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelWithWhitespaceAndQuotesIsRejected]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNormalNamePassesThrough]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNormalNamePassesThrough]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testSentinelAsSubstringOfLongerTextIsNotRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testSentinelAsSubstringOfLongerTextIsNotRejected]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testWhitespaceAndQuotesAreTrimmed]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testWhitespaceAndQuotesAreTrimmed]' passed (0.000 seconds).
+Test Suite 'ReceiptNameAIResolverSanitizeTests' passed at 2026-09-28 08:06:03.745.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+Test Suite 'ReceiptParserLidlFullReceiptTests' started at 2026-09-28 08:06:03.745.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testAllFourteenRealItemsAreFound]' started.
+2026-09-28 08:06:03.749939+0200 Restock[36065:80208423] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x108913e20>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1141eb0c0> (URL: file:///dev/null)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.749994+0200 Restock[36065:80208423] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x108913e20> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.750031+0200 Restock[36065:80208423] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x108913e20> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testAllFourteenRealItemsAreFound]' passed (0.007 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalFindsAmountNormally]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalFindsAmountNormally]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalStillFoundWhenZuZahlenLineIsMissing]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalStillFoundWhenZuZahlenLineIsMissing]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDiagnosticDumpOfCurrentParseResult]' started.
+PARSED: Banane lose | price=0.82 qty=1.0 weightBasis=638.0
+PARSED: Bioland Haferflocken | price=0.85 qty=1.0 weightBasis=-1.0
+PARSED: BistroBaguet. Salami | price=4.38 qty=1.0 weightBasis=-1.0
+PARSED: Brötchen Lauge | price=0.78 qty=2.0 weightBasis=-1.0
+PARSED: BürgerSchwä.Maultas. | price=6.87 qty=3.0 weightBasis=-1.0
+PARSED: Eier Hessen Freilan. | price=2.29 qty=1.0 weightBasis=-1.0
+PARSED: Gouda Scheiben 48% | price=2.45 qty=1.0 weightBasis=-1.0
+PARSED: Mandelkerne | price=4.98 qty=2.0 weightBasis=-1.0
+PARSED: Nektarinen | price=1.89 qty=1.0 weightBasis=-1.0
+PARSED: Olivenöle natur | price=4.99 qty=1.0 weightBasis=-1.0
+PARSED: Penne Rigate | price=0.69 qty=1.0 weightBasis=-1.0
+PARSED: Red Bull E. Original | price=6.49 qty=1.0 weightBasis=-1.0
+PARSED: Schlagsahne 30% | price=0.89 qty=1.0 weightBasis=-1.0
+PARSED: Spaghetti | price=0.69 qty=1.0 weightBasis=-1.0
+TOTAL POSITIONS: 14
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDiagnosticDumpOfCurrentParseResult]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testMultiBuyLinesHaveCorrectQuantityInFullReceiptContext]' started.
+2026-09-28 08:06:03.766275+0200 Restock[36065:80208423] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x108913c60>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1142c1680> (URL: file:///dev/null)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.766338+0200 Restock[36065:80208423] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x108913c60> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.766380+0200 Restock[36065:80208423] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x108913c60> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testMultiBuyLinesHaveCorrectQuantityInFullReceiptContext]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testNoPhantomItemsFromVATTableOrTrailer]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testNoPhantomItemsFromVATTableOrTrailer]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testStillNoPhantomItemsWhenZuZahlenLineIsMissing]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testStillNoPhantomItemsWhenZuZahlenLineIsMissing]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testWeightConfirmationLineAttachesGramBasisToBanana]' started.
+2026-09-28 08:06:03.782312+0200 Restock[36065:80208423] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x108913b80>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x114415400> (URL: file:///dev/null)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.782434+0200 Restock[36065:80208423] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x108913b80> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.782479+0200 Restock[36065:80208423] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x108913b80> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testWeightConfirmationLineAttachesGramBasisToBanana]' passed (0.005 seconds).
+Test Suite 'ReceiptParserLidlFullReceiptTests' passed at 2026-09-28 08:06:03.786.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.040 (0.041) seconds
+Test Suite 'ReceiptParserPriceTests' started at 2026-09-28 08:06:03.786.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineAsFirstLineDoesNotCrash]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineAsFirstLineDoesNotCrash]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineWithFailedSanityCheckIsConsumedNotAttributed]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineWithFailedSanityCheckIsConsumedNotAttributed]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountDoesNotInterfereWithWeightBasedLine]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountDoesNotInterfereWithWeightBasedLine]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountHandlesMandelkerneAndBroetchenFromRealLidlReceipt]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountHandlesMandelkerneAndBroetchenFromRealLidlReceipt]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountLearnsPerUnitPriceNotLineTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountLearnsPerUnitPriceNotLineTotal]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountSetsQuantityFromLidlMultiBuyLine]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountSetsQuantityFromLidlMultiBuyLine]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testDocumentedWeightLineWithoutSuffixComputesWeightTimesRate]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testDocumentedWeightLineWithoutSuffixComputesWeightTimesRate]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testFlatPricePackagedItemWithoutWeightLineLearnsCorrectPerGramPrice]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testFlatPricePackagedItemWithoutWeightLineLearnsCorrectPerGramPrice]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripForReweBroetchenAndBanane]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripForReweBroetchenAndBanane]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithHistoricalMatch]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithHistoricalMatch]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithoutHistoricalMatch]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithoutHistoricalMatch]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearningUnitMatchesLearningQuantityBranchForEveryCase]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearningUnitMatchesLearningQuantityBranchForEveryCase]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testPackageSizeFromNameAgreesWithWeightBasisFromName]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testPackageSizeFromNameAgreesWithWeightBasisFromName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testPackageSizeFromNameReturnsLitreAsMillilitre]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testPackageSizeFromNameReturnsLitreAsMillilitre]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testPieceCountLineSetsQuantityNotWeightBasis]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testPieceCountLineSetsQuantityNotWeightBasis]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testSavingReceiptStoresPriceAndUnitTogether]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testSavingReceiptStoresPriceAndUnitTogether]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasedGrundpreisLineComputesCorrectTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasedGrundpreisLineComputesCorrectTotal]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasisFromNameHandlesKgLiterAndCentiliterUnits]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasisFromNameHandlesKgLiterAndCentiliterUnits]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineSetsGramWeightBasisNotQuantity]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineSetsGramWeightBasisNotQuantity]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithDecimalDotInsteadOfCommaComputesCorrectTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithDecimalDotInsteadOfCommaComputesCorrectTotal]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithMultiplicationSignInsteadOfXComputesCorrectTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithMultiplicationSignInsteadOfXComputesCorrectTotal]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithNoSeparateTotalFallsBackToComputedTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithNoSeparateTotalFallsBackToComputedTotal]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithSeparateTotalPriceLineIsNotOverridden]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithSeparateTotalPriceLineIsNotOverridden]' passed (0.001 seconds).
+Test Suite 'ReceiptParserPriceTests' passed at 2026-09-28 08:06:03.803.
+	 Executed 23 tests, with 0 failures (0 unexpected) in 0.014 (0.017) seconds
+Test Suite 'ReceiptParserReweTests' started at 2026-09-28 08:06:03.803.
+Test Case '-[RestockTests.ReceiptParserReweTests testAllFourteenPositionsAreRecognized]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testAllFourteenPositionsAreRecognized]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserReweTests testItemNamesAndPricesAreCorrect]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testItemNamesAndPricesAreCorrect]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserReweTests testNoAdminOrTaxLinesLeakIntoResults]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testNoAdminOrTaxLinesLeakIntoResults]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserReweTests testQuantityAndWeightFollowupLinesDoNotOverrideAlreadyKnownTotal]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testQuantityAndWeightFollowupLinesDoNotOverrideAlreadyKnownTotal]' passed (0.003 seconds).
+Test Suite 'ReceiptParserReweTests' passed at 2026-09-28 08:06:03.815.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.011 (0.012) seconds
+Test Suite 'ReceiptParserStornoTests' started at 2026-09-28 08:06:03.815.
+Test Case '-[RestockTests.ReceiptParserStornoTests testConfirmationLineAfterStornoDoesNotBecomePhantomPosition]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testConfirmationLineAfterStornoDoesNotBecomePhantomPosition]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testCorrectItemsAndPricesSurvive]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testCorrectItemsAndPricesSurvive]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testOnlyTheThreeActuallyPurchasedItemsSurvive]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testOnlyTheThreeActuallyPurchasedItemsSurvive]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoedItemsDoNotAppear]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoedItemsDoNotAppear]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoStaysPendingAcrossSkippedConfirmationLine]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoStaysPendingAcrossSkippedConfirmationLine]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoWithoutPriorMatchIsHarmless]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoWithoutPriorMatchIsHarmless]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testVatSummaryRowWithNumericCodeIsNotMistakenForAnItem]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testVatSummaryRowWithNumericCodeIsNotMistakenForAnItem]' passed (0.003 seconds).
+Test Suite 'ReceiptParserStornoTests' passed at 2026-09-28 08:06:03.829.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.012 (0.013) seconds
+Test Suite 'ReceiptParserSuggestionTests' started at 2026-09-28 08:06:03.829.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesDefaultLimitIsFive]' started.
+2026-09-28 08:06:03.829622+0200 Restock[36065:80208245] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesDefaultLimitIsFive]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesExcludesLooseFalsePositives]' started.
+2026-09-28 08:06:03.833121+0200 Restock[36065:80208245] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesExcludesLooseFalsePositives]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesKeepsPlausibleShortening]' started.
+2026-09-28 08:06:03.836352+0200 Restock[36065:80208245] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesKeepsPlausibleShortening]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testResolutionServiceLimitsSuggestionsToThree]' started.
+2026-09-28 08:06:03.839477+0200 Restock[36065:80208423] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testResolutionServiceLimitsSuggestionsToThree]' passed (0.008 seconds).
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testResolutionServiceSuggestsFromPendingNotOnlyCompletedItems]' started.
+2026-09-28 08:06:03.847714+0200 Restock[36065:80208345] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-09-28 08:06:03.849173+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1046e0fc0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1144175c0> (URL: file:///dev/null)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.849220+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1046e0fc0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.849259+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1046e0fc0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testResolutionServiceSuggestsFromPendingNotOnlyCompletedItems]' passed (0.004 seconds).
+Test Suite 'ReceiptParserSuggestionTests' passed at 2026-09-28 08:06:03.851.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.021 (0.022) seconds
+Test Suite 'ReceiptReviewCardTests' started at 2026-09-28 08:06:03.851.
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiLineWithTwoSuggestionsOffersFourOptionsWithAiFirst]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiLineWithTwoSuggestionsOffersFourOptionsWithAiFirst]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiSuggestionIsDroppedWhenAListMatchCarriesTheSameName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiSuggestionIsDroppedWhenAListMatchCarriesTheSameName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackFallsBackToOriginalNameWhenPreviousSelectionIsWhitespaceOnly]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackFallsBackToOriginalNameWhenPreviousSelectionIsWhitespaceOnly]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresAIStateOnEmptyName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresAIStateOnEmptyName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnEmptyName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnEmptyName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnWhitespaceOnlyName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnWhitespaceOnlyName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditFloorsPiecesAtOne]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditFloorsPiecesAtOne]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditNeverTouchesUnitOrOriginalName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditNeverTouchesUnitOrOriginalName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithGramsSetsWeightAndResetsQuantity]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithGramsSetsWeightAndResetsQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithPiecesSetsQuantityAndClearsWeight]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithPiecesSetsQuantityAndClearsWeight]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingAiSuggestionRestoresAiStateAfterAnotherSelection]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingAiSuggestionRestoresAiStateAfterAnotherSelection]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingListMatchSetsNameAndItemAndClearsAiFlag]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingListMatchSetsNameAndItemAndClearsAiFlag]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testCurrentNameIsOfferedAndPreselectedWhenNoCandidateMatches]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testCurrentNameIsOfferedAndPreselectedWhenNoCandidateMatches]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testEnteringCustomNameClearsMatchAndAiFlag]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testEnteringCustomNameClearsMatchAndAiFlag]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testFiveSuggestionsAreCappedToThreeListMatches]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testFiveSuggestionsAreCappedToThreeListMatches]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testLineWithoutSuggestionsAndWithoutAiKeepsCurrentName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testLineWithoutSuggestionsAndWithoutAiKeepsCurrentName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testOriginalNameSurvivesAllThreeSelectionPaths]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testOriginalNameSurvivesAllThreeSelectionPaths]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPreselectedListMatchIsSortedFirstRegardlessOfCase]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPreselectedListMatchIsSortedFirstRegardlessOfCase]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryFallsBackToSinglePiece]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryFallsBackToSinglePiece]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesLitrePriceForLiquids]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesLitrePriceForLiquids]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesPrintedGramSize]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesPrintedGramSize]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesQuantityWhenGreaterThanOne]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesQuantityWhenGreaterThanOne]' passed (0.000 seconds).
+2026-09-28 08:06:03.865963+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x108913aa0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1142c1040> (URL: file:///dev/null)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without anTest Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesWeightBasisFirst]' started.
+ iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.866800+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x108913aa0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.866836+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x108913aa0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the fTest Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesWeightBasisFirst]' passed (0.001 seconds).
+ollowing error: (null):0
+Test Case '-[RestockTests.ReceiptReviewCardTests testSectionHeaderTextShowsCountSelectedAndSum]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testSectionHeaderTextShowsCountSelectedAndSum]' passed (0.000 seconds).
+Test Suite 'ReceiptReviewCardTests' passed at 2026-09-28 08:06:03.868.
+	 Executed 26 tests, with 0 failures (0 unexpected) in 0.011 (0.016) seconds
+Test Suite 'ReceiptScannerReResolutionTests' started at 2026-09-28 08:06:03.868.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testAlreadyResolvedByAILinesAreNotReResolvedAgain]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testAlreadyResolvedByAILinesAreNotReResolvedAgain]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testIsSavableKeepsIncludedNamedLineAndRejectsOldCases]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testIsSavableKeepsIncludedNamedLineAndRejectsOldCases]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testIsSavableRejectsLineWithEmptyName]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testIsSavableRejectsLineWithEmptyName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testMergeAppliesAIResolvedNameSuggestionsAndFlagOnlyAtTargetedIndices]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testMergeAppliesAIResolvedNameSuggestionsAndFlagOnlyAtTargetedIndices]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testUnresolvedShareHandoffLinesAreSelectedForReResolution]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testUnresolvedShareHandoffLinesAreSelectedForReResolution]' passed (0.000 seconds).
+Test Suite 'ReceiptScannerReResolutionTests' passed at 2026-09-28 08:06:03.871.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'ReplenishmentDigestTests' started at 2026-09-28 08:06:03.871.
+Test Case '-[RestockTests.ReplenishmentDigestTests testBackgroundRefreshRunsBeforeTheMorningDigest]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testBackgroundRefreshRunsBeforeTheMorningDigest]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testCandidatesIgnoreTheBannerWindowButRespectFeedbackAndOpenItems]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testCandidatesIgnoreTheBannerWindowButRespectFeedbackAndOpenItems]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testCountryChangeDoesNotRepeatTheNotification]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testCountryChangeDoesNotRepeatTheNotification]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testDeliveredItemIsNotAnnouncedAgainInTheSameCycle]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testDeliveredItemIsNotAnnouncedAgainInTheSameCycle]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testItemsDueOnTheSameDayShareOneDigestAtNine]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testItemsDueOnTheSameDayShareOneDigestAtNine]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testItemWhoseHabitEndsBeforeDeliveryIsSkipped]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testItemWhoseHabitEndsBeforeDeliveryIsSkipped]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testNewPurchaseMakesItemNotifiableAgain]' started.
+2026-09-28 08:06:03.883157+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1142f80e0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1144c2e40> (URL: file:///dev/null)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.883225+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1142f80e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-09-28 08:06:03.883265+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1142f80e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-09-28 08:06:03.883559+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1142f90a0>: Failed to set up CloudKit integration for store: (null)
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-28 08:06:03.883607+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1142f90a0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-28 08:06:03.883642+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-28 08:06:03.883821+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x1142f82a0>: Told to tear down with reason: Store Removed
+2026-09-28 08:06:03.883877+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x1142f82a0>: Told to tear down with reason: Stores Changed
+2026-09-28 08:06:03.883904+0200 Restock[36065:80208490] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.export.D9C13951-DD1F-4742-8109-2D5580FB6CF1
+2026-09-28 08:06:03.883944+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1142f82a0>: Failed to set up CloudKit integration for store: (null)
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-28 08:06:03.883993+0200 Restock[36065:80208490] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.export.D9C13951-DD1F-4742-8109-2D5580FB6CF1: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+2026-09-28 08:06:03.884008+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1142f82a0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-28 08:06:03.884094+0200 Restock[36065:80208346] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+Test Case '-[RestockTests.ReplenishmentDigestTests testNewPurchaseMakesItemNotifiableAgain]' passed (0.002 seconds).
+2026-09-28 08:06:03.884288+0200 Restock[36065:80208490] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.import.D9C13951-DD1F-4742-8109-2D5580FB6CF1
+2026-09-28 08:06:03.884379+0200 Restock[36065:80208490] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.import.D9C13951-DD1F-4742-8109-2D5580FB6CF1: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+Test Case '-[RestockTests.ReplenishmentDigestTests testOverdueItemGoesIntoNextDigestInsteadOfImmediatePush]' started.
+2026-09-28 08:06:03.884665+0200 Restock[36065:80208490] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.setup.D9C13951-DD1F-4742-8109-2D5580FB6CF1
+2026-09-28 08:06:03.884710+0200 Restock[36065:80208490] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.setup.D9C13951-DD1F-4742-8109-2D5580FB6CF1: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+Test Case '-[RestockTests.ReplenishmentDigestTests testOverdueItemGoesIntoNextDigestInsteadOfImmediatePush]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testPlanningLooksSevenDaysAhead]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testPlanningLooksSevenDaysAhead]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testSingleItemKeepsItsOwnTextAndSeveralAreListed]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testSingleItemKeepsItsOwnTextAndSeveralAreListed]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testSnoozeAllowsOneMoreNotificationAtTheShiftedDate]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testSnoozeAllowsOneMoreNotificationAtTheShiftedDate]' passed (0.003 seconds).
+Test Suite 'ReplenishmentDigestTests' passed at 2026-09-28 08:06:03.895.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.022 (0.024) seconds
+Test Suite 'ReplenishmentPackageATests' started at 2026-09-28 08:06:03.895.
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionDeletedWithoutPurchaseIsDismissed]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionDeletedWithoutPurchaseIsDismissed]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionPurchasedThenDeletedIsNoSignal]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionPurchasedThenDeletedIsNoSignal]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionReplacedBySamePendingItemIsNoSignal]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionReplacedBySamePendingItemIsNoSignal]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionStillOnListIsKeptTracked]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionStillOnListIsKeptTracked]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testIntervalIsNotScaledByPurchaseQuantity]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testIntervalIsNotScaledByPurchaseQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingKeepsEarlierPurchases]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingKeepsEarlierPurchases]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingKeepsRecordWithReceiptPrice]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingKeepsRecordWithReceiptPrice]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingRemovesRecordCreatedByMarkCompleted]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingRemovesRecordCreatedByMarkCompleted]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testOverdueNotificationOnlyOncePerPurchaseCycle]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testOverdueNotificationOnlyOncePerPurchaseCycle]' passed (0.002 seconds).
+Test Suite 'ReplenishmentPackageATests' passed at 2026-09-28 08:06:03.912.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.015 (0.017) seconds
+Test Suite 'ReplenishmentPackageBTests' started at 2026-09-28 08:06:03.912.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testAlternatingPackSizesAreNotIrregular]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testAlternatingPackSizesAreNotIrregular]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testBacktestOnRegularHistory]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testBacktestOnRegularHistory]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testBiweeklyPurchaseIsNotTreatedAsWeekdayPattern]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testBiweeklyPurchaseIsNotTreatedAsWeekdayPattern]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testDueSoonItemsRequireThreePurchases]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testDueSoonItemsRequireThreePurchases]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testDueWindowIsTwentyPercentOfCycle]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testDueWindowIsTwentyPercentOfCycle]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testEasterMondayIsMovedBeforeTheWeekend]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testEasterMondayIsMovedBeforeTheWeekend]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testGermanPublicHolidays]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testGermanPublicHolidays]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testHabitEndsAfterTwoAndAHalfTypicalGaps]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testHabitEndsAfterTwoAndAHalfTypicalGaps]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testHolidayOnWeekdayPatternMovesToSaturday]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testHolidayOnWeekdayPatternMovesToSaturday]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testIrregularIntervalsAreNotEligible]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testIrregularIntervalsAreNotEligible]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testLargerLastPurchaseMovesNextDateOut]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testLargerLastPurchaseMovesNextDateOut]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMetricsCountEachSuggestionOnce]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMetricsCountEachSuggestionOnce]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMixedUnitsFallBackToInterval]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMixedUnitsFallBackToInterval]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMondayWednesdayPatternPredictsNextMondayAfterWednesday]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMondayWednesdayPatternPredictsNextMondayAfterWednesday]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMondayWednesdayPatternPredictsNextWednesday]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMondayWednesdayPatternPredictsNextWednesday]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testRecentIntervalsWeighMore]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testRecentIntervalsWeighMore]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testSameDayPurchasesCountOnce]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testSameDayPurchasesCountOnce]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testSundayIsMovedToSaturdayInGermany]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testSundayIsMovedToSaturdayInGermany]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testTwoPurchasesAreNotEligible]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testTwoPurchasesAreNotEligible]' passed (0.000 seconds).
+Test Suite 'ReplenishmentPackageBTests' passed at 2026-09-28 08:06:03.928.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.013 (0.016) seconds
+Test Suite 'ReplenishmentPackageCTests' started at 2026-09-28 08:06:03.928.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAcceptedSuggestionDeletedAfterCountryChangeIsStillDismissed]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAcceptedSuggestionDeletedAfterCountryChangeIsStillDismissed]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAliasTargetIsShownEvenIfOnlyReceiptRecordsExist]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAliasTargetIsShownEvenIfOnlyReceiptRecordsExist]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAlsoDueIsSortedByDate]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAlsoDueIsSortedByDate]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAlsoDueUsesTheSameFiltersAsTheBanner]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAlsoDueUsesTheSameFiltersAsTheBanner]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBacktestUsesMergedHistory]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBacktestUsesMergedHistory]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBannerItemsAreAlwaysIncluded]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBannerItemsAreAlwaysIncluded]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlockedItemIsNeverSuggestedUntilUnblocked]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlockedItemIsNeverSuggestedUntilUnblocked]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlocklistAndSnoozeMatchFormalVariants]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlocklistAndSnoozeMatchFormalVariants]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlocklistIsCaseInsensitiveWithoutDuplicates]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlocklistIsCaseInsensitiveWithoutDuplicates]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testConfirmedReceiptAliasCountsTowardsTheListName]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testConfirmedReceiptAliasCountsTowardsTheListName]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testCountryChangeShiftsDateButKeepsPurchaseKey]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testCountryChangeShiftsDateButKeepsPurchaseKey]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testDifferentProductsAreNeverMerged]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testDifferentProductsAreNeverMerged]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testFormalKeyIgnoresCaseSpacesAndEdgePunctuationOnly]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testFormalKeyIgnoresCaseSpacesAndEdgePunctuationOnly]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testFormalVariantsAreMergedUnderTheLatestName]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testFormalVariantsAreMergedUnderTheLatestName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testItemRunningOutBeforeNextVisitIsSuggestedEvenOutsideBannerWindow]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testItemRunningOutBeforeNextVisitIsSuggestedEvenOutsideBannerWindow]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testMetricsCountSnoozesAndBlocksSeparately]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testMetricsCountSnoozesAndBlocksSeparately]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testMigrationConvertsCurrentDateKeyedEntriesAndDropsStaleOnes]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testMigrationConvertsCurrentDateKeyedEntriesAndDropsStaleOnes]' passed (0.007 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testOverdueNotificationNotRepeatedAfterCountryChange]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testOverdueNotificationNotRepeatedAfterCountryChange]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testPendingVariantSuppressesTheSuggestion]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testPendingVariantSuppressesTheSuggestion]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testRemoveAndRemoveAllClearSnoozes]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testRemoveAndRemoveAllClearSnoozes]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testRepeatedSnoozeShiftsAgainFromTheShiftedDate]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testRepeatedSnoozeShiftsAgainFromTheShiftedDate]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testShiftIsHalfTheTypicalGapClampedToOneToFourteenDays]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testShiftIsHalfTheTypicalGapClampedToOneToFourteenDays]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeAvoidsSundayLikeFourB]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeAvoidsSundayLikeFourB]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeEndsWithTheNextPurchase]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeEndsWithTheNextPurchase]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeHidesSuggestionUntilShiftedDateIsDue]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeHidesSuggestionUntilShiftedDateIsDue]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeInStoreListLastsAtLeastUntilNextVisit]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeInStoreListLastsAtLeastUntilNextVisit]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeOfOverdueItemShiftsFromNow]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeOfOverdueItemShiftsFromNow]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeOfShortCycleOverdueItemDoesNotReappearImmediately]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeOfShortCycleOverdueItemDoesNotReappearImmediately]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeSurvivesCountryChange]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeSurvivesCountryChange]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testTimeZoneChangeKeepsPurchaseKey]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testTimeZoneChangeKeepsPurchaseKey]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testTrackAcceptedStoresSuggestionForA4AndCountsIt]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testTrackAcceptedStoresSuggestionForA4AndCountsIt]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testVisitGapFallsBackToVisitFrequencyAndIsClamped]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testVisitGapFallsBackToVisitFrequencyAndIsClamped]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testVisitGapIsMedianOfRecentVisitDays]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testVisitGapIsMedianOfRecentVisitDays]' passed (0.000 seconds).
+Test Suite 'ReplenishmentPackageCTests' passed at 2026-09-28 08:06:03.975.
+	 Executed 33 tests, with 0 failures (0 unexpected) in 0.042 (0.047) seconds
+Test Suite 'SchemaCloudKitCompatibilityTests' started at 2026-09-28 08:06:03.975.
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testCloudKitMirroredContainerInitializesForRealSchema]' started.
+2026-09-28 08:06:03.976123+0200 Restock[36065:80208245] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-09-28 08:06:03.979845+0200 Restock[36065:80208345] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x1142f8620>: Told to tear down with reason: Store Removed
+2026-09-28 08:06:03.979900+0200 Restock[36065:80208490] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.export.B49D3DF8-725C-4ABB-9D02-6B0CEF0D16E9
+2026-09-28 08:06:03.979901+0200 Restock[36065:80208345] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x1142f8620>: Told to tear down with reason: Stores Changed
+2026-09-28 08:06:03.979977+0200 Restock[36065:80208490] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.export.B49D3DF8-725C-4ABB-9D02-6B0CEF0D16E9: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testCloudKitMirroredContainerInitializesForRealSchema]' passed (0.004 seconds).
+2026-09-28 08:06:03.980054+0200 Restock[36065:80208345] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1142f8620>: Failed to set up CloudKit integration for store: (null)
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-28 08:06:03.980136+0200 Restock[36065:80208345] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1142f8620> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-28 08:06:03.980240+0200 Restock[36065:80208490] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.import.B49D3DF8-725C-4ABB-9D02-6B0CEF0D16E9
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testDemonstratesRedWithoutFix]' started.
+2026-09-28 08:06:03.980288+0200 Restock[36065:80208490] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.import.B49D3DF8-725C-4ABB-9D02-6B0CEF0D16E9: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+2026-09-28 08:06:03.980317+0200 Restock[36065:80208345] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-09-28 08:06:03.980599+0200 Restock[36065:80208490] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.setup.B49D3DF8-725C-4ABB-9D02-6B0CEF0D16E9
+2026-09-28 08:06:03.980649+0200 Restock[36065:80208490] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.setup.B49D3DF8-725C-4ABB-9D02-6B0CEF0D16E9: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+2026-09-28 08:06:03.986859+0200 Restock[36065:80208245] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-09-28 08:06:03.987010+0200 Restock[36065:80208245] [error] CoreData: error: Store failed to load.  <NSPersistentStoreDescription: 0x1145a8960> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/DA1A208D-07EA-4C58-A568-B6DF4CCFCBD2/tmp/broken-cktest-117A7556-41C5-4D49-B26A-1219C89586D6.store) with error = Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+BrokenCloudKitModel: name} with userInfo {
+    NSLocalizedFailureReason = "CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:\nBrokenCloudKitModel: name";
+}
+CoreData: error: Store failed to load.  <NSPersistentStoreDescription: 0x1145a8960> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/DA1A208D-07EA-4C58-A568-B6DF4CCFCBD2/tmp/broken-cktest-117A7556-41C5-4D49-B26A-1219C89586D6.store) with error = Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+BrokenCloudKitModel: name} with userInfo {
+    NSLocalizedFailureReason = "CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:\nBrokenCloudKitModel: name";
+}
+2026-09-28 08:06:03.987096+0200 Restock[36065:80208245] [DataStore] Repair of Optional(file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/DA1A208D-07EA-4C58-A568-B6DF4CCFCBD2/tmp/broken-cktest-117A7556-41C5-4D49-B26A-1219C89586D6.store) was not required
+2026-09-28 08:06:03.987840+0200 Restock[36065:80208245] [DataStore] Unresolved error loading container Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+BrokenCloudKitModel: name}
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testDemonstratesRedWithoutFix]' passed (0.008 seconds).
+Test Suite 'SchemaCloudKitCompatibilityTests' passed at 2026-09-28 08:06:03.989.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.013 (0.013) seconds
+Test Suite 'SharedItemDataPhotoRegressionTests' started at 2026-09-28 08:06:03.989.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeItemsSetsHasPhotoTrueWhenPresent]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeItemsSetsHasPhotoTrueWhenPresent]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeOldFormatJSONStillWorks]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeOldFormatJSONStillWorks]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeDecodeRoundTripPreservesHasPhoto]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeDecodeRoundTripPreservesHasPhoto]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeItemsWithoutPhotoAddsOnlyHasPhotoKey]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeItemsWithoutPhotoAddsOnlyHasPhotoKey]' passed (0.000 seconds).
+Test Suite 'SharedItemDataPhotoRegressionTests' passed at 2026-09-28 08:06:03.992.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.003 (0.003) seconds
+Test Suite 'SharedModelContainerExtensionDetectionTests' started at 2026-09-28 08:06:03.992.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testAppExtensionNeverBuildsACloudKitConfiguration]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testAppExtensionNeverBuildsACloudKitConfiguration]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresAppexInAnIntermediatePathComponent]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresAppexInAnIntermediatePathComponent]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresTrailingSlash]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresTrailingSlash]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsCaseInsensitive]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsCaseInsensitive]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForAnAppBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForAnAppBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForTheMainAppProcess]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForTheMainAppProcess]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheShareExtensionBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheShareExtensionBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheWidgetBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheWidgetBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testExtensionAndAppOpenTheSameStoreLocation]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testExtensionAndAppOpenTheSameStoreLocation]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testMainAppStillPrefersTheCloudKitMirroredConfiguration]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testMainAppStillPrefersTheCloudKitMirroredConfiguration]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testPreCloudBackupRunsOnlyInTheMainApp]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testPreCloudBackupRunsOnlyInTheMainApp]' passed (0.000 seconds).
+Test Suite 'SharedModelContainerExtensionDetectionTests' passed at 2026-09-28 08:06:03.999.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.005 (0.007) seconds
+Test Suite 'StorePresetsTests' started at 2026-09-28 08:06:03.999.
+Test Case '-[RestockTests.StorePresetsTests testIKEAIconMapsToSofaSymbol]' started.
+Test Case '-[RestockTests.StorePresetsTests testIKEAIconMapsToSofaSymbol]' passed (0.000 seconds).
+Test Case '-[RestockTests.StorePresetsTests testIKEAPresetExistsInEachSupportedCountry]' started.
+Test Case '-[RestockTests.StorePresetsTests testIKEAPresetExistsInEachSupportedCountry]' passed (0.001 seconds).
+Test Suite 'StorePresetsTests' passed at 2026-09-28 08:06:04.001.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-09-28 08:06:04.001.
+	 Executed 271 tests, with 0 failures (0 unexpected) in 1.738 (1.812) seconds
+Test Suite 'All tests' passed at 2026-09-28 08:06:04.001.
+	 Executed 271 tests, with 0 failures (0 unexpected) in 1.738 (1.813) seconds
+2026-09-28 08:06:04.877196+0200 RestockUITests-Runner[36095:80208596] [Default] Running tests...
+objc[36095]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105bbc310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x105b20398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-28 08:06:07.555.
+Test Suite 'RestockUITests.xctest' started at 2026-09-28 08:06:07.555.
+Test Suite 'ReceiptReviewUITests' started at 2026-09-28 08:06:07.555.
+Test Case '-[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine]' started.
+    t =     0.00s Start Test at 2026-09-28 08:06:07.556
+    t =     0.33s Set Up
+    t =     0.33s Open com.johannesemmrich.Restock
+    t =     0.33s     Launch com.johannesemmrich.Restock
+2026-09-28 08:06:08.222 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:06:08.223 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.88s         Setting up automation session
+    t =     1.92s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     5.31s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     5.32s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     6.34s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     6.34s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     6.47s Waiting 5.0s for "receiptReview.line.0.aiMark" Any to exist
+    t =     7.49s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.aiMark" Any`
+    t =     7.49s         Checking existence of `"receiptReview.line.0.aiMark" Any`
+    t =     7.61s Find the "receiptReview.line.0.aiMark" Any
+    t =     7.71s Find the "receiptReview.line.0.aiMark" Other
+    t =     7.80s Find the "receiptReview.line.0.aiMark" Other
+    t =     7.90s Tear Down
+    t =     7.90s     Setting appearance mode to Light
+    t =     7.92s         Wait for com.johannesemmrich.Restock to idle
+    t =     7.92s     Open com.johannesemmrich.Restock
+    t =     7.92s         Launch com.johannesemmrich.Restock
+    t =     7.92s             Terminate com.johannesemmrich.Restock:36109
+2026-09-28 08:06:16.534 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:06:16.534 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     9.19s             Setting up automation session
+    t =    10.06s             Wait for com.johannesemmrich.Restock to idle
+    t =    11.52s     Terminate com.johannesemmrich.Restock:36157
+Test Case '-[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine]' passed (12.781 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCardShowsAtMostFourSelectionOptions]' started.
+    t =     0.00s Start Test at 2026-09-28 08:06:20.338
+    t =     0.03s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+    t =     0.03s     Launch com.johannesemmrich.Restock
+2026-09-28 08:06:20.367 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:06:20.367 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.24s         Setting up automation session
+    t =     1.04s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testCardShowsAtMostFourSelectionOptions] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.63s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.63s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.66s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.76s Waiting 5.0s for "receiptReview.line.2.option.0" Any to exist
+    t =     5.77s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.option.0" Any`
+    t =     5.77s         Checking existence of `"receiptReview.line.2.option.0" Any`
+    t =     5.89s Waiting 5.0s for "receiptReview.line.2.option.1" Any to exist
+    t =     6.91s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.option.1" Any`
+    t =     6.91s         Checking existence of `"receiptReview.line.2.option.1" Any`
+    t =     7.02s Waiting 5.0s for "receiptReview.line.2.option.2" Any to exist
+    t =     8.04s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.option.2" Any`
+    t =     8.04s         Checking existence of `"receiptReview.line.2.option.2" Any`
+    t =     8.15s Waiting 5.0s for "receiptReview.line.2.option.3" Any to exist
+    t =     9.17s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.option.3" Any`
+    t =     9.17s         Checking existence of `"receiptReview.line.2.option.3" Any`
+    t =     9.29s Checking existence of `"receiptReview.line.2.option.4" Any`
+    t =     9.40s Tear Down
+    t =     9.40s     Setting appearance mode to Light
+    t =     9.40s         Wait for com.johannesemmrich.Restock to idle
+    t =     9.41s     Open com.johannesemmrich.Restock
+    t =     9.41s         Launch com.johannesemmrich.Restock
+    t =     9.41s             Terminate com.johannesemmrich.Restock:36217
+2026-09-28 08:06:30.781 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:06:30.781 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    10.65s             Setting up automation session
+    t =    11.44s             Wait for com.johannesemmrich.Restock to idle
+    t =    12.94s     Terminate com.johannesemmrich.Restock:36253
+Test Case '-[RestockUITests.ReceiptReviewUITests testCardShowsAtMostFourSelectionOptions]' passed (14.001 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' started.
+    t =     0.00s Start Test at 2026-09-28 08:06:34.340
+    t =     0.01s Set Up
+    t =     0.02s Setting appearance mode to Dark
+    t =     0.03s     Wait for com.apple.springboard to idle
+    t =     0.09s Open com.johannesemmrich.Restock
+    t =     0.09s     Launch com.johannesemmrich.Restock
+2026-09-28 08:06:34.428 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:06:34.428 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.30s         Setting up automation session
+    t =     1.10s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.79s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.79s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.81s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.81s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.93s Waiting 5.0s for "receiptReview.line.2.changeButton" Any to exist
+    t =     5.95s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.changeButton" Any`
+    t =     5.95s         Checking existence of `"receiptReview.line.2.changeButton" Any`
+    t =     6.07s Tap "receiptReview.line.2.changeButton" Any
+    t =     6.07s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.07s     Find the "receiptReview.line.2.changeButton" Any
+    t =     6.17s     Check for interrupting elements affecting "receiptReview.line.2.changeButton" Button
+    t =     6.22s     Synthesize event
+    t =     6.22s         Scroll element to visible
+    t =     6.23s         Find the "receiptReview.line.2.changeButton" Button
+    t =     6.34s         Computed hit point {329.66666666666674, 711} after scrolling to visible
+    t =     6.73s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.74s Waiting 5.0s for "receiptReview.line.2.priceField" TextField to exist
+    t =     7.76s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =     7.76s         Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =     7.81s Checking existence of `"receiptReview.line.2.quantityField" TextField`
+    t =     7.84s Tap "receiptReview.line.2.priceField" TextField
+    t =     7.84s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.84s     Find the "receiptReview.line.2.priceField" TextField
+    t =     7.88s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =     7.91s     Synthesize event
+    t =     8.20s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.80s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =     9.80s     Find the "receiptReview.line.2.priceField" TextField
+    t =     9.85s Find the "receiptReview.line.2.priceField" TextField
+    t =     9.89s Type '' into "receiptReview.line.2.priceField" TextField
+    t =     9.89s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.89s     Find the "receiptReview.line.2.priceField" TextField
+    t =     9.93s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =     9.96s     Synthesize event
+    t =    10.23s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.23s Type '3,50' into "receiptReview.line.2.priceField" TextField
+    t =    10.23s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.23s     Find the "receiptReview.line.2.priceField" TextField
+    t =    10.27s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =    10.31s     Synthesize event
+    t =    10.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.58s Find the "receiptReview.line.2.price" Any
+    t =    10.71s Tear Down
+    t =    10.71s     Setting appearance mode to Light
+    t =    10.75s         Wait for com.johannesemmrich.Restock to idle
+    t =    10.93s     Open com.johannesemmrich.Restock
+    t =    10.93s         Launch com.johannesemmrich.Restock
+    t =    10.93s             Terminate com.johannesemmrich.Restock:36264
+2026-09-28 08:06:46.296 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:06:46.296 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    12.17s             Setting up automation session
+    t =    12.93s             Wait for com.johannesemmrich.Restock to idle
+    t =    14.30s     Terminate com.johannesemmrich.Restock:36310
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' passed (15.366 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeOpensPriceAndQuantityEditorAndUpdatesSummary]' started.
+    t =     0.00s Start Test at 2026-09-28 08:06:49.706
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.01s     Launch com.johannesemmrich.Restock
+2026-09-28 08:06:49.720 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:06:49.720 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.22s         Setting up automation session
+    t =     0.95s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testChangeOpensPriceAndQuantityEditorAndUpdatesSummary] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.69s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.69s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.70s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.70s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.79s Waiting 5.0s for "receiptReview.line.2.changeButton" Any to exist
+    t =     5.81s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.changeButton" Any`
+    t =     5.81s         Checking existence of `"receiptReview.line.2.changeButton" Any`
+    t =     5.93s Tap "receiptReview.line.2.changeButton" Any
+    t =     5.93s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.93s     Find the "receiptReview.line.2.changeButton" Any
+    t =     6.04s     Check for interrupting elements affecting "receiptReview.line.2.changeButton" Button
+    t =     6.08s     Synthesize event
+    t =     6.08s         Scroll element to visible
+    t =     6.09s         Find the "receiptReview.line.2.changeButton" Button
+    t =     6.20s         Computed hit point {329.66666666666674, 711} after scrolling to visible
+    t =     6.48s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.48s Waiting 5.0s for "receiptReview.line.2.priceField" TextField to exist
+    t =     7.50s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =     7.51s         Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =     7.55s Checking existence of `"receiptReview.line.2.quantityField" TextField`
+    t =     7.59s Checking existence of `"receiptReview.line.2.quantityMode" Any`
+    t =     7.69s Tap "receiptReview.line.2.priceField" TextField
+    t =     7.69s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.70s     Find the "receiptReview.line.2.priceField" TextField
+    t =     7.73s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =     7.76s     Synthesize event
+    t =     8.05s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.08s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =     9.08s     Find the "receiptReview.line.2.priceField" TextField
+    t =     9.15s Find the "receiptReview.line.2.priceField" TextField
+    t =     9.19s Type '' into "receiptReview.line.2.priceField" TextField
+    t =     9.19s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.19s     Find the "receiptReview.line.2.priceField" TextField
+    t =     9.23s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =     9.28s     Synthesize event
+    t =     9.54s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.54s Type '2,00' into "receiptReview.line.2.priceField" TextField
+    t =     9.54s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.54s     Find the "receiptReview.line.2.priceField" TextField
+    t =     9.59s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =     9.64s     Synthesize event
+    t =     9.91s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.91s Find the "receiptReview.line.2.price" Any
+    t =    10.04s Tap "Stück" Button
+    t =    10.04s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.04s     Find the "Stück" Button
+    t =    10.17s     Check for interrupting elements affecting "Stück" Button
+    t =    10.22s     Synthesize event
+    t =    10.23s         Scroll element to visible
+    t =    10.23s         Find the "Stück" Button
+    t =    10.39s         Computed hit point {229.5, 311.99999999999989} after scrolling to visible
+    t =    10.67s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.50s Tap "receiptReview.line.2.quantityField" TextField
+    t =    11.50s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.50s     Find the "receiptReview.line.2.quantityField" TextField
+    t =    11.55s     Check for interrupting elements affecting "receiptReview.line.2.quantityField" TextField
+    t =    11.59s     Synthesize event
+    t =    11.88s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.90s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.2.quantityField" TextField`
+    t =    12.91s     Find the "receiptReview.line.2.quantityField" TextField
+    t =    12.96s Find the "receiptReview.line.2.quantityField" TextField
+    t =    13.00s Type '' into "receiptReview.line.2.quantityField" TextField
+    t =    13.00s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.00s     Find the "receiptReview.line.2.quantityField" TextField
+    t =    13.05s     Check for interrupting elements affecting "receiptReview.line.2.quantityField" TextField
+    t =    13.09s     Synthesize event
+    t =    13.30s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.31s Type '4' into "receiptReview.line.2.quantityField" TextField
+    t =    13.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.31s     Find the "receiptReview.line.2.quantityField" TextField
+    t =    13.35s     Check for interrupting elements affecting "receiptReview.line.2.quantityField" TextField
+    t =    13.39s     Synthesize event
+    t =    13.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.62s Find the "receiptReview.line.2.price" StaticText
+    t =    13.77s Tear Down
+    t =    13.77s     Setting appearance mode to Light
+    t =    13.77s         Wait for com.johannesemmrich.Restock to idle
+    t =    13.77s     Open com.johannesemmrich.Restock
+    t =    13.77s         Launch com.johannesemmrich.Restock
+    t =    13.77s             Terminate com.johannesemmrich.Restock:36325
+2026-09-28 08:07:04.525 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:07:04.525 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    15.02s             Setting up automation session
+    t =    15.78s             Wait for com.johannesemmrich.Restock to idle
+    t =    17.13s     Terminate com.johannesemmrich.Restock:36477
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeOpensPriceAndQuantityEditorAndUpdatesSummary]' passed (18.243 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testClearingCustomNameFieldKeepsPreviousItemName]' started.
+    t =     0.00s Start Test at 2026-09-28 08:07:07.949
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.01s     Launch com.johannesemmrich.Restock
+2026-09-28 08:07:07.965 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:07:07.965 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.22s         Setting up automation session
+    t =     0.97s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testClearingCustomNameFieldKeepsPreviousItemName] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.68s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.68s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.70s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.70s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.80s Waiting 5.0s for "receiptReview.line.0.checkbox" Any to exist
+    t =     5.83s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.checkbox" Any`
+    t =     5.83s         Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =     5.92s Find the "receiptReview.line.0.checkbox" Any
+    t =     6.01s Waiting 5.0s for "receiptReview.line.0.option.1" Any to exist
+    t =     7.02s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.option.1" Any`
+    t =     7.02s         Checking existence of `"receiptReview.line.0.option.1" Any`
+    t =     7.11s Tap "receiptReview.line.0.option.1" Any
+    t =     7.11s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.12s     Find the "receiptReview.line.0.option.1" Any
+    t =     7.20s     Check for interrupting elements affecting "receiptReview.line.0.option.1" Button
+    t =     7.25s     Synthesize event
+    t =     7.54s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.58s Waiting 5.0s for "receiptReview.line.0.customNameField" TextField to exist
+    t =     8.58s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     8.58s         Checking existence of `"receiptReview.line.0.customNameField" TextField`
+    t =     9.68s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     9.68s     Find the "receiptReview.line.0.customNameField" TextField
+    t =     9.73s Find the "receiptReview.line.0.customNameField" TextField
+    t =     9.77s Type '...' into "receiptReview.line.0.customNameField" TextField
+    t =     9.77s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.78s     Find the "receiptReview.line.0.customNameField" TextField
+    t =     9.82s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =     9.86s     Synthesize event
+    t =    10.44s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.44s Find the "receiptReview.line.0.customNameField" TextField
+    t =    10.49s Find the "receiptReview.line.0.checkbox" Button
+    t =    10.64s Tear Down
+    t =    10.64s     Setting appearance mode to Light
+    t =    10.64s         Wait for com.johannesemmrich.Restock to idle
+    t =    10.64s     Open com.johannesemmrich.Restock
+    t =    10.65s         Launch com.johannesemmrich.Restock
+    t =    10.65s             Terminate com.johannesemmrich.Restock:36491
+2026-09-28 08:07:19.635 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:07:19.635 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    11.90s             Setting up automation session
+    t =    12.70s             Wait for com.johannesemmrich.Restock to idle
+    t =    14.06s     Terminate com.johannesemmrich.Restock:36603
+Test Case '-[RestockUITests.ReceiptReviewUITests testClearingCustomNameFieldKeepsPreviousItemName]' passed (15.143 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCustomNameOptionOpensFocusedTextField]' started.
+    t =     0.00s Start Test at 2026-09-28 08:07:23.092
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:07:23.109 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:07:23.109 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.22s         Setting up automation session
+    t =     0.95s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testCustomNameOptionOpensFocusedTextField] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.64s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.64s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.66s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.77s Waiting 5.0s for "receiptReview.line.0.option.1" Any to exist
+    t =     5.79s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.option.1" Any`
+    t =     5.79s         Checking existence of `"receiptReview.line.0.option.1" Any`
+    t =     5.89s Tap "receiptReview.line.0.option.1" Any
+    t =     5.89s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.89s     Find the "receiptReview.line.0.option.1" Any
+    t =     5.98s     Check for interrupting elements affecting "receiptReview.line.0.option.1" Button
+    t =     6.02s     Synthesize event
+    t =     6.31s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.35s Waiting 5.0s for "receiptReview.line.0.customNameField" TextField to exist
+    t =     7.36s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     7.36s         Checking existence of `"receiptReview.line.0.customNameField" TextField`
+    t =     8.43s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     8.43s     Find the "receiptReview.line.0.customNameField" TextField
+    t =     8.49s Tear Down
+    t =     8.49s     Setting appearance mode to Light
+    t =     8.50s         Wait for com.johannesemmrich.Restock to idle
+    t =     8.50s     Open com.johannesemmrich.Restock
+    t =     8.50s         Launch com.johannesemmrich.Restock
+    t =     8.50s             Terminate com.johannesemmrich.Restock:36622
+2026-09-28 08:07:32.631 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:07:32.631 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     9.75s             Setting up automation session
+    t =    10.55s             Wait for com.johannesemmrich.Restock to idle
+    t =    11.90s     Terminate com.johannesemmrich.Restock:36697
+Test Case '-[RestockUITests.ReceiptReviewUITests testCustomNameOptionOpensFocusedTextField]' passed (12.965 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' started.
+    t =     0.00s Start Test at 2026-09-28 08:07:36.058
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:07:36.074 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:07:36.074 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.22s         Setting up automation session
+    t =     0.98s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.57s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.57s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.60s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.61s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.76s Waiting 5.0s for "receiptReview.line.0.originalName" Any to exist
+    t =     5.79s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.originalName" Any`
+    t =     5.79s         Checking existence of `"receiptReview.line.0.originalName" Any`
+    t =     6.19s Find the "receiptReview.line.0.originalName" Any
+    t =     6.62s Find the "receiptReview.line.0.originalName" StaticText
+    t =     6.85s Waiting 5.0s for "receiptReview.line.1.originalName" Any to exist
+    t =     7.87s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.1.originalName" Any`
+    t =     7.87s         Checking existence of `"receiptReview.line.1.originalName" Any`
+    t =     8.03s Find the "receiptReview.line.1.originalName" Any
+    t =     8.18s Find the "receiptReview.line.1.originalName" StaticText
+    t =     8.32s Waiting 5.0s for "receiptReview.line.2.originalName" Any to exist
+    t =     9.34s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.originalName" Any`
+    t =     9.34s         Checking existence of `"receiptReview.line.2.originalName" Any`
+    t =     9.48s Find the "receiptReview.line.2.originalName" Any
+    t =     9.59s Find the "receiptReview.line.2.originalName" StaticText
+    t =     9.76s Waiting 5.0s for "receiptReview.line.3.originalName" Any to exist
+    t =    10.78s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.3.originalName" Any`
+    t =    10.78s         Checking existence of `"receiptReview.line.3.originalName" Any`
+    t =    10.95s Find the "receiptReview.line.3.originalName" Any
+    t =    11.12s Find the "receiptReview.line.3.originalName" StaticText
+    t =    11.23s Tear Down
+    t =    11.23s     Setting appearance mode to Light
+    t =    11.24s         Wait for com.johannesemmrich.Restock to idle
+    t =    11.25s     Open com.johannesemmrich.Restock
+    t =    11.25s         Launch com.johannesemmrich.Restock
+    t =    11.25s             Terminate com.johannesemmrich.Restock:36739
+2026-09-28 08:07:48.392 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:07:48.392 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    12.77s             Setting up automation session
+    t =    13.72s             Wait for com.johannesemmrich.Restock to idle
+    t =    15.30s     Terminate com.johannesemmrich.Restock:36915
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' passed (16.501 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalTextAndAiMarkAreReadableInDarkMode]' started.
+    t =     0.00s Start Test at 2026-09-28 08:07:52.562
+    t =     0.05s Set Up
+    t =     0.05s Setting appearance mode to Dark
+    t =     0.34s     Wait for com.apple.springboard to idle
+    t =     0.35s Open com.johannesemmrich.Restock
+    t =     0.35s     Launch com.johannesemmrich.Restock
+2026-09-28 08:07:52.936 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:07:52.936 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.82s         Setting up automation session
+    t =     1.89s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testOriginalTextAndAiMarkAreReadableInDarkMode] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     4.88s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     4.88s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     5.90s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     5.90s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     6.05s Waiting 5.0s for "receiptReview.line.1.originalName" Any to exist
+    t =     7.06s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.1.originalName" Any`
+    t =     7.06s         Checking existence of `"receiptReview.line.1.originalName" Any`
+    t =     7.17s Find the "receiptReview.line.1.originalName" Any
+    t =     7.26s Checking existence of `"receiptReview.line.0.aiMark" Any`
+    t =     7.35s Find the "receiptReview.line.0.aiMark" Any
+    t =     7.46s Tear Down
+    t =     7.46s     Setting appearance mode to Light
+    t =     7.49s         Wait for com.johannesemmrich.Restock to idle
+    t =     7.59s     Open com.johannesemmrich.Restock
+    t =     7.59s         Launch com.johannesemmrich.Restock
+    t =     7.59s             Terminate com.johannesemmrich.Restock:36999
+2026-09-28 08:08:01.179 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:08:01.179 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     8.83s             Setting up automation session
+    t =     9.60s             Wait for com.johannesemmrich.Restock to idle
+    t =    10.95s     Terminate com.johannesemmrich.Restock:37116
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalTextAndAiMarkAreReadableInDarkMode]' passed (12.009 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' started.
+    t =     0.00s Start Test at 2026-09-28 08:08:04.571
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:08:04.588 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:08:04.588 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.22s         Setting up automation session
+    t =     1.04s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.82s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.82s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.84s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.84s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.97s Waiting 5.0s for "receiptReview.line.0.card" Any to exist
+    t =     5.99s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.card" Any`
+    t =     5.99s         Checking existence of `"receiptReview.line.0.card" Any`
+    t =     6.11s Checking existence of `"receiptReview.line.0.price" Any`
+    t =     6.21s Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =     6.31s Waiting 5.0s for "receiptReview.line.1.card" Any to exist
+    t =     7.33s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.1.card" Any`
+    t =     7.33s         Checking existence of `"receiptReview.line.1.card" Any`
+    t =     7.44s Checking existence of `"receiptReview.line.1.price" Any`
+    t =     7.54s Checking existence of `"receiptReview.line.1.checkbox" Any`
+    t =     7.64s Waiting 5.0s for "receiptReview.line.2.card" Any to exist
+    t =     8.67s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.card" Any`
+    t =     8.67s         Checking existence of `"receiptReview.line.2.card" Any`
+    t =     8.77s Checking existence of `"receiptReview.line.2.price" Any`
+    t =     8.87s Checking existence of `"receiptReview.line.2.checkbox" Any`
+    t =     8.97s Waiting 5.0s for "receiptReview.line.3.card" Any to exist
+    t =     9.99s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.3.card" Any`
+    t =     9.99s         Checking existence of `"receiptReview.line.3.card" Any`
+    t =    10.09s Checking existence of `"receiptReview.line.3.price" Any`
+    t =    10.20s Checking existence of `"receiptReview.line.3.checkbox" Any`
+    t =    10.30s Checking existence of `"receiptReview.line.0.aiMark" Any`
+    t =    10.39s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =    11.40s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =    11.40s         Checking existence of `"receiptReview.saveButton" Button`
+    t =    11.44s Find the "receiptReview.saveButton" Button
+    t =    11.49s Tear Down
+    t =    11.49s     Setting appearance mode to Light
+    t =    11.49s         Wait for com.johannesemmrich.Restock to idle
+    t =    11.49s     Open com.johannesemmrich.Restock
+    t =    11.49s         Launch com.johannesemmrich.Restock
+    t =    11.49s             Terminate com.johannesemmrich.Restock:37127
+2026-09-28 08:08:17.112 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:08:17.112 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    12.75s             Setting up automation session
+    t =    13.59s             Wait for com.johannesemmrich.Restock to idle
+    t =    14.96s     Terminate com.johannesemmrich.Restock:37274
+Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' passed (16.028 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptDoesNotProduceOneCentItemPrice]' started.
+    t =     0.00s Start Test at 2026-09-28 08:08:20.599
+    t =     0.01s Set Up
+    t =     0.02s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:08:20.617 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:08:20.617 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     1.00s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testSavedReceiptDoesNotProduceOneCentItemPrice] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.69s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.70s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.71s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.71s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.82s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =     5.85s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =     5.85s         Checking existence of `"receiptReview.saveButton" Button`
+    t =     5.90s Tap "receiptReview.saveButton" Button
+    t =     5.90s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.90s     Find the "receiptReview.saveButton" Button
+    t =     5.94s     Check for interrupting elements affecting "receiptReview.saveButton" Button
+    t =     5.98s     Synthesize event
+    t =     6.28s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.64s Waiting 10.0s for Button (First Match) to exist
+    t =     7.66s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     7.66s         Checking existence of `Button (First Match)`
+    t =     8.72s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =     8.72s     Find the Button (First Match)
+    t =     8.77s Tap "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =     8.77s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.77s     Find the "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =     8.79s     Check for interrupting elements affecting "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =     8.80s     Synthesize event
+    t =     9.09s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.28s Waiting 10.0s for "Hackfleisch" StaticText to exist
+    t =    10.29s     Checking `Expect predicate `existsNoRetry == 1` for object "Hackfleisch" StaticText`
+    t =    10.30s         Checking existence of `"Hackfleisch" StaticText`
+    t =    10.35s Waiting 3.0s for StaticText (First Match) to exist
+    t =    11.37s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    11.37s         Checking existence of `StaticText (First Match)`
+    t =    11.46s         Capturing element debug description
+    t =    12.39s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    12.39s         Checking existence of `StaticText (First Match)`
+    t =    12.46s         Capturing element debug description
+    t =    13.35s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    13.35s         Checking existence of `StaticText (First Match)`
+    t =    13.43s         Capturing element debug description
+    t =    13.43s     Checking existence of `StaticText (First Match)`
+    t =    13.49s Collecting debug information to assist test failure triage
+    t =    13.49s     Requesting snapshot of accessibility hierarchy for app with pid 37298
+    t =    13.56s Tear Down
+    t =    13.56s     Setting appearance mode to Light
+    t =    13.57s         Wait for com.johannesemmrich.Restock to idle
+    t =    13.57s     Open com.johannesemmrich.Restock
+    t =    13.57s         Launch com.johannesemmrich.Restock
+    t =    13.57s             Terminate com.johannesemmrich.Restock:37298
+2026-09-28 08:08:35.203 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:08:35.203 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    14.82s             Setting up automation session
+    t =    15.63s             Wait for com.johannesemmrich.Restock to idle
+    t =    17.01s     Terminate com.johannesemmrich.Restock:37431
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptDoesNotProduceOneCentItemPrice]' passed (18.106 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSaveIsNotTriggerableWithoutAnySelectedPosition]' started.
+    t =     0.00s Start Test at 2026-09-28 08:08:38.706
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:08:38.723 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:08:38.723 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     0.98s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testSaveIsNotTriggerableWithoutAnySelectedPosition] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.79s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.79s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.82s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.82s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.91s Waiting 5.0s for "receiptReview.sectionHeader" Any to exist
+    t =     5.93s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.sectionHeader" Any`
+    t =     5.93s         Checking existence of `"receiptReview.sectionHeader" Any`
+    t =     6.04s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =     7.05s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =     7.05s         Checking existence of `"receiptReview.saveButton" Button`
+    t =     7.08s Find the "receiptReview.saveButton" Button
+    t =     7.11s Waiting 5.0s for "receiptReview.line.0.checkbox" Any to exist
+    t =     8.13s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.checkbox" Any`
+    t =     8.13s         Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =     8.24s Find the "receiptReview.line.0.checkbox" Any
+    t =     8.36s Find the "receiptReview.line.0.checkbox" Button
+    t =     8.47s Tap "receiptReview.line.0.checkbox" Button
+    t =     8.47s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.48s     Find the "receiptReview.line.0.checkbox" Button
+    t =     8.56s     Check for interrupting elements affecting "receiptReview.line.0.checkbox" Button
+    t =     8.61s     Synthesize event
+    t =     8.90s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.90s Waiting 5.0s for "receiptReview.line.1.checkbox" Any to exist
+    t =     9.92s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.1.checkbox" Any`
+    t =     9.92s         Checking existence of `"receiptReview.line.1.checkbox" Any`
+    t =    10.03s Find the "receiptReview.line.1.checkbox" Any
+    t =    10.15s Find the "receiptReview.line.1.checkbox" Button
+    t =    10.24s Tap "receiptReview.line.1.checkbox" Button
+    t =    10.24s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.25s     Find the "receiptReview.line.1.checkbox" Button
+    t =    10.34s     Check for interrupting elements affecting "receiptReview.line.1.checkbox" Button
+    t =    10.38s     Synthesize event
+    t =    10.67s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.68s Waiting 5.0s for "receiptReview.line.2.checkbox" Any to exist
+    t =    11.69s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.checkbox" Any`
+    t =    11.69s         Checking existence of `"receiptReview.line.2.checkbox" Any`
+    t =    11.80s Find the "receiptReview.line.2.checkbox" Any
+    t =    11.90s Find the "receiptReview.line.2.checkbox" Button
+    t =    12.01s Tap "receiptReview.line.2.checkbox" Button
+    t =    12.01s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.01s     Find the "receiptReview.line.2.checkbox" Button
+    t =    12.10s     Check for interrupting elements affecting "receiptReview.line.2.checkbox" Button
+    t =    12.15s     Synthesize event
+    t =    12.44s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.44s Checking existence of `"receiptReview.sectionHeader" Any`
+    t =    12.54s Checking existence of `"receiptReview.sectionHeader" Any`
+    t =    12.63s Find the "receiptReview.sectionHeader" Any
+    t =    12.72s Find the "receiptReview.sectionHeader" StaticText
+    t =    12.80s Find the "receiptReview.saveButton" Button
+    t =    12.83s Waiting 5.0s for "receiptReview.line.3.checkbox" Any to exist
+    t =    13.86s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.3.checkbox" Any`
+    t =    13.87s         Checking existence of `"receiptReview.line.3.checkbox" Any`
+    t =    13.99s Find the "receiptReview.line.3.checkbox" Any
+    t =    14.10s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    14.10s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.10s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    14.12s     Check for interrupting elements affecting "Restock" Application
+    t =    14.15s     Synthesize event
+    t =    14.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.34s Find the "receiptReview.line.3.checkbox" Button
+    t =    15.47s Find the "receiptReview.line.3.checkbox" Button
+    t =    15.63s Tap "receiptReview.line.3.checkbox" Button
+    t =    15.63s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.63s     Find the "receiptReview.line.3.checkbox" Button
+    t =    15.75s     Check for interrupting elements affecting "receiptReview.line.3.checkbox" Button
+    t =    15.80s     Synthesize event
+    t =    16.10s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.10s Checking existence of `"receiptReview.sectionHeader" StaticText`
+    t =    16.24s Swipe down Target Application 'com.johannesemmrich.Restock'
+    t =    16.24s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.24s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    16.27s     Check for interrupting elements affecting "Restock" Application
+    t =    16.31s     Synthesize event
+    t =    16.72s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.46s Checking existence of `"receiptReview.sectionHeader" StaticText`
+    t =    17.56s Checking existence of `"receiptReview.sectionHeader" StaticText`
+    t =    17.64s Find the "receiptReview.sectionHeader" StaticText
+    t =    17.72s Find the "receiptReview.sectionHeader" StaticText
+    t =    17.81s Find the "receiptReview.saveButton" Button
+    t =    17.84s Tap "receiptReview.saveButton" Button
+    t =    17.84s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.84s     Find the "receiptReview.saveButton" Button
+    t =    17.87s     Check for interrupting elements affecting "receiptReview.saveButton" Button
+    t =    17.90s     Synthesize event
+    t =    18.20s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.20s Waiting 3.0s for "Bon scannen — Lidl" NavigationBar to not exist
+    t =    19.22s     Checking `Expect predicate `existsNoRetry == 0` for object "Bon scannen — Lidl" NavigationBar`
+    t =    19.22s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    19.27s         Capturing element debug description
+    t =    20.29s     Checking `Expect predicate `existsNoRetry == 0` for object "Bon scannen — Lidl" NavigationBar`
+    t =    20.29s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    20.33s         Capturing element debug description
+    t =    21.20s     Checking `Expect predicate `existsNoRetry == 0` for object "Bon scannen — Lidl" NavigationBar`
+    t =    21.21s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    21.25s         Capturing element debug description
+    t =    21.25s     Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    21.29s Collecting debug information to assist test failure triage
+    t =    21.29s     Requesting snapshot of accessibility hierarchy for app with pid 37445
+    t =    21.35s Find the "receiptReview.sectionHeader" StaticText
+    t =    21.43s Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =    21.52s Tap "receiptReview.line.0.checkbox" Any[0.50, 0.50]
+    t =    21.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.52s     Find the "receiptReview.line.0.checkbox" Any
+    t =    21.61s     Check for interrupting elements affecting "receiptReview.line.0.checkbox" Button
+    t =    21.65s     Synthesize event
+    t =    21.66s         Find the "receiptReview.line.0.checkbox" Button
+    t =    21.75s         Find the "receiptReview.line.0.checkbox" Button
+    t =    21.84s         Find the "receiptReview.line.0.checkbox" Button
+    t =    22.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.22s Find the "receiptReview.sectionHeader" StaticText
+    t =    22.32s Find the "receiptReview.saveButton" Button
+    t =    22.35s Tear Down
+    t =    22.35s     Setting appearance mode to Light
+    t =    22.35s         Wait for com.johannesemmrich.Restock to idle
+    t =    22.36s     Open com.johannesemmrich.Restock
+    t =    22.36s         Launch com.johannesemmrich.Restock
+    t =    22.36s             Terminate com.johannesemmrich.Restock:37445
+2026-09-28 08:09:02.095 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:09:02.096 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    23.59s             Setting up automation session
+    t =    24.50s             Wait for com.johannesemmrich.Restock to idle
+    t =    25.92s     Terminate com.johannesemmrich.Restock:37762
+Test Case '-[RestockUITests.ReceiptReviewUITests testSaveIsNotTriggerableWithoutAnySelectedPosition]' passed (27.058 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' started.
+    t =     0.00s Start Test at 2026-09-28 08:09:05.764
+    t =     0.02s Set Up
+    t =     0.02s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:09:05.785 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:09:05.785 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     0.98s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.79s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.79s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.81s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.81s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.92s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =     5.95s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =     5.95s         Checking existence of `"receiptReview.saveButton" Button`
+    t =     5.99s Tap "receiptReview.saveButton" Button
+    t =     5.99s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.00s     Find the "receiptReview.saveButton" Button
+    t =     6.03s     Check for interrupting elements affecting "receiptReview.saveButton" Button
+    t =     6.06s     Synthesize event
+    t =     6.36s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.72s Waiting 10.0s for Button (First Match) to exist
+    t =     7.75s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     7.75s         Checking existence of `Button (First Match)`
+    t =     8.80s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =     8.80s     Find the Button (First Match)
+    t =     8.84s Tap "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =     8.84s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.84s     Find the "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =     8.86s     Check for interrupting elements affecting "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =     8.87s     Synthesize event
+    t =     9.16s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.28s Waiting 10.0s for "Milch" StaticText to exist
+    t =    10.30s     Checking `Expect predicate `existsNoRetry == 1` for object "Milch" StaticText`
+    t =    10.30s         Checking existence of `"Milch" StaticText`
+    t =    10.35s Waiting 5.0s for StaticText (First Match) to exist
+    t =    11.37s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    11.37s         Checking existence of `StaticText (First Match)`
+    t =    11.43s Tear Down
+    t =    11.43s     Setting appearance mode to Light
+    t =    11.43s         Wait for com.johannesemmrich.Restock to idle
+    t =    11.43s     Open com.johannesemmrich.Restock
+    t =    11.43s         Launch com.johannesemmrich.Restock
+    t =    11.43s             Terminate com.johannesemmrich.Restock:37829
+2026-09-28 08:09:18.224 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:09:18.224 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    12.67s             Setting up automation session
+    t =    13.48s             Wait for com.johannesemmrich.Restock to idle
+    t =    14.85s     Terminate com.johannesemmrich.Restock:37932
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' passed (15.928 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSectionHeaderShowsPositionsSelectedAndSum]' started.
+    t =     0.00s Start Test at 2026-09-28 08:09:21.693
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:09:21.710 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:09:21.710 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.22s         Setting up automation session
+    t =     1.00s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testSectionHeaderShowsPositionsSelectedAndSum] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.82s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.82s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.83s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.83s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.93s Waiting 5.0s for "receiptReview.sectionHeader" Any to exist
+    t =     5.95s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.sectionHeader" Any`
+    t =     5.95s         Checking existence of `"receiptReview.sectionHeader" Any`
+    t =     6.06s Find the "receiptReview.sectionHeader" Any
+    t =     6.22s Tear Down
+    t =     6.22s     Setting appearance mode to Light
+    t =     6.22s         Wait for com.johannesemmrich.Restock to idle
+    t =     6.22s     Open com.johannesemmrich.Restock
+    t =     6.22s         Launch com.johannesemmrich.Restock
+    t =     6.22s             Terminate com.johannesemmrich.Restock:37956
+2026-09-28 08:09:28.962 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:09:28.962 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     7.48s             Setting up automation session
+    t =     8.29s             Wait for com.johannesemmrich.Restock to idle
+    t =     9.68s     Terminate com.johannesemmrich.Restock:38001
+Test Case '-[RestockUITests.ReceiptReviewUITests testSectionHeaderShowsPositionsSelectedAndSum]' passed (10.766 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testTappingListMatchSelectsThatOption]' started.
+    t =     0.00s Start Test at 2026-09-28 08:09:32.459
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:09:32.477 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:09:32.477 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     1.16s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testTappingListMatchSelectsThatOption] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.98s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.99s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     5.00s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     5.00s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     5.09s Waiting 5.0s for "receiptReview.line.2.option.2" Any to exist
+    t =     6.12s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.option.2" Any`
+    t =     6.12s         Checking existence of `"receiptReview.line.2.option.2" Any`
+    t =     6.24s Find the "receiptReview.line.2.option.2" Any
+    t =     6.34s Tap "receiptReview.line.2.option.2" Button
+    t =     6.34s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.34s     Find the "receiptReview.line.2.option.2" Button
+    t =     6.45s     Check for interrupting elements affecting "receiptReview.line.2.option.2" Button
+    t =     6.49s     Synthesize event
+    t =     6.78s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.78s Find the "receiptReview.line.2.option.2" Button
+    t =     6.89s Find the "receiptReview.line.2.option.0" Any
+    t =     7.00s Tear Down
+    t =     7.00s     Setting appearance mode to Light
+    t =     7.00s         Wait for com.johannesemmrich.Restock to idle
+    t =     7.00s     Open com.johannesemmrich.Restock
+    t =     7.00s         Launch com.johannesemmrich.Restock
+    t =     7.00s             Terminate com.johannesemmrich.Restock:38030
+2026-09-28 08:09:40.496 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:09:40.497 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     8.25s             Setting up automation session
+    t =     9.03s             Wait for com.johannesemmrich.Restock to idle
+    t =    10.47s     Terminate com.johannesemmrich.Restock:38105
+Test Case '-[RestockUITests.ReceiptReviewUITests testTappingListMatchSelectsThatOption]' passed (11.577 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testTypingCustomNameIsAppliedWithEveryKeystroke]' started.
+    t =     0.00s Start Test at 2026-09-28 08:09:44.037
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:09:44.054 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:09:44.054 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     0.96s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testTypingCustomNameIsAppliedWithEveryKeystroke] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.67s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.68s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.69s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.69s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.81s Waiting 5.0s for "receiptReview.line.0.checkbox" Any to exist
+    t =     5.82s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.checkbox" Any`
+    t =     5.82s         Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =     5.93s Find the "receiptReview.line.0.checkbox" Any
+    t =     6.01s Waiting 5.0s for "receiptReview.line.0.option.1" Any to exist
+    t =     7.04s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.option.1" Any`
+    t =     7.04s         Checking existence of `"receiptReview.line.0.option.1" Any`
+    t =     7.15s Tap "receiptReview.line.0.option.1" Any
+    t =     7.15s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.15s     Find the "receiptReview.line.0.option.1" Any
+    t =     7.24s     Check for interrupting elements affecting "receiptReview.line.0.option.1" Button
+    t =     7.28s     Synthesize event
+    t =     7.57s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.74s Waiting 5.0s for "receiptReview.line.0.customNameField" TextField to exist
+    t =     8.75s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     8.75s         Checking existence of `"receiptReview.line.0.customNameField" TextField`
+    t =     9.83s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     9.84s     Find the "receiptReview.line.0.customNameField" TextField
+    t =     9.89s Find the "receiptReview.line.0.customNameField" TextField
+    t =     9.93s Type '...' into "receiptReview.line.0.customNameField" TextField
+    t =     9.93s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.93s     Find the "receiptReview.line.0.customNameField" TextField
+    t =     9.97s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    10.01s     Synthesize event
+    t =    10.84s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.26s Type 'Ziegen' into "receiptReview.line.0.customNameField" TextField
+    t =    11.26s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.29s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    11.51s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    11.73s     Synthesize event
+    t =    12.04s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.07s Checking `Expect predicate `label CONTAINS "Ziegen"` for object "receiptReview.line.0.checkbox" Button`
+    t =    13.07s     Find the "receiptReview.line.0.checkbox" Button
+    t =    13.29s Find the "receiptReview.line.0.checkbox" Button
+    t =    13.53s Type 'milch' into "receiptReview.line.0.customNameField" TextField
+    t =    13.53s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.53s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    13.63s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    13.70s     Synthesize event
+    t =    14.00s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.02s Checking `Expect predicate `label CONTAINS "Ziegenmilch"` for object "receiptReview.line.0.checkbox" Button`
+    t =    15.03s     Find the "receiptReview.line.0.checkbox" Button
+    t =    15.20s Checking existence of `Keyboard (First Match)`
+    t =    15.21s Tear Down
+    t =    15.21s     Setting appearance mode to Light
+    t =    15.22s         Wait for com.johannesemmrich.Restock to idle
+    t =    15.22s     Open com.johannesemmrich.Restock
+    t =    15.22s         Launch com.johannesemmrich.Restock
+    t =    15.22s             Terminate com.johannesemmrich.Restock:38139
+2026-09-28 08:10:00.330 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:10:00.330 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    16.50s             Setting up automation session
+    t =    17.41s             Wait for com.johannesemmrich.Restock to idle
+    t =    18.89s     Terminate com.johannesemmrich.Restock:38326
+Test Case '-[RestockUITests.ReceiptReviewUITests testTypingCustomNameIsAppliedWithEveryKeystroke]' passed (20.013 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardDimsItVisibly]' started.
+    t =     0.00s Start Test at 2026-09-28 08:10:04.050
+    t =     0.01s Set Up
+    t =     0.01s Setting appearance mode to Light
+    t =     0.02s     Wait for com.apple.springboard to idle
+    t =     0.60s Open com.johannesemmrich.Restock
+    t =     0.60s     Launch com.johannesemmrich.Restock
+2026-09-28 08:10:04.656 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:10:04.656 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.85s         Setting up automation session
+    t =     1.76s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testUncheckingCardDimsItVisibly] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     4.84s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     4.84s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     5.86s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     5.86s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     6.00s Waiting 5.0s for "receiptReview.line.0.price" Any to exist
+    t =     7.02s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.price" Any`
+    t =     7.02s         Checking existence of `"receiptReview.line.0.price" Any`
+    t =     7.15s Checking existence of `"receiptReview.line.0.price" Any`
+    t =     7.28s Find the "receiptReview.line.0.price" Any
+    t =     7.45s Checking existence of `"receiptReview.sectionHeader" Any`
+    t =     7.53s Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =     7.63s Tap "receiptReview.line.0.checkbox" Any[0.50, 0.50]
+    t =     7.63s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.63s     Find the "receiptReview.line.0.checkbox" Any
+    t =     7.73s     Check for interrupting elements affecting "receiptReview.line.0.checkbox" Button
+    t =     7.77s     Synthesize event
+    t =     7.77s         Find the "receiptReview.line.0.checkbox" Button
+    t =     7.86s         Find the "receiptReview.line.0.checkbox" Button
+    t =     7.96s         Find the "receiptReview.line.0.checkbox" Button
+    t =     8.35s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.35s Find the "receiptReview.sectionHeader" Any
+    t =     8.45s Checking existence of `"receiptReview.line.0.price" StaticText`
+    t =     8.54s Find the "receiptReview.line.0.price" StaticText
+    t =     8.65s Tap "receiptReview.line.0.checkbox" Button[0.50, 0.50]
+    t =     8.65s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.65s     Find the "receiptReview.line.0.checkbox" Button
+    t =     8.74s     Check for interrupting elements affecting "receiptReview.line.0.checkbox" Button
+    t =     8.79s     Synthesize event
+    t =     8.79s         Find the "receiptReview.line.0.checkbox" Button
+    t =     8.88s         Find the "receiptReview.line.0.checkbox" Button
+    t =     8.97s         Find the "receiptReview.line.0.checkbox" Button
+    t =     9.34s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.35s Find the "receiptReview.sectionHeader" StaticText
+    t =     9.43s Checking existence of `"receiptReview.line.0.price" StaticText`
+    t =     9.53s Find the "receiptReview.line.0.price" StaticText
+    t =     9.64s Tear Down
+    t =     9.64s     Setting appearance mode to Light
+    t =     9.64s         Wait for com.johannesemmrich.Restock to idle
+    t =     9.64s     Open com.johannesemmrich.Restock
+    t =     9.64s         Launch com.johannesemmrich.Restock
+    t =     9.64s             Terminate com.johannesemmrich.Restock:38375
+2026-09-28 08:10:14.742 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:10:14.743 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    10.90s             Setting up automation session
+    t =    11.85s             Wait for com.johannesemmrich.Restock to idle
+    t =    13.36s     Terminate com.johannesemmrich.Restock:38436
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardDimsItVisibly]' passed (14.481 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardLowersSelectedCountAndSum]' started.
+    t =     0.00s Start Test at 2026-09-28 08:10:18.532
+    t =     0.03s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+    t =     0.04s     Launch com.johannesemmrich.Restock
+2026-09-28 08:10:18.569 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:10:18.569 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.24s         Setting up automation session
+    t =     0.98s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testUncheckingCardLowersSelectedCountAndSum] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.93s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.93s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.95s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.95s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     5.06s Waiting 5.0s for "receiptReview.sectionHeader" Any to exist
+    t =     6.08s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.sectionHeader" Any`
+    t =     6.08s         Checking existence of `"receiptReview.sectionHeader" Any`
+    t =     6.18s Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =     6.27s Tap "receiptReview.line.0.checkbox" Any
+    t =     6.27s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.27s     Find the "receiptReview.line.0.checkbox" Any
+    t =     6.36s     Check for interrupting elements affecting "receiptReview.line.0.checkbox" Button
+    t =     6.40s     Synthesize event
+    t =     6.70s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.72s Checking `Expect predicate `label CONTAINS[c] "3 ausgewählt"` for object "receiptReview.sectionHeader" Any`
+    t =     7.72s     Find the "receiptReview.sectionHeader" Any
+    t =     7.82s Find the "receiptReview.sectionHeader" StaticText
+    t =     7.91s Tear Down
+    t =     7.91s     Setting appearance mode to Light
+    t =     7.91s         Wait for com.johannesemmrich.Restock to idle
+    t =     7.91s     Open com.johannesemmrich.Restock
+    t =     7.91s         Launch com.johannesemmrich.Restock
+    t =     7.91s             Terminate com.johannesemmrich.Restock:38476
+2026-09-28 08:10:27.478 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:10:27.478 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     9.15s             Setting up automation session
+    t =     9.95s             Wait for com.johannesemmrich.Restock to idle
+    t =    11.36s     Terminate com.johannesemmrich.Restock:38514
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardLowersSelectedCountAndSum]' passed (12.468 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' started.
+    t =     0.00s Start Test at 2026-09-28 08:10:31.000
+    t =     0.01s Set Up
+    t =     0.02s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:10:31.019 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:10:31.019 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     1.03s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.89s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.89s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.92s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.92s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     5.04s Waiting 10.0s for "receiptReview.line.4.originalName" Any to exist
+    t =     6.06s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.4.originalName" Any`
+    t =     6.06s         Checking existence of `"receiptReview.line.4.originalName" Any`
+    t =     6.18s Find the "receiptReview.line.4.originalName" Any
+    t =     6.32s Waiting 10.0s for "receiptReview.line.4.checkbox" Any to exist
+    t =     7.33s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.4.checkbox" Any`
+    t =     7.33s         Checking existence of `"receiptReview.line.4.checkbox" Any`
+    t =     8.47s Checking `Expect predicate `label CONTAINS "Butter"` for object "receiptReview.line.4.checkbox" Any`
+    t =     8.47s     Find the "receiptReview.line.4.checkbox" Any
+    t =     8.61s Waiting 5.0s for "receiptReview.line.4.option.0" Any to exist
+    t =     9.62s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.4.option.0" Any`
+    t =     9.62s         Checking existence of `"receiptReview.line.4.option.0" Any`
+    t =     9.74s Find the "receiptReview.line.4.option.0" Any
+    t =     9.85s Find the "receiptReview.line.4.option.0" Button
+    t =     9.95s Checking existence of `"receiptReview.line.4.option.0" Any`
+    t =    10.06s Find the "receiptReview.line.4.option.0" Any
+    t =    10.19s Checking existence of `"receiptReview.line.4.option.1" Any`
+    t =    10.29s Find the "receiptReview.line.4.option.1" Any
+    t =    10.40s Checking existence of `"receiptReview.line.4.option.2" Any`
+    t =    10.52s Checking existence of `"receiptReview.line.4.option.3" Any`
+    t =    10.64s Tear Down
+    t =    10.64s     Setting appearance mode to Light
+    t =    10.64s         Wait for com.johannesemmrich.Restock to idle
+    t =    10.65s     Open com.johannesemmrich.Restock
+    t =    10.65s         Launch com.johannesemmrich.Restock
+    t =    10.65s             Terminate com.johannesemmrich.Restock:38551
+2026-09-28 08:10:42.663 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:10:42.663 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    11.87s             Setting up automation session
+    t =    12.67s             Wait for com.johannesemmrich.Restock to idle
+    t =    14.04s     Terminate com.johannesemmrich.Restock:38654
+Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' passed (15.141 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testWhitespaceOnlyCustomNameKeepsPreviousItemName]' started.
+    t =     0.00s Start Test at 2026-09-28 08:10:46.141
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-09-28 08:10:46.158 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:10:46.158 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.22s         Setting up automation session
+    t =     0.97s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testWhitespaceOnlyCustomNameKeepsPreviousItemName] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.77s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.77s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.80s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.80s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.92s Waiting 5.0s for "receiptReview.line.0.checkbox" Any to exist
+    t =     5.94s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.checkbox" Any`
+    t =     5.94s         Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =     6.04s Find the "receiptReview.line.0.checkbox" Any
+    t =     6.13s Waiting 5.0s for "receiptReview.line.0.option.1" Any to exist
+    t =     7.15s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.option.1" Any`
+    t =     7.15s         Checking existence of `"receiptReview.line.0.option.1" Any`
+    t =     7.26s Tap "receiptReview.line.0.option.1" Any
+    t =     7.26s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.26s     Find the "receiptReview.line.0.option.1" Any
+    t =     7.35s     Check for interrupting elements affecting "receiptReview.line.0.option.1" Button
+    t =     7.40s     Synthesize event
+    t =     7.69s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.84s Waiting 5.0s for "receiptReview.line.0.customNameField" TextField to exist
+    t =     8.85s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     8.85s         Checking existence of `"receiptReview.line.0.customNameField" TextField`
+    t =     9.95s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     9.95s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    10.01s Find the "receiptReview.line.0.customNameField" TextField
+    t =    10.06s Type '...' into "receiptReview.line.0.customNameField" TextField
+    t =    10.06s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.06s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    10.10s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    10.14s     Synthesize event
+    t =    10.72s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.72s Type ' ' into "receiptReview.line.0.customNameField" TextField
+    t =    10.72s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.72s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    10.77s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    10.81s     Synthesize event
+    t =    11.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.03s Find the "receiptReview.line.0.checkbox" Button
+    t =    11.18s Find the "receiptReview.line.0.checkbox" Button
+    t =    11.32s Tear Down
+    t =    11.32s     Setting appearance mode to Light
+    t =    11.32s         Wait for com.johannesemmrich.Restock to idle
+    t =    11.32s     Open com.johannesemmrich.Restock
+    t =    11.32s         Launch com.johannesemmrich.Restock
+    t =    11.32s             Terminate com.johannesemmrich.Restock:38665
+2026-09-28 08:10:58.506 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-28 08:10:58.506 xcodebuild[35945:80207336] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    12.57s             Setting up automation session
+    t =    13.39s             Wait for com.johannesemmrich.Restock to idle
+    t =    14.79s     Terminate com.johannesemmrich.Restock:38790
+Test Case '-[RestockUITests.ReceiptReviewUITests testWhitespaceOnlyCustomNameKeepsPreviousItemName]' passed (15.856 seconds).
+Test Suite 'ReceiptReviewUITests' passed at 2026-09-28 08:11:01.998.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 294.430 (294.443) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-09-28 08:11:01.999.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 294.430 (294.444) seconds
+Test Suite 'Selected tests' passed at 2026-09-28 08:11:02.000.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 294.430 (294.445) seconds
+2026-09-28 08:11:15.454 xcodebuild[35945:80207336] [MT] IDETestOperationsObserverDebug: 323.291 elapsed -- Testing started completed.
+2026-09-28 08:11:15.454 xcodebuild[35945:80207336] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-28 08:11:15.454 xcodebuild[35945:80207336] [MT] IDETestOperationsObserverDebug: 323.291 sec, +323.291 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dehwhbtzjpalnjgoddettdugtujq/Logs/Test/Test-Restock-2026.09.28_08-05-50-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

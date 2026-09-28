@@ -1,0 +1,511 @@
+<title>Bon-Prüfkarte #50</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --paper: #EFEBE0;
+    --paper-2: #E5E0D2;
+    --ink: #201D16;
+    --ink-soft: #5C5648;
+    --olive: #666F38;
+    --rust: #8C4A2F;
+    --rule: #CFC8B6;
+    --shadow: rgba(32, 29, 22, .10);
+  }
+  :root:not([data-theme="light"]) { }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #17160F;
+      --paper-2: #211F16;
+      --ink: #EBE7DA;
+      --ink-soft: #A7A08C;
+      --olive: #A7AE6B;
+      --rust: #D08A6A;
+      --rule: #3A362B;
+      --shadow: rgba(0, 0, 0, .45);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #17160F;
+    --paper-2: #211F16;
+    --ink: #EBE7DA;
+    --ink-soft: #A7A08C;
+    --olive: #A7AE6B;
+    --rust: #D08A6A;
+    --rule: #3A362B;
+    --shadow: rgba(0, 0, 0, .45);
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 72px; }
+
+  h1, h2, h3 { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(32px, 5vw, 46px); font-weight: 700; line-height: 1.08; letter-spacing: -.02em; }
+  h2 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; letter-spacing: -.01em; }
+  h3 { font-size: 18px; font-weight: 700; }
+  p { margin: 0; }
+
+  .eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase;
+    color: var(--olive);
+  }
+  .lede { font-size: 20px; color: var(--ink-soft); max-width: 62ch; }
+
+  header.top { display: flex; flex-direction: column; gap: 14px; }
+  section { margin-top: 56px; display: flex; flex-direction: column; gap: 20px; }
+  .section-head { display: flex; flex-direction: column; gap: 8px; }
+
+  /* ---- Beleg ---- */
+  .proof { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
+  figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  figure img {
+    width: 100%; max-width: 100%; display: block; border-radius: 10px;
+    border: 1px solid var(--rule); box-shadow: 0 2px 10px var(--shadow);
+  }
+  figcaption { font-size: 15px; color: var(--ink-soft); }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  /* ---- Vergleichsraster ---- */
+  .switcher { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .switcher span { font-size: 14px; color: var(--ink-soft); }
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 9px; overflow: hidden; }
+  .seg button {
+    font: inherit; font-size: 14px; font-weight: 600; padding: 7px 15px;
+    background: transparent; color: var(--ink-soft); border: 0; cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] { background: var(--olive); color: var(--paper); }
+  .seg button:focus-visible { outline: 2px solid var(--olive); outline-offset: 2px; }
+
+  .compare { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 880px) { .compare { grid-template-columns: 1fr; } }
+
+  .col { display: flex; flex-direction: column; gap: 12px; }
+  .col-head { display: flex; flex-direction: column; gap: 4px; padding-bottom: 10px; border-bottom: 2px solid var(--rule); }
+  .col-head .tagline { font-size: 14px; color: var(--ink-soft); }
+  .col.is-today .col-head { border-bottom-color: var(--rust); }
+  .col.is-pick .col-head { border-bottom-color: var(--olive); }
+  .badge {
+    align-self: flex-start; font-size: 11px; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 5px;
+  }
+  .badge.today { background: color-mix(in srgb, var(--rust) 16%, transparent); color: var(--rust); }
+  .badge.pick { background: color-mix(in srgb, var(--olive) 20%, transparent); color: var(--olive); }
+
+  /* ---- iOS-Nachbau: feste App-Farben, unabhängig vom Seitentheme ---- */
+  .stage {
+    --rc-canvas: #F5F2E9; --rc-surface: #FDFBF4; --rc-ink: #201D16;
+    --rc-sec: #6F6A5B; --rc-hair: rgba(32,29,22,.13); --rc-hair-2: rgba(32,29,22,.26);
+    --rc-accent: #666F38; --rc-accent-bg: rgba(102,111,56,.13);
+    background: var(--rc-canvas);
+    border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 14px;
+    border: 1px solid var(--rule);
+  }
+  .stage.dark {
+    --rc-canvas: #141310; --rc-surface: #1D1C16; --rc-ink: #EBE7DA;
+    --rc-sec: #A29B8A; --rc-hair: rgba(235,231,218,.13); --rc-hair-2: rgba(235,231,218,.26);
+    --rc-accent: #A7AE6B; --rc-accent-bg: rgba(167,174,107,.16);
+  }
+
+  .card {
+    background: var(--rc-surface); border: 1px solid var(--rc-hair); border-radius: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    color: var(--rc-ink); overflow: hidden;
+  }
+  .card-top { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .raw-row { display: flex; align-items: flex-start; gap: 12px; }
+  .raw {
+    flex: 1; font-size: 13px; color: var(--rc-sec); line-height: 1.3;
+  }
+  .raw.big { font-size: 15px; color: var(--rc-ink); font-weight: 500; }
+  .copy {
+    flex-shrink: 0; width: 22px; height: 22px; color: var(--rc-accent);
+    display: grid; place-items: center;
+  }
+  .copy svg { width: 15px; height: 15px; }
+  .check {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px;
+    background: var(--rc-accent); display: grid; place-items: center;
+  }
+  .check svg { width: 15px; height: 15px; }
+
+  .opts { display: flex; flex-direction: column; }
+  .opt { height: 48px; display: flex; align-items: center; gap: 10px; }
+  .radio {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    border: 1.5px solid var(--rc-hair-2); display: grid; place-items: center;
+  }
+  .opt.on .radio { border-color: var(--rc-accent); }
+  .opt.on .radio::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--rc-accent); }
+  .opt-name { font-size: 15px; color: var(--rc-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .opt.muted .opt-name { color: var(--rc-sec); }
+  .opt .spacer { flex: 1; min-width: 4px; }
+  .note { font-size: 11px; color: var(--rc-sec); flex-shrink: 0; }
+  .pill {
+    font-size: 10px; font-weight: 600; color: var(--rc-accent); background: var(--rc-accent-bg);
+    padding: 2px 6px; border-radius: 999px; flex-shrink: 0;
+  }
+  .card-rule { height: 1px; background: var(--rc-hair); }
+  .card-bottom { padding: 14px; display: flex; align-items: center; gap: 8px; }
+  .price { font-size: 14px; color: var(--rc-ink); }
+  .change { margin-left: auto; font-size: 15px; font-weight: 600; color: var(--rc-accent); }
+
+  .verdict {
+    font-size: 14px; line-height: 1.45; padding: 10px 12px; border-radius: 8px;
+    border-left: 3px solid var(--rust); background: color-mix(in srgb, var(--rust) 9%, transparent);
+    color: var(--ink);
+  }
+  .verdict.ok { border-left-color: var(--olive); background: color-mix(in srgb, var(--olive) 11%, transparent); }
+  .verdict b { font-weight: 600; }
+
+  /* ---- Tabelle ---- */
+  .table-scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 16px; min-width: 620px; }
+  th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-family: "Bricolage Grotesque", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  .yes { color: var(--olive); font-weight: 600; }
+  .no { color: var(--rust); font-weight: 600; }
+
+  /* ---- Aufteilung ---- */
+  .slices { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .slice {
+    background: var(--paper-2); border-radius: 10px; padding: 18px;
+    display: flex; flex-direction: column; gap: 8px; border-top: 3px solid var(--rule);
+  }
+  .slice.first { border-top-color: var(--olive); }
+  .slice h3 { font-size: 17px; }
+  .slice .meta { font-size: 13px; color: var(--ink-soft); letter-spacing: .03em; }
+  .slice p { font-size: 15px; color: var(--ink-soft); }
+
+  .questions { display: flex; flex-direction: column; gap: 14px; }
+  .q { display: flex; gap: 14px; align-items: baseline; }
+  .q .num {
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 15px;
+    color: var(--olive); flex-shrink: 0;
+  }
+  .q p { font-size: 17px; }
+  .q p em { color: var(--ink-soft); font-style: italic; }
+
+  footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--ink-soft); }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">Restock · Issue&nbsp;50 · Analyse</p>
+    <h1>Die Bon-Prüfkarte hat ein Namensproblem</h1>
+    <p class="lede">
+      Vier Beobachtungen aus der Bon-Prüfliste — und zwei Wege, sie zu beheben.
+      Ein Weg macht den Bontext selbst wählbar, der andere lässt ihn Beschriftung bleiben.
+    </p>
+  </header>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">Belegt</p>
+      <h2>Eine Karte ohne Markierung ist kein Schönheitsfehler</h2>
+      <p class="lede" style="font-size:17px">
+        Links dein Screenshot. Rechts derselbe Zustand, heute Morgen im Simulator nachgestellt —
+        über den echten Weg aus der Teilen-Erweiterung, ohne eine Zeile Code zu ändern.
+      </p>
+    </div>
+    <div class="proof">
+      <figure>
+        <img src="heute-karte-fehlerfall.png" alt="Bon-Karte „Frosch Holzreiniger 750ml“: Häkchen gesetzt, alle vier Auswahlkreise leer.">
+        <figcaption><b>Dein Bon, DM.</b> Häkchen gesetzt, vier Optionen — keine markiert.</figcaption>
+      </figure>
+      <figure>
+        <img src="repro-karte-btr.png" alt="Nachgestellte Bon-Karte „BTR“: Häkchen gesetzt, beide Auswahlkreise leer.">
+        <figcaption><b>Nachgestellt.</b> Die Bonzeile „BTR“ wird im Hintergrund zu „Butter“ aufgelöst — nachdem die Karte schon gezeichnet war. Die Auswahl kennt den neuen Namen nicht mehr.</figcaption>
+      </figure>
+    </div>
+    <p class="verdict">
+      <b>Warum das zählt:</b> Gespeichert wird der Name, den die Karte nicht anzeigt — hier „Butter“.
+      Restock merkt sich dauerhaft „BTR&nbsp;→&nbsp;Butter“, ohne dass du das je bestätigt hast.
+      Und wenn die Auflösung danebenliegt, lernt sie den Fehler mit.
+    </p>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">Entwurf</p>
+      <h2>Heute, und zwei Wege weiter</h2>
+      <div class="switcher">
+        <span>Darstellung der App:</span>
+        <div class="seg" role="group" aria-label="Erscheinungsbild der Vorschau">
+          <button type="button" id="btn-light" aria-pressed="true">Hell</button>
+          <button type="button" id="btn-dark" aria-pressed="false">Dunkel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="compare">
+
+      <div class="col is-today">
+        <div class="col-head">
+          <span class="badge today">Heute</span>
+          <h3>Bontext als Kleingedrucktes</h3>
+          <p class="tagline">13&nbsp;pt, grau, nicht antippbar, nicht kopierbar.</p>
+        </div>
+        <div class="stage" data-stage>
+          <div class="card">
+            <div class="card-top">
+              <div class="raw-row">
+                <div class="raw">BTR</div>
+                <div class="check"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3.5 3.5 7.5-8" stroke="#F5F2E9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+              <div class="opts">
+                <div class="opt"><span class="radio"></span><span class="opt-name">BTR</span></div>
+                <div class="opt muted"><span class="radio"></span><span class="opt-name">Anderer Name …</span></div>
+              </div>
+            </div>
+            <div class="card-rule"></div>
+            <div class="card-bottom"><span class="price">1,49 € · 1 St. · 1,49 € je Stück</span><span class="change">Ändern</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="raw-row">
+                <div class="raw">SKYR NATUR 500G</div>
+                <div class="check"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3.5 3.5 7.5-8" stroke="#F5F2E9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+              <div class="opts">
+                <div class="opt on"><span class="radio"></span><span class="opt-name">Skyr</span><span class="spacer"></span><span class="note">auf deiner Liste</span></div>
+                <div class="opt muted"><span class="radio"></span><span class="opt-name">Anderer Name …</span></div>
+              </div>
+            </div>
+            <div class="card-rule"></div>
+            <div class="card-bottom"><span class="price">2,29 € · 500g · 4,58 € je kg</span><span class="change">Ändern</span></div>
+          </div>
+        </div>
+        <p class="verdict">
+          Der gute Name ist unsichtbar, der Bontext nicht verwertbar — und die erste Karte
+          speichert etwas, das nirgends steht.
+        </p>
+      </div>
+
+      <div class="col is-pick">
+        <div class="col-head">
+          <span class="badge pick">Entwurf A · Empfehlung</span>
+          <h3>Der Bontext wird zur Wahl</h3>
+          <p class="tagline">15&nbsp;pt, dunkel, kopierbar — und als eigene Zeile antippbar, in lesbarer Schreibweise.</p>
+        </div>
+        <div class="stage" data-stage>
+          <div class="card">
+            <div class="card-top">
+              <div class="raw-row">
+                <div class="raw big">BTR</div>
+                <div class="copy" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><rect x="5.2" y="5.2" width="8.3" height="8.3" rx="1.8" stroke="currentColor" stroke-width="1.4"/><path d="M10.8 5.2V4a1.5 1.5 0 0 0-1.5-1.5H4a1.5 1.5 0 0 0-1.5 1.5v5.3A1.5 1.5 0 0 0 4 10.8h1.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+                <div class="check"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3.5 3.5 7.5-8" stroke="#F5F2E9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+              <div class="opts">
+                <div class="opt on"><span class="radio"></span><span class="opt-name">Butter</span></div>
+                <div class="opt"><span class="radio"></span><span class="opt-name">Btr</span><span class="spacer"></span><span class="note">wie auf dem Bon</span></div>
+                <div class="opt muted"><span class="radio"></span><span class="opt-name">Anderer Name …</span></div>
+              </div>
+            </div>
+            <div class="card-rule"></div>
+            <div class="card-bottom"><span class="price">1,49 € · 1 St. · 1,49 € je Stück</span><span class="change">Ändern</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="raw-row">
+                <div class="raw big">SKYR NATUR 500G</div>
+                <div class="copy" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><rect x="5.2" y="5.2" width="8.3" height="8.3" rx="1.8" stroke="currentColor" stroke-width="1.4"/><path d="M10.8 5.2V4a1.5 1.5 0 0 0-1.5-1.5H4a1.5 1.5 0 0 0-1.5 1.5v5.3A1.5 1.5 0 0 0 4 10.8h1.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+                <div class="check"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3.5 3.5 7.5-8" stroke="#F5F2E9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+              <div class="opts">
+                <div class="opt on"><span class="radio"></span><span class="opt-name">Skyr</span><span class="spacer"></span><span class="note">auf deiner Liste</span></div>
+                <div class="opt"><span class="radio"></span><span class="opt-name">Skyr Natur 500g</span><span class="spacer"></span><span class="note">wie auf dem Bon</span></div>
+                <div class="opt muted"><span class="radio"></span><span class="opt-name">Anderer Name …</span></div>
+              </div>
+            </div>
+            <div class="card-rule"></div>
+            <div class="card-bottom"><span class="price">2,29 € · 500g · 4,58 € je kg</span><span class="change">Ändern</span></div>
+          </div>
+        </div>
+        <p class="verdict ok">
+          Alle vier Punkte erledigt. Preis: eine Zeile mehr pro Karte, und die zugesagte
+          Obergrenze von drei Namensvorschlägen wird auf vier angehoben.
+        </p>
+      </div>
+
+      <div class="col">
+        <div class="col-head">
+          <span class="badge">Alternative B</span>
+          <h3>Bontext bleibt Beschriftung</h3>
+          <p class="tagline">Größer und kopierbar — aber keine zusätzliche Auswahlzeile.</p>
+        </div>
+        <div class="stage" data-stage>
+          <div class="card">
+            <div class="card-top">
+              <div class="raw-row">
+                <div class="raw big">BTR</div>
+                <div class="copy" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><rect x="5.2" y="5.2" width="8.3" height="8.3" rx="1.8" stroke="currentColor" stroke-width="1.4"/><path d="M10.8 5.2V4a1.5 1.5 0 0 0-1.5-1.5H4a1.5 1.5 0 0 0-1.5 1.5v5.3A1.5 1.5 0 0 0 4 10.8h1.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+                <div class="check"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3.5 3.5 7.5-8" stroke="#F5F2E9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+              <div class="opts">
+                <div class="opt on"><span class="radio"></span><span class="opt-name">Butter</span></div>
+                <div class="opt muted"><span class="radio"></span><span class="opt-name">Anderer Name …</span></div>
+              </div>
+            </div>
+            <div class="card-rule"></div>
+            <div class="card-bottom"><span class="price">1,49 € · 1 St. · 1,49 € je Stück</span><span class="change">Ändern</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="raw-row">
+                <div class="raw big">SKYR NATUR 500G</div>
+                <div class="copy" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><rect x="5.2" y="5.2" width="8.3" height="8.3" rx="1.8" stroke="currentColor" stroke-width="1.4"/><path d="M10.8 5.2V4a1.5 1.5 0 0 0-1.5-1.5H4a1.5 1.5 0 0 0-1.5 1.5v5.3A1.5 1.5 0 0 0 4 10.8h1.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+                <div class="check"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3.5 3.5 7.5-8" stroke="#F5F2E9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+              <div class="opts">
+                <div class="opt on"><span class="radio"></span><span class="opt-name">Skyr</span><span class="spacer"></span><span class="note">auf deiner Liste</span></div>
+                <div class="opt muted"><span class="radio"></span><span class="opt-name">Anderer Name …</span></div>
+              </div>
+            </div>
+            <div class="card-rule"></div>
+            <div class="card-bottom"><span class="price">2,29 € · 500g · 4,58 € je kg</span><span class="change">Ändern</span></div>
+          </div>
+        </div>
+        <p class="verdict">
+          Deutlich kleinerer Eingriff, zehn bestehende Tests bleiben heil. Aber: Du kannst den
+          Bontext nur abschreiben, nicht wählen — „Anderer Name …“ bleibt dein einziger Weg dahin.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">Gegenüberstellung</p>
+      <h2>Was welcher Weg wirklich löst</h2>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Deine Beobachtung</th><th>Entwurf A</th><th>Alternative B</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Bontext zu klein</td>
+            <td class="yes">Gelöst — 15 pt, volle Textfarbe</td>
+            <td class="yes">Gelöst — identisch</td>
+          </tr>
+          <tr>
+            <td>Bontext kopieren</td>
+            <td class="yes">Langer Druck → „Kopieren“</td>
+            <td class="yes">Identisch</td>
+          </tr>
+          <tr>
+            <td>Guter Vorschlag erst nach Auswahl sichtbar</td>
+            <td class="yes">Steht als erste, markierte Zeile</td>
+            <td class="yes">Identisch</td>
+          </tr>
+          <tr>
+            <td>Keine Option markiert</td>
+            <td class="yes">Unmöglich — immer genau eine</td>
+            <td class="yes">Identisch</td>
+          </tr>
+          <tr>
+            <td>Bontext als Name wählbar</td>
+            <td class="yes">Eigene Zeile, lesbar geschrieben</td>
+            <td class="no">Nur über „Anderer Name …“ abtippen</td>
+          </tr>
+          <tr>
+            <td>Aufwand an bestehenden Tests</td>
+            <td>Zehn Tests müssen nachgezogen werden</td>
+            <td class="yes">Ein Test</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">Zuschnitt</p>
+      <h2>Zu viel für eine Lieferung — Vorschlag: drei</h2>
+      <p class="lede" style="font-size:17px">
+        Alles zusammen liegt bei rund 300 Zeilen Änderung und damit über unserer Grenze.
+        In dieser Reihenfolge kommt das Wichtigste zuerst, und jede Lieferung steht für sich.
+      </p>
+    </div>
+    <div class="slices">
+      <div class="slice first">
+        <p class="meta">Zuerst</p>
+        <h3>Die Auswahl stimmt wieder</h3>
+        <p>Immer genau eine markierte Zeile, und der aufgelöste Name steht sichtbar darin.
+          Behebt den einzigen Punkt, der heute falsche Daten schreibt.</p>
+      </div>
+      <div class="slice">
+        <p class="meta">Danach</p>
+        <h3>Der Bontext wird lesbar</h3>
+        <p>Größer, in voller Textfarbe, mit „Kopieren“ beim langen Druck. Rein sichtbar,
+          ohne Auswirkung auf gespeicherte Namen.</p>
+      </div>
+      <div class="slice">
+        <p class="meta">Zum Schluss</p>
+        <h3>Der Bontext wird wählbar</h3>
+        <p>Eigene Auswahlzeile in lesbarer Schreibweise. Der größte Eingriff — er ändert
+          eine Zusage, die seit dem Umbau der Karte gilt.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">Offen</p>
+      <h2>Drei Fragen an dich</h2>
+    </div>
+    <div class="questions">
+      <div class="q">
+        <span class="num">01</span>
+        <p>Entwurf A oder Alternative B? <em>Empfehlung: A — er erfüllt alle vier Punkte, du hast die wählbare Bon-Zeile ausdrücklich gewollt.</em></p>
+      </div>
+      <div class="q">
+        <span class="num">02</span>
+        <p>Dreigeteilt in der gezeigten Reihenfolge — oder alles in einem Rutsch? <em>Empfehlung: dreigeteilt, damit der Datenfehler nicht auf den Rest wartet.</em></p>
+      </div>
+      <div class="q">
+        <span class="num">03</span>
+        <p>Schreibweise der Bon-Zeile: „SKYR NATUR 500G“ wird zu <em>Skyr natur 500g</em> (heutige Regel), zu <em>Skyr Natur 500g</em> (jedes Wort groß) oder bleibt unverändert?</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Restock · Analyse zu Issue 50 · 27. September 2026 · Fehlerbild im Simulator nachgestellt,
+    Farben und Größen aus dem Gestaltungssystem der App.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var light = document.getElementById('btn-light');
+    var dark = document.getElementById('btn-dark');
+    var stages = document.querySelectorAll('[data-stage]');
+
+    function apply(isDark) {
+      stages.forEach(function (el) { el.classList.toggle('dark', isDark); });
+      light.setAttribute('aria-pressed', String(!isDark));
+      dark.setAttribute('aria-pressed', String(isDark));
+      try { localStorage.setItem('rc50-stage-dark', isDark ? '1' : '0'); } catch (e) {}
+    }
+
+    light.addEventListener('click', function () { apply(false); });
+    dark.addEventListener('click', function () { apply(true); });
+
+    var saved = null;
+    try { saved = localStorage.getItem('rc50-stage-dark'); } catch (e) {}
+    if (saved === '1') { apply(true); }
+  })();
+</script>

@@ -30,6 +30,7 @@ struct SmartCartApp: App {
             Self.clearReceiptReviewSeedForUITestsIfNeeded(context: container.mainContext)
             Self.clearMenuPlanForUITestsIfNeeded()
             Self.seedReceiptReviewForUITestsIfNeeded(context: container.mainContext)
+            Self.seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
 
@@ -289,6 +290,82 @@ struct SmartCartApp: App {
         // `storeConfidentlyDetected: true` ist Pflicht — sonst greift in
         // `checkPendingReceiptScan()` der Besuchsfrequenz-Notnagel, das Banner "Laden nicht sicher
         // erkannt" erscheint und "Speichern" bleibt via `storeNeedsConfirmation` gesperrt.
+        ReceiptShareHandoff.store(SharedReceiptPayload(
+            storeID: store.id,
+            storeConfidentlyDetected: true,
+            lines: lines,
+            rawLines: lines.map(\.originalName),
+            detectedTotal: lines.reduce(0) { $0 + $1.price }))
+    }
+
+    /// Zweiter, ausdrücklich GEGENLÄUFIGER UI-Test-Seed (Issue #50, Paket 1 —
+    /// `docs/specs/testing/receipt-review-test-entry.md`, „Nachtrag Issue #50, Paket 1").
+    ///
+    /// Derselbe Laden „Lidl" mit denselben sechs Artikeln und denselben vier Basiszeilen wie der
+    /// Seed oben, PLUS eine fünfte Zeile mit `name == originalName == "BTR"` und
+    /// `resolvedByAI == false`. Diese eine Zeile verletzt „Invariante 1 — Fixture-Determinismus"
+    /// ABSICHTLICH: nur so ist `EditableReceiptLine.linesNeedingAIReresolution` nicht leer, nur so
+    /// läuft `reResolveAIIfNeeded()` beim Handoff überhaupt — und genau dieses nachträgliche
+    /// Schreiben von `line.name` ist die Ursache von Issue #50 (Punkt 2 und 4).
+    ///
+    /// „BTR" ist bewusst gewählt: `ReceiptParserService.expandAbbreviations` (Stufe 2) enthält den
+    /// statischen Eintrag `"btr": "Butter"`, die Zeile löst sich also deterministisch auf — ohne
+    /// Apple Intelligence (im Simulator nicht verfügbar) und ohne die Fuzzy-Suche gegen abgehakte
+    /// Artikel (keiner der sechs Seed-Artikel ist abgehakt).
+    ///
+    /// Bewusst KEINE gemeinsame Hilfsfunktion mit dem Seed oben: der ist produktiv und von 17
+    /// Tests abhängig, eine Extraktion wäre ein Drive-by-Refactoring außerhalb dieses Tickets.
+    /// Aufgeräumt wird über das bestehende `-clearReceiptReviewSeedForUITests`, das ohnehin ALLE
+    /// Läden und Artikel löscht und jede offene Nutzlast konsumiert.
+    /// Only runs on `-seedReceiptReviewUnresolvedLineForUITests`, DEBUG-only, never ships to users.
+    private static func seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedReceiptReviewUnresolvedLineForUITests") else { return }
+        if let existing = try? context.fetch(FetchDescriptor<Store>()) {
+            for s in existing { context.delete(s) }
+        }
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")
+        context.insert(store)
+
+        let milch = ShoppingItem(name: "Milch", quantity: "1", store: store)
+        let hafermilch = ShoppingItem(name: "Hafermilch", quantity: "1", store: store)
+        let buttermilch = ShoppingItem(name: "Buttermilch", quantity: "1", store: store)
+        let vollmilch = ShoppingItem(name: "Vollmilch", quantity: "1", store: store)
+        let hackfleisch = ShoppingItem(name: "Hackfleisch", quantity: "1", store: store)
+        let broetchen = ShoppingItem(name: "Brötchen", quantity: "1", store: store)
+        for item in [milch, hafermilch, buttermilch, vollmilch, hackfleisch, broetchen] {
+            context.insert(item)
+        }
+        try? context.save()
+
+        let lines: [ResolvedReceiptLine] = [
+            ResolvedReceiptLine(
+                name: "Frische Vollmilch 3,5 %", originalName: "MILCH 3,5% FRISCH",
+                price: 1.19, quantity: 1, unit: "", weightBasis: nil,
+                suggestions: [], matchedItemID: vollmilch.id, resolvedByAI: true),
+            ResolvedReceiptLine(
+                name: "Bio-Hackfleisch gemischt Rind & Schwein 400 g",
+                originalName: "BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G",
+                price: 4.99, quantity: 1, unit: "400g", weightBasis: nil,
+                suggestions: [], matchedItemID: hackfleisch.id, resolvedByAI: false),
+            ResolvedReceiptLine(
+                name: "Milch", originalName: "MILCH",
+                price: 0.99, quantity: 1, unit: "", weightBasis: nil,
+                suggestions: [
+                    ReceiptSuggestion(name: "Hafermilch", itemID: hafermilch.id),
+                    ReceiptSuggestion(name: "Buttermilch", itemID: buttermilch.id),
+                    ReceiptSuggestion(name: "Vollmilch", itemID: vollmilch.id),
+                ], matchedItemID: milch.id, resolvedByAI: false),
+            ResolvedReceiptLine(
+                name: "Brötchen", originalName: "BROETCHEN",
+                price: 1.56, quantity: 4, unit: "", weightBasis: nil,
+                suggestions: [], matchedItemID: broetchen.id, resolvedByAI: false),
+            // Die gezielte Ausnahme von Invariante 1 — siehe Kopfkommentar.
+            ResolvedReceiptLine(
+                name: "BTR", originalName: "BTR",
+                price: 1.09, quantity: 1, unit: "", weightBasis: nil,
+                suggestions: [], matchedItemID: nil, resolvedByAI: false),
+        ]
+
         ReceiptShareHandoff.store(SharedReceiptPayload(
             storeID: store.id,
             storeConfidentlyDetected: true,

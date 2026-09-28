@@ -58,6 +58,22 @@ final class ReceiptReviewUITests: XCTestCase {
         /// genau dieser Preis am Artikel in der Liste stehen (AC12).
         static let matchedItemName = "Milch"
         static let matchedItemPriceText = "0,99 €"
+
+        // MARK: Zweiter Seed (Issue #50, Paket 1) — `-seedReceiptReviewUnresolvedLineForUITests`
+
+        /// Die fünfte Zeile dieses Seeds: `name == originalName`, also die einzige, für die
+        /// `reResolveAIIfNeeded()` beim Handoff überhaupt läuft. Quelle:
+        /// `SmartCartApp.seedReceiptReviewUnresolvedLineForUITestsIfNeeded`.
+        static let unresolvedLine = 4
+        static let unresolvedLineRawText = "BTR"
+        /// Ergebnis von Stufe 2 der Auflösung (`expandAbbreviations`, Eintrag `"btr": "Butter"`) —
+        /// deterministisch, ohne Apple Intelligence.
+        static let unresolvedLineExpectedName = "Butter"
+        /// Zahl der Auswahlzeilen dieser Karte (drei inhaltliche Höchstgrenze + „Anderer Name …").
+        static let maxOptionsPerCard = 4
+        /// Platzhalter des Feldes „Anderer Name …" — `XCUIElement.value` eines leeren `TextField`
+        /// liefert ihn statt einer leeren Zeichenkette.
+        static let customFieldPlaceholder = "Anderer Name …"
     }
 
     override func setUpWithError() throws {
@@ -116,6 +132,27 @@ final class ReceiptReviewUITests: XCTestCase {
     /// Öffnet den Prüf-Screen und gibt die laufende App zurück.
     private func openedReviewSheet(file: StaticString = #filePath, line: UInt = #line) -> XCUIApplication {
         let app = launchedApp()
+        waitUntilSettled(app)
+        XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 30),
+                      "Das Bon-Prüf-Sheet ist nicht erschienen — Seed oder Handoff greift nicht.",
+                      file: file, line: line)
+        return app
+    }
+
+    /// Startet die App mit dem ZWEITEN Seed (Issue #50, Paket 1) — dem mit der noch
+    /// unaufgelösten fünften Zeile „BTR", für die `reResolveAIIfNeeded()` wirklich läuft.
+    private func launchedAppWithUnresolvedLine() -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewUnresolvedLineForUITests"]
+        app.launch()
+        return app
+    }
+
+    /// Öffnet den Prüf-Screen über den zweiten Seed. Gleiches Muster wie `openedReviewSheet()`.
+    private func openedReviewSheetWithUnresolvedLine(
+        file: StaticString = #filePath, line: UInt = #line
+    ) -> XCUIApplication {
+        let app = launchedAppWithUnresolvedLine()
         waitUntilSettled(app)
         XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 30),
                       "Das Bon-Prüf-Sheet ist nicht erschienen — Seed oder Handoff greift nicht.",
@@ -765,5 +802,153 @@ final class ReceiptReviewUITests: XCTestCase {
         let summary = element(app, "receiptReview.line.\(line).price")
         XCTAssertTrue(normalized(summary.label).contains("3,50 €"),
                       "Dunkelmodus: Preiszeile zeigt den neuen Preis nicht: \(summary.label)")
+    }
+
+    // MARK: - Issue #50, Paket 1 — AC-13/AC-14/AC-15
+
+    /// AC-13/AC-14 — Der reproduzierte Fall aus Issue #50: Nach dem Öffnen aus der
+    /// Teilen-Übergabe löst `reResolveAIIfNeeded()` die Zeile „BTR" nachträglich zu „Butter" auf.
+    /// Die Karte muss diesen Namen als markierte Zeile zeigen — und genau eine Markierung tragen.
+    ///
+    /// Vor Regel 9 blieb `option.0` auf dem Bontext „BTR" stehen (die eingefrorene Auswahlliste
+    /// kennt den neuen Namen nicht) und KEINE Zeile war markiert — genau der Screenshot-Befund
+    /// des Tickets. Das ist der RED-Zustand, den dieser Test gegen den heutigen Code zeigt.
+    func testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution() {
+        let app = openedReviewSheetWithUnresolvedLine()
+        let line = Seed.unresolvedLine
+
+        let bonText = element(app, "receiptReview.line.\(line).originalName")
+        XCTAssertTrue(bonText.waitForExistence(timeout: 10),
+                      "Die fünfte Karte des Seeds fehlt — Nutzlast oder Seed greift nicht.")
+        XCTAssertTrue(bonText.label.contains(Seed.unresolvedLineRawText),
+                      "Vorbedingung: Die fünfte Karte trägt nicht den Bontext "
+                      + "\(Seed.unresolvedLineRawText) — bekommen: \(bonText.label)")
+
+        // Erst warten, bis die nachträgliche Auflösung wirklich durch ist: sie schreibt den Namen
+        // in das Bedienhilfen-Label des Häkchens („Position übernehmen: <Name>"). Ohne dieses
+        // Warten würde der Test den Zustand VOR dem Nachlösen messen und aus dem falschen Grund
+        // fehlschlagen.
+        let checkbox = element(app, "receiptReview.line.\(line).checkbox")
+        XCTAssertTrue(checkbox.waitForExistence(timeout: 10), "Häkchen der fünften Karte fehlt.")
+        expectation(for: NSPredicate(format: "label CONTAINS %@", Seed.unresolvedLineExpectedName),
+                    evaluatedWith: checkbox)
+        waitForExpectations(timeout: 20)
+
+        let firstOption = element(app, "receiptReview.line.\(line).option.0")
+        XCTAssertTrue(firstOption.waitForExistence(timeout: 5), "Erste Auswahlzeile fehlt.")
+        XCTAssertTrue(firstOption.label.contains(Seed.unresolvedLineExpectedName),
+                      "Die erste Auswahlzeile zeigt den nachträglich aufgelösten Namen nicht — "
+                      + "bekommen: \(firstOption.label)")
+        XCTAssertTrue(firstOption.isSelected,
+                      "Die Zeile mit dem geltenden Namen ist nicht markiert.")
+
+        var selected = 0
+        for position in 0..<Seed.maxOptionsPerCard {
+            let option = element(app, "receiptReview.line.\(line).option.\(position)")
+            if option.exists && option.isSelected { selected += 1 }
+        }
+        XCTAssertEqual(selected, 1,
+                       "Es muss genau eine Auswahlzeile markiert sein, gefunden: \(selected).")
+    }
+
+    /// AC-15 — Der PO-Fund: Leert man das vorbelegte Feld „Anderer Name …" vollständig, darf die
+    /// Position nie mit einem leeren Namen dastehen. Geprüft am Bedienhilfen-Label des Häkchens,
+    /// das genau den Namen nennt, den `save()` schreiben würde.
+    ///
+    /// Vor Regel 10 schrieb jeder gelöschte Buchstabe den Namen live durch, bis er bei
+    /// vollständig geleertem Feld leer war.
+    func testClearingCustomNameFieldKeepsPreviousItemName() {
+        let app = openedReviewSheet()
+        let line = Seed.aiLine
+
+        let checkbox = element(app, "receiptReview.line.\(line).checkbox")
+        XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "Häkchen der KI-Zeile fehlt.")
+        XCTAssertTrue(checkbox.label.contains(Seed.aiLineName),
+                      "Vorbedingung: Das Häkchen nennt nicht den bisherigen Namen — "
+                      + "bekommen: \(checkbox.label)")
+
+        let customOption = element(app, "receiptReview.line.\(line).option.1")
+        XCTAssertTrue(customOption.waitForExistence(timeout: 5),
+                      "Auswahlzeile für den eigenen Namen fehlt.")
+        customOption.tap()
+
+        let field = app.textFields["receiptReview.line.\(line).customNameField"]
+        XCTAssertTrue(field.waitForExistence(timeout: 5), "Textfeld für den eigenen Namen fehlt.")
+        expectation(for: NSPredicate(format: "hasKeyboardFocus == true"), evaluatedWith: field)
+        waitForExpectations(timeout: 10)
+
+        let existing = (field.value as? String) ?? ""
+        XCTAssertFalse(existing.isEmpty,
+                       "Vorbedingung: Das Feld ist nicht vorbelegt — dann prüft dieser Test nichts.")
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
+
+        // Das Feld selbst bleibt bewusst leer (sonst könnte man nie einen neuen Namen tippen),
+        // aber die Position behält den Namen, der vor dem Öffnen des Feldes galt.
+        //
+        // `value` eines LEEREN `TextField` ist in XCUITest nicht "", sondern der Platzhaltertext —
+        // beides gilt hier also als leer. Ohne diese Unterscheidung scheitert der Test an seiner
+        // eigenen Vorbedingung statt an der Sache (im RED-Lauf gemessen: "Anderer Name …").
+        let afterDelete = (field.value as? String) ?? ""
+        XCTAssertTrue(afterDelete.isEmpty || afterDelete == Seed.customFieldPlaceholder,
+                      "Vorbedingung: Das Feld ist nach dem Löschen nicht leer — bekommen: \(afterDelete)")
+        XCTAssertTrue(checkbox.label.contains(Seed.aiLineName),
+                      "Die Position steht mit einem leeren Namen da — "
+                      + "bekommen: \(checkbox.label)")
+    }
+
+    /// AC-18 (Issue #50, Paket 1b, F002) — Ein Feld „Anderer Name …", das auf ein einzelnes
+    /// Leerzeichen reduziert wurde, verhält sich wie ein leeres Feld: die Position behält den
+    /// Namen, der vor dem Öffnen des Feldes galt.
+    ///
+    /// Gleiche Strecke wie `testClearingCustomNameFieldKeepsPreviousItemName`, nur wird das Feld
+    /// nicht vollständig geleert, sondern auf ein Leerzeichen reduziert. Vor Paket 1b guardete
+    /// Regel 10 auf `isEmpty`: `line.name` wurde " ", die Position blieb angehakt und zählte in
+    /// Kopfzeile und Summe mit, `save()` verwarf sie über Regel 11 aber still — ohne Rückmeldung.
+    /// Geprüft wird am Bedienhilfen-Label des Häkchens, das genau den Namen nennt, den `save()`
+    /// schreiben würde.
+    func testWhitespaceOnlyCustomNameKeepsPreviousItemName() {
+        let app = openedReviewSheet()
+        let line = Seed.aiLine
+
+        let checkbox = element(app, "receiptReview.line.\(line).checkbox")
+        XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "Häkchen der KI-Zeile fehlt.")
+        XCTAssertTrue(checkbox.label.contains(Seed.aiLineName),
+                      "Vorbedingung: Das Häkchen nennt nicht den bisherigen Namen — "
+                      + "bekommen: \(checkbox.label)")
+
+        let customOption = element(app, "receiptReview.line.\(line).option.1")
+        XCTAssertTrue(customOption.waitForExistence(timeout: 5),
+                      "Auswahlzeile für den eigenen Namen fehlt.")
+        customOption.tap()
+
+        let field = app.textFields["receiptReview.line.\(line).customNameField"]
+        XCTAssertTrue(field.waitForExistence(timeout: 5), "Textfeld für den eigenen Namen fehlt.")
+        expectation(for: NSPredicate(format: "hasKeyboardFocus == true"), evaluatedWith: field)
+        waitForExpectations(timeout: 10)
+
+        let existing = (field.value as? String) ?? ""
+        XCTAssertFalse(existing.isEmpty,
+                       "Vorbedingung: Das Feld ist nicht vorbelegt — dann prüft dieser Test nichts.")
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
+        // Genau der Unterschied zum bestehenden Test: das Feld bleibt nicht leer, es enthält ein
+        // einzelnes Leerzeichen.
+        field.typeText(" ")
+
+        // Bis zu 5 s Geduld: dasselbe Warten wie bei den anderen Label-Prüfungen dieser Klasse.
+        let keptPreviousName = labelOf(checkbox, contains: Seed.aiLineName, within: 5)
+        let label = checkbox.label
+        // Der Namensteil des Labels („Position übernehmen: <Name>"). Endet das Label auf „:",
+        // steht dort kein Name mehr — XCUITest liefert ein Label mit reinen Leerzeichen am Ende
+        // je nach OS-Version getrimmt oder ungetrimmt, beides gilt hier als leerer Name.
+        let trimmedLabel = label.trimmingCharacters(in: .whitespaces)
+        let namePart = trimmedLabel.hasSuffix(":")
+            ? ""
+            : (trimmedLabel.components(separatedBy: ": ").last ?? "")
+        XCTAssertFalse(namePart.trimmingCharacters(in: .whitespaces).isEmpty,
+                       "Die Position steht mit einem Namen aus reinen Leerzeichen da — "
+                       + "bekommen: \"\(label)\"")
+        XCTAssertTrue(keptPreviousName,
+                      "Die Position hat den vorherigen Namen nicht behalten — "
+                      + "bekommen: \(label)")
     }
 }
