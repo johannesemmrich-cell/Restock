@@ -4,8 +4,8 @@ type: feature
 created: 2026-09-22
 updated: 2026-09-28
 status: draft
-workflow: fix-50-import-dialog-design
-workflow_history: [feat-23-receipt-review-screen, fix-37-receipt-name-preselect, fix-50-import-dialog-design-paket2]
+workflow: fix-66-ai-resolved-name-selection
+workflow_history: [feat-23-receipt-review-screen, fix-37-receipt-name-preselect, fix-50-import-dialog-design, fix-50-import-dialog-design-paket2]
 tags: [feature, ui, receipt-scanner]
 ---
 
@@ -13,7 +13,7 @@ tags: [feature, ui, receipt-scanner]
 
 ## Approval
 
-- [ ] Approved
+- [x] Approved
 
 ## Purpose
 
@@ -29,7 +29,8 @@ Kilopreis. Macht den Bon-Import erstmals auf dem iPhone verlässlich prüfbar �
 - **File:** `SmartCart/Views/Prices/ReceiptReviewCard.swift` (neu)
 - **Identifier:** `struct ReceiptReviewCard`, `enum ReceiptNameOption`,
   `static func selectionOptions(for:)`, `static func priceSummary(for:)`,
-  `static func applyQuantityEdit(_:mode:value:)`, `static func sectionHeaderText(count:selected:sum:)`
+  `static func applyQuantityEdit(_:mode:value:)`, `static func sectionHeaderText(count:selected:sum:)`,
+  `static func isSelected(_:for:customActive:)` (Issue #66, siehe „Nachtrag Issue #66" unten)
 
 ## Problem und Design-Grundlage
 
@@ -252,6 +253,49 @@ oben). Volle Herleitung, Regeln 7-8, Design-Entscheidungen und Test Plan in „N
   Eingriff in `save()`, `ReceiptResolutionService` oder `ReceiptParserService`; keine neue
   Wire-Format-Änderung.
 
+### Scope-Erweiterung (Issue #66 — 2026-09-28)
+
+Behebt F001 (Issue #50, Paket 1b bewusst zurückgestellt, siehe „Known Limitations") und die
+„zweite Restlücke" aus Invariante 6, per PO-Entscheidung Entwurf A + Reparatur über „Anderer Name
+…" (siehe „Problem und Design-Grundlage" oben und „Nachtrag Issue #66" unten für die volle
+Herleitung).
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `SmartCart/Views/Prices/ReceiptReviewCard.swift` | MODIFY | `isSelected(_:)` aus einer privaten Instanzmethode in eine neue, statische, unit-testbare Funktion `isSelected(_:for:customActive:)` extrahiert (reiner Aufrufer bleibt in der View), dabei die `.listMatch`-Bedingung gelockert (`!resolvedByAI` entfällt, `matchedItemID == suggestion.itemID \|\| matchedItemID == nil`); `applyCustomName(_:name:)` gleicht den bestätigten Namen case-insensitiv gegen `line.suggestions` ab und setzt `matchedItemID` bei Treffer statt immer `nil`; Regel 9 (`onChange`) bekommt zwei zusätzliche Hooks auf `line.matchedItemID`/`line.resolvedByAI`, alle drei rufen eine neue private `refreshOptionsIfNeeded()` (der bisherige Regel-9-Rumpf, unverändert). Keine Änderung an `selectionOptions(for:)` selbst (Regeln 1-8 bleiben wortgleich). |
+| `RestockTests/ReceiptReviewCardTests.swift` | MODIFY | Neue Unit-Tests für `isSelected(_:for:customActive:)` (alle fünf `ReceiptNameOption`-Fälle, inkl. des gelockerten `.listMatch`-Zweigs und der unveränderten `.custom`-Ausnahme), für die Regel-9-Erweiterung (Guard erkennt fehlende Markierung bei unverändertem Namen) und für den Namensabgleich in `applyCustomName`. Keine Änderung an bestehenden Tests nötig — alle bisherigen Aufrufer von `applyCustomName` benutzen Fixtures ohne `suggestions` (siehe „Nachtrag Issue #66", Abschnitt b). |
+| `RestockUITests/ReceiptReviewUITests.swift` | Keine Änderung | Kein neuer DEBUG-Seed (siehe „Nachweisbarkeit" unten) — die Karte selbst ändert sich in keinem bestehenden Seed-Zustand, weil `resolvedByAI == true` mit `matchedItemID == nil` UND namensgleichem Vorschlag in keinem der beiden bestehenden Seeds vorkommt. |
+
+- Files: **2** — innerhalb des Ziels „max. 4-5 Dateien".
+- LoC: ≈ **+70/−10** (`ReceiptReviewCard.swift` ≈ +45/−8: die extrahierte `isSelected`-Funktion 16
+  Zeilen, der Namensabgleich in `applyCustomName` 4 Zeilen, zwei zusätzliche `onChange`-Hooks plus
+  `refreshOptionsIfNeeded()` 8 Zeilen, Rest Kommentare mit Spec-Verweisen;
+  `ReceiptReviewCardTests.swift` ≈ +25) — deutlich unter dem Standard-Limit von ±250 LoC. Das
+  LoC-Gate zählt Testcode als Produktivcode (Memory `loc-gate-zaehlt-testcode-als-produktiv`) —
+  Reihenfolge in `/50-implement`: erst `ReceiptReviewCard.swift` committen und bauen, dann die
+  Testdatei.
+- Risk Level: **NIEDRIG.** Alle Änderungen liegen in reinen, ohne SwiftUI testbaren Funktionen
+  einer Datei; `save()`, die Wire-Formate, `ReceiptResolutionService` und `SmartCartApp.swift`
+  bleiben unberührt. Die einzige Verhaltensänderung außerhalb der reinen Funktionen ist die
+  Erweiterung von Regel 9 um zwei zusätzliche `onChange`-Hooks — dieselbe zweizeilige Guard-Logik,
+  nur an zwei weiteren Feldern hängend.
+- **Ausdrücklich NICHT geändert:** `ReceiptResolutionService.swift`, `ReceiptScannerView.swift`
+  (auch nicht `save()`/`isSavable`), `SmartCartApp.swift` (kein neuer Seed), `project.pbxproj`
+  (keine neuen Dateien), `selectionOptions(for:)` (Regeln 1-8 unverändert).
+
+**Nachweisbarkeit (Antwort auf die in Issue #66 offen gelassene Frage):** Kein neuer DEBUG-Seed.
+Der reproduzierte Fehlerzustand (`resolvedByAI == true`, `matchedItemID == nil`, `line.name`
+case-insensitiv gleich einem `line.suggestions`-Eintrag) ist vollständig durch die Feldbelegung von
+`EditableReceiptLine` bestimmt — genau die Felder, die `ReceiptScannerView.mergeAIReresolution`
+(`:126-141`) dokumentiert nachvollziehbar setzt (siehe „Nachtrag Issue #66"). Ein Unit-Test, der
+diese Feldbelegung direkt konstruiert (wie es JEDER bestehende Test dieser Datei bereits für
+`resolvedByAI`/`matchedItemID`/`aiSuggestedName` tut), reproduziert damit denselben Zustand, den
+Apple Intelligence im Simulator nicht deterministisch herstellen könnte — ohne Umweg über einen
+Seed, der `SmartCartApp.swift` ändern würde (siehe „Ausdrücklich NICHT geändert" oben). Ein
+Bildschirm-Nachweis über einen neuen Seed wäre zusätzlicher Aufwand ohne zusätzliche Sicherheit:
+die Anzeige-Logik selbst (`isSelected`) ist SwiftUI-frei und bereits vollständig über die neue
+statische Funktion geprüft.
+
 ## Implementation Details
 
 ### 1. Zwei neue, nicht-Codable Felder auf `EditableReceiptLine`
@@ -421,9 +465,11 @@ Volle Herleitung in `docs/context/fix-50-import-dialog-design.md` (Abschnitte �
 „Analysis", „PO-Entscheidungen" und „Nachtrag"). Drei Zusagen, alle in derselben Erweiterung:
 
 1. Der aufgelöste Name steht sichtbar in der Auswahlliste (im Regelfall als markierte Zeile;
-   Ausnahme F001, siehe Zusage 2) — nicht erst im Feld „Anderer Name …".
+   Ausnahme F001, siehe Zusage 2 — **seit Issue #66 ebenfalls behoben**) — nicht erst im Feld
+   „Anderer Name …".
 2. Es ist immer genau eine Option markiert (für eine Zeile mit nicht-leerem `line.name`) — mit
-   den in Invariante 6 benannten Ausnahmen, insbesondere F001 (offen, Issue #66).
+   den in Invariante 6 benannten Ausnahmen. Zum Zeitpunkt von Paket 1 insbesondere F001 (damals
+   offen) — **seit Issue #66 behoben, siehe „Nachtrag Issue #66" und Invariante 6.**
 3. Ein leerer Name ist kein speicherbarer Zustand.
 
 #### Regel 9 — Optionen nachführen, nicht neu berechnen (Zusagen 1+2)
@@ -458,19 +504,23 @@ mehr entspricht, löst die Neuberechnung aus; Regel 5 (Abschnitt 2 oben) sorgt d
 neue Name selbst als vorausgewählte `.currentName`-Zeile erscheint — Zusage 1 ist damit ohne neue
 Regel in `selectionOptions` erledigt, allein durch das Nachführen des `onAppear`-Aufrufers.
 
-**Reichweite von Zusage 2 („immer genau eine Option markiert"):** Gilt für jede Zeile mit
-nicht-leerem `line.name`, mit **zwei** ausdrücklich benannten Ausnahmen — siehe Invariante 6 unten
-und „Known Limitations":
-1. bei leerem `line.name` (Regel 6, bewusst unverändert seit Issue #37);
+**Reichweite von Zusage 2 („immer genau eine Option markiert"), Stand Paket 1 (2026-09-27):** Galt
+für jede Zeile mit nicht-leerem `line.name`, mit **zwei** ausdrücklich benannten Ausnahmen:
+1. bei leerem `line.name` (Regel 6, bewusst unverändert seit Issue #37) — weiterhin gültig;
 2. wenn der aufgelöste Name wörtlich einem eigenen `suggestions`-Eintrag entspricht und die
-   Auflösung dabei `resolvedByAI = true` mit `matchedItemID = nil` setzt — **F001, offen, Issue
-   #66**. Regel 9 führt die Liste in diesem Fall zwar nach, aber die Neuberechnung liefert
+   Auflösung dabei `resolvedByAI = true` mit `matchedItemID = nil` setzt — **F001, damals offen,
+   Issue #66**. Regel 9 führte die Liste in diesem Fall zwar nach, aber die Neuberechnung lieferte
    dasselbe Ergebnis: Dedup-Regel 2 entfernt die KI-Zeile zugunsten des namensgleichen
-   Listen-Treffers, Regel 5 greift mangels Namens-Mismatch nicht, und `isSelected(.listMatch)`
-   verweigert die Markierung wegen `!line.resolvedByAI` (`ReceiptReviewCard.swift:369`). Der Fix
-   ist eine sichtbare Gestaltungsentscheidung (zwei Zeilen mit demselben Namen) und deshalb #66 mit
-   vorgeschaltetem Design-Entwurf zugewiesen; ausformulierte Vorarbeit in
-   `docs/specs/views/receipt-review-card-nachtrag-1b.md`.
+   Listen-Treffers, Regel 5 greift mangels Namens-Mismatch nicht, und das damalige
+   `isSelected(.listMatch)` verweigerte die Markierung wegen `!line.resolvedByAI`. Der Fix war eine
+   sichtbare Gestaltungsentscheidung (zwei Zeilen mit demselben Namen vs. Markierung lockern) und
+   deshalb #66 mit vorgeschaltetem Design-Entwurf zugewiesen. **Seit Issue #66 behoben** (Entwurf A,
+   siehe „Nachtrag Issue #66"): die verworfene Vorarbeit aus
+   `docs/specs/views/receipt-review-card-nachtrag-1b.md` (zwei Zeilen) ist NICHT die umgesetzte
+   Lösung — siehe „Alternativen (verworfen)".
+
+Aktuelle Reichweite (seit Issue #66): siehe Invariante 6 unten — nur noch EINE Ausnahme (leerer
+`line.name`) plus der vorbestehende, unberührte Randfall aus „Known Limitations".
 
 #### Regel 10 — Leerer Name ist kein speicherbarer Zustand (Zusage 3)
 
@@ -809,6 +859,163 @@ Pflichtkorrektur): `testAiSuggestionIsDroppedWhenAListMatchCarriesTheSameName` (
 filtert nur auf `.aiSuggestion`/Namenssuffix, deckt die neue Bon-Zeile nicht ab, prüft aber auch
 nichts Falsches.
 
+### Nachtrag Issue #66 (2026-09-28): Genau eine markierte Zeile, auch nach KI-Auflösung
+
+Behebt F001 (offen seit Issue #50, Paket 1b) und die „zweite Restlücke" aus Invariante 6 —
+beide in `docs/context/fix-66-ai-resolved-name-selection.md` vollständig hergeleitet. Volle
+Entwurfsfreigabe: `docs/artifacts/fix-66-ai-resolved-name-selection/entwurf.html`. **PO-Entscheidung
+2026-09-28: Entwurf A**, ergänzt um den vom PO vorgeschlagenen Reparatur-Mechanismus über „Anderer
+Name …" — siehe unten. **Entwurf B (die in
+`docs/specs/views/receipt-review-card-nachtrag-1b.md` fertig ausformulierte Regel 12
+`isSelectedIgnoringCustom` mit erhaltener, zusätzlicher KI-Zeile) ist damit ausdrücklich
+VERWORFEN**, nicht mehr Kandidat für eine künftige Umsetzung — der Doppelname-Nachteil wog schwerer
+als der Verknüpfungs-Vorteil. **Entwurf C** (Wurzelfix in `ReceiptResolutionService.resolve`, den
+`matchedItemID`-Nachgriff nach Stufe 5 zu wiederholen) ist ebenfalls verworfen: er griffe in
+Invariante 1/AC-12 (Preis-Lernpfad) und die bewusste Trennung „breiter Vorschlags-Pool, engere
+automatische Übernahme" ein — eine Änderung am Lernverhalten für unabgehakte Artikel, nicht an der
+Anzeige. `ReceiptResolutionService.swift` bleibt unverändert.
+
+#### a) Markierungsregel als reine, testbare Funktion extrahiert und gelockert
+
+Die Markierungsregel stand bisher ausschließlich als `private func isSelected(_:)` auf der View
+selbst (`ReceiptReviewCard.swift:388-404`) — ohne SwiftUI-Instanz nicht unit-testbar. Reine
+Extraktion (kein Verhaltensunterschied für vier der fünf Fälle) plus die eine inhaltliche
+Lockerung, die #66 verlangt:
+
+```swift
+static func isSelected(_ option: ReceiptNameOption, for line: EditableReceiptLine, customActive: Bool) -> Bool {
+    if customActive { if case .custom = option { return true }; return false }
+    switch option {
+    case .listMatch(let suggestion):
+        // Issue #66: `!line.resolvedByAI` entfällt. Ein KI-aufgelöster Name, der wörtlich einem
+        // Listen-Treffer entspricht, darf diesen Treffer markieren — sonst bleibt die Karte ohne
+        // markierte Zeile (F001). `matchedItemID == nil` deckt genau diesen Fall zusätzlich zum
+        // unveränderten `matchedItemID == suggestion.itemID` ab; ein `matchedItemID`, das auf
+        // einen ANDEREN Artikel verweist, markiert weiterhin nicht (vorbestehender Randfall aus
+        // Issue #37/#50, siehe „Known Limitations", unverändert).
+        return (line.matchedItemID == suggestion.itemID || line.matchedItemID == nil)
+            && line.name.caseInsensitiveCompare(suggestion.name) == .orderedSame
+    case .aiSuggestion(let name):
+        return line.resolvedByAI
+            && line.name.caseInsensitiveCompare(line.aiSuggestedName ?? name) == .orderedSame
+    case .currentName(let name):
+        return line.name.caseInsensitiveCompare(name) == .orderedSame
+    case .receiptText(let name):
+        return line.name.caseInsensitiveCompare(name) == .orderedSame
+    case .custom:
+        return false
+    }
+}
+```
+
+Die private Instanzmethode wird zum reinen Aufrufer: `private func isSelected(_ option:
+ReceiptNameOption) -> Bool { Self.isSelected(option, for: line, customActive: customActive) }`.
+Jeder bestehende Aufrufer (`optionRow`, `select(_:)`, Regel 9) bleibt unverändert, ruft nur intern
+die neue statische Funktion.
+
+**Warum keine zweite Markierung möglich ist:** Innerhalb EINER `selectionOptions(for:)`-Berechnung
+trägt höchstens ein Kandidat einen zu `line.name` case-insensitiv gleichen Namen — Regel 2
+dedupliziert `.aiSuggestion` gegen einen namensgleichen `.listMatch`, `line.suggestions` selbst ist
+bereits namens-dedupliziert (`ReceiptParserService.completedItemCandidates`, `bestByName`), und
+Regel 5 fügt `.currentName` nur ein, wenn KEIN Kandidat namensgleich ist. Jeder der fünf
+`isSelected`-Zweige verlangt Namensgleichheit zu `line.name` als Vorbedingung — die zusätzliche
+`matchedItemID == nil`-Bedingung im `.listMatch`-Zweig erweitert NICHT die Menge der Kandidaten,
+die überhaupt namensgleich sein können, sie lockert nur, unter welchem `matchedItemID`-Zustand der
+EINE ohnehin schon namensgleiche Kandidat zählt. Invariante 6 („höchstens eine Markierung") bleibt
+deshalb strukturell erhalten.
+
+**Nicht behoben, weil vorbestehend und von #66 nicht berührt:** Trägt ein `.listMatch` denselben
+Namen wie `line.name`, aber `line.matchedItemID` verweist auf einen ANDEREN, existierenden Artikel
+(zwei verschiedene Artikel mit exakt gleichem Namen im selben Laden) — dieser Fall bleibt
+unmarkiert, wie vor #66 (siehe „Known Limitations").
+
+#### b) Reparatur über „Anderer Name …": `applyCustomName`/`applyCustomNameOrFallback`
+
+Zweiter Teil der PO-Entscheidung: Bestätigt der Nutzer im ohnehin vorbelegten Feld „Anderer Name
+…" einen Namen, der case-insensitiv exakt einem Eintrag aus `line.suggestions` entspricht, wird
+`matchedItemID` auf dessen `itemID` gesetzt statt — wie bisher ausnahmslos — auf `nil`. Das ist der
+einzige Weg, mit dem der Nutzer die durch Entwurf A absichtlich fehlende Verknüpfung (siehe
+„Konsequenz" unten) nachträglich herstellen kann, ohne dass eine neue sichtbare Zeile oder ein
+neuer UI-Bestandteil nötig wäre — das Feld ist bereits da und bereits mit `line.name` vorbelegt.
+
+```swift
+static func applyCustomName(_ line: inout EditableReceiptLine, name: String) {
+    line.name = name
+    // Issue #66: ein bestätigter Name, der zu einem der eigenen Vorschläge passt, verknüpft sich
+    // damit — statt wie bisher ausnahmslos auf `nil` zu fallen. `resolvedByAI` bleibt `false`: der
+    // Nutzer hat aktiv bestätigt, das ist kein KI-Signal mehr.
+    line.matchedItemID = line.suggestions.first {
+        $0.name.caseInsensitiveCompare(name) == .orderedSame
+    }?.itemID
+    line.resolvedByAI = false
+}
+```
+
+`applyCustomNameOrFallback` ruft `applyCustomName` für jeden nicht-leeren Namen unverändert auf
+(Zeile `applyCustomName(&line, name: name)`, `ReceiptReviewCard.swift:568`) — der Namensabgleich
+gilt damit automatisch auch dort, ohne eigene Änderung an `applyCustomNameOrFallback` selbst. Der
+Leer-/Rückfall-Zweig (Regel 10, Issue #50/Paket 1b) bleibt unverändert: ein Rückfall stellt eine
+FRÜHERE Auswahl wieder her, er ruft keinen Namensabgleich auf.
+
+**Regression, geprüft:** Alle bestehenden Aufrufer/Tests von `applyCustomName` benutzen Fixtures
+ohne `suggestions` (`testEnteringCustomNameClearsMatchAndAiFlag`,
+`testOriginalNameSurvivesAllThreeSelectionPaths`,
+`testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged`) — `line.suggestions.first { … }` liefert
+dort `nil`, `matchedItemID` bleibt wie bisher `nil`. Keiner dieser Tests ändert sein Ergebnis.
+
+#### c) Regel 9 (Nachführen) hängt zusätzlich an `matchedItemID`/`resolvedByAI`
+
+Issue #66, Punkt (b): Das Nachführen der eingefrorenen Auswahlliste hing bisher ausschließlich an
+`line.name` (`.onChange(of: line.name)`, `ReceiptReviewCard.swift:127-130`). Ändert eine externe
+Auflösung `matchedItemID`/`resolvedByAI`, lässt den Namen aber byte-gleich — erreichbar, wenn ein
+bereits abgehakter Artikel exakt wie der Bontext heißt: Stufe 3 setzt `matchedItemID`,
+`linesNeedingAIReresolution` hält die Zeile trotzdem für unaufgelöst (`name == originalName`),
+Stufe 5 liefert denselben Namen mit `matchedItemID = nil`/`resolvedByAI = true` zurück —, führt sich
+die eingefrorene Liste bisher NICHT nach, obwohl (vor #66) keine ihrer Zeilen mehr markierbar wäre.
+
+Zwei zusätzliche `onChange`-Hooks auf denselben Guard, statt eines künstlichen, aus drei Feldern
+zusammengesetzten Vergleichsschlüssels — am einfachsten nachvollziehbar, weil jeder Hook exakt
+dieselbe zweizeilige Regel ausführt wie der bestehende:
+
+```swift
+.onChange(of: line.name) { _, _ in refreshOptionsIfNeeded() }
+.onChange(of: line.matchedItemID) { _, _ in refreshOptionsIfNeeded() }
+.onChange(of: line.resolvedByAI) { _, _ in refreshOptionsIfNeeded() }
+```
+
+mit `refreshOptionsIfNeeded()` als neue, private Methode, die den bisherigen Rumpf von Regel 9
+unverändert trägt:
+
+```swift
+private func refreshOptionsIfNeeded() {
+    guard !options.contains(where: { isSelected($0) }) else { return }
+    options = Self.selectionOptions(for: line)
+}
+```
+
+Der Guard selbst (über die neue statische `isSelected(_:for:customActive:)`) ist unit-testbar, ohne
+die drei `onChange`-Hooks selbst anzustoßen: ein Test baut `options` aus einem ALTEN Zustand
+(`selectionOptions(for: alterZustand)`), ändert dann NUR `matchedItemID`/`resolvedByAI` einer Kopie
+der Zeile und prüft, dass `!options.contains(where: { ReceiptReviewCard.isSelected($0, for:
+neuerZustand, customActive: false) })` — das ist genau die Bedingung, unter der die View
+nachrechnen würde.
+
+#### Konsequenz von Entwurf A, vom PO ausdrücklich akzeptiert
+
+„Markiert" heißt seit #66 nicht mehr zwingend „mit dem Listenartikel verknüpft": Bleibt
+`matchedItemID == nil` (F001-Fall, Nutzer tippt nicht in „Anderer Name …"), lernt `save()` den Preis
+zwar unter `store.learnedPrices[lineLower]` (textbasiert, unverändert), schreibt ihn aber NICHT auf
+den unabgehakten Artikel selbst zurück — `matchedItem` (`ReceiptScannerView.swift:643-656`) findet
+ihn nur über den Fallback auf BEREITS ABGEHAKTE Artikel (`$0.isCompleted`), der unabgehakte Artikel
+aus dem F001-Fall ist per Definition nicht abgehakt. Der Preis landet also nicht direkt sichtbar auf
+der Liste zurück, ohne dass die Karte dem Nutzer einen Anlass zum Tippen gibt (er sieht ja bereits
+eine markierte, „auf deiner Liste" gekennzeichnete Zeile). Das ist exakt der in Issue #66,
+Variante A, benannte Nachteil — vom PO in Kenntnis dieser Konsequenz gewählt, weil der
+Reparatur-Weg über „Anderer Name …" (Abschnitt b oben) offensteht, sobald der Nutzer den Preis
+gezielt der Liste zuordnen will. Kein neues Verhalten von `save()` — dieselbe Konsequenz tritt
+schon heute für jede Zeile mit `matchedItemID == nil` ein (z. B. `.currentName`, `.receiptText`
+oder ein `.aiSuggestion` ohne `aiSuggestedMatchedItemID`).
+
 ### `accessibilityIdentifier`-Schema (neu, koordiniert mit #28)
 
 | Element | Identifier |
@@ -861,33 +1068,38 @@ Umbruchverhalten prüft).
    — `option.<k>`-Indizes blieben unverändert; Paket 2 (Issue #65) fügt jetzt genau eine hinzu
    (siehe „Nachtrag Issue #65 (Paket 2)" für die betroffenen `option.<k>`-Verschiebungen an
    bestehenden Tests).
-6. **(Issue #50, Paket 1) Genau eine Option ist markiert, sofern `line.name` nicht leer ist —
-   mit den unten benannten Ausnahmen.** Gilt für jede Zeile, deren `matchedItemID`/`resolvedByAI`
-   aus einem der bekannten Zuweisungswege stammen (`applySelection`,
-   `applyCustomName`/`applyCustomNameOrFallback` oder `mergeAIReresolution`) — sichergestellt
-   durch Regel 9 (Nachführen) zusammen mit den unveränderten Regeln 3/5/6. `mergeAIReresolution`
-   ist ausdrücklich eingeschlossen: der reproduzierte Fall aus Issue #50 läuft über genau diesen
-   Weg (`linesNeedingAIReresolution` wählt die BTR-Zeile, `resolve` löst sie über
-   `expandAbbreviations` auf, `resolvedByAI` bleibt dabei false —
-   `ReceiptResolutionService.swift:104`, `ReceiptScannerView.swift:126`) und ist durch
-   `RestockUITests/ReceiptReviewUITests.swift:842` belegt. Ausgenommen ist allein die Konjunktion
-   aus diesem Weg UND Namensgleichheit, siehe unten.
+6. **(Issue #50, Paket 1; auf strukturelle Basis gehoben durch Issue #66) Genau eine Option ist
+   markiert, sofern `line.name` nicht leer ist — mit den unten benannten Ausnahmen.** Seit #66
+   NICHT mehr auf bestimmte Zuweisungswege beschränkt: `isSelected(_:for:customActive:)` (neue
+   statische Funktion, siehe „Nachtrag Issue #66") markiert genau den einen Kandidaten, dessen Name
+   case-insensitiv `line.name` entspricht — und Regel 2/5 in `selectionOptions` stellen sicher, dass
+   höchstens ein Kandidat je Berechnung namensgleich sein kann (siehe „Warum keine zweite
+   Markierung möglich ist" im Nachtrag). `mergeAIReresolution` ist eingeschlossen, EINSCHLIESSLICH
+   des Falls, in dem der aufgelöste Name wörtlich einem eigenen `suggestions`-Eintrag entspricht
+   (vormals F001, siehe unten) — sichergestellt durch Regel 9 (Nachführen, seit #66 zusätzlich an
+   `matchedItemID`/`resolvedByAI` gehängt) zusammen mit den unveränderten Regeln 3/5/6.
 
-   **Ausdrücklich NICHT abgedeckt (F001, offen, Issue #66):** eine Zeile, deren Zustand direkt aus
-   `ReceiptResolutionService.resolve` über `mergeAIReresolution` stammt UND deren aufgelöster Name
-   wörtlich einem eigenen `suggestions`-Eintrag entspricht. `mergeAIReresolution` setzt
-   `resolvedByAI = true` mit `matchedItemID = nil` (`ReceiptScannerView.swift:130`); Dedup-Regel 2
-   entfernt dann die KI-Zeile zugunsten des namensgleichen Listen-Treffers, Regel 5 greift mangels
-   Namens-Mismatch nicht, und `isSelected(.listMatch)` verweigert die Markierung wegen
-   `!line.resolvedByAI` (`ReceiptReviewCard.swift:369`). Ergebnis: keine markierte Zeile trotz
-   nicht-leerem Namen — Punkt 4 aus Issue #50, für diesen einen Eingang unbehoben. Frühere
-   Fassungen dieser Invariante zählten `mergeAIReresolution` als abgedeckt auf und widersprachen
-   damit „Known Limitations"; dieser Selbstwiderspruch war der Grund, warum der erste Prüfdialog
-   kein Urteil fassen konnte (behoben 2026-09-27).
+   **F001 (Issue #50, Paket 1b, offen; seit Issue #66 behoben):** Eine Zeile, deren Zustand direkt
+   aus `ReceiptResolutionService.resolve` über `mergeAIReresolution` stammt UND deren aufgelöster
+   Name wörtlich einem eigenen `suggestions`-Eintrag entspricht (`resolvedByAI = true`,
+   `matchedItemID = nil`, `ReceiptScannerView.swift:130`), zeigte bis #66 keine markierte Zeile:
+   Dedup-Regel 2 entfernt die KI-Zeile zugunsten des namensgleichen Listen-Treffers, Regel 5 greift
+   mangels Namens-Mismatch nicht, und das alte `isSelected(.listMatch)` verweigerte die Markierung
+   wegen `!line.resolvedByAI`. Seit #66 markiert der namensgleiche Listen-Treffer in genau diesem
+   Fall (`matchedItemID == nil`-Zweig der neuen Regel) — siehe AC-23. **Konsequenz, vom PO
+   akzeptiert:** „markiert" heißt hier nicht „verknüpft" — siehe „Konsequenz von Entwurf A" im
+   Nachtrag Issue #66.
 
-   **Zweite Restlücke (offen, Teil von Issue #66):** Regel 9 hängt allein an `line.name`. Ändert
-   eine externe Auflösung `matchedItemID`/`resolvedByAI` und lässt den Namen byte-gleich, führt
-   sich nichts nach.
+   **Zweite Restlücke (Teil von Issue #66, jetzt behoben):** Regel 9 hing bisher allein an
+   `line.name`. Änderte eine externe Auflösung `matchedItemID`/`resolvedByAI` und ließ den Namen
+   byte-gleich, führte sich nichts nach. Seit #66 lösen zwei zusätzliche `onChange`-Hooks auf
+   `line.matchedItemID`/`line.resolvedByAI` denselben Guard aus — siehe AC-24.
+
+   **Weiterhin NICHT abgedeckt, vorbestehend seit Issue #37/#50, von #66 nicht berührt:** Trägt ein
+   `.listMatch`-Kandidat denselben Namen wie `line.name`, verweist `line.matchedItemID` aber auf
+   einen ANDEREN, existierenden Artikel (zwei verschiedene Artikel mit exakt gleichem Namen im
+   selben Laden), bleibt er unmarkiert — die neue `matchedItemID == nil`-Bedingung greift hier
+   nicht, weil `matchedItemID` gesetzt, aber verschieden ist. Siehe „Known Limitations".
 
    Ist `line.name` leer,
    bleibt das bestehende, durch Issue #37 bewusst unveränderte Verhalten gültig (siehe Known
@@ -972,15 +1184,16 @@ Umbruchverhalten prüft).
   Vorauswahl-Assertion ergänzt: THEN ist `options[0]` `.currentName("Milch")`
   (`RestockTests/ReceiptReviewCardTests.swift:165`). Dieser Test konstruierte das Symptom-Szenario
   aus Issue #37 bereits vor dieser Erweiterung, prüfte die Vorauswahl bisher aber nicht.
-- [ ] **AC-4 (Rest, verschoben nach Issue #66):** Die zweite, ursprünglich mitgeforderte Assertion
-  („für `options[0]` liefert die Auswahl-Logik der Karte `true`") ist in der Unit-Suite **nicht
-  schreibbar**: `isSelected(_:)` ist eine `private func` der View und hat keinen von außen
-  erreichbaren Einstieg — `grep -n "isSelected" RestockTests/ReceiptReviewCardTests.swift` liefert
-  keinen Treffer, die Markierungs-Logik wird heute ausschließlich über UI-Tests belegt
-  (`firstOption.isSelected`). Prüfbar wird sie erst, wenn Issue #66 die Markierungs-Regel als reine
-  Funktion `isSelectedIgnoringCustom(_:for:)` herauszieht (siehe Regel 12 der Vorarbeit in
-  `docs/specs/views/receipt-review-card-nachtrag-1b.md`). Bis dahin bewusst offen — der Punkt wird
-  NICHT als erfüllt geführt.
+- [ ] **AC-4 (Rest, seit Issue #66 schreibbar):** Die zweite, ursprünglich mitgeforderte Assertion
+  („für `options[0]` liefert die Auswahl-Logik der Karte `true`") war in der Unit-Suite bis #66
+  **nicht schreibbar**: `isSelected(_:)` war eine `private func` der View ohne von außen
+  erreichbaren Einstieg, die Markierungs-Logik wurde ausschließlich über UI-Tests belegt
+  (`firstOption.isSelected`). Seit #66 die statische `isSelected(_:for:customActive:)` extrahiert
+  hat (siehe „Nachtrag Issue #66"; NICHT `isSelectedIgnoringCustom` wie in der verworfenen
+  Vorarbeit `receipt-review-card-nachtrag-1b.md` — anderer Name, gleicher Zweck), ist die Assertion
+  nachrüstbar: `ReceiptReviewCard.isSelected(options[0], for: line, customActive: false) == true`
+  für `testFiveSuggestionsAreCappedToThreeListMatches`. Test: als Ergänzung desselben Tests, nicht
+  als eigener neuer Test geführt.
 
 **Issue #50, Paket 1; geschrieben und grün:**
 
@@ -1224,6 +1437,71 @@ anderen zwei sowie zwei zusätzliche, hier nicht genannte Tests sind jetzt betro
 „Nachtrag Issue #65 (Paket 2)" und den Unterabschnitt „Issue #65, Paket 2 — neue und korrigierte
 Tests" oben.
 
+### Issue #66 (2026-09-28) — Genau eine markierte Zeile, auch nach KI-Auflösung
+
+**Unit — `RestockTests/ReceiptReviewCardTests.swift`, neu** (alle gegen die neue statische
+`ReceiptReviewCard.isSelected(_:for:customActive:)`, ohne SwiftUI-Instanz):
+
+- [ ] **AC-23, `.listMatch` mit `matchedItemID == nil` (F001, der eigentliche Fix):** GIVEN eine
+  Zeile mit `name: "Vollmilch"`, `resolvedByAI: true`, `matchedItemID: nil`,
+  `aiSuggestedName: "Vollmilch"`, `suggestions: [ReceiptSuggestion(name: "vollmilch", itemID: id)]`
+  WHEN `ReceiptReviewCard.isSelected(.listMatch(suggestions[0]), for: line, customActive: false)`
+  THEN `true` — genau der reproduzierte F001-Zustand aus `mergeAIReresolution`.
+  Test: `testIsSelectedMarksListMatchWhenMatchedItemIDIsNilAndNameEqualsSuggestion`.
+- [ ] **AC-23, `.listMatch` mit fremdem, GESETZTEM `matchedItemID` (Regression, vorbestehender
+  Randfall unverändert):** GIVEN dieselbe Zeile, aber `matchedItemID: <eine andere UUID>` WHEN
+  `isSelected(.listMatch(suggestions[0]), for:, customActive: false)` THEN `false` — die Lockerung
+  greift ausschließlich bei `nil`, nicht bei einem gesetzten, abweichenden `matchedItemID`.
+  Test: `testIsSelectedDoesNotMarkListMatchWhenMatchedItemIDPointsToAnotherItem`.
+- [ ] **AC-23, `.listMatch` unverändert für den Regelfall:** GIVEN `matchedItemID ==
+  suggestion.itemID`, `resolvedByAI: false` WHEN `isSelected(.listMatch(suggestion), for:,
+  customActive: false)` THEN `true` — Regression zum bisherigen Verhalten (AC-5).
+  Test: `testIsSelectedStillMarksListMatchOnExactAssignment`.
+- [ ] **`.aiSuggestion`/`.currentName`/`.receiptText`/`.custom`, Regression:** GIVEN je eine Zeile
+  passend zu jedem der vier übrigen Fälle WHEN `isSelected(_:for:customActive:)` aufgerufen wird
+  THEN liefert jeder exakt dasselbe Ergebnis wie die bisherige `private func isSelected(_:)` —
+  reine Verhaltensgleichheit, keine neue Bedingung.
+  Test: `testIsSelectedMatchesPreviousBehaviorForAiSuggestionCurrentNameReceiptTextAndCustom`.
+- [ ] **Genau eine Markierung je Fixture (Struktur-Nachweis):** GIVEN jede Fixture dieser Datei mit
+  nicht-leerem `name` WHEN `selectionOptions(for:)` berechnet und über das Ergebnis mit
+  `isSelected(_:for:customActive: false)` gezählt wird THEN ist die Anzahl markierter Optionen
+  genau 1 — belegt „Warum keine zweite Markierung möglich ist" aus „Nachtrag Issue #66".
+  Test: `testEveryNamedFixtureEndsWithExactlyOneMarkedOptionAfterIssue66`.
+- [ ] **AC-24, Regel 9 erkennt eine Änderung ohne Namensänderung:** GIVEN `options` berechnet aus
+  einem ALTEN Zustand (`matchedItemID: id`, `resolvedByAI: false`, `name: "Butter"`) UND eine Kopie
+  der Zeile mit NUR `matchedItemID: nil`, `resolvedByAI: true` geändert (Name byte-gleich) WHEN
+  geprüft wird, ob ein Element aus `options` für den NEUEN Zustand markiert ist
+  (`options.contains { ReceiptReviewCard.isSelected($0, for: neueZeile, customActive: false) }`)
+  THEN `false` — genau die Bedingung, unter der Regel 9 (seit #66 auch an `matchedItemID`/
+  `resolvedByAI` gehängt) neu berechnen würde.
+  Test: `testStaleOptionsNoLongerMatchAfterMatchedItemIDAndResolvedByAIChangeWithoutNameChange`.
+- [ ] **AC-25, Reparatur über „Anderer Name …", Treffer:** GIVEN eine Zeile mit `suggestions:
+  [ReceiptSuggestion(name: "Vollmilch", itemID: id), ReceiptSuggestion(name: "Hafermilch", itemID:
+  otherID)]` WHEN `ReceiptReviewCard.applyCustomName(&line, name: "vollmilch")` (andere
+  Groß-/Kleinschreibung) THEN gilt `line.name == "vollmilch"`, `matchedItemID == id`,
+  `resolvedByAI == false`.
+  Test: `testApplyCustomNameLinksMatchedItemIDWhenNameEqualsASuggestion`.
+- [ ] **AC-25, Reparatur über „Anderer Name …", kein Treffer (Regression):** GIVEN dieselbe Zeile
+  WHEN `applyCustomName(&line, name: "Ziegenmilch")` (kein passender Vorschlag) THEN gilt
+  `matchedItemID == nil` — unverändert zum bisherigen Verhalten, deckungsgleich mit
+  `testEnteringCustomNameClearsMatchAndAiFlag`.
+  Test: `testApplyCustomNameLeavesMatchedItemIDNilWhenNoSuggestionMatches`.
+
+**UI:** Kein neuer UI-Test — siehe „Nachweisbarkeit" in der Scope-Erweiterung zu Issue #66 oben.
+Die vier bestehenden AC-13/AC-14-Nachweise (`RestockUITests/ReceiptReviewUITests.swift:842` u. a.,
+über den `-seedReceiptReviewUnresolvedLineForUITests`-Seed, Regel 9 am `line.name`-Weg) bleiben
+unverändert grün: keiner ihrer Seed-Zustände hat `matchedItemID == nil` UND `resolvedByAI == true`
+UND einen namensgleichen Vorschlag gleichzeitig.
+
+**Bestehende Tests, unverändert (bestätigt für Issue #66):**
+`testAiSuggestionIsDroppedWhenAListMatchCarriesTheSameName` bleibt unverändert grün — er prüft
+ausschließlich die Zusammensetzung von `selectionOptions` (unverändert durch #66), nicht die
+Markierung. `testEnteringCustomNameClearsMatchAndAiFlag`,
+`testOriginalNameSurvivesAllThreeSelectionPaths` und
+`testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged` bleiben unverändert grün: ihre Fixtures
+tragen `suggestions: []`, der neue Namensabgleich in `applyCustomName` liefert dort `nil`, wie
+bisher.
+
 **Dark/Light:** mindestens `AC1`, `AC3` und `AC9` zusätzlich einmal mit dem Launch-Argument
 `-AppleInterfaceStyle Dark` ausgeführt (zweiter Testlauf derselben Methoden oder parametrisierte
 Variante) — Dark ist der im Original-Screenshot (Issue #23) reproduzierte Fall.
@@ -1262,23 +1540,20 @@ diese Spec GREEN macht.
 - **AC-11:** Section-Kopf zeigt „N Positionen · M ausgewählt · Summe" korrekt.
 - **AC-12:** Speichern schreibt weiterhin über den `save()`-Pfad (Regressionsschutz) — bis auf die
   gezielte, in AC-16 beschriebene Ausnahme unverändert.
-- **AC-13 (Issue #50, Zusagen 1+2):** Ändert sich `line.name` von AUSSEN (z. B. durch
-  `reResolveAIIfNeeded()` nach dem ersten Zeichnen der Karte), UND passt danach keine der
-  bestehenden Auswahlzeilen mehr dazu, wird die Auswahlliste einmal neu berechnet (Regel 9) — der
-  neue Name erscheint als eigene, vorausgewählte Zeile (Regel 5), nicht erst im Feld „Anderer
-  Name …". **Ausgenommen der Fall F001 (Issue #66):** Trägt ein verbliebener Kandidat denselben
-  Namen, verhindert Regel 5 die Einfügung (`ReceiptReviewCard.swift:443-447`), Regel 3 sortiert
-  den Listen-Treffer nur nach vorn, und `isSelected` verweigert die Markierung wegen
-  `!line.resolvedByAI` (`:369`) — die Karte bleibt dann ohne markierte Zeile. Passt eine bestehende Zeile weiterhin (z. B. nach einem Nutzer-Tap), bleibt die Liste
-  unverändert stehen — das bewusste Einfrieren aus Abschnitt 5 bleibt für diesen Fall erhalten.
-- **AC-14 (Issue #50, Zusage 2):** Für jede Zeile mit nicht-leerem `line.name`, deren
-  `matchedItemID`/`resolvedByAI` aus einem der bekannten Zuweisungswege stammen (`applySelection`,
-  `applyCustomName`/`applyCustomNameOrFallback` oder `mergeAIReresolution`), ist immer genau eine
-  Auswahlzeile markiert — beweisbar am reproduzierten Fall: „Karte zeigt genau einen gefüllten Auswahlkreis,
-  nie null und nie zwei." **Nicht abgedeckt:** eine Zeile aus `mergeAIReresolution`, deren
-  aufgelöster Name wörtlich einem eigenen `suggestions`-Eintrag entspricht (F001, offen, Issue
-  #66), und eine externe Änderung von `matchedItemID`/`resolvedByAI` bei byte-gleichem Namen.
-  Beide Ausnahmen sind in Invariante 6 und „Known Limitations" begründet.
+- **AC-13 (Issue #50, Zusagen 1+2; seit Issue #66 ohne F001-Ausnahme):** Ändert sich `line.name`
+  ODER `matchedItemID` ODER `resolvedByAI` von AUSSEN (z. B. durch `reResolveAIIfNeeded()` nach dem
+  ersten Zeichnen der Karte), UND passt danach keine der bestehenden Auswahlzeilen mehr dazu, wird
+  die Auswahlliste einmal neu berechnet (Regel 9, seit #66 an alle drei Felder gehängt) — der neue
+  Name erscheint als eigene, vorausgewählte Zeile (Regel 5), nicht erst im Feld „Anderer Name …".
+  Passt eine bestehende Zeile weiterhin (z. B. nach einem Nutzer-Tap), bleibt die Liste unverändert
+  stehen — das bewusste Einfrieren aus Abschnitt 5 bleibt für diesen Fall erhalten.
+- **AC-14 (Issue #50, Zusage 2; seit Issue #66 strukturell, ohne Einschränkung auf bestimmte
+  Zuweisungswege):** Für jede Zeile mit nicht-leerem `line.name` ist immer genau eine Auswahlzeile
+  markiert — beweisbar am reproduzierten Fall: „Karte zeigt genau einen gefüllten Auswahlkreis, nie
+  null und nie zwei." Gilt jetzt auch für `mergeAIReresolution`, deren aufgelöster Name wörtlich
+  einem eigenen `suggestions`-Eintrag entspricht (vormals F001, siehe AC-23). **Weiterhin nicht
+  abgedeckt:** zwei verschiedene Artikel mit exakt gleichem Namen im selben Laden, wenn
+  `line.matchedItemID` auf den ANDEREN verweist (vorbestehend, siehe „Known Limitations").
 - **AC-15 (Issue #50, Zusage 3):** Leert der Nutzer das vorbelegte Feld „Anderer Name …"
   vollständig **oder reduziert es auf reine Leerzeichen** (Paket 1b, F002), fällt die Karte auf
   die Auswahl zurück, die unmittelbar zuvor galt (Name, `matchedItemID` UND `resolvedByAI`
@@ -1308,6 +1583,22 @@ diese Spec GREEN macht.
 - **AC-22 (Issue #65, Paket 2 — Unterdrückung):** Die Bon-Zeile erscheint NICHT, wenn der
   getrimmte Bontext kürzer als 4 Zeichen ist ODER der normalisierte Bontext case-insensitiv dem
   aktuell geltenden Namen entspricht.
+- **AC-23 (Issue #66, F001 behoben):** Löst die Namensauflösung eine Position auf einen Namen auf,
+  der wörtlich (case-insensitiv) einem ihrer eigenen `suggestions`-Einträge entspricht und dabei
+  `resolvedByAI = true` mit `matchedItemID = nil` setzt, ist danach GENAU EINE Zeile markiert: der
+  namensgleiche Listen-Treffer, mit dem Label „auf deiner Liste" (nicht die KI-Marke — die
+  `.aiSuggestion`-Zeile bleibt durch Dedup-Regel 2 unverändert entfernt). Ein Tap auf „Anderer
+  Name …" mit demselben Namen verknüpft den Artikel zusätzlich (`matchedItemID` wird gesetzt, siehe
+  AC-25).
+- **AC-24 (Issue #66, Regel 9 erweitert):** Ändert eine externe Auflösung `matchedItemID` oder
+  `resolvedByAI` einer Zeile, OHNE `line.name` zu ändern, und passt danach keine bestehende
+  Auswahlzeile mehr zum neuen Zustand, wird die Auswahlliste ebenfalls einmal neu berechnet — nicht
+  erst bei der nächsten Namensänderung.
+- **AC-25 (Issue #66, Reparatur über „Anderer Name …"):** Bestätigt der Nutzer im Feld „Anderer
+  Name …" einen Namen, der case-insensitiv exakt einem Eintrag aus `line.suggestions` entspricht,
+  wird `matchedItemID` auf dessen `itemID` gesetzt (statt wie bisher ausnahmslos auf `nil`);
+  `resolvedByAI` bleibt `false`. Für jeden Namen ohne passenden Vorschlag bleibt das bisherige
+  Verhalten (`matchedItemID = nil`) unverändert.
 
 ## Alternativen (verworfen)
 
@@ -1379,6 +1670,22 @@ diese Spec GREEN macht.
   der ihm am wenigsten geholfen ist, eine zusätzliche, nützliche Option, ohne dass Issue #65 das
   verlangt oder ein Sicherheitsrisiko dagegen spricht (`isSavable`/Regel 11 verhindert ohnehin
   jedes Speichern mit leerem Namen).
+- **Issue #66 — Entwurf B: KI-Zeile bleibt zusätzlich zum Listen-Treffer stehen und trägt die
+  Markierung** (vollständig ausformuliert in
+  `docs/specs/views/receipt-review-card-nachtrag-1b.md`, Regel 12 `isSelectedIgnoringCustom`, neue
+  Platzierung der erhaltenen KI-Zeile vor dem namensgleichen Listen-Treffer): Verworfen laut
+  PO-Entscheidung 2026-09-28 — kostet eine zweite, gleichnamige Zeile („KI-Vorschlag" neben „auf
+  deiner Liste") für einen Fall, den Entwurf A ohne Doppelnennung löst. Nimmt damit KEINE frühere
+  Freigabe zurück (nachtrag-1b wurde nie umgesetzt, F001 blieb bis #66 offen).
+- **Issue #66 — Entwurf C: Wurzelfix in `ReceiptResolutionService.resolve`** (den
+  `matchedItemID`-Nachgriff nach Stufe 5 mit dem KI-Namen wiederholen): Verworfen — greift in
+  Invariante 1/AC-12 (Preis-Lernpfad von `save()`) und widerspricht der bestehenden, bewussten
+  Trennung „breiter Vorschlags-Pool, engere automatische Übernahme" (`ReceiptResolutionService.
+  swift:96`): ein unabgehakter Artikel wird heute absichtlich NICHT automatisch zugeordnet. Löst
+  außerdem die Anzeige-Lücke nicht vollständig (eine Zeile, deren KI-Name zu keinem Artikel passt,
+  bliebe weiter unmarkiert, solange Regel 5 auf Namensbasis bleibt). Vorschlag aus Issue #66, Punkt
+  (a) — als eigenes Folge-Ticket denkbar, falls die Verknüpfung selbst (nicht nur die Anzeige)
+  künftig automatisch hergestellt werden soll.
 
 ## Risiken
 
@@ -1453,7 +1760,12 @@ diese Spec GREEN macht.
   bestehenden Enum hinzu und zwei reine Funktionen neben bereits bestehende reine Funktionen
   derselben Datei — kein neues Architekturmuster. Die einzige Invarianten-Änderung dieser
   Erweiterung (Nr. 5) ist im Text selbst begründet und gegen zwei Alternativen abgewogen (siehe
-  „Alternativen").
+  „Alternativen"). Die Issue-#66-Erweiterung (2026-09-28) ist ebenfalls kein eigenes ADR wert: sie
+  extrahiert eine bestehende private Methode in eine gleichwertige statische Funktion (reine
+  Refaktorierung plus eine gelockerte Bedingung) und erweitert eine bestehende reine Funktion
+  (`applyCustomName`) um einen Namensabgleich — kein neues Architekturmuster, keine
+  Wire-Format-Änderung. Die einzige Invarianten-Änderung (Nr. 6) ist im Text selbst begründet und
+  gegen zwei Alternativen (Entwurf B, Entwurf C) abgewogen (siehe „Alternativen").
 
 ## Definition of Done
 
@@ -1475,13 +1787,13 @@ Beobachtbar für den PO, ohne Code zu lesen:
   wird; die Kopfzeile darüber zeigt jederzeit „N Positionen · M ausgewählt · Summe" korrekt.
 - Speichern übernimmt die gewählten Namen und Preise wie bisher in die Liste — kein bisheriges
   Verhalten geht verloren.
-- **(Issue #50, Paket 1)** Ändert sich der Namensvorschlag einer Karte NACH dem Öffnen (z. B. beim
-  Zurückkommen aus einer geteilten App), zeigt die Karte den neuen Namen sofort als markierte
-  Zeile — nicht mehr „Häkchen gesetzt, kein Kreis gefüllt", und der Name steht nicht mehr nur
-  versteckt im Feld „Anderer Name …". **Eine Ausnahme bleibt offen (F001, Issue #66):** Trifft der
-  neue Name wörtlich einen Artikel, der bereits als Vorschlag dieser Position angeboten wird, steht
-  die Karte weiterhin ohne markierten Kreis. Alltagsfall: der Artikel steht unabgehakt auf der
-  Liste. Der Fix ist eine sichtbare Gestaltungsentscheidung und braucht zuerst einen Entwurf.
+- **(Issue #50, Paket 1; seit Issue #66 ohne Ausnahme)** Ändert sich der Namensvorschlag einer
+  Karte NACH dem Öffnen (z. B. beim Zurückkommen aus einer geteilten App), zeigt die Karte den
+  neuen Namen sofort als markierte Zeile — nicht mehr „Häkchen gesetzt, kein Kreis gefüllt", und
+  der Name steht nicht mehr nur versteckt im Feld „Anderer Name …". Gilt jetzt auch, wenn der neue
+  Name wörtlich einen Artikel trifft, der bereits als Vorschlag dieser Position angeboten wird
+  (vormals F001: der Artikel steht unabgehakt auf der Liste) — dieser Listen-Treffer trägt seit
+  Issue #66 selbst die Markierung, mit dem Label „auf deiner Liste".
 - **(Issue #50, Paket 1 + 1b)** Leert man das Feld „Anderer Name …" versehentlich vollständig oder
   reduziert es auf reine Leerzeichen, bleibt die Position unter ihrem vorherigen Namen gespeichert,
   statt kommentarlos ohne Namen dazustehen.
@@ -1536,14 +1848,22 @@ Beobachtbar für den PO, ohne Code zu lesen:
   markierte Option, bis der Nutzer selbst wählt (Regel 6, unverändert seit Issue #37). Regel 10
   (Zusage 3) schließt nur den EINEN produktiv erreichbaren Weg zu einem leeren Namen (das Feld
   „Anderer Name …" bis auf null Zeichen leeren).
-- **Issue #37/#50, vorbestehende, ungeprüfte Randbedingung:** Trägt ein `.listMatch`-Kandidat
-  denselben Namen wie `line.name` (Regel 3 sortiert ihn dadurch nach vorn), aber sein
-  `suggestion.itemID` weicht von `line.matchedItemID` ab (zwei verschiedene Artikel mit exakt
-  gleichem Namen im selben Laden), kann `isSelected` für diese Zeile `false` liefern, obwohl Regel
-  5 mangels Namens-Mismatch keinen `.currentName`-Ausweg einfügt — eine Karte ohne markierte Zeile
-  trotz nicht-leerem Namen. Vorbestehend seit Issue #37 (Regel 3/5 unverändert), von Paket 1 weder
-  eingeführt noch behoben; Invariante 6 ist deshalb ausdrücklich auf Zeilen beschränkt, deren
-  `matchedItemID`/`resolvedByAI` aus einem der bekannten Zuweisungswege stammen.
+- **Issue #37/#50, vorbestehende, ungeprüfte Randbedingung, von Issue #66 nicht berührt:** Trägt
+  ein `.listMatch`-Kandidat denselben Namen wie `line.name` (Regel 3 sortiert ihn dadurch nach
+  vorn), aber sein `suggestion.itemID` weicht von einem GESETZTEN `line.matchedItemID` ab (zwei
+  verschiedene Artikel mit exakt gleichem Namen im selben Laden), liefert `isSelected` für diese
+  Zeile weiterhin `false` — die Lockerung aus Issue #66 greift nur bei `matchedItemID == nil`, nicht
+  bei einem gesetzten, aber ABWEICHENDEN `matchedItemID` —, obwohl Regel 5 mangels Namens-Mismatch
+  keinen `.currentName`-Ausweg einfügt — eine Karte ohne markierte Zeile trotz nicht-leerem Namen.
+  Vorbestehend seit Issue #37 (Regel 3/5 unverändert).
+- **Issue #66, Konsequenz von Entwurf A, vom PO akzeptiert:** Markiert der namensgleiche
+  Listen-Treffer eine Zeile, deren `matchedItemID` dabei `nil` bleibt (der F001-Fall selbst, siehe
+  AC-23), bedeutet „markiert" nicht mehr zwingend „mit dem Listenartikel verknüpft": `save()`
+  schreibt den Preis dann nicht auf den (unabgehakten) Artikel zurück, sondern lernt ihn nur
+  textbasiert unter `store.learnedPrices[lineLower]` — derselbe Effekt, den jede andere Zeile mit
+  `matchedItemID == nil` (`.currentName`, `.receiptText`, ein `.aiSuggestion` ohne
+  `aiSuggestedMatchedItemID`) schon vor #66 hatte. Der Reparatur-Weg über „Anderer Name …" (AC-25)
+  bleibt offen, ist aber ein zusätzlicher Tap, keine Voreinstellung.
 - **F104 (LOW, Issue #69): `.whitespaces` deckt Zeilenumbrüche nicht ab.** Regel 10
   (`applyCustomNameOrFallback`) und Regel 11 (`isSavable`) trimmen beide mit
   `trimmingCharacters(in: .whitespaces)` — gemessen erfasst das Tabulator, U+00A0, alle
@@ -1554,19 +1874,16 @@ Beobachtbar für den PO, ohne Code zu lesen:
   Erreichbarkeit über das einzeilige Textfeld der Karte ist unbewiesen; über den KI-Weg aus #69
   nicht ausgeschlossen. Beim Umstellen auf `.whitespacesAndNewlines` muss die Symmetrie zwischen
   `ReceiptScannerView.swift:106` und `ReceiptReviewCard.swift:499-500` erhalten bleiben.
-- **F001 (Issue #50, Paket 1b bewusst NICHT behoben — Folge-Issue #66 mit vorgeschaltetem
-  Design-Entwurf):** Löst die Namensauflösung eine Position nachträglich auf einen Namen auf, der
-  wörtlich einem ihrer eigenen Vorschläge entspricht (`resolvedByAI == true`,
-  `matchedItemID == nil`), entfernt Dedup-Regel 2 die KI-Zeile, und der namensgleiche
-  Listen-Treffer kann die Markierung nicht tragen — die Karte steht dann ganz OHNE markierte Zeile,
-  obwohl `line.name` nicht leer ist (Punkt 4 aus Issue #50). Paket 1b behebt nur F002; der PO hat
-  am 2026-09-27 entschieden, F001 einem eigenen Ticket mit vorgeschaltetem Design-Entwurf
-  zuzuweisen, weil die Lösung die Zusammensetzung der Auswahlliste sichtbar verändert (erhaltene
-  KI-Zeile, Doppelnennung eines Namens). Die vollständige Vorarbeit — Regel 12
-  (`isSelectedIgnoringCustom`), Regel 2/5 auf Markierungsbasis, AC-17, Test Plan — liegt fertig
-  formuliert in `docs/specs/views/receipt-review-card-nachtrag-1b.md` und ist bis zur Freigabe
-  dieses Folge-Issues (#66) NICHT Bestandteil dieser Spec. Solange gilt die Einschränkung von
-  Invariante 6 und AC-14 auf die bekannten Zuweisungswege unverändert weiter.
+- **F001 (Issue #50, Paket 1b bewusst NICHT behoben — seit Issue #66 BEHOBEN, 2026-09-28):** Löste
+  die Namensauflösung eine Position nachträglich auf einen Namen auf, der wörtlich einem ihrer
+  eigenen Vorschläge entsprach (`resolvedByAI == true`, `matchedItemID == nil`), entfernte
+  Dedup-Regel 2 die KI-Zeile, und der namensgleiche Listen-Treffer konnte die Markierung nicht
+  tragen — die Karte stand dann ganz OHNE markierte Zeile, obwohl `line.name` nicht leer war (Punkt
+  4 aus Issue #50). Seit #66 markiert der namensgleiche Listen-Treffer in genau diesem Fall (siehe
+  AC-23, „Nachtrag Issue #66"). Die in `docs/specs/views/receipt-review-card-nachtrag-1b.md`
+  fertig formulierte Alternative (Regel 12 `isSelectedIgnoringCustom`, erhaltene KI-Zeile,
+  Doppelnennung eines Namens) ist per PO-Entscheidung 2026-09-28 verworfen, nicht Bestandteil
+  dieser Spec — siehe „Alternativen (verworfen)".
 - **F003 (LOW, vorbestehend seit Issue #37, Folge-Issue #67):** `applySelection` setzt im
   `.currentName`-Zweig NUR `line.name` (`ReceiptReviewCard.swift:470-471`) und lässt eine zuvor
   gesetzte, fremde `matchedItemID` stehen. Wer zuerst einen Listen-Treffer und danach die
@@ -1695,3 +2012,27 @@ GREEN-Lauf fand zwei echte, im RED-Test selbst liegende Fehler (nicht im Produkt
    „Nicht UI-testbar (AC-20, tatsächlicher Pasteboard-Inhalt)" mit Quellen und zwei geprüften,
    verworfenen Alternativen. Gleiche Prüftiefe wie AC-19, aus vergleichbarem Grund
    (Plattform-Grenze statt fehlender Testwille). Kein Produktcode geändert.
+
+### 2026-09-28 — Issue #66: F001 behoben (Entwurf A + Reparatur über „Anderer Name …")
+
+PO-Entscheidung nach Entwurfsfreigabe (`docs/artifacts/fix-66-ai-resolved-name-selection/entwurf.html`):
+Entwurf A (der namensgleiche Listen-Treffer gilt als markiert, auch ohne bestehende
+`matchedItemID`-Verknüpfung), ergänzt um den vom PO vorgeschlagenen Reparatur-Mechanismus über das
+bereits vorbelegte Feld „Anderer Name …". Entwurf B (die in `receipt-review-card-nachtrag-1b.md`
+fertig ausformulierte Regel 12 mit erhaltener, zusätzlicher KI-Zeile) und Entwurf C (Wurzelfix in
+`ReceiptResolutionService.resolve`) verworfen — beide in „Alternativen (verworfen)" begründet.
+
+`isSelected(_:)` aus einer privaten Instanzmethode in eine neue, statische, unit-testbare Funktion
+`isSelected(_:for:customActive:)` extrahiert und dabei die `.listMatch`-Bedingung gelockert
+(`!resolvedByAI` entfällt, `matchedItemID == suggestion.itemID || matchedItemID == nil`);
+`applyCustomName(_:name:)` gleicht einen bestätigten Namen gegen `line.suggestions` ab und setzt
+`matchedItemID` bei Treffer; Regel 9 (`onChange`) zusätzlich an `line.matchedItemID`/
+`line.resolvedByAI` gehängt (behebt die „zweite Restlücke" aus Invariante 6). Keine Änderung an
+`selectionOptions(for:)`, `ReceiptResolutionService.swift`, `ReceiptScannerView.swift` oder
+`SmartCartApp.swift` (kein neuer DEBUG-Seed — Begründung in der Scope-Erweiterung). Invariante 6
+von zuweisungswegs-beschränkt auf strukturell umgestellt, AC-13/AC-14 entsprechend präzisiert,
+AC-23 bis AC-25 neu. Known Limitations: F001-Eintrag als behoben markiert, neuer Eintrag für die
+vom PO akzeptierte Konsequenz von Entwurf A („markiert" ≠ „verknüpft"), der vorbestehende
+Randfall (zwei Artikel, gleicher Name, abweichendes `matchedItemID`) als von #66 unberührt
+präzisiert. Test Plan um sieben neue Unit-Tests erweitert, keine bestehenden Tests geändert.
+Approval erneut zurückgesetzt.

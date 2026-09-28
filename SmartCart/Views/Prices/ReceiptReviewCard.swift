@@ -124,10 +124,11 @@ struct ReceiptReviewCard: View {
         // der bestehenden Zeilen mehr dazu, wird die Liste EINMAL nachgeführt. Nach einem
         // Nutzer-Tap passt die angetippte Zeile weiterhin — der Guard hält das bewusste
         // Einfrieren für diesen Fall aufrecht, die Zeile springt nicht unter dem Finger weg.
-        .onChange(of: line.name) { _, _ in
-            guard !options.contains(where: { isSelected($0) }) else { return }
-            options = Self.selectionOptions(for: line)
-        }
+        // Issue #66: derselbe Guard hängt zusätzlich an `matchedItemID`/`resolvedByAI` — eine
+        // externe Auflösung kann beide ändern, ohne den Namen anzufassen.
+        .onChange(of: line.name) { _, _ in refreshOptionsIfNeeded() }
+        .onChange(of: line.matchedItemID) { _, _ in refreshOptionsIfNeeded() }
+        .onChange(of: line.resolvedByAI) { _, _ in refreshOptionsIfNeeded() }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("receiptReview.line.\(index).card")
     }
@@ -380,27 +381,47 @@ struct ReceiptReviewCard: View {
 
     // MARK: Zustand
 
+    /// Regel 9 (Issue #50, Paket 1): Passt nach einer externen Änderung keine der eingefrorenen
+    /// Zeilen mehr, wird die Liste EINMAL nachgeführt. Nach einem Nutzer-Tap passt die angetippte
+    /// Zeile weiterhin — der Guard hält das bewusste Einfrieren für diesen Fall aufrecht, die Zeile
+    /// springt nicht unter dem Finger weg.
+    private func refreshOptionsIfNeeded() {
+        guard !options.contains(where: { isSelected($0) }) else { return }
+        options = Self.selectionOptions(for: line)
+    }
+
     private func isCustom(_ option: ReceiptNameOption) -> Bool {
         if case .custom = option { return true }
         return false
     }
 
-    private func isSelected(_ option: ReceiptNameOption) -> Bool {
+    /// Markierungsregel als reine, ohne SwiftUI-Instanz testbare Funktion (Issue #66).
+    static func isSelected(_ option: ReceiptNameOption, for line: EditableReceiptLine, customActive: Bool) -> Bool {
+        if customActive { if case .custom = option { return true }; return false }
         switch option {
         case .listMatch(let suggestion):
-            return !customActive && !line.resolvedByAI
-                && line.matchedItemID == suggestion.itemID
+            // Issue #66: `!line.resolvedByAI` entfällt. Ein KI-aufgelöster Name, der wörtlich einem
+            // Listen-Treffer entspricht, darf diesen Treffer markieren — sonst bleibt die Karte ohne
+            // markierte Zeile (F001). `matchedItemID == nil` deckt genau diesen Fall zusätzlich zum
+            // unveränderten `matchedItemID == suggestion.itemID` ab; ein `matchedItemID`, das auf
+            // einen ANDEREN Artikel verweist, markiert weiterhin nicht (vorbestehender Randfall aus
+            // Issue #37/#50, siehe „Known Limitations", unverändert).
+            return (line.matchedItemID == suggestion.itemID || line.matchedItemID == nil)
                 && line.name.caseInsensitiveCompare(suggestion.name) == .orderedSame
         case .aiSuggestion(let name):
-            return !customActive && line.resolvedByAI
+            return line.resolvedByAI
                 && line.name.caseInsensitiveCompare(line.aiSuggestedName ?? name) == .orderedSame
         case .currentName(let name):
-            return !customActive && line.name.caseInsensitiveCompare(name) == .orderedSame
+            return line.name.caseInsensitiveCompare(name) == .orderedSame
         case .receiptText(let name):
-            return !customActive && line.name.caseInsensitiveCompare(name) == .orderedSame
+            return line.name.caseInsensitiveCompare(name) == .orderedSame
         case .custom:
-            return customActive
+            return false
         }
+    }
+
+    private func isSelected(_ option: ReceiptNameOption) -> Bool {
+        Self.isSelected(option, for: line, customActive: customActive)
     }
 
     private func select(_ option: ReceiptNameOption) {
@@ -538,7 +559,12 @@ struct ReceiptReviewCard: View {
     /// TextField-Binding der Zeile. `originalName` bleibt unangetastet.
     static func applyCustomName(_ line: inout EditableReceiptLine, name: String) {
         line.name = name
-        line.matchedItemID = nil
+        // Issue #66: ein bestätigter Name, der zu einem der eigenen Vorschläge passt, verknüpft sich
+        // damit — statt wie bisher ausnahmslos auf `nil` zu fallen. `resolvedByAI` bleibt `false`: der
+        // Nutzer hat aktiv bestätigt, das ist kein KI-Signal mehr.
+        line.matchedItemID = line.suggestions.first {
+            $0.name.caseInsensitiveCompare(name) == .orderedSame
+        }?.itemID
         line.resolvedByAI = false
     }
 
