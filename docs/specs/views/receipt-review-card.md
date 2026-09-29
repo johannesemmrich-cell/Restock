@@ -2,10 +2,10 @@
 entity_id: receipt-review-card
 type: feature
 created: 2026-09-22
-updated: 2026-09-28
+updated: 2026-09-29
 status: draft
-workflow: fix-66-ai-resolved-name-selection
-workflow_history: [feat-23-receipt-review-screen, fix-37-receipt-name-preselect, fix-50-import-dialog-design, fix-50-import-dialog-design-paket2]
+workflow: fix-67-currentname-matcheditem
+workflow_history: [feat-23-receipt-review-screen, fix-37-receipt-name-preselect, fix-50-import-dialog-design, fix-50-import-dialog-design-paket2, fix-66-ai-resolved-name-selection]
 tags: [feature, ui, receipt-scanner]
 ---
 
@@ -13,7 +13,7 @@ tags: [feature, ui, receipt-scanner]
 
 ## Approval
 
-- [x] Approved
+- [ ] Approved
 
 ## Purpose
 
@@ -81,6 +81,16 @@ mindestens vier Zeichen lang ist. Dafür ändert sich Invariante 5 wie oben bere
 Bon-Zeile" (max. 5 Optionen insgesamt inkl. „Anderer Name …"). Details, neue Regel 7 (Renumerierung
 der bisherigen Regel 7 auf 8), der erweiterte Test Plan und eine Korrektur einer falschen
 Testannahme aus Issue #65 selbst: Abschnitt „Nachtrag Issue #65 (Paket 2)" unten.
+
+**Nachtrag Issue #67 (2026-09-29):** Behebt F003 aus „Known Limitations" (vorbestehend seit Issue
+#37): `applySelection`s `.currentName`-Zweig setzte NUR `line.name` und ließ eine zuvor über eine
+andere Option (z. B. `.aiSuggestion`, `.listMatch`) gesetzte `matchedItemID` stehen — `save()`
+schrieb den gelernten Preis dann auf den falschen, stehengebliebenen Artikel. Vollständige
+Ursachenanalyse in `docs/context/fix-67-currentname-matcheditem.md`. Der Fix gleicht den
+`.currentName`-Zweig an das bereits bestehende Muster von `.receiptText`/`applyCustomName` an
+(`matchedItemID = nil`, `resolvedByAI = false`) — von Issue #66 unberührt, da dieses ausschließlich
+`isSelected(_:for:customActive:)`, `applyCustomName`s Namensabgleich und Regel 9 änderte, nicht
+`applySelection`. Details, Code und Sicherheitsbegründung: Abschnitt „Nachtrag Issue #67" unten.
 
 ## Dependencies
 
@@ -295,6 +305,31 @@ Seed, der `SmartCartApp.swift` ändern würde (siehe „Ausdrücklich NICHT geä
 Bildschirm-Nachweis über einen neuen Seed wäre zusätzlicher Aufwand ohne zusätzliche Sicherheit:
 die Anzeige-Logik selbst (`isSelected`) ist SwiftUI-frei und bereits vollständig über die neue
 statische Funktion geprüft.
+
+### Scope-Erweiterung (Issue #67 — 2026-09-29)
+
+Behebt F003 aus „Known Limitations" (vorbestehend seit Issue #37, Folge-Issue #67): der
+`.currentName`-Zweig in `applySelection` lässt eine zuvor über eine andere Option gesetzte
+`matchedItemID` stehen. Vollständige Ursachenanalyse in
+`docs/context/fix-67-currentname-matcheditem.md`; Details, der korrigierte Code und die
+Sicherheitsbegründung: Abschnitt „Nachtrag Issue #67" unten.
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `SmartCart/Views/Prices/ReceiptReviewCard.swift` | MODIFY | `.currentName`-Zweig in `applySelection` (aktuell Zeile 545-546) ergänzt um `matchedItemID = nil` und `resolvedByAI = false` — exakt das bereits bestehende Muster von `.receiptText`/`applyCustomName`. |
+| `RestockTests/ReceiptReviewCardTests.swift` | MODIFY | Neuer Unit-Test `testChoosingCurrentNameAfterAiSuggestionClearsMatchedItemIDAndResolvedByAI`: nach Auswahl von `.aiSuggestion` (setzt `matchedItemID`) zurück zu `.currentName` wechseln → `matchedItemID == nil` und `resolvedByAI == false`. |
+
+- Files: **2** — weit innerhalb des Ziels „max. 4-5 Dateien".
+- LoC: ≈ **+20/−0** — weit unter dem Standard-Limit von ±250 LoC.
+- Risk Level: **NIEDRIG.** Isolierte Ein-Zeilen-Ergänzung in einer bereits bestehenden, reinen
+  Funktion, wiederholt ein bereits etabliertes Muster derselben Funktion (`.receiptText`). Kein
+  Eingriff in `save()`, `isSelected`, `selectionOptions(for:)`, `ReceiptResolutionService` oder
+  Wire-Formate. Sicher gegen Datenverlust: `save()` fällt bei `matchedItemID == nil` auf eine exakte
+  Namenssuche über abgehakte Artikel desselben Stores zurück (`ReceiptScannerView.swift:653-655`,
+  Zeilennummer vor Issue #66 verifiziert, siehe Kontext-Dokument) — der Preis landet dann korrekt
+  über den aktuell geltenden Namen statt über eine stehengebliebene fremde ID.
+- **Ausdrücklich NICHT geändert:** `isSelected(_:for:customActive:)`, `selectionOptions(for:)`,
+  Regel 9, `ReceiptResolutionService.swift`, `SmartCartApp.swift` (kein neuer Seed), `project.pbxproj`.
 
 ## Implementation Details
 
@@ -1041,6 +1076,42 @@ gewöhnliche Auswahlzeile und läuft über das bestehende `option.<k>`-Schema, w
 Liste"-Zeile auch keinen eigenen Marken-Identifier hat (nur die KI-Marke, weil AC-3 explizit ihr
 Umbruchverhalten prüft).
 
+### Nachtrag Issue #67 (2026-09-29): `.currentName`-Auswahl bereinigt `matchedItemID`
+
+Vollständige Ursachenanalyse in `docs/context/fix-67-currentname-matcheditem.md`. `applySelection`
+(Abschnitt 5 oben, „Auswahl-Callbacks") behandelt fünf Fälle. Vier davon setzen
+`matchedItemID`/`resolvedByAI` explizit (`.listMatch`, `.aiSuggestion`, `.receiptText`, `.custom`
+über `applyCustomName`); der `.currentName`-Zweig setzte bisher ausschließlich `line.name`:
+
+```swift
+case .currentName(let name):
+    line.name = name
+```
+
+Stand eine `matchedItemID` aus einer zuvor gewählten, anderen Option noch im State (z. B. nach
+`.aiSuggestion` oder `.listMatch`), und wechselte der Nutzer danach zur `.currentName`-Zeile zurück,
+gewann bei `save()` diese fremde ID — der angezeigte Name entsprach bereits dem neuen Wert, die
+Preis-Zuordnung folgte aber der alten ID. Der Fix gleicht den Zweig an das bereits bestehende Muster
+von `.receiptText` (Zeile 547-552 oben) an:
+
+```swift
+case .currentName(let name):
+    line.name = name
+    line.matchedItemID = nil
+    line.resolvedByAI = false
+```
+
+**Sicher gegen Datenverlust:** `save()` fällt bei `matchedItemID == nil` auf eine exakte Namenssuche
+über abgehakte Artikel desselben Stores zurück (`ReceiptScannerView.swift:653-655`) — der Preis
+landet damit nicht verloren, sondern korrekt über den aktuell geltenden Namen zugeordnet, statt über
+eine stehengebliebene fremde ID. Dieselbe Fallback-Sicherheit, mit der bereits `.receiptText` und
+`applyCustomName` begründet sind.
+
+**Abgrenzung zu Issue #66:** #66 änderte `isSelected(_:for:customActive:)`, den Namensabgleich in
+`applyCustomName` und Regel 9 — nicht `applySelection`. Der hier behobene Fehler bestand unverändert
+vor UND nach #66; die beiden Fixes berühren unterschiedliche Funktionen und schließen sich nicht
+gegenseitig ein.
+
 ## Invarianten
 
 1. **`save()` bleibt bis auf eine gezielte Ausnahme unverändert.** Seit Issue #50, Paket 1
@@ -1049,7 +1120,10 @@ Umbruchverhalten prüft).
    („keine Änderung an `ReceiptScannerView.swift`"). Die Fallback-Suche `looseMatch` selbst bleibt
    unangetastet; keine andere Zeile von `save()` ändert sich.
 2. **`originalName` wird durch keine Auswahl-Interaktion verändert** — nur `name`,
-   `matchedItemID`, `resolvedByAI` ändern sich, wie heute.
+   `matchedItemID`, `resolvedByAI` ändern sich, wie heute. **Bestätigt durch Issue #67
+   (2026-09-29):** Der Fix am `.currentName`-Zweig (siehe „Nachtrag Issue #67") ändert genau diese
+   beiden bereits als veränderlich benannten Felder — `originalName` bleibt unangetastet, die
+   Invariante gilt unverändert.
 3. **Die Art.-50-Kennzeichnung („KI-Vorschlag", `sparkles`) bleibt immer an der Stelle sichtbar,
    an der der KI-Name tatsächlich zur Auswahl steht** — verschwindet nie, auch nicht nach
    Dedup-Regel 2 (dort geht nur die separate KI-Zeile auf, wenn ein identischer Listen-Treffer
@@ -1502,6 +1576,20 @@ Markierung. `testEnteringCustomNameClearsMatchAndAiFlag`,
 tragen `suggestions: []`, der neue Namensabgleich in `applyCustomName` liefert dort `nil`, wie
 bisher.
 
+#### Issue #67 — `.currentName` bereinigt `matchedItemID`
+
+**Unit — `RestockTests/ReceiptReviewCardTests.swift`:**
+
+- [ ] **AC-26:** GIVEN eine Zeile mit `aiSuggestedName`/`aiSuggestedMatchedItemID` gesetzt WHEN
+  zuerst der `.aiSuggestion`-Callback aufgerufen wird (setzt `matchedItemID` auf
+  `aiSuggestedMatchedItemID`, `resolvedByAI == true`) und danach der `.currentName`-Callback mit
+  einem anderen Namen aufgerufen wird THEN gilt `line.name` == der `.currentName`-Name,
+  `matchedItemID == nil`, `resolvedByAI == false`, `originalName` unverändert.
+  Test: `testChoosingCurrentNameAfterAiSuggestionClearsMatchedItemIDAndResolvedByAI`
+  (`RestockTests/ReceiptReviewCardTests.swift:360`). RED bestätigt
+  (`docs/artifacts/fix-67-currentname-matcheditem/test-red-output.txt`): 2 Failures gegen den
+  Live-Code, exakt an den beiden neuen Assertions (`matchedItemID`, `resolvedByAI`).
+
 **Dark/Light:** mindestens `AC1`, `AC3` und `AC9` zusätzlich einmal mit dem Launch-Argument
 `-AppleInterfaceStyle Dark` ausgeführt (zweiter Testlauf derselben Methoden oder parametrisierte
 Variante) — Dark ist der im Original-Screenshot (Issue #23) reproduzierte Fall.
@@ -1599,6 +1687,10 @@ diese Spec GREEN macht.
   wird `matchedItemID` auf dessen `itemID` gesetzt (statt wie bisher ausnahmslos auf `nil`);
   `resolvedByAI` bleibt `false`. Für jeden Namen ohne passenden Vorschlag bleibt das bisherige
   Verhalten (`matchedItemID = nil`) unverändert.
+- **AC-26 (Issue #67 — `.currentName` bereinigt `matchedItemID`):** Wahl der `.currentName`-Zeile
+  setzt `matchedItemID = nil` und `resolvedByAI = false` — dieselbe Bereinigung wie bei der Bon-Zeile
+  (AC-21) und „Anderer Name …" (AC-7). Eine zuvor über eine andere Option (z. B. `.aiSuggestion`,
+  `.listMatch`) gesetzte `matchedItemID` bleibt nie stehen.
 
 ## Alternativen (verworfen)
 
@@ -1884,12 +1976,6 @@ Beobachtbar für den PO, ohne Code zu lesen:
   fertig formulierte Alternative (Regel 12 `isSelectedIgnoringCustom`, erhaltene KI-Zeile,
   Doppelnennung eines Namens) ist per PO-Entscheidung 2026-09-28 verworfen, nicht Bestandteil
   dieser Spec — siehe „Alternativen (verworfen)".
-- **F003 (LOW, vorbestehend seit Issue #37, Folge-Issue #67):** `applySelection` setzt im
-  `.currentName`-Zweig NUR `line.name` (`ReceiptReviewCard.swift:470-471`) und lässt eine zuvor
-  gesetzte, fremde `matchedItemID` stehen. Wer zuerst einen Listen-Treffer und danach die
-  `.currentName`-Zeile antippt, behält dessen Artikel-Identität; `save()` schreibt den Preis dann
-  über `matchedItem` auf den falschen Artikel (`ReceiptScannerView.swift:642-645`, `:709`). Von
-  Paket 1b nicht berührt.
 - **F004 (LOW, vorbestehend, Folge-Issue #68):** Solange `customActive` gilt, ersetzt `optionRow` die
   `.custom`-Zeile durch das Textfeld; der `.isSelected`-Trait und der gefüllte Radiopunkt hängen
   nur an den Nicht-Custom-Zeilen. Während der Eingabe eines eigenen Namens trägt deshalb KEINE
@@ -2036,3 +2122,19 @@ vom PO akzeptierte Konsequenz von Entwurf A („markiert" ≠ „verknüpft"), d
 Randfall (zwei Artikel, gleicher Name, abweichendes `matchedItemID`) als von #66 unberührt
 präzisiert. Test Plan um sieben neue Unit-Tests erweitert, keine bestehenden Tests geändert.
 Approval erneut zurückgesetzt.
+
+### 2026-09-29 — Issue #67: `.currentName`-Auswahl bereinigt `matchedItemID`
+
+Behebt F003 aus „Known Limitations" (vorbestehend seit Issue #37): `applySelection`s
+`.currentName`-Zweig setzte NUR `line.name` und ließ eine zuvor über eine andere Option gesetzte
+`matchedItemID`/`resolvedByAI` stehen; `save()` schrieb den gelernten Preis dann auf den
+stehengebliebenen, falschen Artikel. Fix gleicht den Zweig an das bereits bestehende Muster von
+`.receiptText`/`applyCustomName` an (`matchedItemID = nil`, `resolvedByAI = false`) — unberührt von
+und unabhängig von Issue #66, das ausschließlich `isSelected`, `applyCustomName`s Namensabgleich und
+Regel 9 änderte, nicht `applySelection`. Neuer Abschnitt „Nachtrag Issue #67" in Implementation
+Details, neue Scope-Erweiterung „Issue #67 — 2026-09-29" (2 Dateien, ≈ +20 LoC, Risk NIEDRIG),
+Invariante 2 um einen bestätigenden Satz ergänzt, neue AC-26 (nach AC-25, der zuvor höchsten
+tatsächlich vorhandenen Nummer — die ursprünglich für dieses Issue vorgesehene Nummer AC-23 wurde
+zwischenzeitlich durch Issue #66 belegt), Test Plan um einen Unit-Test erweitert (RED bestätigt),
+F003-Eintrag vollständig aus „Known Limitations" entfernt. Status bleibt `draft`, Approval erneut
+zurückgesetzt.
