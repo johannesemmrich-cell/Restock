@@ -544,6 +544,8 @@ struct ReceiptReviewCard: View {
             line.resolvedByAI = true
         case .currentName(let name):
             line.name = name
+            line.matchedItemID = nil
+            line.resolvedByAI = false
         case .receiptText(let name):
             // Gleiche Form wie `.currentName` — die Bon-Zeile trägt weder einen Listen- noch
             // einen KI-Treffer (Issue #65).
