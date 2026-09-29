@@ -355,6 +355,25 @@ final class ReceiptReviewCardTests: XCTestCase {
         XCTAssertEqual(line.matchedItemID, aiItemID, "Die ursprüngliche Artikel-Zuordnung der KI muss zurückkommen.")
     }
 
+    /// AC-23 (Issue #67) — die Auswahl des geltenden Namens („aktueller Name") darf keine zuvor
+    /// über eine andere Option gesetzte Artikel-Zuordnung stehen lassen.
+    func testChoosingCurrentNameAfterAiSuggestionClearsMatchedItemIDAndResolvedByAI() {
+        let aiItemID = UUID()
+        var line = makeLine(name: "Frische Vollmilch", price: 1.19, originalName: "MILCH 3,5% FRISCH",
+                            aiSuggestedName: "Frische Vollmilch",
+                            aiSuggestedMatchedItemID: aiItemID)
+
+        ReceiptReviewCard.applySelection(&line, option: .aiSuggestion(name: "Frische Vollmilch"))
+        XCTAssertEqual(line.matchedItemID, aiItemID, "Vorbedingung: KI-Vorschlag muss die Artikel-Zuordnung gesetzt haben.")
+
+        ReceiptReviewCard.applySelection(&line, option: .currentName(name: "Milch 3,5% frisch"))
+
+        XCTAssertEqual(line.name, "Milch 3,5% frisch")
+        XCTAssertNil(line.matchedItemID, "Die zuvor über den KI-Vorschlag gesetzte matchedItemID darf nicht stehen bleiben.")
+        XCTAssertFalse(line.resolvedByAI, "Nach Wahl des aktuellen Namens ist keine KI-Zuordnung mehr aktiv.")
+        XCTAssertEqual(line.originalName, "MILCH 3,5% FRISCH", "Der Bontext darf sich nie ändern.")
+    }
+
     /// AC7 — ein eigener Name löst die Artikel-Zuordnung und die KI-Kennzeichnung.
     func testEnteringCustomNameClearsMatchAndAiFlag() {
         var line = makeLine(name: "Milch", price: 0.99, originalName: "MILCH",
