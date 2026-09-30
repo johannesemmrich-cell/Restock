@@ -136,10 +136,14 @@ class ShoppingItem {
         // letzte, immer entscheidende Instanz.
         let rawLearnedMatch: (price: Double, unit: String?)? = {
             guard let store else { return nil }
-            let matchingKeys = store.learnedPrices.keys.filter { key in
+            let substringKeys = store.learnedPrices.keys.filter { key in
                 key.count >= 3 && itemLower.count >= 3 &&
                 (key.contains(itemLower) || itemLower.contains(key))
             }
+            // Issue #52: Fehlertoleranter Fallback (Tippfehler/OCR, "saitan" ↔ "seitan") — nur
+            // wenn die Teilstring-Prüfung nichts findet; ein Teilstring-Treffer hat Vorrang.
+            let matchingKeys = !substringKeys.isEmpty ? substringKeys
+                : store.learnedPrices.keys.filter { Self.isFuzzyLearnedPriceMatch($0, itemLower) }
             let bestKey = matchingKeys.max { a, b in
                 let dateA = store.learnedPriceDates[a] ?? .distantPast
                 let dateB = store.learnedPriceDates[b] ?? .distantPast
@@ -189,6 +193,30 @@ class ShoppingItem {
         }
         self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category, unit: self.unit, quantityAmount: quantityAmount)
         self.estimatedPriceIsAutoDerived = (learnedPrice == nil)
+    }
+
+    /// Fuzzy-Gate für gelernte Preise (Issue #52): Levenshtein-Distanz ≤ 1 UND der kürzere der
+    /// beiden Namen hat mindestens 5 Zeichen. Bewusst konservativ ("milch"/"mehl" = 4, "eis" zu
+    /// kurz), weil ein Fehltreffer hier still einen falschen Preis setzt.
+    static func isFuzzyLearnedPriceMatch(_ a: String, _ b: String) -> Bool {
+        min(a.count, b.count) >= 5 && levenshteinDistance(a, b) <= 1
+    }
+
+    /// Klassische Levenshtein-Distanz (Einfügen, Löschen, Ersetzen je Kosten 1), zeilenweise DP.
+    private static func levenshteinDistance(_ a: String, _ b: String) -> Int {
+        let s = Array(a), t = Array(b)
+        guard !s.isEmpty else { return t.count }
+        guard !t.isEmpty else { return s.count }
+        var previous = Array(0...t.count)
+        for i in 1...s.count {
+            var current = [i] + Array(repeating: 0, count: t.count)
+            for j in 1...t.count {
+                let cost = s[i - 1] == t[j - 1] ? 0 : 1
+                current[j] = min(previous[j] + 1, current[j - 1] + 1, previous[j - 1] + cost)
+            }
+            previous = current
+        }
+        return previous[t.count]
     }
 
     /// Ergebnis der Entscheidungstabelle für einen gelernten Preis (Issue #10). Lebt als
