@@ -15,8 +15,6 @@ struct SettingsView: View {
     @AppStorage("currencyCode") private var currencyCode = Locale.current.currency?.identifier ?? "EUR"
     @AppStorage("developerMode") private var developerMode = false
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
-    @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
-    private var autoSortByLearnedOrder = true
     // Gleicher Key wie HomeView.storeViewModeRaw, damit eine Änderung hier sofort dort
     // (und umgekehrt) wirkt.
     @AppStorage("storeViewMode") private var storeViewModeRaw = StoreViewMode.cards.rawValue
@@ -101,10 +99,15 @@ struct SettingsView: View {
                     } label: {
                         Text("Siri & Schnellzugriff")
                     }
-                    NavigationLink {
-                        NotificationSettingsView()
-                    } label: {
-                        Text("Benachrichtigungen")
+                    // Enthält nur noch den Developer-Mode-Schalter für Nachkauf-Erinnerungen, seit
+                    // die Sortierung pro Laden im ···-Menü gewählt wird (Issue #79) — ohne Developer
+                    // Mode wäre die Seite leer.
+                    if developerMode {
+                        NavigationLink {
+                            NotificationSettingsView()
+                        } label: {
+                            Text("Benachrichtigungen")
+                        }
                     }
                     NavigationLink {
                         DefaultStoresSettingsView()
@@ -396,8 +399,6 @@ struct SettingsView: View {
 
 struct NotificationSettingsView: View {
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
-    @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
-    private var autoSortByLearnedOrder = true
     @AppStorage("developerMode") private var developerMode = false
 
     var body: some View {
@@ -418,13 +419,6 @@ struct NotificationSettingsView: View {
                             }
                         }
                 }
-                VStack(alignment: .leading, spacing: 2) {
-                    Toggle("Automatisch nach Einkaufsreihenfolge sortieren", isOn: $autoSortByLearnedOrder)
-                    Text("Restock merkt sich, in welcher Reihenfolge du Artikel abhakst, und sortiert die Liste beim nächsten Mal entsprechend.")
-                        .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
-                }
-                .padding(.vertical, 2)
             }
             .listRowBackground(Color.surface)
         }
