@@ -94,6 +94,37 @@ extension AssignmentService {
         return stores.first { normalizedStoreKey($0.name) == dominantKey }
     }
 
+    // MARK: - Quantity suggestion (Issue #57)
+
+    /// Leitet aus nachweisbarer Evidenz eine Mengen-Voreinstellung für einen neu anzulegenden
+    /// Artikel ab. Reine Funktion über Werten — kein SwiftUI, kein ModelContext —, damit die
+    /// Stufen einzeln nachweisbar sind statt nur beschrieben
+    /// (`docs/specs/services/assignment-service-quantity-suggestion.md`).
+    ///
+    /// 1. `"history"`: der zeitlich LETZTE Kauf desselben Artikels (`namesRepresentSameItem`,
+    ///    kein `contains()`) in DIESEM Laden — nie laden-übergreifend, nie ein Durchschnitt.
+    /// 2. `"package"`: Füllmenge im Namen (`ReceiptParserService.packageSizeFromName`).
+    /// 3. `"none"`: keine Evidenz, leere Menge und Einheit.
+    static func suggestQuantity(itemName: String, storeName: String, purchaseRecords: [PurchaseRecord])
+        -> (quantity: String, unit: String, source: String) {
+        let storeKey = normalizedStoreKey(storeName)
+        let lastPurchase = purchaseRecords
+            .filter { namesRepresentSameItem($0.itemName, itemName) && normalizedStoreKey($0.storeName) == storeKey }
+            .max { $0.date < $1.date }
+        if let lastPurchase {
+            return (formattedQuantity(lastPurchase.quantityAmount), lastPurchase.unit, "history")
+        }
+        if let package = ReceiptParserService.packageSizeFromName(itemName) {
+            return (formattedQuantity(package.amount), package.unit, "package")
+        }
+        return ("", "", "none")
+    }
+
+    /// Ganze Zahlen ohne Nachkommastelle ("500" statt "500.0").
+    private static func formattedQuantity(_ amount: Double) -> String {
+        amount == amount.rounded() && abs(amount) < 1e9 ? String(Int(amount)) : String(amount)
+    }
+
     static func assign(itemName: String, to activeStores: [Store], purchaseRecords: [PurchaseRecord] = []) -> Store? {
         guard !activeStores.isEmpty else { return nil }
 

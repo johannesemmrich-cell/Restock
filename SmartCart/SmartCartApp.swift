@@ -31,6 +31,8 @@ struct SmartCartApp: App {
             Self.clearMenuPlanForUITestsIfNeeded()
             Self.seedReceiptReviewForUITestsIfNeeded(context: container.mainContext)
             Self.seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context: container.mainContext)
+            Self.clearQuantitySuggestionSeedForUITestsIfNeeded(context: container.mainContext)
+            Self.seedQuantitySuggestionForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
 
@@ -208,6 +210,50 @@ struct SmartCartApp: App {
         }
         try? context.save()
         _ = ReceiptShareHandoff.takePending()
+    }
+
+    /// UI-Test-Seed für die Mengen-Vorbelegung (Issue #57, `AddItemQuantitySuggestionUITests`):
+    /// Laden „Quittenhof" mit „Bio Käse" (angenommene Menge aus der Kaufhistorie, 400 g — AC-14/16)
+    /// und „Parmesan" ohne belegte Menge, aber mit gelernter Gramm-Rate 0,0125 €/g (AC-15; der
+    /// Konstruktor setzt `unit` dabei selbst auf "g"). Löscht vorher alle Läden und Artikel, damit
+    /// jeder Test denselben Ausgangszustand hat.
+    /// Only runs on `-seedQuantitySuggestionForUITests`, DEBUG-only, never ships to users.
+    private static func seedQuantitySuggestionForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedQuantitySuggestionForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        let store = Store(name: "Quittenhof", emoji: "🍐", colorHex: "#8A9A2B")
+        store.learnedPrices["parmesan"] = 0.0125
+        store.learnedPriceUnits["parmesan"] = "g"
+        context.insert(store)
+        context.insert(ShoppingItem(
+            name: "Bio Käse", quantity: "400", quantityAmount: 400, unit: "g",
+            store: store, quantitySource: "history"))
+        context.insert(ShoppingItem(name: "Parmesan", store: store, quantitySource: "none"))
+        // Früherer Kauf „Milch" (2 l) — Zwischentreffer beim Weitertippen zu „Milchreis" (F001).
+        context.insert(PurchaseRecord(itemName: "Milch", storeName: "Quittenhof", quantityAmount: 2, unit: "l"))
+        try? context.save()
+    }
+
+    /// Räumt den Seed oben wieder weg — `AddItemQuantitySuggestionUITests.tearDown()` startet die
+    /// App einmal mit diesem Argument (App-Group-Container überlebt den Test, siehe Issue #28).
+    /// Only runs on `-clearQuantitySuggestionSeedForUITests`, DEBUG-only.
+    private static func clearQuantitySuggestionSeedForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-clearQuantitySuggestionSeedForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        try? context.save()
+    }
+
+    private static func deleteAllStoresAndItems(context: ModelContext) {
+        if let items = try? context.fetch(FetchDescriptor<ShoppingItem>()) {
+            for item in items { context.delete(item) }
+        }
+        if let stores = try? context.fetch(FetchDescriptor<Store>()) {
+            for store in stores { context.delete(store) }
+        }
+        let seededRecords = FetchDescriptor<PurchaseRecord>(predicate: #Predicate { $0.storeName == "Quittenhof" })
+        if let records = try? context.fetch(seededRecords) {
+            for record in records { context.delete(record) }
+        }
     }
 
     /// Leert den Menüplan der laufenden Woche (Issue #60).

@@ -17,6 +17,11 @@ struct AddItemView: View {
     @State private var name = ""
     @State private var quantity = ""
     @State private var unit = ""
+    /// Herkunft der Menge (Issue #57), siehe `ShoppingItem.quantitySource`.
+    @State private var quantitySource = "user"
+    /// Hat der Nutzer Menge oder Einheit selbst angefasst? Nur dann ist die Vorbelegung tabu —
+    /// eine eigene, noch unberührte Vorbelegung wird bei jeder Namensänderung neu bewertet.
+    @State private var quantityTouchedByUser = false
     @State private var selectedStore: Store?
     @State private var autoAssigned = false
     @State private var note = ""
@@ -37,6 +42,17 @@ struct AddItemView: View {
             return n == nameLower || (n.count >= 3 && (n.contains(nameLower) || nameLower.contains(n)))
         }
         return match.map { "'\($0.name)' ist bereits in der Liste" }
+    }
+
+    /// Bindings für manuelle Eingaben: jedes Schreiben macht die Menge zur eigenen des Nutzers.
+    /// Bewusst kein `.onChange(of: quantity)` — das würde die eigene Vorbelegung im selben
+    /// Update-Zyklus sofort wieder auf `"user"` zurücksetzen (Spec #57, Implementation Details 1b).
+    private var userQuantity: Binding<String> {
+        Binding(get: { quantity }, set: { quantity = $0; quantitySource = "user"; quantityTouchedByUser = true })
+    }
+
+    private var userUnit: Binding<String> {
+        Binding(get: { unit }, set: { unit = $0; quantitySource = "user"; quantityTouchedByUser = true })
     }
 
     private var nameSuggestions: [String] {
@@ -69,9 +85,9 @@ struct AddItemView: View {
                     }
 
                     HStack(spacing: 6) {
-                        QuantityStepperField(quantity: $quantity, unit: $unit)
+                        QuantityStepperField(quantity: userQuantity, unit: userUnit)
                             .fixedSize()
-                        TextField(String(localized: "item.unit.placeholder"), text: $unit)
+                        TextField(String(localized: "item.unit.placeholder"), text: userUnit)
                             .multilineTextAlignment(.center)
                             .frame(width: 72)
                             .padding(.horizontal, 8)
@@ -179,22 +195,19 @@ struct AddItemView: View {
         applySuggestedQuantity(for: name)
     }
 
+    /// Mengen-Vorbelegung (Issue #57): eine selbst eingetippte Menge oder Einheit wird nie
+    /// überschrieben (F002), sonst entscheidet `AssignmentService.suggestQuantity` bei jeder
+    /// Namensänderung neu — eine Vorbelegung aus einem Zwischenstand („Milch" auf dem Weg zu
+    /// „Milchreis") bleibt so nicht hängen (F001). Schreibt direkt auf die `@State`-Variablen,
+    /// nicht über die berechneten Bindings — die Vorbelegung ist keine Nutzereingabe.
     private func applySuggestedQuantity(for name: String) {
-        guard quantity.isEmpty else { return }
-        let nameLower = name.lowercased()
-        guard nameLower.count >= 3 else { return }
-        let matching = allRecords.filter { record in
-            let rn = record.itemName.lowercased()
-            return rn == nameLower || (rn.count >= 3 && (rn.contains(nameLower) || nameLower.contains(rn)))
-        }
-        guard !matching.isEmpty else { return }
-        let recent = Array(matching.sorted { $0.date > $1.date }.prefix(5))
-        let avgAmount = recent.map { $0.quantityAmount }.reduce(0, +) / Double(recent.count)
-        guard avgAmount > 0, !(avgAmount == 1 && recent.allSatisfy { $0.unit.isEmpty }) else { return }
-        let lastUnit = recent.compactMap { $0.unit.isEmpty ? nil : $0.unit }.first ?? ""
-        let qtyStr = avgAmount == Double(Int(avgAmount)) ? "\(Int(avgAmount))" : String(format: "%.1f", avgAmount)
-        quantity = qtyStr
-        if !lastUnit.isEmpty && unit.isEmpty { unit = lastUnit }
+        guard !quantityTouchedByUser else { return }
+        let suggestion = AssignmentService.suggestQuantity(
+            itemName: name, storeName: selectedStore?.name ?? "", purchaseRecords: allRecords
+        )
+        quantity = suggestion.quantity
+        unit = suggestion.unit
+        quantitySource = suggestion.source
     }
 
     private func addItem() {
@@ -211,7 +224,8 @@ struct AddItemView: View {
             quantityAmount: qtyAmount,
             unit: unit,
             note: note,
-            store: selectedStore
+            store: selectedStore,
+            quantitySource: quantitySource
         )
         context.insert(item)
         SyncCoordinator.shared.pushInBackground(selectedStore)

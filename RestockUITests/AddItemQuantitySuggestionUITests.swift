@@ -168,12 +168,83 @@ final class AddItemQuantitySuggestionUITests: XCTestCase {
         waitForExpectations(timeout: 10)
         quantityField.typeText("3")
 
-        let addConfirmButton = app.buttons["Hinzufügen"]
+        let addConfirmButton = app.navigationBars["Artikel hinzufügen"].buttons["Hinzufügen"]
         XCTAssertTrue(addConfirmButton.waitForExistence(timeout: 5), "'Hinzufügen'-Button in AddItemView nicht gefunden")
         addConfirmButton.tap()
 
         XCTAssertTrue(app.staticTexts["Kaffeebohnen"].waitForExistence(timeout: 10), "Neu angelegter Artikel erscheint nicht in der Liste")
         XCTAssertTrue(app.staticTexts["3"].waitForExistence(timeout: 5), "Selbst eingetippte Menge muss unverändert angezeigt werden")
         XCTAssertFalse(app.staticTexts["ca. 3"].exists, "Eine selbst eingetippte Menge darf NIE als Annahme ('ca. ') markiert werden (AC-13)")
+    }
+
+    // MARK: - Regressionen F001/F002 (Adversary-Befunde zu #57)
+
+    /// Öffnet `AddItemView` über den "+"-Button der Quittenhof-Liste (presetStore gesetzt).
+    private func openAddItemFromQuittenhof(_ app: XCUIApplication) {
+        openQuittenhofStoreDetail(app)
+        let addButton = app.buttons.matching(NSPredicate(format: "identifier == 'plus'")).firstMatch
+        XCTAssertTrue(addButton.waitForExistence(timeout: 5), "'+'-Button in StoreDetailView nicht gefunden")
+        addButton.tap()
+    }
+
+    /// F001: GIVEN ein Kauf "Milch" (2 l) im Quittenhof (Seed) WHEN der Nutzer "Milch" tippt
+    /// (Vorbelegung greift, Einheit "l") und dann zu "Milchreis" weitertippt (kein Kauf) THEN darf
+    /// die Vorbelegung aus dem Zwischenstand nicht hängen bleiben — kein "ca. 2 l" in der Liste.
+    func testStaleSuggestionIsDroppedWhenNameIsTypedFurther() throws {
+        let app = launchedApp()
+        openAddItemFromQuittenhof(app)
+
+        let nameField = app.textFields["Artikelname"]
+        XCTAssertTrue(nameField.waitForExistence(timeout: 5), "Artikelname-Feld in AddItemView nicht gefunden")
+        nameField.tap()
+        nameField.typeText("Milch")
+
+        let unitField = app.textFields["Einheit"]
+        XCTAssertTrue(unitField.waitForExistence(timeout: 5), "Einheiten-Feld in AddItemView nicht gefunden")
+        expectation(for: NSPredicate(format: "value == %@", "l"), evaluatedWith: unitField)
+        waitForExpectations(timeout: 5)
+
+        nameField.typeText("reis")
+
+        let addConfirmButton = app.navigationBars["Artikel hinzufügen"].buttons["Hinzufügen"]
+        XCTAssertTrue(addConfirmButton.waitForExistence(timeout: 5), "'Hinzufügen'-Button in AddItemView nicht gefunden")
+        addConfirmButton.tap()
+
+        XCTAssertTrue(app.staticTexts["Milchreis"].waitForExistence(timeout: 10), "Neu angelegter Artikel 'Milchreis' erscheint nicht in der Liste")
+        let staleSuggestion = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "ca. 2 l")).firstMatch
+        XCTAssertFalse(staleSuggestion.exists, "Die Vorbelegung aus dem Zwischenstand 'Milch' darf bei 'Milchreis' nicht übernommen werden (F001)")
+        XCTAssertFalse(app.staticTexts["2 l"].exists, "Auch ohne 'ca.' darf die überholte Menge 2 l nicht bei 'Milchreis' landen (F001)")
+    }
+
+    /// F002: GIVEN der Nutzer tippt zuerst die Einheit "kg" WHEN er danach den Namen "Kaffeebohnen"
+    /// tippt (kein Kauf, keine Packungsgröße → Stufe "none") THEN bleibt die Einheit "kg" stehen und
+    /// die Liste zeigt "1 kg" ohne "ca."-Präfix.
+    func testUserTypedUnitIsNeverOverwrittenBySuggestion() throws {
+        let app = launchedApp()
+        openAddItemFromQuittenhof(app)
+
+        let unitField = app.textFields["Einheit"]
+        XCTAssertTrue(unitField.waitForExistence(timeout: 5), "Einheiten-Feld in AddItemView nicht gefunden")
+        unitField.tap()
+        expectation(for: NSPredicate(format: "hasKeyboardFocus == true"), evaluatedWith: unitField)
+        waitForExpectations(timeout: 10)
+        unitField.typeText("kg")
+
+        let nameField = app.textFields["Artikelname"]
+        XCTAssertTrue(nameField.waitForExistence(timeout: 5), "Artikelname-Feld in AddItemView nicht gefunden")
+        nameField.tap()
+        expectation(for: NSPredicate(format: "hasKeyboardFocus == true"), evaluatedWith: nameField)
+        waitForExpectations(timeout: 10)
+        nameField.typeText("Kaffeebohnen")
+
+        XCTAssertEqual(unitField.value as? String, "kg", "Die selbst getippte Einheit darf durch die Namenseingabe nicht überschrieben werden (F002)")
+
+        let addConfirmButton = app.navigationBars["Artikel hinzufügen"].buttons["Hinzufügen"]
+        XCTAssertTrue(addConfirmButton.waitForExistence(timeout: 5), "'Hinzufügen'-Button in AddItemView nicht gefunden")
+        addConfirmButton.tap()
+
+        XCTAssertTrue(app.staticTexts["Kaffeebohnen"].waitForExistence(timeout: 10), "Neu angelegter Artikel erscheint nicht in der Liste")
+        XCTAssertTrue(app.staticTexts["1 kg"].waitForExistence(timeout: 5), "Die selbst gesetzte Einheit muss als '1 kg' in der Liste erscheinen (F002)")
+        XCTAssertFalse(app.staticTexts["ca. 1 kg"].exists, "Eine selbst gesetzte Einheit darf nie als Annahme ('ca. ') markiert werden (F002)")
     }
 }

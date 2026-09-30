@@ -1,0 +1,93 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination id=8F696920-4B9A-40A7-96F0-7697BE887CC7 "-only-testing:RestockUITests/AddItemQuantitySuggestionUITests/testTEMPScreenshotDurchlauf"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-09-30 11:28:22.642628+0200 RestockUITests-Runner[50281:85881694] [Default] Running tests...
+2026-09-30 11:28:22.855018+0200 RestockUITests-Runner[50281:85882120] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-09-30 11:28:22.891760+0200 RestockUITests-Runner[50281:85882120] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+objc[50281]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x1099c8310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x108c0c398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-30 11:28:33.319.
+Test Suite 'RestockUITests.xctest' started at 2026-09-30 11:28:33.321.
+Test Suite 'AddItemQuantitySuggestionUITests' started at 2026-09-30 11:28:33.321.
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testTEMPScreenshotDurchlauf]' started.
+    t =     0.01s Start Test at 2026-09-30 11:28:33.327
+    t =     0.94s Set Up
+    t =     0.97s Open com.johannesemmrich.Restock
+    t =     0.98s     Launch com.johannesemmrich.Restock
+2026-09-30 11:28:35.180 xcodebuild[50082:85879586] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 11:28:35.181 xcodebuild[50082:85879586] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     6.71s         Setting up automation session
+    t =     9.97s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.AddItemQuantitySuggestionUITests testTEMPScreenshotDurchlauf] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    12.72s Waiting 15.0s for Button (First Match) to exist
+    t =    13.72s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    13.73s         Checking existence of `Button (First Match)`
+    t =    15.07s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    15.08s     Find the Button (First Match)
+    t =    15.52s Tap "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    15.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.53s     Find the "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    15.59s     Check for interrupting elements affecting "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    15.71s     Synthesize event
+    t =    16.23s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.76s Waiting 10.0s for "ca. 400 g" StaticText to exist
+    t =    18.77s     Checking `Expect predicate `existsNoRetry == 1` for object "ca. 400 g" StaticText`
+    t =    18.77s         Checking existence of `"ca. 400 g" StaticText`
+    t =    19.16s Waiting 10.0s for StaticText (First Match) to exist
+    t =    20.20s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    20.20s         Checking existence of `StaticText (First Match)`
+    t =    22.84s Requesting snapshot of accessibility hierarchy for app with pid 50395
+    t =    23.87s Requesting snapshot of accessibility hierarchy for app with pid 50395
+    t =    24.27s Tear Down
+    t =    24.28s     Open com.johannesemmrich.Restock
+    t =    24.29s         Launch com.johannesemmrich.Restock
+    t =    24.29s             Terminate com.johannesemmrich.Restock:50395
+2026-09-30 11:28:58.865 xcodebuild[50082:85879586] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 11:28:58.866 xcodebuild[50082:85879586] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    26.24s             Setting up automation session
+    t =    32.31s             Wait for com.johannesemmrich.Restock to idle
+    t =    35.67s     Terminate com.johannesemmrich.Restock:50546
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testTEMPScreenshotDurchlauf]' passed (39.751 seconds).
+Test Suite 'AddItemQuantitySuggestionUITests' passed at 2026-09-30 11:29:13.258.
+	 Executed 1 test, with 0 failures (0 unexpected) in 39.751 (39.936) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-09-30 11:29:13.269.
+	 Executed 1 test, with 0 failures (0 unexpected) in 39.751 (39.948) seconds
+Test Suite 'Selected tests' passed at 2026-09-30 11:29:13.278.
+	 Executed 1 test, with 0 failures (0 unexpected) in 39.751 (39.959) seconds
