@@ -1,0 +1,177 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/AddItemQuantitySuggestionUITests/testStaleSuggestionIsDroppedWhenNameIsTypedFurther" test
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/SmartCart/Assets.xcassets /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/SmartCart/Preview Content/Preview Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+Build description signature: b005b0eddf8f196a1bccb31b7994751e
+Build description path: /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/XCBuildData/b005b0eddf8f196a1bccb31b7994751e.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/RestockShareExtension/Info.plist (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/RestockShareExtension/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/SmartCartWidgets/Info.plist (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/SmartCartWidgets/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter
+    builtin-infoPlistUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter
+    builtin-infoPlistUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/ProductTypeInfoPlistAdditions.plist -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-09-30 12:37:32.676507+0200 RestockUITests-Runner[7136:86226836] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-30 12:37:33.966.
+Test Suite 'RestockUITests.xctest' started at 2026-09-30 12:37:33.967.
+Test Suite 'AddItemQuantitySuggestionUITests' started at 2026-09-30 12:37:33.967.
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testStaleSuggestionIsDroppedWhenNameIsTypedFurther]' started.
+    t =     0.00s Start Test at 2026-09-30 12:37:33.968
+    t =     0.07s Set Up
+    t =     0.07s Open com.johannesemmrich.Restock
+    t =     0.07s     Launch com.johannesemmrich.Restock
+2026-09-30 12:37:34.342 xcodebuild[7074:86226211] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 12:37:34.342 xcodebuild[7074:86226211] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[7136]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10b204310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a624398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     2.47s         Setting up automation session
+    t =     5.41s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.AddItemQuantitySuggestionUITests testStaleSuggestionIsDroppedWhenNameIsTypedFurther] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     7.87s Waiting 15.0s for Button (First Match) to exist
+    t =     8.89s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     8.90s         Checking existence of `Button (First Match)`
+    t =    10.05s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    10.05s     Find the Button (First Match)
+    t =    10.11s Tap "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    10.11s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.12s     Find the "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    10.15s     Check for interrupting elements affecting "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    10.19s     Synthesize event
+    t =    10.49s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.00s Waiting 5.0s for Button (First Match) to exist
+    t =    12.02s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    12.02s         Checking existence of `Button (First Match)`
+    t =    12.11s Tap Button (First Match)
+    t =    12.11s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.13s     Find the Button (First Match)
+    t =    12.19s     Check for interrupting elements affecting "plus" Button
+    t =    12.44s     Synthesize event
+    t =    12.78s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.01s Waiting 5.0s for "Artikelname" TextField to exist
+    t =    14.04s     Checking `Expect predicate `existsNoRetry == 1` for object "Artikelname" TextField`
+    t =    14.04s         Checking existence of `"Artikelname" TextField`
+    t =    14.22s Tap "Artikelname" TextField
+    t =    14.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.22s     Find the "Artikelname" TextField
+    t =    14.32s     Check for interrupting elements affecting "Artikelname" TextField
+    t =    14.44s     Synthesize event
+    t =    14.74s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.33s Type 'Milch' into "Artikelname" TextField
+    t =    15.33s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.67s     Find the "Artikelname" TextField
+    t =    15.90s     Check for interrupting elements affecting "Artikelname" TextField
+    t =    16.06s     Synthesize event
+    t =    16.35s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.36s Waiting 5.0s for "Einheit" TextField to exist
+    t =    17.39s     Checking `Expect predicate `existsNoRetry == 1` for object "Einheit" TextField`
+    t =    17.39s         Checking existence of `"Einheit" TextField`
+    t =    18.53s Checking `Expect predicate `value == "l"` for object "Einheit" TextField`
+    t =    18.53s     Find the "Einheit" TextField
+    t =    18.61s Type 'reis' into "Artikelname" TextField
+    t =    18.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.62s     Find the "Artikelname" TextField
+    t =    18.68s     Check for interrupting elements affecting "Artikelname" TextField
+    t =    18.75s     Synthesize event
+    t =    19.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.02s Waiting 5.0s for "Hinzufügen" Button to exist
+    t =    20.05s     Checking `Expect predicate `existsNoRetry == 1` for object "Hinzufügen" Button`
+    t =    20.05s         Checking existence of `"Hinzufügen" Button`
+    t =    20.12s Tap "Hinzufügen" Button
+    t =    20.12s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.13s     Find the "Hinzufügen" Button
+    t =    20.19s     Check for interrupting elements affecting "Hinzufügen" Button
+    t =    20.24s     Synthesize event
+    t =    20.53s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.60s Waiting 10.0s for "Milchreis" StaticText to exist
+    t =    21.62s     Checking `Expect predicate `existsNoRetry == 1` for object "Milchreis" StaticText`
+    t =    21.62s         Checking existence of `"Milchreis" StaticText`
+    t =    21.67s Checking existence of `StaticText (First Match)`
+/Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/RestockUITests/AddItemQuantitySuggestionUITests.swift:215: error: -[RestockUITests.AddItemQuantitySuggestionUITests testStaleSuggestionIsDroppedWhenNameIsTypedFurther] : XCTAssertFalse failed - Die Vorbelegung aus dem Zwischenstand 'Milch' darf bei 'Milchreis' nicht übernommen werden (F001)
+    t =    21.74s Tear Down
+    t =    21.74s     Open com.johannesemmrich.Restock
+    t =    21.75s         Launch com.johannesemmrich.Restock
+    t =    21.75s             Terminate com.johannesemmrich.Restock:7160
+2026-09-30 12:37:56.809 xcodebuild[7074:86226211] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 12:37:56.809 xcodebuild[7074:86226211] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    23.27s             Setting up automation session
+    t =    25.23s             Wait for com.johannesemmrich.Restock to idle
+    t =    27.57s     Terminate com.johannesemmrich.Restock:7304
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testStaleSuggestionIsDroppedWhenNameIsTypedFurther]' failed (28.787 seconds).
+Test Suite 'AddItemQuantitySuggestionUITests' failed at 2026-09-30 12:38:02.755.
+	 Executed 1 test, with 1 failure (0 unexpected) in 28.787 (28.788) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-09-30 12:38:02.756.
+	 Executed 1 test, with 1 failure (0 unexpected) in 28.787 (28.789) seconds
+Test Suite 'Selected tests' failed at 2026-09-30 12:38:02.756.
+	 Executed 1 test, with 1 failure (0 unexpected) in 28.787 (28.790) seconds
+** BUILD INTERRUPTED **
