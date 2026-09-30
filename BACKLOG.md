@@ -2,6 +2,16 @@
 
 ## Implementiert
 
+### Mengen-Vorbelegung beim Artikel-Anlegen (Issue #57, 2026-09-30)
+
+Legte ein Nutzer einen Artikel ohne Menge an, blieb `quantitySource` bisher immer `"user"` und die Menge stumm `1` — die aus Issue #10 gebaute Rate-Fallback-Logik (`ShoppingItem.learnedRateUsage`) griff dadurch in ihrer `.rateOnly`-Stufe praktisch nie.
+
+- **`AssignmentService.suggestQuantity(itemName:storeName:purchaseRecords:)`** (neu): leitet aus dem letzten Kauf desselben Artikels in diesem Laden, sonst aus einer im Namen erkennbaren Füllmenge (`ReceiptParserService.packageSizeFromName`), sonst gar nichts eine Mengen-Voreinstellung ab und markiert die Quelle (`"history"`/`"package"`/`"none"`).
+- **`AddItemView`**: ruft `suggestQuantity` bei jeder Namensänderung auf, außer der Nutzer hat Menge oder Einheit bereits selbst angefasst (`quantityTouchedByUser`, gesetzt über die berechneten Bindings `userQuantity`/`userUnit`) — verhindert sowohl das Überschreiben einer Nutzereingabe als auch eine hängenbleibende Vorbelegung aus einem Zwischenstand des Namens (z. B. „Milch" auf dem Weg zu „Milchreis").
+- **`ItemRow`**: zeigt eine vorbelegte Menge als Annahme sichtbar markiert („ca. 400 g", getönt) und fällt in der Preiszelle bei fehlender Evidenz (`quantitySource == "none"`) auf die Rate zurück („1,25 €/100 g") statt einen erfundenen Gesamtpreis zu zeigen. Korrigiert der Nutzer die Menge — beim Anlegen oder später in `EditItemView` — gilt sie ab sofort als seine eigene, die Markierung verschwindet.
+- Details, Entscheidungen und Testnachweis: `docs/specs/services/assignment-service-quantity-suggestion.md`.
+- **Bekannte Einschränkung:** Schnell-Eingabe (`HomeView`) und `AddItemIntent` (Siri) bekommen die Stufenlogik nicht — als eigenes Ticket vorgemerkt, Issue #76.
+
 ### Abo-Modell umgebaut, Nachkauf in Dev-Mode verschoben, Laden-Icons vereinheitlicht, Dev-Passwort geändert (2026-09-24)
 
 - **Dev-Passwort** (`SettingsView.devPasswordHash`): neuer SHA256-Hash für das neue Passwort.

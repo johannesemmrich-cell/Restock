@@ -1,0 +1,457 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockTests/AssignmentServiceQuantitySuggestionTests" "-only-testing:RestockUITests/AddItemQuantitySuggestionUITests" test
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+
+
+*** If you believe this error represents a bug, please attach the result bundle at /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Logs/Test/Test-Restock-2026.09.30_10-27-33-+0200.xcresult
+
+2026-09-30 10:33:46.862004+0200 RestockUITests-Runner[11024:85607850] [Default] Running tests...
+objc[11024]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105d78310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x106624398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-30 10:34:08.702.
+Test Suite 'RestockUITests.xctest' started at 2026-09-30 10:34:08.739.
+Test Suite 'AddItemQuantitySuggestionUITests' started at 2026-09-30 10:34:08.740.
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testAssumedQuantityIsMarkedAsAssumptionInList]' started.
+    t =     0.08s Start Test at 2026-09-30 10:34:08.821
+    t =     1.37s Set Up
+    t =     1.56s Open com.johannesemmrich.Restock
+    t =     1.58s     Launch com.johannesemmrich.Restock
+2026-09-30 10:34:11.471 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:34:11.472 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     3.83s         Setting up automation session
+    t =     8.10s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.AddItemQuantitySuggestionUITests testAssumedQuantityIsMarkedAsAssumptionInList] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    12.01s Waiting 15.0s for Button (First Match) to exist
+    t =    13.05s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    13.05s         Checking existence of `Button (First Match)`
+    t =    14.66s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    14.66s     Find the Button (First Match)
+    t =    14.89s Tap "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    14.89s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.91s     Find the "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    15.00s     Check for interrupting elements affecting "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    15.21s     Synthesize event
+    t =    15.92s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.86s Waiting 10.0s for "ca. 400 g" StaticText to exist
+    t =    18.91s     Checking `Expect predicate `existsNoRetry == 1` for object "ca. 400 g" StaticText`
+    t =    18.91s         Checking existence of `"ca. 400 g" StaticText`
+    t =    19.25s Tear Down
+    t =    19.26s     Open com.johannesemmrich.Restock
+    t =    19.27s         Launch com.johannesemmrich.Restock
+    t =    19.28s             Terminate com.johannesemmrich.Restock:11106
+2026-09-30 10:34:29.168 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:34:29.169 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    23.13s             Setting up automation session
+    t =    26.28s             Wait for com.johannesemmrich.Restock to idle
+    t =    30.80s     Terminate com.johannesemmrich.Restock:11168
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testAssumedQuantityIsMarkedAsAssumptionInList]' passed (32.263 seconds).
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testCorrectingQuantityRemovesAssumptionMarkAndRestoresTotal]' started.
+    t =     0.00s Start Test at 2026-09-30 10:34:41.057
+    t =     0.16s Set Up
+    t =     0.19s Open com.johannesemmrich.Restock
+    t =     0.20s     Launch com.johannesemmrich.Restock
+2026-09-30 10:34:41.269 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:34:41.270 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.34s         Setting up automation session
+    t =     6.28s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.AddItemQuantitySuggestionUITests testCorrectingQuantityRemovesAssumptionMarkAndRestoresTotal] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    10.32s Waiting 15.0s for Button (First Match) to exist
+    t =    11.34s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    11.35s         Checking existence of `Button (First Match)`
+    t =    12.77s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    12.77s     Find the Button (First Match)
+    t =    12.94s Tap "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    12.94s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.95s     Find the "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    13.10s     Check for interrupting elements affecting "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    13.24s     Synthesize event
+    t =    13.72s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.81s Waiting 10.0s for "ca. 400 g" StaticText to exist
+    t =    18.06s     Checking `Expect predicate `existsNoRetry == 1` for object "ca. 400 g" StaticText`
+    t =    18.08s         Checking existence of `"ca. 400 g" StaticText`
+    t =    19.92s Tap "Bio Käse" StaticText
+    t =    19.93s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.51s     Find the "Bio Käse" StaticText
+    t =    21.04s     Check for interrupting elements affecting "Bio Käse" StaticText
+    t =    21.71s     Synthesize event
+    t =    22.25s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.31s Waiting 5.0s for "plus.circle.fill" Button to exist
+    t =    23.34s     Checking `Expect predicate `existsNoRetry == 1` for object "plus.circle.fill" Button`
+    t =    23.35s         Checking existence of `"plus.circle.fill" Button`
+    t =    23.56s         Capturing element debug description
+    t =    24.39s     Checking `Expect predicate `existsNoRetry == 1` for object "plus.circle.fill" Button`
+    t =    24.39s         Checking existence of `"plus.circle.fill" Button`
+    t =    24.64s         Capturing element debug description
+    t =    25.36s     Checking `Expect predicate `existsNoRetry == 1` for object "plus.circle.fill" Button`
+    t =    25.36s         Checking existence of `"plus.circle.fill" Button`
+    t =    25.60s         Capturing element debug description
+    t =    26.35s     Checking `Expect predicate `existsNoRetry == 1` for object "plus.circle.fill" Button`
+    t =    26.35s         Checking existence of `"plus.circle.fill" Button`
+    t =    27.23s         Capturing element debug description
+    t =    27.32s     Checking `Expect predicate `existsNoRetry == 1` for object "plus.circle.fill" Button`
+    t =    27.33s         Checking existence of `"plus.circle.fill" Button`
+    t =    27.62s         Capturing element debug description
+    t =    27.63s     Checking existence of `"plus.circle.fill" Button`
+    t =    28.00s Collecting debug information to assist test failure triage
+    t =    28.01s     Requesting snapshot of accessibility hierarchy for app with pid 11201
+/Users/hem/Developer/Restock/.claude/worktrees/goofy-snuggling-otter/RestockUITests/AddItemQuantitySuggestionUITests.swift:126: error: -[RestockUITests.AddItemQuantitySuggestionUITests testCorrectingQuantityRemovesAssumptionMarkAndRestoresTotal] : XCTAssertTrue failed - Mengen-Stepper '+' in EditItemView nicht gefunden
+    t =    30.04s Tear Down
+    t =    30.05s     Open com.johannesemmrich.Restock
+    t =    30.05s         Launch com.johannesemmrich.Restock
+    t =    30.05s             Terminate com.johannesemmrich.Restock:11201
+2026-09-30 10:35:12.299 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:35:12.299 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    35.31s             Setting up automation session
+    t =    39.59s             Wait for com.johannesemmrich.Restock to idle
+    t =    43.33s     Terminate com.johannesemmrich.Restock:11326
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testCorrectingQuantityRemovesAssumptionMarkAndRestoresTotal]' failed (45.261 seconds).
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testItemWithoutEvidenceShowsRateInsteadOfTotal]' started.
+2026-09-30 10:35:26.768 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:35:26.770 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.00s Start Test at 2026-09-30 10:35:26.322
+    t =     0.16s Set Up
+    t =     0.20s Open com.johannesemmrich.Restock
+    t =     0.21s     Launch com.johannesemmrich.Restock
+    t =     1.91s         Setting up automation session
+    t =     6.99s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.AddItemQuantitySuggestionUITests testItemWithoutEvidenceShowsRateInsteadOfTotal] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    11.38s Waiting 15.0s for Button (First Match) to exist
+    t =    12.45s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    12.47s         Checking existence of `Button (First Match)`
+    t =    14.20s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    14.21s     Find the Button (First Match)
+    t =    14.70s Tap "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    14.70s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.71s     Find the "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    14.79s     Check for interrupting elements affecting "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    14.90s     Synthesize event
+    t =    15.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.13s Waiting 10.0s for StaticText (First Match) to exist
+    t =    18.16s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    18.18s         Checking existence of `StaticText (First Match)`
+    t =    18.73s Find the StaticText (First Match)
+    t =    18.96s Tear Down
+    t =    18.96s     Open com.johannesemmrich.Restock
+    t =    18.98s         Launch com.johannesemmrich.Restock
+    t =    18.98s             Terminate com.johannesemmrich.Restock:11367
+2026-09-30 10:35:47.104 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:35:47.105 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    21.95s             Setting up automation session
+    t =    26.69s             Wait for com.johannesemmrich.Restock to idle
+    t =    29.99s     Terminate com.johannesemmrich.Restock:11419
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testItemWithoutEvidenceShowsRateInsteadOfTotal]' passed (31.368 seconds).
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testStaleSuggestionIsDroppedWhenNameIsTypedFurther]' started.
+    t =     0.00s Start Test at 2026-09-30 10:35:57.696
+    t =     0.20s Set Up
+    t =     0.25s Open com.johannesemmrich.Restock
+    t =     0.31s     Launch com.johannesemmrich.Restock
+2026-09-30 10:35:58.098 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:35:58.099 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     4.12s         Setting up automation session
+    t =     7.84s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.AddItemQuantitySuggestionUITests testStaleSuggestionIsDroppedWhenNameIsTypedFurther] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    12.09s Waiting 15.0s for Button (First Match) to exist
+    t =    13.15s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    13.17s         Checking existence of `Button (First Match)`
+    t =    14.87s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    14.87s     Find the Button (First Match)
+    t =    15.05s Tap "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    15.05s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.07s     Find the "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    15.24s     Check for interrupting elements affecting "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    15.37s     Synthesize event
+    t =    15.71s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.44s Waiting 5.0s for Button (First Match) to exist
+    t =    18.49s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    18.49s         Checking existence of `Button (First Match)`
+    t =    18.58s Tap Button (First Match)
+    t =    18.58s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.75s     Find the Button (First Match)
+    t =    19.08s     Check for interrupting elements affecting "plus" Button
+    t =    19.45s     Synthesize event
+    t =    19.79s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.35s Waiting 5.0s for "Artikelname" TextField to exist
+    t =    21.40s     Checking `Expect predicate `existsNoRetry == 1` for object "Artikelname" TextField`
+    t =    21.40s         Checking existence of `"Artikelname" TextField`
+    t =    21.71s Tap "Artikelname" TextField
+    t =    21.71s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.72s     Find the "Artikelname" TextField
+    t =    21.93s     Check for interrupting elements affecting "Artikelname" TextField
+    t =    22.15s     Synthesize event
+    t =    22.54s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.71s Type 'Milch' into "Artikelname" TextField
+    t =    26.74s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.90s     Find the "Artikelname" TextField
+    t =    27.26s     Check for interrupting elements affecting "Artikelname" TextField
+    t =    28.19s     Synthesize event
+    t =    28.72s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.12s Waiting 5.0s for TextField (First Match) to exist
+    t =    30.17s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =    30.51s         Checking existence of `TextField (First Match)`
+    t =    31.39s Find the TextField (First Match)
+    t =    32.34s Type 'reis' into "Artikelname" TextField
+    t =    32.34s     Wait for com.johannesemmrich.Restock to idle
+    t =    32.38s     Find the "Artikelname" TextField
+    t =    32.75s     Check for interrupting elements affecting "Artikelname" TextField
+    t =    33.33s     Synthesize event
+    t =    35.85s     Wait for com.johannesemmrich.Restock to idle
+    t =    36.44s Find the "Einheit" TextField
+    t =    42.28s Waiting 5.0s for "Hinzufügen" Button to exist
+    t =    43.30s     Checking `Expect predicate `existsNoRetry == 1` for object "Hinzufügen" Button`
+    t =    43.42s         Checking existence of `"Hinzufügen" Button`
+    t =    43.85s Tap "Hinzufügen" Button
+    t =    43.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    44.15s     Find the "Hinzufügen" Button
+    t =    44.52s     Check for interrupting elements affecting "Hinzufügen" Button
+    t =    45.04s     Synthesize event
+    t =    45.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    47.11s Waiting 10.0s for "Milchreis" StaticText to exist
+    t =    48.15s     Checking `Expect predicate `existsNoRetry == 1` for object "Milchreis" StaticText`
+    t =    48.17s         Checking existence of `"Milchreis" StaticText`
+    t =    48.82s Checking existence of `"ca. 2 l" StaticText`
+    t =    49.18s Tear Down
+    t =    49.25s     Open com.johannesemmrich.Restock
+    t =    49.25s         Launch com.johannesemmrich.Restock
+    t =    49.25s             Terminate com.johannesemmrich.Restock:11493
+2026-09-30 10:36:48.340 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:36:48.341 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    54.27s             Setting up automation session
+    t =    58.39s             Wait for com.johannesemmrich.Restock to idle
+    t =    63.44s     Terminate com.johannesemmrich.Restock:11618
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testStaleSuggestionIsDroppedWhenNameIsTypedFurther]' passed (66.099 seconds).
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testUserTypedQuantityIsNeverMarkedAsAssumption]' started.
+    t =     0.04s Start Test at 2026-09-30 10:37:03.846
+    t =     0.54s Set Up
+    t =     0.55s Open com.johannesemmrich.Restock
+    t =     0.56s     Launch com.johannesemmrich.Restock
+2026-09-30 10:37:04.504 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:37:04.506 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     3.42s         Setting up automation session
+    t =     8.91s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.AddItemQuantitySuggestionUITests testUserTypedQuantityIsNeverMarkedAsAssumption] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    15.06s Waiting 15.0s for Button (First Match) to exist
+    t =    16.25s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    16.45s         Checking existence of `Button (First Match)`
+    t =    18.87s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    19.23s     Find the Button (First Match)
+    t =    19.92s Tap "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    19.92s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.98s     Find the "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    20.12s     Check for interrupting elements affecting "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    20.32s     Synthesize event
+    t =    20.83s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.29s Waiting 5.0s for Button (First Match) to exist
+    t =    24.37s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    24.37s         Checking existence of `Button (First Match)`
+    t =    24.65s Tap Button (First Match)
+    t =    24.65s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.67s     Find the Button (First Match)
+    t =    24.77s     Check for interrupting elements affecting "plus" Button
+    t =    25.06s     Synthesize event
+    t =    25.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.97s Waiting 5.0s for "Artikelname" TextField to exist
+    t =    27.10s     Checking `Expect predicate `existsNoRetry == 1` for object "Artikelname" TextField`
+    t =    27.42s         Checking existence of `"Artikelname" TextField`
+    t =    30.40s Tap "Artikelname" TextField
+    t =    30.41s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.48s     Find the "Artikelname" TextField
+    t =    30.81s     Check for interrupting elements affecting "Artikelname" TextField
+    t =    31.27s     Synthesize event
+    t =    31.82s     Wait for com.johannesemmrich.Restock to idle
+    t =    34.21s Type 'Kaffeebohnen' into "Artikelname" TextField
+    t =    34.25s     Wait for com.johannesemmrich.Restock to idle
+    t =    34.44s     Find the "Artikelname" TextField
+    t =    34.82s     Check for interrupting elements affecting "Artikelname" TextField
+    t =    35.04s     Synthesize event
+    t =    35.50s     Wait for com.johannesemmrich.Restock to idle
+    t =    37.40s Waiting 5.0s for TextField (First Match) to exist
+    t =    38.45s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =    38.49s         Checking existence of `TextField (First Match)`
+    t =    39.17s Tap TextField (First Match)
+    t =    39.17s     Wait for com.johannesemmrich.Restock to idle
+    t =    39.19s     Find the TextField (First Match)
+    t =    39.73s     Check for interrupting elements affecting "1" TextField
+    t =    39.98s     Synthesize event
+    t =    40.36s     Wait for com.johannesemmrich.Restock to idle
+    t =    41.67s Checking `Expect predicate `hasKeyboardFocus == 1` for object "1" TextField`
+    t =    41.68s     Find the "1" TextField
+    t =    42.15s Type '3' into "1" TextField
+    t =    42.16s     Wait for com.johannesemmrich.Restock to idle
+    t =    42.28s     Find the "1" TextField
+    t =    42.89s     Check for interrupting elements affecting "1" TextField
+    t =    43.16s     Synthesize event
+    t =    43.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    43.52s Waiting 5.0s for "Hinzufügen" Button to exist
+    t =    44.54s     Checking `Expect predicate `existsNoRetry == 1` for object "Hinzufügen" Button`
+    t =    44.56s         Checking existence of `"Hinzufügen" Button`
+    t =    45.52s Tap "Hinzufügen" Button
+    t =    45.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    45.58s     Find the "Hinzufügen" Button
+    t =    45.87s     Check for interrupting elements affecting "Hinzufügen" Button
+    t =    46.26s     Synthesize event
+    t =    46.74s     Wait for com.johannesemmrich.Restock to idle
+    t =    48.83s Waiting 10.0s for "Kaffeebohnen" StaticText to exist
+    t =    49.87s     Checking `Expect predicate `existsNoRetry == 1` for object "Kaffeebohnen" StaticText`
+    t =    50.35s         Checking existence of `"Kaffeebohnen" StaticText`
+    t =    51.36s Waiting 5.0s for "3" StaticText to exist
+    t =    52.41s     Checking `Expect predicate `existsNoRetry == 1` for object "3" StaticText`
+    t =    52.41s         Checking existence of `"3" StaticText`
+    t =    52.60s Checking existence of `"ca. 3" StaticText`
+    t =    52.72s Tear Down
+    t =    52.72s     Open com.johannesemmrich.Restock
+    t =    52.73s         Launch com.johannesemmrich.Restock
+    t =    52.73s             Terminate com.johannesemmrich.Restock:11693
+2026-09-30 10:37:57.842 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:37:57.843 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    55.90s             Setting up automation session
+    t =    61.53s             Wait for com.johannesemmrich.Restock to idle
+    t =    64.99s     Terminate com.johannesemmrich.Restock:11820
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testUserTypedQuantityIsNeverMarkedAsAssumption]' passed (66.322 seconds).
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testUserTypedUnitIsNeverOverwrittenBySuggestion]' started.
+    t =     0.00s Start Test at 2026-09-30 10:38:10.149
+    t =     0.18s Set Up
+    t =     0.21s Open com.johannesemmrich.Restock
+    t =     0.21s     Launch com.johannesemmrich.Restock
+2026-09-30 10:38:10.415 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:38:10.422 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.46s         Setting up automation session
+    t =     6.40s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.AddItemQuantitySuggestionUITests testUserTypedUnitIsNeverOverwrittenBySuggestion] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    10.08s Waiting 15.0s for Button (First Match) to exist
+    t =    11.14s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    11.15s         Checking existence of `Button (First Match)`
+    t =    12.90s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    12.91s     Find the Button (First Match)
+    t =    13.13s Tap "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    13.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.14s     Find the "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    13.41s     Check for interrupting elements affecting "Quittenhof, · 2, 1x pro Woche, Bio Käse, Parmesan" Button
+    t =    13.58s     Synthesize event
+    t =    13.94s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.24s Waiting 5.0s for Button (First Match) to exist
+    t =    16.32s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    16.32s         Checking existence of `Button (First Match)`
+    t =    16.52s Tap Button (First Match)
+    t =    16.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.54s     Find the Button (First Match)
+    t =    16.88s     Check for interrupting elements affecting "plus" Button
+    t =    17.06s     Synthesize event
+    t =    17.41s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.87s Waiting 5.0s for TextField (First Match) to exist
+    t =    18.89s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =    18.89s         Checking existence of `TextField (First Match)`
+    t =    19.30s Tap TextField (First Match)
+    t =    19.30s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.31s     Find the TextField (First Match)
+    t =    19.66s     Check for interrupting elements affecting "Einheit" TextField
+    t =    19.86s     Synthesize event
+    t =    20.19s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.92s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Einheit" TextField`
+    t =    24.03s     Find the "Einheit" TextField
+    t =    27.21s Type 'kg' into "Einheit" TextField
+    t =    27.21s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.24s     Find the "Einheit" TextField
+    t =    28.04s     Check for interrupting elements affecting "Einheit" TextField
+    t =    28.24s     Synthesize event
+    t =    28.50s     Wait for com.johannesemmrich.Restock to idle
+    t =    28.52s Tap "Artikelname" TextField
+    t =    28.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    28.54s     Find the "Artikelname" TextField
+    t =    28.80s     Check for interrupting elements affecting "Artikelname" TextField
+    t =    29.03s     Synthesize event
+    t =    29.37s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.56s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Artikelname" TextField`
+    t =    30.56s     Find the "Artikelname" TextField
+    t =    30.81s Type 'Kaffeebohnen' into "Artikelname" TextField
+    t =    30.82s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.82s     Find the "Artikelname" TextField
+    t =    31.09s     Check for interrupting elements affecting "Artikelname" TextField
+    t =    31.33s     Synthesize event
+    t =    31.80s     Wait for com.johannesemmrich.Restock to idle
+    t =    32.15s Find the "Einheit" TextField
+    t =    32.73s Waiting 5.0s for "Hinzufügen" Button to exist
+    t =    33.79s     Checking `Expect predicate `existsNoRetry == 1` for object "Hinzufügen" Button`
+    t =    33.81s         Checking existence of `"Hinzufügen" Button`
+    t =    34.11s Tap "Hinzufügen" Button
+    t =    34.11s     Wait for com.johannesemmrich.Restock to idle
+    t =    34.12s     Find the "Hinzufügen" Button
+    t =    34.38s     Check for interrupting elements affecting "Hinzufügen" Button
+    t =    34.58s     Synthesize event
+    t =    35.03s     Wait for com.johannesemmrich.Restock to idle
+    t =    36.48s Waiting 10.0s for "Kaffeebohnen" StaticText to exist
+    t =    37.50s     Checking `Expect predicate `existsNoRetry == 1` for object "Kaffeebohnen" StaticText`
+    t =    37.51s         Checking existence of `"Kaffeebohnen" StaticText`
+    t =    37.65s Waiting 5.0s for "1 kg" StaticText to exist
+    t =    38.68s     Checking `Expect predicate `existsNoRetry == 1` for object "1 kg" StaticText`
+    t =    38.69s         Checking existence of `"1 kg" StaticText`
+    t =    38.91s Checking existence of `"ca. 1 kg" StaticText`
+    t =    39.02s Tear Down
+    t =    39.03s     Open com.johannesemmrich.Restock
+    t =    39.04s         Launch com.johannesemmrich.Restock
+    t =    39.04s             Terminate com.johannesemmrich.Restock:11901
+2026-09-30 10:38:50.310 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-30 10:38:50.312 xcodebuild[9568:85589350] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    42.60s             Setting up automation session
+    t =    53.74s             Wait for com.johannesemmrich.Restock to idle
+    t =    58.25s     Terminate com.johannesemmrich.Restock:12081
+Test Case '-[RestockUITests.AddItemQuantitySuggestionUITests testUserTypedUnitIsNeverOverwrittenBySuggestion]' passed (59.799 seconds).
+Test Suite 'AddItemQuantitySuggestionUITests' failed at 2026-09-30 10:39:09.960.
+	 Executed 6 tests, with 1 failure (0 unexpected) in 301.112 (301.220) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-09-30 10:39:09.978.
+	 Executed 6 tests, with 1 failure (0 unexpected) in 301.112 (301.239) seconds
+Test Suite 'Selected tests' failed at 2026-09-30 10:39:09.979.
+	 Executed 6 tests, with 1 failure (0 unexpected) in 301.112 (301.277) seconds
+2026-09-30 10:49:12.508 xcodebuild[9568:85618279]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Timed out after 600.0 seconds while waiting for a response from the invoked process
+2026-09-30 10:49:12.637 xcodebuild[9568:85589350] [MT] IDETestOperationsObserverDebug: 1294.803 elapsed -- Testing started completed.
+2026-09-30 10:49:12.637 xcodebuild[9568:85589350] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-30 10:49:12.637 xcodebuild[9568:85589350] [MT] IDETestOperationsObserverDebug: 1294.803 sec, +1294.803 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnglitttwqtmbdgernoqfmybblfj/Logs/Test/Test-Restock-2026.09.30_10-27-33-+0200.xcresult
+
+Testing failed:
+	Restock (9725) encountered an error (The test runner hung before establishing connection.)
+
+Failing tests:
+	AddItemQuantitySuggestionUITests.testCorrectingQuantityRemovesAssumptionMarkAndRestoresTotal()
+
+** TEST FAILED **
+
+Testing started

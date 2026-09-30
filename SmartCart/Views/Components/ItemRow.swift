@@ -33,6 +33,13 @@ struct ItemRow: View {
         item.categoryManuallySet ? item.category : AssignmentService.category(for: item.name)
     }
 
+    /// Rate pro 100 g für einen Artikel ohne belegte Menge (AC-15) — nur wenn kein Gesamtpreis
+    /// existiert, `quantitySource == "none"` und die Rate sich auf Gramm bezieht.
+    private var ratePer100g: Double? {
+        guard item.estimatedLineTotal == nil, item.quantitySource == "none", item.unit == "g" else { return nil }
+        return item.estimatedPrice.map { $0 * 100 }
+    }
+
     var body: some View {
         HStack(spacing: 14) {
             Button(action: {
@@ -145,6 +152,12 @@ struct ItemRow: View {
             // ReceiptScannerView.save() keinerlei sichtbare Bestätigung).
             if let price = item.estimatedLineTotal, !item.isCompleted || !item.estimatedPriceIsAutoDerived {
                 Text(price, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.secondary)
+            } else if let rate = ratePer100g, !item.isCompleted || !item.estimatedPriceIsAutoDerived {
+                // Ohne belegte Menge gibt es keinen Gesamtpreis (`estimatedLineTotal == nil`),
+                // aber die gelernte Gramm-Rate bleibt nützlich: „1,25 €/100 g" (Issue #57, AC-15).
+                Text("\(rate.formatted(.currency(code: Locale.current.currency?.identifier ?? "EUR")))/100 g")
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.secondary)
             }
