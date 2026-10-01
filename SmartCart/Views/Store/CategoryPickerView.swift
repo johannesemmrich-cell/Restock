@@ -12,7 +12,6 @@ struct CategoryPickerView: View {
     /// Kategorie hier gelöscht wird.
     let automaticCategory: String
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissSearch) private var dismissSearch
 
     @State private var query = ""
     @State private var editingCategory: EditTarget?
@@ -47,6 +46,24 @@ struct CategoryPickerView: View {
 
     var body: some View {
         List {
+            // Eigenes Suchfeld statt `.searchable`: das System-Suchfeld blockierte im Test das
+            // Zurückgehen zum Artikel-Dialog nach dem Anlegen.
+            Section {
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(.secondary)
+                    TextField(
+                        store == nil ? String(localized: "category.picker.search.only") : String(localized: "category.picker.search"),
+                        text: $query
+                    )
+                    .textInputAutocapitalization(.sentences)
+                    .autocorrectionDisabled()
+                    .submitLabel(.done)
+                    .accessibilityIdentifier("categoryPicker.search")
+                }
+            }
+            .listRowBackground(Color.surface)
+
             if let store, let name = creatableName {
                 Section {
                     Button {
@@ -107,8 +124,6 @@ struct CategoryPickerView: View {
         }
         .scrollContentBackground(.hidden)
         .background(Color.canvas)
-        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always),
-                    prompt: Text(store == nil ? String(localized: "category.picker.search.only") : String(localized: "category.picker.search")))
         .navigationTitle(String(localized: "item.category.section"))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $editingCategory) { target in
@@ -169,9 +184,6 @@ struct CategoryPickerView: View {
     private func choose(_ category: String) {
         selection = category
         Haptics.impact(.light)
-        // Erst das aktive Suchfeld schließen, sonst bleibt der Zurück-Schritt in manchen
-        // iOS-Versionen am Suchmodus hängen.
-        dismissSearch()
         dismiss()
     }
 }

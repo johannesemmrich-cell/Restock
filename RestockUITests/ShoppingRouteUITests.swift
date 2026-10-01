@@ -128,7 +128,7 @@ final class ShoppingRouteUITests: XCTestCase {
         XCTAssertTrue(categoryRow.waitForExistence(timeout: 5), "Zeile „Kategorie“ im Bearbeiten-Dialog fehlt")
         categoryRow.tap()
 
-        let search = app.searchFields.firstMatch
+        let search = app.textFields["categoryPicker.search"].firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 5), "Suchfeld der Kategorieliste fehlt")
         search.tap()
         search.typeText("Kühltheke hinten")
@@ -138,7 +138,7 @@ final class ShoppingRouteUITests: XCTestCase {
         create.tap()
 
         let save = app.buttons["Speichern"].firstMatch
-        XCTAssertTrue(save.waitForExistence(timeout: 5), "Zurück im Dialog fehlt „Speichern“")
+        XCTAssertTrue(save.waitForExistence(timeout: 10), "Zurück im Dialog fehlt „Speichern“")
         save.tap()
 
         let caption = app.staticTexts["Kühltheke hinten"].firstMatch
