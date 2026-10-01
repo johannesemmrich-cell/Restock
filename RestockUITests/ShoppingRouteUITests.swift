@@ -92,7 +92,10 @@ final class ShoppingRouteUITests: XCTestCase {
 
         choose("Einkaufsweg", in: app)
         waitForOrder(["Gouda", "Brot", "Apfel"], in: app, "Zurück auf Einkaufsweg muss wieder die gelernte Reihenfolge zeigen")
-        XCTAssertFalse(header.exists, "Im Modus Einkaufsweg darf es keine Kategorie-Abschnitte geben")
+        // Die Reihenfolge ist in beiden Modi gleich — `waitForOrder` kehrt also sofort zurück, bevor
+        // die Liste neu gezeichnet ist. Deshalb aufs Verschwinden der Überschrift warten.
+        expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: header)
+        waitForExpectations(timeout: 5)
     }
 
     func testSortModeIsRememberedPerStore() {
