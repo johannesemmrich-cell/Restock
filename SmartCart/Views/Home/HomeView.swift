@@ -1194,7 +1194,8 @@ struct HomeView: View {
         }
         for key in grouped.keys.sorted() where !AssignmentService.categoryOrder.contains(key) {
             if let items = grouped[key], !items.isEmpty {
-                result.append((category: key, emoji: AssignmentService.categoryEmoji(key), items: items))
+                // Eigene Kategorie eines Ladens (Issue #85) mit ihrem Emoji statt 🏷️.
+                result.append((category: key, emoji: items.lazy.compactMap(\.store).first?.categoryEmoji(key) ?? AssignmentService.categoryEmoji(key), items: items))
             }
         }
         return result

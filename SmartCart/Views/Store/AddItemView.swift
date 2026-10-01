@@ -25,6 +25,9 @@ struct AddItemView: View {
     @State private var selectedStore: Store?
     @State private var autoAssigned = false
     @State private var note = ""
+    /// Selbst gewählte Kategorie (Issue #85); `nil` = automatisch (gemerkte eigene Kategorie des
+    /// Ladens, sonst aus dem Namen).
+    @State private var chosenCategory: String?
     @State private var showScanner = false
     @FocusState private var isNameFocused: Bool
 
@@ -53,6 +56,25 @@ struct AddItemView: View {
 
     private var userUnit: Binding<String> {
         Binding(get: { unit }, set: { unit = $0; quantitySource = "user"; quantityTouchedByUser = true })
+    }
+
+    private var trimmedName: String { name.trimmingCharacters(in: .whitespaces) }
+
+    private var automaticCategory: String {
+        selectedStore?.rememberedCategory(forItemNamed: trimmedName) ?? AssignmentService.category(for: trimmedName)
+    }
+
+    private var effectiveCategory: String { chosenCategory ?? automaticCategory }
+
+    private var categoryLabel: String {
+        let category = effectiveCategory
+        let title: String
+        if let store = selectedStore, store.isCustomCategory(category) {
+            title = "\(store.categoryEmoji(category)) \(category)"
+        } else {
+            title = "\(AssignmentService.categoryEmoji(category)) \(AssignmentService.displayCategory(category))"
+        }
+        return chosenCategory == nil ? "\(String(localized: "category.picker.automatic")): \(title)" : title
     }
 
     private var nameSuggestions: [String] {
@@ -99,6 +121,25 @@ struct AddItemView: View {
 
                     TextField(String(localized: "item.note.placeholder"), text: $note)
                         .foregroundStyle(.secondary)
+                }
+
+                Section(String(localized: "item.category.section")) {
+                    NavigationLink {
+                        CategoryPickerView(
+                            store: selectedStore,
+                            selection: Binding(get: { effectiveCategory }, set: { chosenCategory = $0 }),
+                            automaticCategory: AssignmentService.category(for: trimmedName)
+                        )
+                    } label: {
+                        HStack {
+                            Text(String(localized: "item.category.section"))
+                            Spacer()
+                            Text(categoryLabel)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    .accessibilityIdentifier("item.categoryRow")
                 }
 
                 if let warning = duplicateWarning {
@@ -177,6 +218,13 @@ struct AddItemView: View {
                 }
             }
         }
+        // Eine eigene Kategorie gilt nur in ihrem Laden (Issue #85).
+        .onChange(of: selectedStore?.id) {
+            if let chosen = chosenCategory, AssignmentService.categoryOrder.contains(chosen) == false,
+               selectedStore?.isCustomCategory(chosen) != true {
+                chosenCategory = nil
+            }
+        }
         .devFeedback(context: "Artikel hinzufügen")
     }
 
@@ -227,6 +275,11 @@ struct AddItemView: View {
             store: selectedStore,
             quantitySource: quantitySource
         )
+        if let chosen = chosenCategory {
+            item.category = chosen
+            item.categoryManuallySet = chosen != category
+            selectedStore?.rememberCategory(chosen, forItemNamed: trimmedName)
+        }
         context.insert(item)
         SyncCoordinator.shared.pushInBackground(selectedStore)
         dismiss()

@@ -193,6 +193,13 @@ class ShoppingItem {
         }
         self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category, unit: self.unit, quantityAmount: quantityAmount)
         self.estimatedPriceIsAutoDerived = (learnedPrice == nil)
+        // Issue #85: Hat der Nutzer diesen Artikel in diesem Laden schon einmal einer eigenen
+        // Kategorie zugeordnet, landet er wieder dort. Erst nach der Preisschätzung, denn die
+        // braucht die feste Kategorie — eine eigene hat keinen Katalogpreis.
+        if let remembered = store?.rememberedCategory(forItemNamed: name) {
+            self.category = remembered
+            self.categoryManuallySet = true
+        }
     }
 
     /// Fuzzy-Gate für gelernte Preise (Issue #52): Levenshtein-Distanz ≤ 1 UND der kürzere der

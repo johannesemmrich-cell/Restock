@@ -371,3 +371,26 @@
 "store.sort.route" = "Einkaufsweg";
 "store.sort.category" = "Kategorie";
 "store.sort.added" = "Hinzugefügt";
+
+/* Eigene Kategorien (Issue #85) und Reihenfolge anpassen (Issue #86) */
+"category.picker.create" = "„%@“ bei %@ anlegen";
+"category.picker.create.hint" = "Emoji %@ · über „Bearbeiten“ änderbar";
+"category.picker.store.section" = "Bei %@";
+"category.picker.all" = "Alle Kategorien";
+"category.picker.count" = "%lld offen";
+"category.picker.search" = "Suchen oder neu anlegen";
+"category.picker.search.only" = "Suchen";
+"category.picker.delete.confirm" = "„%@“ löschen?";
+"category.picker.delete.message" = "Artikel darin bekommen wieder ihre automatische Kategorie.";
+"category.picker.automatic" = "Automatisch";
+"category.editor.title" = "Kategorie bearbeiten";
+"category.editor.name" = "Name";
+"category.editor.emoji" = "Emoji";
+"store.reorder" = "Reihenfolge anpassen";
+"store.reorder.hint.route" = "Ziehen, um die Reihenfolge zu ändern. Die App lernt beim Abhaken weiter.";
+"store.reorder.hint.category" = "Ziehen, um die Abschnitte zu ordnen. Die App lernt beim Abhaken weiter.";
+"store.reorder.up" = "Nach oben";
+"store.reorder.down" = "Nach unten";
+"store.route.reset" = "Gelernte Reihenfolge zurücksetzen";
+"store.route.reset.confirm" = "Gelernte Reihenfolge zurücksetzen?";
+"store.route.reset.message" = "Bis neu gelernt ist, sortiert die Liste nach Kategorie.";

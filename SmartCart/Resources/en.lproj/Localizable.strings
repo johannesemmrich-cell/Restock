@@ -371,3 +371,26 @@
 "store.sort.route" = "Shopping route";
 "store.sort.category" = "Category";
 "store.sort.added" = "Date added";
+
+/* Eigene Kategorien (Issue #85) und Reihenfolge anpassen (Issue #86) */
+"category.picker.create" = "Create “%@” at %@";
+"category.picker.create.hint" = "Emoji %@ · change via Edit";
+"category.picker.store.section" = "At %@";
+"category.picker.all" = "All categories";
+"category.picker.count" = "%lld open";
+"category.picker.search" = "Search or create";
+"category.picker.search.only" = "Search";
+"category.picker.delete.confirm" = "Delete “%@”?";
+"category.picker.delete.message" = "Its items go back to their automatic category.";
+"category.picker.automatic" = "Automatic";
+"category.editor.title" = "Edit category";
+"category.editor.name" = "Name";
+"category.editor.emoji" = "Emoji";
+"store.reorder" = "Adjust order";
+"store.reorder.hint.route" = "Drag to change the order. The app keeps learning as you check items off.";
+"store.reorder.hint.category" = "Drag to arrange the sections. The app keeps learning as you check items off.";
+"store.reorder.up" = "Move up";
+"store.reorder.down" = "Move down";
+"store.route.reset" = "Reset learned order";
+"store.route.reset.confirm" = "Reset learned order?";
+"store.route.reset.message" = "Until it has learned again, the list is sorted by category.";

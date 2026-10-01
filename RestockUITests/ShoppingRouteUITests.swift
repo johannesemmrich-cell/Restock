@@ -117,4 +117,87 @@ final class ShoppingRouteUITests: XCTestCase {
         XCTAssertTrue(relaunched.staticTexts["Gouda"].waitForExistence(timeout: 10), "Ladenliste nicht geöffnet")
         waitForOrder(["Brot", "Apfel", "Gouda"], in: relaunched, "Der gewählte Sortiermodus muss nach einem Neustart erhalten bleiben")
     }
+
+    // MARK: - Eigene Kategorie (Issue #85)
+
+    func testCreatingCustomCategoryFromItemDialog() {
+        let app = openedStore()
+        app.staticTexts["Gouda"].firstMatch.tap()
+
+        let categoryRow = app.descendants(matching: .any)["item.categoryRow"].firstMatch
+        XCTAssertTrue(categoryRow.waitForExistence(timeout: 5), "Zeile „Kategorie“ im Bearbeiten-Dialog fehlt")
+        categoryRow.tap()
+
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 5), "Suchfeld der Kategorieliste fehlt")
+        search.tap()
+        search.typeText("Kühltheke hinten")
+
+        let create = app.descendants(matching: .any)["categoryPicker.create"].firstMatch
+        XCTAssertTrue(create.waitForExistence(timeout: 5), "„… bei Wegeladen anlegen“ fehlt")
+        create.tap()
+
+        let save = app.buttons["Speichern"].firstMatch
+        XCTAssertTrue(save.waitForExistence(timeout: 5), "Zurück im Dialog fehlt „Speichern“")
+        save.tap()
+
+        let caption = app.staticTexts["Kühltheke hinten"].firstMatch
+        XCTAssertTrue(caption.waitForExistence(timeout: 5), "Gouda zeigt die neue Kategorie nicht")
+
+        choose("Kategorie", in: app)
+        let header = app.staticTexts.matching(NSPredicate(
+            format: "label CONTAINS %@ AND label CONTAINS[c] %@", "🧊", "Kühltheke hinten")).firstMatch
+        XCTAssertTrue(header.waitForExistence(timeout: 5), "Die eigene Kategorie erscheint nicht als Abschnitt mit ihrem Emoji")
+    }
+
+    // MARK: - Von Hand verschieben (Issue #86)
+
+    private func startReordering(_ app: XCUIApplication) {
+        let more = app.descendants(matching: .any)["storeDetail.moreMenu"].firstMatch
+        XCTAssertTrue(more.waitForExistence(timeout: 5), "···-Menü fehlt")
+        more.tap()
+        let reorder = app.buttons["Reihenfolge anpassen"].firstMatch
+        XCTAssertTrue(reorder.waitForExistence(timeout: 5), "Menüpunkt „Reihenfolge anpassen“ fehlt")
+        reorder.tap()
+    }
+
+    /// Zieht die Zeile `source` am Griff (rechter Rand) an den Anfang der Zeile `target`.
+    private func drag(_ source: String, above target: String, in app: XCUIApplication) {
+        let from = app.cells.containing(.any, identifier: "reorder.row.\(source)").firstMatch
+        let to = app.cells.containing(.any, identifier: "reorder.row.\(target)").firstMatch
+        XCTAssertTrue(from.waitForExistence(timeout: 5), "Zeile „\(source)“ im Verschiebe-Modus fehlt")
+        XCTAssertTrue(to.waitForExistence(timeout: 5), "Zeile „\(target)“ im Verschiebe-Modus fehlt")
+        from.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5))
+            .press(forDuration: 0.6, thenDragTo: to.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.1)))
+    }
+
+    private func finishReordering(_ app: XCUIApplication) {
+        let done = app.descendants(matching: .any)["storeDetail.reorderDone"].firstMatch
+        XCTAssertTrue(done.waitForExistence(timeout: 5), "„Fertig“ fehlt")
+        done.tap()
+        XCTAssertTrue(app.staticTexts["Gouda"].waitForExistence(timeout: 5), "Liste nach „Fertig“ nicht zurück")
+    }
+
+    func testDraggingItemInRouteModeChangesOrder() {
+        let app = openedStore()
+        waitForOrder(["Gouda", "Brot", "Apfel"], in: app, "Ausgangslage: gelernter Weg")
+
+        startReordering(app)
+        drag("Apfel", above: "Gouda", in: app)
+        finishReordering(app)
+
+        waitForOrder(["Apfel", "Gouda", "Brot"], in: app, "Apfel muss nach dem Verschieben vorne stehen")
+    }
+
+    func testDraggingCategorySectionChangesOrder() {
+        let app = openedStore()
+        choose("Kategorie", in: app)
+        waitForOrder(["Gouda", "Brot", "Apfel"], in: app, "Ausgangslage: gelernte Kategorie-Reihenfolge")
+
+        startReordering(app)
+        drag("Obst & Gemüse", above: "Milchprodukte", in: app)
+        finishReordering(app)
+
+        waitForOrder(["Apfel", "Gouda", "Brot"], in: app, "Der Abschnitt Obst & Gemüse muss nach dem Verschieben vorne stehen")
+    }
 }

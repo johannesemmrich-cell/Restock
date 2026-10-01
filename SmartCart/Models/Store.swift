@@ -53,6 +53,16 @@ class Store {
     /// kommt auf Gerät B ohne Bezugsgröße an und gilt dort wie ein Altdatum: er wird nicht
     /// angewendet. Kein Falschpreis-Risiko, aber ein fehlender Preis.
     var learnedPriceUnits: [String: String] = [:]
+    /// Eigene Kategorien dieses Ladens (Issue #85): Name → Emoji. Nur lebende Kategorien.
+    /// Additiv wie `learnedPriceDates` — kein Schema-Versionsbump, CloudKit-tauglich.
+    var customCategoryEmojis: [String: String] = [:]
+    /// Name → Zeitpunkt der letzten Änderung, auch für gelöschte Kategorien (Löschvermerk) —
+    /// nur fürs Abgleichen geteilter Läden (`StoreCategories.merge`), wie `learnedPriceDates`.
+    var customCategoryDates: [String: Date] = [:]
+    /// Gemerkte Zuordnung Artikelschlüssel (`ShoppingRoute.itemKey`) → eigene Kategorie: ein
+    /// neu hinzugefügter „Feta“ landet in diesem Laden wieder in „Kühltheke hinten“
+    /// (`ShoppingItem.init`).
+    var categoryAssignments: [String: String] = [:]
     var sortIndex: Int = 0
 
     // CloudKit verlangt für automatische Spiegelung, dass ALLE To-many-Relationships optional
@@ -127,6 +137,9 @@ class Store {
         self.learnedPrices = [:]
         self.learnedPriceDates = [:]
         self.learnedPriceUnits = [:]
+        self.customCategoryEmojis = [:]
+        self.customCategoryDates = [:]
+        self.categoryAssignments = [:]
     }
 
     var color: Color {
@@ -279,16 +292,189 @@ class Store {
         ShoppingRoute.orderedCategories(categories, model: routeModel, staticOrder: AssignmentService.categoryOrder)
     }
 
+    private static func sortInput(_ item: ShoppingItem) -> ShoppingRoute.SortInput {
+        ShoppingRoute.SortInput(
+            key: ShoppingRoute.itemKey(item.name),
+            category: displayCategory(of: item),
+            isUrgent: item.isUrgent,
+            addedDate: item.addedDate
+        )
+    }
+
+    // MARK: Von Hand verschieben (Issue #86)
+
+    /// Neue Artikel-Reihenfolge aus dem Modus „Reihenfolge anpassen“ (Einkaufsweg) übernehmen.
+    /// `items` sind die nicht dringenden offenen Artikel in der neuen Reihenfolge.
+    func applyManualOrder(_ items: [ShoppingItem], moved: ShoppingItem?) {
+        routeModel = ShoppingRoute.applyManualOrder(
+            items.map(Store.sortInput),
+            movedKey: moved.map { ShoppingRoute.itemKey($0.name) },
+            model: routeModel
+        )
+        Store.bumpRouteRevision()
+    }
+
+    /// Neue Abschnitts-Reihenfolge aus dem Modus „Reihenfolge anpassen“ (Kategorie) übernehmen.
+    func applyManualCategoryOrder(_ categories: [String], moved: String?) {
+        let pending = (items ?? []).filter { !$0.isCompleted && !$0.isUrgent }
+        routeModel = ShoppingRoute.applyManualCategoryOrder(
+            categories,
+            movedCategory: moved,
+            items: pending.map(Store.sortInput),
+            model: routeModel
+        )
+        Store.bumpRouteRevision()
+    }
+
+    /// „Gelernte Reihenfolge zurücksetzen“: bis neu gelernt ist, gilt die Kategorie-Reihenfolge.
+    func resetRoute() {
+        routeModel = ShoppingRouteModel()
+        currentTrip = ShoppingTrip()
+        Store.bumpRouteRevision()
+    }
+
+    // MARK: Eigene Kategorien (Issue #85)
+
+    /// Eigene Kategorien samt Löschvermerken, für Abgleich und Anzeige.
+    var customCategoryEntries: [String: CustomCategoryEntry] {
+        get {
+            var entries: [String: CustomCategoryEntry] = [:]
+            for (name, date) in customCategoryDates {
+                entries[name] = CustomCategoryEntry(emoji: customCategoryEmojis[name], date: date)
+            }
+            // Ein Emoji ohne Datum (sollte nicht vorkommen) zählt als lebend und uralt.
+            for (name, emoji) in customCategoryEmojis where entries[name] == nil {
+                entries[name] = CustomCategoryEntry(emoji: emoji, date: .distantPast)
+            }
+            return entries
+        }
+        set {
+            customCategoryEmojis = newValue.compactMapValues(\.emoji)
+            customCategoryDates = newValue.mapValues(\.date)
+        }
+    }
+
+    /// Lebende eigene Kategorien, alphabetisch.
+    var customCategories: [String] { StoreCategories.activeNames(customCategoryEntries) }
+
+    func isCustomCategory(_ category: String) -> Bool { customCategoryEmojis[category] != nil }
+
+    /// Emoji für Abschnittsüberschriften: eigenes Emoji, sonst das der festen Kategorie.
+    func categoryEmoji(_ category: String) -> String {
+        customCategoryEmojis[category] ?? AssignmentService.categoryEmoji(category)
+    }
+
+    func resolveCategory(_ input: String) -> StoreCategories.Resolution {
+        StoreCategories.resolve(
+            input,
+            builtIn: AssignmentService.categoryOrder,
+            displayName: AssignmentService.displayCategory,
+            custom: customCategories
+        )
+    }
+
+    /// Kategorie aus dem Suchfeld anlegen. Liefert die zu verwendende Kategorie: eine feste oder
+    /// vorhandene, wenn der Name schon existiert, sonst die neue; `nil` bei leerem Namen.
+    @discardableResult
+    func addCustomCategory(_ input: String, emoji: String? = nil) -> String? {
+        switch resolveCategory(input) {
+        case .invalid:
+            return nil
+        case .builtIn(let category), .existingCustom(let category):
+            return category
+        case .new(let name):
+            var entries = customCategoryEntries
+            entries[name] = CustomCategoryEntry(emoji: emoji ?? StoreCategories.suggestedEmoji(for: name), date: Date())
+            customCategoryEntries = entries
+            return name
+        }
+    }
+
+    /// Eigene Kategorie umbenennen und/oder ihr Emoji ändern. Liefert den gültigen Namen danach.
+    /// Kollidiert der neue Name mit einer festen oder anderen eigenen Kategorie, wandern die
+    /// Artikel dorthin und die alte Kategorie wird gelöscht.
+    @discardableResult
+    func updateCustomCategory(_ old: String, name input: String, emoji: String) -> String {
+        guard isCustomCategory(old) else { return old }
+        let now = Date()
+        var entries = customCategoryEntries
+        let name = StoreCategories.normalizedName(input)
+        if name.isEmpty || name == old {
+            entries[old] = CustomCategoryEntry(emoji: emoji, date: now)
+            customCategoryEntries = entries
+            return old
+        }
+        let target: String
+        switch StoreCategories.resolve(
+            name,
+            builtIn: AssignmentService.categoryOrder,
+            displayName: AssignmentService.displayCategory,
+            custom: customCategories.filter { $0 != old }
+        ) {
+        case .invalid:
+            return old
+        case .builtIn(let category), .existingCustom(let category):
+            target = category
+        case .new(let newName):
+            target = newName
+            entries[newName] = CustomCategoryEntry(emoji: emoji, date: now)
+        }
+        entries[old] = CustomCategoryEntry(emoji: nil, date: now)
+        customCategoryEntries = entries
+        for item in items ?? [] where item.category == old {
+            item.category = target
+            item.categoryManuallySet = target != AssignmentService.category(for: item.name)
+            item.lastModified = now
+        }
+        let targetIsCustom = isCustomCategory(target)
+        categoryAssignments = categoryAssignments.compactMapValues { value in
+            value == old ? (targetIsCustom ? target : nil) : value
+        }
+        routeModel = ShoppingRoute.renameCategory(old, to: target, in: routeModel)
+        Store.bumpRouteRevision()
+        return target
+    }
+
+    /// Eigene Kategorie löschen: ihre Artikel bekommen wieder die automatische Kategorie.
+    func deleteCustomCategory(_ name: String) {
+        guard isCustomCategory(name) else { return }
+        let now = Date()
+        var entries = customCategoryEntries
+        entries[name] = CustomCategoryEntry(emoji: nil, date: now)
+        customCategoryEntries = entries
+        for item in items ?? [] where item.category == name {
+            item.category = AssignmentService.category(for: item.name)
+            item.categoryManuallySet = false
+            item.lastModified = now
+        }
+        categoryAssignments = categoryAssignments.filter { $0.value != name }
+        Store.bumpRouteRevision()
+    }
+
+    /// Zuordnung merken (eigene Kategorie) bzw. vergessen (feste Kategorie gewählt).
+    func rememberCategory(_ category: String, forItemNamed name: String) {
+        let key = ShoppingRoute.itemKey(name)
+        if isCustomCategory(category) {
+            categoryAssignments[key] = category
+        } else if categoryAssignments[key] != nil {
+            categoryAssignments.removeValue(forKey: key)
+        }
+    }
+
+    /// Gemerkte eigene Kategorie für einen Artikelnamen in diesem Laden, falls sie noch existiert.
+    func rememberedCategory(forItemNamed name: String) -> String? {
+        guard let category = categoryAssignments[ShoppingRoute.itemKey(name)], isCustomCategory(category) else { return nil }
+        return category
+    }
+
+    /// Offene Artikel in einer Kategorie (für die Kategorieliste).
+    func pendingCount(inCategory category: String) -> Int {
+        (items ?? []).filter { !$0.isCompleted && $0.category == category }.count
+    }
+
     var pendingItems: [ShoppingItem] {
         let pending = (items ?? []).filter { !$0.isCompleted }
-        let inputs = pending.map {
-            ShoppingRoute.SortInput(
-                key: ShoppingRoute.itemKey($0.name),
-                category: Store.displayCategory(of: $0),
-                isUrgent: $0.isUrgent,
-                addedDate: $0.addedDate
-            )
-        }
+        let inputs = pending.map(Store.sortInput)
         return ShoppingRoute.sortedIndices(
             inputs,
             mode: sortMode,

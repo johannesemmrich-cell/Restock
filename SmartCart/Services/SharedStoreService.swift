@@ -34,18 +34,18 @@ actor SharedStoreService {
 
     @discardableResult
     func publish(store: Store) async throws -> String {
-        let (code, _, _, _, _, _) = try await syncToCloud(store: store)
+        let (code, _, _, _, _, _, _) = try await syncToCloud(store: store)
         return code
     }
 
     @discardableResult
-    func push(store: Store) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date])? {
+    func push(store: Store) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], categories: [String: CustomCategoryEntry])? {
         guard store.shareID != nil else { return nil }
-        let (_, items, members, deletedIDs, prices, priceDates) = try await syncToCloud(store: store)
-        return (items, members, deletedIDs, prices, priceDates)
+        let (_, items, members, deletedIDs, prices, priceDates, categories) = try await syncToCloud(store: store)
+        return (items, members, deletedIDs, prices, priceDates, categories)
     }
 
-    private func syncToCloud(store: Store) async throws -> (code: String, items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date]) {
+    private func syncToCloud(store: Store) async throws -> (code: String, items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], categories: [String: CustomCategoryEntry]) {
         let code = store.shareID ?? Self.generateCode()
         let recordID = CKRecord.ID(recordName: code)
 
@@ -61,12 +61,12 @@ actor SharedStoreService {
 
         var attempt = 0
         while true {
-            let (mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates) = mergeIntoRecord(record, store: store, code: code, isNewRecord: isNewRecord)
+            let (mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates, mergedCategories) = mergeIntoRecord(record, store: store, code: code, isNewRecord: isNewRecord)
             do {
                 let saved = try await db.save(record)
                 markSynced(shareID: code, at: saved.modificationDate ?? Date())
                 pruneDeletions(shareID: code, stillPresent: Set(mergedItems.map(\.id)))
-                return (code, mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates)
+                return (code, mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates, mergedCategories)
             } catch let error as CKError where error.code == .serverRecordChanged && attempt == 0 {
                 // Another device saved between our fetch and our save. Re-merge against the
                 // record that actually won instead of blindly overwriting it a second time.
@@ -80,11 +80,17 @@ actor SharedStoreService {
 
     /// Merges local store state into `record` in place and returns the merged items/members/
     /// tombstones/prices.
-    private func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool) -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date]) {
+    private func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool) -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], categories: [String: CustomCategoryEntry]) {
         let remoteItems = decodeItems(record["itemsJSON"] as? String ?? "[]")
         let remoteMembers = decodeMembers(record["membersJSON"] as? String ?? "[]")
         let remoteDeletedIDs = decodeIDs(record["deletedJSON"] as? String ?? "[]")
         let (remotePrices, remotePriceDates) = decodePrices(record["pricesJSON"] as? String ?? "{}")
+        // Issue #85: eigene Kategorien des Ladens — pro Name gewinnt der spätere Stand, auch ein
+        // Löschvermerk (`StoreCategories.merge`).
+        let mergedCategories = StoreCategories.merge(
+            local: store.customCategoryEntries,
+            remote: decodeCategories(record["categoriesJSON"] as? String ?? "{}")
+        )
 
         let localTombstones = pendingDeletions(shareID: code)
         let allTombstones = localTombstones.union(remoteDeletedIDs)
@@ -115,7 +121,8 @@ actor SharedStoreService {
         record["membersJSON"] = encodeMembers(mergedMembers) as CKRecordValue
         record["deletedJSON"] = encodeIDs(mergedDeletedIDs) as CKRecordValue
         record["pricesJSON"] = encodePrices(mergedPrices, dates: mergedPriceDates) as CKRecordValue
-        return (mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates)
+        record["categoriesJSON"] = encodeCategories(mergedCategories) as CKRecordValue
+        return (mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates, mergedCategories)
     }
 
     /// Per-item last-write-wins merge: an id present in both is resolved by the newer `lastModified`.
@@ -171,7 +178,7 @@ actor SharedStoreService {
 
     // MARK: - Pull (download remote items if newer)
 
-    func pull(shareID: String) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], modifiedAt: Date)? {
+    func pull(shareID: String) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], categories: [String: CustomCategoryEntry], modifiedAt: Date)? {
         let recordID = CKRecord.ID(recordName: shareID)
         let record = try await db.record(for: recordID)
         let remoteModified = record.modificationDate ?? .distantPast
@@ -189,11 +196,12 @@ actor SharedStoreService {
         // der Aufrufer (SyncCoordinator.apply) entscheidet pro Schlüssel gegen den LOKALEN Stand
         // zum Anwendungszeitpunkt, exakt wie er es für `items` per `lastModified` auch schon tut.
         let (prices, priceDates) = decodePrices(record["pricesJSON"] as? String ?? "{}")
+        let categories = decodeCategories(record["categoriesJSON"] as? String ?? "{}")
         pruneDeletions(shareID: shareID, stillPresent: Set(allRemoteItems.map(\.id)))
         // Not marked synced here: the caller (SyncCoordinator) only advances the watermark once
         // this result has actually been applied and saved into the local SwiftData store, so a
         // failed/interrupted apply doesn't permanently skip the merge that would have fixed it.
-        return (items, members, allTombstones, prices, priceDates, remoteModified)
+        return (items, members, allTombstones, prices, priceDates, categories, remoteModified)
     }
 
     // MARK: - Members
@@ -381,6 +389,19 @@ actor SharedStoreService {
     /// Preis-Schlüssel → {price, date}-Objekt, damit jeder Eintrag seinen eigenen Zeitstempel
     /// mitführt (nötig für `mergePrices`s "später gewinnt"). Fehlende Werte defaulten beim
     /// Decode auf leer, damit ein älterer Record ohne dieses Feld (vor diesem Feature) nicht bricht.
+    /// Eigene Kategorien (Issue #85) als JSON: Name → {emoji (fehlt = gelöscht), date}.
+    func encodeCategories(_ categories: [String: CustomCategoryEntry]) -> String {
+        guard let data = try? JSONEncoder().encode(categories),
+              let str = String(data: data, encoding: .utf8) else { return "{}" }
+        return str
+    }
+
+    func decodeCategories(_ json: String) -> [String: CustomCategoryEntry] {
+        guard let data = json.data(using: .utf8),
+              let categories = try? JSONDecoder().decode([String: CustomCategoryEntry].self, from: data) else { return [:] }
+        return categories
+    }
+
     func encodePrices(_ prices: [String: Double], dates: [String: Date]) -> String {
         var dicts: [String: [String: Any]] = [:]
         for (key, price) in prices {
