@@ -96,3 +96,75 @@ PO-Entscheidung steht im Issue. Offen: Erkennungskriterium und Verhalten bei get
 ## Offene Frage an die Analyse (Phase 2)
 - Wie viele sichtbare Falschwerte gibt es tatsächlich (Punkt 2), und lässt sich das im
   Simulator mit dem Altstand nachstellen? Ohne Reproduktion keine Empfehlung.
+
+---
+
+# Analysis (Phase 2, 2026-10-01)
+
+## Type
+Bug (Altdaten-Reparatur). Kein sichtbares Redesign → keine Artefakt-Vorschau nötig (nur bei Alternative C).
+
+## Recherche (zuerst)
+Gesucht: Muster für einmalige Datenreparatur bei SwiftData/CloudKit und für nachträgliche Preisbereinigung.
+Ergebnis dünn und nur bestätigend: Einmal-Migration mit Versions-Flag in UserDefaults ist das übliche
+Muster (Apple-Foren: developer.apple.com/forums/thread/756538, /744491); für Preis-Ausreißer gilt in der
+Fachliteratur „erst erkennen, dann mit dem Nutzer bestätigen“ — es gibt kein verlässliches
+Reparaturkriterium ohne Beleg. Nichts davon ersetzt die eigene Reproduktion unten.
+
+## Reproduktion (Simulator `Restock-Validate`, aktueller Stand = HEAD, Build 8)
+Echter Weg: Alt-Stand vor #10 (`3af1d03^`) in Wegwerf-Kopie gebaut, Bestands-UI-Test ohne Aufräumen
+gefahren. Der Test brach VOR dem Speichern ab (Kachel nicht anklickbar) → der Bon wurde nicht gespeichert,
+das alte Speichern ließ sich also NICHT im echten Ablauf auslösen. Ausweg (offen so benannt):
+Der Speicher stammt aus dem echten Alt-Build (Schema ohne `learnedPriceUnits`), die Falschwerte habe ich
+von Hand in diesen Alt-Speicher geschrieben: `learnedPrices = {"brötchen": 1.56}` ohne Einheit,
+abgehakter Artikel „Brötchen“ mit `estimatedPrice 1.56`, `estimatedPriceIsAutoDerived = 0`.
+Dann aktuellen Stand darüber installiert und normal gestartet.
+- **Beobachtet:** App startet, Daten bleiben unverändert (`learnedPrices` weiter ohne Einheit,
+  `estimatedPrice` weiter 1,56 mit „echter Herkunft“). Keine Migration greift.
+- **Nur gelesen, nicht gesehen** (Simulator fensterlos, kein Tippen auf die Lidl-Kachel möglich):
+  `ItemRow.swift:153` zeigt bei abgehakten Artikeln mit echter Herkunft `estimatedLineTotal` → „1,56 €“.
+  `ShoppingItem.markPending()` (`:317-340`) setzt den Preis NICHT zurück → wird der Artikel wieder
+  aktiviert, summiert `PriceOverviewView.swift:158` den Falschwert ins Budget.
+- Nicht belegt: wie viele solcher Einträge Hennings echtes Gerät hat (nicht lesbar).
+
+## Ursachenkette (Code-Stellen)
+1. Quelle: Parser verlor Stückzahl (behoben #9). 2. `learnedPrices` ohne Einheit: seit #10 inert
+(`learnedRateUsage` → `.reject`), heilt sich beim nächsten Scan selbst (Überschreiben mit Einheit,
+`ReceiptScannerView.swift:717-719`). 3. Einziger Weg, auf dem Altwerte heute Schaden machen:
+bereits gespeicherte `ShoppingItem.estimatedPrice` mit `estimatedPriceIsAutoDerived == false`
+(Liste bei abgehakten, Budget nach Reaktivierung). 4. Artikelpreise werden NICHT synchronisiert
+(`SharedItemData` enthält keinen Preis, geprüft) — nur `learnedPrices`, und die immer ohne Einheit
+(→ #53), also bei anderen Mitgliedern ohnehin inert. Eine „Mitkorrektur bei anderen“ ist daher
+weder nötig noch möglich; sie läge in #53.
+5. `PriceProvenanceMigration` Phase C fängt Faktor 4 nicht (nur Subeinheit, Menge > 10, > 200 €).
+
+## Erkennungskriterium — Befund
+Es gibt KEIN Merkmal „falsch“. Ein rein regelbasierter Weg, der Falsches erkennt, existiert nicht.
+Regelbasiert möglich ist nur: „Wert stammt aus der Zeit vor der Einheit“ (Fingerabdruck:
+Artikel mit echter Herkunft, aber im Laden kein Eintrag MIT Einheit zum Namen).
+Unsicherheit: Der Bon-Scan speichert unter dem aufgelösten Bon-Namen, der Artikel kann anders heißen
+→ Fingerabdruck kann auch nach #10 gelernte, richtige Preise treffen. Braucht Datums-Grenze oder Test.
+Rückrechnen aus `PurchaseRecord` (actualPrice ÷ quantityAmount) wäre eine Regel, ist aber unsicher:
+Menge im Datensatz vor #54 ist die geplante Menge; bei Menge 1 entstünde derselbe Falschwert, nur
+jetzt MIT Einheit und damit „gültig“ — schlechter als heute.
+
+## Alternativen (PO-Regel)
+- **A. Rückrechnen aus Kaufdaten** (Muster Phase C). Kippt nichts, aber siehe oben: kann Falsches
+  legitimieren. Verworfen.
+- **B/D. Zurücksetzen statt reparieren (Empfehlung):** einmalige Migration setzt Artikelpreise mit
+  Altherkunft auf die Katalogschätzung zurück und markiert sie als „geschätzt“; `learnedPrices` ohne
+  Einheit bleiben unangetastet (inert, selbstheilend). Kein Erkennungskriterium für „falsch“ nötig,
+  ohne Modell. Kosten: richtige Altpreise gehen verloren, nächster Bon lernt sie neu.
+- **C. Nutzer korrigiert selbst** (Preise je Laden ansehen/ändern/löschen). Kippt PO-Entscheidung
+  „automatisch bereinigen“; mehr UI, Entwurf vorab nötig.
+- **E. Nichts tun:** Altwerte verschwinden von selbst, sobald ein Artikel erledigt und gelöscht oder neu
+  gescannt wird. Kostet nichts, lässt aber das Budget bei reaktivierten Artikeln falsch.
+
+## Scope-Schätzung (für B/D)
+~3 Dateien (`ShoppingItem.swift` Migration, `SmartCartApp.swift` Aufruf, 1 Testdatei), ca. +120 LoC.
+Risiko: Mittel — Datenänderung an CloudKit-gespiegelten Werten, Fingerabdruck kann Richtiges treffen.
+
+## Offene Fragen
+- [x] PO (2026-10-01): Zurücksetzen auf Schätzung (B/D) gewählt; Verlust richtiger Altpreise akzeptiert.
+- [ ] Fingerabdruck-Grenze: Datum (Release-Stand von #10 auf Hennings Gerät) oder Namensabgleich?
+  Wird in Phase 3 mit Tests an echten Konstellationen (Name ≠ Bon-Name) festgelegt.
