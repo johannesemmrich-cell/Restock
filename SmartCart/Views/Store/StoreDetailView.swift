@@ -46,13 +46,13 @@ struct StoreDetailView: View {
     @State private var alsoDueItems: [ConsumptionPattern] = []
     @State private var visitGapDays: Double = 7
 
-    // Lokale Kopie von `store.sortMode` (UserDefaults, pro Laden, Issue #79). Das ···-Menü
-    // schreibt beides: den Store-Wert zum Speichern und diesen @State für die Animation.
-    @State private var sortMode: StoreSortMode
+    // Direkt aus dem Store gelesen statt als @State-Kopie: eine Kopie bliebe beim Wechsel auf
+    // einen anderen Laden in derselben View-Instanz (Deep Link aus dem Widget) auf dem alten Wert.
+    // `routeRevision` oben sorgt fürs Neuzeichnen, wenn der Modus sich ändert.
+    private var sortMode: StoreSortMode { store.sortMode }
 
     init(store: Store) {
         self.store = store
-        _sortMode = State(initialValue: store.sortMode)
     }
 
     private func total(for items: [ShoppingItem]) -> Double {
@@ -305,8 +305,7 @@ struct StoreDetailView: View {
                         Picker(selection: Binding(
                             get: { sortMode },
                             set: { newValue in
-                                withAnimation { sortMode = newValue }
-                                store.sortMode = newValue
+                                withAnimation { store.sortMode = newValue }
                                 Haptics.impact(.light)
                             }
                         )) {
@@ -314,7 +313,7 @@ struct StoreDetailView: View {
                                 Label(mode.label, systemImage: mode.systemImage).tag(mode)
                             }
                         } label: {
-                            Label("Sortieren: \(sortMode.label)", systemImage: "arrow.up.arrow.down")
+                            Label(String(format: String(localized: "store.sort.menu"), sortMode.label), systemImage: "arrow.up.arrow.down")
                         }
                         .pickerStyle(.menu)
                         Divider()
@@ -388,13 +387,14 @@ struct StoreDetailView: View {
         }
         .devFeedback(context: "Liste: \(store.name)")
         .onAppear {
-            // Ein seit über 30 Minuten ruhender Einkauf ist vorbei: jetzt lernen, damit die Liste
-            // schon vor dem ersten Haken im gelernten Weg steht (Issue #79).
-            store.finalizeStaleTrip()
             // Erst die aus der Dynamic Island gequeueten Haken persistieren, DANN die Activity
             // starten — sonst startet start(for:) für eine per Island komplett abgehakte Liste
             // kurz eine neue Activity, die der Drain eine Zeile später sofort wieder beendet (Flash).
             applyPendingCheckoffs()
+            // Danach (nicht davor, sonst zerfiele ein halb per Island abgehakter Einkauf in zwei):
+            // ein seit über 30 Minuten ruhender Einkauf ist vorbei — jetzt lernen, damit die Liste
+            // schon vor dem ersten Haken im gelernten Weg steht (Issue #79).
+            store.finalizeStaleTrip()
             LiveActivityService.shared.start(for: store)
             // Kein eigener wiederkehrender Poll-Loop mehr hier — SyncCoordinator.startPeriodicPulls()
             // deckt bereits alle geteilten Stores app-weit alle 15s ab (Push + CloudKit-Notifications

@@ -127,6 +127,27 @@ final class ShoppingRouteTests: XCTestCase {
         XCTAssertEqual(state.model.itemPositions["b"], 1)
     }
 
+    func testQueuedCheckOffsContinueTripInsteadOfStartingNewOne() {
+        // 3 Artikel in der App, Rest per Dynamic Island; nachgetragen erst 50 Minuten später.
+        var state = (trip: trip([("a", "x"), ("b", "x"), ("c", "x")]), model: ShoppingRouteModel())
+        let drain = t0.addingTimeInterval(50 * 60)
+        for key in ["d", "e"] {
+            state = ShoppingRoute.recordCheckOff(key: key, category: "x", at: drain, batched: true, trip: state.trip, model: state.model)
+        }
+        XCTAssertEqual(state.trip.entries.map(\.key), ["a", "b", "c", "d", "e"], "Ein Weg darf nicht in zwei Einkäufe zerfallen")
+        XCTAssertTrue(state.model.itemPositions.isEmpty)
+        let learned = ShoppingRoute.learn(state.trip, into: state.model)
+        XCTAssertEqual(learned.itemPositions["c"], 0.5)
+        XCTAssertEqual(learned.itemPositions["e"], 1)
+    }
+
+    func testQueuedCheckOffAfterLongGapStartsNewTrip() {
+        var state = (trip: trip([("a", "x"), ("b", "x")]), model: ShoppingRouteModel())
+        state = ShoppingRoute.recordCheckOff(key: "c", category: "x", at: t0.addingTimeInterval(7 * 3600), batched: true, trip: state.trip, model: state.model)
+        XCTAssertEqual(state.trip.entries.map(\.key), ["c"])
+        XCTAssertEqual(state.model.itemPositions["b"], 1)
+    }
+
     func testFinalizeIfStale() {
         let open = trip([("a", "x"), ("b", "x")])
         let recent = ShoppingRoute.finalizeIfStale(trip: open, model: ShoppingRouteModel(), now: t0.addingTimeInterval(10 * 60))

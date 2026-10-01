@@ -18,9 +18,9 @@ enum StoreSortMode: String, CaseIterable, Codable {
 
     var label: String {
         switch self {
-        case .route: return "Einkaufsweg"
-        case .category: return "Kategorie"
-        case .added: return "Hinzugefügt"
+        case .route: return String(localized: "store.sort.route")
+        case .category: return String(localized: "store.sort.category")
+        case .added: return String(localized: "store.sort.added")
         }
     }
 
@@ -70,6 +70,11 @@ struct ShoppingRouteModel: Codable, Equatable {
 enum ShoppingRoute {
     /// Längere Pause zwischen zwei Haken in einem Laden beginnt einen neuen Einkauf.
     static let tripGap: TimeInterval = 30 * 60
+    /// Aus der Dynamic-Island-/Widget-Warteschlange nachgetragene Haken tragen den Zeitpunkt des
+    /// Nachtragens, nicht des Abhakens — sie setzen deshalb den laufenden Einkauf fort (sonst
+    /// würde ein Weg, halb in der App und halb per Island abgehakt, in zwei Einkäufe zerfallen).
+    /// Nur ein Einkauf, der älter als dieses Fenster ist, wird vorher abgeschlossen.
+    static let batchedTripGap: TimeInterval = 6 * 3600
     /// Gewicht eines neuen Einkaufs im gleitenden Mittel. Ein Ausreißer verschiebt eine Position
     /// nur um 30 % statt (wie früher) um die Hälfte; ein Umbau im Laden ist nach wenigen
     /// Einkäufen trotzdem gelernt.
@@ -104,14 +109,20 @@ enum ShoppingRoute {
 
     // MARK: Aufzeichnen
 
-    /// Einkauf abschließen und lernen, wenn seit dem letzten Haken mehr als `tripGap` vergangen ist.
-    static func finalizeIfStale(trip: ShoppingTrip, model: ShoppingRouteModel, now: Date) -> (trip: ShoppingTrip, model: ShoppingRouteModel) {
-        guard let last = trip.lastActivity, now.timeIntervalSince(last) > tripGap else { return (trip, model) }
+    /// Einkauf abschließen und lernen, wenn seit dem letzten Haken mehr als `gap` vergangen ist.
+    static func finalizeIfStale(
+        trip: ShoppingTrip,
+        model: ShoppingRouteModel,
+        now: Date,
+        gap: TimeInterval = ShoppingRoute.tripGap
+    ) -> (trip: ShoppingTrip, model: ShoppingRouteModel) {
+        guard let last = trip.lastActivity, now.timeIntervalSince(last) > gap else { return (trip, model) }
         return (ShoppingTrip(), learn(trip, into: model))
     }
 
-    /// Einen Haken aufzeichnen. Ein älterer Einkauf wird vorher abgeschlossen und gelernt.
-    /// Jeder Artikel zählt pro Einkauf nur beim ersten Haken.
+    /// Einen Haken aufzeichnen. Ein älterer Einkauf wird vorher abgeschlossen und gelernt
+    /// (bei `batched` erst nach `batchedTripGap`). Jeder Artikel zählt pro Einkauf nur beim
+    /// ersten Haken.
     static func recordCheckOff(
         key: String,
         category: String,
@@ -120,7 +131,7 @@ enum ShoppingRoute {
         trip: ShoppingTrip,
         model: ShoppingRouteModel
     ) -> (trip: ShoppingTrip, model: ShoppingRouteModel) {
-        var (trip, model) = finalizeIfStale(trip: trip, model: model, now: date)
+        var (trip, model) = finalizeIfStale(trip: trip, model: model, now: date, gap: batched ? batchedTripGap : tripGap)
         guard !trip.entries.contains(where: { $0.key == key }) else { return (trip, model) }
         trip.entries.append(.init(key: key, category: category, date: date, batched: batched))
         return (trip, model)
@@ -184,8 +195,15 @@ enum ShoppingRoute {
         model: ShoppingRouteModel,
         staticOrder: [String]
     ) -> [String] {
-        let learned = categoryPositions(model)
-        return Array(Set(categories)).sorted { a, b in
+        orderedCategories(categories, learned: categoryPositions(model), staticOrder: staticOrder)
+    }
+
+    private static func orderedCategories(
+        _ categories: [String],
+        learned: [String: Double],
+        staticOrder: [String]
+    ) -> [String] {
+        Array(Set(categories)).sorted { a, b in
             switch (learned[a], learned[b]) {
             case let (pa?, pb?) where pa != pb: return pa < pb
             case (.some, nil): return true
@@ -222,7 +240,7 @@ enum ShoppingRoute {
     ) -> [Int] {
         let learnedCategories = categoryPositions(model)
         let categoryRank: [String: Int] = Dictionary(
-            uniqueKeysWithValues: orderedCategories(items.map(\.category), model: model, staticOrder: staticCategoryOrder)
+            uniqueKeysWithValues: orderedCategories(items.map(\.category), learned: learnedCategories, staticOrder: staticCategoryOrder)
                 .enumerated().map { ($1, $0) }
         )
         func routePosition(_ item: SortInput) -> Double? {

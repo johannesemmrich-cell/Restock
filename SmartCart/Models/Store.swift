@@ -158,9 +158,9 @@ class Store {
 
     /// App-Group-Suite statt `.standard`, weil diese Datei auch im Widget und in der Share
     /// Extension läuft und dort dieselbe Sortierung gelten muss.
-    private static var routeDefaults: UserDefaults {
-        UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart") ?? .standard
-    }
+    /// Einmal angelegt statt bei jedem Zugriff — `pendingItems` liest daraus und wird pro
+    /// Darstellung der Startseite oft aufgerufen.
+    private static let routeDefaults = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart") ?? .standard
 
     /// Wird bei jeder Änderung an Sortiermodus oder gelernter Reihenfolge hochgezählt. Views, die
     /// `pendingItems` anzeigen, beobachten den Schlüssel per `@AppStorage`, damit sie sofort neu
@@ -173,17 +173,25 @@ class Store {
     }
 
     /// Sortierung der offenen Artikel, pro Laden. Ohne gespeicherten Wert gilt, was die früheren
-    /// Einstellungen ergeben (`StoreSortMode.migratedDefault`).
+    /// Einstellungen ergeben (`StoreSortMode.migratedDefault`). Die Haupt-App schreibt diesen
+    /// Wert beim ersten Lesen fest: `groupByCategory` liegt in `UserDefaults.standard` und ist
+    /// für Widget und Share Extension unsichtbar — ohne das Festschreiben sortierten sie denselben
+    /// Laden anders als die App (und der Legacy-Drain träfe einen anderen Artikel).
     var sortMode: StoreSortMode {
         get {
             let defaults = Store.routeDefaults
-            if let raw = defaults.string(forKey: "sortMode_\(id.uuidString)"), let mode = StoreSortMode(rawValue: raw) {
+            let key = "sortMode_\(id.uuidString)"
+            if let raw = defaults.string(forKey: key), let mode = StoreSortMode(rawValue: raw) {
                 return mode
             }
-            return StoreSortMode.migratedDefault(
+            let migrated = StoreSortMode.migratedDefault(
                 groupByCategory: groupByCategory,
                 autoSortByLearnedOrder: defaults.object(forKey: "autoSortByLearnedOrder") as? Bool ?? true
             )
+            if Bundle.main.bundleURL.pathExtension != "appex" {
+                defaults.set(migrated.rawValue, forKey: key)
+            }
+            return migrated
         }
         set {
             Store.routeDefaults.set(newValue.rawValue, forKey: "sortMode_\(id.uuidString)")

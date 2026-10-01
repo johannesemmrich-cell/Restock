@@ -68,7 +68,13 @@ nach Kategorien, deren Reihenfolge ebenfalls aus dem Weg gelernt wird.
   `shoppingTrip_<storeID>`) angehängt; pro Einkauf zählt jeder Artikel nur beim ersten Haken.
   Rücknahme entfernt ihn aus dem Einkauf.
 - Ein Einkauf endet, wenn seit dem letzten Haken mehr als 30 Minuten vergangen sind. Gelernt wird
-  beim nächsten Haken oder beim Öffnen der Ladenansicht (`finalizeStaleTrip`).
+  beim nächsten Haken oder beim Öffnen der Ladenansicht (`finalizeStaleTrip`, nach dem Nachtragen
+  der Dynamic-Island-Warteschlange).
+- Aus der Warteschlange nachgetragene Haken (`batched`) setzen den laufenden Einkauf fort; nur
+  ein Einkauf, der älter als 6 Stunden ist, wird vorher abgeschlossen (`batchedTripGap`).
+- Der Sortiermodus wird beim ersten Lesen in der Haupt-App festgeschrieben, damit Widget und
+  Share Extension (die `groupByCategory` aus `UserDefaults.standard` nicht sehen) gleich sortieren.
+- Auch Abhaken/Zurücknehmen im Bearbeiten-Sheet (`EditItemView`) wird aufgezeichnet.
 - Position im Einkauf: `index / (n − 1)` ∈ 0…1. Erstbeobachtung wird übernommen, danach
   gleitendes Mittel `alt + 0,3 · w · (neu − alt)` mit `w = min(1, (n − 1) / 4)`: Einkäufe unter
   5 Artikeln lernen anteilig schwächer.
@@ -101,5 +107,10 @@ nach Kategorien, deren Reihenfolge ebenfalls aus dem Weg gelernt wird.
 ## Known Limitations
 
 - Die Ladenkarten-Vorschau auf der Startseite übernimmt den Modus des Ladens (flach sortiert).
+- Ein Einkauf, der seit über 30 Minuten ruht, wird erst beim Öffnen der Ladenansicht oder beim
+  nächsten Haken gelernt. Bleibt die Ansicht offen, kann sich die Liste beim ersten Haken des
+  nächsten Einkaufs einmal neu sortieren.
+- App und Widget schreiben Einkauf und Modell ohne prozessübergreifende Sperre (wie der
+  bestehende Drain); bei gleichzeitigem Abhaken kann ein einzelner Eintrag verloren gehen.
 - Die Einstellungsseite „Benachrichtigungen“ ist nur noch im Developer Mode sichtbar, weil der
   einzige andere Eintrag (der globale Sortierschalter) entfallen ist.
