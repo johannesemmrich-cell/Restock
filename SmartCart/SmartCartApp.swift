@@ -31,6 +31,7 @@ struct SmartCartApp: App {
             Self.clearMenuPlanForUITestsIfNeeded()
             Self.seedReceiptReviewForUITestsIfNeeded(context: container.mainContext)
             Self.seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context: container.mainContext)
+            Self.seedReceiptReviewWeightLineForUITestsIfNeeded(context: container.mainContext)
             Self.clearQuantitySuggestionSeedForUITestsIfNeeded(context: container.mainContext)
             Self.seedQuantitySuggestionForUITestsIfNeeded(context: container.mainContext)
             Self.clearShoppingRouteSeedForUITestsIfNeeded(context: container.mainContext)
@@ -209,6 +210,11 @@ struct SmartCartApp: App {
         }
         if let stores = try? context.fetch(FetchDescriptor<Store>()) {
             for store in stores { context.delete(store) }
+        }
+        // `save()` legt für Zeilen ohne Artikel-Treffer eigenständige `PurchaseRecord`s an (Issue
+        // #54) — ohne dieses Löschen tauchten sie in der Ausgabenansicht späterer Tests auf.
+        if let records = try? context.fetch(FetchDescriptor<PurchaseRecord>()) {
+            for record in records { context.delete(record) }
         }
         try? context.save()
         _ = ReceiptShareHandoff.takePending()
@@ -454,6 +460,38 @@ struct SmartCartApp: App {
                 suggestions: [], matchedItemID: nil, resolvedByAI: false),
         ]
 
+        ReceiptShareHandoff.store(SharedReceiptPayload(
+            storeID: store.id,
+            storeConfidentlyDetected: true,
+            lines: lines,
+            rawLines: lines.map(\.originalName),
+            detectedTotal: lines.reduce(0) { $0 + $1.price }))
+    }
+
+    /// Dritter UI-Test-Seed (Issue #54, `docs/specs/views/receipt-save-purchase-quantity.md`):
+    /// Laden „Lidl" ohne Artikel und NUR die Gewichtszeile „BANANE CHIQUITA" (0,706 kg x 2,49,
+    /// Gesamtpreis 1,76, `weightBasis` 706, `matchedItemID` nil). So nimmt `save()` den
+    /// `else`-Zweig und legt einen neuen `PurchaseRecord` an. Eigener Seed statt einer fünften
+    /// Zeile im Seed oben, weil sie dort Positionszähler und Summe bestehender Tests verschöbe.
+    /// `resolvedByAI: true` hält die Zeile aus `reResolveAIIfNeeded()` heraus (Invariante 1), damit
+    /// der Name unverändert „BANANE CHIQUITA" bleibt. Aufgeräumt über
+    /// `-clearReceiptReviewSeedForUITests` (Läden, Artikel und alle `PurchaseRecord`s).
+    /// Only runs on `-seedReceiptReviewWeightLineForUITests`, DEBUG-only, never ships to users.
+    private static func seedReceiptReviewWeightLineForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedReceiptReviewWeightLineForUITests") else { return }
+        if let existing = try? context.fetch(FetchDescriptor<Store>()) {
+            for s in existing { context.delete(s) }
+        }
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")
+        context.insert(store)
+        try? context.save()
+
+        let lines: [ResolvedReceiptLine] = [
+            ResolvedReceiptLine(
+                name: "BANANE CHIQUITA", originalName: "BANANE CHIQUITA",
+                price: 1.76, quantity: 1, unit: "", weightBasis: 706,
+                suggestions: [], matchedItemID: nil, resolvedByAI: true),
+        ]
         ReceiptShareHandoff.store(SharedReceiptPayload(
             storeID: store.id,
             storeConfidentlyDetected: true,

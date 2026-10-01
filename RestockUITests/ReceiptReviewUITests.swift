@@ -808,20 +808,24 @@ final class ReceiptReviewUITests: XCTestCase {
         let lidlTile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Lidl,")).firstMatch
         XCTAssertTrue(lidlTile.waitForExistence(timeout: 10), "Nach dem Speichern ist der Home-Screen nicht sichtbar.")
 
-        let expensesButton = app.buttons.matching(
-            NSPredicate(format: "label CONTAINS[c] %@ OR label CONTAINS[c] %@", "chart.bar", "Balken")
-        ).firstMatch
+        // Bezeichner = SF-Symbol-Name; das Label ist lokalisiert („Diagrammspalte").
+        let expensesButton = app.buttons["chart.bar"]
         XCTAssertTrue(expensesButton.waitForExistence(timeout: 10), "Ausgaben-Knopf fehlt.")
         expensesButton.tap()
 
-        let tripGroup = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Lidl")).firstMatch
+        // Nur „Lidl" träfe auch die Laden-Kachel des Home-Screens hinter dem Sheet. Die Kopfzeile
+        // des Einkaufs trägt zusätzlich die Summe 1,76 (Name, Datum, Summe im Label).
+        let tripGroup = app.buttons.matching(
+            NSPredicate(format: "label BEGINSWITH %@ AND label CONTAINS %@", "Lidl", "1,76")
+        ).firstMatch
         XCTAssertTrue(tripGroup.waitForExistence(timeout: 10), "Einkauf „Lidl“ fehlt in der Ausgabenansicht.")
         tripGroup.tap()
 
         XCTAssertTrue(app.staticTexts["BANANE CHIQUITA"].waitForExistence(timeout: 10),
                       "Eintrag BANANE CHIQUITA fehlt in der Ausgabenansicht.")
         XCTAssertTrue(app.staticTexts["706 g"].waitForExistence(timeout: 5),
-                      "Beim Eintrag BANANE CHIQUITA steht nicht „706 g“ — der Kaufdatensatz trägt das Gewicht nicht.")
+                      "Beim Eintrag BANANE CHIQUITA steht nicht „706 g“ — der Kaufdatensatz trägt das Gewicht nicht. "
+                      + "Sichtbare Texte: \(app.staticTexts.allElementsBoundByIndex.map(\.label))")
     }
 
     // MARK: - Dunkelmodus (der im Issue-Screenshot reproduzierte Fall)
