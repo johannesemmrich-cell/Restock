@@ -215,11 +215,19 @@ struct ReceiptReviewCard: View {
                 } label: {
                     HStack(spacing: 10) {
                         radio(filled: isSelected(option))
-                        Text(option.displayName)
+                        // Die Zeile „Anderer Name …" zeigt vorab, WOMIT das Feld gefüllt wird:
+                        // immer mit dem unveränderten Bontext, nie mit dem gerade gewählten Namen.
+                        Text(isCustom(option) ? Self.customFieldSeed(for: line) : option.displayName)
                             .font(.system(size: 15))
                             .foregroundStyle(isCustom(option) ? Color.textSecondary : Color.ink)
                             .lineLimit(1)
                         Spacer(minLength: 4)
+                        if isCustom(option) {
+                            Label("Bearbeiten", systemImage: "pencil")
+                                .font(.system(size: 11))
+                                .foregroundStyle(Color.textSecondary)
+                                .fixedSize()
+                        }
                         if case .listMatch = option {
                             Text("auf deiner Liste")
                                 .font(.system(size: 11))
@@ -428,9 +436,13 @@ struct ReceiptReviewCard: View {
         Haptics.impact(.light)
         if case .custom = option {
             // Regel 10: die geltende Auswahl festhalten, BEVOR das Feld sie überschreiben kann.
-            previousSelectionBeforeCustom = (line.name, line.matchedItemID, line.resolvedByAI)
-            customName = line.name
+            let previous = (line.name, line.matchedItemID, line.resolvedByAI)
+            previousSelectionBeforeCustom = previous
+            // Das Feld startet immer mit dem Original-Scan-Text und gilt sofort als Name der Zeile —
+            // so stimmen Feldinhalt, Häkchen-Label und gespeicherter Name von Anfang an überein.
+            customName = Self.customFieldSeed(for: line)
             customActive = true
+            Self.applyCustomNameOrFallback(&line, name: customName, previousSelection: previous)
             // Das Feld existiert erst nach diesem State-Wechsel — Fokus deshalb im nächsten
             // Runloop setzen, sonst läuft `@FocusState` ins Leere.
             DispatchQueue.main.async { customFocused = true }
@@ -555,6 +567,13 @@ struct ReceiptReviewCard: View {
         case .custom:
             break
         }
+    }
+
+    /// Startwert des Felds „Anderer Name …": der unveränderte, gedruckte Bontext (getrimmt).
+    /// Nur wenn der leer ist, der aktuelle Name.
+    static func customFieldSeed(for line: EditableReceiptLine) -> String {
+        let printed = line.originalName.trimmingCharacters(in: .whitespacesAndNewlines)
+        return printed.isEmpty ? line.name : printed
     }
 
     /// Eigener Name — löst Artikel-Identität und KI-Kennzeichnung, wie früher das freie

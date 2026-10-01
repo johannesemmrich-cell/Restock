@@ -263,6 +263,20 @@ final class ReceiptReviewCardTests: XCTestCase {
         XCTAssertEqual(describe(options[2]), "eigener", "Bekommen: \(describe(options))")
     }
 
+    // MARK: - Feld „Anderer Name …" startet mit dem Original-Scan-Text
+
+    /// Das Feld wird immer mit dem unveränderten Bontext gefüllt — nicht mit dem gewählten Namen.
+    func testCustomFieldSeedIsOriginalScanText() {
+        let line = makeLine(name: "Vollmilch", price: 0.99, originalName: "  MILCH 3,5% FRISCH ")
+        XCTAssertEqual(ReceiptReviewCard.customFieldSeed(for: line), "MILCH 3,5% FRISCH")
+    }
+
+    /// Ohne Bontext bleibt der aktuelle Name als Startwert.
+    func testCustomFieldSeedFallsBackToCurrentName() {
+        let line = makeLine(name: "Vollmilch", price: 0.99, originalName: "  ")
+        XCTAssertEqual(ReceiptReviewCard.customFieldSeed(for: line), "Vollmilch")
+    }
+
     // MARK: - AC-21/AC-22 (Issue #65, Paket 2): Bon-Zeile
 
     /// AC-21 — der gedruckte Bontext wird wortweise großgeschrieben, unabhängig vom
