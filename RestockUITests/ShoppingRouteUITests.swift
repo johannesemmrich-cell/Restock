@@ -47,13 +47,14 @@ final class ShoppingRouteUITests: XCTestCase {
     }
 
     private func choose(_ mode: String, in app: XCUIApplication) {
-        let more = app.buttons["ellipsis"].firstMatch
+        let more = app.descendants(matching: .any)["storeDetail.moreMenu"].firstMatch
         XCTAssertTrue(more.waitForExistence(timeout: 5), "···-Menü fehlt")
         more.tap()
-        let sortMenu = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Sortieren")).firstMatch
+        let sortMenu = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label BEGINSWITH %@", "Sortieren")).firstMatch
         XCTAssertTrue(sortMenu.waitForExistence(timeout: 5), "Menüpunkt „Sortieren“ fehlt")
         sortMenu.tap()
-        let option = app.buttons[mode].firstMatch
+        let option = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", mode)).firstMatch
         XCTAssertTrue(option.waitForExistence(timeout: 5), "Sortieroption „\(mode)“ fehlt")
         option.tap()
     }

@@ -346,6 +346,9 @@ struct StoreDetailView: View {
                     }
                     .menuStyle(.button)
                     .buttonStyle(.pressable)
+                    // Für `ShoppingRouteUITests` (Issue #79): das Symbol allein ist kein verlässlicher
+                    // Suchbegriff für das Menü.
+                    .accessibilityIdentifier("storeDetail.moreMenu")
                     Button {
                         showAddItem = true
                         Haptics.impact(.light)
