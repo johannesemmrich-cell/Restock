@@ -87,7 +87,10 @@ final class ShoppingRouteUITests: XCTestCase {
         choose("Kategorie", in: app)
         waitForOrder(["Gouda", "Brot", "Apfel"], in: app,
                      "Kategorie muss die Abschnitte in der gelernten Ladenreihenfolge zeigen, nicht in der festen")
-        let header = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Milchprodukte")).firstMatch
+        // Abschnittsüberschrift „🥛 Milchprodukte“. Nur über den Namen gesucht träfe der Test auch die
+        // Kategorie-Zeile, die `ItemRow` in jedem Modus unter „Gouda“ zeigt (ohne Emoji).
+        let header = app.staticTexts.matching(NSPredicate(
+            format: "label CONTAINS %@ AND label CONTAINS[c] %@", "🥛", "Milchprodukte")).firstMatch
         XCTAssertTrue(header.waitForExistence(timeout: 5), "Im Modus Kategorie fehlt die Abschnittsüberschrift")
 
         choose("Einkaufsweg", in: app)
