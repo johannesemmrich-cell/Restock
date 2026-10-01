@@ -127,6 +127,7 @@
 		59990828CCDE670F831874AD /* PhotoCompressorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E81942B396B5E8737A9976 /* PhotoCompressorTests.swift */; };
 		D78DB66BFF8EBECE0338D4D6 /* ExistingDataSurvivesCloudEnableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E41CD9B259ABB65652D89028 /* ExistingDataSurvivesCloudEnableTests.swift */; };
 		9D507887509A2C64F3C625EF /* ReceiptParserPriceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */; };
+		E54A0001B2C34D5E8F6071A2 /* ReceiptSavePurchaseQuantityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */; };
 		406A9602E2603784E461BA88 /* PriceProvenanceMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */; };
 		6974D7102BB46BEE039CDB22 /* ShoppingItemFuzzyPriceMatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819030AD296BDC33619C4C2 /* ShoppingItemFuzzyPriceMatchTests.swift */; };
 		7169A936DC526EB4B1002F33 /* PriceEstimatorCategoryFallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */; };
@@ -305,6 +306,7 @@
 		25E81942B396B5E8737A9976 /* PhotoCompressorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCompressorTests.swift; sourceTree = "<group>"; };
 		E41CD9B259ABB65652D89028 /* ExistingDataSurvivesCloudEnableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExistingDataSurvivesCloudEnableTests.swift; sourceTree = "<group>"; };
 		68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserPriceTests.swift; sourceTree = "<group>"; };
+		A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptSavePurchaseQuantityTests.swift; sourceTree = "<group>"; };
 		16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceProvenanceMigrationTests.swift; sourceTree = "<group>"; };
 		8819030AD296BDC33619C4C2 /* ShoppingItemFuzzyPriceMatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItemFuzzyPriceMatchTests.swift; sourceTree = "<group>"; };
 		C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceEstimatorCategoryFallbackTests.swift; sourceTree = "<group>"; };
@@ -610,6 +612,7 @@
 				27029F1EAB7F4E23EABF7783 /* SharedItemDataPhotoRegressionTests.swift */,
 				25E81942B396B5E8737A9976 /* PhotoCompressorTests.swift */,
 				68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */,
+				A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */,
 				16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */,
 				8819030AD296BDC33619C4C2 /* ShoppingItemFuzzyPriceMatchTests.swift */,
 				C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */,
@@ -957,6 +960,7 @@
 				6E2DF557B7FAF55F3567C875 /* SharedItemDataPhotoRegressionTests.swift in Sources */,
 				59990828CCDE670F831874AD /* PhotoCompressorTests.swift in Sources */,
 				9D507887509A2C64F3C625EF /* ReceiptParserPriceTests.swift in Sources */,
+				E54A0001B2C34D5E8F6071A2 /* ReceiptSavePurchaseQuantityTests.swift in Sources */,
 				406A9602E2603784E461BA88 /* PriceProvenanceMigrationTests.swift in Sources */,
 				6974D7102BB46BEE039CDB22 /* ShoppingItemFuzzyPriceMatchTests.swift in Sources */,
 				7169A936DC526EB4B1002F33 /* PriceEstimatorCategoryFallbackTests.swift in Sources */,

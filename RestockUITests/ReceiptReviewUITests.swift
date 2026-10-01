@@ -780,6 +780,54 @@ final class ReceiptReviewUITests: XCTestCase {
         )
     }
 
+    // MARK: - Issue #54: Gewicht im Kaufdatensatz
+
+    /// Durchstich durch den echten Weg: Bon mit der Bananenzeile (`0,706 kg x 2,49`, Gesamtpreis
+    /// 1,76, kein Artikel-Treffer) speichern, Ausgabenansicht öffnen, Einkauf aufklappen.
+    /// Vorher stand dort keine Menge (der `PurchaseRecord` trug 1 / leer, die Ansicht blendet das
+    /// aus) — jetzt muss „706 g" beim Eintrag stehen.
+    ///
+    /// Eigener Seed (`-seedReceiptReviewWeightLineForUITests`), kein Anhängen an den bestehenden:
+    /// dessen vier Zeilen lösen alle über `matchedItemID` auf und nähmen den Match-Zweig.
+    /// `-premiumForScreenshots`: die Ausgabenansicht liegt hinter Pro.
+    ///
+    /// Spec: docs/specs/views/receipt-save-purchase-quantity.md — AC-7.
+    func testSavedWeightLineShowsGramsInExpenses() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-premiumForScreenshots",
+                                "-seedReceiptReviewWeightLineForUITests"]
+        app.launch()
+        waitUntilSettled(app)
+        XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 30),
+                      "Das Bon-Prüf-Sheet ist nicht erschienen — Seed oder Handoff greift nicht.")
+
+        let saveButton = app.buttons["receiptReview.saveButton"]
+        XCTAssertTrue(saveButton.waitForExistence(timeout: 5), "Speichern-Knopf fehlt.")
+        saveButton.tap()
+
+        let lidlTile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Lidl,")).firstMatch
+        XCTAssertTrue(lidlTile.waitForExistence(timeout: 10), "Nach dem Speichern ist der Home-Screen nicht sichtbar.")
+
+        // Bezeichner = SF-Symbol-Name; das Label ist lokalisiert („Diagrammspalte").
+        let expensesButton = app.buttons["chart.bar"]
+        XCTAssertTrue(expensesButton.waitForExistence(timeout: 10), "Ausgaben-Knopf fehlt.")
+        expensesButton.tap()
+
+        // Nur „Lidl" träfe auch die Laden-Kachel des Home-Screens hinter dem Sheet. Die Kopfzeile
+        // des Einkaufs trägt zusätzlich die Summe 1,76 (Name, Datum, Summe im Label).
+        let tripGroup = app.buttons.matching(
+            NSPredicate(format: "label BEGINSWITH %@ AND label CONTAINS %@", "Lidl", "1,76")
+        ).firstMatch
+        XCTAssertTrue(tripGroup.waitForExistence(timeout: 10), "Einkauf „Lidl“ fehlt in der Ausgabenansicht.")
+        tripGroup.tap()
+
+        XCTAssertTrue(app.staticTexts["BANANE CHIQUITA"].waitForExistence(timeout: 10),
+                      "Eintrag BANANE CHIQUITA fehlt in der Ausgabenansicht.")
+        XCTAssertTrue(app.staticTexts["706 g"].waitForExistence(timeout: 5),
+                      "Beim Eintrag BANANE CHIQUITA steht nicht „706 g“ — der Kaufdatensatz trägt das Gewicht nicht. "
+                      + "Sichtbare Texte: \(app.staticTexts.allElementsBoundByIndex.map(\.label))")
+    }
+
     // MARK: - Dunkelmodus (der im Issue-Screenshot reproduzierte Fall)
 
     /// AC1 + AC3 im Dunkelmodus — der Screenshot zu #23 stammt genau daher.

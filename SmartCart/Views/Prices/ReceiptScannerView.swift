@@ -92,6 +92,31 @@ struct EditableReceiptLine: Identifiable {
         return "stk"
     }
 
+    /// Menge und Einheit für den `PurchaseRecord`, den `save()` für eine Zeile ohne Artikel-Treffer
+    /// anlegt (Issue #54, `docs/specs/views/receipt-save-purchase-quantity.md`). Erste zutreffende
+    /// Regel gewinnt: Gewicht der Zeile in g; sonst Stückzahl > 1 ohne Einheit; sonst gedruckte
+    /// Packungsgröße aus dem Namen (g/ml); sonst 1 ohne Einheit. Der Rohtext `unit` ("400g") wird
+    /// bewusst nicht übernommen. Regeln 1 und 2 decken sich mit `learningQuantity`.
+    func purchaseRecordQuantity() -> (amount: Double, unit: String) {
+        if let weightBasis { return (weightBasis, "g") }
+        if quantity > 1 { return (quantity, "") }
+        if let size = ReceiptParserService.packageSizeFromName(originalName) { return size }
+        return (1, "")
+    }
+
+    /// Der `PurchaseRecord`, den `save()` für eine Zeile ohne Artikel-Treffer einfügt (Issue #54).
+    /// Menge und Einheit kommen aus `purchaseRecordQuantity()`; einfügen bleibt in `save()`.
+    func makePurchaseRecord(storeName: String) -> PurchaseRecord {
+        let recordQuantity = purchaseRecordQuantity()
+        return PurchaseRecord(
+            itemName: name,
+            storeName: storeName,
+            quantityAmount: recordQuantity.amount,
+            unit: recordQuantity.unit,
+            actualPrice: price
+        )
+    }
+
     /// Darf diese Position gespeichert werden? (Issue #50, Paket 1, Regel 11 —
     /// `docs/specs/views/receipt-review-card.md`.)
     ///
@@ -739,13 +764,7 @@ struct ReceiptScannerView: View {
                 // .TripKey) auf mehrere "Einkäufe" auseinanderfallen.
                 match.date = Date()
             } else {
-                modelContext.insert(PurchaseRecord(
-                    itemName: line.name,
-                    storeName: store.name,
-                    quantityAmount: line.quantity,
-                    unit: line.unit,
-                    actualPrice: line.price
-                ))
+                modelContext.insert(line.makePurchaseRecord(storeName: store.name))
             }
         }
         Haptics.success()

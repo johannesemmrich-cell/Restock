@@ -1,0 +1,180 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/ReceiptReviewUITests/testSavedWeightLineShowsGramsInExpenses"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+SwiftDriver RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ ReceiptSavePurchaseQuantityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift (in target 'RestockTests' from project 'Restock')
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:28:78: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 26 |     /// AC-1: Die Banane aus dem Issue — 0,706 kg x 2,49 EUR/kg, Gesamtpreis 1,76.
+ 27 |     func testWeightLineGivesGrams() {
+ 28 |         let result = line(originalName: "BANANE CHIQUITA", weightBasis: 706).purchaseRecordQuantity()
+    |                                                                              `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 29 |         XCTAssertEqual(result.amount, 706)
+ 30 |         XCTAssertEqual(result.unit, "g")
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:35:72: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 33 |     /// AC-2: Gedruckte Packungsgröße — nicht der Rohtext "500g" im Einheitenfeld.
+ 34 |     func testPackageSizeInNameGivesGrams() {
+ 35 |         let skyr = line(originalName: "SKYR NATUR 500G", unit: "500g").purchaseRecordQuantity()
+    |                                                                        `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 36 |         XCTAssertEqual(skyr.amount, 500)
+ 37 |         XCTAssertEqual(skyr.unit, "g")
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:40:14: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 38 | 
+ 39 |         let hack = line(originalName: "BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G", unit: "400g")
+ 40 |             .purchaseRecordQuantity()
+    |              `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 41 |         XCTAssertEqual(hack.amount, 400)
+ 42 |         XCTAssertEqual(hack.unit, "g")
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:47:66: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 45 |     /// AC-3: Milliliter bleiben Milliliter, es wird nicht auf Gramm umgerechnet.
+ 46 |     func testLiterSizeInNameGivesMilliliters() {
+ 47 |         let cola = line(originalName: "COLA 1,5L", unit: "1,5l").purchaseRecordQuantity()
+    |                                                                  `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 48 |         XCTAssertEqual(cola.amount, 1500)
+ 49 |         XCTAssertEqual(cola.unit, "ml")
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:51:54: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 49 |         XCTAssertEqual(cola.unit, "ml")
+ 50 | 
+ 51 |         let halbe = line(originalName: "MILCH 0,5L").purchaseRecordQuantity()
+    |                                                      `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 52 |         XCTAssertEqual(halbe.amount, 500)
+ 53 |         XCTAssertEqual(halbe.unit, "ml")
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:55:52: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 53 |         XCTAssertEqual(halbe.unit, "ml")
+ 54 | 
+ 55 |         let dose = line(originalName: "LIMO 33CL").purchaseRecordQuantity()
+    |                                                    `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 56 |         XCTAssertEqual(dose.amount, 330)
+ 57 |         XCTAssertEqual(dose.unit, "ml")
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:62:80: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 60 |     /// AC-4: Echte Stückzahl (Mengenzeile "4 x 0,39") bleibt Stückzahl ohne Einheit.
+ 61 |     func testQuantityGreaterOneGivesPieces() {
+ 62 |         let result = line(originalName: "BROETCHEN", price: 1.56, quantity: 4).purchaseRecordQuantity()
+    |                                                                                `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 63 |         XCTAssertEqual(result.amount, 4)
+ 64 |         XCTAssertEqual(result.unit, "")
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:69:50: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 67 |     /// AC-4b: Nichts bekannt → ehrlich "1 / keine Einheit".
+ 68 |     func testNothingKnownGivesOneWithoutUnit() {
+ 69 |         let result = line(originalName: "MILCH").purchaseRecordQuantity()
+    |                                                  `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 70 |         XCTAssertEqual(result.amount, 1)
+ 71 |         XCTAssertEqual(result.unit, "")
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:78:26: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 76 |     func testAgreesWithLearningQuantityForWeightCases() {
+ 77 |         let l = line(originalName: "BANANE CHIQUITA", weightBasis: 706)
+ 78 |         let purchase = l.purchaseRecordQuantity()
+    |                          `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 79 |         XCTAssertEqual(purchase.amount, l.learningQuantity(matchQuantityAmount: nil))
+ 80 |         XCTAssertEqual(purchase.unit, l.learningUnit(matchUnit: nil))
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:87:26: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 85 |     func testSwitchingToPiecesFallsBackToQuantity() {
+ 86 |         var l = line(originalName: "BANANE CHIQUITA", quantity: 2, weightBasis: 706)
+ 87 |         XCTAssertEqual(l.purchaseRecordQuantity().amount, 706)
+    |                          `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 88 | 
+ 89 |         l.weightBasis = nil
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:90:24: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 88 | 
+ 89 |         l.weightBasis = nil
+ 90 |         let pieces = l.purchaseRecordQuantity()
+    |                        `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 91 |         XCTAssertEqual(pieces.amount, 2)
+ 92 |         XCTAssertEqual(pieces.unit, "")
+
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift:95:23: error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 93 | 
+ 94 |         l.weightBasis = 706
+ 95 |         let grams = l.purchaseRecordQuantity()
+    |                       `- error: value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+ 96 |         XCTAssertEqual(grams.amount, 706)
+ 97 |         XCTAssertEqual(grams.unit, "g")
+Failed frontend command:
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-SwiftPerFileCompile ReceiptSavePurchaseQuantityTests.swift
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ExistingDataSurvivesCloudEnableTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/SchemaCloudKitCompatibilityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptHistoryMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptKnownItemNamesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/SharedItemDataPhotoRegressionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/PhotoCompressorTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptParserPriceTests.swift -primary-file /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/PriceProvenanceMigrationTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ShoppingItemFuzzyPriceMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/PriceEstimatorCategoryFallbackTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/PriceEstimatorStagesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptParserReweTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptParserLidlFullReceiptTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptNameAIResolverSanitizeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/AssignmentServiceDetectStoreTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptParserStornoTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/LiveActivityServiceReattachTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptAbbreviationExpansionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/QuickAddParserTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ConsumptionPatternTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/StorePresetsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ShoppingRouteTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/AssignmentServiceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/PurchaseRecordDeletionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReplenishmentPackageATests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReplenishmentPackageBTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReplenishmentPackageCTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReplenishmentDigestTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptParserSuggestionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptScannerReResolutionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/DateFixtures.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/SharedModelContainerExtensionDetectionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/AssignmentServiceQuantitySuggestionTests.swift -emit-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptSavePurchaseQuantityTests.d -emit-const-values-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptSavePurchaseQuantityTests.swiftconstvalues -emit-reference-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptSavePurchaseQuantityTests.swiftdeps -serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptSavePurchaseQuantityTests.dia -target arm64-apple-ios18.0-simulator -disable-cross-import-overlay-search -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/CoreData.swiftoverlay -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationModelsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationModelsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftDataMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftDataMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle -enable-anonymous-context-mangled-names -file-compilation-dir /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name RestockTests -const-gather-protocols-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -disable-clang-spi -clang-target arm64-apple-ios27.0-simulator -target-sdk-version 27.0 -target-sdk-name iphonesimulator27.0 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptSavePurchaseQuantityTests.o -debug-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -index-unit-output-path /Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ReceiptSavePurchaseQuantityTests.o -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Index.noindex/DataStore -index-system-modules
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockTests (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Logs/Test/Test-Restock-2026.10.01_12-47-33-+0200.xcresult
+
+Testing failed:
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Value of type 'EditableReceiptLine' has no member 'purchaseRecordQuantity'
+	Testing cancelled because the build failed.
+
+** TEST FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift (in target 'RestockTests' from project 'Restock')
+	SwiftCompile normal arm64 Compiling\ ReceiptSavePurchaseQuantityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptSavePurchaseQuantityTests.swift (in target 'RestockTests' from project 'Restock')
+	Testing project Restock with scheme Restock
+(3 failures)
