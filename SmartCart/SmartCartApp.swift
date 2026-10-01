@@ -33,6 +33,8 @@ struct SmartCartApp: App {
             Self.seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context: container.mainContext)
             Self.clearQuantitySuggestionSeedForUITestsIfNeeded(context: container.mainContext)
             Self.seedQuantitySuggestionForUITestsIfNeeded(context: container.mainContext)
+            Self.clearShoppingRouteSeedForUITestsIfNeeded(context: container.mainContext)
+            Self.seedShoppingRouteForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
 
@@ -243,12 +245,52 @@ struct SmartCartApp: App {
         try? context.save()
     }
 
+    /// UI-Test-Seed für die Sortierung nach Einkaufsweg (Issue #79, `ShoppingRouteUITests`):
+    /// Laden „Wegeladen" mit „Brot", „Apfel", „Gouda" — in dieser Reihenfolge hinzugefügt — und
+    /// einem gelernten Weg Gouda → Brot → Apfel. So unterscheiden sich alle drei Modi: Hinzugefügt
+    /// (Brot, Apfel, Gouda), feste Supermarkt-Reihenfolge (Apfel, Brot, Gouda) und gelernter Weg
+    /// bzw. gelernte Kategorie-Reihenfolge (Gouda, Brot, Apfel). Startet im Modus Einkaufsweg.
+    /// Löscht vorher alle Läden und Artikel. Only runs on `-seedShoppingRouteForUITests`, DEBUG-only.
+    private static func seedShoppingRouteForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedShoppingRouteForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        let store = Store(name: "Wegeladen", emoji: "🧭", colorHex: "#2B6A9A")
+        context.insert(store)
+        let start = Date().addingTimeInterval(-3600)
+        for (index, name) in ["Brot", "Apfel", "Gouda"].enumerated() {
+            let item = ShoppingItem(name: name, store: store)
+            item.addedDate = start.addingTimeInterval(Double(index) * 60)
+            context.insert(item)
+        }
+        var model = ShoppingRouteModel()
+        for (index, name) in ["Gouda", "Brot", "Apfel"].enumerated() {
+            let key = ShoppingRoute.itemKey(name)
+            model.itemPositions[key] = Double(index) / 2
+            model.itemCategories[key] = AssignmentService.category(for: name)
+        }
+        store.routeModel = model
+        store.currentTrip = ShoppingTrip()
+        store.sortMode = .route
+        try? context.save()
+    }
+
+    /// Räumt den Seed oben wieder weg — `ShoppingRouteUITests.tearDown()` startet die App einmal
+    /// mit diesem Argument. Only runs on `-clearShoppingRouteSeedForUITests`, DEBUG-only.
+    private static func clearShoppingRouteSeedForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-clearShoppingRouteSeedForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        try? context.save()
+    }
+
     private static func deleteAllStoresAndItems(context: ModelContext) {
         if let items = try? context.fetch(FetchDescriptor<ShoppingItem>()) {
             for item in items { context.delete(item) }
         }
         if let stores = try? context.fetch(FetchDescriptor<Store>()) {
-            for store in stores { context.delete(store) }
+            for store in stores {
+                store.removeRouteData()
+                context.delete(store)
+            }
         }
         let seededRecords = FetchDescriptor<PurchaseRecord>(predicate: #Predicate { $0.storeName == "Quittenhof" })
         if let records = try? context.fetch(seededRecords) {

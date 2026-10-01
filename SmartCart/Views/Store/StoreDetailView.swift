@@ -6,12 +6,11 @@ struct StoreDetailView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.colorScheme) private var colorScheme
 
-    // Not read directly — its only job is to make SwiftUI re-invoke `body` (and thus re-derive
-    // `store.pendingItems`, which internally consults this same key) the moment the user flips
-    // the setting in SettingsView, instead of waiting for some unrelated state change to force a
-    // redraw. Store-scoped, matching the key SettingsView's Toggle actually writes to.
-    @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
-    private var autoSortByLearnedOrder = true
+    // Nicht direkt gelesen — sorgt nur dafür, dass `body` (und damit `store.pendingItems`) neu
+    // läuft, sobald sich Sortiermodus oder gelernte Reihenfolge ändern (Issue #79). Beides liegt in
+    // UserDefaults und würde sonst kein Neuzeichnen auslösen.
+    @AppStorage(Store.routeRevisionKey, store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
+    private var routeRevision = 0
 
     @State private var showAddItem = false
     @State private var showClearConfirm = false
@@ -22,7 +21,6 @@ struct StoreDetailView: View {
     @State private var showSaveTemplateAlert = false
     @State private var templateName = ""
     @State private var editingItem: ShoppingItem?
-    @State private var completionOrder: [String] = []
     @State private var quickAddText: String = ""
     @State private var isSyncing = false
     @State private var syncFailed = false
@@ -48,16 +46,16 @@ struct StoreDetailView: View {
     @State private var alsoDueItems: [ConsumptionPattern] = []
     @State private var visitGapDays: Double = 7
 
-    // Local mirror of `store.groupByCategory` (which is UserDefaults-backed, so writing it alone
-    // would never invalidate this view). The "···" menu toggle writes both: the Store property
-    // for persistence, and this @State so SwiftUI re-renders immediately.
-    @State private var groupByCategory: Bool
+    // Lokale Kopie von `store.sortMode` (UserDefaults, pro Laden, Issue #79): Erst der @State-
+    // Wechsel zeichnet die Liste nach einer Auswahl im ···-Menü sicher neu — in den UI-Tests
+    // sortierte sich die Liste allein über `routeRevision` nicht um. Wechselt dieselbe
+    // View-Instanz auf einen anderen Laden (Deep Link aus dem Widget), lädt `.onChange(of:
+    // store.id)` den Modus dieses Ladens neu.
+    @State private var sortMode: StoreSortMode
 
     init(store: Store) {
         self.store = store
-        // Seed the mirror from the persisted per-store preference so even the very first
-        // render already uses the layout the user chose last time.
-        _groupByCategory = State(initialValue: store.groupByCategory)
+        _sortMode = State(initialValue: store.sortMode)
     }
 
     private func total(for items: [ShoppingItem]) -> Double {
@@ -213,7 +211,7 @@ struct StoreDetailView: View {
             }
 
             if !regularItems.isEmpty {
-                if groupByCategory {
+                if sortMode == .category {
                     ForEach(groupedRegularItems(regularItems), id: \.category) { group in
                         Section {
                             ForEach(group.items) { item in
@@ -307,16 +305,21 @@ struct StoreDetailView: View {
                     }
                     .buttonStyle(.pressable)
                     Menu {
-                        Toggle(isOn: Binding(
-                            get: { groupByCategory },
+                        Picker(selection: Binding(
+                            get: { sortMode },
                             set: { newValue in
-                                withAnimation { groupByCategory = newValue }
-                                store.groupByCategory = newValue
+                                store.sortMode = newValue
+                                withAnimation { sortMode = newValue }
                                 Haptics.impact(.light)
                             }
                         )) {
-                            Label("Nach Kategorie gruppieren", systemImage: "square.grid.3x1.below.line.grid.1x2")
+                            ForEach(StoreSortMode.allCases, id: \.self) { mode in
+                                Label(mode.label, systemImage: mode.systemImage).tag(mode)
+                            }
+                        } label: {
+                            Label(String(format: String(localized: "store.sort.menu"), sortMode.label), systemImage: "arrow.up.arrow.down")
                         }
+                        .pickerStyle(.menu)
                         Divider()
                         if !store.completedItems.isEmpty {
                             Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
@@ -347,6 +350,9 @@ struct StoreDetailView: View {
                     }
                     .menuStyle(.button)
                     .buttonStyle(.pressable)
+                    // Für `ShoppingRouteUITests` (Issue #79): das Symbol allein ist kein verlässlicher
+                    // Suchbegriff für das Menü.
+                    .accessibilityIdentifier("storeDetail.moreMenu")
                     Button {
                         showAddItem = true
                         Haptics.impact(.light)
@@ -392,6 +398,10 @@ struct StoreDetailView: View {
             // starten — sonst startet start(for:) für eine per Island komplett abgehakte Liste
             // kurz eine neue Activity, die der Drain eine Zeile später sofort wieder beendet (Flash).
             applyPendingCheckoffs()
+            // Danach (nicht davor, sonst zerfiele ein halb per Island abgehakter Einkauf in zwei):
+            // ein seit über 30 Minuten ruhender Einkauf ist vorbei — jetzt lernen, damit die Liste
+            // schon vor dem ersten Haken im gelernten Weg steht (Issue #79).
+            store.finalizeStaleTrip()
             LiveActivityService.shared.start(for: store)
             // Kein eigener wiederkehrender Poll-Loop mehr hier — SyncCoordinator.startPeriodicPulls()
             // deckt bereits alle geteilten Stores app-weit alle 15s ab (Push + CloudKit-Notifications
@@ -420,6 +430,7 @@ struct StoreDetailView: View {
             }
         }
         .onAppear { refreshAlsoDue() }
+        .onChange(of: store.id) { sortMode = store.sortMode }
         .onChange(of: allRecords.count) { refreshAlsoDue() }
         .onChange(of: allPendingItems.count) { refreshAlsoDue() }
         .onChange(of: blockedReplenishmentsData) { refreshAlsoDue() }
@@ -462,23 +473,14 @@ struct StoreDetailView: View {
     /// categories stick as the user chose them, everything else keeps re-deriving from the
     /// current name so stale stored values and keyword-rule updates apply immediately.
     /// `Dictionary(grouping:)` preserves encounter order within each group, so inside a section
-    /// the items keep the exact `store.pendingItems` order (learned aisle / insertion order).
+    /// the items keep the exact `store.pendingItems` order. The sections themselves follow the
+    /// category order learned for this store (Issue #79, `Store.orderedCategories`).
     private func groupedRegularItems(_ items: [ShoppingItem]) -> [(category: String, emoji: String, items: [ShoppingItem])] {
-        let grouped = Dictionary(grouping: items) {
-            $0.categoryManuallySet ? $0.category : AssignmentService.category(for: $0.name)
+        let grouped = Dictionary(grouping: items) { Store.displayCategory(of: $0) }
+        return store.orderedCategories(Array(grouped.keys)).compactMap { cat in
+            guard let items = grouped[cat], !items.isEmpty else { return nil }
+            return (category: cat, emoji: AssignmentService.categoryEmoji(cat), items: items)
         }
-        var result: [(category: String, emoji: String, items: [ShoppingItem])] = []
-        for cat in AssignmentService.categoryOrder {
-            if let items = grouped[cat], !items.isEmpty {
-                result.append((category: cat, emoji: AssignmentService.categoryEmoji(cat), items: items))
-            }
-        }
-        for key in grouped.keys.sorted() where !AssignmentService.categoryOrder.contains(key) {
-            if let items = grouped[key], !items.isEmpty {
-                result.append((category: key, emoji: AssignmentService.categoryEmoji(key), items: items))
-            }
-        }
-        return result
     }
 
     // MARK: - Also due before the next visit (Issue #30, C4)
@@ -970,11 +972,11 @@ struct StoreDetailView: View {
         withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
             if item.isCompleted {
                 item.markPending()
+                store.recordUncheck(item)
                 Haptics.impact(.light)
             } else {
-                completionOrder.append(item.name)
                 item.markCompleted()
-                store.recordCompletionOrder(completionOrder)
+                store.recordCheckOff(item)
                 Haptics.success()
             }
         }
@@ -988,7 +990,6 @@ struct StoreDetailView: View {
         guard let shareID = store.shareID else {
             withAnimation {
                 for item in store.completedItems { context.delete(item) }
-                completionOrder.removeAll()
             }
             return
         }
@@ -1003,7 +1004,6 @@ struct StoreDetailView: View {
             await MainActor.run {
                 withAnimation {
                     for item in store.completedItems where deletedIDs.contains(item.id) { context.delete(item) }
-                    completionOrder.removeAll()
                 }
             }
             let ok = await SyncCoordinator.shared.push(store: store)
@@ -1019,12 +1019,9 @@ struct StoreDetailView: View {
     private func applyPendingCheckoffs() {
         let defaults = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart")
         var applied = 0
-        // Wie completionOrder in toggle(): die ganze Batch-Reihenfolge akkumulieren und jedes
-        // Mal komplett übergeben, statt jedes Item isoliert mit `[item.name]` zu melden — sonst
-        // sieht recordCompletionOrder für jeden Aufruf nur ein Ein-Element-Array (Index immer 0)
-        // und bekommt gar kein Signal, in welcher Reihenfolge die Items in dieser Drain-Batch
-        // erledigt wurden.
-        var batchOrder: [String] = []
+        // Die Warteschlange hält die echte Abhak-Reihenfolge, aber nicht den Zeitpunkt — deshalb
+        // `batched: true`: zählt für den Einkaufsweg, nicht für die Erkennung „zu Hause
+        // nachgetragen“ (Issue #79).
 
         // UUID-Queue: exakt die gequeueten Items erledigen (nicht "die ersten N" —
         // count-basiert würde nach Widget-Checkoff/Sync-Merge das falsche Item treffen).
@@ -1035,9 +1032,8 @@ struct StoreDetailView: View {
                 guard let id = UUID(uuidString: idString),
                       let item = store.items?.first(where: { $0.id == id }),
                       !item.isCompleted else { continue }
-                batchOrder.append(item.name)
                 item.markCompleted()
-                store.recordCompletionOrder(batchOrder)
+                store.recordCheckOff(item, batched: true)
                 applied += 1
             }
         }
@@ -1050,9 +1046,8 @@ struct StoreDetailView: View {
             defaults?.removeObject(forKey: legacyKey)
             for _ in 0..<legacyCount {
                 guard let item = store.pendingItems.first else { break }
-                batchOrder.append(item.name)
                 item.markCompleted()
-                store.recordCompletionOrder(batchOrder)
+                store.recordCheckOff(item, batched: true)
                 applied += 1
             }
         }

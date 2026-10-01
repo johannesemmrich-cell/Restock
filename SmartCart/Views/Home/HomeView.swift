@@ -56,11 +56,11 @@ struct HomeView: View {
     @AppStorage("storeViewMode") private var storeViewModeRaw = StoreViewMode.cards.rawValue
     private var storeViewMode: StoreViewMode { StoreViewMode(rawValue: storeViewModeRaw) ?? .cards }
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
-    // Not read directly — its only job is to make SwiftUI re-invoke `body` (and thus the store
-    // cards' pending-item preview text, which depends on `Store.pendingItems`' order) when the
-    // user flips the setting in SettingsView. Store-scoped, matching the key the Toggle writes to.
-    @AppStorage("autoSortByLearnedOrder", store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
-    private var autoSortByLearnedOrder = true
+    // Nicht direkt gelesen — sorgt nur dafür, dass `body` (und damit die Vorschautexte der
+    // Ladenkarten, die von der Reihenfolge in `Store.pendingItems` abhängen) neu läuft, sobald
+    // sich Sortiermodus oder gelernte Reihenfolge eines Ladens ändern (Issue #79).
+    @AppStorage(Store.routeRevisionKey, store: UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
+    private var routeRevision = 0
     // Persisted map ConsumptionPattern.itemKey → dismissed ConsumptionPattern.purchaseKey (timestamp of
     // the latest purchase). A dismissal hides the suggestion for its current purchase cycle only:
     // the next real purchase changes the key, which makes the item eligible for the banner again. Since Issue #30 C1

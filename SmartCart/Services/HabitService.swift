@@ -26,24 +26,17 @@ struct ReplenishmentItemIdentity {
     /// Nur formale Unterschiede, ohne Bon-Zuordnungen.
     static let formalOnly = ReplenishmentItemIdentity { _ in nil }
 
-    /// Satzzeichen, die nur am Rand ignoriert werden. Bewusst ohne Klammern, `%` und Ziffern —
-    /// „Eier (10)“ oder „Milch 1,5%“ tragen dort Inhalt. Im Wortinneren bleibt alles stehen:
-    /// „H-Milch“ ist nicht „H Milch“ und schon gar nicht „Milch“.
-    private static let edgeCharacters = CharacterSet.whitespacesAndNewlines
-        .union(CharacterSet(charactersIn: ".,;:!?*-–—\"'„“”‚‘’"))
-
     /// Schlüssel für rein formale Unterschiede: klein geschrieben, Leerzeichenfolgen zu einem
-    /// Leerzeichen, Leerzeichen und Satzzeichen am Rand entfernt. Alle gespeicherten Nachkauf-
-    /// Einträge (Ablehnung, „Hab noch“, Sperrliste, Nachrichten, D1) hängen an diesem Schlüssel
-    /// des angezeigten Namens. Für Namen ohne solche Unterschiede ist er identisch mit dem
-    /// früheren `lowercased()`, bestehende Einträge bleiben also gültig.
+    /// Leerzeichen, Leerzeichen und Satzzeichen am Rand entfernt. Satzzeichen im Wortinneren
+    /// bleiben stehen: „H-Milch“ ist nicht „H Milch“ und schon gar nicht „Milch“; bewusst ohne
+    /// Klammern, `%` und Ziffern — „Eier (10)“ oder „Milch 1,5%“ tragen dort Inhalt. Alle
+    /// gespeicherten Nachkauf-Einträge (Ablehnung, „Hab noch“, Sperrliste, Nachrichten, D1) hängen
+    /// an diesem Schlüssel des angezeigten Namens. Für Namen ohne solche Unterschiede ist er
+    /// identisch mit dem früheren `lowercased()`, bestehende Einträge bleiben also gültig.
+    /// Implementiert in `ShoppingRoute.itemKey` (Issue #79), weil der gelernte Einkaufsweg
+    /// denselben Schlüssel auch in Widget und Share Extension braucht, wo diese Datei fehlt.
     static func formalKey(_ name: String) -> String {
-        let collapsed = name.lowercased()
-            .components(separatedBy: .whitespacesAndNewlines)
-            .filter { !$0.isEmpty }
-            .joined(separator: " ")
-        let trimmed = collapsed.trimmingCharacters(in: edgeCharacters)
-        return trimmed.isEmpty ? collapsed : trimmed
+        ShoppingRoute.itemKey(name)
     }
 
     /// Name, unter dem ein Kauf gezählt wird: die bestätigte Bon-Zuordnung, sonst der Name selbst

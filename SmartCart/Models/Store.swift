@@ -21,7 +21,10 @@ class Store {
     var categories: [String] = []
     var countryCode: String = "DE"
     var isCustom: Bool = false
-    // Learned aisle order: item name -> average completion position
+    // Früher: gelernte Einkaufsreihenfolge (absolute Abhak-Position). Seit Issue #79 weder gelesen
+    // noch geschrieben — die Werte waren durch die 50/50-Mittelung und die bei jedem Öffnen der
+    // Ladenansicht neu beginnende Zählung verzerrt. Ersetzt durch `routeModel` (pro Gerät, siehe
+    // `ShoppingRoute.swift`). Das Feld bleibt nur fürs SwiftData-/CloudKit-Schema stehen.
     var itemOrderMap: [String: Double] = [:]
     // Learned prices per store: item name (lowercased) -> last confirmed price from receipt
     var learnedPrices: [String: Double] = [:]
@@ -75,10 +78,8 @@ class Store {
         set { UserDefaults.standard.set(newValue, forKey: "isSharedByMe_\(id.uuidString)") }
     }
 
-    /// Per-store view preference (StoreDetailView's "···" menu): show pending items grouped into
-    /// category sections instead of one flat list. UserDefaults-backed like `shareID`/`isSharedByMe`
-    /// above — deliberately NOT a SwiftData schema field, so no schema migration is needed.
-    /// Defaults to `false` (flat list, i.e. the previous behavior).
+    /// Frühere Ansichtseinstellung pro Laden („Nach Kategorie gruppieren“). Seit Issue #79 nur noch
+    /// gelesen, um den Anfangswert von `sortMode` zu bestimmen.
     var groupByCategory: Bool {
         get { UserDefaults.standard.bool(forKey: "groupByCategory_\(id.uuidString)") }
         set { UserDefaults.standard.set(newValue, forKey: "groupByCategory_\(id.uuidString)") }
@@ -153,37 +154,147 @@ class Store {
         }
     }
 
-    /// User-facing toggle (Settings) — when off, falls back to insertion order instead of the
-    /// learned aisle order. Read directly from UserDefaults rather than via `@AppStorage` since
-    /// this is a model class, not a View. Uses the app-group suite (matching `UserIdentity` in
-    /// ShoppingItem.swift) rather than `.standard` since this file is also compiled into the
-    /// SmartCartWidgets extension target, which runs in a different process/sandbox and would
-    /// otherwise never see the value the user set in the main app's Settings.
-    /// `object(forKey:) as? Bool ?? true` (rather than `bool(forKey:)`) keeps the default `true`
-    /// even before the user ever touches the Settings toggle, regardless of which process reads it first.
-    private var autoSortByLearnedOrderEnabled: Bool {
-        let suite = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart") ?? .standard
-        return suite.object(forKey: "autoSortByLearnedOrder") as? Bool ?? true
+    // MARK: Einkaufsweg (Issue #79)
+
+    /// App-Group-Suite statt `.standard`, weil diese Datei auch im Widget und in der Share
+    /// Extension läuft und dort dieselbe Sortierung gelten muss.
+    /// Einmal angelegt statt bei jedem Zugriff — `pendingItems` liest daraus und wird pro
+    /// Darstellung der Startseite oft aufgerufen.
+    private static let routeDefaults = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart") ?? .standard
+
+    /// Wird bei jeder Änderung an Sortiermodus oder gelernter Reihenfolge hochgezählt. Views, die
+    /// `pendingItems` anzeigen, beobachten den Schlüssel per `@AppStorage`, damit sie sofort neu
+    /// sortieren (UserDefaults-Werte lösen sonst kein Neuzeichnen aus).
+    static let routeRevisionKey = "shoppingRouteRevision"
+
+    private static func bumpRouteRevision() {
+        let defaults = routeDefaults
+        defaults.set(defaults.integer(forKey: routeRevisionKey) &+ 1, forKey: routeRevisionKey)
+    }
+
+    /// Sortierung der offenen Artikel, pro Laden. Ohne gespeicherten Wert gilt, was die früheren
+    /// Einstellungen ergeben (`StoreSortMode.migratedDefault`). Die Haupt-App schreibt diesen
+    /// Wert beim ersten Lesen fest: `groupByCategory` liegt in `UserDefaults.standard` und ist
+    /// für Widget und Share Extension unsichtbar — ohne das Festschreiben sortierten sie denselben
+    /// Laden anders als die App (und der Legacy-Drain träfe einen anderen Artikel).
+    var sortMode: StoreSortMode {
+        get {
+            let defaults = Store.routeDefaults
+            let key = "sortMode_\(id.uuidString)"
+            if let raw = defaults.string(forKey: key), let mode = StoreSortMode(rawValue: raw) {
+                return mode
+            }
+            let migrated = StoreSortMode.migratedDefault(
+                groupByCategory: groupByCategory,
+                autoSortByLearnedOrder: defaults.object(forKey: "autoSortByLearnedOrder") as? Bool ?? true
+            )
+            if Bundle.main.bundleURL.pathExtension != "appex" {
+                defaults.set(migrated.rawValue, forKey: key)
+            }
+            return migrated
+        }
+        set {
+            Store.routeDefaults.set(newValue.rawValue, forKey: "sortMode_\(id.uuidString)")
+            Store.bumpRouteRevision()
+        }
+    }
+
+    /// Gelernte Reihenfolge dieses Ladens — bewusst pro Gerät (nicht in SwiftData/CloudKit und
+    /// nicht in geteilten Listen): zwei Personen laufen durch denselben Laden oft verschieden.
+    var routeModel: ShoppingRouteModel {
+        get { Store.decode(ShoppingRouteModel.self, key: "shoppingRoute_\(id.uuidString)") ?? ShoppingRouteModel() }
+        set { Store.encode(newValue, key: "shoppingRoute_\(id.uuidString)") }
+    }
+
+    /// Der laufende Einkauf in diesem Laden (noch nicht gelernt).
+    var currentTrip: ShoppingTrip {
+        get { Store.decode(ShoppingTrip.self, key: "shoppingTrip_\(id.uuidString)") ?? ShoppingTrip() }
+        set { Store.encode(newValue, key: "shoppingTrip_\(id.uuidString)") }
+    }
+
+    private static func decode<T: Decodable>(_ type: T.Type, key: String) -> T? {
+        guard let data = routeDefaults.data(forKey: key) else { return nil }
+        return try? JSONDecoder().decode(type, from: data)
+    }
+
+    private static func encode<T: Encodable>(_ value: T, key: String) {
+        guard let data = try? JSONEncoder().encode(value) else { return }
+        routeDefaults.set(data, forKey: key)
+    }
+
+    /// Kategorie wie überall in der Liste: manuell gesetzt bleibt, sonst aus dem aktuellen Namen.
+    static func displayCategory(of item: ShoppingItem) -> String {
+        item.categoryManuallySet ? item.category : AssignmentService.category(for: item.name)
+    }
+
+    /// Einen Haken für den Einkaufsweg aufzeichnen. `batched`: aus der Dynamic-Island-/Widget-
+    /// Warteschlange nachgetragen (Reihenfolge stimmt, Zeitpunkt nicht).
+    func recordCheckOff(_ item: ShoppingItem, batched: Bool = false, at date: Date = Date()) {
+        let before = routeModel
+        let result = ShoppingRoute.recordCheckOff(
+            key: ShoppingRoute.itemKey(item.name),
+            category: Store.displayCategory(of: item),
+            at: date,
+            batched: batched,
+            trip: currentTrip,
+            model: before
+        )
+        currentTrip = result.trip
+        if result.model != before {
+            routeModel = result.model
+            Store.bumpRouteRevision()
+        }
+    }
+
+    /// Haken zurückgenommen — zählt für den laufenden Einkauf nicht mehr.
+    func recordUncheck(_ item: ShoppingItem) {
+        currentTrip = ShoppingRoute.recordUncheck(key: ShoppingRoute.itemKey(item.name), trip: currentTrip)
+    }
+
+    /// Einen seit `ShoppingRoute.tripGap` ruhenden Einkauf abschließen und lernen (beim Öffnen
+    /// der Ladenansicht), damit die Liste schon vor dem ersten Haken des nächsten Einkaufs
+    /// im gelernten Weg steht.
+    func finalizeStaleTrip(now: Date = Date()) {
+        let trip = currentTrip
+        guard !trip.entries.isEmpty else { return }
+        let result = ShoppingRoute.finalizeIfStale(trip: trip, model: routeModel, now: now)
+        guard result.trip != trip else { return }
+        currentTrip = result.trip
+        routeModel = result.model
+        Store.bumpRouteRevision()
+    }
+
+    /// Sortiermodus, gelerntes Modell und laufenden Einkauf dieses Ladens entfernen — für einen
+    /// Laden, der gelöscht wird (die Schlüssel hängen an seiner `id` und blieben sonst liegen).
+    func removeRouteData() {
+        let defaults = Store.routeDefaults
+        for key in ["sortMode_", "shoppingRoute_", "shoppingTrip_"] {
+            defaults.removeObject(forKey: key + id.uuidString)
+        }
+        Store.bumpRouteRevision()
+    }
+
+    /// Kategorien in der gelernten Reihenfolge dieses Ladens (für die gruppierte Ansicht).
+    func orderedCategories(_ categories: [String]) -> [String] {
+        ShoppingRoute.orderedCategories(categories, model: routeModel, staticOrder: AssignmentService.categoryOrder)
     }
 
     var pendingItems: [ShoppingItem] {
-        let sortByLearnedOrder = autoSortByLearnedOrderEnabled
-        return (items ?? []).filter { !$0.isCompleted }.sorted { a, b in
-            if a.isUrgent != b.isUrgent { return a.isUrgent }
-            if sortByLearnedOrder {
-                let posA = itemOrderMap[a.name.lowercased()] ?? 999
-                let posB = itemOrderMap[b.name.lowercased()] ?? 999
-                if posA != posB { return posA < posB }
-                // Neither item has a learned checkout position yet — fall back to a realistic
-                // supermarket aisle order instead of jumping straight to insertion order.
-                let categoryA = a.categoryManuallySet ? a.category : AssignmentService.category(for: a.name)
-                let categoryB = b.categoryManuallySet ? b.category : AssignmentService.category(for: b.name)
-                let aisleA = AssignmentService.categoryOrder.firstIndex(of: categoryA) ?? Int.max
-                let aisleB = AssignmentService.categoryOrder.firstIndex(of: categoryB) ?? Int.max
-                if aisleA != aisleB { return aisleA < aisleB }
-            }
-            return a.addedDate < b.addedDate
+        let pending = (items ?? []).filter { !$0.isCompleted }
+        let inputs = pending.map {
+            ShoppingRoute.SortInput(
+                key: ShoppingRoute.itemKey($0.name),
+                category: Store.displayCategory(of: $0),
+                isUrgent: $0.isUrgent,
+                addedDate: $0.addedDate
+            )
         }
+        return ShoppingRoute.sortedIndices(
+            inputs,
+            mode: sortMode,
+            model: routeModel,
+            staticCategoryOrder: AssignmentService.categoryOrder
+        ).map { pending[$0] }
     }
 
     var completedItems: [ShoppingItem] {
@@ -204,28 +315,6 @@ class Store {
         completedItems.filter {
             guard let completedDate = $0.completedDate else { return false }
             return Date().timeIntervalSince(completedDate) < Store.recentCompletionWindow
-        }
-    }
-
-    /// `completedNames` is the caller's full completion history for this session, replayed on
-    /// every call (not just the newest name) — callers append-then-pass-the-whole-array so the
-    /// running average always reflects each item's usual position. That replay makes duplicates
-    /// dangerous: if a name appears twice (item unchecked and rechecked within one visit, or the
-    /// same staple bought again on a later trip before completed items were ever cleared), the
-    /// second occurrence would be processed again WITHIN this same call and average against the
-    /// value the first occurrence just set — dragging the learned position toward the later,
-    /// accidental repeat instead of the item's real typical spot. Only the first occurrence of
-    /// each name counts per call.
-    func recordCompletionOrder(_ completedNames: [String]) {
-        var seen = Set<String>()
-        for (index, name) in completedNames.enumerated() {
-            let key = name.lowercased()
-            guard seen.insert(key).inserted else { continue }
-            if let existing = itemOrderMap[key] {
-                itemOrderMap[key] = (existing + Double(index)) / 2.0
-            } else {
-                itemOrderMap[key] = Double(index)
-            }
         }
     }
 }

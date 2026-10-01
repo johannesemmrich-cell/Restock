@@ -187,7 +187,15 @@ struct EditItemView: View {
                 Section {
                     Button {
                         withAnimation {
-                            if item.isCompleted { item.markPending() } else { item.markCompleted() }
+                            // Wie `StoreDetailView.toggle`: auch hier für den Einkaufsweg aufzeichnen
+                            // (Issue #79), sonst zählte ein hier zurückgenommener Haken weiter.
+                            if item.isCompleted {
+                                item.markPending()
+                                item.store?.recordUncheck(item)
+                            } else {
+                                item.markCompleted()
+                                item.store?.recordCheckOff(item)
+                            }
                         }
                         Haptics.success()
                         dismiss()

@@ -29,7 +29,7 @@ struct CheckOffItemIntent: LiveActivityIntent {
         //    ein Zähler ("erledige die ersten N pendingItems") erledigt das falsche Item,
         //    sobald Widget-Checkoffs oder ein Sync-Merge die Pending-Liste zwischen Anzeige
         //    und Drain verschoben haben (inkl. falschem PurchaseRecord und verfälschtem
-        //    recordCompletionOrder-Lernen). Duplikate in der Queue sind harmlos — der Drain
+        //    Einkaufsweg-Lernen, Issue #79). Duplikate in der Queue sind harmlos — der Drain
         //    überspringt bereits erledigte Items (No-op-Guard).
         if let itemID = activity?.content.state.pendingItemIDs.first {
             let idKey = "pendingCheckoffIDs_\(storeName)"
