@@ -46,13 +46,16 @@ struct StoreDetailView: View {
     @State private var alsoDueItems: [ConsumptionPattern] = []
     @State private var visitGapDays: Double = 7
 
-    // Direkt aus dem Store gelesen statt als @State-Kopie: eine Kopie bliebe beim Wechsel auf
-    // einen anderen Laden in derselben View-Instanz (Deep Link aus dem Widget) auf dem alten Wert.
-    // `routeRevision` oben sorgt fürs Neuzeichnen, wenn der Modus sich ändert.
-    private var sortMode: StoreSortMode { store.sortMode }
+    // Lokale Kopie von `store.sortMode` (UserDefaults, pro Laden, Issue #79): Erst der @State-
+    // Wechsel zeichnet die Liste nach einer Auswahl im ···-Menü sicher neu — in den UI-Tests
+    // sortierte sich die Liste allein über `routeRevision` nicht um. Wechselt dieselbe
+    // View-Instanz auf einen anderen Laden (Deep Link aus dem Widget), lädt `.onChange(of:
+    // store.id)` den Modus dieses Ladens neu.
+    @State private var sortMode: StoreSortMode
 
     init(store: Store) {
         self.store = store
+        _sortMode = State(initialValue: store.sortMode)
     }
 
     private func total(for items: [ShoppingItem]) -> Double {
@@ -305,7 +308,8 @@ struct StoreDetailView: View {
                         Picker(selection: Binding(
                             get: { sortMode },
                             set: { newValue in
-                                withAnimation { store.sortMode = newValue }
+                                store.sortMode = newValue
+                                withAnimation { sortMode = newValue }
                                 Haptics.impact(.light)
                             }
                         )) {
@@ -426,6 +430,7 @@ struct StoreDetailView: View {
             }
         }
         .onAppear { refreshAlsoDue() }
+        .onChange(of: store.id) { sortMode = store.sortMode }
         .onChange(of: allRecords.count) { refreshAlsoDue() }
         .onChange(of: allPendingItems.count) { refreshAlsoDue() }
         .onChange(of: blockedReplenishmentsData) { refreshAlsoDue() }

@@ -54,7 +54,10 @@ final class ShoppingRouteUITests: XCTestCase {
             .matching(NSPredicate(format: "label BEGINSWITH %@", "Sortieren")).firstMatch
         XCTAssertTrue(sortMenu.waitForExistence(timeout: 5), "Menüpunkt „Sortieren“ fehlt")
         sortMenu.tap()
-        let option = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", mode)).firstMatch
+        let button = app.buttons[mode].firstMatch
+        let option = button.waitForExistence(timeout: 5)
+            ? button
+            : app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", mode)).firstMatch
         XCTAssertTrue(option.waitForExistence(timeout: 5), "Sortieroption „\(mode)“ fehlt")
         option.tap()
     }
