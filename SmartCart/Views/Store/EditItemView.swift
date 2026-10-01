@@ -367,7 +367,7 @@ struct EditItemView: View {
         let automaticCategory = AssignmentService.category(for: item.name)
         if let oldStore = item.store, oldStore.isCustomCategory(category),
            selectedStore?.isCustomCategory(category) != true {
-            category = automaticCategory
+            category = selectedStore?.rememberedCategory(forItemNamed: item.name) ?? automaticCategory
         }
         let categoryChanged = item.category != category
         item.category = category

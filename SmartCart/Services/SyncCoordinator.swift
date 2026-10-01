@@ -282,6 +282,9 @@ final class SyncCoordinator {
                     unit: remote.unit, note: remote.note, store: store
                 )
                 item.id = remote.id
+                // Die Kategorie des Absenders gilt — `ShoppingItem.init` hätte sonst die auf
+                // diesem Gerät gemerkte eigene Kategorie gesetzt (Issue #85).
+                item.category = remote.category
                 item.categoryManuallySet = remote.categoryManuallySet
                 item.isCompleted = remote.isCompleted
                 item.isUrgent = remote.isUrgent

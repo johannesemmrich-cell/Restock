@@ -12,6 +12,7 @@ struct CategoryPickerView: View {
     /// Kategorie hier gelöscht wird.
     let automaticCategory: String
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismissSearch) private var dismissSearch
 
     @State private var query = ""
     @State private var editingCategory: EditTarget?
@@ -168,6 +169,9 @@ struct CategoryPickerView: View {
     private func choose(_ category: String) {
         selection = category
         Haptics.impact(.light)
+        // Erst das aktive Suchfeld schließen, sonst bleibt der Zurück-Schritt in manchen
+        // iOS-Versionen am Suchmodus hängen.
+        dismissSearch()
         dismiss()
     }
 }

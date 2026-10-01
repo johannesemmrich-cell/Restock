@@ -448,6 +448,11 @@ class Store {
             item.lastModified = now
         }
         categoryAssignments = categoryAssignments.filter { $0.value != name }
+        // Gelernte Positionen bleiben, aber nicht mehr unter dem gelöschten Namen — sonst erbte
+        // eine später gleich benannte Kategorie dessen Platz.
+        var model = routeModel
+        model.itemCategories = model.itemCategories.filter { $0.value != name }
+        routeModel = model
         Store.bumpRouteRevision()
     }
 
@@ -465,6 +470,15 @@ class Store {
     func rememberedCategory(forItemNamed name: String) -> String? {
         guard let category = categoryAssignments[ShoppingRoute.itemKey(name)], isCustomCategory(category) else { return nil }
         return category
+    }
+
+    /// Ein Artikel wechselt in diesen Laden: eine eigene Kategorie des alten Ladens, die es hier
+    /// nicht gibt, weicht der hier gemerkten eigenen Kategorie oder der automatischen.
+    func adoptCategory(of item: ShoppingItem, from oldStore: Store?) {
+        guard oldStore?.isCustomCategory(item.category) == true, !isCustomCategory(item.category) else { return }
+        let automatic = AssignmentService.category(for: item.name)
+        item.category = rememberedCategory(forItemNamed: item.name) ?? automatic
+        item.categoryManuallySet = item.category != automatic
     }
 
     /// Offene Artikel in einer Kategorie (für die Kategorieliste).

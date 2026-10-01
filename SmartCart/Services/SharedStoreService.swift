@@ -386,9 +386,6 @@ actor SharedStoreService {
         }
     }
 
-    /// Preis-Schlüssel → {price, date}-Objekt, damit jeder Eintrag seinen eigenen Zeitstempel
-    /// mitführt (nötig für `mergePrices`s "später gewinnt"). Fehlende Werte defaulten beim
-    /// Decode auf leer, damit ein älterer Record ohne dieses Feld (vor diesem Feature) nicht bricht.
     /// Eigene Kategorien (Issue #85) als JSON: Name → {emoji (fehlt = gelöscht), date}.
     func encodeCategories(_ categories: [String: CustomCategoryEntry]) -> String {
         guard let data = try? JSONEncoder().encode(categories),
@@ -402,6 +399,9 @@ actor SharedStoreService {
         return categories
     }
 
+    /// Preis-Schlüssel → {price, date}-Objekt, damit jeder Eintrag seinen eigenen Zeitstempel
+    /// mitführt (nötig für `mergePrices`s "später gewinnt"). Fehlende Werte defaulten beim
+    /// Decode auf leer, damit ein älterer Record ohne dieses Feld (vor diesem Feature) nicht bricht.
     func encodePrices(_ prices: [String: Double], dates: [String: Date]) -> String {
         var dicts: [String: [String: Any]] = [:]
         for (key, price) in prices {
