@@ -89,6 +89,109 @@ struct StoreDetailView: View {
         // Sort + UserDefaults-Zugriff) an bis zu 6 Stellen in diesem body einzeln neu aufzurufen.
         let _ = reorderTick
         let pending = store.pendingItems
+        withAlsoDueObservers(decoratedList(pending: pending))
+        .onAppear {
+            // Erst die aus der Dynamic Island gequeueten Haken persistieren, DANN die Activity
+            // starten — sonst startet start(for:) für eine per Island komplett abgehakte Liste
+            // kurz eine neue Activity, die der Drain eine Zeile später sofort wieder beendet (Flash).
+            applyPendingCheckoffs()
+            // Danach (nicht davor, sonst zerfiele ein halb per Island abgehakter Einkauf in zwei):
+            // ein seit über 30 Minuten ruhender Einkauf ist vorbei — jetzt lernen, damit die Liste
+            // schon vor dem ersten Haken im gelernten Weg steht (Issue #79).
+            store.finalizeStaleTrip()
+            LiveActivityService.shared.start(for: store)
+            // Kein eigener wiederkehrender Poll-Loop mehr hier — SyncCoordinator.startPeriodicPulls()
+            // deckt bereits alle geteilten Stores app-weit alle 15s ab (Push + CloudKit-Notifications
+            // bleiben der schnelle Pfad; Polling ist nur das Fallback-Netz), ein zusätzlicher lokaler
+            // 10s-Loop hätte nur doppelt gepollt und doppelte Merge/Re-Render-Kaskaden ausgelöst,
+            // genau während man die Liste aktiv ansieht. Der sofortige Pull unten bleibt für ein
+            // knackiges erstes Laden.
+            var skipCloudKit = false
+            #if DEBUG
+            // Für Screenshot-Automation: ein per `-seedSharedAssignmentForScreenshots`
+            // synthetisch gesetztes shareID hat keinen echten CloudKit-Share dahinter — ein
+            // echter Pull-Versuch würde fehlschlagen und den "Sync fehlgeschlagen"-Banner
+            // zeigen. Gleiches Muster wie `-skipCloudKitForScreenshots` in StoreShareSheet.swift.
+            skipCloudKit = ProcessInfo.processInfo.arguments.contains("-skipCloudKitForScreenshots")
+            #endif
+            if store.shareID != nil && !skipCloudKit {
+                let generation = nextSyncGeneration()
+                Task {
+                    await MainActor.run { isSyncing = true }
+                    let ok = await SyncCoordinator.shared.pull(store: store)
+                    await MainActor.run {
+                        isSyncing = false
+                        applySyncResult(ok, generation: generation)
+                    }
+                }
+            }
+        }
+        .onDisappear {
+            LiveActivityService.shared.end(for: store)
+            if store.shareID != nil {
+                let generation = nextSyncGeneration()
+                Task {
+                    let ok = await SyncCoordinator.shared.push(store: store)
+                    await MainActor.run { applySyncResult(ok, generation: generation) }
+                }
+            }
+        }
+        .onChange(of: pending.count) { oldCount, newCount in
+            LiveActivityService.shared.update(for: store)
+            if newCount == 0, oldCount > 0, !store.completedItems.isEmpty {
+                showConfetti = true
+                Task {
+                    try? await Task.sleep(for: .seconds(3.5))
+                    await MainActor.run { showConfetti = false }
+                }
+            }
+        }
+        .overlay {
+            if showConfetti {
+                ConfettiView()
+                    .transition(.opacity)
+            }
+        }
+    }
+
+    // MARK: - Category grouping
+
+    /// Splits the (already sorted) non-urgent pending items into category sections for the
+    /// optional grouped view. Same derivation as `HomeView.groupedByCategory`: manually-set
+    /// categories stick as the user chose them, everything else keeps re-deriving from the
+    /// current name so stale stored values and keyword-rule updates apply immediately.
+    /// `Dictionary(grouping:)` preserves encounter order within each group, so inside a section
+    /// the items keep the exact `store.pendingItems` order. The sections themselves follow the
+    /// category order learned for this store (Issue #79, `Store.orderedCategories`).
+    private func groupedRegularItems(_ items: [ShoppingItem]) -> [(category: String, emoji: String, items: [ShoppingItem])] {
+        let grouped = Dictionary(grouping: items) { Store.displayCategory(of: $0) }
+        return store.orderedCategories(Array(grouped.keys)).compactMap { cat in
+            guard let items = grouped[cat], !items.isEmpty else { return nil }
+            return (category: cat, emoji: store.categoryEmoji(cat), items: items)
+        }
+    }
+
+    // MARK: - Body-Teile
+
+    /// Beobachter für „Vielleicht auch fällig“ und den Ladenwechsel — aus `body` ausgelagert,
+    /// damit der Typprüfer die Modifier-Kette schafft (Issue #86).
+    private func withAlsoDueObservers<Content: View>(_ content: Content) -> some View {
+        content
+            .onAppear { refreshAlsoDue() }
+            .onChange(of: store.id) { sortMode = store.sortMode }
+            .onChange(of: allRecords.count) { refreshAlsoDue() }
+            .onChange(of: allPendingItems.count) { refreshAlsoDue() }
+            .onChange(of: blockedReplenishmentsData) { refreshAlsoDue() }
+            .onChange(of: snoozedReplenishmentsData) { refreshAlsoDue() }
+            .onChange(of: dismissedReplenishmentsData) { refreshAlsoDue() }
+            .onChange(of: developerMode) { refreshAlsoDue() }
+            .onChange(of: store.visitsPerWeek) { refreshAlsoDue() }
+    }
+
+
+    /// Liste samt Toolbar, Dialogen und Sheets — aus `body` ausgelagert, weil die gesamte
+    /// Modifier-Kette sonst für den Typprüfer zu groß wird (Issue #86).
+    private func decoratedList(pending: [ShoppingItem]) -> some View {
         List {
             if isReordering {
                 reorderSections(pending: pending)
@@ -144,97 +247,8 @@ struct StoreDetailView: View {
             }
         }
         .devFeedback(context: "Liste: \(store.name)")
-        .onAppear {
-            // Erst die aus der Dynamic Island gequeueten Haken persistieren, DANN die Activity
-            // starten — sonst startet start(for:) für eine per Island komplett abgehakte Liste
-            // kurz eine neue Activity, die der Drain eine Zeile später sofort wieder beendet (Flash).
-            applyPendingCheckoffs()
-            // Danach (nicht davor, sonst zerfiele ein halb per Island abgehakter Einkauf in zwei):
-            // ein seit über 30 Minuten ruhender Einkauf ist vorbei — jetzt lernen, damit die Liste
-            // schon vor dem ersten Haken im gelernten Weg steht (Issue #79).
-            store.finalizeStaleTrip()
-            LiveActivityService.shared.start(for: store)
-            // Kein eigener wiederkehrender Poll-Loop mehr hier — SyncCoordinator.startPeriodicPulls()
-            // deckt bereits alle geteilten Stores app-weit alle 15s ab (Push + CloudKit-Notifications
-            // bleiben der schnelle Pfad; Polling ist nur das Fallback-Netz), ein zusätzlicher lokaler
-            // 10s-Loop hätte nur doppelt gepollt und doppelte Merge/Re-Render-Kaskaden ausgelöst,
-            // genau während man die Liste aktiv ansieht. Der sofortige Pull unten bleibt für ein
-            // knackiges erstes Laden.
-            var skipCloudKit = false
-            #if DEBUG
-            // Für Screenshot-Automation: ein per `-seedSharedAssignmentForScreenshots`
-            // synthetisch gesetztes shareID hat keinen echten CloudKit-Share dahinter — ein
-            // echter Pull-Versuch würde fehlschlagen und den "Sync fehlgeschlagen"-Banner
-            // zeigen. Gleiches Muster wie `-skipCloudKitForScreenshots` in StoreShareSheet.swift.
-            skipCloudKit = ProcessInfo.processInfo.arguments.contains("-skipCloudKitForScreenshots")
-            #endif
-            if store.shareID != nil && !skipCloudKit {
-                let generation = nextSyncGeneration()
-                Task {
-                    await MainActor.run { isSyncing = true }
-                    let ok = await SyncCoordinator.shared.pull(store: store)
-                    await MainActor.run {
-                        isSyncing = false
-                        applySyncResult(ok, generation: generation)
-                    }
-                }
-            }
-        }
-        .onAppear { refreshAlsoDue() }
-        .onChange(of: store.id) { sortMode = store.sortMode }
-        .onChange(of: allRecords.count) { refreshAlsoDue() }
-        .onChange(of: allPendingItems.count) { refreshAlsoDue() }
-        .onChange(of: blockedReplenishmentsData) { refreshAlsoDue() }
-        .onChange(of: snoozedReplenishmentsData) { refreshAlsoDue() }
-        .onChange(of: dismissedReplenishmentsData) { refreshAlsoDue() }
-        .onChange(of: developerMode) { refreshAlsoDue() }
-        .onChange(of: store.visitsPerWeek) { refreshAlsoDue() }
-        .onDisappear {
-            LiveActivityService.shared.end(for: store)
-            if store.shareID != nil {
-                let generation = nextSyncGeneration()
-                Task {
-                    let ok = await SyncCoordinator.shared.push(store: store)
-                    await MainActor.run { applySyncResult(ok, generation: generation) }
-                }
-            }
-        }
-        .onChange(of: pending.count) { oldCount, newCount in
-            LiveActivityService.shared.update(for: store)
-            if newCount == 0, oldCount > 0, !store.completedItems.isEmpty {
-                showConfetti = true
-                Task {
-                    try? await Task.sleep(for: .seconds(3.5))
-                    await MainActor.run { showConfetti = false }
-                }
-            }
-        }
-        .overlay {
-            if showConfetti {
-                ConfettiView()
-                    .transition(.opacity)
-            }
-        }
     }
 
-    // MARK: - Category grouping
-
-    /// Splits the (already sorted) non-urgent pending items into category sections for the
-    /// optional grouped view. Same derivation as `HomeView.groupedByCategory`: manually-set
-    /// categories stick as the user chose them, everything else keeps re-deriving from the
-    /// current name so stale stored values and keyword-rule updates apply immediately.
-    /// `Dictionary(grouping:)` preserves encounter order within each group, so inside a section
-    /// the items keep the exact `store.pendingItems` order. The sections themselves follow the
-    /// category order learned for this store (Issue #79, `Store.orderedCategories`).
-    private func groupedRegularItems(_ items: [ShoppingItem]) -> [(category: String, emoji: String, items: [ShoppingItem])] {
-        let grouped = Dictionary(grouping: items) { Store.displayCategory(of: $0) }
-        return store.orderedCategories(Array(grouped.keys)).compactMap { cat in
-            guard let items = grouped[cat], !items.isEmpty else { return nil }
-            return (category: cat, emoji: store.categoryEmoji(cat), items: items)
-        }
-    }
-
-    // MARK: - Body-Teile
 
     // Aus `body` ausgelagert: mit Verschiebe-Modus und neuem Menü wurde der Ausdruck für den
     // Swift-Typprüfer zu groß („unable to type-check this expression in reasonable time“).
@@ -1383,3 +1397,4 @@ private struct TemplatePickerSheet: View {
         }
     }
 }
+
