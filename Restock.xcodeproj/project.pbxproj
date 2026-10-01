@@ -157,6 +157,7 @@
 		7A31C4E2B90D45F1A6E30C11 /* ReceiptReviewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D82F0A7C14B49E28B7A6D33 /* ReceiptReviewUITests.swift */; };
 		015DA7427FD1EAE4DF8E730F /* AssignmentServiceQuantitySuggestionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A565488E820C9913EBBD141 /* AssignmentServiceQuantitySuggestionTests.swift */; };
 		54FBC057E3FD038294A3AEA0 /* AddItemQuantitySuggestionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */; };
+		91DA57026009303F78C87BDB /* ShoppingRouteUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -334,6 +335,7 @@
 		5D82F0A7C14B49E28B7A6D33 /* ReceiptReviewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptReviewUITests.swift; sourceTree = "<group>"; };
 		9A565488E820C9913EBBD141 /* AssignmentServiceQuantitySuggestionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentServiceQuantitySuggestionTests.swift; sourceTree = "<group>"; };
 		3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemQuantitySuggestionUITests.swift; sourceTree = "<group>"; };
+		4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRouteUITests.swift; sourceTree = "<group>"; };
 		E2ECD600D24B6ACC3CB50C74 /* RestockUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		634FBBE2D9633DD7732C8BAF /* RestockTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -646,6 +648,7 @@
 				95312F3105014450B82B1EF5 /* ReceiptShareExtensionTests.swift */,
 				5D82F0A7C14B49E28B7A6D33 /* ReceiptReviewUITests.swift */,
 				3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */,
+				4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */,
 			);
 			path = RestockUITests;
 			sourceTree = "<group>";
@@ -992,6 +995,7 @@
 				6B398E7EEE5549BE924E1540 /* ReceiptShareExtensionTests.swift in Sources */,
 				7A31C4E2B90D45F1A6E30C11 /* ReceiptReviewUITests.swift in Sources */,
 				54FBC057E3FD038294A3AEA0 /* AddItemQuantitySuggestionUITests.swift in Sources */,
+				91DA57026009303F78C87BDB /* ShoppingRouteUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

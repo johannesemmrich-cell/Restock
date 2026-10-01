@@ -256,6 +256,16 @@ class Store {
         Store.bumpRouteRevision()
     }
 
+    /// Sortiermodus, gelerntes Modell und laufenden Einkauf dieses Ladens entfernen — für einen
+    /// Laden, der gelöscht wird (die Schlüssel hängen an seiner `id` und blieben sonst liegen).
+    func removeRouteData() {
+        let defaults = Store.routeDefaults
+        for key in ["sortMode_", "shoppingRoute_", "shoppingTrip_"] {
+            defaults.removeObject(forKey: key + id.uuidString)
+        }
+        Store.bumpRouteRevision()
+    }
+
     /// Kategorien in der gelernten Reihenfolge dieses Ladens (für die gruppierte Ansicht).
     func orderedCategories(_ categories: [String]) -> [String] {
         ShoppingRoute.orderedCategories(categories, model: routeModel, staticOrder: AssignmentService.categoryOrder)
