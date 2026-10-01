@@ -93,207 +93,7 @@ struct StoreDetailView: View {
             if isReordering {
                 reorderSections(pending: pending)
             } else {
-            Section {
-                storeHero(pending: pending)
-            }
-            .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
-
-            if syncFailed && store.shareID != nil {
-                Section {
-                    Button {
-                        let generation = nextSyncGeneration()
-                        Task {
-                            let ok = await SyncCoordinator.shared.pull(store: store)
-                            await MainActor.run { applySyncResult(ok, generation: generation) }
-                        }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .font(.system(size: 13))
-                            Text(syncFailureText)
-                                .font(.system(size: 13))
-                            Spacer()
-                            Image(systemName: "arrow.clockwise")
-                                .font(.system(size: 13))
-                        }
-                        .foregroundStyle(.orange)
-                    }
-                    .buttonStyle(.pressable)
-                }
-                .listRowBackground(Color.orange.opacity(0.1))
-            }
-
-            Section {
-                HStack(spacing: 10) {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundStyle(store.color)
-                        .font(.system(size: 18))
-                    TextField(String(localized: "home.quickadd.placeholder"), text: $quickAddText)
-                        .focused($isQuickAddFocused)
-                        .submitLabel(.continue)
-                        .onSubmit { quickAdd() }
-                    if !quickAddText.isEmpty {
-                        Button { quickAddText = "" } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(Color(.systemGray3))
-                        }
-                        .buttonStyle(.pressable)
-                    }
-                }
-                if isQuickAddFocused {
-                    ProductSuggestionChips(suggestions: quickAddSuggestions, tint: store.color, onSelect: applyQuickAddSuggestion)
-                }
-                if let parsed = quickAddParsed {
-                    VStack(spacing: 4) {
-                        HStack(spacing: 8) {
-                            if parsed.quantityAmount != 1 || !parsed.unit.isEmpty {
-                                Text(parsed.unit.isEmpty ? "\(parsed.quantity)×"
-                                     : (parsed.quantityAmount != 1 ? "\(parsed.quantity) \(parsed.unit)" : parsed.unit))
-                                    .font(.system(size: 12, weight: .semibold))
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 8).padding(.vertical, 3)
-                                    .background(store.color, in: RoundedRectangle(cornerRadius: RCRadius.tag))
-                            } else if let hint = historicQuantityHint(for: parsed.name) {
-                                Text(hint)
-                                    .font(.system(size: 12, weight: .semibold))
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 8).padding(.vertical, 3)
-                                    .background(store.color.opacity(0.7), in: RoundedRectangle(cornerRadius: RCRadius.tag))
-                            }
-                            Text(parsed.name)
-                                .font(.system(size: 13, weight: .medium))
-                            Spacer()
-                            Image(systemName: "return")
-                                .font(.system(size: 12))
-                                .foregroundStyle(.secondary)
-                        }
-                        if let dup = quickAddDuplicate(for: parsed.name, in: pending) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .font(.system(size: 11))
-                                Text("'\(dup.name)' bereits in der Liste")
-                                    .font(.system(size: 12))
-                                Spacer()
-                            }
-                            .foregroundStyle(.orange)
-                        }
-                    }
-                    .padding(.horizontal, 6).padding(.vertical, 5)
-                    .background(store.color.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(store.color.opacity(0.2), lineWidth: 1))
-                    .contentShape(Rectangle())
-                    .onTapGesture { quickAdd() }
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 6, trailing: 16))
-                    .listRowBackground(Color.clear)
-                }
-            }
-            .listRowBackground(Color.surface)
-            .animation(.easeInOut(duration: 0.15), value: quickAddParsed?.name)
-
-            Section {
-                if !(store.items ?? []).isEmpty {
-                    progressHeader(pending: pending)
-                }
-                frequencyRow
-            }
-            .listRowBackground(Color.surface)
-            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-
-            alsoDueSection
-
-            let urgentItems = pending.filter { $0.isUrgent }
-            let regularItems = pending.filter { !$0.isUrgent }
-
-            if !urgentItems.isEmpty {
-                Section {
-                    ForEach(urgentItems) { item in
-                        pendingRow(item)
-                    }
-                } header: {
-                    Label("Dringend", systemImage: "exclamationmark.circle.fill")
-                        .foregroundStyle(.orange)
-                        .font(.system(size: 12, weight: .semibold))
-                        .tracking(0.6)
-                }
-                .listRowBackground(Color.surface)
-            }
-
-            if !regularItems.isEmpty {
-                if sortMode == .category {
-                    ForEach(groupedRegularItems(regularItems), id: \.category) { group in
-                        Section {
-                            ForEach(group.items) { item in
-                                pendingRow(item)
-                            }
-                        } header: {
-                            Text("\(group.emoji) \(AssignmentService.displayCategory(group.category))")
-                                .font(.system(size: 12, weight: .semibold))
-                                .tracking(0.6)
-                        }
-                        .listRowBackground(Color.surface)
-                    }
-                } else {
-                    Section(String(localized: "list.pending")) {
-                        ForEach(regularItems) { item in
-                            pendingRow(item)
-                        }
-                    }
-                    .listRowBackground(Color.surface)
-                }
-            }
-
-            if !store.completedItems.isEmpty {
-                Section {
-                    ForEach(store.completedItems) { item in
-                        ItemRow(item: item) { toggle(item: item) }
-                            .contentShape(Rectangle())
-                            .onTapGesture { editingItem = item }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    withAnimation { deleteItem(item) }
-                                } label: {
-                                    Label(String(localized: "action.delete"), systemImage: "trash")
-                                }
-                            }
-                            .swipeActions(edge: .leading) {
-                                Button {
-                                    toggle(item: item)
-                                } label: {
-                                    Label(String(localized: "item.action.uncheck"), systemImage: "arrow.uturn.backward")
-                                }
-                                .tint(.orange)
-                            }
-                            .contextMenu {
-                                if store.shareID != nil {
-                                    assignMenuItems(for: item)
-                                }
-                            }
-                    }
-                } header: {
-                    HStack {
-                        Text(String(localized: "list.completed"))
-                        Spacer()
-                        Button(String(localized: "list.clear.completed")) {
-                            showClearConfirm = true
-                        }
-                        .buttonStyle(.pressable)
-                        .font(.system(size: 12))
-                        .foregroundStyle(.red)
-                        .textCase(nil)
-                    }
-                }
-                .listRowBackground(Color.surface)
-            }
-
-            if (store.items ?? []).isEmpty {
-                Section {
-                    emptyState
-                }
-                .listRowBackground(Color.clear)
-            }
+                standardSections(pending: pending)
             }
         }
         .environment(\.editMode, .constant(isReordering ? .active : .inactive))
@@ -301,105 +101,7 @@ struct StoreDetailView: View {
         .background(Color.canvas)
         .navigationTitle(store.name)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ChipToolbarItem(placement: .navigationBarTrailing) {
-                if isReordering {
-                    Button {
-                        withAnimation { isReordering = false }
-                        Haptics.success()
-                    } label: {
-                        Text(String(localized: "action.done")).toolbarChip(prominent: true)
-                    }
-                    .buttonStyle(.pressable)
-                    .accessibilityIdentifier("storeDetail.reorderDone")
-                } else {
-                HStack(spacing: 20) {
-                    if isSyncing {
-                        ProgressView()
-                            .scaleEffect(0.8)
-                    }
-                    Button {
-                        showShareSheet = true
-                        Haptics.impact(.light)
-                    } label: {
-                        Image(systemName: store.shareID != nil ? "person.2.fill" : "person.2")
-                            .font(.system(size: 16))
-                            .foregroundStyle(Color.ink)
-                    }
-                    .buttonStyle(.pressable)
-                    Menu {
-                        Picker(selection: Binding(
-                            get: { sortMode },
-                            set: { newValue in
-                                store.sortMode = newValue
-                                withAnimation { sortMode = newValue }
-                                Haptics.impact(.light)
-                            }
-                        )) {
-                            ForEach(StoreSortMode.allCases, id: \.self) { mode in
-                                Label(mode.label, systemImage: mode.systemImage).tag(mode)
-                            }
-                        } label: {
-                            Label(String(format: String(localized: "store.sort.menu"), sortMode.label), systemImage: "arrow.up.arrow.down")
-                        }
-                        .pickerStyle(.menu)
-                        if sortMode != .added {
-                            Button(String(localized: "store.reorder"), systemImage: "arrow.up.and.down.text.horizontal") {
-                                withAnimation { isReordering = true }
-                                Haptics.impact(.light)
-                            }
-                            .disabled(pending.filter { !$0.isUrgent }.count < 2)
-                            Button(String(localized: "store.route.reset"), systemImage: "arrow.counterclockwise", role: .destructive) {
-                                showResetRouteConfirm = true
-                            }
-                        }
-                        Divider()
-                        if !store.completedItems.isEmpty {
-                            Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
-                                showReceiptScanner = true
-                                Haptics.impact(.light)
-                            }
-                            Button("Preis eintragen", systemImage: "eurosign.circle") {
-                                showActualPriceEntry = true
-                                Haptics.impact(.light)
-                            }
-                        }
-                        Button("Als Vorlage speichern", systemImage: "plus.rectangle.on.folder") {
-                            templateName = store.name
-                            showSaveTemplateAlert = true
-                            Haptics.impact(.light)
-                        }
-                        .disabled(pending.isEmpty)
-                        if !templateService.templates.isEmpty {
-                            Button("Vorlage laden", systemImage: "folder") {
-                                showTemplatePicker = true
-                                Haptics.impact(.light)
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .font(.system(size: 16))
-                            .foregroundStyle(Color.ink)
-                    }
-                    .menuStyle(.button)
-                    .buttonStyle(.pressable)
-                    // Für `ShoppingRouteUITests` (Issue #79): das Symbol allein ist kein verlässlicher
-                    // Suchbegriff für das Menü.
-                    .accessibilityIdentifier("storeDetail.moreMenu")
-                    Button {
-                        showAddItem = true
-                        Haptics.impact(.light)
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.system(size: 17))
-                            .foregroundStyle(Color.ink)
-                    }
-                    .buttonStyle(.pressable)
-                }
-                .toolbarChip()
-                }
-            }
-        }
+        .toolbar { toolbarItems(pending: pending) }
         .confirmationDialog(
             String(localized: "store.route.reset.confirm"),
             isPresented: $showResetRouteConfirm,
@@ -529,6 +231,317 @@ struct StoreDetailView: View {
         return store.orderedCategories(Array(grouped.keys)).compactMap { cat in
             guard let items = grouped[cat], !items.isEmpty else { return nil }
             return (category: cat, emoji: store.categoryEmoji(cat), items: items)
+        }
+    }
+
+    // MARK: - Body-Teile
+
+    // Aus `body` ausgelagert: mit Verschiebe-Modus und neuem Menü wurde der Ausdruck für den
+    // Swift-Typprüfer zu groß („unable to type-check this expression in reasonable time“).
+
+    @ViewBuilder
+    private func standardSections(pending: [ShoppingItem]) -> some View {
+        Section {
+            storeHero(pending: pending)
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
+
+        if syncFailed && store.shareID != nil {
+            Section {
+                Button {
+                    let generation = nextSyncGeneration()
+                    Task {
+                        let ok = await SyncCoordinator.shared.pull(store: store)
+                        await MainActor.run { applySyncResult(ok, generation: generation) }
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 13))
+                        Text(syncFailureText)
+                            .font(.system(size: 13))
+                        Spacer()
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 13))
+                    }
+                    .foregroundStyle(.orange)
+                }
+                .buttonStyle(.pressable)
+            }
+            .listRowBackground(Color.orange.opacity(0.1))
+        }
+
+        Section {
+            HStack(spacing: 10) {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundStyle(store.color)
+                    .font(.system(size: 18))
+                TextField(String(localized: "home.quickadd.placeholder"), text: $quickAddText)
+                    .focused($isQuickAddFocused)
+                    .submitLabel(.continue)
+                    .onSubmit { quickAdd() }
+                if !quickAddText.isEmpty {
+                    Button { quickAddText = "" } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(Color(.systemGray3))
+                    }
+                    .buttonStyle(.pressable)
+                }
+            }
+            if isQuickAddFocused {
+                ProductSuggestionChips(suggestions: quickAddSuggestions, tint: store.color, onSelect: applyQuickAddSuggestion)
+            }
+            if let parsed = quickAddParsed {
+                VStack(spacing: 4) {
+                    HStack(spacing: 8) {
+                        if parsed.quantityAmount != 1 || !parsed.unit.isEmpty {
+                            Text(parsed.unit.isEmpty ? "\(parsed.quantity)×"
+                                 : (parsed.quantityAmount != 1 ? "\(parsed.quantity) \(parsed.unit)" : parsed.unit))
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 8).padding(.vertical, 3)
+                                .background(store.color, in: RoundedRectangle(cornerRadius: RCRadius.tag))
+                        } else if let hint = historicQuantityHint(for: parsed.name) {
+                            Text(hint)
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 8).padding(.vertical, 3)
+                                .background(store.color.opacity(0.7), in: RoundedRectangle(cornerRadius: RCRadius.tag))
+                        }
+                        Text(parsed.name)
+                            .font(.system(size: 13, weight: .medium))
+                        Spacer()
+                        Image(systemName: "return")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    if let dup = quickAddDuplicate(for: parsed.name, in: pending) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 11))
+                            Text("'\(dup.name)' bereits in der Liste")
+                                .font(.system(size: 12))
+                            Spacer()
+                        }
+                        .foregroundStyle(.orange)
+                    }
+                }
+                .padding(.horizontal, 6).padding(.vertical, 5)
+                .background(store.color.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(store.color.opacity(0.2), lineWidth: 1))
+                .contentShape(Rectangle())
+                .onTapGesture { quickAdd() }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+                .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 6, trailing: 16))
+                .listRowBackground(Color.clear)
+            }
+        }
+        .listRowBackground(Color.surface)
+        .animation(.easeInOut(duration: 0.15), value: quickAddParsed?.name)
+
+        Section {
+            if !(store.items ?? []).isEmpty {
+                progressHeader(pending: pending)
+            }
+            frequencyRow
+        }
+        .listRowBackground(Color.surface)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+
+        alsoDueSection
+
+        let urgentItems = pending.filter { $0.isUrgent }
+        let regularItems = pending.filter { !$0.isUrgent }
+
+        if !urgentItems.isEmpty {
+            Section {
+                ForEach(urgentItems) { item in
+                    pendingRow(item)
+                }
+            } header: {
+                Label("Dringend", systemImage: "exclamationmark.circle.fill")
+                    .foregroundStyle(.orange)
+                    .font(.system(size: 12, weight: .semibold))
+                    .tracking(0.6)
+            }
+            .listRowBackground(Color.surface)
+        }
+
+        if !regularItems.isEmpty {
+            if sortMode == .category {
+                ForEach(groupedRegularItems(regularItems), id: \.category) { group in
+                    Section {
+                        ForEach(group.items) { item in
+                            pendingRow(item)
+                        }
+                    } header: {
+                        Text("\(group.emoji) \(AssignmentService.displayCategory(group.category))")
+                            .font(.system(size: 12, weight: .semibold))
+                            .tracking(0.6)
+                    }
+                    .listRowBackground(Color.surface)
+                }
+            } else {
+                Section(String(localized: "list.pending")) {
+                    ForEach(regularItems) { item in
+                        pendingRow(item)
+                    }
+                }
+                .listRowBackground(Color.surface)
+            }
+        }
+
+        if !store.completedItems.isEmpty {
+            Section {
+                ForEach(store.completedItems) { item in
+                    ItemRow(item: item) { toggle(item: item) }
+                        .contentShape(Rectangle())
+                        .onTapGesture { editingItem = item }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                withAnimation { deleteItem(item) }
+                            } label: {
+                                Label(String(localized: "action.delete"), systemImage: "trash")
+                            }
+                        }
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                toggle(item: item)
+                            } label: {
+                                Label(String(localized: "item.action.uncheck"), systemImage: "arrow.uturn.backward")
+                            }
+                            .tint(.orange)
+                        }
+                        .contextMenu {
+                            if store.shareID != nil {
+                                assignMenuItems(for: item)
+                            }
+                        }
+                }
+            } header: {
+                HStack {
+                    Text(String(localized: "list.completed"))
+                    Spacer()
+                    Button(String(localized: "list.clear.completed")) {
+                        showClearConfirm = true
+                    }
+                    .buttonStyle(.pressable)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.red)
+                    .textCase(nil)
+                }
+            }
+            .listRowBackground(Color.surface)
+        }
+
+        if (store.items ?? []).isEmpty {
+            Section {
+                emptyState
+            }
+            .listRowBackground(Color.clear)
+        }
+    }
+
+    @ToolbarContentBuilder
+    private func toolbarItems(pending: [ShoppingItem]) -> some ToolbarContent {
+        ChipToolbarItem(placement: .navigationBarTrailing) {
+            if isReordering {
+                Button {
+                    withAnimation { isReordering = false }
+                    Haptics.success()
+                } label: {
+                    Text(String(localized: "action.done")).toolbarChip(prominent: true)
+                }
+                .buttonStyle(.pressable)
+                .accessibilityIdentifier("storeDetail.reorderDone")
+            } else {
+            HStack(spacing: 20) {
+                if isSyncing {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                }
+                Button {
+                    showShareSheet = true
+                    Haptics.impact(.light)
+                } label: {
+                    Image(systemName: store.shareID != nil ? "person.2.fill" : "person.2")
+                        .font(.system(size: 16))
+                        .foregroundStyle(Color.ink)
+                }
+                .buttonStyle(.pressable)
+                Menu {
+                    Picker(selection: Binding(
+                        get: { sortMode },
+                        set: { newValue in
+                            store.sortMode = newValue
+                            withAnimation { sortMode = newValue }
+                            Haptics.impact(.light)
+                        }
+                    )) {
+                        ForEach(StoreSortMode.allCases, id: \.self) { mode in
+                            Label(mode.label, systemImage: mode.systemImage).tag(mode)
+                        }
+                    } label: {
+                        Label(String(format: String(localized: "store.sort.menu"), sortMode.label), systemImage: "arrow.up.arrow.down")
+                    }
+                    .pickerStyle(.menu)
+                    if sortMode != .added {
+                        Button(String(localized: "store.reorder"), systemImage: "arrow.up.and.down.text.horizontal") {
+                            withAnimation { isReordering = true }
+                            Haptics.impact(.light)
+                        }
+                        .disabled(pending.filter { !$0.isUrgent }.count < 2)
+                        Button(String(localized: "store.route.reset"), systemImage: "arrow.counterclockwise", role: .destructive) {
+                            showResetRouteConfirm = true
+                        }
+                    }
+                    Divider()
+                    if !store.completedItems.isEmpty {
+                        Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
+                            showReceiptScanner = true
+                            Haptics.impact(.light)
+                        }
+                        Button("Preis eintragen", systemImage: "eurosign.circle") {
+                            showActualPriceEntry = true
+                            Haptics.impact(.light)
+                        }
+                    }
+                    Button("Als Vorlage speichern", systemImage: "plus.rectangle.on.folder") {
+                        templateName = store.name
+                        showSaveTemplateAlert = true
+                        Haptics.impact(.light)
+                    }
+                    .disabled(pending.isEmpty)
+                    if !templateService.templates.isEmpty {
+                        Button("Vorlage laden", systemImage: "folder") {
+                            showTemplatePicker = true
+                            Haptics.impact(.light)
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 16))
+                        .foregroundStyle(Color.ink)
+                }
+                .menuStyle(.button)
+                .buttonStyle(.pressable)
+                // Für `ShoppingRouteUITests` (Issue #79): das Symbol allein ist kein verlässlicher
+                // Suchbegriff für das Menü.
+                .accessibilityIdentifier("storeDetail.moreMenu")
+                Button {
+                    showAddItem = true
+                    Haptics.impact(.light)
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.system(size: 17))
+                        .foregroundStyle(Color.ink)
+                }
+                .buttonStyle(.pressable)
+            }
+            .toolbarChip()
+            }
         }
     }
 
