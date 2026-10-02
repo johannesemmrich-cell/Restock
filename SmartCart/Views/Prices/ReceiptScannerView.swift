@@ -48,6 +48,11 @@ struct EditableReceiptLine: Identifiable {
     /// rein lokaler Anzeigezustand der Karte, ohne Prozessgrenze.
     var aiSuggestedName: String? = nil
     var aiSuggestedMatchedItemID: UUID? = nil
+    /// Messgrundlage für `ReceiptResolutionStats` (Issue #14): Stufe und Name unmittelbar nach der
+    /// Auflösung. Gesetzt an allen drei Konstruktionsstellen; ändert sich nicht, wenn der Nutzer
+    /// im Review umbenennt — genau diese Abweichung zählt `save()` als „geändert“.
+    var stage: ReceiptResolutionStage? = nil
+    var resolvedName: String = ""
 
     /// Divisor fürs Preis-Lernen in `save()` — als Methode extrahiert (statt inline dort
     /// berechnet), damit Tests exakt diese Formel aufrufen statt sie nachzubilden. Ein Test, der
@@ -156,6 +161,8 @@ struct EditableReceiptLine: Identifiable {
             result[index].suggestions = r.suggestions
             result[index].matchedItemID = r.matchedItemID
             result[index].resolvedByAI = r.resolvedByAI
+            result[index].stage = r.stage
+            result[index].resolvedName = r.name
             // Siehe `aiSuggestedName`: nur merken, wenn diese Auflösung wirklich von der KI kam.
             if r.resolvedByAI {
                 result[index].aiSuggestedName = r.name
@@ -344,7 +351,9 @@ struct ReceiptScannerView: View {
                 matchedItemID: line.matchedItemID,
                 resolvedByAI: line.resolvedByAI,
                 aiSuggestedName: line.resolvedByAI ? line.name : nil,
-                aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil
+                aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil,
+                stage: line.stage,
+                resolvedName: line.name
             )
         })
         _debugRawLines = State(initialValue: prefilled.rawLines)
@@ -734,7 +743,9 @@ struct ReceiptScannerView: View {
                         matchedItemID: line.matchedItemID,
                         resolvedByAI: line.resolvedByAI,
                         aiSuggestedName: line.resolvedByAI ? line.name : nil,
-                        aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil
+                        aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil,
+                        stage: line.stage,
+                        resolvedName: line.name
                     )
                 }
                 phase = .review
@@ -743,6 +754,8 @@ struct ReceiptScannerView: View {
     }
 
     private func save() {
+        // Issue #14: Messung je Stufe — ALLE Zeilen, auch abgewählte (Spalte „Abgewählt“).
+        ReceiptResolutionStats().record(parsedLines)
         let included = parsedLines.filter { EditableReceiptLine.isSavable($0) }
         let cutoff = Date().addingTimeInterval(-7 * 24 * 3600)
 
