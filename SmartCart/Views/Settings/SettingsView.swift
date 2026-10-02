@@ -271,6 +271,12 @@ struct SettingsView: View {
                             Label("Ausgeblendete Vorschläge", systemImage: "eye.slash")
                         }
 
+                        NavigationLink {
+                            ReceiptResolutionStatsView()
+                        } label: {
+                            Label("Bon-Erkennung je Stufe", systemImage: "doc.text.magnifyingglass")
+                        }
+
                         Button(role: .destructive) {
                             developerMode = false
                             // Nachkauf-Erinnerungen sind außerhalb des Dev-Mode kein Feature mehr

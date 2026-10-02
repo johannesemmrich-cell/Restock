@@ -61,6 +61,18 @@ final class ReceiptScannerReResolutionTests: XCTestCase {
                        "Ein Name aus reinen Leerzeichen ist genauso wenig ein Name.")
     }
 
+    /// Issue #69 (F104) — ein Name aus Zeilenumbrüchen ist optisch leer und darf ebenso wenig
+    /// gespeichert werden.
+    func testIsSavableRejectsNewlineOnlyName() {
+        var newline = EditableReceiptLine(name: "\n", price: 1.99, originalName: "BTR")
+        newline.isIncluded = true
+        var mixed = EditableReceiptLine(name: " \u{000B}\n\t", price: 1.99, originalName: "BTR")
+        mixed.isIncluded = true
+
+        XCTAssertFalse(EditableReceiptLine.isSavable(newline))
+        XCTAssertFalse(EditableReceiptLine.isSavable(mixed))
+    }
+
     /// AC-16 (Regression) — Die Regel trägt die bisher in `save()` inline stehende Bedingung
     /// unverändert mit: angehakt und mit Preis wird gespeichert, abgewählt oder ohne Preis nicht.
     func testIsSavableKeepsIncludedNamedLineAndRejectsOldCases() {

@@ -42,6 +42,94 @@ struct ResolvedReceiptLine: Codable {
     /// damit ein bereits gespeicherter, älterer `SharedReceiptPayload` ohne dieses Feld nicht am
     /// Decodieren scheitert.
     var resolvedByAI: Bool = false
+    /// Welche Stufe von `ReceiptResolutionService.resolve` den Namen geliefert hat (Issue #14,
+    /// Messung). Optional, damit ein älterer `SharedReceiptPayload` ohne dieses Feld decodierbar
+    /// bleibt — dann wird die Zeile beim Speichern schlicht nicht gezählt.
+    var stage: ReceiptResolutionStage? = nil
+}
+
+/// Die Stufen der Bon-Namensauflösung in `ReceiptResolutionService.resolve` (Issue #14).
+enum ReceiptResolutionStage: String, Codable, CaseIterable {
+    /// 1) gelernter Alias aus einer früheren Korrektur
+    case alias
+    /// 2) statisches Abkürzungswörterbuch
+    case dictionary
+    /// 3) Treffer unter den gerade abgehakten Artikeln
+    case completedItem
+    /// 4) Kaufhistorie dieses Ladens
+    case history
+    /// 5) Apple Intelligence
+    case ai
+    /// Keine Stufe hat geliefert, der Bontext bleibt stehen.
+    case unresolved
+
+    var label: String {
+        switch self {
+        case .alias: return "1 · Gelernter Alias"
+        case .dictionary: return "2 · Wörterbuch"
+        case .completedItem: return "3 · Abgehakte Artikel"
+        case .history: return "4 · Kaufhistorie"
+        case .ai: return "5 · Apple Intelligence"
+        case .unresolved: return "Unaufgelöst"
+        }
+    }
+}
+
+/// Messung je Auflösungsstufe (Issue #14, Schritt 1 — „erst messen, dann umbauen"). Gezählt wird
+/// beim Speichern eines Bons, je Zeile genau einmal: wie oft welche Stufe den Namen geliefert hat
+/// und was der Nutzer daraus gemacht hat — übernommen, umbenannt oder abgewählt. Dazu, wie oft
+/// das Sprachmodell mit `KEIN_PRODUKT` geantwortet hat (gezählt beim Auflösen, Hebel d / #90).
+/// Lokal in UserDefaults wie `ReplenishmentMetrics`, nur im Dev-Mode sichtbar.
+struct ReceiptResolutionMetrics {
+    enum Outcome: String, CaseIterable {
+        /// Gespeichert unter dem Namen, den die Stufe geliefert hat.
+        case kept
+        /// Gespeichert, aber unter einem anderen Namen.
+        case renamed
+        /// Nicht gespeichert (abgewählt, ohne Preis oder ohne Namen).
+        case excluded
+    }
+
+    static let countsKey = "receiptResolutionMetricsCounts"
+    static let nonProductKey = "nonProductAnswer"
+
+    let defaults: UserDefaults
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
+
+    func count(_ stage: ReceiptResolutionStage, _ outcome: Outcome) -> Int {
+        counts()["\(stage.rawValue).\(outcome.rawValue)"] ?? 0
+    }
+
+    func total(_ stage: ReceiptResolutionStage) -> Int {
+        Outcome.allCases.reduce(0) { $0 + count(stage, $1) }
+    }
+
+    var nonProductAnswers: Int { counts()[Self.nonProductKey] ?? 0 }
+
+    func record(_ stage: ReceiptResolutionStage, _ outcome: Outcome) {
+        increment("\(stage.rawValue).\(outcome.rawValue)")
+    }
+
+    func recordNonProductAnswer() {
+        increment(Self.nonProductKey)
+    }
+
+    func reset() {
+        defaults.removeObject(forKey: Self.countsKey)
+    }
+
+    private func increment(_ key: String) {
+        var map = counts()
+        map[key, default: 0] += 1
+        defaults.set(map, forKey: Self.countsKey)
+    }
+
+    private func counts() -> [String: Int] {
+        defaults.dictionary(forKey: Self.countsKey) as? [String: Int] ?? [:]
+    }
 }
 
 /// Löst OCR-Rohnamen von Bon-Zeilen zu echten Artikelnamen auf. Ausgelagert aus
@@ -73,8 +161,9 @@ enum ReceiptResolutionService {
     /// nächsten manuellen Öffnen (`HomeView.checkPendingReceiptScan`) ganz normal in
     /// `ReceiptScannerView` landen — dort läuft Stufe 5 mit vollem App-Speicherbudget.
     static func resolve(parsed: [ReceiptLine], store: Store, allRecords: [PurchaseRecord], allowAIResolution: Bool = true) async -> [ResolvedReceiptLine] {
-        var (resolvedNames, needsAI, suggestionsByIndex, matchedItemIDs) = await MainActor.run { () -> ([Int: String], [Int], [Int: [ReceiptSuggestion]], [Int: UUID]) in
+        var (resolvedNames, stages, needsAI, suggestionsByIndex, matchedItemIDs) = await MainActor.run { () -> ([Int: String], [Int: ReceiptResolutionStage], [Int], [Int: [ReceiptSuggestion]], [Int: UUID]) in
             var resolvedNames: [Int: String] = [:]
+            var stages: [Int: ReceiptResolutionStage] = [:]
             var needsAI: [Int] = []
             var suggestionsByIndex: [Int: [ReceiptSuggestion]] = [:]
             var matchedItemIDs: [Int: UUID] = [:]
@@ -103,16 +192,20 @@ enum ReceiptResolutionService {
 
                 if let alias = ReceiptAliasService.shared.resolve(line.name) {
                     resolvedNames[index] = alias
+                    stages[index] = .alias
                 } else if let expanded = ReceiptParserService.expandAbbreviations(line.name) {
                     resolvedNames[index] = expanded
+                    stages[index] = .dictionary
                 } else if let best = candidates.first(where: {
                     !consumedItemIDs.contains($0.item.id) && $0.score >= ReceiptParserService.completedItemAutoApplyThreshold
                 }) {
                     resolvedNames[index] = best.item.name
+                    stages[index] = .completedItem
                     consumedItemIDs.insert(best.item.id)
                     matchedItemIDs[index] = best.item.id
                 } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
                     resolvedNames[index] = historical
+                    stages[index] = .history
                 } else {
                     needsAI.append(index)
                 }
@@ -152,7 +245,7 @@ enum ReceiptResolutionService {
                     .filter { $0.item.name.caseInsensitiveCompare(resolvedName) != .orderedSame }
                     .map { ReceiptSuggestion(name: $0.item.name, itemID: $0.item.id) }
             }
-            return (resolvedNames, needsAI, suggestionsByIndex, matchedItemIDs)
+            return (resolvedNames, stages, needsAI, suggestionsByIndex, matchedItemIDs)
         }
 
         // Indizes, deren Name tatsächlich von Apple Intelligence stammt (nicht nur versucht —
@@ -173,6 +266,7 @@ enum ReceiptResolutionService {
                 for await (index, suggestion) in group {
                     if let suggestion {
                         resolvedNames[index] = suggestion
+                        stages[index] = .ai
                         aiResolvedIndices.insert(index)
                     }
                 }
@@ -189,7 +283,8 @@ enum ReceiptResolutionService {
                 weightBasis: line.weightBasis,
                 suggestions: suggestionsByIndex[index] ?? [],
                 matchedItemID: matchedItemIDs[index],
-                resolvedByAI: aiResolvedIndices.contains(index)
+                resolvedByAI: aiResolvedIndices.contains(index),
+                stage: stages[index] ?? .unresolved
             )
         }
     }

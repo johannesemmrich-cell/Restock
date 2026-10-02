@@ -136,3 +136,92 @@ struct ReplenishmentStatsView: View {
         return "\(Int((Double(part) / Double(total) * 100).rounded())) %"
     }
 }
+
+/// Dev-Mode: Messung der Bon-Namensauflösung je Stufe (Issue #14, Schritt 1). Grundlage für die
+/// Folge-Tickets #89–#91 — erst mit diesen Zahlen lässt sich sagen, ob Stufe 5 (Sprachmodell)
+/// gebraucht wird und welche Regel-Hebel sich lohnen.
+struct ReceiptResolutionStatsView: View {
+    @State private var showResetConfirmation = false
+    /// Zähler liegen in UserDefaults — nach dem Zurücksetzen neu zeichnen.
+    @State private var metricsVersion = 0
+
+    var body: some View {
+        let metrics = ReceiptResolutionMetrics()
+        let allLines = ReceiptResolutionStage.allCases.reduce(0) { $0 + metrics.total($1) }
+
+        List {
+            Section {
+                ForEach(ReceiptResolutionStage.allCases, id: \.self) { stage in
+                    stageRow(stage, metrics: metrics, allLines: allLines)
+                }
+            } header: {
+                Text("Gespeicherte Bon-Zeilen (\(allLines))")
+            } footer: {
+                Text("Je Zeile beim Speichern eines Bons: welche Stufe den Namen geliefert hat und ob er übernommen, umbenannt oder abgewählt wurde. Gezählt wird ab dieser Version.")
+            }
+
+            Section {
+                HStack {
+                    Text("KEIN_PRODUKT-Antworten")
+                    Spacer()
+                    Text("\(metrics.nonProductAnswers)")
+                        .monospacedDigit()
+                }
+            } header: {
+                Text("Sprachmodell")
+            } footer: {
+                Text("Wie oft Apple Intelligence eine Zeile als Nicht-Produkt eingestuft hat (Steuer-, Summen-, Zahlungszeile). Gezählt bei jeder Auflösung, auch wenn der Bon danach nicht gespeichert wird.")
+            }
+        }
+        .id(metricsVersion)
+        .navigationTitle("Bon-Erkennung je Stufe")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Zurücksetzen") { showResetConfirmation = true }
+            }
+        }
+        .confirmationDialog("Zähler zurücksetzen?", isPresented: $showResetConfirmation, titleVisibility: .visible) {
+            Button("Zurücksetzen", role: .destructive) {
+                ReceiptResolutionMetrics().reset()
+                metricsVersion += 1
+            }
+        }
+        .devFeedback(context: "Bon-Erkennung je Stufe")
+    }
+
+    private func stageRow(_ stage: ReceiptResolutionStage, metrics: ReceiptResolutionMetrics, allLines: Int) -> some View {
+        let total = metrics.total(stage)
+        return VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(stage.label)
+                Spacer()
+                if let share = percent(total, of: allLines) {
+                    Text(share)
+                        .foregroundStyle(.secondary)
+                }
+                Text("\(total)")
+                    .monospacedDigit()
+            }
+            if total > 0 {
+                Text(outcomeSummary(stage, metrics: metrics, total: total))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.vertical, 2)
+    }
+
+    private func outcomeSummary(_ stage: ReceiptResolutionStage, metrics: ReceiptResolutionMetrics, total: Int) -> String {
+        let kept = metrics.count(stage, .kept)
+        var summary = "übernommen \(kept) · umbenannt \(metrics.count(stage, .renamed)) · abgewählt \(metrics.count(stage, .excluded))"
+        if let rate = percent(kept, of: total) {
+            summary += " · Trefferquote \(rate)"
+        }
+        return summary
+    }
+
+    private func percent(_ part: Int, of total: Int) -> String? {
+        guard total > 0 else { return nil }
+        return "\(Int((Double(part) / Double(total) * 100).rounded())) %"
+    }
+}

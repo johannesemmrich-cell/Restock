@@ -135,6 +135,8 @@
 		E54A0001B2C34D5E8F6071A2 /* ReceiptSavePurchaseQuantityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */; };
 		406A9602E2603784E461BA88 /* PriceProvenanceMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */; };
 		A1C0DE110000000000000001 /* LegacyLearnedPriceResetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE110000000000000002 /* LegacyLearnedPriceResetTests.swift */; };
+		A1C0DE530000000000000001 /* LearnedPriceSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE530000000000000002 /* LearnedPriceSyncTests.swift */; };
+		A1C0DE590000000000000001 /* ReceiptLearningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE590000000000000002 /* ReceiptLearningTests.swift */; };
 		6974D7102BB46BEE039CDB22 /* ShoppingItemFuzzyPriceMatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819030AD296BDC33619C4C2 /* ShoppingItemFuzzyPriceMatchTests.swift */; };
 		7169A936DC526EB4B1002F33 /* PriceEstimatorCategoryFallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */; };
 		9023139F29439ED2491D853A /* PriceEstimatorStagesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C68E8D82565BA3E9CA923D /* PriceEstimatorStagesTests.swift */; };
@@ -321,6 +323,8 @@
 		A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptSavePurchaseQuantityTests.swift; sourceTree = "<group>"; };
 		16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceProvenanceMigrationTests.swift; sourceTree = "<group>"; };
 		A1C0DE110000000000000002 /* LegacyLearnedPriceResetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceResetTests.swift; sourceTree = "<group>"; };
+		A1C0DE530000000000000002 /* LearnedPriceSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnedPriceSyncTests.swift; sourceTree = "<group>"; };
+		A1C0DE590000000000000002 /* ReceiptLearningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptLearningTests.swift; sourceTree = "<group>"; };
 		8819030AD296BDC33619C4C2 /* ShoppingItemFuzzyPriceMatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItemFuzzyPriceMatchTests.swift; sourceTree = "<group>"; };
 		C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceEstimatorCategoryFallbackTests.swift; sourceTree = "<group>"; };
 		18C68E8D82565BA3E9CA923D /* PriceEstimatorStagesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceEstimatorStagesTests.swift; sourceTree = "<group>"; };
@@ -634,6 +638,8 @@
 				A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */,
 				16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */,
 				A1C0DE110000000000000002 /* LegacyLearnedPriceResetTests.swift */,
+				A1C0DE530000000000000002 /* LearnedPriceSyncTests.swift */,
+				A1C0DE590000000000000002 /* ReceiptLearningTests.swift */,
 				8819030AD296BDC33619C4C2 /* ShoppingItemFuzzyPriceMatchTests.swift */,
 				C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */,
 				18C68E8D82565BA3E9CA923D /* PriceEstimatorStagesTests.swift */,
@@ -991,6 +997,8 @@
 				E54A0001B2C34D5E8F6071A2 /* ReceiptSavePurchaseQuantityTests.swift in Sources */,
 				406A9602E2603784E461BA88 /* PriceProvenanceMigrationTests.swift in Sources */,
 				A1C0DE110000000000000001 /* LegacyLearnedPriceResetTests.swift in Sources */,
+				A1C0DE530000000000000001 /* LearnedPriceSyncTests.swift in Sources */,
+				A1C0DE590000000000000001 /* ReceiptLearningTests.swift in Sources */,
 				6974D7102BB46BEE039CDB22 /* ShoppingItemFuzzyPriceMatchTests.swift in Sources */,
 				7169A936DC526EB4B1002F33 /* PriceEstimatorCategoryFallbackTests.swift in Sources */,
 				9023139F29439ED2491D853A /* PriceEstimatorStagesTests.swift in Sources */,
