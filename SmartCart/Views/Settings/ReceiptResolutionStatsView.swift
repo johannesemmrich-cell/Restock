@@ -71,7 +71,7 @@ struct ReceiptResolutionStatsView: View {
         .accessibilityIdentifier("resolutionStage.\(key)")
     }
 
-    private static let totalWidth: CGFloat = 44
+    private static let totalWidth: CGFloat = 50
     private static let percentWidth: CGFloat = 76
 
     private func columns(_ stage: String, _ total: String, _ changed: String, _ deselected: String) -> some View {
@@ -82,6 +82,7 @@ struct ReceiptResolutionStatsView: View {
             Text(changed).frame(width: Self.percentWidth, alignment: .trailing)
             Text(deselected).frame(width: Self.percentWidth, alignment: .trailing)
         }
+        .font(.caption)
         .lineLimit(1)
         .minimumScaleFactor(0.7)
     }
