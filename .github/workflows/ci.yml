@@ -98,7 +98,9 @@ jobs:
 
   ui-test:
     runs-on: macos-26
-    timeout-minutes: 40
+    # Die UI-Suite braucht seit den Schnell-Eingabe-Tests (Oktober 2026) rund 31 Min reine Testzeit
+    # plus Build und Simulator-Start; 40 Min reichten nicht mehr (Abbruch im letzten Test).
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 

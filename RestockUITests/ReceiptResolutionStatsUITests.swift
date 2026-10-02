@@ -15,8 +15,9 @@ final class ReceiptResolutionStatsUITests: XCTestCase {
     private enum Seed {
         static let aiLine = 0
         static let lastLine = 3
-        /// Position der Option „Anderer Name …“ an der KI-Zeile (siehe `ReceiptReviewUITests.Seed`).
-        static let aiLineCustomOptionIndex = 2
+        /// Position der Eingabezeile „Anderer Name …“ an der KI-Zeile (siehe `ReceiptReviewUITests.Seed`);
+        /// seit dem Textfeld statt Bon-Zeile direkt nach der KI-Zeile.
+        static let aiLineCustomOptionIndex = 1
     }
 
     override func setUpWithError() throws {

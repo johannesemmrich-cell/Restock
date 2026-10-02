@@ -35,6 +35,12 @@ final class StoreAssignmentOverrideService {
         persist()
     }
 
+    /// Vergisst alle gemerkten Korrekturen — nur für den UI-Test-Seed (`-seedQuickAddAssignmentForUITests`).
+    func removeAll() {
+        overrides.removeAll()
+        persist()
+    }
+
     private func normalize(_ s: String) -> String {
         s.lowercased()
             .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
@@ -77,6 +83,12 @@ final class DefaultStoreService {
 
     func storeName(for groupKey: String) -> String? {
         defaults[groupKey]
+    }
+
+    /// Vergisst alle Standard-Läden — nur für den UI-Test-Seed (`-seedQuickAddAssignmentForUITests`).
+    func removeAll() {
+        defaults.removeAll()
+        persist()
     }
 
     func setStoreName(_ storeName: String?, for groupKey: String) {

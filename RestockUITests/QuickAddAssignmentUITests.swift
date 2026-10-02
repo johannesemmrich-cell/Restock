@@ -1,0 +1,209 @@
+import XCTest
+
+/// Schnell-Eingabe auf der Startseite: Ziel-Karte mit Grund, Bestätigungs-Toast und Umgang mit
+/// Artikeln ohne Laden (Karte „Ohne Laden“ + Zuordnen-Sheet). Design: Canvas „Schnell hinzufügen –
+/// Vorschläge“ (2026-10-02).
+///
+/// Seed (`SmartCartApp.seedQuickAddAssignmentForUITestsIfNeeded`): Läden „Lidl“ (Lebensmittel) und
+/// „dm“ (Drogerie), keine Standard-Läden, keine gemerkten Korrekturen. Mit `-quickAddSeedStoreless`
+/// zusätzlich zwei offene Artikel ohne Laden.
+///
+/// Die Tests prüfen die Bedienung über `accessibilityIdentifier`s (`quickAdd.*`, `home.unassignedCard`,
+/// `unassigned.*`). Die Logik hinter dem Grund („4 von 5 Käufen“, Standard-Laden …) ist in
+/// `AssignmentServiceTests` abgedeckt; hier geht es darum, dass der Nutzer sie sieht und bedienen kann.
+final class QuickAddAssignmentUITests: XCTestCase {
+
+    private static let placeholder = "Schnell hinzufügen…"
+
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+    }
+
+    /// Der App-Group-Container überlebt den einzelnen Test (siehe CLAUDE.md).
+    override func tearDown() {
+        super.tearDown()
+        let cleaner = XCUIApplication()
+        cleaner.launchArguments = ["-hasCompletedOnboarding", "YES", "-clearQuickAddAssignmentSeedForUITests"]
+        cleaner.launch()
+        cleaner.terminate()
+    }
+
+    // MARK: - Hilfen
+
+    private func launchedApp(storeless: Bool = false) -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedQuickAddAssignmentForUITests"]
+        if storeless { app.launchArguments.append("-quickAddSeedStoreless") }
+        app.launch()
+        return app
+    }
+
+    private func element(_ app: XCUIApplication, _ identifier: String) -> XCUIElement {
+        app.descendants(matching: .any)[identifier].firstMatch
+    }
+
+    /// Tippt `text` in das Schnell-Eingabe-Feld der Startseite und wartet auf die Ziel-Karte.
+    private func typeIntoQuickAdd(_ text: String, in app: XCUIApplication) -> XCUIElement {
+        let field = app.textFields[Self.placeholder]
+        XCTAssertTrue(field.waitForExistence(timeout: 15), "Schnell-Eingabe-Feld nicht gefunden")
+        field.tap()
+        expectation(for: NSPredicate(format: "hasKeyboardFocus == true"), evaluatedWith: field)
+        waitForExpectations(timeout: 10)
+        field.typeText(text)
+        XCTAssertTrue(element(app, "quickAdd.targetCard").waitForExistence(timeout: 5),
+                      "Ziel-Karte erscheint nicht, obwohl Text eingegeben wurde")
+        return field
+    }
+
+    private func labelOf(_ element: XCUIElement, contains text: String, within seconds: TimeInterval = 5) -> Bool {
+        let predicate = NSPredicate(format: "label CONTAINS %@", text)
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
+        return XCTWaiter().wait(for: [expectation], timeout: seconds) == .completed
+    }
+
+    // MARK: - 2A: Ziel-Karte beim Tippen
+
+    /// Beim Tippen steht sofort da, WOHIN der Artikel geht und WARUM — hier der einzige
+    /// Lebensmittel-Laden.
+    func testTypingShowsTargetStoreAndReason() {
+        let app = launchedApp()
+        _ = typeIntoQuickAdd("Nudeln", in: app)
+
+        XCTAssertTrue(labelOf(element(app, "quickAdd.target"), contains: "Lidl"),
+                      "Die Ziel-Zeile nennt den Laden nicht")
+        let reason = element(app, "quickAdd.reason")
+        XCTAssertTrue(reason.waitForExistence(timeout: 5), "Der Grund der Zuordnung fehlt")
+        XCTAssertTrue(labelOf(reason, contains: "Lebensmittel"),
+                      "Der Grund nennt die Kategorie nicht — bekommen: \(reason.label)")
+    }
+
+    /// Ein Laden-Chip überschreibt das Ziel vor dem Hinzufügen; der Grund wird „Von dir gewählt“.
+    func testStoreChipOverridesTarget() {
+        let app = launchedApp()
+        _ = typeIntoQuickAdd("Nudeln", in: app)
+
+        let dmChip = element(app, "quickAdd.storeChip.dm")
+        XCTAssertTrue(dmChip.waitForExistence(timeout: 5), "Chip „dm“ fehlt")
+        dmChip.tap()
+
+        XCTAssertTrue(labelOf(element(app, "quickAdd.target"), contains: "dm"),
+                      "Das Ziel wechselt nach Tippen auf den Chip nicht auf „dm“")
+        XCTAssertTrue(labelOf(element(app, "quickAdd.reason"), contains: "Von dir gewählt"),
+                      "Der Grund zeigt nicht, dass der Nutzer gewählt hat")
+        XCTAssertTrue(dmChip.isSelected, "Der gewählte Chip ist nicht als ausgewählt gekennzeichnet")
+    }
+
+    // MARK: - 2B: Bestätigung mit Ändern und Rückgängig
+
+    /// Nach dem Hinzufügen nennt der Toast den Laden und bietet „Laden ändern“ und „Rückgängig“ an.
+    func testToastNamesStoreAndOffersChangeAndUndo() {
+        let app = launchedApp()
+        let field = typeIntoQuickAdd("Nudeln", in: app)
+        field.typeText("\n")
+
+        let toast = element(app, "quickAdd.toast")
+        XCTAssertTrue(toast.waitForExistence(timeout: 5), "Bestätigungs-Toast erscheint nicht")
+        let message = element(app, "quickAdd.toast.message")
+        XCTAssertTrue(labelOf(message, contains: "Lidl"), "Der Toast nennt den Laden nicht — bekommen: \(message.label)")
+        XCTAssertTrue(element(app, "quickAdd.toast.change").exists, "„Laden ändern“ fehlt")
+        XCTAssertTrue(element(app, "quickAdd.toast.undo").exists, "„Rückgängig“ fehlt")
+    }
+
+    /// „Rückgängig“ räumt den Toast ab und legt den Artikel nicht als Artikel ohne Laden ab.
+    func testUndoRemovesToastAndItem() {
+        let app = launchedApp()
+        let field = typeIntoQuickAdd("Nudeln", in: app)
+        field.typeText("\n")
+
+        let undo = element(app, "quickAdd.toast.undo")
+        XCTAssertTrue(undo.waitForExistence(timeout: 5), "„Rückgängig“ fehlt")
+        undo.tap()
+
+        let gone = NSPredicate(format: "exists == false")
+        expectation(for: gone, evaluatedWith: element(app, "quickAdd.toast"))
+        waitForExpectations(timeout: 5)
+        XCTAssertFalse(element(app, "home.unassignedCard").exists,
+                       "Nach „Rückgängig“ darf kein Artikel ohne Laden übrig sein")
+    }
+
+    /// Der Toast bleibt länger als zwei Sekunden stehen (vorher verschwand er nach zwei Sekunden).
+    func testToastStaysVisibleLongerThanTwoSeconds() {
+        let app = launchedApp()
+        let field = typeIntoQuickAdd("Nudeln", in: app)
+        field.typeText("\n")
+
+        let toast = element(app, "quickAdd.toast")
+        XCTAssertTrue(toast.waitForExistence(timeout: 5), "Bestätigungs-Toast erscheint nicht")
+        Thread.sleep(forTimeInterval: 3)
+        XCTAssertTrue(toast.exists, "Der Toast ist nach drei Sekunden schon weg")
+    }
+
+    // MARK: - 3A/3B: Artikel ohne Laden
+
+    /// „Ohne Laden“ als bewusste Wahl: Der Artikel verschwindet nicht, sondern erscheint als Karte
+    /// auf der Startseite.
+    func testItemAddedWithoutStoreShowsUnassignedCard() {
+        let app = launchedApp()
+        let field = typeIntoQuickAdd("Nudeln", in: app)
+
+        let none = element(app, "quickAdd.storeChip.none")
+        XCTAssertTrue(none.waitForExistence(timeout: 5), "Chip „Ohne Laden“ fehlt")
+        none.tap()
+        field.typeText("\n")
+
+        let card = element(app, "home.unassignedCard")
+        XCTAssertTrue(card.waitForExistence(timeout: 5), "Karte „Ohne Laden“ erscheint nicht")
+        XCTAssertTrue(labelOf(card, contains: "1 Artikel ohne Laden"),
+                      "Die Karte zählt nicht richtig — bekommen: \(card.label)")
+    }
+
+    /// Die Karte nennt Anzahl und Namen der offenen Artikel ohne Laden.
+    func testUnassignedCardShowsCountAndNames() {
+        let app = launchedApp(storeless: true)
+
+        let card = element(app, "home.unassignedCard")
+        XCTAssertTrue(card.waitForExistence(timeout: 15), "Karte „Ohne Laden“ fehlt")
+        XCTAssertTrue(labelOf(card, contains: "2 Artikel ohne Laden"), "Anzahl fehlt — bekommen: \(card.label)")
+        XCTAssertTrue(labelOf(card, contains: "Testartikel Eins"), "Name fehlt — bekommen: \(card.label)")
+    }
+
+    /// „Alle Vorschläge übernehmen“ ordnet alles zu; das Sheet schließt sich, die Karte verschwindet.
+    func testAcceptAllAssignsEverythingAndRemovesCard() {
+        let app = launchedApp(storeless: true)
+
+        let card = element(app, "home.unassignedCard")
+        XCTAssertTrue(card.waitForExistence(timeout: 15), "Karte „Ohne Laden“ fehlt")
+        card.tap()
+
+        let acceptAll = element(app, "unassigned.acceptAll")
+        XCTAssertTrue(acceptAll.waitForExistence(timeout: 5), "„Alle Vorschläge übernehmen“ fehlt")
+        XCTAssertTrue(labelOf(acceptAll, contains: "(2)"), "Zähler stimmt nicht — bekommen: \(acceptAll.label)")
+        acceptAll.tap()
+
+        let gone = NSPredicate(format: "exists == false")
+        expectation(for: gone, evaluatedWith: element(app, "unassigned.acceptAll"))
+        waitForExpectations(timeout: 10)
+        expectation(for: gone, evaluatedWith: element(app, "home.unassignedCard"))
+        waitForExpectations(timeout: 10)
+    }
+
+    /// Ein Tipp auf einen Laden ordnet genau diesen Artikel zu; der andere bleibt offen.
+    func testChoosingStoreForOneItemLeavesTheOtherOpen() {
+        let app = launchedApp(storeless: true)
+
+        let card = element(app, "home.unassignedCard")
+        XCTAssertTrue(card.waitForExistence(timeout: 15), "Karte „Ohne Laden“ fehlt")
+        card.tap()
+
+        let dmChip = element(app, "unassigned.Testartikel Eins.dm")
+        XCTAssertTrue(dmChip.waitForExistence(timeout: 5), "Laden-Chip für „Testartikel Eins“ fehlt")
+        dmChip.tap()
+
+        let acceptAll = element(app, "unassigned.acceptAll")
+        XCTAssertTrue(acceptAll.waitForExistence(timeout: 5), "„Alle Vorschläge übernehmen“ fehlt")
+        XCTAssertTrue(labelOf(acceptAll, contains: "(1)"),
+                      "Es ist nicht genau ein Artikel übrig — bekommen: \(acceptAll.label)")
+        XCTAssertFalse(element(app, "unassigned.Testartikel Eins.Lidl").exists,
+                       "Der zugeordnete Artikel steht noch in der Liste")
+    }
+}

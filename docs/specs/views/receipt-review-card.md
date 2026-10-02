@@ -11,6 +11,12 @@ tags: [feature, ui, receipt-scanner]
 
 # Bon-Prüf-Screen: Positionen als Karte mit Auswahl statt Tippen
 
+> **Stand 2026-10-01 (Nachtrag „Textfeld statt Bon-Zeile", unten vor „Invarianten"):** Die Auswahlzeile
+> „wie auf dem Bon" (Issue #65, Paket 2: `ReceiptNameOption.receiptText`, `shouldOfferReceiptTextOption`,
+> Regel 7, AC-21/AC-22) ist ENTFALLEN. An ihre Stelle tritt ein dauerhaft sichtbares Textfeld als letzte
+> Zeile, vorausgefüllt mit dem wortweise großgeschriebenen Bontext. Wo ältere Abschnitte noch die
+> Bon-Zeile beschreiben, gilt der Nachtrag.
+
 ## Approval
 
 - [ ] Approved
@@ -712,6 +718,8 @@ und macht `save()` robust gegen eine Annahme, die die Karte nur GERADE JETZT erf
 
 ### Nachtrag Issue #65 (Paket 2, 2026-09-28): Bontext lesbar, kopierbar, wählbar
 
+> **Teilweise überholt (2026-10-01):** Lesbarkeit (15 pt, `Color.ink`) und „Kopieren" bleiben. Die Auswahlzeile „wie auf dem Bon" mit allem, was daran hängt (`.receiptText`, `shouldOfferReceiptTextOption`, Regel 7, Mindestlänge, Marke), wurde durch das vorausgefüllte Textfeld ersetzt — siehe „Nachtrag: Textfeld statt Bon-Zeile".
+
 Vollständiger Auftrag, gegen den Live-Code verifizierte Fakten und die berechnete Testkorrektur
 stehen in `docs/context/fix-50-import-dialog-design-paket2.md`. Drei Zusagen aus Issue #65
 (Punkte 1-3, siehe Nachtrag-Absatz oben), in dieser Erweiterung umgesetzt.
@@ -1053,6 +1061,8 @@ oder ein `.aiSuggestion` ohne `aiSuggestedMatchedItemID`).
 
 ### `accessibilityIdentifier`-Schema (neu, koordiniert mit #28)
 
+> Seit 2026-10-01: `option.<k>` der letzten Zeile ist der Auswahlkreis des Textfelds (Antippen wählt die Zeile und fokussiert das Feld); `customNameField` ist das Feld selbst und ist immer sichtbar.
+
 | Element | Identifier |
 |---|---|
 | Karte | `receiptReview.line.<index>.card` |
@@ -1112,6 +1122,53 @@ eine stehengebliebene fremde ID. Dieselbe Fallback-Sicherheit, mit der bereits `
 vor UND nach #66; die beiden Fixes berühren unterschiedliche Funktionen und schließen sich nicht
 gegenseitig ein.
 
+### Nachtrag (2026-10-01): Textfeld statt Bon-Zeile
+
+**Anlass (PO-Rückmeldung zum Importdialog):** Der Original-Bontext soll immer als editierbare Eingabe
+nutzbar sein. Das Feld „Anderer Name …" erschien erst nach Antippen und war mit dem gerade gewählten
+Namen gefüllt (KI-Name, Listentreffer oder Bontext je nach Auswahl) — vorab nicht sichtbar, ohne
+erkennbares Muster. Die Zeile „wie auf dem Bon" war zusätzlich eine Doppelung des Bontexts.
+Design vom PO freigegeben (Canvas „Bon-Karte Textfeld", 2026-10-01).
+
+**Verhalten:**
+
+1. **Die Bon-Zeile entfällt.** `ReceiptNameOption.receiptText`, `shouldOfferReceiptTextOption`,
+   `receiptTextMinLength`, die Marke „wie auf dem Bon" und Regel 7 sind entfernt. Der Fall `.custom`
+   rückt als Regel 7 nach (bisher 8). `normalizedReceiptText(_:)` bleibt, wird aber nur noch für die
+   Vorausfüllung benutzt.
+2. **Das Feld ist immer sichtbar** — als letzte Zeile jeder Karte, nicht erst nach Antippen. Links
+   steht der Auswahlkreis (`option.<k>`), daneben das Textfeld (`customNameField`, Platzhalter
+   „Anderer Name …"), rechts ein Stift als Hinweis auf die Bearbeitbarkeit.
+3. **Vorausfüllung:** `customFieldSeed(for:)` liefert den getrimmten `originalName`, wortweise
+   großgeschrieben (`normalizedReceiptText`). Ist `originalName` leer, der aktuelle `line.name`. Die
+   Vorausfüllung geschieht einmal beim ersten Erscheinen der Karte und hängt NICHT von der aktuellen
+   Auswahl ab — immer derselbe Ausgangspunkt, gleiches Muster für jede Zeile.
+4. **Anfangszustand:** Die Auswahl bleibt unverändert (z. B. KI-Zeile gewählt); das Feld ist gefüllt,
+   aber nicht gewählt (Kreis leer).
+5. **Aktivieren:** Antippen des Kreises oder Fokus im Feld wählt die Zeile (`activateCustom`): die
+   geltende Auswahl wird als `previousSelectionBeforeCustom` festgehalten (Regel 10), danach wird der
+   Feldinhalt über `applyCustomNameOrFallback` zum Namen der Position. Feldinhalt, Häkchen-Label und
+   gespeicherter Name stimmen damit von Anfang an überein.
+6. **Tippen:** Jede Eingabe wirkt sofort (`applyCustomNameOrFallback`); Leeren oder reine Leerzeichen
+   fällt auf die zuvor gewählte Auswahl zurück (Regel 10, unverändert). Wählt der Nutzer danach eine
+   andere Zeile, bleibt der Feldinhalt erhalten; erneutes Aktivieren übernimmt ihn wieder.
+7. `matchedItemID`/`resolvedByAI` folgen unverändert `applyCustomName` (AC-25).
+
+**Betroffene Dateien:** `SmartCart/Views/Prices/ReceiptReviewCard.swift` (Enum, Regel 7, `customNameRow`,
+`activateCustom`, `customFieldSeed`), `SmartCart/Views/Prices/ReceiptScannerView.swift` (Hinweistext unter
+der Liste), `RestockTests/ReceiptReviewCardTests.swift`, `RestockUITests/ReceiptReviewUITests.swift`.
+`save()` und das Wire-Format bleiben unberührt.
+
+**Optionen je Karte:** höchstens 3 inhaltliche Kandidaten + Textfeld = **max. 4** (Stand vor Issue #65,
+Paket 2). `option.<k>`-Indizes: `Seed.aiLine` → KI-Zeile `option.0`, Textfeld `option.1`
+(`Seed.aiLineCustomOptionIndex` 2 → 1).
+
+**Tests:** Unit — entfernt: `shouldOfferReceiptTextOption*`, `testChoosingReceiptTextSetsNameAndClearsMatchAndAiFlag`,
+`.receiptText`-Fall in `isSelected`; Options-Zählungen 5→4 bzw. 3→2; neu: `testCustomFieldSeedIsCapitalizedScanText`,
+`testCustomFieldSeedFallsBackToCurrentName`. UI — `testTappingReceiptTextOptionSelectsNormalizedBonText`
+ersetzt durch `testCustomFieldIsPrefilledWithCapitalizedBonText` (Feld ohne Antippen sichtbar, Wert
+„Milch 3,5% Frisch", Antippen übernimmt ihn als Namen).
+
 ## Invarianten
 
 1. **`save()` bleibt bis auf eine gezielte Ausnahme unverändert.** Seit Issue #50, Paket 1
@@ -1130,7 +1187,9 @@ gegenseitig ein.
    existiert; der KI-Name selbst bleibt über den Listen-Treffer weiterhin wählbar).
 4. **`ResolvedReceiptLine`/`ReceiptSuggestion` (Wire-Format) bekommen keine neuen Felder** — die
    KI-Merk-Felder sind ausschließlich lokaler `EditableReceiptLine`-Zustand.
-5. **(Geändert durch Issue #65, Paket 2, 2026-09-28) Die Karte zeigt höchstens 3 andere
+5. **(Seit 2026-10-01 wieder: höchstens 3 inhaltliche Optionen plus das Textfeld = max. 4; die
+   Bon-Zeile ist entfallen, siehe „Nachtrag: Textfeld statt Bon-Zeile". Der folgende Absatz ist
+   historisch.) (Geändert durch Issue #65, Paket 2, 2026-09-28) Die Karte zeigt höchstens 3 andere
    Auswahl-Optionen plus optional die Bon-Zeile „wie auf dem Bon"**, unabhängig davon, wie viele
    `suggestions` `ReceiptResolutionService` liefert (heute bis zu 5) — Regel 4 aus
    `selectionOptions` kappt weiterhin auf max. 3 inhaltliche Kandidaten (Listen-Treffer/
@@ -1603,9 +1662,9 @@ diese Spec GREEN macht.
 
 - **AC-1:** Jede Karte zeigt den vollständigen, unveränderten Bontext (`originalName`) —
   auch bei Überlänge umbrechend, nie abgeschnitten.
-- **AC-2:** Jede Karte zeigt max. 5 Auswahlzeilen (max. 3 inhaltliche + optional die Bon-Zeile
-  „wie auf dem Bon" + „Anderer Name …") — Obergrenze seit Issue #65, Paket 2 (2026-09-28) von 4
-  auf 5 erhöht, siehe AC-21/Invariante 5.
+- **AC-2:** Jede Karte zeigt max. 4 Zeilen (max. 3 inhaltliche Auswahlzeilen + das Textfeld
+  „Anderer Name …"). Die in Issue #65, Paket 2 auf 5 erhöhte Obergrenze (Bon-Zeile) ist seit
+  2026-10-01 wieder zurückgenommen, siehe AC-27.
 - **AC-3:** Die KI-Marke ist an der KI-Options-Zeile sichtbar, einzeilig, nie umbrechend.
 - **AC-4:** Der beste Treffer / aktuelle Zustand der Zeile ist vorausgewählt. Entspricht keiner der
   bis zu 3 angezeigten Kandidaten-Zeilen dem aktuell für die Position geltenden Namen (`line.name`)
@@ -1663,12 +1722,12 @@ diese Spec GREEN macht.
   antippbar). Dass danach `UIPasteboard.general.string = line.originalName` (unverändert,
   ungetrimmt) gilt, ist NICHT automatisiert testbar (siehe „Nicht UI-testbar" im Test Plan) und
   wird per Code-Review verifiziert — dieselbe Prüftiefe wie AC-19.
-- **AC-21 (Issue #65, Paket 2 — Bon-Zeile als Auswahl):** Ist der wortweise großgeschriebene
+- **AC-21 (ENTFALLEN 2026-10-01, ersetzt durch AC-27; Issue #65, Paket 2 — Bon-Zeile als Auswahl):** Ist der wortweise großgeschriebene
   Bontext nicht case-insensitiv identisch mit dem aktuell geltenden Namen (`line.name`), erscheint
   er als eigene, antippbare Auswahlzeile „wie auf dem Bon" unmittelbar vor „Anderer Name …";
   Antippen setzt `name` auf den normalisierten Bontext, `matchedItemID = nil`,
   `resolvedByAI = false`.
-- **AC-22 (Issue #65, Paket 2 — Unterdrückung):** Die Bon-Zeile erscheint NICHT, wenn der
+- **AC-22 (ENTFALLEN 2026-10-01 mit der Bon-Zeile; Issue #65, Paket 2 — Unterdrückung):** Die Bon-Zeile erscheint NICHT, wenn der
   getrimmte Bontext kürzer als 4 Zeichen ist ODER der normalisierte Bontext case-insensitiv dem
   aktuell geltenden Namen entspricht.
 - **AC-23 (Issue #66, F001 behoben):** Löst die Namensauflösung eine Position auf einen Namen auf,
@@ -1691,6 +1750,13 @@ diese Spec GREEN macht.
   setzt `matchedItemID = nil` und `resolvedByAI = false` — dieselbe Bereinigung wie bei der Bon-Zeile
   (AC-21) und „Anderer Name …" (AC-7). Eine zuvor über eine andere Option (z. B. `.aiSuggestion`,
   `.listMatch`) gesetzte `matchedItemID` bleibt nie stehen.
+
+- **AC-27 (2026-10-01 — Textfeld mit vorausgefülltem Bontext):** Die letzte Zeile jeder Karte ist ein
+  dauerhaft sichtbares Textfeld (`customNameField`), vorausgefüllt mit dem wortweise großgeschriebenen
+  Bontext (bei leerem Bontext mit dem aktuellen Namen), unabhängig von der aktuellen Auswahl. Vor dem
+  Antippen bleibt die bisherige Auswahl gewählt. Antippen des Kreises oder des Feldes wählt die Zeile;
+  der Feldinhalt gilt sofort als Name, jede Eingabe wirkt live, Leeren fällt auf die vorherige Auswahl
+  zurück (Regel 10). Es gibt keine eigene Zeile „wie auf dem Bon" mehr.
 
 ## Alternativen (verworfen)
 

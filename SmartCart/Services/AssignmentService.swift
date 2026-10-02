@@ -6,6 +6,51 @@ import SwiftData
 // 2. Past purchase history (learned store preference)
 // 3. Visit frequency (frequent items → most-visited store)
 
+/// Warum `AssignmentService.assignDetailed` einen Artikel in einen Laden (oder in keinen) legt —
+/// wird in der Schnell-Eingabe als Satz angezeigt.
+enum AssignmentReason: Equatable {
+    case noStoresAtAll
+    case userCorrection
+    case history(count: Int, total: Int)
+    case defaultStore(group: String)
+    case onlyMatchingStore(group: String)
+    case mostVisited
+    case noStore(group: String)
+    /// Vom Nutzer in der Schnell-Eingabe gewählt (kein Ergebnis von `assignDetailed`).
+    case chosenByUser
+
+    static func groupLabel(_ group: String) -> String {
+        switch group {
+        case "drugstore": return "Drogerie"
+        case "variety":   return "Sonstiges"
+        case "hardware":  return "Baumarkt & Garten"
+        default:          return "Lebensmittel"
+        }
+    }
+
+    /// Ein Satz für die Ziel-Zeile unter dem Schnell-Eingabe-Feld.
+    var explanation: String {
+        switch self {
+        case .noStoresAtAll:
+            return "Du hast noch keinen Laden angelegt."
+        case .userCorrection:
+            return "Du hast diesen Artikel früher in diesen Laden verschoben."
+        case .history(let count, let total):
+            return "Du kaufst ihn meistens hier (\(count) von \(total) Käufen)."
+        case .defaultStore(let group):
+            return "Dein Standard-Laden für \(Self.groupLabel(group))."
+        case .onlyMatchingStore(let group):
+            return "Dein einziger Laden für \(Self.groupLabel(group))."
+        case .mostVisited:
+            return "Hier kaufst du am häufigsten ein."
+        case .noStore(let group):
+            return "Du hast noch keinen Standard-Laden für \(Self.groupLabel(group)) festgelegt (Einstellungen → Standard-Läden)."
+        case .chosenByUser:
+            return "Von dir gewählt."
+        }
+    }
+}
+
 extension AssignmentService {
 
     // MARK: - Category to store-type mapping
@@ -77,6 +122,13 @@ extension AssignmentService {
     }
 
     static func dominantStore(for itemName: String, in stores: [Store], purchaseRecords: [PurchaseRecord]) -> Store? {
+        dominantStoreDetail(for: itemName, in: stores, purchaseRecords: purchaseRecords)?.store
+    }
+
+    /// Wie `dominantStore`, liefert zusätzlich die Zahlen hinter der Entscheidung (Käufe im
+    /// dominanten Laden von allen Käufen dieses Artikels) — Grundlage für den angezeigten Grund.
+    static func dominantStoreDetail(for itemName: String, in stores: [Store], purchaseRecords: [PurchaseRecord])
+        -> (store: Store, count: Int, total: Int)? {
         let relevant = purchaseRecords.filter {
             namesRepresentSameItem($0.itemName, itemName)
         }
@@ -89,9 +141,10 @@ extension AssignmentService {
 
         let total = relevant.count
         guard let (dominantKey, dominantCount) = counts.max(by: { $0.value < $1.value }),
-              Double(dominantCount) / Double(total) > 0.5 else { return nil }
+              Double(dominantCount) / Double(total) > 0.5,
+              let store = stores.first(where: { normalizedStoreKey($0.name) == dominantKey }) else { return nil }
 
-        return stores.first { normalizedStoreKey($0.name) == dominantKey }
+        return (store, dominantCount, total)
     }
 
     // MARK: - Quantity suggestion (Issue #57)
@@ -126,90 +179,92 @@ extension AssignmentService {
     }
 
     static func assign(itemName: String, to activeStores: [Store], purchaseRecords: [PurchaseRecord] = []) -> Store? {
-        guard !activeStores.isEmpty else { return nil }
+        assignDetailed(itemName: itemName, to: activeStores, purchaseRecords: purchaseRecords).store
+    }
+
+    /// Wie `assign`, nennt aber zusätzlich den Grund der Entscheidung (Schnell-Eingabe zeigt ihn an).
+    /// Die Reihenfolge der Stufen ist unverändert; ohne Treffer steht in `reason` die Kategorie-Gruppe,
+    /// für die kein Laden gefunden wurde.
+    static func assignDetailed(itemName: String, to activeStores: [Store], purchaseRecords: [PurchaseRecord] = [])
+        -> (store: Store?, reason: AssignmentReason) {
+        guard !activeStores.isEmpty else { return (nil, .noStoresAtAll) }
 
         let nameLower = itemName.lowercased()
+        let isHardware = hardwareStoreKeywords.contains(where: { nameLower.contains($0) })
+        let isVariety = varietyStoreKeywords.contains(where: { nameLower.contains($0) })
+            || nonFoodCompoundEndings.contains(where: { nameLower.hasSuffix($0) })
+        let isDrugstore = drugstoreKeywords.contains(where: { nameLower.contains($0) })
+        let itemGroup = isHardware ? "hardware" : isVariety ? "variety" : isDrugstore ? "drugstore" : "grocery"
+
+        /// Standard-Laden vor Kaufhistorie-/Besuchsheuristik; bei genau einem Kandidaten „einziger Laden“.
+        func choose(_ group: String, _ candidates: [Store]) -> (store: Store?, reason: AssignmentReason)? {
+            if let preferred = preferredDefault(for: group, among: activeStores) {
+                return (preferred, .defaultStore(group: group))
+            }
+            if let best = bestFallback(among: candidates, purchaseRecords: purchaseRecords) {
+                return (best, candidates.count == 1 ? .onlyMatchingStore(group: group) : .mostVisited)
+            }
+            return nil
+        }
 
         // 0a. Explicit user correction (Quick-Add toast) always wins — it's a stronger signal
         // than a merely inferred purchase-history pattern, and doesn't need >1 purchase to apply.
         if let overrideName = StoreAssignmentOverrideService.shared.storeName(for: itemName),
            let overrideStore = activeStores.first(where: { $0.name.lowercased() == overrideName.lowercased() }) {
-            return overrideStore
+            return (overrideStore, .userCorrection)
         }
 
         // 0b. History-based: if a dominant store is found, use it
-        if let dominant = dominantStore(for: itemName, in: activeStores, purchaseRecords: purchaseRecords) {
-            return dominant
+        if let dominant = dominantStoreDetail(for: itemName, in: activeStores, purchaseRecords: purchaseRecords) {
+            return (dominant.store, .history(count: dominant.count, total: dominant.total))
         }
 
         // 1. Hardware/DIY items → hardware store, variety store as fallback
-        let isHardware = hardwareStoreKeywords.contains(where: { nameLower.contains($0) })
         if isHardware {
             let hardwareStores = activeStores.filter { $0.categories.contains(where: { Category.hardware.contains($0) }) }
-            if let best = preferredDefault(for: "hardware", among: hardwareStores)
-                ?? bestFallback(among: hardwareStores, purchaseRecords: purchaseRecords) {
-                return best
-            }
+            if let result = choose("hardware", hardwareStores) { return result }
             // No hardware store → fall through to variety
             let varietyFallback = activeStores.filter { $0.categories.contains(where: { Category.variety.contains($0) }) }
-            if let best = preferredDefault(for: "variety", among: varietyFallback)
-                ?? bestFallback(among: varietyFallback, purchaseRecords: purchaseRecords) {
-                return best
-            }
+            if let result = choose("variety", varietyFallback) { return result }
         }
 
         // 2. Variety/discount store items → variety store
-        let isVariety = varietyStoreKeywords.contains(where: { nameLower.contains($0) })
-            || nonFoodCompoundEndings.contains(where: { nameLower.hasSuffix($0) })
         if isVariety {
             let varietyStores = activeStores.filter { store in
                 store.categories.contains(where: { Category.variety.contains($0) })
             }
-            if let best = preferredDefault(for: "variety", among: varietyStores)
-                ?? bestFallback(among: varietyStores, purchaseRecords: purchaseRecords) {
-                return best
-            }
+            if let result = choose("variety", varietyStores) { return result }
         }
 
         // 3. Drugstore items → drugstore-type store (DM, Rossmann, etc.)
-        let isDrugstore = drugstoreKeywords.contains(where: { nameLower.contains($0) })
         if isDrugstore {
             let drugstores = activeStores.filter { store in
                 store.categories.contains(where: { Category.drugstore.contains($0) })
                     && !store.categories.contains(where: { Category.grocery.contains($0) })
             }
-            if let best = preferredDefault(for: "drugstore", among: drugstores)
-                ?? bestFallback(among: drugstores, purchaseRecords: purchaseRecords) {
-                return best
-            }
+            if let result = choose("drugstore", drugstores) { return result }
         }
 
-        // 4. High-frequency food → store with highest visit frequency
-        let isFrequentFood = highFrequencyFoodKeywords.contains(where: { nameLower.contains($0) })
-        if isFrequentFood {
-            let groceryStores = activeStores.filter { store in
-                store.categories.contains(where: { Category.grocery.contains($0) })
-            }
-            return preferredDefault(for: "grocery", among: groceryStores)
-                ?? bestFallback(among: groceryStores, purchaseRecords: purchaseRecords)
-        }
-
-        // 5. Default: dominant grocery store by real purchase history (visit frequency only as tiebreak)
+        // 4./5. Food (high-frequency or default) → dominant grocery store by real purchase history
+        // (visit frequency only as tiebreak)
         let groceryStores = activeStores.filter { store in
             store.categories.contains(where: { Category.grocery.contains($0) })
         }
-        return preferredDefault(for: "grocery", among: groceryStores)
-            ?? bestFallback(among: groceryStores, purchaseRecords: purchaseRecords)
+        if let result = choose("grocery", groceryStores) { return result }
+        return (nil, .noStore(group: itemGroup))
     }
 
     /// Nutzer-konfigurierter Standard-Laden (`DefaultStoreService`, Settings → Standard-Läden)
-    /// für eine bereits nach Kategorie gefilterte Kandidatenliste. Vor jedem `bestFallback`-Aufruf
-    /// geprüft: eine explizite Nutzer-Einstellung soll immer Vorrang vor der nur abgeleiteten
-    /// Kaufhistorie-/Besuchsfrequenz-Heuristik haben — dasselbe Prinzip wie die Artikelname-
-    /// Korrektur in Stufe 0a oben, nur auf Kategorie-Ebene statt pro Artikel. Liefert `nil`, wenn
-    /// nichts konfiguriert ist ODER der konfigurierte Laden in `candidates` fehlt (deaktiviert,
-    /// gelöscht, oder passt nicht mehr zur Kategorie) — der Aufrufer fällt dann automatisch auf
-    /// `bestFallback` zurück, kein gesonderter Cleanup nötig.
+    /// für eine Kategorie-Gruppe. Vor jedem `bestFallback`-Aufruf geprüft: eine explizite
+    /// Nutzer-Einstellung hat immer Vorrang vor der nur abgeleiteten Kaufhistorie-/
+    /// Besuchsfrequenz-Heuristik — dasselbe Prinzip wie die Artikelname-Korrektur in Stufe 0a.
+    ///
+    /// Gesucht wird unter ALLEN aktiven Läden, nicht nur unter denen, deren `categories` zur
+    /// Gruppe passen: Der Nutzer hat den Laden ausdrücklich gewählt (Nutzerbericht 02.10.2026:
+    /// „Lidl“ ließ sich nicht als Standard für Lebensmittel wählen, weil der Laden ohne
+    /// Lebensmittel-Kategorien angelegt war und deshalb nie als Kandidat erschien). Liefert `nil`,
+    /// wenn nichts konfiguriert ist ODER der konfigurierte Laden nicht mehr aktiv ist — der
+    /// Aufrufer fällt dann automatisch auf `bestFallback` zurück, kein gesonderter Cleanup nötig.
     private static func preferredDefault(for groupKey: String, among candidates: [Store]) -> Store? {
         guard let name = DefaultStoreService.shared.storeName(for: groupKey) else { return nil }
         return candidates.first { $0.name.lowercased() == name.lowercased() }

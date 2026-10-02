@@ -463,16 +463,26 @@ struct DefaultStoresSettingsView: View {
 
             Section {
                 ForEach(groups, id: \.key) { group in
-                    let candidates = activeStores.filter { store in
+                    // Alle aktiven Läden sind wählbar — passende (nach Kategorie) stehen vorn. Ein
+                    // Laden ohne passende Kategorien darf trotzdem Standard sein; die Wahl ist
+                    // ausdrücklich und gilt vor der automatischen Zuordnung.
+                    let matching = activeStores.filter { store in
                         store.categories.contains(where: { group.categories.contains($0) })
                     }
+                    let others = activeStores.filter { store in !matching.contains(where: { $0.id == store.id }) }
+                    let current = selections[group.key] ?? ""
                     Picker(group.label, selection: binding(for: group.key)) {
                         Text("Automatisch").tag("")
-                        ForEach(candidates) { store in
+                        ForEach(matching + others) { store in
                             Text("\(store.emoji) \(store.name)").tag(store.name)
                         }
+                        // Gespeicherter Laden ist inzwischen deaktiviert/gelöscht: sichtbar halten,
+                        // statt eine leere Auswahl zu zeigen.
+                        if !current.isEmpty, !activeStores.contains(where: { $0.name == current }) {
+                            Text("\(current) (nicht aktiv)").tag(current)
+                        }
                     }
-                    .disabled(candidates.isEmpty)
+                    .disabled(activeStores.isEmpty)
                 }
             }
             .listRowBackground(Color.surface)

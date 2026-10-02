@@ -127,4 +127,78 @@ final class AssignmentServiceTests: XCTestCase {
 
         XCTAssertEqual(resultOrderA?.id, resultOrderB?.id, "Bei zwei gleichnamigen Stores muss dieselbe id gewinnen, unabhängig von der Reihenfolge im übergebenen Array")
     }
+
+    // MARK: - Standard-Laden (Nutzerbericht 02.10.2026)
+
+    /// Ein ausdrücklich gewählter Standard-Laden gilt auch dann, wenn er ohne Lebensmittel-
+    /// Kategorien angelegt wurde — vorher erschien er nie als Kandidat.
+    func testExplicitDefaultStoreWinsEvenWithoutMatchingCategories() {
+        let lidl = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")          // categories == []
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#CC0000", visitsPerWeek: 3,
+                         categories: Category.grocery)
+        DefaultStoreService.shared.setStoreName("Lidl", for: "grocery")
+        defer { DefaultStoreService.shared.setStoreName(nil, for: "grocery") }
+
+        let result = AssignmentService.assign(itemName: "Nudeln", to: [rewe, lidl])
+
+        XCTAssertEqual(result?.name, "Lidl")
+    }
+
+    /// Ist der gewählte Standard-Laden nicht (mehr) aktiv, greift weiter die automatische Zuordnung.
+    func testDefaultStoreThatIsNotActiveFallsBackToAutomatic() {
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#CC0000", categories: Category.grocery)
+        DefaultStoreService.shared.setStoreName("Lidl", for: "grocery")
+        defer { DefaultStoreService.shared.setStoreName(nil, for: "grocery") }
+
+        let result = AssignmentService.assign(itemName: "Nudeln", to: [rewe])
+
+        XCTAssertEqual(result?.name, "Rewe")
+    }
+
+    // MARK: - Grund der Zuordnung (Schnell-Eingabe zeigt ihn an)
+
+    func testAssignDetailedReportsPurchaseCountsAsReason() {
+        let lidl = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", categories: Category.grocery)
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#CC0000", categories: Category.grocery)
+        let purchases = records("Hackfleisch", storeName: "Lidl", count: 4) + records("Hackfleisch", storeName: "Rewe", count: 1)
+
+        let result = AssignmentService.assignDetailed(itemName: "Hackfleisch", to: [lidl, rewe], purchaseRecords: purchases)
+
+        XCTAssertEqual(result.store?.name, "Lidl")
+        XCTAssertEqual(result.reason, .history(count: 4, total: 5))
+    }
+
+    func testAssignDetailedReportsDefaultStoreAsReason() {
+        let lidl = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", categories: Category.grocery)
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#CC0000", categories: Category.grocery)
+        DefaultStoreService.shared.setStoreName("Lidl", for: "grocery")
+        defer { DefaultStoreService.shared.setStoreName(nil, for: "grocery") }
+
+        let result = AssignmentService.assignDetailed(itemName: "Nudeln", to: [rewe, lidl])
+
+        XCTAssertEqual(result.store?.name, "Lidl")
+        XCTAssertEqual(result.reason, .defaultStore(group: "grocery"))
+    }
+
+    /// Kein passender Laden: kein Store, aber ein Grund, der die Gruppe nennt (statt „Nirgendwo“).
+    func testAssignDetailedWithoutMatchingStoreNamesTheGroup() {
+        let dm = Store(name: "dm", emoji: "💄", colorHex: "#C2185B", categories: Category.drugstore)
+        DefaultStoreService.shared.setStoreName(nil, for: "grocery")
+
+        let result = AssignmentService.assignDetailed(itemName: "Nudeln", to: [dm])
+
+        XCTAssertNil(result.store)
+        XCTAssertEqual(result.reason, .noStore(group: "grocery"))
+        XCTAssertTrue(result.reason.explanation.contains("Lebensmittel"))
+    }
+
+    func testAssignAndAssignDetailedAgree() {
+        let lidl = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 2, categories: Category.grocery)
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#CC0000", visitsPerWeek: 1, categories: Category.grocery)
+        let purchases = records("Milch", storeName: "Rewe", count: 3)
+
+        XCTAssertEqual(
+            AssignmentService.assign(itemName: "Milch", to: [lidl, rewe], purchaseRecords: purchases)?.name,
+            AssignmentService.assignDetailed(itemName: "Milch", to: [lidl, rewe], purchaseRecords: purchases).store?.name)
+    }
 }

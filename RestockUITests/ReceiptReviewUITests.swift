@@ -74,12 +74,8 @@ final class ReceiptReviewUITests: XCTestCase {
 
         // MARK: Issue #65, Paket 2 — Bon-Zeile
 
-        /// `aiLine` hat keine `suggestions`, nur den KI-Vorschlag — die Bon-Zeile (Regel 7) steht
-        /// deshalb an Position 1, direkt nach der KI-Zeile. „Anderer Name …" rutscht dadurch von
-        /// `option.1` auf `option.2` (siehe `docs/specs/views/receipt-review-card.md`, Abschnitt
-        /// „Korrektur einer Falschannahme aus Issue #65").
-        static let aiLineReceiptTextOptionIndex = 1
-        static let aiLineCustomOptionIndex = 2
+        /// Position der Eingabezeile an `aiLine` (KI-Zeile an 0, danach das Feld).
+        static let aiLineCustomOptionIndex = 1
         /// `normalizedReceiptText("MILCH 3,5% FRISCH")` — Anzeigetext der Bon-Zeile an `aiLine`.
         static let aiLineReceiptText = "Milch 3,5% Frisch"
         /// Platzhalter des Feldes „Anderer Name …" — `XCUIElement.value` eines leeren `TextField`
@@ -271,6 +267,18 @@ final class ReceiptReviewUITests: XCTestCase {
     }
 
     /// Wie `waitUntilLabel`, nur als Abfrage ohne Urteil.
+    /// Leert ein Textfeld über die Tastatur und wiederholt das Löschen, falls nach einem Durchgang noch
+    /// Text steht. Das Feld ist seit dem Textfeld-Umbau mit dem Bontext (17 Zeichen) vorbelegt; auf dem
+    /// langsamen CI-Runner kam ein einzelner Durchgang mit vielen Löschtasten vereinzelt zu früh zurück
+    /// (gemessen: „Milch“ blieb stehen). `value` eines leeren Feldes ist der Platzhalter.
+    private func clear(_ field: XCUIElement) {
+        for _ in 0..<3 {
+            let value = (field.value as? String) ?? ""
+            if value.isEmpty || value == Seed.customFieldPlaceholder { return }
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count))
+        }
+    }
+
     private func labelOf(_ element: XCUIElement, contains fragment: String, within timeout: TimeInterval) -> Bool {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
@@ -448,8 +456,6 @@ final class ReceiptReviewUITests: XCTestCase {
     func testCustomNameOptionOpensFocusedTextField() {
         let app = openedReviewSheet()
 
-        // Issue #65, Paket 2: Die neue Bon-Zeile besetzt option.1, "Anderer Name …" rutscht auf
-        // option.2 (Seed.aiLineCustomOptionIndex).
         let customOption = element(app, "receiptReview.line.\(Seed.aiLine).option.\(Seed.aiLineCustomOptionIndex)")
         XCTAssertTrue(customOption.waitForExistence(timeout: 5), "Auswahlzeile für den eigenen Namen fehlt.")
         customOption.tap()
@@ -478,8 +484,6 @@ final class ReceiptReviewUITests: XCTestCase {
                       "Vorbedingung: Das Häkchen nennt nicht den bisherigen Namen der Position — "
                       + "bekommen: \(checkbox.label)")
 
-        // Issue #65, Paket 2: Die neue Bon-Zeile besetzt option.1, "Anderer Name …" rutscht auf
-        // option.2 (Seed.aiLineCustomOptionIndex).
         let customOption = element(app, "receiptReview.line.\(line).option.\(Seed.aiLineCustomOptionIndex)")
         XCTAssertTrue(customOption.waitForExistence(timeout: 5), "Auswahlzeile für den eigenen Namen fehlt.")
         customOption.tap()
@@ -930,8 +934,6 @@ final class ReceiptReviewUITests: XCTestCase {
                       "Vorbedingung: Das Häkchen nennt nicht den bisherigen Namen — "
                       + "bekommen: \(checkbox.label)")
 
-        // Issue #65, Paket 2: Die neue Bon-Zeile besetzt option.1, "Anderer Name …" rutscht auf
-        // option.2 (Seed.aiLineCustomOptionIndex).
         let customOption = element(app, "receiptReview.line.\(line).option.\(Seed.aiLineCustomOptionIndex)")
         XCTAssertTrue(customOption.waitForExistence(timeout: 5),
                       "Auswahlzeile für den eigenen Namen fehlt.")
@@ -945,7 +947,7 @@ final class ReceiptReviewUITests: XCTestCase {
         let existing = (field.value as? String) ?? ""
         XCTAssertFalse(existing.isEmpty,
                        "Vorbedingung: Das Feld ist nicht vorbelegt — dann prüft dieser Test nichts.")
-        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
+        clear(field)
 
         // Das Feld selbst bleibt bewusst leer (sonst könnte man nie einen neuen Namen tippen),
         // aber die Position behält den Namen, der vor dem Öffnen des Feldes galt.
@@ -981,8 +983,6 @@ final class ReceiptReviewUITests: XCTestCase {
                       "Vorbedingung: Das Häkchen nennt nicht den bisherigen Namen — "
                       + "bekommen: \(checkbox.label)")
 
-        // Issue #65, Paket 2: Die neue Bon-Zeile besetzt option.1, "Anderer Name …" rutscht auf
-        // option.2 (Seed.aiLineCustomOptionIndex).
         let customOption = element(app, "receiptReview.line.\(line).option.\(Seed.aiLineCustomOptionIndex)")
         XCTAssertTrue(customOption.waitForExistence(timeout: 5),
                       "Auswahlzeile für den eigenen Namen fehlt.")
@@ -1036,23 +1036,20 @@ final class ReceiptReviewUITests: XCTestCase {
         copyItem.tap()
     }
 
-    /// AC-21 — Antippen der Bon-Zeile („wie auf dem Bon") übernimmt den wortweise normalisierten
-    /// Bontext als Namen der Position und markiert genau diese Zeile als ausgewählt.
-    func testTappingReceiptTextOptionSelectsNormalizedBonText() {
+    /// Das Feld „Anderer Name …" ist ohne Antippen sichtbar und mit dem wortweise
+    /// großgeschriebenen Bontext vorausgefüllt; Antippen übernimmt ihn als Namen der Position.
+    func testCustomFieldIsPrefilledWithCapitalizedBonText() {
         let app = openedReviewSheet()
 
-        let receiptTextOption = element(app, "receiptReview.line.\(Seed.aiLine).option.\(Seed.aiLineReceiptTextOptionIndex)")
-        XCTAssertTrue(receiptTextOption.waitForExistence(timeout: 5), "Bon-Zeilen-Auswahl fehlt.")
-        XCTAssertTrue(receiptTextOption.label.contains(Seed.aiLineReceiptText),
-                      "Die Bon-Zeile zeigt nicht den normalisierten Bontext — bekommen: \(receiptTextOption.label)")
-        receiptTextOption.tap()
+        let field = app.textFields["receiptReview.line.\(Seed.aiLine).customNameField"]
+        XCTAssertTrue(field.waitForExistence(timeout: 5), "Eingabefeld ist nicht ohne Antippen sichtbar.")
+        XCTAssertEqual(field.value as? String, Seed.aiLineReceiptText,
+                       "Das Feld ist nicht mit dem großgeschriebenen Bontext vorausgefüllt.")
+
+        field.tap()
 
         let checkbox = element(app, "receiptReview.line.\(Seed.aiLine).checkbox")
-        XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "Häkchen der KI-Zeile fehlt.")
-        let tookOverNormalizedName = labelOf(checkbox, contains: Seed.aiLineReceiptText, within: 5)
-        XCTAssertTrue(tookOverNormalizedName,
-                      "Die Position hat den normalisierten Bontext nicht übernommen — bekommen: \(checkbox.label)")
-        XCTAssertTrue(receiptTextOption.isSelected,
-                      "Die angetippte Bon-Zeile ist danach nicht als ausgewählt gekennzeichnet.")
+        XCTAssertTrue(labelOf(checkbox, contains: Seed.aiLineReceiptText, within: 5),
+                      "Die Position hat den Bontext nicht übernommen — bekommen: \(checkbox.label)")
     }
 }

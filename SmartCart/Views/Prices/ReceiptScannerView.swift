@@ -650,7 +650,7 @@ struct ReceiptScannerView: View {
                         .textCase(nil)
                         .accessibilityIdentifier("receiptReview.sectionHeader")
                 } footer: {
-                    Text("Tippe eine Zeile an, um den Artikel zu wählen, oder \"Anderer Name …\" für eine eigene Eingabe.")
+                    Text("Tippe eine Zeile an, um den Artikel zu wählen, oder ändere in der letzten Zeile den vorausgefüllten Bontext.")
                 }
 
                 if let totalMismatchWarning {

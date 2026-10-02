@@ -18,11 +18,8 @@ enum ReceiptNameOption: Identifiable {
     case aiSuggestion(name: String)
     /// Rückfall, wenn es weder Treffer noch KI-Vorschlag gibt: der heutige Name der Zeile.
     case currentName(name: String)
-    /// Der gedruckte Bontext, wortweise großgeschrieben — Marke „wie auf dem Bon" (Issue #65).
-    /// Erscheint erst NACH den inhaltlichen Kandidaten (Regeln 1-6) und zählt nicht zu deren
-    /// Kappung auf max. 3 (Regel 4) — sie ist ein Add-on, immer unmittelbar vor „Anderer Name …".
-    case receiptText(name: String)
-    /// „Anderer Name …" — immer die letzte Zeile.
+    /// Das Eingabefeld — immer die letzte Zeile, ab Start mit dem Bontext (wortweise
+    /// großgeschrieben) vorausgefüllt und dauerhaft sichtbar.
     case custom
 
     var id: String {
@@ -30,7 +27,6 @@ enum ReceiptNameOption: Identifiable {
         case .listMatch(let suggestion): return "listMatch-\(suggestion.id)"
         case .aiSuggestion(let name):    return "ai-\(name)"
         case .currentName(let name):     return "current-\(name)"
-        case .receiptText(let name):     return "bon-\(name)"
         case .custom:                    return "custom"
         }
     }
@@ -41,7 +37,6 @@ enum ReceiptNameOption: Identifiable {
         case .listMatch(let suggestion): return suggestion.name
         case .aiSuggestion(let name):    return name
         case .currentName(let name):     return name
-        case .receiptText(let name):     return name
         case .custom:                    return "Anderer Name …"
         }
     }
@@ -52,7 +47,6 @@ enum ReceiptNameOption: Identifiable {
         case .listMatch(let suggestion): return suggestion.name
         case .aiSuggestion(let name):    return name
         case .currentName(let name):     return name
-        case .receiptText(let name):     return name
         case .custom:                    return nil
         }
     }
@@ -118,7 +112,10 @@ struct ReceiptReviewCard: View {
         .background(Color.surface, in: RoundedRectangle(cornerRadius: RCRadius.card))
         .overlay(RoundedRectangle(cornerRadius: RCRadius.card).strokeBorder(Color.hairline))
         .onAppear {
-            if options.isEmpty { options = Self.selectionOptions(for: line) }
+            if options.isEmpty {
+                options = Self.selectionOptions(for: line)
+                customName = Self.customFieldSeed(for: line)
+            }
         }
         // Regel 9 (Issue #50, Paket 1): Ändert sich `line.name` von AUSSEN und passt danach keine
         // der bestehenden Zeilen mehr dazu, wird die Liste EINMAL nachgeführt. Nach einem
@@ -206,8 +203,8 @@ struct ReceiptReviewCard: View {
     @ViewBuilder
     private func optionRow(_ option: ReceiptNameOption, at position: Int) -> some View {
         let identifier = "receiptReview.line.\(index).option.\(position)"
-        if case .custom = option, customActive {
-            customNameRow()
+        if case .custom = option {
+            customNameRow(identifier: identifier)
         } else {
             HStack(spacing: 8) {
                 Button {
@@ -217,19 +214,11 @@ struct ReceiptReviewCard: View {
                         radio(filled: isSelected(option))
                         Text(option.displayName)
                             .font(.system(size: 15))
-                            .foregroundStyle(isCustom(option) ? Color.textSecondary : Color.ink)
+                            .foregroundStyle(Color.ink)
                             .lineLimit(1)
                         Spacer(minLength: 4)
                         if case .listMatch = option {
                             Text("auf deiner Liste")
-                                .font(.system(size: 11))
-                                .foregroundStyle(Color.textSecondary)
-                                .fixedSize()
-                        }
-                        // Issue #65, Paket 2: dieselbe Marken-Form wie „auf deiner Liste",
-                        // damit die Herkunft der Zeile ohne zweite Gestaltungssprache ablesbar ist.
-                        if case .receiptText = option {
-                            Text("wie auf dem Bon")
                                 .font(.system(size: 11))
                                 .foregroundStyle(Color.textSecondary)
                                 .fixedSize()
@@ -283,25 +272,46 @@ struct ReceiptReviewCard: View {
         }
     }
 
-    private func customNameRow() -> some View {
+    /// Immer sichtbares Eingabefeld, ab Start mit dem Bontext vorausgefüllt. Antippen des Kreises
+    /// oder des Felds wählt die Zeile; jede Eingabe wirkt sofort auf den Namen der Position.
+    private func customNameRow(identifier: String) -> some View {
         HStack(spacing: 10) {
+            Button {
+                Haptics.impact(.light)
+                activateCustom()
+                DispatchQueue.main.async { customFocused = true }
+            } label: {
+                radio(filled: customActive)
+                    .frame(height: 48)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Eigener Name")
+            .accessibilityIdentifier(identifier)
+            .accessibilityAddTraits(customActive ? [.isSelected] : [])
+
             TextField("Anderer Name …", text: $customName)
                 .font(.system(size: 15))
+                .foregroundStyle(Color.ink)
                 .focused($customFocused)
                 .submitLabel(.done)
                 .accessibilityIdentifier("receiptReview.line.\(index).customNameField")
-                // Issue #68: Diese Zeile wird nur bei `customActive` gezeigt und ist dann die
-                // gewählte Option (`isSelected(.custom)`) — die Bedienhilfe muss das ebenso melden
-                // wie bei den übrigen Auswahlzeilen.
+                .onChange(of: customFocused) { _, focused in
+                    if focused && !customActive { activateCustom() }
+                }
+                // Issue #68: Ist die Eingabezeile die gewählte Option (`isSelected(.custom)`), muss
+                // die Bedienhilfe das am Feld ebenso melden wie bei den übrigen Auswahlzeilen.
                 .accessibilityAddTraits(isSelected(.custom) ? [.isSelected] : [])
                 .onChange(of: customName) { _, newValue in
+                    guard customActive else { return }
                     Self.applyCustomNameOrFallback(&line, name: newValue,
                                                    previousSelection: previousSelectionBeforeCustom
                                                        ?? (line.name, line.matchedItemID, line.resolvedByAI))
                 }
-            Spacer(minLength: 0)
+            Image(systemName: "pencil")
+                .font(.system(size: 12))
+                .foregroundStyle(Color.textSecondary)
         }
-        .padding(.leading, 32)
         .frame(height: 48)
         .overlay(alignment: .bottom) {
             Rectangle().fill(Color.hairline).frame(height: 1)
@@ -417,8 +427,6 @@ struct ReceiptReviewCard: View {
                 && line.name.caseInsensitiveCompare(line.aiSuggestedName ?? name) == .orderedSame
         case .currentName(let name):
             return line.name.caseInsensitiveCompare(name) == .orderedSame
-        case .receiptText(let name):
-            return line.name.caseInsensitiveCompare(name) == .orderedSame
         case .custom:
             return false
         }
@@ -431,17 +439,23 @@ struct ReceiptReviewCard: View {
     private func select(_ option: ReceiptNameOption) {
         Haptics.impact(.light)
         if case .custom = option {
-            // Regel 10: die geltende Auswahl festhalten, BEVOR das Feld sie überschreiben kann.
-            previousSelectionBeforeCustom = (line.name, line.matchedItemID, line.resolvedByAI)
-            customName = line.name
-            customActive = true
-            // Das Feld existiert erst nach diesem State-Wechsel — Fokus deshalb im nächsten
-            // Runloop setzen, sonst läuft `@FocusState` ins Leere.
+            activateCustom()
             DispatchQueue.main.async { customFocused = true }
             return
         }
         customActive = false
         Self.applySelection(&line, option: option)
+    }
+
+    /// Wählt die Eingabezeile. Regel 10: die geltende Auswahl wird festgehalten, BEVOR das Feld
+    /// sie überschreibt — bei leerem Feld fällt die Zeile darauf zurück.
+    private func activateCustom() {
+        guard !customActive else { return }
+        previousSelectionBeforeCustom = (line.name, line.matchedItemID, line.resolvedByAI)
+        customActive = true
+        Self.applyCustomNameOrFallback(&line, name: customName,
+                                       previousSelection: previousSelectionBeforeCustom
+                                           ?? (line.name, line.matchedItemID, line.resolvedByAI))
     }
 
     private func syncEditorFields() {
@@ -498,17 +512,11 @@ struct ReceiptReviewCard: View {
         // 6. Gar kein Kandidat: den heutigen Namen anbieten.
         if candidates.isEmpty { candidates = [.currentName(name: line.name)] }
 
-        // 7. (Issue #65) Bontext als eigene Auswahlzeile anbieten, sofern nicht unterdrückt.
-        if shouldOfferReceiptTextOption(originalName: line.originalName, selectedName: line.name) {
-            candidates.append(.receiptText(name: normalizedReceiptText(
-                line.originalName.trimmingCharacters(in: .whitespaces))))
-        }
-
-        // 8. „Anderer Name …" immer als letzte Zeile.
+        // 7. Das Eingabefeld „Anderer Name …" immer als letzte Zeile.
         return candidates + [.custom]
     }
 
-    /// Wortweise Großschreibung des gedruckten Bontexts für die Auswahlzeile „wie auf dem Bon"
+    /// Wortweise Großschreibung des gedruckten Bontexts für die Vorausfüllung des Textfelds
     /// (Issue #65). Bewusst NICHT `ReceiptParserService.smartCapitalize` — die kapitalisiert nur
     /// das erste Wort und wirkt nur bei durchgehender Großschreibung; ihre vier bestehenden
     /// Aufrufstellen dort verfolgen eine andere Absicht (Normalform für Aliase/Matching, nicht
@@ -518,18 +526,6 @@ struct ReceiptReviewCard: View {
             guard let first = word.first else { return "" }
             return String(first).uppercased() + word.dropFirst().lowercased()
         }.joined(separator: " ")
-    }
-
-    /// Mindestlänge des gedruckten Bontexts, ab der die Bon-Zeile überhaupt angeboten wird —
-    /// „BTR" (3 Zeichen) ist das vom PO selbst genannte Unsinns-Beispiel und fällt damit heraus.
-    private static let receiptTextMinLength = 4
-
-    /// Zwei Bedingungen (Issue #65): Mindestlänge UND Namensungleichheit zum AKTUELL gewählten
-    /// Namen — nicht zu allen angezeigten Kandidaten.
-    static func shouldOfferReceiptTextOption(originalName: String, selectedName: String) -> Bool {
-        let trimmed = originalName.trimmingCharacters(in: .whitespaces)
-        guard trimmed.count >= receiptTextMinLength else { return false }
-        return normalizedReceiptText(trimmed).caseInsensitiveCompare(selectedName) != .orderedSame
     }
 
     /// Übernimmt eine gewählte Option in die Zeile — Zeichen für Zeichen dieselben Zuweisungen
@@ -550,15 +546,16 @@ struct ReceiptReviewCard: View {
             line.name = name
             line.matchedItemID = nil
             line.resolvedByAI = false
-        case .receiptText(let name):
-            // Gleiche Form wie `.currentName` — die Bon-Zeile trägt weder einen Listen- noch
-            // einen KI-Treffer (Issue #65).
-            line.name = name
-            line.matchedItemID = nil
-            line.resolvedByAI = false
         case .custom:
             break
         }
+    }
+
+    /// Vorausfüllung des Felds „Anderer Name …": der gedruckte Bontext, wortweise
+    /// großgeschrieben. Nur wenn der leer ist, der aktuelle Name.
+    static func customFieldSeed(for line: EditableReceiptLine) -> String {
+        let printed = line.originalName.trimmingCharacters(in: .whitespacesAndNewlines)
+        return printed.isEmpty ? line.name : normalizedReceiptText(printed)
     }
 
     /// Eigener Name — löst Artikel-Identität und KI-Kennzeichnung, wie früher das freie
