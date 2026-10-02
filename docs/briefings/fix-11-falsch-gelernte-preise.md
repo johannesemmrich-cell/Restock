@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/models/legacy-price-reset-migration.md
-spec_sha256: 0f86b582c2061bf46a1248f44618e24eda168a49866e4d689687be4b114b55ba
+spec_sha256: 4856d935eec20c27ea20ce8b138215a73d1e5ccc0664780ee3a39dcad6587fca
 ---
 
 # PO-Briefing: fix-11-falsch-gelernte-preise

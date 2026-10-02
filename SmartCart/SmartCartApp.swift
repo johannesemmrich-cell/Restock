@@ -36,6 +36,8 @@ struct SmartCartApp: App {
             Self.seedQuantitySuggestionForUITestsIfNeeded(context: container.mainContext)
             Self.clearShoppingRouteSeedForUITestsIfNeeded(context: container.mainContext)
             Self.seedShoppingRouteForUITestsIfNeeded(context: container.mainContext)
+            Self.clearLegacyLearnedPriceSeedForUITestsIfNeeded(context: container.mainContext)
+            Self.seedLegacyLearnedPriceForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
 
@@ -288,6 +290,44 @@ struct SmartCartApp: App {
         try? context.save()
     }
 
+    /// UI-Test-Seed für den Altlast-Preis-Reset (Issue #11, `LegacyLearnedPriceResetUITests`):
+    /// Laden „Altbon“ mit gelerntem Altwert 1,56 für „laugenbrötchen“ OHNE Einheit, dazu
+    /// „Laugenbrötchen“ (abgehakt) und „Laugenbrötchen groß“ (offen) mit diesem Altwert sowie
+    /// „Kontrollbrot“ mit manuellem Preis 2,50. Der Altzustand wird nach der Konstruktion von Hand
+    /// gesetzt (der Konstruktor verwirft den Altwert seit #10 selbst). Entfernt das
+    /// Migrations-Flag, damit die Migration im normalen App-Start (`.task`) läuft.
+    /// Only runs on `-seedLegacyLearnedPriceForUITests`, DEBUG-only.
+    private static func seedLegacyLearnedPriceForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedLegacyLearnedPriceForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        UserDefaults.standard.removeObject(forKey: LegacyLearnedPriceReset.flagKey)
+        let store = Store(name: "Altbon", emoji: "🥐", colorHex: "#AA5500")
+        store.learnedPrices["laugenbrötchen"] = 1.56
+        context.insert(store)
+        let seeds: [(name: String, price: Double, completed: Bool)] = [
+            ("Laugenbrötchen", 1.56, true),
+            ("Laugenbrötchen groß", 1.56, false),
+            ("Kontrollbrot", 2.50, false)
+        ]
+        for seed in seeds {
+            let item = ShoppingItem(name: seed.name, quantityAmount: 1, store: store)
+            item.estimatedPrice = seed.price
+            item.estimatedPriceIsAutoDerived = false
+            item.isCompleted = seed.completed
+            context.insert(item)
+        }
+        try? context.save()
+    }
+
+    /// Räumt den Seed oben samt Migrations-Flag wieder weg — `LegacyLearnedPriceResetUITests.tearDown()`
+    /// startet die App einmal mit diesem Argument. Only runs on `-clearLegacyLearnedPriceSeedForUITests`, DEBUG-only.
+    private static func clearLegacyLearnedPriceSeedForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-clearLegacyLearnedPriceSeedForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        UserDefaults.standard.removeObject(forKey: LegacyLearnedPriceReset.flagKey)
+        try? context.save()
+    }
+
     private static func deleteAllStoresAndItems(context: ModelContext) {
         if let items = try? context.fetch(FetchDescriptor<ShoppingItem>()) {
             for item in items { context.delete(item) }
@@ -525,6 +565,7 @@ struct SmartCartApp: App {
                 }
                 .task {
                     PriceProvenanceMigration.runIfNeeded(context: container.mainContext)
+                    LegacyLearnedPriceReset.runIfNeeded(context: container.mainContext)
                     await SyncCoordinator.shared.resubscribeAll()
                 }
                 // App-wide pull for ALL shared stores: immediately on every (re)activation and

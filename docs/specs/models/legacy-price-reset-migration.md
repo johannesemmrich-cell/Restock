@@ -129,7 +129,7 @@ enum LegacyLearnedPriceReset {
 - DEBUG-Seed `-seedLegacyLearnedPriceForUITests` (Muster
   `seedQuantitySuggestionForUITestsIfNeeded`): `deleteAllStoresAndItems`, Flag
   (`UserDefaults.standard.removeObject(forKey: flagKey)`) entfernen, Laden „Altbon“ mit
-  `learnedPrices["laugenbrötchen"] = 1.56` **ohne** `learnedPriceUnits`; vier Artikel, deren
+  `learnedPrices["laugenbrötchen"] = 1.56` **ohne** `learnedPriceUnits`; drei Artikel, deren
   `estimatedPrice`/`estimatedPriceIsAutoDerived` nach der Konstruktion von Hand auf den
   Altzustand gesetzt wird (der Konstruktor würde den Altwert seit #10 selbst verwerfen):
   „Laugenbrötchen“ abgehakt (1,56, `false`), „Laugenbrötchen groß“ offen (1,56, `false`),
@@ -171,38 +171,38 @@ Der Test läuft in der Scheme-Sprache Deutsch.
 
 ## Acceptance Criteria
 
-- AC1: Ein Artikel mit Store, `estimatedPriceIsAutoDerived == false`, `estimatedPrice` gleich dem
+- **AC-1:** Ein Artikel mit Store, `estimatedPriceIsAutoDerived == false`, `estimatedPrice` gleich dem
   über die `init`-Namenszuordnung gefundenen `learnedPrices`-Wert (Toleranz ≤ 0,005) und ohne
   `learnedPriceUnits`-Eintrag zu diesem Schlüssel wird nach `runIfNeeded` auf
   `PriceEstimator.estimate(for:category:unit:quantityAmount:)` gesetzt und hat
   `estimatedPriceIsAutoDerived == true` (Unit-Test 1).
-- AC2: Ein manuell eingetippter Preis, der vom Altwert um mehr als 0,005 abweicht, bleibt
+- **AC-2:** Ein manuell eingetippter Preis, der vom Altwert um mehr als 0,005 abweicht, bleibt
   unverändert (Unit-Test 2).
-- AC3: Ein Artikel, dessen zugeordneter `learnedPrices`-Eintrag ein nicht leeres
+- **AC-3:** Ein Artikel, dessen zugeordneter `learnedPrices`-Eintrag ein nicht leeres
   `learnedPriceUnits`-Pendant hat, bleibt unverändert (Unit-Test 3).
-- AC4: Ein Artikel mit `estimatedPriceIsAutoDerived == true` und ein Artikel ohne
+- **AC-4:** Ein Artikel mit `estimatedPriceIsAutoDerived == true` und ein Artikel ohne
   `estimatedPrice` bleiben unverändert (Unit-Test 4).
-- AC5: Die Zuordnung Artikelname → Schlüssel nutzt dieselbe Funktion wie `ShoppingItem.init`
+- **AC-5:** Die Zuordnung Artikelname → Schlüssel nutzt dieselbe Funktion wie `ShoppingItem.init`
   (Teilstring, dann Fuzzy #52): Ein Artikel „Brötchen“ trifft den Schlüssel „laugenbrötchen“,
   ein Tippfehler-Name trifft per Fuzzy, ein Name ohne Treffer bleibt unverändert
   (Unit-Test 5 und 11; `ShoppingItemFuzzyPriceMatchTests` bleibt grün).
-- AC6: Abgehakte und offene Artikel werden gleich behandelt; `isCompleted`, `quantityAmount`,
+- **AC-6:** Abgehakte und offene Artikel werden gleich behandelt; `isCompleted`, `quantityAmount`,
   `unit` und `quantitySource` bleiben nach dem Zurücksetzen unverändert (Unit-Test 6).
-- AC7: Ein Artikel ohne Store bleibt unverändert und löst keinen Absturz aus (Unit-Test 7).
-- AC8: Nach dem ersten Lauf ist `UserDefaults` `legacyLearnedPriceResetV1Applied == true`; ein
+- **AC-7:** Ein Artikel ohne Store bleibt unverändert und löst keinen Absturz aus (Unit-Test 7).
+- **AC-8:** Nach dem ersten Lauf ist `UserDefaults` `legacyLearnedPriceResetV1Applied == true`; ein
   zweiter Lauf ändert keinen Artikel; bei gesetztem Flag ändert ein Lauf keinen Artikel
   (Unit-Test 8).
-- AC9: `shouldReset` liefert bei Abweichung 0,004 `true` und bei 0,006 `false` (Unit-Test 9).
-- AC10: `Store.learnedPrices`, `learnedPriceUnits` und `learnedPriceDates` sind nach dem Lauf
+- **AC-9:** `shouldReset` liefert bei Abweichung 0,004 `true` und bei 0,006 `false` (Unit-Test 9).
+- **AC-10:** `Store.learnedPrices`, `learnedPriceUnits` und `learnedPriceDates` sind nach dem Lauf
   unverändert (Unit-Test 10).
-- AC11: `SmartCartApp.swift` ruft `LegacyLearnedPriceReset.runIfNeeded` direkt nach
-  `PriceProvenanceMigration.runIfNeeded` auf (belegt durch den Durchlauf AC12; zusätzlich
+- **AC-11:** `SmartCartApp.swift` ruft `LegacyLearnedPriceReset.runIfNeeded` direkt nach
+  `PriceProvenanceMigration.runIfNeeded` auf (belegt durch den Durchlauf AC-12; zusätzlich
   Quellcode-Prüfung der Reihenfolge im Review).
-- AC12: Im UI-Durchlauf mit dem Seed zeigt nach App-Start weder der abgehakte noch der offene
+- **AC-12:** Im UI-Durchlauf mit dem Seed zeigt nach App-Start weder der abgehakte noch der offene
   Altlast-Artikel „1,56“, und der manuell bepreiste Kontrollartikel zeigt weiter „2,50“.
-- AC13: Das Seed-Aufräum-Argument entfernt Läden, Artikel und das Migrations-Flag; die
+- **AC-13:** Das Seed-Aufräum-Argument entfernt Läden, Artikel und das Migrations-Flag; die
   bestehende Test-Suite bleibt im gemeinsamen Lauf grün (keine Folgefehler durch Restdaten).
-- AC14: Das Verhalten von `ShoppingItem.init` ändert sich nicht: die Extraktion in `ShoppingItem.init` ist
+- **AC-14:** Das Verhalten von `ShoppingItem.init` ändert sich nicht: die Extraktion in `ShoppingItem.init` ist
   verhaltensgleich (alle bestehenden Tests zu gelernten Preisen und `PriceProvenanceMigrationTests`
   bleiben grün).
 
