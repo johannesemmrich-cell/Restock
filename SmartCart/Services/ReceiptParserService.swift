@@ -1326,9 +1326,6 @@ actor ReceiptNameAIResolver {
             seconds: 25,
             operation: {
                 guard let response = try? await LanguageModelSession().respond(to: prompt) else { return nil }
-                if self.isNonProductAnswer(response.content) {
-                    ReceiptResolutionMetrics().recordNonProductAnswer()
-                }
                 return self.sanitize(response.content)
             },
             onTimeout: { nil }
@@ -1339,24 +1336,14 @@ actor ReceiptNameAIResolver {
     }
 
     nonisolated func sanitize(_ text: String) -> String? {
-        let trimmed = trimmedAnswer(text)
-        guard !trimmed.isEmpty, trimmed.count <= 60, !trimmed.contains("\n") else { return nil }
-        guard !isNonProductAnswer(text) else { return nil }
-        return trimmed
-    }
-
-    /// Hat das Modell die Zeile als Nicht-Produkt eingestuft (`KEIN_PRODUKT`)? Gezählt für die
-    /// Messung aus Issue #14 (`ReceiptResolutionMetrics`).
-    nonisolated func isNonProductAnswer(_ text: String) -> Bool {
-        trimmedAnswer(text).caseInsensitiveCompare(Self.nonProductSentinel) == .orderedSame
-    }
-
-    /// Issue #69: nach dem Entfernen der Anführungszeichen erneut trimmen — sonst überlebt eine
-    /// Antwort wie `" "` (Leerzeichen in Anführungszeichen) als Name aus reinem Leerraum.
-    private nonisolated func trimmedAnswer(_ text: String) -> String {
-        text
+        // Issue #69: nach dem Entfernen der Anführungszeichen erneut trimmen — sonst überlebt eine
+        // Antwort wie `" "` (Leerzeichen in Anführungszeichen) als Name aus reinem Leerraum.
+        let trimmed = text
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
             .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, trimmed.count <= 60, !trimmed.contains("\n") else { return nil }
+        guard trimmed.caseInsensitiveCompare(Self.nonProductSentinel) != .orderedSame else { return nil }
+        return trimmed
     }
 }
