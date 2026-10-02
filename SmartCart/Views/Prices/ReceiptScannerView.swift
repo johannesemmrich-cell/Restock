@@ -48,6 +48,11 @@ struct EditableReceiptLine: Identifiable {
     /// rein lokaler Anzeigezustand der Karte, ohne Prozessgrenze.
     var aiSuggestedName: String? = nil
     var aiSuggestedMatchedItemID: UUID? = nil
+    /// Stufe und Name, die die automatische Auflösung geliefert hat (Issue #14, Messung) — fest
+    /// ab dem Scan, unabhängig von späteren Änderungen im Review. `save()` vergleicht damit, ob
+    /// der Nutzer den Vorschlag übernommen hat (`resolutionOutcome`).
+    var resolutionStage: ReceiptResolutionStage? = nil
+    var resolutionName: String? = nil
 
     /// Divisor fürs Preis-Lernen in `save()` — als Methode extrahiert (statt inline dort
     /// berechnet), damit Tests exakt diese Formel aufrufen statt sie nachzubilden. Ein Test, der
@@ -161,8 +166,44 @@ struct EditableReceiptLine: Identifiable {
                 result[index].aiSuggestedName = r.name
                 result[index].aiSuggestedMatchedItemID = r.matchedItemID
             }
+            // Messung (Issue #14): die erneute Auflösung ersetzt die Stufe des ersten Durchlaufs.
+            if let stage = r.stage {
+                result[index].resolutionStage = stage
+                result[index].resolutionName = r.name
+            }
         }
         return result
+    }
+
+    /// Was der Nutzer aus dem Vorschlag der Auflösung gemacht hat (Issue #14, Messung) — nil, wenn
+    /// die Zeile keine Stufe kennt (älterer Share-Handoff). Gleicher Namensvergleich wie überall im
+    /// Bon-Import: Groß-/Kleinschreibung zählt nicht.
+    static func resolutionOutcome(_ line: EditableReceiptLine) -> ReceiptResolutionMetrics.Outcome? {
+        guard line.resolutionStage != nil, let resolutionName = line.resolutionName else { return nil }
+        guard isSavable(line) else { return .excluded }
+        return line.name.caseInsensitiveCompare(resolutionName) == .orderedSame ? .kept : .renamed
+    }
+}
+
+extension EditableReceiptLine {
+    /// Review-Zeile aus dem Ergebnis der Namensauflösung — gemeinsamer Weg für den Scan in der App
+    /// und den Share-Handoff.
+    init(resolved line: ResolvedReceiptLine) {
+        self.init(
+            name: line.name,
+            price: line.price,
+            originalName: line.originalName,
+            quantity: line.quantity,
+            unit: line.unit,
+            weightBasis: line.weightBasis,
+            suggestions: line.suggestions,
+            matchedItemID: line.matchedItemID,
+            resolvedByAI: line.resolvedByAI,
+            aiSuggestedName: line.resolvedByAI ? line.name : nil,
+            aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil,
+            resolutionStage: line.stage,
+            resolutionName: line.stage == nil ? nil : line.name
+        )
     }
 }
 
@@ -333,19 +374,7 @@ struct ReceiptScannerView: View {
         _phase = State(initialValue: .review)
         _cameFromShareHandoff = State(initialValue: true)
         _parsedLines = State(initialValue: prefilled.lines.map { line in
-            EditableReceiptLine(
-                name: line.name,
-                price: line.price,
-                originalName: line.originalName,
-                quantity: line.quantity,
-                unit: line.unit,
-                weightBasis: line.weightBasis,
-                suggestions: line.suggestions,
-                matchedItemID: line.matchedItemID,
-                resolvedByAI: line.resolvedByAI,
-                aiSuggestedName: line.resolvedByAI ? line.name : nil,
-                aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil
-            )
+            EditableReceiptLine(resolved: line)
         })
         _debugRawLines = State(initialValue: prefilled.rawLines)
         _detectedTotal = State(initialValue: prefilled.detectedTotal)
@@ -722,27 +751,21 @@ struct ReceiptScannerView: View {
             // siehe ReceiptResolutionService.swift für die mehrstufige Auflösungs-Logik selbst.
             let resolved = await ReceiptResolutionService.resolve(parsed: parsed, store: store, allRecords: allRecords)
             await MainActor.run {
-                parsedLines = resolved.map { line in
-                    EditableReceiptLine(
-                        name: line.name,
-                        price: line.price,
-                        originalName: line.originalName,
-                        quantity: line.quantity,
-                        unit: line.unit,
-                        weightBasis: line.weightBasis,
-                        suggestions: line.suggestions,
-                        matchedItemID: line.matchedItemID,
-                        resolvedByAI: line.resolvedByAI,
-                        aiSuggestedName: line.resolvedByAI ? line.name : nil,
-                        aiSuggestedMatchedItemID: line.resolvedByAI ? line.matchedItemID : nil
-                    )
-                }
+                parsedLines = resolved.map { EditableReceiptLine(resolved: $0) }
                 phase = .review
             }
         }
     }
 
     private func save() {
+        // Messung je Auflösungsstufe (Issue #14) — jede Zeile genau einmal, auch abgewählte.
+        let metrics = ReceiptResolutionMetrics()
+        for line in parsedLines {
+            if let stage = line.resolutionStage, let outcome = EditableReceiptLine.resolutionOutcome(line) {
+                metrics.record(stage, outcome)
+            }
+        }
+
         let included = parsedLines.filter { EditableReceiptLine.isSavable($0) }
         let cutoff = Date().addingTimeInterval(-7 * 24 * 3600)
 
