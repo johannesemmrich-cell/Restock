@@ -562,6 +562,22 @@ final class ReceiptReviewCardTests: XCTestCase {
                        "Der Bontext ist kein KI-Vorschlag.")
     }
 
+    /// Issue #69 (F104) — ein Name aus einem Zeilenumbruch ist genauso leer wie einer aus
+    /// Leerzeichen: derselbe Rückfall, symmetrisch zu `EditableReceiptLine.isSavable`.
+    func testApplyCustomNameOrFallbackTreatsNewlineOnlyNameAsEmpty() {
+        var line = makeLine(name: "Butter", price: 1.19, originalName: "BTR",
+                            matchedItemID: nil, resolvedByAI: false)
+
+        ReceiptReviewCard.applyCustomNameOrFallback(
+            &line, name: "\n",
+            previousSelection: (name: "Butter", matchedItemID: nil, resolvedByAI: false))
+
+        XCTAssertEqual(line.name, "Butter")
+        line.isIncluded = true
+        XCTAssertTrue(EditableReceiptLine.isSavable(line),
+                      "Nach dem Rückfall muss die Position speicherbar bleiben.")
+    }
+
     // MARK: - Issue #66: Genau eine markierte Zeile, auch nach KI-Auflösung
 
     /// AC-23 (F001, der eigentliche Fix) — genau der reproduzierte Zustand aus

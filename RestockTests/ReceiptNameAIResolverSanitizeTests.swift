@@ -27,6 +27,21 @@ final class ReceiptNameAIResolverSanitizeTests: XCTestCase {
         XCTAssertNil(resolver.sanitize("Sahne\nJoghurt"))
     }
 
+    // MARK: - Issue #69 — Leerraum innerhalb der Anführungszeichen
+
+    /// F103: Antwortet das Modell mit einem leeren Zitat, darf kein Name aus reinem Leerraum
+    /// entstehen — `nil` lässt den Roh-Bontext stehen.
+    func testQuotedWhitespaceIsRejected() {
+        XCTAssertNil(resolver.sanitize("\" \""))
+        XCTAssertNil(resolver.sanitize("\"\""))
+        XCTAssertNil(resolver.sanitize("' '"))
+        XCTAssertNil(resolver.sanitize(" \"\n\" "))
+    }
+
+    func testWhitespaceInsideQuotesIsTrimmed() {
+        XCTAssertEqual(resolver.sanitize("\" Sahne \""), "Sahne")
+    }
+
     // MARK: - Neuer "kein Produkt"-Ausweg
 
     func testNonProductSentinelIsRejected() {

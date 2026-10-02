@@ -5,6 +5,7 @@ struct StoreDetailView: View {
     @Bindable var store: Store
     @Environment(\.modelContext) private var context
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
 
     // Nicht direkt gelesen — sorgt nur dafür, dass `body` (und damit `store.pendingItems`) neu
     // läuft, sobald sich Sortiermodus oder gelernte Reihenfolge ändern (Issue #79). Beides liegt in
@@ -173,7 +174,7 @@ struct StoreDetailView: View {
 
     // MARK: - Body-Teile
 
-    /// Beobachter für „Vielleicht auch fällig“ und den Ladenwechsel — aus `body` ausgelagert,
+    /// Beobachter für „Vielleicht auch fällig“, den Ladenwechsel und die Rückkehr in die App — aus `body` ausgelagert,
     /// damit der Typprüfer die Modifier-Kette schafft (Issue #86).
     private func withAlsoDueObservers<Content: View>(_ content: Content) -> some View {
         content
@@ -186,6 +187,16 @@ struct StoreDetailView: View {
             .onChange(of: dismissedReplenishmentsData) { refreshAlsoDue() }
             .onChange(of: developerMode) { refreshAlsoDue() }
             .onChange(of: store.visitsPerWeek) { refreshAlsoDue() }
+            .onChange(of: scenePhase) { _, phase in
+                guard phase == .active else { return }
+                // Zurück in der App, Liste noch offen: ein inzwischen über 30 Minuten ruhender
+                // Einkauf ist vorbei — jetzt lernen wie in `.onAppear`, nicht erst beim ersten
+                // Haken, sonst sortiert sich die Liste unter dem Finger um (Issue #94).
+                // Reihenfolge wie dort: erst die Haken aus der Dynamic Island übernehmen.
+                applyPendingCheckoffs()
+                store.finalizeStaleTrip()
+                reorderTick += 1
+            }
     }
 
 

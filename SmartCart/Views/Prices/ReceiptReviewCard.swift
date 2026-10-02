@@ -299,6 +299,9 @@ struct ReceiptReviewCard: View {
                 .onChange(of: customFocused) { _, focused in
                     if focused && !customActive { activateCustom() }
                 }
+                // Issue #68: Ist die Eingabezeile die gewählte Option (`isSelected(.custom)`), muss
+                // die Bedienhilfe das am Feld ebenso melden wie bei den übrigen Auswahlzeilen.
+                .accessibilityAddTraits(isSelected(.custom) ? [.isSelected] : [])
                 .onChange(of: customName) { _, newValue in
                     guard customActive else { return }
                     Self.applyCustomNameOrFallback(&line, name: newValue,
@@ -582,8 +585,10 @@ struct ReceiptReviewCard: View {
     ) {
         // Paket 1b (F002): derselbe getrimmte Leer-Begriff wie in `EditableReceiptLine.isSavable` —
         // ein Feld mit reinen Leerzeichen ist für den Nutzer leer und muss es auch hier sein.
-        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
-            let fallback = previousSelection.name.trimmingCharacters(in: .whitespaces).isEmpty
+        // Issue #69 (F104): `.whitespacesAndNewlines` — ein reiner Zeilenumbruch ist ebenso leer.
+        // Muss wörtlich dem Ausdruck in `EditableReceiptLine.isSavable` entsprechen.
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            let fallback = previousSelection.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 ? (name: line.originalName, matchedItemID: nil, resolvedByAI: false)
                 : previousSelection
             line.name = fallback.name

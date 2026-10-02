@@ -167,6 +167,8 @@ Werten und ohne SwiftUI-Umgebung prüfbar.
 - **Sync geteilter Listen** (`SharedStoreService.encodePrices`/`decodePrices`,
   `SyncCoordinator.apply`) zieht `learnedPriceUnits` **nicht** mit → **Issue #53**. Folge siehe
   „Known Limitations".
+  *Nachtrag 2026-10-02:* mit #53 behoben — `LearnedPriceSync` (`SharedStoreService.swift`) überträgt
+  die Einheit gemeinsam mit Betrag und Zeitstempel.
 - **Reparatur der einheitenlosen Altdaten** → **Issue #11** (PO-Entscheidung 1: Altdaten werden
   nicht angewendet, nicht repariert).
 - **Trennung von Gramm und Milliliter** im gelernten Preis → **Issue #15**.
