@@ -513,7 +513,7 @@ struct ReceiptReviewCard: View {
         return candidates + [.custom]
     }
 
-    /// Wortweise Großschreibung des gedruckten Bontexts für die Auswahlzeile „wie auf dem Bon"
+    /// Wortweise Großschreibung des gedruckten Bontexts für die Vorausfüllung des Textfelds
     /// (Issue #65). Bewusst NICHT `ReceiptParserService.smartCapitalize` — die kapitalisiert nur
     /// das erste Wort und wirkt nur bei durchgehender Großschreibung; ihre vier bestehenden
     /// Aufrufstellen dort verfolgen eine andere Absicht (Normalform für Aliase/Matching, nicht
