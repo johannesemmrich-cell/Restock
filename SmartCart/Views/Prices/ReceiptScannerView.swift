@@ -166,6 +166,112 @@ struct EditableReceiptLine: Identifiable {
     }
 }
 
+// MARK: - Lern-Entscheidungen beim Speichern
+
+/// Fachentscheidungen beim Speichern eines geprüften Bons (Issue #59) — aus
+/// `ReceiptScannerView.save()` herausgezogen, damit sie ohne View direkt prüfbar sind. `save()`
+/// ruft diese Funktionen auf und schreibt nur noch. Kein neues Verhalten gegenüber dem vorherigen
+/// Inline-Code.
+enum ReceiptLearning {
+    /// Was für eine Bon-Zeile gelernt wird: Schlüssel in `Store.learnedPrices`, Preis je
+    /// Bezugsgröße und die Bezugsgröße selbst (`"g"`/`"stk"`, siehe `Store.learnedPriceUnits`).
+    struct Plan: Equatable {
+        let key: String
+        let perUnitPrice: Double
+        let unit: String
+    }
+
+    /// `learnedPrices` muss je Einheit bleiben (es speist `ShoppingItem.estimatedPrice`), eine
+    /// Bon-Zeile trägt aber die Zeilen-SUMME — Herleitung in
+    /// `EditableReceiptLine.learningQuantity(matchQuantityAmount:)`. Menge und Einheit des
+    /// Treffers kommen bewusst aus DEMSELBEN Datensatz (`match`), siehe `learningUnit(matchUnit:)`.
+    static func plan(line: EditableReceiptLine, match: PurchaseRecord?) -> Plan {
+        let quantity = line.learningQuantity(matchQuantityAmount: match?.quantityAmount)
+        return Plan(
+            key: line.name.lowercased(),
+            perUnitPrice: quantity > 0 ? line.price / quantity : line.price,
+            unit: line.learningUnit(matchUnit: match?.unit)
+        )
+    }
+
+    /// Der gemeinte, bereits gelistete Artikel.
+    ///
+    /// Ist die Zeile einem konkreten Artikel zugeordnet (automatisch oder per Vorschlag,
+    /// `matchedItemID`), gilt dieser — die Identität steht dann schon fest. `matchedItemID` ist
+    /// aber oft bewusst nil: eine manuelle Namens-Korrektur im Review löscht sie (siehe
+    /// `ReceiptReviewCard`). Der korrigierte Name ist dann die verlässlichste Evidenz, deshalb
+    /// zusätzlich exakt (nicht nur „contains") gegen alle Artikel des Ladens suchen. Behebt
+    /// „Maultaschen ohne Preis".
+    ///
+    /// Nur bereits abgehakte Artikel — ein Bon belegt einen tatsächlichen Kauf, ein noch offener
+    /// Artikel mit gleichem Namen (schon wieder vorgemerkt) wurde nicht gekauft. Ohne diesen Filter
+    /// träfe `max(by:)` bevorzugt den neueren, ungekauften Artikel und der Bon-Preis landete am
+    /// falschen Artikel.
+    static func matchedItem(for line: EditableReceiptLine, in items: [ShoppingItem]) -> ShoppingItem? {
+        if let id = line.matchedItemID, let item = items.first(where: { $0.id == id }) {
+            return item
+        }
+        let lineLower = line.name.lowercased()
+        return items
+            .filter { $0.isCompleted && $0.name.lowercased() == lineLower }
+            .max(by: { ($0.completedDate ?? $0.addedDate) < ($1.completedDate ?? $1.addedDate) })
+    }
+
+    /// Der Kaufdatensatz, der den Bon-Preis bekommt — oder nil, dann legt `save()` einen neuen an.
+    ///
+    /// Bevorzugt den jüngsten unbepreisten Datensatz des gemeinten Artikels (`ownRecords`, Identität
+    /// verifiziert). Sonst die lockere 7-Tage-Suche im selben Laden über alle Datensätze. Die hat
+    /// über reines `contains` keinerlei Namensprüfung („Milch" träfe „Kondensmilch") und schreibt
+    /// Preis UND Datum auf einen womöglich fremden Datensatz — deshalb dieselbe Ähnlichkeitsschwelle
+    /// wie bei der automatischen Vorschlags-Übernahme; darunter gilt sie als kein Treffer.
+    static func purchaseMatch(
+        for line: EditableReceiptLine,
+        ownRecords: [PurchaseRecord],
+        allRecords: [PurchaseRecord],
+        storeName: String,
+        cutoff: Date
+    ) -> PurchaseRecord? {
+        if let ownUnpriced = ownRecords
+            .filter({ $0.actualPrice == nil })
+            .max(by: { $0.date < $1.date }) {
+            return ownUnpriced
+        }
+        let lineLower = line.name.lowercased()
+        let storeNameLower = storeName.lowercased()
+        let looseMatch = allRecords.first { record in
+            record.storeName.lowercased() == storeNameLower &&
+            record.date >= cutoff &&
+            (record.itemName.lowercased().contains(lineLower) ||
+             lineLower.contains(record.itemName.lowercased()))
+        }
+        guard let looseMatch else { return nil }
+        let score = ReceiptParserService.lcsSimilarity(line.name, looseMatch.itemName)
+        return score >= ReceiptParserService.completedItemAutoApplyThreshold ? looseMatch : nil
+    }
+
+    /// Schreibt den gelernten Preis auf den gelisteten Artikel — nach derselben
+    /// Entscheidungstabelle wie `ShoppingItem.init` (Issue #10): eine pro Gramm gelernte Rate darf
+    /// nicht als Stückpreis an einen Artikel ohne Mengenangabe geschrieben werden (die gemeldeten
+    /// „0,01 €").
+    static func apply(_ plan: Plan, to item: ShoppingItem) {
+        switch ShoppingItem.learnedRateUsage(
+            learnedUnit: plan.unit,
+            itemUnit: item.unit,
+            quantitySource: item.quantitySource
+        ) {
+        case .apply:
+            item.estimatedPrice = plan.perUnitPrice
+            item.estimatedPriceIsAutoDerived = false
+        case .rateOnly:
+            item.estimatedPrice = plan.perUnitPrice
+            item.unit = "g"
+            item.estimatedPriceIsAutoDerived = false
+        case .reject:
+            break // Der bisherige (geschätzte) Preis bleibt stehen — kein falscher Betrag.
+        }
+    }
+}
+
 // MARK: - Main Scanner View
 
 struct ReceiptScannerView: View {
@@ -639,11 +745,8 @@ struct ReceiptScannerView: View {
     private func save() {
         let included = parsedLines.filter { EditableReceiptLine.isSavable($0) }
         let cutoff = Date().addingTimeInterval(-7 * 24 * 3600)
-        let storeNameLower = store.name.lowercased()
 
         for line in included {
-            let lineLower = line.name.lowercased()
-
             // Kürzel-Lernen: weicht der finale Name vom rohen Bon-Text ab (User hat die Position
             // umbenannt oder eine früher gelernte Zuordnung bestätigt), Mapping für künftige
             // Scans merken — beim nächsten Bon erscheint das Kürzel direkt als richtiger Artikel.
@@ -651,72 +754,23 @@ struct ReceiptScannerView: View {
                 ReceiptAliasService.shared.learn(receiptText: line.originalName, itemName: line.name)
             }
 
-            // Ist diese Zeile einem konkreten, gerade abgehakten Artikel zugeordnet (automatisch
-            // oder per Vorschlags-Chip), dessen eigene Historie bevorzugen — präziser als die
-            // unscharfe 7-Tage-Suche, weil die Identität schon feststeht statt nur über den Namen
-            // erraten zu werden. Kein eigener unbepreister Datensatz vorhanden → laxe, rein auf
-            // Substring basierende 7-Tage/Store-Suche über ALLE Datensätze als Fallback.
-            //
-            // `matchedItemID` ist oft bewusst nil: eine manuelle Namens-Korrektur im Review löscht
-            // sie extra (siehe ReceiptReviewCard), damit ein automatischer Match/Chip-Tap nicht
-            // fälschlich am alten, überschriebenen Namen hängen bleibt. Der gerade korrigierte
-            // Name IST aber die verlässlichste verfügbare Evidenz an dieser Stelle — bevor auf die
-            // unscharfe 7-Tage-Historie unten zurückgefallen wird, zusätzlich exakt (nicht nur
-            // "contains") gegen ALLE Artikel dieses Stores suchen, nicht nur die letzten 7 Tage.
-            // Behebt "Maultaschen ohne Preis": der Artikel stand nach der Korrektur schon korrekt
-            // benannt auf der Liste, nur die Rück-Zuordnung fand ihn vorher nicht mehr.
-            let matchedItem: ShoppingItem? = {
-                if let id = line.matchedItemID, let item = store.items?.first(where: { $0.id == id }) {
-                    return item
-                }
-                // Nur bereits abgehakte Artikel — ein Bon belegt einen tatsächlichen Kauf, ein
-                // noch offener Artikel mit gleichem Namen (z. B. schon wieder für den nächsten
-                // Einkauf vorgemerkt) wurde nicht gekauft. Ohne dieses Filter könnte `max(by:)`
-                // bevorzugt den neueren, aber ungekauften Artikel treffen (späteres addedDate als
-                // das completedDate des tatsächlich gekauften) und der Bon-Preis würde auf dem
-                // falschen Artikel landen, während der echte Kauf weiterhin ohne Preis bleibt.
-                return (store.items ?? [])
-                    .filter { $0.isCompleted && $0.name.lowercased() == lineLower }
-                    .max(by: { ($0.completedDate ?? $0.addedDate) < ($1.completedDate ?? $1.addedDate) })
-            }()
-            let ownUnpricedRecord = matchedItem?.purchaseRecords?
-                .filter({ $0.actualPrice == nil })
-                .max(by: { $0.date < $1.date })
-            let looseMatch = allRecords.first { record in
-                record.storeName.lowercased() == storeNameLower &&
-                record.date >= cutoff &&
-                (record.itemName.lowercased().contains(lineLower) ||
-                 lineLower.contains(record.itemName.lowercased()))
-            }
-            // `looseMatch` hat KEINERLEI Namens-Ähnlichkeitsprüfung — reines `contains` kann einen
-            // komplett anderen Artikel treffen (z. B. "Milch" matcht einen bestehenden
-            // "Kondensmilch"-Datensatz). Für `ownUnpricedRecord` ist die Identität schon über
-            // `matchedItemID` verifiziert, aber `looseMatch` wird unten für ZWEI Schreibvorgänge auf
-            // einem fremden Datensatz benutzt (Preis UND — neu — Datum), deshalb dieselbe Schwelle
-            // wie bei der automatischen Vorschlags-Übernahme verlangen, statt ihn blind zu
-            // vertrauen. Kein Treffer über der Schwelle → wie "kein Match" behandeln (unten wird
-            // dann ein neuer Datensatz angelegt statt einen fremden zu verfälschen).
-            let match: PurchaseRecord? = {
-                if let ownUnpricedRecord { return ownUnpricedRecord }
-                guard let looseMatch else { return nil }
-                let score = ReceiptParserService.lcsSimilarity(line.name, looseMatch.itemName)
-                return score >= ReceiptParserService.completedItemAutoApplyThreshold ? looseMatch : nil
-            }()
+            // Gemeinten Artikel und Kaufdatensatz auflösen (Issue #59: als reine Funktionen in
+            // `ReceiptLearning`, Begründungen dort).
+            let matchedItem = ReceiptLearning.matchedItem(for: line, in: store.items ?? [])
+            let match = ReceiptLearning.purchaseMatch(
+                for: line,
+                ownRecords: matchedItem?.purchaseRecords ?? [],
+                allRecords: allRecords,
+                storeName: store.name,
+                cutoff: cutoff
+            )
 
             // Learn price for this store — overwrites previous learned price for this item.
-            // `learnedPrices` must stay per-unit (it seeds `ShoppingItem.estimatedPrice`, which
-            // is canonically per-unit), but a receipt line's price is the line TOTAL — siehe
-            // `EditableReceiptLine.learningQuantity(matchQuantityAmount:)` für die Herleitung.
-            let quantity = line.learningQuantity(matchQuantityAmount: match?.quantityAmount)
-            let perUnitPrice = quantity > 0 ? line.price / quantity : line.price
-            // Bezugsgröße in EINEM Zug mitschreiben (Issue #10) — ohne sie ist der Preis später
-            // nicht anwendbar, weil eine Pro-Gramm-Rate von einem Stückpreis nicht zu
-            // unterscheiden wäre. `match?.unit` gehört zum selben Datensatz wie das
-            // `matchQuantityAmount` oben, siehe `learningUnit(matchUnit:)`.
-            let learnedUnit = line.learningUnit(matchUnit: match?.unit)
-            store.learnedPrices[lineLower] = perUnitPrice
-            store.learnedPriceUnits[lineLower] = learnedUnit
-            store.learnedPriceDates[lineLower] = Date()
+            // Preis, Bezugsgröße und Datum in EINEM Zug (Issue #10), siehe `ReceiptLearning.plan`.
+            let plan = ReceiptLearning.plan(line: line, match: match)
+            store.learnedPrices[plan.key] = plan.perUnitPrice
+            store.learnedPriceUnits[plan.key] = plan.unit
+            store.learnedPriceDates[plan.key] = Date()
 
             // Direkt auf den bereits gelisteten Artikel zurückschreiben — sonst lernt ein Scan nur
             // für KÜNFTIG neu erstellte Artikel (über `learnedPrices`), während der schon
@@ -724,33 +778,14 @@ struct ReceiptScannerView: View {
             // geschätzten Preis zeigt, obwohl der Bon ihn gerade korrekt erkannt hat. Bevorzugt
             // `matchedItem` (aus der Kandidaten-Suche mit dem aufgelösten Namen), fällt aber auf
             // `match.item` zurück — `match` ist an dieser Stelle bereits namensgeprüft (entweder
-            // über `matchedItemID` oder die LCS-Schwelle oben), das PurchaseRecord kennt über die
-            // Kaufhistorie oft denselben, noch existierenden Artikel, auch wenn `matchedItemID`
-            // z. B. wegen einer OCR-Verwucherung des Namens nicht griff. Ohne diesen Fallback
-            // bekommt der PurchaseRecord (und damit die Ausgaben-Ansicht) einen Preis, während der
-            // Artikel auf der Liste selbst weiterhin keinen zeigt — genau das gemeldete
+            // über `matchedItemID` oder die LCS-Schwelle in `purchaseMatch`), das PurchaseRecord
+            // kennt über die Kaufhistorie oft denselben, noch existierenden Artikel, auch wenn
+            // `matchedItemID` z. B. wegen einer OCR-Verwucherung des Namens nicht griff. Ohne diesen
+            // Fallback bekommt der PurchaseRecord (und damit die Ausgaben-Ansicht) einen Preis,
+            // während der Artikel auf der Liste selbst weiterhin keinen zeigt — genau das gemeldete
             // Mandeln-Symptom.
-            let itemToUpdate = matchedItem ?? match?.item
-            if let itemToUpdate {
-                // Dieselbe Entscheidungstabelle wie in `ShoppingItem.init` (Issue #10): eine pro
-                // Gramm gelernte Rate darf auch hier nicht als Stückpreis an einen Artikel ohne
-                // Mengenangabe geschrieben werden — genau so entstanden die gemeldeten „0,01 €"
-                // am gerade gescannten Artikel, obwohl der Konstruktor sie verworfen hätte.
-                switch ShoppingItem.learnedRateUsage(
-                    learnedUnit: learnedUnit,
-                    itemUnit: itemToUpdate.unit,
-                    quantitySource: itemToUpdate.quantitySource
-                ) {
-                case .apply:
-                    itemToUpdate.estimatedPrice = perUnitPrice
-                    itemToUpdate.estimatedPriceIsAutoDerived = false
-                case .rateOnly:
-                    itemToUpdate.estimatedPrice = perUnitPrice
-                    itemToUpdate.unit = "g"
-                    itemToUpdate.estimatedPriceIsAutoDerived = false
-                case .reject:
-                    break // Der bisherige (geschätzte) Preis bleibt stehen — kein falscher Betrag.
-                }
+            if let itemToUpdate = matchedItem ?? match?.item {
+                ReceiptLearning.apply(plan, to: itemToUpdate)
             }
 
             if let match {
