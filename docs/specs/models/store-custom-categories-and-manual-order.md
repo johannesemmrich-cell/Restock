@@ -64,11 +64,7 @@ im Modus Kategorie.
 - **Preis:** Für die Schätzung zählt die automatische Kategorie (keine Katalogpreise für eigene).
 - **Geteilte Läden:** Feld `categoriesJSON` im geteilten Record; pro Name gewinnt der spätere
   Stand, auch ein Löschvermerk (`StoreCategories.merge`), beim Push wie beim Anwenden eines Pulls.
-  Die Zuordnungen fürs Merken (#94) laufen als `assignmentsJSON` mit: pro Artikelschlüssel gewinnt
-  der spätere Stand (`StoreCategories.mergeAssignments`), auch „vergessen“ (feste Kategorie
-  gewählt, Kategorie gelöscht). Dafür hält `Store.categoryAssignmentDates` den Zeitpunkt jeder
-  Änderung; Umbenennen und Löschen stempeln die betroffenen Zuordnungen neu. Zuordnungen von vor
-  #94 haben kein Datum und verlieren gegen jeden geteilten Stand.
+  Die Zuordnungen fürs Merken bleiben beim Gerät des Nutzers (über die eigene CloudKit-Spiegelung).
 
 ## Verschieben von Hand (#86)
 
@@ -101,4 +97,5 @@ im Modus Kategorie.
 
 ## Known Limitations
 
+- Die Zuordnungen fürs Merken werden nicht mit anderen Mitgliedern geteilter Läden abgeglichen.
 - Im Verschiebe-Modus sind nur die verschiebbaren Zeilen sichtbar (keine dringenden, keine erledigten).

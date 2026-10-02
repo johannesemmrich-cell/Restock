@@ -107,10 +107,9 @@ nach Kategorien, deren Reihenfolge ebenfalls aus dem Weg gelernt wird.
 ## Known Limitations
 
 - Die Ladenkarten-Vorschau auf der Startseite übernimmt den Modus des Ladens (flach sortiert).
-- Ein Einkauf, der seit über 30 Minuten ruht, wird beim Öffnen der Ladenansicht, bei der Rückkehr
-  in die App mit offener Ladenansicht (#94) oder beim nächsten Haken gelernt. Nur wer die App über
-  30 Minuten durchgehend im Vordergrund auf der Liste lässt, sieht sie beim ersten Haken des
-  nächsten Einkaufs einmal neu sortiert.
+- Ein Einkauf, der seit über 30 Minuten ruht, wird erst beim Öffnen der Ladenansicht oder beim
+  nächsten Haken gelernt. Bleibt die Ansicht offen, kann sich die Liste beim ersten Haken des
+  nächsten Einkaufs einmal neu sortieren.
 - App und Widget schreiben Einkauf und Modell ohne prozessübergreifende Sperre (wie der
   bestehende Drain); bei gleichzeitigem Abhaken kann ein einzelner Eintrag verloren gehen.
 - Die Einstellungsseite „Benachrichtigungen“ ist nur noch im Developer Mode sichtbar, weil der

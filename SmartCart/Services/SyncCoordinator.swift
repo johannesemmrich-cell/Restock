@@ -68,7 +68,7 @@ final class SyncCoordinator {
         guard let shareID = store.shareID else { return true }
         do {
             guard let result = try await SharedStoreService.shared.pull(shareID: shareID) else { return true }
-            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, categories: result.categories, assignments: result.assignments, modifiedAt: result.modifiedAt, to: store)
+            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, categories: result.categories, modifiedAt: result.modifiedAt, to: store)
             return true
         } catch {
             lastFailureKind = classify(error)
@@ -88,7 +88,7 @@ final class SyncCoordinator {
             guard let result = try await SharedStoreService.shared.push(store: store) else { return true }
             // syncToCloud's save already advanced the watermark to the server's modificationDate
             // (see SharedStoreService.markSynced), so apply() shouldn't override it here.
-            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, categories: result.categories, assignments: result.assignments, modifiedAt: nil, to: store)
+            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, categories: result.categories, modifiedAt: nil, to: store)
             return true
         } catch {
             lastFailureKind = classify(error)
@@ -226,7 +226,7 @@ final class SyncCoordinator {
     /// `modifiedAt` is the server's `modificationDate` for this remote state, used to advance the
     /// sync watermark to server time rather than this device's local clock. Pass `nil` when the
     /// caller (e.g. a push) already advanced the watermark itself via `SharedStoreService.markSynced`.
-    func apply(items remoteItems: [SharedItemData], members: [String], deletedIDs: Set<UUID> = [], prices: [String: Double] = [:], priceDates: [String: Date] = [:], categories: [String: CustomCategoryEntry] = [:], assignments: [String: CategoryAssignmentEntry] = [:], modifiedAt: Date?, to store: Store) async {
+    func apply(items remoteItems: [SharedItemData], members: [String], deletedIDs: Set<UUID> = [], prices: [String: Double] = [:], priceDates: [String: Date] = [:], categories: [String: CustomCategoryEntry] = [:], modifiedAt: Date?, to store: Store) async {
         guard let context = modelContext ?? store.modelContext else { return }
 
         for name in members { store.addMember(name) }
@@ -236,11 +236,6 @@ final class SyncCoordinator {
         if !categories.isEmpty {
             let merged = StoreCategories.merge(local: store.customCategoryEntries, remote: categories)
             if merged != store.customCategoryEntries { store.customCategoryEntries = merged }
-        }
-        // Issue #94: gemerkte Zuordnungen Artikel → eigene Kategorie, gleiche Regel pro Artikel.
-        if !assignments.isEmpty {
-            let merged = StoreCategories.mergeAssignments(local: store.categoryAssignmentEntries, remote: assignments)
-            if merged != store.categoryAssignmentEntries { store.categoryAssignmentEntries = merged }
         }
 
         // Last-write-wins pro Preis-Schlüssel, exakt dasselbe Prinzip wie der Item-Merge direkt
