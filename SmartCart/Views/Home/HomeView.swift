@@ -43,6 +43,13 @@ struct HomeView: View {
     /// tap after that point (on nothing visible) can't silently reassign a stale, unrelated item.
     @State private var quickAddToastItem: ShoppingItem? = nil
     @State private var showStoreCorrection = false
+    /// Laden, den der Nutzer in der Ziel-Karte der Schnell-Eingabe gewählt hat (überschreibt die
+    /// automatische Zuordnung); `quickAddNoStoreChoice` = ausdrücklich „Ohne Laden“.
+    @State private var quickAddStoreChoice: UUID? = nil
+    @State private var quickAddNoStoreChoice = false
+    /// Unterscheidet Toasts, damit ein älterer Ablauf-Timer einen neueren Toast nicht abräumt.
+    @State private var quickAddToastToken = UUID()
+    @State private var showUnassigned = false
     @FocusState private var isQuickAddFocused: Bool
     @Environment(\.scenePhase) private var scenePhase
     @State private var dueSoonItems: [ConsumptionPattern] = []
@@ -158,6 +165,9 @@ struct HomeView: View {
                     if !seasonalSuggestions.isEmpty {
                         seasonalBanner
                     }
+                    if !storelessPending.isEmpty {
+                        UnassignedItemsCard(items: storelessPending) { showUnassigned = true }
+                    }
                     storeSection
                 }
                 .padding(.horizontal, 16)
@@ -175,6 +185,7 @@ struct HomeView: View {
             .sheet(isPresented: $showMenuPlan)      { MenuPlanView() }
             .sheet(isPresented: $showPriceOverview) { PriceOverviewView() }
             .sheet(isPresented: $showAddStore) { NavigationStack { BrowseStoresView() } }
+            .sheet(isPresented: $showUnassigned) { UnassignedItemsSheet(onNewStore: { showAddStore = true }) }
             .sheet(isPresented: $showAllItems) { AllItemsView() }
             .sheet(isPresented: $showStoreSetup) { NavigationStack { StoreSetupView() } }
             .sheet(isPresented: $showJoinStore) { JoinStoreSheet(prefilledCode: pendingJoinCode) }
@@ -217,37 +228,34 @@ struct HomeView: View {
             }
             .overlay(alignment: .bottom) {
                 if let toast = quickAddToastMessage {
-                    Button {
-                        guard quickAddToastItem != nil else { return }
-                        showStoreCorrection = true
-                    } label: {
-                        HStack(spacing: 6) {
-                            Text(toast)
-                            if quickAddToastItem != nil {
-                                Image(systemName: "chevron.up.chevron.down")
-                                    .font(.system(size: 11, weight: .semibold))
-                            }
-                        }
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(.black.opacity(0.75), in: Capsule())
-                    }
-                    .buttonStyle(.plain)
+                    QuickAddConfirmationToast(
+                        message: toast,
+                        storeColor: quickAddToastItem?.store?.color,
+                        changeTitle: quickAddToastItem == nil ? "" : (quickAddToastItem?.store == nil ? "Laden wählen" : "Laden ändern"),
+                        onChange: {
+                            guard quickAddToastItem != nil else { return }
+                            showStoreCorrection = true
+                        },
+                        onUndo: quickAddToastItem == nil ? nil : { undoQuickAdd() }
+                    )
+                    .padding(.horizontal, 16)
                     .padding(.bottom, 20)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            withAnimation {
-                                quickAddToastMessage = nil
-                                quickAddToastItem = nil
-                            }
-                        }
-                    }
                 }
             }
             .animation(.easeInOut(duration: 0.25), value: quickAddToastMessage)
+            .onChange(of: showStoreCorrection) { _, shown in
+                if !shown, let message = quickAddToastMessage {
+                    showQuickAddToast(message, item: quickAddToastItem, duration: 3)
+                }
+            }
+            .onChange(of: addItemText) { _, text in
+                // Neuer Artikel, neue Entscheidung: die Laden-Wahl gilt nur für den getippten Artikel.
+                if text.trimmingCharacters(in: .whitespaces).isEmpty {
+                    quickAddStoreChoice = nil
+                    quickAddNoStoreChoice = false
+                }
+            }
             .confirmationDialog(
                 String(localized: "home.quickadd.correctstore.title"),
                 isPresented: $showStoreCorrection,
@@ -623,14 +631,6 @@ struct HomeView: View {
 
     // MARK: - Quick add
 
-    private var parsedHint: QuickAddResult? {
-        guard !addItemText.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
-        let r = QuickAddParser.parse(addItemText)
-        // Only show chip when something meaningful was parsed (name differs or unit present)
-        guard r.name != addItemText.trimmingCharacters(in: .whitespaces) || !r.unit.isEmpty else { return nil }
-        return r
-    }
-
     private var quickAddSuggestions: [String] {
         guard !addItemText.trimmingCharacters(in: .whitespaces).isEmpty else { return [] }
         return QuickAddParser.knownProductSuggestions(for: QuickAddParser.parse(addItemText).name, in: allRecords, itemNames: activeStores.flatMap { $0.items ?? [] }.map(\.name))
@@ -660,10 +660,19 @@ struct HomeView: View {
         }
     }
 
-    private var suggestedStore: Store? {
-        guard !addItemText.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
+    /// Ziel der Schnell-Eingabe samt Grund — die Wahl des Nutzers (Chip) geht vor der Automatik.
+    private var quickAddTarget: (store: Store?, reason: AssignmentReason) {
+        if quickAddNoStoreChoice { return (nil, .chosenByUser) }
+        if let id = quickAddStoreChoice, let chosen = activeStores.first(where: { $0.id == id }) {
+            return (chosen, .chosenByUser)
+        }
         let parsed = QuickAddParser.parse(addItemText)
-        return AssignmentService.assign(itemName: parsed.name, to: activeStores, purchaseRecords: allRecords)
+        return AssignmentService.assignDetailed(itemName: parsed.name, to: activeStores, purchaseRecords: allRecords)
+    }
+
+    private func chooseQuickAddStore(_ store: Store?) {
+        quickAddStoreChoice = store?.id
+        quickAddNoStoreChoice = store == nil
     }
 
     private var quickAddBar: some View {
@@ -737,50 +746,20 @@ struct HomeView: View {
                 ProductSuggestionChips(suggestions: quickAddSuggestions, tint: Color.accent, onSelect: applyQuickAddSuggestion)
             }
 
-            // Smart parsing preview chip
-            if let parsed = parsedHint {
-                HStack(spacing: 8) {
-                    // Quantity + unit pill (only when qty ≠ 1 or unit is present)
-                    if parsed.quantityAmount != 1 || !parsed.unit.isEmpty {
-                        Text(
-                            parsed.unit.isEmpty
-                                ? "\(parsed.quantity)×"
-                                : (parsed.quantityAmount != 1 ? "\(parsed.quantity) \(parsed.unit)" : parsed.unit)
-                        )
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(Color.accent)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .overlay(RoundedRectangle(cornerRadius: RCRadius.tag).strokeBorder(Color.accent.opacity(0.4)))
-                    }
-
-                    // Item name
-                    Text(parsed.name)
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-
-                    Spacer()
-
-                    // Store suggestion
-                    if let store = suggestedStore {
-                        HStack(spacing: 3) {
-                            Image(systemName: "arrow.right")
-                                .font(.system(size: 10, weight: .semibold))
-                            Text(store.name)
-                                .font(.system(size: 12, weight: .medium))
-                        }
-                        .foregroundStyle(store.color)
-                    }
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 7)
-                .background(Color.accentContainer)
-                .clipShape(RoundedRectangle(cornerRadius: RCRadius.control))
+            // Ziel-Karte: Menge/Name, Laden, Grund und Laden-Chips (Design 2A)
+            if !addItemText.trimmingCharacters(in: .whitespaces).isEmpty {
+                let target = quickAddTarget
+                QuickAddTargetCard(
+                    parsed: QuickAddParser.parse(addItemText),
+                    store: target.store,
+                    reason: target.reason,
+                    stores: activeStores,
+                    onChoose: chooseQuickAddStore
+                )
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .animation(.easeInOut(duration: 0.18), value: parsedHint?.name)
+        .animation(.easeInOut(duration: 0.18), value: addItemText.isEmpty)
     }
 
     // MARK: - Seasonal banner
@@ -1446,7 +1425,16 @@ struct HomeView: View {
         guard !trimmed.isEmpty else { return }
         let parsed = QuickAddParser.parse(trimmed)
         let category = AssignmentService.category(for: parsed.name)
-        let store = AssignmentService.assign(itemName: parsed.name, to: activeStores, purchaseRecords: allRecords)
+        let target = quickAddTarget
+        let store = target.store
+        // Eine ausdrückliche Wahl in der Ziel-Karte, die von der Automatik abweicht, wird wie eine
+        // Korrektur gemerkt — beim nächsten Mal landet der Artikel gleich dort.
+        if let store, quickAddStoreChoice != nil {
+            let automatic = AssignmentService.assign(itemName: parsed.name, to: activeStores, purchaseRecords: allRecords)
+            if automatic?.id != store.id {
+                StoreAssignmentOverrideService.shared.remember(itemName: parsed.name, storeName: store.name)
+            }
+        }
         let item = ShoppingItem(
             name: parsed.name,
             category: category,
@@ -1458,16 +1446,61 @@ struct HomeView: View {
         context.insert(item)
         SyncCoordinator.shared.pushInBackground(store)
         addItemText = ""
+        quickAddStoreChoice = nil
+        quickAddNoStoreChoice = false
         Haptics.success()
-        quickAddToastItem = item
-        quickAddToastMessage = store.map { String(format: String(localized: "home.quickadd.addedto.format"), $0.name) }
-            ?? String(localized: "home.quickadd.addedwithoutstore")
+        showQuickAddToast(
+            store.map { "„\(parsed.name)“ → \($0.name)" } ?? "„\(parsed.name)“ ohne Laden hinzugefügt",
+            item: item,
+            duration: 6
+        )
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { quickAddSucceeded = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
             withAnimation(.spring(response: 0.4)) { quickAddSucceeded = false }
         }
         // Tastatur offen lassen — Nutzer kann direkt weitertippen
         DispatchQueue.main.async { isQuickAddFocused = true }
+    }
+
+    /// Zeigt den Bestätigungs-Toast und räumt ihn nach `duration` Sekunden wieder ab — aber nur,
+    /// wenn er in der Zwischenzeit nicht durch einen neueren ersetzt wurde.
+    private func showQuickAddToast(_ message: String, item: ShoppingItem?, duration: Double) {
+        quickAddToastToken = UUID()
+        let token = quickAddToastToken
+        quickAddToastItem = item
+        quickAddToastMessage = message
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            // Solange die Laden-Auswahl offen ist, bleibt der Toast stehen (sonst wäre der Artikel
+            // beim Antippen schon weg); beim Schließen des Dialogs läuft die Frist neu an.
+            guard token == quickAddToastToken, !showStoreCorrection else { return }
+            withAnimation {
+                quickAddToastMessage = nil
+                quickAddToastItem = nil
+            }
+        }
+    }
+
+    /// „Rückgängig“ im Toast: entfernt den gerade hinzugefügten Artikel wieder (in geteilten
+    /// Läden mit Löschvermerk, damit ihn der nächste Abgleich nicht wieder anlegt).
+    private func undoQuickAdd() {
+        guard let item = quickAddToastItem else { return }
+        let store = item.store
+        let itemID = item.id
+        if let store, let shareID = store.shareID {
+            Task {
+                await SharedStoreService.shared.recordLocalDeletion(shareID: shareID, itemID: itemID)
+                await MainActor.run { context.delete(item) }
+                await SyncCoordinator.shared.push(store: store)
+            }
+        } else {
+            context.delete(item)
+        }
+        Haptics.impact(.light)
+        quickAddToastToken = UUID()
+        withAnimation {
+            quickAddToastMessage = nil
+            quickAddToastItem = nil
+        }
     }
 
     /// Stores offered in the toast's correction dialog — the currently assigned store is left
@@ -1490,13 +1523,7 @@ struct HomeView: View {
         SyncCoordinator.shared.pushInBackground(oldStore)
         SyncCoordinator.shared.pushInBackground(newStore)
         Haptics.success()
-        withAnimation { quickAddToastMessage = String(format: String(localized: "home.quickadd.movedto.format"), newStore.name) }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation {
-                quickAddToastMessage = nil
-                quickAddToastItem = nil
-            }
-        }
+        showQuickAddToast(String(format: String(localized: "home.quickadd.movedto.format"), newStore.name), item: item, duration: 3)
     }
 
     private func activateQuickAdd() {

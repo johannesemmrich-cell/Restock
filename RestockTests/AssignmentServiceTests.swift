@@ -154,4 +154,51 @@ final class AssignmentServiceTests: XCTestCase {
 
         XCTAssertEqual(result?.name, "Rewe")
     }
+
+    // MARK: - Grund der Zuordnung (Schnell-Eingabe zeigt ihn an)
+
+    func testAssignDetailedReportsPurchaseCountsAsReason() {
+        let lidl = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", categories: Category.grocery)
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#CC0000", categories: Category.grocery)
+        let purchases = records("Hackfleisch", storeName: "Lidl", count: 4) + records("Hackfleisch", storeName: "Rewe", count: 1)
+
+        let result = AssignmentService.assignDetailed(itemName: "Hackfleisch", to: [lidl, rewe], purchaseRecords: purchases)
+
+        XCTAssertEqual(result.store?.name, "Lidl")
+        XCTAssertEqual(result.reason, .history(count: 4, total: 5))
+    }
+
+    func testAssignDetailedReportsDefaultStoreAsReason() {
+        let lidl = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", categories: Category.grocery)
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#CC0000", categories: Category.grocery)
+        DefaultStoreService.shared.setStoreName("Lidl", for: "grocery")
+        defer { DefaultStoreService.shared.setStoreName(nil, for: "grocery") }
+
+        let result = AssignmentService.assignDetailed(itemName: "Nudeln", to: [rewe, lidl])
+
+        XCTAssertEqual(result.store?.name, "Lidl")
+        XCTAssertEqual(result.reason, .defaultStore(group: "grocery"))
+    }
+
+    /// Kein passender Laden: kein Store, aber ein Grund, der die Gruppe nennt (statt „Nirgendwo“).
+    func testAssignDetailedWithoutMatchingStoreNamesTheGroup() {
+        let dm = Store(name: "dm", emoji: "💄", colorHex: "#C2185B", categories: Category.drugstore)
+        DefaultStoreService.shared.setStoreName(nil, for: "grocery")
+
+        let result = AssignmentService.assignDetailed(itemName: "Nudeln", to: [dm])
+
+        XCTAssertNil(result.store)
+        XCTAssertEqual(result.reason, .noStore(group: "grocery"))
+        XCTAssertTrue(result.reason.explanation.contains("Lebensmittel"))
+    }
+
+    func testAssignAndAssignDetailedAgree() {
+        let lidl = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 2, categories: Category.grocery)
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#CC0000", visitsPerWeek: 1, categories: Category.grocery)
+        let purchases = records("Milch", storeName: "Rewe", count: 3)
+
+        XCTAssertEqual(
+            AssignmentService.assign(itemName: "Milch", to: [lidl, rewe], purchaseRecords: purchases)?.name,
+            AssignmentService.assignDetailed(itemName: "Milch", to: [lidl, rewe], purchaseRecords: purchases).store?.name)
+    }
 }
