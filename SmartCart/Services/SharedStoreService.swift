@@ -34,7 +34,7 @@ actor SharedStoreService {
 
     @discardableResult
     func publish(store: Store) async throws -> String {
-        let code = try await syncToCloud(store: store).code
+        let (code, _, _, _, _, _, _) = try await syncToCloud(store: store)
         return code
     }
 
