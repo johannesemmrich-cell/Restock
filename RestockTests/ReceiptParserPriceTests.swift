@@ -328,6 +328,25 @@ final class ReceiptParserPriceTests: XCTestCase {
         XCTAssertNil(produkt.weightBasis)
     }
 
+    /// Issue #25 — eine Differenz von exakt einem Cent liegt innerhalb der Toleranz, unabhängig
+    /// davon, in welche Richtung die Fließkomma-Rundung fällt (4 × 0,39 − 1,57 ergibt
+    /// 0.010000000000000009 und wurde vorher abgelehnt, 2 × 3,44 − 6,87 dagegen angenommen).
+    func testConfirmationLineWithExactlyOneCentDifferenceIsAttributedInBothDirections() throws {
+        let broetchen = try XCTUnwrap(ReceiptParserService.parse(["Produkt  1,57 A", "4 Stk x 0,39"]).first)
+        XCTAssertEqual(broetchen.quantity, 4, accuracy: 0.001)
+
+        let maultaschen = try XCTUnwrap(ReceiptParserService.parse(["Produkt  6,87 A", "2 Stk x 3,44"]).first)
+        XCTAssertEqual(maultaschen.quantity, 2, accuracy: 0.001)
+    }
+
+    func testAmountsAgreeIsInclusiveAtTheToleranceBoundary() {
+        XCTAssertTrue(ReceiptParserService.amountsAgree(4 * 0.39, 1.57, tolerance: 0.01))
+        XCTAssertTrue(ReceiptParserService.amountsAgree(2 * 3.44, 6.87, tolerance: 0.01))
+        XCTAssertFalse(ReceiptParserService.amountsAgree(4 * 0.39, 1.58, tolerance: 0.01))
+        XCTAssertTrue(ReceiptParserService.amountsAgree(3 * 2.29, 6.92, tolerance: 0.05))
+        XCTAssertFalse(ReceiptParserService.amountsAgree(3 * 2.29, 6.93, tolerance: 0.05))
+    }
+
     /// AC7 — Bestätigungszeile als allererste Zeile: keine Vorposition, an die sie gehören könnte.
     /// Ergebnis: keine Position, kein Absturz.
     func testBareConfirmationLineAsFirstLineDoesNotCrash() {

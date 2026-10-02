@@ -128,7 +128,7 @@ struct EditableReceiptLine: Identifiable {
     static func isSavable(_ line: EditableReceiptLine) -> Bool {
         line.isIncluded
             && line.price > 0
-            && !line.name.trimmingCharacters(in: .whitespaces).isEmpty
+            && !line.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// Indizes von Zeilen, die Stufe 5 (Apple Intelligence) noch NICHT durchlaufen haben — erkannt
