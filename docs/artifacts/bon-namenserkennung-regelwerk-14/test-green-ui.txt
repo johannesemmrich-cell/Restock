@@ -1,0 +1,31 @@
+# UI-Tests GREEN, Issue #14 - Stand nach Adversary-Fixes F003/F005
+# Geraet: Restock-Validate (8F696920-4B9A-40A7-96F0-7697BE887CC7), Lauf 2026-10-02 12:16, Basis d4e610a + F003/F005
+# Befehl: xcodebuild test ... -only-testing:RestockUITests/ReceiptResolutionStatsUITests -only-testing:RestockUITests/ReceiptReviewUITests/testSavingStillWritesLearnedPriceToMatchedItem -only-testing:RestockUITests/ReceiptReviewUITests/testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution
+# Ergebnis: ReceiptResolutionStatsUITests Executed 4 tests, with 0 failures; ReceiptReviewUITests (2 ausgewaehlt) Executed 2 tests, with 0 failures; gesamt Executed 6 tests, with 0 failures - TEST SUCCEEDED
+# Gefiltert auf Testfall-Zeilen und Zusammenfassung, keine ANSI-Codes.
+
+Test Suite 'Selected tests' started at 2026-10-02 12:14:39.669.
+Test Suite 'RestockUITests.xctest' started at 2026-10-02 12:14:39.669.
+Test Suite 'ReceiptResolutionStatsUITests' started at 2026-10-02 12:14:39.670.
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' started.
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' passed (20.203 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' started.
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' passed (28.983 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' started.
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' passed (41.128 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' started.
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' passed (25.944 seconds).
+Test Suite 'ReceiptResolutionStatsUITests' passed at 2026-10-02 12:16:35.930.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 116.257 (116.260) seconds
+Test Suite 'ReceiptReviewUITests' started at 2026-10-02 12:16:35.930.
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' started.
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' passed (16.247 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' started.
+Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' passed (17.966 seconds).
+Test Suite 'ReceiptReviewUITests' passed at 2026-10-02 12:17:10.145.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 34.212 (34.214) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-02 12:17:10.145.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 150.470 (150.476) seconds
+Test Suite 'Selected tests' passed at 2026-10-02 12:17:10.146.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 150.470 (150.477) seconds
+** TEST SUCCEEDED **
