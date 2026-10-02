@@ -58,6 +58,13 @@ struct StoreDetailView: View {
         _sortMode = State(initialValue: store.sortMode)
     }
 
+    // Issue #86: Modus „Reihenfolge anpassen“ (Artikel im Modus Einkaufsweg, Abschnitte im
+    // Modus Kategorie). `reorderTick` zeichnet nach einer Verschiebung neu — das Modell liegt in
+    // UserDefaults und löst selbst kein Neuzeichnen aus.
+    @State private var isReordering = false
+    @State private var reorderTick = 0
+    @State private var showResetRouteConfirm = false
+
     private func total(for items: [ShoppingItem]) -> Double {
         items.compactMap { $0.estimatedLineTotal }.reduce(0, +)
     }
@@ -80,319 +87,9 @@ struct StoreDetailView: View {
         let _ = SyncCoordinator.shared.applyGeneration
         // Einmal pro Body-Durchlauf holen statt der ungecachten `store.pendingItems` (Filter +
         // Sort + UserDefaults-Zugriff) an bis zu 6 Stellen in diesem body einzeln neu aufzurufen.
+        let _ = reorderTick
         let pending = store.pendingItems
-        List {
-            Section {
-                storeHero(pending: pending)
-            }
-            .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
-
-            if syncFailed && store.shareID != nil {
-                Section {
-                    Button {
-                        let generation = nextSyncGeneration()
-                        Task {
-                            let ok = await SyncCoordinator.shared.pull(store: store)
-                            await MainActor.run { applySyncResult(ok, generation: generation) }
-                        }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .font(.system(size: 13))
-                            Text(syncFailureText)
-                                .font(.system(size: 13))
-                            Spacer()
-                            Image(systemName: "arrow.clockwise")
-                                .font(.system(size: 13))
-                        }
-                        .foregroundStyle(.orange)
-                    }
-                    .buttonStyle(.pressable)
-                }
-                .listRowBackground(Color.orange.opacity(0.1))
-            }
-
-            Section {
-                HStack(spacing: 10) {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundStyle(store.color)
-                        .font(.system(size: 18))
-                    TextField(String(localized: "home.quickadd.placeholder"), text: $quickAddText)
-                        .focused($isQuickAddFocused)
-                        .submitLabel(.continue)
-                        .onSubmit { quickAdd() }
-                    if !quickAddText.isEmpty {
-                        Button { quickAddText = "" } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(Color(.systemGray3))
-                        }
-                        .buttonStyle(.pressable)
-                    }
-                }
-                if isQuickAddFocused {
-                    ProductSuggestionChips(suggestions: quickAddSuggestions, tint: store.color, onSelect: applyQuickAddSuggestion)
-                }
-                if let parsed = quickAddParsed {
-                    VStack(spacing: 4) {
-                        HStack(spacing: 8) {
-                            if parsed.quantityAmount != 1 || !parsed.unit.isEmpty {
-                                Text(parsed.unit.isEmpty ? "\(parsed.quantity)×"
-                                     : (parsed.quantityAmount != 1 ? "\(parsed.quantity) \(parsed.unit)" : parsed.unit))
-                                    .font(.system(size: 12, weight: .semibold))
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 8).padding(.vertical, 3)
-                                    .background(store.color, in: RoundedRectangle(cornerRadius: RCRadius.tag))
-                            } else if let hint = historicQuantityHint(for: parsed.name) {
-                                Text(hint)
-                                    .font(.system(size: 12, weight: .semibold))
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 8).padding(.vertical, 3)
-                                    .background(store.color.opacity(0.7), in: RoundedRectangle(cornerRadius: RCRadius.tag))
-                            }
-                            Text(parsed.name)
-                                .font(.system(size: 13, weight: .medium))
-                            Spacer()
-                            Image(systemName: "return")
-                                .font(.system(size: 12))
-                                .foregroundStyle(.secondary)
-                        }
-                        if let dup = quickAddDuplicate(for: parsed.name, in: pending) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .font(.system(size: 11))
-                                Text("'\(dup.name)' bereits in der Liste")
-                                    .font(.system(size: 12))
-                                Spacer()
-                            }
-                            .foregroundStyle(.orange)
-                        }
-                    }
-                    .padding(.horizontal, 6).padding(.vertical, 5)
-                    .background(store.color.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(store.color.opacity(0.2), lineWidth: 1))
-                    .contentShape(Rectangle())
-                    .onTapGesture { quickAdd() }
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 6, trailing: 16))
-                    .listRowBackground(Color.clear)
-                }
-            }
-            .listRowBackground(Color.surface)
-            .animation(.easeInOut(duration: 0.15), value: quickAddParsed?.name)
-
-            Section {
-                if !(store.items ?? []).isEmpty {
-                    progressHeader(pending: pending)
-                }
-                frequencyRow
-            }
-            .listRowBackground(Color.surface)
-            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-
-            alsoDueSection
-
-            let urgentItems = pending.filter { $0.isUrgent }
-            let regularItems = pending.filter { !$0.isUrgent }
-
-            if !urgentItems.isEmpty {
-                Section {
-                    ForEach(urgentItems) { item in
-                        pendingRow(item)
-                    }
-                } header: {
-                    Label("Dringend", systemImage: "exclamationmark.circle.fill")
-                        .foregroundStyle(.orange)
-                        .font(.system(size: 12, weight: .semibold))
-                        .tracking(0.6)
-                }
-                .listRowBackground(Color.surface)
-            }
-
-            if !regularItems.isEmpty {
-                if sortMode == .category {
-                    ForEach(groupedRegularItems(regularItems), id: \.category) { group in
-                        Section {
-                            ForEach(group.items) { item in
-                                pendingRow(item)
-                            }
-                        } header: {
-                            Text("\(group.emoji) \(AssignmentService.displayCategory(group.category))")
-                                .font(.system(size: 12, weight: .semibold))
-                                .tracking(0.6)
-                        }
-                        .listRowBackground(Color.surface)
-                    }
-                } else {
-                    Section(String(localized: "list.pending")) {
-                        ForEach(regularItems) { item in
-                            pendingRow(item)
-                        }
-                    }
-                    .listRowBackground(Color.surface)
-                }
-            }
-
-            if !store.completedItems.isEmpty {
-                Section {
-                    ForEach(store.completedItems) { item in
-                        ItemRow(item: item) { toggle(item: item) }
-                            .contentShape(Rectangle())
-                            .onTapGesture { editingItem = item }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    withAnimation { deleteItem(item) }
-                                } label: {
-                                    Label(String(localized: "action.delete"), systemImage: "trash")
-                                }
-                            }
-                            .swipeActions(edge: .leading) {
-                                Button {
-                                    toggle(item: item)
-                                } label: {
-                                    Label(String(localized: "item.action.uncheck"), systemImage: "arrow.uturn.backward")
-                                }
-                                .tint(.orange)
-                            }
-                            .contextMenu {
-                                if store.shareID != nil {
-                                    assignMenuItems(for: item)
-                                }
-                            }
-                    }
-                } header: {
-                    HStack {
-                        Text(String(localized: "list.completed"))
-                        Spacer()
-                        Button(String(localized: "list.clear.completed")) {
-                            showClearConfirm = true
-                        }
-                        .buttonStyle(.pressable)
-                        .font(.system(size: 12))
-                        .foregroundStyle(.red)
-                        .textCase(nil)
-                    }
-                }
-                .listRowBackground(Color.surface)
-            }
-
-            if (store.items ?? []).isEmpty {
-                Section {
-                    emptyState
-                }
-                .listRowBackground(Color.clear)
-            }
-        }
-        .scrollContentBackground(.hidden)
-        .background(Color.canvas)
-        .navigationTitle(store.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ChipToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 20) {
-                    if isSyncing {
-                        ProgressView()
-                            .scaleEffect(0.8)
-                    }
-                    Button {
-                        showShareSheet = true
-                        Haptics.impact(.light)
-                    } label: {
-                        Image(systemName: store.shareID != nil ? "person.2.fill" : "person.2")
-                            .font(.system(size: 16))
-                            .foregroundStyle(Color.ink)
-                    }
-                    .buttonStyle(.pressable)
-                    Menu {
-                        Picker(selection: Binding(
-                            get: { sortMode },
-                            set: { newValue in
-                                store.sortMode = newValue
-                                withAnimation { sortMode = newValue }
-                                Haptics.impact(.light)
-                            }
-                        )) {
-                            ForEach(StoreSortMode.allCases, id: \.self) { mode in
-                                Label(mode.label, systemImage: mode.systemImage).tag(mode)
-                            }
-                        } label: {
-                            Label(String(format: String(localized: "store.sort.menu"), sortMode.label), systemImage: "arrow.up.arrow.down")
-                        }
-                        .pickerStyle(.menu)
-                        Divider()
-                        if !store.completedItems.isEmpty {
-                            Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
-                                showReceiptScanner = true
-                                Haptics.impact(.light)
-                            }
-                            Button("Preis eintragen", systemImage: "eurosign.circle") {
-                                showActualPriceEntry = true
-                                Haptics.impact(.light)
-                            }
-                        }
-                        Button("Als Vorlage speichern", systemImage: "plus.rectangle.on.folder") {
-                            templateName = store.name
-                            showSaveTemplateAlert = true
-                            Haptics.impact(.light)
-                        }
-                        .disabled(pending.isEmpty)
-                        if !templateService.templates.isEmpty {
-                            Button("Vorlage laden", systemImage: "folder") {
-                                showTemplatePicker = true
-                                Haptics.impact(.light)
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .font(.system(size: 16))
-                            .foregroundStyle(Color.ink)
-                    }
-                    .menuStyle(.button)
-                    .buttonStyle(.pressable)
-                    // Für `ShoppingRouteUITests` (Issue #79): das Symbol allein ist kein verlässlicher
-                    // Suchbegriff für das Menü.
-                    .accessibilityIdentifier("storeDetail.moreMenu")
-                    Button {
-                        showAddItem = true
-                        Haptics.impact(.light)
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.system(size: 17))
-                            .foregroundStyle(Color.ink)
-                    }
-                    .buttonStyle(.pressable)
-                }
-                .toolbarChip()
-            }
-        }
-        .sheet(isPresented: $showAddItem) { AddItemView(presetStore: store) }
-        .sheet(isPresented: $showShareSheet) { StoreShareSheet(store: store) }
-        .sheet(isPresented: $showReceiptScanner) { ReceiptScannerView(store: store) }
-        .sheet(isPresented: $showActualPriceEntry) { ActualPriceEntryView(store: store) }
-        .sheet(item: $editingItem) { item in EditItemView(item: item) }
-        .sheet(isPresented: $showTemplatePicker) {
-            TemplatePickerSheet(service: templateService) { template in
-                loadTemplate(template)
-            }
-        }
-        .alert("Vorlage speichern", isPresented: $showSaveTemplateAlert) {
-            TextField("Name", text: $templateName)
-            Button("Speichern") { saveAsTemplate() }
-            Button("Abbrechen", role: .cancel) { templateName = "" }
-        } message: {
-            Text("\(pending.count) Artikel werden gespeichert")
-        }
-        .confirmationDialog(
-            String(localized: "list.clear.confirm"),
-            isPresented: $showClearConfirm,
-            titleVisibility: .visible
-        ) {
-            Button(String(localized: "list.clear.completed"), role: .destructive) {
-                clearCompleted()
-            }
-        }
-        .devFeedback(context: "Liste: \(store.name)")
+        withAlsoDueObservers(decoratedList(pending: pending))
         .onAppear {
             // Erst die aus der Dynamic Island gequeueten Haken persistieren, DANN die Activity
             // starten — sonst startet start(for:) für eine per Island komplett abgehakte Liste
@@ -429,15 +126,6 @@ struct StoreDetailView: View {
                 }
             }
         }
-        .onAppear { refreshAlsoDue() }
-        .onChange(of: store.id) { sortMode = store.sortMode }
-        .onChange(of: allRecords.count) { refreshAlsoDue() }
-        .onChange(of: allPendingItems.count) { refreshAlsoDue() }
-        .onChange(of: blockedReplenishmentsData) { refreshAlsoDue() }
-        .onChange(of: snoozedReplenishmentsData) { refreshAlsoDue() }
-        .onChange(of: dismissedReplenishmentsData) { refreshAlsoDue() }
-        .onChange(of: developerMode) { refreshAlsoDue() }
-        .onChange(of: store.visitsPerWeek) { refreshAlsoDue() }
         .onDisappear {
             LiveActivityService.shared.end(for: store)
             if store.shareID != nil {
@@ -479,8 +167,502 @@ struct StoreDetailView: View {
         let grouped = Dictionary(grouping: items) { Store.displayCategory(of: $0) }
         return store.orderedCategories(Array(grouped.keys)).compactMap { cat in
             guard let items = grouped[cat], !items.isEmpty else { return nil }
-            return (category: cat, emoji: AssignmentService.categoryEmoji(cat), items: items)
+            return (category: cat, emoji: store.categoryEmoji(cat), items: items)
         }
+    }
+
+    // MARK: - Body-Teile
+
+    /// Beobachter für „Vielleicht auch fällig“ und den Ladenwechsel — aus `body` ausgelagert,
+    /// damit der Typprüfer die Modifier-Kette schafft (Issue #86).
+    private func withAlsoDueObservers<Content: View>(_ content: Content) -> some View {
+        content
+            .onAppear { refreshAlsoDue() }
+            .onChange(of: store.id) { sortMode = store.sortMode }
+            .onChange(of: allRecords.count) { refreshAlsoDue() }
+            .onChange(of: allPendingItems.count) { refreshAlsoDue() }
+            .onChange(of: blockedReplenishmentsData) { refreshAlsoDue() }
+            .onChange(of: snoozedReplenishmentsData) { refreshAlsoDue() }
+            .onChange(of: dismissedReplenishmentsData) { refreshAlsoDue() }
+            .onChange(of: developerMode) { refreshAlsoDue() }
+            .onChange(of: store.visitsPerWeek) { refreshAlsoDue() }
+    }
+
+
+    /// Liste samt Toolbar, Dialogen und Sheets — aus `body` ausgelagert, weil die gesamte
+    /// Modifier-Kette sonst für den Typprüfer zu groß wird (Issue #86).
+    private func decoratedList(pending: [ShoppingItem]) -> some View {
+        List {
+            if isReordering {
+                reorderSections(pending: pending)
+            } else {
+                standardSections(pending: pending)
+            }
+        }
+        .environment(\.editMode, .constant(isReordering ? .active : .inactive))
+        .scrollContentBackground(.hidden)
+        .background(Color.canvas)
+        .navigationTitle(store.name)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar { toolbarItems(pending: pending) }
+        .confirmationDialog(
+            String(localized: "store.route.reset.confirm"),
+            isPresented: $showResetRouteConfirm,
+            titleVisibility: .visible
+        ) {
+            Button(String(localized: "store.route.reset"), role: .destructive) {
+                withAnimation {
+                    store.resetRoute()
+                    reorderTick += 1
+                }
+                Haptics.impact(.medium)
+            }
+        } message: {
+            Text(String(localized: "store.route.reset.message"))
+        }
+        .sheet(isPresented: $showAddItem) { AddItemView(presetStore: store) }
+        .sheet(isPresented: $showShareSheet) { StoreShareSheet(store: store) }
+        .sheet(isPresented: $showReceiptScanner) { ReceiptScannerView(store: store) }
+        .sheet(isPresented: $showActualPriceEntry) { ActualPriceEntryView(store: store) }
+        .sheet(item: $editingItem) { item in EditItemView(item: item) }
+        .sheet(isPresented: $showTemplatePicker) {
+            TemplatePickerSheet(service: templateService) { template in
+                loadTemplate(template)
+            }
+        }
+        .alert("Vorlage speichern", isPresented: $showSaveTemplateAlert) {
+            TextField("Name", text: $templateName)
+            Button("Speichern") { saveAsTemplate() }
+            Button("Abbrechen", role: .cancel) { templateName = "" }
+        } message: {
+            Text("\(pending.count) Artikel werden gespeichert")
+        }
+        .confirmationDialog(
+            String(localized: "list.clear.confirm"),
+            isPresented: $showClearConfirm,
+            titleVisibility: .visible
+        ) {
+            Button(String(localized: "list.clear.completed"), role: .destructive) {
+                clearCompleted()
+            }
+        }
+        .devFeedback(context: "Liste: \(store.name)")
+    }
+
+
+    // Aus `body` ausgelagert: mit Verschiebe-Modus und neuem Menü wurde der Ausdruck für den
+    // Swift-Typprüfer zu groß („unable to type-check this expression in reasonable time“).
+
+    @ViewBuilder
+    private func standardSections(pending: [ShoppingItem]) -> some View {
+        Section {
+            storeHero(pending: pending)
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
+
+        if syncFailed && store.shareID != nil {
+            Section {
+                Button {
+                    let generation = nextSyncGeneration()
+                    Task {
+                        let ok = await SyncCoordinator.shared.pull(store: store)
+                        await MainActor.run { applySyncResult(ok, generation: generation) }
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 13))
+                        Text(syncFailureText)
+                            .font(.system(size: 13))
+                        Spacer()
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 13))
+                    }
+                    .foregroundStyle(.orange)
+                }
+                .buttonStyle(.pressable)
+            }
+            .listRowBackground(Color.orange.opacity(0.1))
+        }
+
+        Section {
+            HStack(spacing: 10) {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundStyle(store.color)
+                    .font(.system(size: 18))
+                TextField(String(localized: "home.quickadd.placeholder"), text: $quickAddText)
+                    .focused($isQuickAddFocused)
+                    .submitLabel(.continue)
+                    .onSubmit { quickAdd() }
+                if !quickAddText.isEmpty {
+                    Button { quickAddText = "" } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(Color(.systemGray3))
+                    }
+                    .buttonStyle(.pressable)
+                }
+            }
+            if isQuickAddFocused {
+                ProductSuggestionChips(suggestions: quickAddSuggestions, tint: store.color, onSelect: applyQuickAddSuggestion)
+            }
+            if let parsed = quickAddParsed {
+                VStack(spacing: 4) {
+                    HStack(spacing: 8) {
+                        if parsed.quantityAmount != 1 || !parsed.unit.isEmpty {
+                            Text(parsed.unit.isEmpty ? "\(parsed.quantity)×"
+                                 : (parsed.quantityAmount != 1 ? "\(parsed.quantity) \(parsed.unit)" : parsed.unit))
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 8).padding(.vertical, 3)
+                                .background(store.color, in: RoundedRectangle(cornerRadius: RCRadius.tag))
+                        } else if let hint = historicQuantityHint(for: parsed.name) {
+                            Text(hint)
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 8).padding(.vertical, 3)
+                                .background(store.color.opacity(0.7), in: RoundedRectangle(cornerRadius: RCRadius.tag))
+                        }
+                        Text(parsed.name)
+                            .font(.system(size: 13, weight: .medium))
+                        Spacer()
+                        Image(systemName: "return")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    if let dup = quickAddDuplicate(for: parsed.name, in: pending) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 11))
+                            Text("'\(dup.name)' bereits in der Liste")
+                                .font(.system(size: 12))
+                            Spacer()
+                        }
+                        .foregroundStyle(.orange)
+                    }
+                }
+                .padding(.horizontal, 6).padding(.vertical, 5)
+                .background(store.color.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(store.color.opacity(0.2), lineWidth: 1))
+                .contentShape(Rectangle())
+                .onTapGesture { quickAdd() }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+                .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 6, trailing: 16))
+                .listRowBackground(Color.clear)
+            }
+        }
+        .listRowBackground(Color.surface)
+        .animation(.easeInOut(duration: 0.15), value: quickAddParsed?.name)
+
+        Section {
+            if !(store.items ?? []).isEmpty {
+                progressHeader(pending: pending)
+            }
+            frequencyRow
+        }
+        .listRowBackground(Color.surface)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+
+        alsoDueSection
+
+        let urgentItems = pending.filter { $0.isUrgent }
+        let regularItems = pending.filter { !$0.isUrgent }
+
+        if !urgentItems.isEmpty {
+            Section {
+                ForEach(urgentItems) { item in
+                    pendingRow(item)
+                }
+            } header: {
+                Label("Dringend", systemImage: "exclamationmark.circle.fill")
+                    .foregroundStyle(.orange)
+                    .font(.system(size: 12, weight: .semibold))
+                    .tracking(0.6)
+            }
+            .listRowBackground(Color.surface)
+        }
+
+        if !regularItems.isEmpty {
+            if sortMode == .category {
+                ForEach(groupedRegularItems(regularItems), id: \.category) { group in
+                    Section {
+                        ForEach(group.items) { item in
+                            pendingRow(item)
+                        }
+                    } header: {
+                        Text("\(group.emoji) \(AssignmentService.displayCategory(group.category))")
+                            .font(.system(size: 12, weight: .semibold))
+                            .tracking(0.6)
+                    }
+                    .listRowBackground(Color.surface)
+                }
+            } else {
+                Section(String(localized: "list.pending")) {
+                    ForEach(regularItems) { item in
+                        pendingRow(item)
+                    }
+                }
+                .listRowBackground(Color.surface)
+            }
+        }
+
+        if !store.completedItems.isEmpty {
+            Section {
+                ForEach(store.completedItems) { item in
+                    ItemRow(item: item) { toggle(item: item) }
+                        .contentShape(Rectangle())
+                        .onTapGesture { editingItem = item }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                withAnimation { deleteItem(item) }
+                            } label: {
+                                Label(String(localized: "action.delete"), systemImage: "trash")
+                            }
+                        }
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                toggle(item: item)
+                            } label: {
+                                Label(String(localized: "item.action.uncheck"), systemImage: "arrow.uturn.backward")
+                            }
+                            .tint(.orange)
+                        }
+                        .contextMenu {
+                            if store.shareID != nil {
+                                assignMenuItems(for: item)
+                            }
+                        }
+                }
+            } header: {
+                HStack {
+                    Text(String(localized: "list.completed"))
+                    Spacer()
+                    Button(String(localized: "list.clear.completed")) {
+                        showClearConfirm = true
+                    }
+                    .buttonStyle(.pressable)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.red)
+                    .textCase(nil)
+                }
+            }
+            .listRowBackground(Color.surface)
+        }
+
+        if (store.items ?? []).isEmpty {
+            Section {
+                emptyState
+            }
+            .listRowBackground(Color.clear)
+        }
+    }
+
+    @ToolbarContentBuilder
+    private func toolbarItems(pending: [ShoppingItem]) -> some ToolbarContent {
+        ChipToolbarItem(placement: .navigationBarTrailing) {
+            if isReordering {
+                Button {
+                    withAnimation { isReordering = false }
+                    Haptics.success()
+                } label: {
+                    Text(String(localized: "action.done")).toolbarChip(prominent: true)
+                }
+                .buttonStyle(.pressable)
+                .accessibilityIdentifier("storeDetail.reorderDone")
+            } else {
+            HStack(spacing: 20) {
+                if isSyncing {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                }
+                Button {
+                    showShareSheet = true
+                    Haptics.impact(.light)
+                } label: {
+                    Image(systemName: store.shareID != nil ? "person.2.fill" : "person.2")
+                        .font(.system(size: 16))
+                        .foregroundStyle(Color.ink)
+                }
+                .buttonStyle(.pressable)
+                Menu {
+                    Picker(selection: Binding(
+                        get: { sortMode },
+                        set: { newValue in
+                            store.sortMode = newValue
+                            withAnimation { sortMode = newValue }
+                            Haptics.impact(.light)
+                        }
+                    )) {
+                        ForEach(StoreSortMode.allCases, id: \.self) { mode in
+                            Label(mode.label, systemImage: mode.systemImage).tag(mode)
+                        }
+                    } label: {
+                        Label(String(format: String(localized: "store.sort.menu"), sortMode.label), systemImage: "arrow.up.arrow.down")
+                    }
+                    .pickerStyle(.menu)
+                    if sortMode != .added {
+                        Button(String(localized: "store.reorder"), systemImage: "arrow.up.and.down.text.horizontal") {
+                            withAnimation { isReordering = true }
+                            Haptics.impact(.light)
+                        }
+                        .disabled(pending.filter { !$0.isUrgent }.count < 2)
+                        Button(String(localized: "store.route.reset"), systemImage: "arrow.counterclockwise", role: .destructive) {
+                            showResetRouteConfirm = true
+                        }
+                    }
+                    Divider()
+                    if !store.completedItems.isEmpty {
+                        Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
+                            showReceiptScanner = true
+                            Haptics.impact(.light)
+                        }
+                        Button("Preis eintragen", systemImage: "eurosign.circle") {
+                            showActualPriceEntry = true
+                            Haptics.impact(.light)
+                        }
+                    }
+                    Button("Als Vorlage speichern", systemImage: "plus.rectangle.on.folder") {
+                        templateName = store.name
+                        showSaveTemplateAlert = true
+                        Haptics.impact(.light)
+                    }
+                    .disabled(pending.isEmpty)
+                    if !templateService.templates.isEmpty {
+                        Button("Vorlage laden", systemImage: "folder") {
+                            showTemplatePicker = true
+                            Haptics.impact(.light)
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 16))
+                        .foregroundStyle(Color.ink)
+                }
+                .menuStyle(.button)
+                .buttonStyle(.pressable)
+                // Für `ShoppingRouteUITests` (Issue #79): das Symbol allein ist kein verlässlicher
+                // Suchbegriff für das Menü.
+                .accessibilityIdentifier("storeDetail.moreMenu")
+                Button {
+                    showAddItem = true
+                    Haptics.impact(.light)
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.system(size: 17))
+                        .foregroundStyle(Color.ink)
+                }
+                .buttonStyle(.pressable)
+            }
+            .toolbarChip()
+            }
+        }
+    }
+
+    // MARK: - Reihenfolge anpassen (Issue #86)
+
+    @ViewBuilder
+    private func reorderSections(pending: [ShoppingItem]) -> some View {
+        let regular = pending.filter { !$0.isUrgent }
+        if sortMode == .category {
+            let groups = groupedRegularItems(regular)
+            Section {
+                ForEach(groups, id: \.category) { group in
+                    reorderRow(
+                        title: "\(group.emoji) \(categoryTitle(group.category))",
+                        subtitle: String(format: String(localized: "category.picker.count"), group.items.count),
+                        index: groups.firstIndex { $0.category == group.category } ?? 0,
+                        count: groups.count,
+                        identifier: "reorder.row.\(group.category)"
+                    ) { from, to in
+                        moveCategories(groups.map(\.category), from: IndexSet(integer: from), to: to)
+                    }
+                }
+                .onMove { from, to in moveCategories(groups.map(\.category), from: from, to: to) }
+            } header: {
+                Text(String(localized: "store.reorder.hint.category"))
+                    .textCase(nil)
+            }
+            .listRowBackground(Color.surface)
+        } else {
+            Section {
+                ForEach(regular) { item in
+                    reorderRow(
+                        title: item.name,
+                        subtitle: categoryTitle(Store.displayCategory(of: item)),
+                        index: regular.firstIndex { $0.id == item.id } ?? 0,
+                        count: regular.count,
+                        identifier: "reorder.row.\(item.name)"
+                    ) { from, to in
+                        moveItems(regular, from: IndexSet(integer: from), to: to)
+                    }
+                }
+                .onMove { from, to in moveItems(regular, from: from, to: to) }
+            } header: {
+                Text(String(localized: "store.reorder.hint.route"))
+                    .textCase(nil)
+            }
+            .listRowBackground(Color.surface)
+        }
+    }
+
+    /// Eine Zeile im Modus „Reihenfolge anpassen“. Für VoiceOver gibt es „Nach oben“/„Nach
+    /// unten“ statt Ziehen; `move(from, to)` nutzt dieselbe Zählweise wie `onMove`.
+    private func reorderRow(
+        title: String,
+        subtitle: String?,
+        index: Int,
+        count: Int,
+        identifier: String,
+        move: @escaping (Int, Int) -> Void
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.system(size: 16))
+                .foregroundStyle(Color.ink)
+            if let subtitle, !subtitle.isEmpty {
+                Text(subtitle)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .padding(.vertical, 2)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(identifier)
+        .accessibilityActions {
+            if index > 0 {
+                Button(String(localized: "store.reorder.up")) { move(index, index - 1) }
+            }
+            if index < count - 1 {
+                Button(String(localized: "store.reorder.down")) { move(index, index + 2) }
+            }
+        }
+    }
+
+    private func categoryTitle(_ category: String) -> String {
+        store.isCustomCategory(category) ? category : AssignmentService.displayCategory(category)
+    }
+
+    private func moveItems(_ items: [ShoppingItem], from: IndexSet, to: Int) {
+        var order = items
+        order.move(fromOffsets: from, toOffset: to)
+        let moved = from.first.map { items[$0] }
+        withAnimation {
+            store.applyManualOrder(order, moved: moved)
+            reorderTick += 1
+        }
+        Haptics.impact(.light)
+    }
+
+    private func moveCategories(_ categories: [String], from: IndexSet, to: Int) {
+        var order = categories
+        order.move(fromOffsets: from, toOffset: to)
+        let moved = from.first.map { categories[$0] }
+        withAnimation {
+            store.applyManualCategoryOrder(order, moved: moved)
+            reorderTick += 1
+        }
+        Haptics.impact(.light)
     }
 
     // MARK: - Also due before the next visit (Issue #30, C4)
@@ -1215,3 +1397,4 @@ private struct TemplatePickerSheet: View {
         }
     }
 }
+
