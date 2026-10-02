@@ -63,6 +63,9 @@ class Store {
     /// neu hinzugefügter „Feta“ landet in diesem Laden wieder in „Kühltheke hinten“
     /// (`ShoppingItem.init`).
     var categoryAssignments: [String: String] = [:]
+    /// Artikelschlüssel → Zeitpunkt der letzten Änderung der Zuordnung, auch fürs Vergessen
+    /// (Löschvermerk) — nur fürs Abgleichen geteilter Läden (Issue #94), wie `customCategoryDates`.
+    var categoryAssignmentDates: [String: Date] = [:]
     var sortIndex: Int = 0
 
     // CloudKit verlangt für automatische Spiegelung, dass ALLE To-many-Relationships optional
@@ -140,6 +143,7 @@ class Store {
         self.customCategoryEmojis = [:]
         self.customCategoryDates = [:]
         self.categoryAssignments = [:]
+        self.categoryAssignmentDates = [:]
     }
 
     var color: Color {
@@ -427,8 +431,8 @@ class Store {
             item.lastModified = now
         }
         let targetIsCustom = isCustomCategory(target)
-        categoryAssignments = categoryAssignments.compactMapValues { value in
-            value == old ? (targetIsCustom ? target : nil) : value
+        for (key, value) in categoryAssignments where value == old {
+            setAssignment(targetIsCustom ? target : nil, forKey: key, at: now)
         }
         routeModel = ShoppingRoute.renameCategory(old, to: target, in: routeModel)
         Store.bumpRouteRevision()
@@ -447,7 +451,9 @@ class Store {
             item.categoryManuallySet = false
             item.lastModified = now
         }
-        categoryAssignments = categoryAssignments.filter { $0.value != name }
+        for (key, value) in categoryAssignments where value == name {
+            setAssignment(nil, forKey: key, at: now)
+        }
         // Gelernte Positionen bleiben, aber nicht mehr unter dem gelöschten Namen — sonst erbte
         // eine später gleich benannte Kategorie dessen Platz.
         var model = routeModel
@@ -460,9 +466,34 @@ class Store {
     func rememberCategory(_ category: String, forItemNamed name: String) {
         let key = ShoppingRoute.itemKey(name)
         if isCustomCategory(category) {
-            categoryAssignments[key] = category
+            if categoryAssignments[key] != category { setAssignment(category, forKey: key, at: Date()) }
         } else if categoryAssignments[key] != nil {
-            categoryAssignments.removeValue(forKey: key)
+            setAssignment(nil, forKey: key, at: Date())
+        }
+    }
+
+    /// Zuordnung setzen oder vergessen (`nil`) und den Zeitpunkt fürs Abgleichen festhalten.
+    private func setAssignment(_ category: String?, forKey key: String, at date: Date) {
+        categoryAssignments[key] = category
+        categoryAssignmentDates[key] = date
+    }
+
+    /// Gemerkte Zuordnungen samt Vergessen-Vermerken, für den Abgleich geteilter Läden (Issue #94).
+    var categoryAssignmentEntries: [String: CategoryAssignmentEntry] {
+        get {
+            var entries: [String: CategoryAssignmentEntry] = [:]
+            for (key, date) in categoryAssignmentDates {
+                entries[key] = CategoryAssignmentEntry(category: categoryAssignments[key], date: date)
+            }
+            // Zuordnung ohne Datum (vor Issue #94 gemerkt) zählt als lebend und uralt.
+            for (key, category) in categoryAssignments where entries[key] == nil {
+                entries[key] = CategoryAssignmentEntry(category: category, date: .distantPast)
+            }
+            return entries
+        }
+        set {
+            categoryAssignments = newValue.compactMapValues(\.category)
+            categoryAssignmentDates = newValue.mapValues(\.date)
         }
     }
 

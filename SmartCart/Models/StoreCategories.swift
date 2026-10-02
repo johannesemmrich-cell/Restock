@@ -15,6 +15,14 @@ struct CustomCategoryEntry: Codable, Equatable {
     var isDeleted: Bool { emoji == nil }
 }
 
+/// Gemerkte Zuordnung Artikel → eigene Kategorie für den Abgleich geteilter Läden (Issue #94):
+/// `category == nil` heißt vergessen (feste Kategorie gewählt oder Kategorie gelöscht). Wie bei
+/// den Kategorien gewinnt pro Artikel der spätere Stand.
+struct CategoryAssignmentEntry: Codable, Equatable {
+    var category: String?
+    var date: Date
+}
+
 enum StoreCategories {
     /// Emoji, wenn weder Name noch Nutzer eines vorgeben.
     static let defaultEmoji = "🏷️"
@@ -131,6 +139,20 @@ enum StoreCategories {
         for (name, entry) in local {
             if let other = merged[name], other.date > entry.date { continue }
             merged[name] = entry
+        }
+        return merged
+    }
+
+    /// Zuordnungen abgleichen: pro Artikelschlüssel gewinnt der spätere Stand, auch „vergessen“.
+    /// Bei gleichem Zeitpunkt bleibt der lokale Stand (wie bei `merge`).
+    static func mergeAssignments(
+        local: [String: CategoryAssignmentEntry],
+        remote: [String: CategoryAssignmentEntry]
+    ) -> [String: CategoryAssignmentEntry] {
+        var merged = remote
+        for (key, entry) in local {
+            if let other = merged[key], other.date > entry.date { continue }
+            merged[key] = entry
         }
         return merged
     }
