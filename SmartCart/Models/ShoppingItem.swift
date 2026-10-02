@@ -135,21 +135,9 @@ class ShoppingItem {
         // seltener. Deshalb zusätzlich der Key selbst (garantiert eindeutig, alphabetisch) als
         // letzte, immer entscheidende Instanz.
         let rawLearnedMatch: (price: Double, unit: String?)? = {
-            guard let store else { return nil }
-            let substringKeys = store.learnedPrices.keys.filter { key in
-                key.count >= 3 && itemLower.count >= 3 &&
-                (key.contains(itemLower) || itemLower.contains(key))
-            }
-            // Issue #52: Fehlertoleranter Fallback (Tippfehler/OCR, "saitan" ↔ "seitan") — nur
-            // wenn die Teilstring-Prüfung nichts findet; ein Teilstring-Treffer hat Vorrang.
-            let matchingKeys = !substringKeys.isEmpty ? substringKeys
-                : store.learnedPrices.keys.filter { Self.isFuzzyLearnedPriceMatch($0, itemLower) }
-            let bestKey = matchingKeys.max { a, b in
-                let dateA = store.learnedPriceDates[a] ?? .distantPast
-                let dateB = store.learnedPriceDates[b] ?? .distantPast
-                return dateA != dateB ? dateA < dateB : a > b
-            }
-            guard let bestKey, let price = store.learnedPrices[bestKey] else { return nil }
+            guard let store,
+                  let bestKey = Self.matchingLearnedPriceKey(forLowercasedName: itemLower, in: store),
+                  let price = store.learnedPrices[bestKey] else { return nil }
             // Die Bezugsgröße wird unter DEMSELBEN Schlüssel geführt (siehe
             // `Store.learnedPriceUnits`). Fehlt sie, ist der Preis ein Altdatum — die
             // Entscheidungstabelle unten verwirft ihn dann.
@@ -199,6 +187,26 @@ class ShoppingItem {
         if let remembered = store?.rememberedCategory(forItemNamed: name) {
             self.category = remembered
             self.categoryManuallySet = true
+        }
+    }
+
+    /// Schlüssel in `store.learnedPrices`, den `init` für einen (kleingeschriebenen) Artikelnamen
+    /// wählt: Teilstring-Treffer, sonst Fuzzy-Fallback (#52); bei mehreren Treffern gewinnt das
+    /// jüngste `learnedPriceDates`, bei Gleichstand der alphabetisch kleinste Schlüssel. Auch von
+    /// `LegacyLearnedPriceReset` (Issue #11) genutzt, damit beide dieselbe Zuordnung treffen.
+    static func matchingLearnedPriceKey(forLowercasedName itemLower: String, in store: Store) -> String? {
+        let substringKeys = store.learnedPrices.keys.filter { key in
+            key.count >= 3 && itemLower.count >= 3 &&
+            (key.contains(itemLower) || itemLower.contains(key))
+        }
+        // Issue #52: Fehlertoleranter Fallback (Tippfehler/OCR, "saitan" ↔ "seitan") — nur
+        // wenn die Teilstring-Prüfung nichts findet; ein Teilstring-Treffer hat Vorrang.
+        let matchingKeys = !substringKeys.isEmpty ? substringKeys
+            : store.learnedPrices.keys.filter { isFuzzyLearnedPriceMatch($0, itemLower) }
+        return matchingKeys.max { a, b in
+            let dateA = store.learnedPriceDates[a] ?? .distantPast
+            let dateB = store.learnedPriceDates[b] ?? .distantPast
+            return dateA != dateB ? dateA < dateB : a > b
         }
     }
 

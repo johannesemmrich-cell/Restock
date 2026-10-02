@@ -46,6 +46,7 @@
 		47C167B4A1828C9F1D437D86 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1316E9EFE646ED0F0078332F /* Store.swift */; };
 		A0D490DE0D31D30BD9FEF341 /* StoreCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC82CB50C5D6C4FD0257599 /* StoreCategories.swift */; };
 		150BD40FD1E7284CB544C93F /* ShoppingRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EBBE9D9B16A5A1ADEE1D34 /* ShoppingRoute.swift */; };
+		B1C0DE110000000000000005 /* LegacyLearnedPriceReset.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */; };
 		4875ED5EEB7BE1A728289FBA /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */; };
 		4C16FAE9DA52BB877ACC9BC3 /* ReceiptAliasService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F213D22060B00AE4751A8 /* ReceiptAliasService.swift */; };
 		4F223836DA8ED358DC718C1F /* ReceiptScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E205C058079CBDE7869B96F4 /* ReceiptScannerView.swift */; };
@@ -133,6 +134,7 @@
 		9D507887509A2C64F3C625EF /* ReceiptParserPriceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */; };
 		E54A0001B2C34D5E8F6071A2 /* ReceiptSavePurchaseQuantityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */; };
 		406A9602E2603784E461BA88 /* PriceProvenanceMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */; };
+		A1C0DE110000000000000001 /* LegacyLearnedPriceResetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE110000000000000002 /* LegacyLearnedPriceResetTests.swift */; };
 		6974D7102BB46BEE039CDB22 /* ShoppingItemFuzzyPriceMatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819030AD296BDC33619C4C2 /* ShoppingItemFuzzyPriceMatchTests.swift */; };
 		7169A936DC526EB4B1002F33 /* PriceEstimatorCategoryFallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */; };
 		9023139F29439ED2491D853A /* PriceEstimatorStagesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C68E8D82565BA3E9CA923D /* PriceEstimatorStagesTests.swift */; };
@@ -164,6 +166,7 @@
 		7A31C4E2B90D45F1A6E30C11 /* ReceiptReviewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D82F0A7C14B49E28B7A6D33 /* ReceiptReviewUITests.swift */; };
 		015DA7427FD1EAE4DF8E730F /* AssignmentServiceQuantitySuggestionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A565488E820C9913EBBD141 /* AssignmentServiceQuantitySuggestionTests.swift */; };
 		54FBC057E3FD038294A3AEA0 /* AddItemQuantitySuggestionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */; };
+		A1C0DE110000000000000003 /* LegacyLearnedPriceResetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */; };
 		91DA57026009303F78C87BDB /* ShoppingRouteUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */; };
 /* End PBXBuildFile section */
 
@@ -220,6 +223,7 @@
 		1316E9EFE646ED0F0078332F /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		2BC82CB50C5D6C4FD0257599 /* StoreCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCategories.swift; sourceTree = "<group>"; };
 		05EBBE9D9B16A5A1ADEE1D34 /* ShoppingRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRoute.swift; sourceTree = "<group>"; };
+		B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceReset.swift; sourceTree = "<group>"; };
 		137F4903637F2E7F3B8FF9D7 /* SmartCartWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCartWidgets.entitlements; sourceTree = "<group>"; };
 		15ED485E807ADF771EE3C623 /* LiveActivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityService.swift; sourceTree = "<group>"; };
 		1CC6F3E41F217D74D6B1A8AA /* BrowseStoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseStoresView.swift; sourceTree = "<group>"; };
@@ -316,6 +320,7 @@
 		68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserPriceTests.swift; sourceTree = "<group>"; };
 		A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptSavePurchaseQuantityTests.swift; sourceTree = "<group>"; };
 		16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceProvenanceMigrationTests.swift; sourceTree = "<group>"; };
+		A1C0DE110000000000000002 /* LegacyLearnedPriceResetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceResetTests.swift; sourceTree = "<group>"; };
 		8819030AD296BDC33619C4C2 /* ShoppingItemFuzzyPriceMatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItemFuzzyPriceMatchTests.swift; sourceTree = "<group>"; };
 		C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceEstimatorCategoryFallbackTests.swift; sourceTree = "<group>"; };
 		18C68E8D82565BA3E9CA923D /* PriceEstimatorStagesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceEstimatorStagesTests.swift; sourceTree = "<group>"; };
@@ -347,6 +352,7 @@
 		5D82F0A7C14B49E28B7A6D33 /* ReceiptReviewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptReviewUITests.swift; sourceTree = "<group>"; };
 		9A565488E820C9913EBBD141 /* AssignmentServiceQuantitySuggestionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentServiceQuantitySuggestionTests.swift; sourceTree = "<group>"; };
 		3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemQuantitySuggestionUITests.swift; sourceTree = "<group>"; };
+		A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceResetUITests.swift; sourceTree = "<group>"; };
 		4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRouteUITests.swift; sourceTree = "<group>"; };
 		E2ECD600D24B6ACC3CB50C74 /* RestockUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		634FBBE2D9633DD7732C8BAF /* RestockTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -479,6 +485,7 @@
 				1316E9EFE646ED0F0078332F /* Store.swift */,
 				2BC82CB50C5D6C4FD0257599 /* StoreCategories.swift */,
 				05EBBE9D9B16A5A1ADEE1D34 /* ShoppingRoute.swift */,
+				B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */,
 				79B54EB99B9957838C1031AD /* TodoItem.swift */,
 			);
 			path = Models;
@@ -626,6 +633,7 @@
 				68588F8D5305384A6730E9A7 /* ReceiptParserPriceTests.swift */,
 				A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */,
 				16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */,
+				A1C0DE110000000000000002 /* LegacyLearnedPriceResetTests.swift */,
 				8819030AD296BDC33619C4C2 /* ShoppingItemFuzzyPriceMatchTests.swift */,
 				C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */,
 				18C68E8D82565BA3E9CA923D /* PriceEstimatorStagesTests.swift */,
@@ -665,6 +673,7 @@
 				95312F3105014450B82B1EF5 /* ReceiptShareExtensionTests.swift */,
 				5D82F0A7C14B49E28B7A6D33 /* ReceiptReviewUITests.swift */,
 				3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */,
+				A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */,
 				4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */,
 			);
 			path = RestockUITests;
@@ -928,6 +937,7 @@
 				47C167B4A1828C9F1D437D86 /* Store.swift in Sources */,
 				A0D490DE0D31D30BD9FEF341 /* StoreCategories.swift in Sources */,
 				150BD40FD1E7284CB544C93F /* ShoppingRoute.swift in Sources */,
+				B1C0DE110000000000000005 /* LegacyLearnedPriceReset.swift in Sources */,
 				29F88390E651065B4706C81A /* StoreCard.swift in Sources */,
 				DC682519ADF44DAEC0189666 /* StoreDetailView.swift in Sources */,
 				196D318FE932C7D9AFD15E25 /* StoreSetupView.swift in Sources */,
@@ -980,6 +990,7 @@
 				9D507887509A2C64F3C625EF /* ReceiptParserPriceTests.swift in Sources */,
 				E54A0001B2C34D5E8F6071A2 /* ReceiptSavePurchaseQuantityTests.swift in Sources */,
 				406A9602E2603784E461BA88 /* PriceProvenanceMigrationTests.swift in Sources */,
+				A1C0DE110000000000000001 /* LegacyLearnedPriceResetTests.swift in Sources */,
 				6974D7102BB46BEE039CDB22 /* ShoppingItemFuzzyPriceMatchTests.swift in Sources */,
 				7169A936DC526EB4B1002F33 /* PriceEstimatorCategoryFallbackTests.swift in Sources */,
 				9023139F29439ED2491D853A /* PriceEstimatorStagesTests.swift in Sources */,
@@ -1019,6 +1030,7 @@
 				6B398E7EEE5549BE924E1540 /* ReceiptShareExtensionTests.swift in Sources */,
 				7A31C4E2B90D45F1A6E30C11 /* ReceiptReviewUITests.swift in Sources */,
 				54FBC057E3FD038294A3AEA0 /* AddItemQuantitySuggestionUITests.swift in Sources */,
+				A1C0DE110000000000000003 /* LegacyLearnedPriceResetUITests.swift in Sources */,
 				91DA57026009303F78C87BDB /* ShoppingRouteUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
