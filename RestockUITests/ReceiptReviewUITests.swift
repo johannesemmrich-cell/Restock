@@ -955,6 +955,18 @@ final class ReceiptReviewUITests: XCTestCase {
         // `value` eines LEEREN `TextField` ist in XCUITest nicht "", sondern der Platzhaltertext —
         // beides gilt hier also als leer. Ohne diese Unterscheidung scheitert der Test an seiner
         // eigenen Vorbedingung statt an der Sache (im RED-Lauf gemessen: "Anderer Name …").
+        //
+        // Issue #82: `typeText` kehrt zurück, bevor die App alle Löschtasten verarbeitet hat — jede
+        // Taste zeichnet die Liste neu. Auf dem CI-Runner kommen die letzten Tasten bis zu rund
+        // 3 s später an (dort gemessen, 8 von 30 Läufen rot bei einmaligem Lesen). Verloren geht
+        // keine, das Feld ist am Ende immer leer. Also auf den leeren Zustand WARTEN, nicht
+        // einmal lesen.
+        let isEmptyField = NSPredicate { evaluated, _ in
+            let value = ((evaluated as? XCUIElement)?.value as? String) ?? ""
+            return value.isEmpty || value == Seed.customFieldPlaceholder
+        }
+        expectation(for: isEmptyField, evaluatedWith: field)
+        waitForExpectations(timeout: 15)
         let afterDelete = (field.value as? String) ?? ""
         XCTAssertTrue(afterDelete.isEmpty || afterDelete == Seed.customFieldPlaceholder,
                       "Vorbedingung: Das Feld ist nach dem Löschen nicht leer — bekommen: \(afterDelete)")
