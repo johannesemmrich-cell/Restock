@@ -1,123 +1,31 @@
-# UI-Tests GREEN, Issue #14 - Restock-Validate (8F696920-4B9A-40A7-96F0-7697BE887CC7), 2026-10-02, Basis 179cb8f + Implementierungsstand
-# Drei aufeinanderfolgende Laeufe ReceiptResolutionStatsUITests (nie parallel), danach Gegenprobe ReceiptReviewUITests.
-# Lauf 1: Executed 4 tests, with 0 failures - TEST SUCCEEDED
-# Lauf 2: Executed 4 tests, with 0 failures - TEST SUCCEEDED
-# Lauf 3: Executed 4 tests, with 0 failures - TEST SUCCEEDED
-# Gegenprobe ReceiptReviewUITests: Executed 22 tests, with 0 failures - TEST SUCCEEDED
+# UI-Tests GREEN, Issue #14 - Stand nach Adversary-Fixes F003/F005
+# Geraet: Restock-Validate (8F696920-4B9A-40A7-96F0-7697BE887CC7), Lauf 2026-10-02 12:16, Basis d4e610a + F003/F005
+# Befehl: xcodebuild test ... -only-testing:RestockUITests/ReceiptResolutionStatsUITests -only-testing:RestockUITests/ReceiptReviewUITests/testSavingStillWritesLearnedPriceToMatchedItem -only-testing:RestockUITests/ReceiptReviewUITests/testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution
+# Ergebnis: ReceiptResolutionStatsUITests Executed 4 tests, with 0 failures; ReceiptReviewUITests (2 ausgewaehlt) Executed 2 tests, with 0 failures; gesamt Executed 6 tests, with 0 failures - TEST SUCCEEDED
 # Gefiltert auf Testfall-Zeilen und Zusammenfassung, keine ANSI-Codes.
 
-=== Lauf 1: -only-testing:RestockUITests/ReceiptResolutionStatsUITests ===
-Test Suite 'Selected tests' started at 2026-10-02 11:14:28.182.
-Test Suite 'RestockUITests.xctest' started at 2026-10-02 11:14:28.182.
-Test Suite 'ReceiptResolutionStatsUITests' started at 2026-10-02 11:14:28.182.
+Test Suite 'Selected tests' started at 2026-10-02 12:14:39.669.
+Test Suite 'RestockUITests.xctest' started at 2026-10-02 12:14:39.669.
+Test Suite 'ReceiptResolutionStatsUITests' started at 2026-10-02 12:14:39.670.
 Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' passed (20.271 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' passed (20.203 seconds).
 Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' passed (28.862 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' passed (28.983 seconds).
 Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' passed (41.298 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' passed (41.128 seconds).
 Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' passed (26.303 seconds).
-Test Suite 'ReceiptResolutionStatsUITests' passed at 2026-10-02 11:16:24.920.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 116.734 (116.737) seconds
-Test Suite 'RestockUITests.xctest' passed at 2026-10-02 11:16:24.920.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 116.734 (116.738) seconds
-Test Suite 'Selected tests' passed at 2026-10-02 11:16:24.921.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 116.734 (116.739) seconds
-** TEST SUCCEEDED **
-
-=== Lauf 2: -only-testing:RestockUITests/ReceiptResolutionStatsUITests ===
-Test Suite 'Selected tests' started at 2026-10-02 11:28:53.177.
-Test Suite 'RestockUITests.xctest' started at 2026-10-02 11:28:53.178.
-Test Suite 'ReceiptResolutionStatsUITests' started at 2026-10-02 11:28:53.178.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' passed (19.762 seconds).
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' passed (28.953 seconds).
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' passed (41.375 seconds).
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' passed (26.678 seconds).
-Test Suite 'ReceiptResolutionStatsUITests' passed at 2026-10-02 11:30:49.951.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 116.768 (116.773) seconds
-Test Suite 'RestockUITests.xctest' passed at 2026-10-02 11:30:49.952.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 116.768 (116.774) seconds
-Test Suite 'Selected tests' passed at 2026-10-02 11:30:49.953.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 116.768 (116.775) seconds
-** TEST SUCCEEDED **
-
-=== Lauf 3: -only-testing:RestockUITests/ReceiptResolutionStatsUITests ===
-Test Suite 'Selected tests' started at 2026-10-02 11:32:34.427.
-Test Suite 'RestockUITests.xctest' started at 2026-10-02 11:32:34.428.
-Test Suite 'ReceiptResolutionStatsUITests' started at 2026-10-02 11:32:34.428.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' passed (19.792 seconds).
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' passed (28.652 seconds).
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' passed (41.136 seconds).
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' started.
-Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' passed (26.226 seconds).
-Test Suite 'ReceiptResolutionStatsUITests' passed at 2026-10-02 11:34:30.237.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 115.806 (115.809) seconds
-Test Suite 'RestockUITests.xctest' passed at 2026-10-02 11:34:30.237.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 115.806 (115.810) seconds
-Test Suite 'Selected tests' passed at 2026-10-02 11:34:30.238.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 115.806 (115.811) seconds
-** TEST SUCCEEDED **
-
-=== Gegenprobe: -only-testing:RestockUITests/ReceiptReviewUITests ===
-Test Suite 'Selected tests' started at 2026-10-02 11:18:48.915.
-Test Suite 'RestockUITests.xctest' started at 2026-10-02 11:18:48.915.
-Test Suite 'ReceiptReviewUITests' started at 2026-10-02 11:18:48.915.
-Test Case '-[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine]' passed (14.398 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testCardShowsAtMostFourSelectionOptions]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testCardShowsAtMostFourSelectionOptions]' passed (15.801 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' passed (16.775 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testChangeOpensPriceAndQuantityEditorAndUpdatesSummary]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testChangeOpensPriceAndQuantityEditorAndUpdatesSummary]' passed (19.785 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testClearingCustomNameFieldKeepsPreviousItemName]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testClearingCustomNameFieldKeepsPreviousItemName]' passed (18.706 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard]' passed (15.228 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testCustomNameOptionOpensFocusedTextField]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testCustomNameOptionOpensFocusedTextField]' passed (16.854 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' passed (17.812 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalTextAndAiMarkAreReadableInDarkMode]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalTextAndAiMarkAreReadableInDarkMode]' passed (13.690 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' passed (17.563 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptDoesNotProduceOneCentItemPrice]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptDoesNotProduceOneCentItemPrice]' passed (21.363 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testSavedWeightLineShowsGramsInExpenses]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testSavedWeightLineShowsGramsInExpenses]' passed (18.912 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testSaveIsNotTriggerableWithoutAnySelectedPosition]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testSaveIsNotTriggerableWithoutAnySelectedPosition]' passed (28.769 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' passed (25.944 seconds).
+Test Suite 'ReceiptResolutionStatsUITests' passed at 2026-10-02 12:16:35.930.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 116.257 (116.260) seconds
+Test Suite 'ReceiptReviewUITests' started at 2026-10-02 12:16:35.930.
 Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' passed (20.040 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testSectionHeaderShowsPositionsSelectedAndSum]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testSectionHeaderShowsPositionsSelectedAndSum]' passed (12.903 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testTappingListMatchSelectsThatOption]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testTappingListMatchSelectsThatOption]' passed (11.519 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testTappingReceiptTextOptionSelectsNormalizedBonText]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testTappingReceiptTextOptionSelectsNormalizedBonText]' passed (12.249 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testTypingCustomNameIsAppliedWithEveryKeystroke]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testTypingCustomNameIsAppliedWithEveryKeystroke]' passed (18.322 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardDimsItVisibly]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardDimsItVisibly]' passed (13.278 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardLowersSelectedCountAndSum]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardLowersSelectedCountAndSum]' passed (12.045 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' passed (16.247 seconds).
 Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' passed (15.186 seconds).
-Test Case '-[RestockUITests.ReceiptReviewUITests testWhitespaceOnlyCustomNameKeepsPreviousItemName]' started.
-Test Case '-[RestockUITests.ReceiptReviewUITests testWhitespaceOnlyCustomNameKeepsPreviousItemName]' passed (16.010 seconds).
-Test Suite 'ReceiptReviewUITests' passed at 2026-10-02 11:24:56.143.
-	 Executed 22 tests, with 0 failures (0 unexpected) in 367.209 (367.227) seconds
-Test Suite 'RestockUITests.xctest' passed at 2026-10-02 11:24:56.143.
-	 Executed 22 tests, with 0 failures (0 unexpected) in 367.209 (367.228) seconds
-Test Suite 'Selected tests' passed at 2026-10-02 11:24:56.144.
-	 Executed 22 tests, with 0 failures (0 unexpected) in 367.209 (367.229) seconds
+Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' passed (17.966 seconds).
+Test Suite 'ReceiptReviewUITests' passed at 2026-10-02 12:17:10.145.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 34.212 (34.214) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-02 12:17:10.145.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 150.470 (150.476) seconds
+Test Suite 'Selected tests' passed at 2026-10-02 12:17:10.146.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 150.470 (150.477) seconds
 ** TEST SUCCEEDED **

@@ -221,6 +221,8 @@ struct SmartCartApp: App {
         }
         try? context.save()
         _ = ReceiptShareHandoff.takePending()
+        // Issue #14: Speichern des Seeds zählt in `ReceiptResolutionStats` (App-Gruppe) — mit weg.
+        ReceiptResolutionStats().reset()
     }
 
     /// Setzt den Zähler der Bon-Auflösung zurück (Issue #14) — er liegt in der App-Gruppe und

@@ -187,28 +187,62 @@ Finding:
 - AC-5 `suggestions` nur indirekt (F003).
 - AC-4 echtes Gerät mit Apple Intelligence nicht prüfbar (Spec-Grenze).
 
-## Verdict: AMBIGUOUS (nach Runde 2)
+Zwischenstand nach Runde 2: AMBIGUOUS. Kein harter Verstoß, kein Datenschutz- oder Verhaltensdefekt. PO-OK zur Übernahme der Befunde und zum Beheben von F005 und F003 liegt vor (Rückfrage 2026-10-02, override-ambiguous protokolliert); Stand gesichert als Commit d4e610a.
 
-Kein harter Verstoß, kein Datenschutz- oder Verhaltensdefekt. Offen: F001, F005 (vor dem Merge beheben), F002, F003, F004. Fixes für F005 und F003 sind beauftragt, Nachprüfung folgt als Runde 3.
+### Runde 3: Nachprüfung der Fixes
+
+Selbst ausgeführt: `ReceiptResolutionStatsTests` auf Restock-Validate, vorher kein xcodebuild aktiv, keine Extra-Build-Settings: 19 Tests, 0 Fehler, TEST SUCCEEDED. UI-Suiten und Gesamt-Unit-Suite nicht selbst gefahren, nur die Artefakte geprüft.
+
+Confirmation:
+  AC: F005 (AC-19, Aufräumen)
+  Code reference: SmartCart/SmartCartApp.swift:209-225
+  Evidence: `ReceiptResolutionStats().reset()` steht als letzte Anweisung in `clearReceiptReviewSeedForUITestsIfNeeded`, nach `try? context.save()` und `takePending()`. Der einzige guard davor ist der auf das Argument selbst, kein früheres return. Aufruf im init-defer in der `#if DEBUG`-Gruppe (:28-31), also nur unter DEBUG. `ReceiptReviewUITests.tearDown` startet die App mit genau diesem Argument (ReceiptReviewUITests.swift:107), der Zähler wird nach jedem seed-nutzenden Test dieser Klasse geleert, auch nach den speichernden.
+  Status: CONFIRMED
+
+Confirmation:
+  AC: F005, Nebenwirkung "reset löscht absichtlich aufgebaute Zähler"
+  Code reference: RestockUITests/ReceiptResolutionStatsUITests.swift:27-36
+  Evidence: Beide Aufräumargumente stehen nur im tearDown-Cleaner. Die Test-Starts setzen nur `-clearReceiptResolutionStatsForUITests` plus optional den Seed, nie `-clearReceiptReviewSeedForUITests`. Eine Kollision, bei der ein Test seine eigenen Zähler verliert, gibt es nicht.
+  Status: CONFIRMED
+
+Confirmation:
+  AC: F003 (AC-5, Vergleichssatz)
+  Code reference: RestockTests/ReceiptResolutionStatsTests.swift:152-180
+  Evidence: Der Test prüft name, matchedItemID, suggestion-itemIDs und suggestion-Namen je Zeile mit festen Erwartungen, plausibel gegen den Altcode (Vorschlagspool = store.items, limit 3, ReceiptResolutionService.swift:100-128). Reihenfolge deterministisch, weil `completedItemCandidates` Namen als zweiten Sortierschlüssel nutzt. Der Test legt keine Aliase an und schreibt nicht in den App-Gruppen-Speicher. 19/19 selbst grün. Die Messung der Erwartungen am Altstand 928c16c konnte der Prüfer nur auf Plausibilität prüfen; der Entwickler meldet die Messung in einer Wegwerf-Kopie (zuerst hergeleitete Vorschläge waren falsch und wurden durch gemessene ersetzt).
+  Status: CONFIRMED (Messung am Altstand nur plausibilisiert)
+
+Confirmation:
+  AC: Alias-Risiko (BTR-Seed speichert nie)
+  Code reference: RestockUITests/ReceiptReviewUITests.swift:157
+  Evidence: Der BTR-Seed wird nur von `testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution` benutzt, der den Speichern-Knopf nie bedient. Die speichernden Tests nutzen den Standard-Seed (Zeile 116) oder den Gewichts-Seed (Zeile 798). Es wird nie ein Alias für "BTR" gelernt.
+  Status: CONFIRMED
+
+Confirmation:
+  AC: Artefakt-Konsistenz
+  Code reference: docs/artifacts/bon-namenserkennung-regelwerk-14/test-green-unit.txt
+  Evidence: Kopf nennt Basis d4e610a + F003/F005, 396 Tests, 19/19 für `ReceiptResolutionStatsTests`, Ende "Executed 396 tests, with 0 failures ... TEST SUCCEEDED". UI-Artefakt: 4 + 2 = 6 Tests, 0 Fehler. Zahlen konsistent, kein Null-Test-Lauf. Die volle `ReceiptReviewUITests`-Suite (22) und ein gemeinsamer Lauf der Gesamt-UI-Suite sind in diesem Stand nicht gelaufen (offene Grenze von AC-19; 22/22 und 3x4 UI-Tests waren auf dem Stand d4e610a grün).
+  Status: CONFIRMED (mit der Grenze)
+
+Statuswertung der Altbefunde:
+- F001 (.alert statt confirmationDialog): inhaltlich akzeptiert, AC-17 erfüllt. Spec-Nachzug blockiert die Spec-Sperre (PO-Override nötig), bleibt als offener Punkt für /60-validate.
+- F002 (Abbruch ohne Test, Doppeltipp) und F004 (Randfälle in tally): als Messgrenzen benannt, kein Defekt in diesem Ticket.
+
+Neue Defekte: keine. Der Diff der Fixes ist eine Zeile Produktivcode in einer DEBUG-Hilfsfunktion plus ein neuer Test.
+
+## Verdict: VERIFIED
+
+F005 und F003 tragen, kein neuer Defekt. Nicht eigenständig bewiesen bleiben die Messung der Test-Erwartungen am Altstand und ein Lauf der Gesamt-UI-Suite im gemeinsamen Lauf; das sind Beweisgrenzen, keine Defekte.
 
 ## Geprüfte Dateien
 
 - sha256:bcfa6673544a2d96e633096641bc05737ce292687c6173f44c162d02cb7d48a6  Restock.xcodeproj/project.pbxproj
-- sha256:a4dc38a75c09720079bf89ab58b5818cd720241f9c4b8f766f27047adef2308f  RestockTests/ReceiptResolutionStatsTests.swift
+- sha256:8b8cbbf4f12232ddef2fc1e342aedb5ecf68ff0a120979d7ecf33e7ec44499aa  RestockTests/ReceiptResolutionStatsTests.swift
+- sha256:19a6419909afa421af8274e4aedf7dd9cdc3c2cb80c706d88ade8f1c6b3fbef9  RestockUITests/ReceiptResolutionStatsUITests.swift
+- sha256:d525fb088c9cc3a61bd862e6b94213a588412a267e40eeb149ea1b3106aba54a  RestockUITests/ReceiptReviewUITests.swift
 - sha256:5e23f81bb949e76a288b1c8c8e0ea71006f902e7ee85f1cf55f2335aeedf1638  SmartCart/Services/ReceiptResolutionService.swift
 - sha256:a11e7b9db4ef8c15aab821cb956221704549458c43ba77594fb6a550098448f4  SmartCart/Services/ReceiptResolutionStats.swift
-- sha256:e57007fda6c6e6989f3db6ce2616ed7e958761655f17c2821c99b3bc05f5d494  SmartCart/SmartCartApp.swift
+- sha256:1d7b2aaa5fce723986fd02339f9e1c19a20a1cc942f027a941044182b13201d5  SmartCart/SmartCartApp.swift
 - sha256:972e06bcec2e6ad9729ffc2272a3ab567bb3ec00adb7c9b746ada951f4d4f5e5  SmartCart/Views/Prices/ReceiptScannerView.swift
 - sha256:254667a6dbc6e5af41cc09ed76efaea506975c48c5d833e12d28d3fe67d28129  SmartCart/Views/Settings/ReceiptResolutionStatsView.swift
 - sha256:56477701352a7129a848d8fcceff730109dadb92df28eda7db314cfac17c4f0e  SmartCart/Views/Settings/SettingsView.swift
-
-## Geprüfte Dateien
-
-- sha256:bcfa6673544a2d96e633096641bc05737ce292687c6173f44c162d02cb7d48a6  Restock.xcodeproj/project.pbxproj
-- sha256:a4dc38a75c09720079bf89ab58b5818cd720241f9c4b8f766f27047adef2308f  RestockTests/ReceiptResolutionStatsTests.swift
-- sha256:5e23f81bb949e76a288b1c8c8e0ea71006f902e7ee85f1cf55f2335aeedf1638  SmartCart/Services/ReceiptResolutionService.swift
-- sha256:a11e7b9db4ef8c15aab821cb956221704549458c43ba77594fb6a550098448f4  SmartCart/Services/ReceiptResolutionStats.swift
-- sha256:e57007fda6c6e6989f3db6ce2616ed7e958761655f17c2821c99b3bc05f5d494  SmartCart/SmartCartApp.swift
-- sha256:972e06bcec2e6ad9729ffc2272a3ab567bb3ec00adb7c9b746ada951f4d4f5e5  SmartCart/Views/Prices/ReceiptScannerView.swift
-- sha256:254667a6dbc6e5af41cc09ed76efaea506975c48c5d833e12d28d3fe67d28129  SmartCart/Views/Settings/ReceiptResolutionStatsView.swift
-- sha256:56477701352a7129a848d8fcceff730109dadb92df28eda7db314cfac17c4f0e  SmartCart/Views/Settings/SettingsView.swift
+- sha256:21a535817ade0fbd98bb8ec8e23deb4d26a4f2fedbb7147b7c14f02cc995cbf9  docs/artifacts/bon-namenserkennung-regelwerk-14/test-green-unit.txt

@@ -149,6 +149,36 @@ final class ReceiptResolutionStatsTests: XCTestCase {
         }
     }
 
+    /// AC-5: Vergleichssatz — `resolve` liefert dieselben Namen, Verknüpfungen und Vorschläge wie
+    /// vor Issue #14. Die Erwartungen wurden am Altstand (Commit 928c16c, ohne `stage`) gemessen.
+    func testResolveComparisonSetMatchesBehaviourBeforeStageTracking() async throws {
+        let context = try makeContext()
+        let store = Store(name: "Lidl", emoji: "🛒", colorHex: "#123456")
+        context.insert(store)
+        let hackfleisch = ShoppingItem(name: "Hackfleisch", store: store)
+        let hafermilch = ShoppingItem(name: "Hafermilch", store: store)
+        context.insert(hackfleisch)
+        context.insert(hafermilch)
+        hackfleisch.markCompleted()
+        let records = [PurchaseRecord(itemName: "Mozzarella", storeName: "Lidl")]
+
+        let result = await ReceiptResolutionService.resolve(
+            parsed: [
+                ReceiptLine(name: "Hackfleish", price: 4.99),
+                ReceiptLine(name: "Mzzrll", price: 0.89),
+                ReceiptLine(name: "Hafermlch", price: 1.29),
+                ReceiptLine(name: "Xyz123 Qwv", price: 2.0),
+            ],
+            store: store, allRecords: records, allowAIResolution: false)
+
+        XCTAssertEqual(result.map(\.name), ["Hackfleisch", "Mozzarella", "Hafermlch", "Xyz123 Qwv"])
+        XCTAssertEqual(result.map(\.matchedItemID), [hackfleisch.id, nil, nil, nil])
+        XCTAssertEqual(result.map { $0.suggestions.map(\.itemID) },
+                       [[hafermilch.id], [], [hafermilch.id, hackfleisch.id], []])
+        XCTAssertEqual(result.map { $0.suggestions.map(\.name) },
+                       [["Hafermilch"], [], ["Hafermilch", "Hackfleisch"], []])
+    }
+
     // MARK: - AC-6: Wire-Format der Share Extension
 
     func testLegacyPayloadWithoutStageDecodesWithNilStage() throws {
