@@ -47,6 +47,9 @@ struct HomeView: View {
     /// automatische Zuordnung); `quickAddNoStoreChoice` = ausdrücklich „Ohne Laden“.
     @State private var quickAddStoreChoice: UUID? = nil
     @State private var quickAddNoStoreChoice = false
+    /// Stand der Laden-Korrektur vor dem letzten Schnell-Hinzufügen (bzw. „Laden ändern“), damit
+    /// „Rückgängig“ auch die gemerkte Korrektur zurücknimmt, nicht nur den Artikel.
+    @State private var quickAddOverrideUndo: (itemName: String, previous: String?)? = nil
     /// Unterscheidet Toasts, damit ein älterer Ablauf-Timer einen neueren Toast nicht abräumt.
     @State private var quickAddToastToken = UUID()
     @State private var showUnassigned = false
@@ -208,7 +211,7 @@ struct HomeView: View {
                     QuickAddConfirmationToast(
                         message: toast,
                         storeColor: quickAddToastItem?.store?.color,
-                        changeTitle: quickAddToastItem == nil ? "" : (quickAddToastItem?.store == nil ? "Laden wählen" : "Laden ändern"),
+                        changeTitle: quickAddToastItem == nil ? "" : (quickAddToastItem?.store == nil ? String(localized: "home.quickadd.toast.choose") : String(localized: "home.quickadd.toast.change")),
                         onChange: {
                             guard quickAddToastItem != nil else { return }
                             showStoreCorrection = true
@@ -226,9 +229,12 @@ struct HomeView: View {
                     showQuickAddToast(message, item: quickAddToastItem, duration: 3)
                 }
             }
-            .onChange(of: addItemText) { _, text in
+            .onChange(of: addItemText) { old, text in
                 // Neuer Artikel, neue Entscheidung: die Laden-Wahl gilt nur für den getippten Artikel.
-                if text.trimmingCharacters(in: .whitespaces).isEmpty {
+                // Weitertippen oder Löschen am Ende behält sie; ein ersetzter Text (Vorschlags-Chip,
+                // alles markiert und neu getippt) ist ein anderer Artikel.
+                let continued = text.hasPrefix(old) || old.hasPrefix(text)
+                if text.trimmingCharacters(in: .whitespaces).isEmpty || !continued {
                     quickAddStoreChoice = nil
                     quickAddNoStoreChoice = false
                 }
@@ -1443,11 +1449,13 @@ struct HomeView: View {
         let category = AssignmentService.category(for: parsed.name)
         let target = quickAddTarget
         let store = target.store
+        quickAddOverrideUndo = nil
         // Eine ausdrückliche Wahl in der Ziel-Karte, die von der Automatik abweicht, wird wie eine
         // Korrektur gemerkt — beim nächsten Mal landet der Artikel gleich dort.
         if let store, quickAddStoreChoice != nil {
             let automatic = AssignmentService.assign(itemName: parsed.name, to: activeStores, purchaseRecords: allRecords)
             if automatic?.id != store.id {
+                quickAddOverrideUndo = (parsed.name, StoreAssignmentOverrideService.shared.storeName(for: parsed.name))
                 StoreAssignmentOverrideService.shared.remember(itemName: parsed.name, storeName: store.name)
             }
         }
@@ -1466,7 +1474,8 @@ struct HomeView: View {
         quickAddNoStoreChoice = false
         Haptics.success()
         showQuickAddToast(
-            store.map { "„\(parsed.name)“ → \($0.name)" } ?? "„\(parsed.name)“ ohne Laden hinzugefügt",
+            store.map { String(format: String(localized: "home.quickadd.addeditem.format"), parsed.name, $0.name) }
+                ?? String(format: String(localized: "home.quickadd.addeditemwithoutstore.format"), parsed.name),
             item: item,
             duration: 6
         )
@@ -1511,6 +1520,10 @@ struct HomeView: View {
         } else {
             context.delete(item)
         }
+        if let undo = quickAddOverrideUndo {
+            StoreAssignmentOverrideService.shared.restore(itemName: undo.itemName, storeName: undo.previous)
+            quickAddOverrideUndo = nil
+        }
         Haptics.impact(.light)
         quickAddToastToken = UUID()
         withAnimation {
@@ -1535,6 +1548,9 @@ struct HomeView: View {
         newStore.adoptCategory(of: item, from: oldStore)
         item.store = newStore
         try? context.save()
+        if quickAddOverrideUndo == nil {
+            quickAddOverrideUndo = (item.name, StoreAssignmentOverrideService.shared.storeName(for: item.name))
+        }
         StoreAssignmentOverrideService.shared.remember(itemName: item.name, storeName: newStore.name)
         SyncCoordinator.shared.pushInBackground(oldStore)
         SyncCoordinator.shared.pushInBackground(newStore)
