@@ -30,7 +30,7 @@ class Store {
     var learnedPrices: [String: Double] = [:]
     /// Zeitstempel pro `learnedPrices`-Eintrag — ausschließlich fürs Sync-Merge geteilter Listen
     /// nötig (bei einem Preis-Konflikt zwischen zwei Geräten/Mitgliedern gewinnt der spätere,
-    /// siehe `SharedStoreService.mergePrices`). Additiv wie `categoryManuallySet`/`completedBy`
+    /// siehe `LearnedPriceSync.merge`). Additiv wie `categoryManuallySet`/`completedBy`
     /// bei `ShoppingItem`, kein Schema-Versionsbump nötig.
     var learnedPriceDates: [String: Date] = [:]
     /// Bezugsgröße pro `learnedPrices`-Eintrag: `"stk"` (Stückpreis) oder `"g"` (Gewichts- bzw.
@@ -47,11 +47,8 @@ class Store {
     /// l auf denselben Faktor 1000, aus dem gespeicherten Preis ist beides nicht mehr zu
     /// unterscheiden. Eine dritte, literal genaue Einheit wäre vorgetäuschte Genauigkeit → #15.
     ///
-    /// ACHTUNG: Diese Map wird noch NICHT über geteilte Listen synchronisiert —
-    /// `SharedStoreService.encodePrices`/`decodePrices` und `SyncCoordinator.apply` übertragen nur
-    /// `learnedPrices` + `learnedPriceDates` → **Issue #53**. Ein auf Gerät A gelernter Preis
-    /// kommt auf Gerät B ohne Bezugsgröße an und gilt dort wie ein Altdatum: er wird nicht
-    /// angewendet. Kein Falschpreis-Risiko, aber ein fehlender Preis.
+    /// Reist bei geteilten Listen gemeinsam mit Betrag und Zeitstempel (`LearnedPriceSync` in
+    /// `SharedStoreService.swift`, Issue #53).
     var learnedPriceUnits: [String: String] = [:]
     /// Eigene Kategorien dieses Ladens (Issue #85): Name → Emoji. Nur lebende Kategorien.
     /// Additiv wie `learnedPriceDates` — kein Schema-Versionsbump, CloudKit-tauglich.
