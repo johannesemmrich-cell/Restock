@@ -1194,7 +1194,8 @@ struct HomeView: View {
         }
         for key in grouped.keys.sorted() where !AssignmentService.categoryOrder.contains(key) {
             if let items = grouped[key], !items.isEmpty {
-                result.append((category: key, emoji: AssignmentService.categoryEmoji(key), items: items))
+                // Eigene Kategorie eines Ladens (Issue #85) mit ihrem Emoji statt 🏷️.
+                result.append((category: key, emoji: items.lazy.compactMap(\.store).first?.categoryEmoji(key) ?? AssignmentService.categoryEmoji(key), items: items))
             }
         }
         return result
@@ -1482,6 +1483,7 @@ struct HomeView: View {
     private func correctQuickAddStore(to newStore: Store) {
         guard let item = quickAddToastItem, item.store?.id != newStore.id else { return }
         let oldStore = item.store
+        newStore.adoptCategory(of: item, from: oldStore)
         item.store = newStore
         try? context.save()
         StoreAssignmentOverrideService.shared.remember(itemName: item.name, storeName: newStore.name)

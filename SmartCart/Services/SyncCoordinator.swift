@@ -68,7 +68,7 @@ final class SyncCoordinator {
         guard let shareID = store.shareID else { return true }
         do {
             guard let result = try await SharedStoreService.shared.pull(shareID: shareID) else { return true }
-            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, modifiedAt: result.modifiedAt, to: store)
+            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, categories: result.categories, modifiedAt: result.modifiedAt, to: store)
             return true
         } catch {
             lastFailureKind = classify(error)
@@ -88,7 +88,7 @@ final class SyncCoordinator {
             guard let result = try await SharedStoreService.shared.push(store: store) else { return true }
             // syncToCloud's save already advanced the watermark to the server's modificationDate
             // (see SharedStoreService.markSynced), so apply() shouldn't override it here.
-            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, modifiedAt: nil, to: store)
+            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, categories: result.categories, modifiedAt: nil, to: store)
             return true
         } catch {
             lastFailureKind = classify(error)
@@ -226,10 +226,17 @@ final class SyncCoordinator {
     /// `modifiedAt` is the server's `modificationDate` for this remote state, used to advance the
     /// sync watermark to server time rather than this device's local clock. Pass `nil` when the
     /// caller (e.g. a push) already advanced the watermark itself via `SharedStoreService.markSynced`.
-    func apply(items remoteItems: [SharedItemData], members: [String], deletedIDs: Set<UUID> = [], prices: [String: Double] = [:], priceDates: [String: Date] = [:], modifiedAt: Date?, to store: Store) async {
+    func apply(items remoteItems: [SharedItemData], members: [String], deletedIDs: Set<UUID> = [], prices: [String: Double] = [:], priceDates: [String: Date] = [:], categories: [String: CustomCategoryEntry] = [:], modifiedAt: Date?, to store: Store) async {
         guard let context = modelContext ?? store.modelContext else { return }
 
         for name in members { store.addMember(name) }
+
+        // Issue #85: eigene Kategorien des Ladens, gleiche Regel wie beim Push (der spätere Stand
+        // gewinnt, auch ein Löschvermerk). Nur schreiben, wenn sich etwas ändert.
+        if !categories.isEmpty {
+            let merged = StoreCategories.merge(local: store.customCategoryEntries, remote: categories)
+            if merged != store.customCategoryEntries { store.customCategoryEntries = merged }
+        }
 
         // Last-write-wins pro Preis-Schlüssel, exakt dasselbe Prinzip wie der Item-Merge direkt
         // unten (dort per `lastModified`, hier per `learnedPriceDates`) — ein Schlüssel, der nur
@@ -275,6 +282,9 @@ final class SyncCoordinator {
                     unit: remote.unit, note: remote.note, store: store
                 )
                 item.id = remote.id
+                // Die Kategorie des Absenders gilt — `ShoppingItem.init` hätte sonst die auf
+                // diesem Gerät gemerkte eigene Kategorie gesetzt (Issue #85).
+                item.category = remote.category
                 item.categoryManuallySet = remote.categoryManuallySet
                 item.isCompleted = remote.isCompleted
                 item.isUrgent = remote.isUrgent

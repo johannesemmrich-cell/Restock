@@ -280,4 +280,115 @@ enum ShoppingRoute {
             return ia < ib
         }
     }
+
+    // MARK: Von Hand verschieben (Issue #86)
+
+    /// Abstand für Positionen vor dem ersten bzw. hinter dem letzten festen Nachbarn.
+    static let manualStep = 0.02
+
+    /// Positionen für eine Reihenfolge, die von oben nach unten gilt. Möglichst viele bisherige
+    /// Werte bleiben stehen (längste streng aufsteigende Teilfolge); alle übrigen — `nil` oder
+    /// nicht mehr passend — werden zwischen ihren festen Nachbarn verteilt. So verschiebt ein
+    /// Ziehen nur die gezogene Zeile und nicht den ganzen gelernten Weg.
+    static func positionsPreservingOrder(_ current: [Double?]) -> [Double] {
+        let n = current.count
+        guard n > 0 else { return [] }
+        // Längste streng aufsteigende Teilfolge über die vorhandenen Werte (n ist klein).
+        var length = [Int](repeating: 0, count: n)
+        var previous = [Int](repeating: -1, count: n)
+        var best = -1
+        for i in 0..<n {
+            guard let vi = current[i] else { continue }
+            length[i] = 1
+            for j in 0..<i {
+                if let vj = current[j], vj < vi, length[j] + 1 > length[i] {
+                    length[i] = length[j] + 1
+                    previous[i] = j
+                }
+            }
+            if best < 0 || length[i] > length[best] { best = i }
+        }
+        guard best >= 0 else {
+            return n == 1 ? [0.5] : (0..<n).map { Double($0) / Double(n - 1) }
+        }
+        var anchors: [Int] = []
+        var index = best
+        while index >= 0 {
+            anchors.append(index)
+            index = previous[index]
+        }
+        anchors.reverse()
+
+        var result = [Double](repeating: 0, count: n)
+        for a in anchors { result[a] = current[a]! }
+        let first = anchors[0], last = anchors[anchors.count - 1]
+        for i in 0..<first { result[i] = result[first] - manualStep * Double(first - i) }
+        for i in (last + 1)..<n { result[i] = result[last] + manualStep * Double(i - last) }
+        for (a, b) in zip(anchors, anchors.dropFirst()) where b - a > 1 {
+            for i in (a + 1)..<b {
+                result[i] = result[a] + (result[b] - result[a]) * Double(i - a) / Double(b - a)
+            }
+        }
+        return result
+    }
+
+    /// Eine von Hand festgelegte Artikel-Reihenfolge (Modus Einkaufsweg, ohne Dringende) ins
+    /// Modell schreiben. Die gezogene Zeile landet zwischen ihren neuen Nachbarn; Artikel ohne
+    /// eigene Position (bisher über den Kategorie-Mittelwert einsortiert) bekommen eine. Das
+    /// Lernen beim Abhaken läuft danach normal weiter — die Verschiebung ist ein Startwert.
+    static func applyManualOrder(
+        _ items: [SortInput],
+        movedKey: String?,
+        model: ShoppingRouteModel
+    ) -> ShoppingRouteModel {
+        let learnedCategories = categoryPositions(model)
+        let current: [Double?] = items.map {
+            $0.key == movedKey ? nil : (model.itemPositions[$0.key] ?? learnedCategories[$0.category])
+        }
+        var model = model
+        for (item, position) in zip(items, positionsPreservingOrder(current)) {
+            if model.itemPositions[item.key] != position { model.itemPositions[item.key] = position }
+            model.itemCategories[item.key] = item.category
+        }
+        return model
+    }
+
+    /// Eine von Hand festgelegte Abschnitts-Reihenfolge (Modus Kategorie) ins Modell schreiben.
+    /// Eine Kategorie mit gelernten Artikeln wird als Ganzes verschoben (alle Positionen um
+    /// denselben Betrag), damit ihr Mittelwert auf dem Zielplatz landet; eine noch ungelernte
+    /// bekommt den Zielplatz für ihre offenen Artikel (`items`).
+    static func applyManualCategoryOrder(
+        _ categories: [String],
+        movedCategory: String?,
+        items: [SortInput],
+        model: ShoppingRouteModel
+    ) -> ShoppingRouteModel {
+        let learned = categoryPositions(model)
+        let current: [Double?] = categories.map { $0 == movedCategory ? nil : learned[$0] }
+        var model = model
+        for (category, target) in zip(categories, positionsPreservingOrder(current)) {
+            if let mean = learned[category] {
+                let delta = target - mean
+                guard delta != 0 else { continue }
+                for (key, itemCategory) in model.itemCategories where itemCategory == category {
+                    if let position = model.itemPositions[key] { model.itemPositions[key] = position + delta }
+                }
+            } else {
+                for item in items where item.category == category {
+                    model.itemPositions[item.key] = target
+                    model.itemCategories[item.key] = category
+                }
+            }
+        }
+        return model
+    }
+
+    /// Kategorie eines Artikels im gelernten Modell umbenennen (eigene Kategorie umbenannt).
+    static func renameCategory(_ old: String, to new: String, in model: ShoppingRouteModel) -> ShoppingRouteModel {
+        var model = model
+        for (key, category) in model.itemCategories where category == old {
+            model.itemCategories[key] = new
+        }
+        return model
+    }
 }

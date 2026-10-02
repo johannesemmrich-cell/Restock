@@ -35,17 +35,13 @@ struct EditItemView: View {
     /// now-stale displayed total).
     private let initialPriceText: String
 
-    /// The canonical category list, plus the item's current category if it's a stale/legacy
-    /// value not present in `AssignmentService.categoryOrder` — so the Picker always has a
-    /// matching option for `category` and never falls back to an unselected/blank state.
-    /// Sorted alphabetically (locale-aware) for easier scanning in the Picker; the aisle
-    /// order of `AssignmentService.categoryOrder` itself stays untouched for grouped lists.
-    private var availableCategories: [String] {
-        var categories = AssignmentService.categoryOrder
-        if !category.isEmpty, !categories.contains(category) {
-            categories.append(category)
+    /// Anzeige der gewählten Kategorie: eigene Kategorien des gewählten Ladens (Issue #85) mit
+    /// ihrem Emoji und Namen, feste mit dem lokalisierten Namen.
+    private var categoryLabel: String {
+        if let store = selectedStore, store.isCustomCategory(category) {
+            return "\(store.categoryEmoji(category)) \(category)"
         }
-        return categories.sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        return "\(AssignmentService.categoryEmoji(category)) \(AssignmentService.displayCategory(category))"
     }
 
     init(item: ShoppingItem) {
@@ -56,7 +52,11 @@ struct EditItemView: View {
         _note = State(initialValue: item.note)
         _selectedStore = State(initialValue: item.store)
         _assignedTo = State(initialValue: item.assignedTo)
-        _category = State(initialValue: item.category)
+        // Wie überall in der Liste: eine nicht von Hand gesetzte feste (oder leere) Kategorie gilt
+        // aus dem Namen; eine von Hand gesetzte oder eigene bleibt.
+        let keepsStoredCategory = item.categoryManuallySet
+            || (!item.category.isEmpty && !AssignmentService.categoryOrder.contains(item.category))
+        _category = State(initialValue: keepsStoredCategory ? item.category : AssignmentService.category(for: item.name))
         _stagedPhotoData = State(initialValue: item.photoData)
         // `item.estimatedPrice` is stored per-unit, but the field here shows/accepts the TOTAL
         // for this line (matching what a user would read off a receipt for e.g. a 6-pack),
@@ -119,11 +119,21 @@ struct EditItemView: View {
                 photoSection
 
                 Section(String(localized: "item.category.section")) {
-                    Picker(String(localized: "item.category.section"), selection: $category) {
-                        ForEach(availableCategories, id: \.self) { cat in
-                            Text("\(AssignmentService.categoryEmoji(cat)) \(AssignmentService.displayCategory(cat))").tag(cat)
+                    NavigationLink {
+                        CategoryPickerView(
+                            store: selectedStore,
+                            selection: $category,
+                            automaticCategory: AssignmentService.category(for: name)
+                        )
+                    } label: {
+                        HStack {
+                            Text(String(localized: "item.category.section"))
+                            Spacer()
+                            Text(categoryLabel)
+                                .foregroundStyle(.secondary)
                         }
                     }
+                    .accessibilityIdentifier("item.categoryRow")
                 }
 
                 Section(String(localized: "item.store.section")) {
@@ -352,17 +362,30 @@ struct EditItemView: View {
         let oldUnit = item.unit
         item.unit = unit
         item.note = note
+        // Eine eigene Kategorie gilt nur in ihrem Laden (Issue #85): wechselt der Artikel in einen
+        // Laden ohne sie, bekommt er wieder die automatische Kategorie.
+        let automaticCategory = AssignmentService.category(for: item.name)
+        if let oldStore = item.store, oldStore.isCustomCategory(category),
+           selectedStore?.isCustomCategory(category) != true {
+            category = selectedStore?.rememberedCategory(forItemNamed: item.name) ?? automaticCategory
+        }
+        let categoryChanged = item.category != category
         item.category = category
         // Only lock the category in as a manual override if the user actually picked something
         // different from what the name-based heuristic would auto-detect. If they left it on
         // the auto-detected value, keep it free to re-derive so future keyword-rule tweaks apply.
-        item.categoryManuallySet = category != AssignmentService.category(for: item.name)
+        item.categoryManuallySet = category != automaticCategory
+        if categoryChanged {
+            selectedStore?.rememberCategory(category, forItemNamed: item.name)
+        }
         let oldStore = item.store
         let itemID = item.id
         let movedToAnotherStore = oldStore?.id != selectedStore?.id
         item.store = selectedStore
         item.assignedTo = selectedStore?.shareID != nil ? assignedTo : ""
         item.lastModified = Date()
+        // Eine eigene Kategorie hat keinen Katalogpreis — für die Schätzung zählt die automatische.
+        let priceCategory = selectedStore?.isCustomCategory(item.category) == true ? automaticCategory : item.category
 
         if photoChanged {
             item.photoData = stagedPhotoData
@@ -384,7 +407,7 @@ struct EditItemView: View {
                 // A manual entry gives the price a real-world origin — never auto-recompute it again.
                 item.estimatedPriceIsAutoDerived = false
             } else if rawPrice.isEmpty {
-                item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit, quantityAmount: item.quantityAmount)
+                item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: priceCategory, unit: item.unit, quantityAmount: item.quantityAmount)
                 item.estimatedPriceIsAutoDerived = true
             }
         } else if oldUnit != unit, item.estimatedPriceIsAutoDerived {
@@ -393,7 +416,7 @@ struct EditItemView: View {
             // (e.g. "" → "g" needs the per-gram rate, not the per-package rate). A learned or
             // manually-entered price (estimatedPriceIsAutoDerived == false) is left untouched here,
             // even if it would numerically collide with the old-unit formula.
-            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: item.category, unit: item.unit, quantityAmount: item.quantityAmount)
+            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: priceCategory, unit: item.unit, quantityAmount: item.quantityAmount)
         }
 
         Haptics.success()
