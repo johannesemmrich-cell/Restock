@@ -127,4 +127,31 @@ final class AssignmentServiceTests: XCTestCase {
 
         XCTAssertEqual(resultOrderA?.id, resultOrderB?.id, "Bei zwei gleichnamigen Stores muss dieselbe id gewinnen, unabhängig von der Reihenfolge im übergebenen Array")
     }
+
+    // MARK: - Standard-Laden (Nutzerbericht 02.10.2026)
+
+    /// Ein ausdrücklich gewählter Standard-Laden gilt auch dann, wenn er ohne Lebensmittel-
+    /// Kategorien angelegt wurde — vorher erschien er nie als Kandidat.
+    func testExplicitDefaultStoreWinsEvenWithoutMatchingCategories() {
+        let lidl = Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA")          // categories == []
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#CC0000", visitsPerWeek: 3,
+                         categories: Category.grocery)
+        DefaultStoreService.shared.setStoreName("Lidl", for: "grocery")
+        defer { DefaultStoreService.shared.setStoreName(nil, for: "grocery") }
+
+        let result = AssignmentService.assign(itemName: "Nudeln", to: [rewe, lidl])
+
+        XCTAssertEqual(result?.name, "Lidl")
+    }
+
+    /// Ist der gewählte Standard-Laden nicht (mehr) aktiv, greift weiter die automatische Zuordnung.
+    func testDefaultStoreThatIsNotActiveFallsBackToAutomatic() {
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#CC0000", categories: Category.grocery)
+        DefaultStoreService.shared.setStoreName("Lidl", for: "grocery")
+        defer { DefaultStoreService.shared.setStoreName(nil, for: "grocery") }
+
+        let result = AssignmentService.assign(itemName: "Nudeln", to: [rewe])
+
+        XCTAssertEqual(result?.name, "Rewe")
+    }
 }

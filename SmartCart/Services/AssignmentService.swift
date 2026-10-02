@@ -146,13 +146,13 @@ extension AssignmentService {
         let isHardware = hardwareStoreKeywords.contains(where: { nameLower.contains($0) })
         if isHardware {
             let hardwareStores = activeStores.filter { $0.categories.contains(where: { Category.hardware.contains($0) }) }
-            if let best = preferredDefault(for: "hardware", among: hardwareStores)
+            if let best = preferredDefault(for: "hardware", among: activeStores)
                 ?? bestFallback(among: hardwareStores, purchaseRecords: purchaseRecords) {
                 return best
             }
             // No hardware store → fall through to variety
             let varietyFallback = activeStores.filter { $0.categories.contains(where: { Category.variety.contains($0) }) }
-            if let best = preferredDefault(for: "variety", among: varietyFallback)
+            if let best = preferredDefault(for: "variety", among: activeStores)
                 ?? bestFallback(among: varietyFallback, purchaseRecords: purchaseRecords) {
                 return best
             }
@@ -165,7 +165,7 @@ extension AssignmentService {
             let varietyStores = activeStores.filter { store in
                 store.categories.contains(where: { Category.variety.contains($0) })
             }
-            if let best = preferredDefault(for: "variety", among: varietyStores)
+            if let best = preferredDefault(for: "variety", among: activeStores)
                 ?? bestFallback(among: varietyStores, purchaseRecords: purchaseRecords) {
                 return best
             }
@@ -178,7 +178,7 @@ extension AssignmentService {
                 store.categories.contains(where: { Category.drugstore.contains($0) })
                     && !store.categories.contains(where: { Category.grocery.contains($0) })
             }
-            if let best = preferredDefault(for: "drugstore", among: drugstores)
+            if let best = preferredDefault(for: "drugstore", among: activeStores)
                 ?? bestFallback(among: drugstores, purchaseRecords: purchaseRecords) {
                 return best
             }
@@ -190,7 +190,7 @@ extension AssignmentService {
             let groceryStores = activeStores.filter { store in
                 store.categories.contains(where: { Category.grocery.contains($0) })
             }
-            return preferredDefault(for: "grocery", among: groceryStores)
+            return preferredDefault(for: "grocery", among: activeStores)
                 ?? bestFallback(among: groceryStores, purchaseRecords: purchaseRecords)
         }
 
@@ -198,18 +198,21 @@ extension AssignmentService {
         let groceryStores = activeStores.filter { store in
             store.categories.contains(where: { Category.grocery.contains($0) })
         }
-        return preferredDefault(for: "grocery", among: groceryStores)
+        return preferredDefault(for: "grocery", among: activeStores)
             ?? bestFallback(among: groceryStores, purchaseRecords: purchaseRecords)
     }
 
     /// Nutzer-konfigurierter Standard-Laden (`DefaultStoreService`, Settings → Standard-Läden)
-    /// für eine bereits nach Kategorie gefilterte Kandidatenliste. Vor jedem `bestFallback`-Aufruf
-    /// geprüft: eine explizite Nutzer-Einstellung soll immer Vorrang vor der nur abgeleiteten
-    /// Kaufhistorie-/Besuchsfrequenz-Heuristik haben — dasselbe Prinzip wie die Artikelname-
-    /// Korrektur in Stufe 0a oben, nur auf Kategorie-Ebene statt pro Artikel. Liefert `nil`, wenn
-    /// nichts konfiguriert ist ODER der konfigurierte Laden in `candidates` fehlt (deaktiviert,
-    /// gelöscht, oder passt nicht mehr zur Kategorie) — der Aufrufer fällt dann automatisch auf
-    /// `bestFallback` zurück, kein gesonderter Cleanup nötig.
+    /// für eine Kategorie-Gruppe. Vor jedem `bestFallback`-Aufruf geprüft: eine explizite
+    /// Nutzer-Einstellung hat immer Vorrang vor der nur abgeleiteten Kaufhistorie-/
+    /// Besuchsfrequenz-Heuristik — dasselbe Prinzip wie die Artikelname-Korrektur in Stufe 0a.
+    ///
+    /// Gesucht wird unter ALLEN aktiven Läden, nicht nur unter denen, deren `categories` zur
+    /// Gruppe passen: Der Nutzer hat den Laden ausdrücklich gewählt (Nutzerbericht 02.10.2026:
+    /// „Lidl“ ließ sich nicht als Standard für Lebensmittel wählen, weil der Laden ohne
+    /// Lebensmittel-Kategorien angelegt war und deshalb nie als Kandidat erschien). Liefert `nil`,
+    /// wenn nichts konfiguriert ist ODER der konfigurierte Laden nicht mehr aktiv ist — der
+    /// Aufrufer fällt dann automatisch auf `bestFallback` zurück, kein gesonderter Cleanup nötig.
     private static func preferredDefault(for groupKey: String, among candidates: [Store]) -> Store? {
         guard let name = DefaultStoreService.shared.storeName(for: groupKey) else { return nil }
         return candidates.first { $0.name.lowercased() == name.lowercased() }
