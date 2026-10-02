@@ -267,6 +267,18 @@ final class ReceiptReviewUITests: XCTestCase {
     }
 
     /// Wie `waitUntilLabel`, nur als Abfrage ohne Urteil.
+    /// Leert ein Textfeld über die Tastatur und wiederholt das Löschen, falls nach einem Durchgang noch
+    /// Text steht. Das Feld ist seit dem Textfeld-Umbau mit dem Bontext (17 Zeichen) vorbelegt; auf dem
+    /// langsamen CI-Runner kam ein einzelner Durchgang mit vielen Löschtasten vereinzelt zu früh zurück
+    /// (gemessen: „Milch“ blieb stehen). `value` eines leeren Feldes ist der Platzhalter.
+    private func clear(_ field: XCUIElement) {
+        for _ in 0..<3 {
+            let value = (field.value as? String) ?? ""
+            if value.isEmpty || value == Seed.customFieldPlaceholder { return }
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count))
+        }
+    }
+
     private func labelOf(_ element: XCUIElement, contains fragment: String, within timeout: TimeInterval) -> Bool {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
@@ -935,7 +947,7 @@ final class ReceiptReviewUITests: XCTestCase {
         let existing = (field.value as? String) ?? ""
         XCTAssertFalse(existing.isEmpty,
                        "Vorbedingung: Das Feld ist nicht vorbelegt — dann prüft dieser Test nichts.")
-        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
+        clear(field)
 
         // Das Feld selbst bleibt bewusst leer (sonst könnte man nie einen neuen Namen tippen),
         // aber die Position behält den Namen, der vor dem Öffnen des Feldes galt.
