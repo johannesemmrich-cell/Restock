@@ -145,7 +145,7 @@ struct QuickAddConfirmationToast: View {
                         button(changeTitle, id: "quickAdd.toast.change", action: onChange)
                     }
                     if let onUndo {
-                        button("Rückgängig", id: "quickAdd.toast.undo", action: onUndo)
+                        button(String(localized: "home.quickadd.toast.undo"), id: "quickAdd.toast.undo", action: onUndo)
                     }
                 }
             }
