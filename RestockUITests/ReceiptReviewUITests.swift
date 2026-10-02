@@ -953,6 +953,19 @@ final class ReceiptReviewUITests: XCTestCase {
         // `value` eines LEEREN `TextField` ist in XCUITest nicht "", sondern der Platzhaltertext —
         // beides gilt hier also als leer. Ohne diese Unterscheidung scheitert der Test an seiner
         // eigenen Vorbedingung statt an der Sache (im RED-Lauf gemessen: "Anderer Name …").
+        // DIAGNOSE (Messzweig #82, wird nicht übernommen): Verlauf des Feldinhalts nach dem Löschen.
+        let t0 = Date()
+        var trace: [String] = []
+        var cleared = false
+        repeat {
+            let v = (field.value as? String) ?? ""
+            trace.append(String(format: "%.2fs:%d", Date().timeIntervalSince(t0), v.count))
+            if v.isEmpty || v == Seed.customFieldPlaceholder { cleared = true; break }
+            Thread.sleep(forTimeInterval: 0.25)
+        } while Date().timeIntervalSince(t0) < 15
+        if trace.count > 1 || !cleared {
+            XCTFail("DIAGNOSE vorher \(existing.count) Zeichen, geleert=\(cleared), Verlauf: \(trace.joined(separator: " "))")
+        }
         let afterDelete = (field.value as? String) ?? ""
         XCTAssertTrue(afterDelete.isEmpty || afterDelete == Seed.customFieldPlaceholder,
                       "Vorbedingung: Das Feld ist nach dem Löschen nicht leer — bekommen: \(afterDelete)")

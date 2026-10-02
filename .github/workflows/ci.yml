@@ -152,8 +152,6 @@ jobs:
             -scheme Restock \
             -destination 'platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}' \
             -only-testing:RestockUITests/ReceiptReviewUITests/testClearingCustomNameFieldKeepsPreviousItemName \
-            -only-testing:RestockUITests/ReceiptReviewUITests/testUncheckingCardLowersSelectedCountAndSum \
-            -only-testing:RestockUITests/ReceiptReviewUITests/testWhitespaceOnlyCustomNameKeepsPreviousItemName \
             -test-iterations 30 \
             -resultBundlePath UITestResults.xcresult \
             -skipMacroValidation \
