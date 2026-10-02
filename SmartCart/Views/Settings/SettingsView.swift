@@ -266,6 +266,12 @@ struct SettingsView: View {
                         }
 
                         NavigationLink {
+                            ReceiptResolutionStatsView()
+                        } label: {
+                            Label("Bon-Auflösung", systemImage: "doc.text.magnifyingglass")
+                        }
+
+                        NavigationLink {
                             HiddenReplenishmentsView()
                         } label: {
                             Label("Ausgeblendete Vorschläge", systemImage: "eye.slash")

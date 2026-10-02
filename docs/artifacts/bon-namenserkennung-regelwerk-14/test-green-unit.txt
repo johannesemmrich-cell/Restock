@@ -1,0 +1,973 @@
+# Unit-Tests GREEN, Issue #14 - gesamte RestockTests-Suite (Stand nach Adversary-Fixes F003/F005)
+# Geraet: Restock-Validate (8F696920-4B9A-40A7-96F0-7697BE887CC7), Lauf 2026-10-02 12:30, Basis d4e610a + F003/F005
+# Befehl: xcodebuild test -scheme Restock -project Restock.xcodeproj -destination id=8F696920-4B9A-40A7-96F0-7697BE887CC7 -only-testing:RestockTests
+# Ergebnis: Executed 396 tests, with 0 failures; davon ReceiptResolutionStatsTests 19/19 passed (neu: testResolveComparisonSetMatchesBehaviourBeforeStageTracking)
+# Lauf direkt nach einem UI-Lauf mit speicherndem ReceiptReviewUITests-Test (Alias-Pruefung, Punkt 3)
+# Gefiltert auf Testfall-Zeilen und Zusammenfassung (Simulator-Lograuschen entfernt, keine ANSI-Codes)
+
+2026-10-02 12:30:57.297070+0200 Restock[49069:4556093] [General] Failed to connect to linkd to request update AppShortcut parameters, error: Kommunikation mit der Hilfs-App nicht möglich.
+2026-10-02 12:30:57.369406+0200 Restock[49069:4556093] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x10870c2a0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:57.369476+0200 Restock[49069:4556093] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x10870c2a0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Suite 'All tests' started at 2026-10-02 12:30:57.888.
+Test Suite 'RestockTests.xctest' started at 2026-10-02 12:30:57.888.
+Test Suite 'AssignmentServiceDetectStoreTests' started at 2026-10-02 12:30:57.888.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_LidlFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_LidlFirst]' passed (0.004 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_NettoFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlNotNetto_NettoFirst]' passed (0.003 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_FrankfurtFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_FrankfurtFirst]' passed (0.004 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_LidlFirst]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testDetectsLidlRegardlessOfCandidateOrder_LidlFirst]' passed (0.004 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testEmptyCandidatesReturnsNil]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testEmptyCandidatesReturnsNil]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testGenuineNettoReceiptStillDetectedViaHeader]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testGenuineNettoReceiptStillDetectedViaHeader]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNettoAloneDoesNotFalsePositiveOnVATTable]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNettoAloneDoesNotFalsePositiveOnVATTable]' passed (0.002 seconds).
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNoMatchReturnsNilRatherThanGuessing]' started.
+Test Case '-[RestockTests.AssignmentServiceDetectStoreTests testNoMatchReturnsNilRatherThanGuessing]' passed (0.000 seconds).
+Test Suite 'AssignmentServiceDetectStoreTests' passed at 2026-10-02 12:30:57.909.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.019 (0.021) seconds
+Test Suite 'AssignmentServiceQuantitySuggestionTests' started at 2026-10-02 12:30:57.910.
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testAmberDarkModeContrastMeetsWCAGAA]' started.
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testAmberDarkModeContrastMeetsWCAGAA]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testFallsBackToPackageSizeWhenNoHistory]' started.
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testFallsBackToPackageSizeWhenNoHistory]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testIgnoresPurchaseFromDifferentStore]' started.
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testIgnoresPurchaseFromDifferentStore]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testMatchesQualifierVariantViaNamesRepresentSameItem]' started.
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testMatchesQualifierVariantViaNamesRepresentSameItem]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testPicksMostRecentPurchaseNotAverage]' started.
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testPicksMostRecentPurchaseNotAverage]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testReturnsNoneWhenNoEvidenceAtAll]' started.
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testReturnsNoneWhenNoEvidenceAtAll]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testSuggestsLastPurchaseFromSameStore]' started.
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testSuggestsLastPurchaseFromSameStore]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testUsesNamesRepresentSameItemNotSubstring]' started.
+Test Case '-[RestockTests.AssignmentServiceQuantitySuggestionTests testUsesNamesRepresentSameItemNotSubstring]' passed (0.000 seconds).
+Test Suite 'AssignmentServiceQuantitySuggestionTests' passed at 2026-10-02 12:30:57.916.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.005 (0.006) seconds
+Test Suite 'AssignmentServiceTests' started at 2026-10-02 12:30:57.916.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignAppliesSameTieBreakToHardwareStores]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignAppliesSameTieBreakToHardwareStores]' passed (0.002 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreIdWhenNamesAlsoCollide]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreIdWhenNamesAlsoCollide]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreNameWhenPurchaseCountsAreEqual]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignBreaksEvidenceTieByStoreNameWhenPurchaseCountsAreEqual]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksHigherVisitsPerWeekStoreWithoutNeedingEvidence]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksHigherVisitsPerWeekStoreWithoutNeedingEvidence]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksTiedGroceryStoreWithPurchaseEvidence]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignPicksTiedGroceryStoreWithPurchaseEvidence]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testAssignReturnsNilWhenTiedGroceryStoresHaveNoPurchaseEvidence]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testAssignReturnsNilWhenTiedGroceryStoresHaveNoPurchaseEvidence]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreDoesNotMatchUnrelatedCompoundWord]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreDoesNotMatchUnrelatedCompoundWord]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteDiacriticDifference]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteDiacriticDifference]' passed (0.001 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteQualifierPrefix]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreMatchesDespiteQualifierPrefix]' passed (0.000 seconds).
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreStillMatchesExactNameCaseInsensitively]' started.
+Test Case '-[RestockTests.AssignmentServiceTests testDominantStoreStillMatchesExactNameCaseInsensitively]' passed (0.000 seconds).
+Test Suite 'AssignmentServiceTests' passed at 2026-10-02 12:30:57.925.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.007 (0.009) seconds
+Test Suite 'ConsumptionPatternTests' started at 2026-10-02 12:30:57.925.
+Test Case '-[RestockTests.ConsumptionPatternTests testAveragesRegularPurchaseInterval]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testAveragesRegularPurchaseInterval]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutOneDayOut]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutOneDayOut]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutTwoDaysOut]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testDueSoonWhenEstimatedDateIsAboutTwoDaysOut]' passed (0.000 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsAboutFourDaysOut]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsAboutFourDaysOut]' passed (0.000 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsFarInTheFuture]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testNotDueSoonWhenEstimatedDateIsFarInTheFuture]' passed (0.000 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testOutlierIntervalIsExcludedFromAverageWithEnoughSamples]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testOutlierIntervalIsExcludedFromAverageWithEnoughSamples]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testOverdueWhenEstimatedDateIsInThePast]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testOverdueWhenEstimatedDateIsInThePast]' passed (0.001 seconds).
+Test Case '-[RestockTests.ConsumptionPatternTests testReturnsNilWithFewerThanTwoRecords]' started.
+Test Case '-[RestockTests.ConsumptionPatternTests testReturnsNilWithFewerThanTwoRecords]' passed (0.000 seconds).
+Test Suite 'ConsumptionPatternTests' passed at 2026-10-02 12:30:57.932.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.005 (0.007) seconds
+Test Suite 'ExistingDataSurvivesCloudEnableTests' started at 2026-10-02 12:30:57.932.
+Test Case '-[RestockTests.ExistingDataSurvivesCloudEnableTests testExistingLocalStoreSurvivesFirstCloudKitOpen]' started.
+2026-10-02 12:30:57.978031+0200 Restock[49069:4556101] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x10c94f560> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134407 "Request '5E254976-DAE8-400E-B1A6-1BAF76215E8D' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request '5E254976-DAE8-400E-B1A6-1BAF76215E8D' was cancelled because the store was removed from the coordinator.}
+2026-10-02 12:30:57.978125+0200 Restock[49069:4556101] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate resetAfterError:andKeepContainer:](589): <NSCloudKitMirroringDelegate: 0x10c94f560> - resetting internal state after error: Error Domain=NSCocoaErrorDomain Code=134407 "Request '5E254976-DAE8-400E-B1A6-1BAF76215E8D' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request '5E254976-DAE8-400E-B1A6-1BAF76215E8D' was cancelled because the store was removed from the coordinator.}
+2026-10-02 12:30:57.978176+0200 Restock[49069:4556101] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x10c94f560> - Failed to recover from error: NSCocoaErrorDomain:134407
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ExistingDataSurvivesCloudEnableTests testExistingLocalStoreSurvivesFirstCloudKitOpen]' passed (0.047 seconds).
+Test Suite 'ExistingDataSurvivesCloudEnableTests' passed at 2026-10-02 12:30:57.979.
+Test Suite 'LegacyLearnedPriceResetTests' started at 2026-10-02 12:30:57.979.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testAutoDerivedAndPricelessItemsAreUntouched]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testAutoDerivedAndPricelessItemsAreUntouched]' passed (0.006 seconds).
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testCompletedItemIsResetAndStaysCompleted]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testCompletedItemIsResetAndStaysCompleted]' passed (0.004 seconds).
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testFlagIsSetAndSecondRunAndSetFlagDoNothing]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testFlagIsSetAndSecondRunAndSetFlagDoNothing]' passed (0.004 seconds).
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testItemWithoutStoreIsUntouched]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testItemWithoutStoreIsUntouched]' passed (0.003 seconds).
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testLearnedPriceMapsAreUntouched]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testLearnedPriceMapsAreUntouched]' passed (0.004 seconds).
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testLegacyValueIsResetToEstimate]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testLegacyValueIsResetToEstimate]' passed (0.004 seconds).
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testManualPriceWithDifferentValueIsUntouched]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testManualPriceWithDifferentValueIsUntouched]' passed (0.003 seconds).
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testMatchingKeyMatchesInitBehavior]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testMatchingKeyMatchesInitBehavior]' passed (0.000 seconds).
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testNameMatchingFollowsSubstringAndFuzzyRules]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testNameMatchingFollowsSubstringAndFuzzyRules]' passed (0.004 seconds).
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testRateWithUnitIsUntouched]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testRateWithUnitIsUntouched]' passed (0.003 seconds).
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testToleranceBoundary]' started.
+Test Case '-[RestockTests.LegacyLearnedPriceResetTests testToleranceBoundary]' passed (0.000 seconds).
+Test Suite 'LegacyLearnedPriceResetTests' passed at 2026-10-02 12:30:58.018.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.036 (0.038) seconds
+Test Suite 'LiveActivityServiceReattachTests' started at 2026-10-02 12:30:58.018.
+Test Case '-[RestockTests.LiveActivityServiceReattachTests testReopeningWithinDismissalGracePeriodStartsAFreshActiveActivity]' started.
+Test Case '-[RestockTests.LiveActivityServiceReattachTests testReopeningWithinDismissalGracePeriodStartsAFreshActiveActivity]' passed (1.185 seconds).
+Test Suite 'LiveActivityServiceReattachTests' passed at 2026-10-02 12:30:59.204.
+Test Suite 'PhotoCompressorTests' started at 2026-10-02 12:30:59.204.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorDownsizesLargeImage]' started.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorDownsizesLargeImage]' passed (0.034 seconds).
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorLeavesSmallImageDimensionsUnchanged]' started.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorLeavesSmallImageDimensionsUnchanged]' passed (0.001 seconds).
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorProducesDataUnderSizeCap]' started.
+Test Case '-[RestockTests.PhotoCompressorTests testCompressorProducesDataUnderSizeCap]' passed (0.021 seconds).
+Test Suite 'PhotoCompressorTests' passed at 2026-10-02 12:30:59.260.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.056 (0.056) seconds
+Test Suite 'PriceEstimatorCategoryFallbackTests' started at 2026-10-02 12:30:59.260.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testAllCategoryFallbackPricesAreDistinct]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testAllCategoryFallbackPricesAreDistinct]' passed (0.002 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testBabybedarfGruppeIstDifferenziert]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testBabybedarfGruppeIstDifferenziert]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testElektronikGruppeIstDifferenziert]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testElektronikGruppeIstDifferenziert]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testMilchproduktGruppeIstDifferenziert]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testMilchproduktGruppeIstDifferenziert]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testObstUndGemueseDiffersFromLebensmittel]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testObstUndGemueseDiffersFromLebensmittel]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testSpecificPricesBleibenUnveraendert]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testSpecificPricesBleibenUnveraendert]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testUnbekannteKategorieLiefertNil]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testUnbekannteKategorieLiefertNil]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testVerbleibendePaareSindDifferenziert]' started.
+Test Case '-[RestockTests.PriceEstimatorCategoryFallbackTests testVerbleibendePaareSindDifferenziert]' passed (0.000 seconds).
+Test Suite 'PriceEstimatorCategoryFallbackTests' passed at 2026-10-02 12:30:59.266.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.004 (0.006) seconds
+Test Suite 'PriceEstimatorStagesTests' started at 2026-10-02 12:30:59.266.
+Test Case '-[RestockTests.PriceEstimatorStagesTests testCategoryFallbackUsedWhenNoLearnedPriceAndNoKeywordMatch]' started.
+Test Case '-[RestockTests.PriceEstimatorStagesTests testCategoryFallbackUsedWhenNoLearnedPriceAndNoKeywordMatch]' passed (0.004 seconds).
+Test Case '-[RestockTests.PriceEstimatorStagesTests testLearnedPriceTakesPriorityOverProductKeywordAndCategory]' started.
+Test Case '-[RestockTests.PriceEstimatorStagesTests testLearnedPriceTakesPriorityOverProductKeywordAndCategory]' passed (0.003 seconds).
+Test Case '-[RestockTests.PriceEstimatorStagesTests testProductKeywordTakesPriorityOverCategoryFallback]' started.
+Test Case '-[RestockTests.PriceEstimatorStagesTests testProductKeywordTakesPriorityOverCategoryFallback]' passed (0.000 seconds).
+Test Suite 'PriceEstimatorStagesTests' passed at 2026-10-02 12:30:59.274.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.007 (0.008) seconds
+Test Suite 'PriceProvenanceMigrationTests' started at 2026-10-02 12:30:59.274.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramPriceAppliesToItemWithGramQuantity]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramPriceAppliesToItemWithGramQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramPriceIsNotAppliedToItemWithoutQuantity]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramPriceIsNotAppliedToItemWithoutQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramRateIsRejectedForKilogramItem]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramRateIsRejectedForKilogramItem]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramRateWithoutEvidenceIsKeptAsRate]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedGramRateWithoutEvidenceIsKeptAsRate]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedPieceRateIsRejectedForWeightItem]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testLearnedPieceRateIsRejectedForWeightItem]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesLegitimatelyExpensiveLearnedPriceUntouched]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesLegitimatelyExpensiveLearnedPriceUntouched]' passed (0.026 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesPlausibleStoreLearnedPricesUntouched]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationLeavesPlausibleStoreLearnedPricesUntouched]' passed (0.004 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationRepairsCorruptedStoreLearnedPrice]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testMigrationRepairsCorruptedStoreLearnedPrice]' passed (0.005 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemAcceptsLegitimatelyExpensiveLearnedPrice]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemAcceptsLegitimatelyExpensiveLearnedPrice]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemPicksDeterministicWinnerWhenMultipleLearnedPricesMatchWithoutDates]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemPicksDeterministicWinnerWhenMultipleLearnedPricesMatchWithoutDates]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemRejectsImplausibleLearnedPriceAndFallsBackToEstimator]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemRejectsImplausibleLearnedPriceAndFallsBackToEstimator]' passed (0.001 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemStillUsesPlausibleLearnedPrice]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testShoppingItemStillUsesPlausibleLearnedPrice]' passed (0.000 seconds).
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testUnitBucketMapsSynonymsAndUnknownUnits]' started.
+Test Case '-[RestockTests.PriceProvenanceMigrationTests testUnitBucketMapsSynonymsAndUnknownUnits]' passed (0.000 seconds).
+Test Suite 'PriceProvenanceMigrationTests' passed at 2026-10-02 12:30:59.316.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.039 (0.042) seconds
+Test Suite 'PurchaseRecordDeletionTests' started at 2026-10-02 12:30:59.316.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testKnownProductSuggestionsSurviveItemDeletion]' started.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testKnownProductSuggestionsSurviveItemDeletion]' passed (0.011 seconds).
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesItemDeletion]' started.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesItemDeletion]' passed (0.004 seconds).
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesStoreDeletion]' started.
+Test Case '-[RestockTests.PurchaseRecordDeletionTests testPurchaseRecordSurvivesStoreDeletion]' passed (0.004 seconds).
+Test Suite 'PurchaseRecordDeletionTests' passed at 2026-10-02 12:30:59.335.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.019 (0.019) seconds
+Test Suite 'QuickAddParserTests' started at 2026-10-02 12:30:59.335.
+Test Case '-[RestockTests.QuickAddParserTests testCommaDecimalWithSeparateUnitToken]' started.
+Test Case '-[RestockTests.QuickAddParserTests testCommaDecimalWithSeparateUnitToken]' passed (0.001 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testEmptyInputReturnsEmptyNameWithDefaultQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testEmptyInputReturnsEmptyNameWithDefaultQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testGermanWordNumberIsParsed]' started.
+Test Case '-[RestockTests.QuickAddParserTests testGermanWordNumberIsParsed]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testGluedNumberAndUnitSplitCorrectly]' started.
+Test Case '-[RestockTests.QuickAddParserTests testGluedNumberAndUnitSplitCorrectly]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testHalfWordNumberIsParsedAsFraction]' started.
+Test Case '-[RestockTests.QuickAddParserTests testHalfWordNumberIsParsedAsFraction]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testHintFormatsQuantityAndUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testHintFormatsQuantityAndUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testHintReturnsNilForPlainNameWithoutQuantityOrUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testHintReturnsNilForPlainNameWithoutQuantityOrUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testLeadingMultiplierSuffixSetsQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testLeadingMultiplierSuffixSetsQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testLeadingNumberSetsQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testLeadingNumberSetsQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testNumberOnlyInputIsTreatedAsNameNotQuantity]' started.
+Test Case '-[RestockTests.QuickAddParserTests testNumberOnlyInputIsTreatedAsNameNotQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testPlainNameWithoutQuantityDefaultsToOne]' started.
+Test Case '-[RestockTests.QuickAddParserTests testPlainNameWithoutQuantityDefaultsToOne]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsAreSortedByMostRecentFirst]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsAreSortedByMostRecentFirst]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsDedupeCaseInsensitiveKeepingFirstSeen]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsDedupeCaseInsensitiveKeepingFirstSeen]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsExcludeExactMatch]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsExcludeExactMatch]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFallBackToSubstringWhenPrefixMatchesAreFew]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFallBackToSubstringWhenPrefixMatchesAreFew]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFoldDiacriticsForMatching]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsFoldDiacriticsForMatching]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsIncludeItemNamesNotOnlyPurchaseRecords]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsIncludeItemNamesNotOnlyPurchaseRecords]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsMatchByPrefixCaseInsensitive]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsMatchByPrefixCaseInsensitive]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRequireAtLeastTwoCharacters]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRequireAtLeastTwoCharacters]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRespectLimit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testSuggestionsRespectLimit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingGluedQuantityAndUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingGluedQuantityAndUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingMultiplierSuffixWithoutUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingMultiplierSuffixWithoutUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingPlainNumberWithoutUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingPlainNumberWithoutUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testTrailingSeparateQuantityAndUnit]' started.
+Test Case '-[RestockTests.QuickAddParserTests testTrailingSeparateQuantityAndUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.QuickAddParserTests testUppercaseUnitTokenIsRecognized]' started.
+Test Case '-[RestockTests.QuickAddParserTests testUppercaseUnitTokenIsRecognized]' passed (0.000 seconds).
+Test Suite 'QuickAddParserTests' passed at 2026-10-02 12:30:59.351.
+	 Executed 25 tests, with 0 failures (0 unexpected) in 0.009 (0.016) seconds
+Test Suite 'ReceiptAbbreviationExpansionTests' started at 2026-10-02 12:30:59.351.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testFlBuersteExpandsToFlaschenbuersteAcrossDotAndSpaceVariants]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testFlBuersteExpandsToFlaschenbuersteAcrossDotAndSpaceVariants]' passed (0.009 seconds).
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testPremExpandsToPremium]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testPremExpandsToPremium]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testToiPaExpandsToToilettenpapier]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testToiPaExpandsToToilettenpapier]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testUnknownWordsReturnNil]' started.
+Test Case '-[RestockTests.ReceiptAbbreviationExpansionTests testUnknownWordsReturnNil]' passed (0.000 seconds).
+Test Suite 'ReceiptAbbreviationExpansionTests' passed at 2026-10-02 12:30:59.362.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.010 (0.011) seconds
+Test Suite 'ReceiptHistoryMatchTests' started at 2026-10-02 12:30:59.362.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBelowThresholdReturnsNil]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBelowThresholdReturnsNil]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBestMatchWinsNotFirstInArray]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testBestMatchWinsNotFirstInArray]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testFuzzyMatchFoundWhereContainsWouldFail]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testFuzzyMatchFoundWhereContainsWouldFail]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testStoreScopeStillEnforced]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testStoreScopeStillEnforced]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testTieBreaksDeterministicallyByAlphabeticallyEarlierName]' started.
+Test Case '-[RestockTests.ReceiptHistoryMatchTests testTieBreaksDeterministicallyByAlphabeticallyEarlierName]' passed (0.002 seconds).
+Test Suite 'ReceiptHistoryMatchTests' passed at 2026-10-02 12:30:59.367.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+Test Suite 'ReceiptKnownItemNamesTests' started at 2026-10-02 12:30:59.367.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testCapsAtLimit]' started.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testCapsAtLimit]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testDeduplicatesCaseAndDiacriticInsensitively]' started.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testDeduplicatesCaseAndDiacriticInsensitively]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testIncludesPendingStoreItemsNotOnlyPurchaseHistory]' started.
+Test Case '-[RestockTests.ReceiptKnownItemNamesTests testIncludesPendingStoreItemsNotOnlyPurchaseHistory]' passed (0.003 seconds).
+Test Suite 'ReceiptKnownItemNamesTests' passed at 2026-10-02 12:30:59.378.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.011 (0.011) seconds
+Test Suite 'ReceiptNameAIResolverSanitizeTests' started at 2026-10-02 12:30:59.378.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testEmptyOrTooLongOrMultilineIsRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testEmptyOrTooLongOrMultilineIsRejected]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsCaseInsensitive]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsCaseInsensitive]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelIsRejected]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelWithWhitespaceAndQuotesIsRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNonProductSentinelWithWhitespaceAndQuotesIsRejected]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNormalNamePassesThrough]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testNormalNamePassesThrough]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testSentinelAsSubstringOfLongerTextIsNotRejected]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testSentinelAsSubstringOfLongerTextIsNotRejected]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testWhitespaceAndQuotesAreTrimmed]' started.
+Test Case '-[RestockTests.ReceiptNameAIResolverSanitizeTests testWhitespaceAndQuotesAreTrimmed]' passed (0.000 seconds).
+Test Suite 'ReceiptNameAIResolverSanitizeTests' passed at 2026-10-02 12:30:59.383.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+Test Suite 'ReceiptParserLidlFullReceiptTests' started at 2026-10-02 12:30:59.383.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testAllFourteenRealItemsAreFound]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testAllFourteenRealItemsAreFound]' passed (0.007 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalFindsAmountNormally]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalFindsAmountNormally]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalStillFoundWhenZuZahlenLineIsMissing]' started.
+2026-10-02 12:30:59.394839+0200 Restock[49069:4556098] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x10c94fb80> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.394896+0200 Restock[49069:4556098] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x10c94fb80> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDetectedTotalStillFoundWhenZuZahlenLineIsMissing]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDiagnosticDumpOfCurrentParseResult]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testDiagnosticDumpOfCurrentParseResult]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testMultiBuyLinesHaveCorrectQuantityInFullReceiptContext]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testMultiBuyLinesHaveCorrectQuantityInFullReceiptContext]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testNoPhantomItemsFromVATTableOrTrailer]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testNoPhantomItemsFromVATTableOrTrailer]' passed (0.005 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testStillNoPhantomItemsWhenZuZahlenLineIsMissing]' started.
+2026-10-02 12:30:59.415732+0200 Restock[49069:4556098] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x10c94ff00> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.415858+0200 Restock[49069:4556098] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x10c94ff00> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testStillNoPhantomItemsWhenZuZahlenLineIsMissing]' passed (0.006 seconds).
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testWeightConfirmationLineAttachesGramBasisToBanana]' started.
+Test Case '-[RestockTests.ReceiptParserLidlFullReceiptTests testWeightConfirmationLineAttachesGramBasisToBanana]' passed (0.006 seconds).
+Test Suite 'ReceiptParserLidlFullReceiptTests' passed at 2026-10-02 12:30:59.426.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.041 (0.043) seconds
+Test Suite 'ReceiptParserPriceTests' started at 2026-10-02 12:30:59.426.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineAsFirstLineDoesNotCrash]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineAsFirstLineDoesNotCrash]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineWithFailedSanityCheckIsConsumedNotAttributed]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBareConfirmationLineWithFailedSanityCheckIsConsumedNotAttributed]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountDoesNotInterfereWithWeightBasedLine]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountDoesNotInterfereWithWeightBasedLine]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountHandlesMandelkerneAndBroetchenFromRealLidlReceipt]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountHandlesMandelkerneAndBroetchenFromRealLidlReceipt]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountLearnsPerUnitPriceNotLineTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountLearnsPerUnitPriceNotLineTotal]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountSetsQuantityFromLidlMultiBuyLine]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testBarePriceTimesCountSetsQuantityFromLidlMultiBuyLine]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testDocumentedWeightLineWithoutSuffixComputesWeightTimesRate]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testDocumentedWeightLineWithoutSuffixComputesWeightTimesRate]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testFlatPricePackagedItemWithoutWeightLineLearnsCorrectPerGramPrice]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testFlatPricePackagedItemWithoutWeightLineLearnsCorrectPerGramPrice]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripForReweBroetchenAndBanane]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripForReweBroetchenAndBanane]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithHistoricalMatch]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithHistoricalMatch]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithoutHistoricalMatch]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearnedPriceRoundTripWithoutHistoricalMatch]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearningUnitMatchesLearningQuantityBranchForEveryCase]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testLearningUnitMatchesLearningQuantityBranchForEveryCase]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testPackageSizeFromNameAgreesWithWeightBasisFromName]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testPackageSizeFromNameAgreesWithWeightBasisFromName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testPackageSizeFromNameReturnsLitreAsMillilitre]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testPackageSizeFromNameReturnsLitreAsMillilitre]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testPieceCountLineSetsQuantityNotWeightBasis]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testPieceCountLineSetsQuantityNotWeightBasis]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testSavingReceiptStoresPriceAndUnitTogether]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testSavingReceiptStoresPriceAndUnitTogether]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasedGrundpreisLineComputesCorrectTotal]' started.
+2026-10-02 12:30:59.439169+0200 Restock[49069:4556098] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x10c94faa0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.439208+0200 Restock[49069:4556098] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x10c94faa0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasedGrundpreisLineComputesCorrectTotal]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasisFromNameHandlesKgLiterAndCentiliterUnits]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightBasisFromNameHandlesKgLiterAndCentiliterUnits]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineSetsGramWeightBasisNotQuantity]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineSetsGramWeightBasisNotQuantity]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithDecimalDotInsteadOfCommaComputesCorrectTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithDecimalDotInsteadOfCommaComputesCorrectTotal]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithMultiplicationSignInsteadOfXComputesCorrectTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithMultiplicationSignInsteadOfXComputesCorrectTotal]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithNoSeparateTotalFallsBackToComputedTotal]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithNoSeparateTotalFallsBackToComputedTotal]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithSeparateTotalPriceLineIsNotOverridden]' started.
+Test Case '-[RestockTests.ReceiptParserPriceTests testWeightLineWithSeparateTotalPriceLineIsNotOverridden]' passed (0.001 seconds).
+Test Suite 'ReceiptParserPriceTests' passed at 2026-10-02 12:30:59.445.
+	 Executed 23 tests, with 0 failures (0 unexpected) in 0.015 (0.019) seconds
+Test Suite 'ReceiptParserReweTests' started at 2026-10-02 12:30:59.445.
+Test Case '-[RestockTests.ReceiptParserReweTests testAllFourteenPositionsAreRecognized]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testAllFourteenPositionsAreRecognized]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserReweTests testItemNamesAndPricesAreCorrect]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testItemNamesAndPricesAreCorrect]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserReweTests testNoAdminOrTaxLinesLeakIntoResults]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testNoAdminOrTaxLinesLeakIntoResults]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserReweTests testQuantityAndWeightFollowupLinesDoNotOverrideAlreadyKnownTotal]' started.
+Test Case '-[RestockTests.ReceiptParserReweTests testQuantityAndWeightFollowupLinesDoNotOverrideAlreadyKnownTotal]' passed (0.003 seconds).
+Test Suite 'ReceiptParserReweTests' passed at 2026-10-02 12:30:59.457.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.012 (0.012) seconds
+Test Suite 'ReceiptParserStornoTests' started at 2026-10-02 12:30:59.457.
+Test Case '-[RestockTests.ReceiptParserStornoTests testConfirmationLineAfterStornoDoesNotBecomePhantomPosition]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testConfirmationLineAfterStornoDoesNotBecomePhantomPosition]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testCorrectItemsAndPricesSurvive]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testCorrectItemsAndPricesSurvive]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testOnlyTheThreeActuallyPurchasedItemsSurvive]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testOnlyTheThreeActuallyPurchasedItemsSurvive]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoedItemsDoNotAppear]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoedItemsDoNotAppear]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoStaysPendingAcrossSkippedConfirmationLine]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoStaysPendingAcrossSkippedConfirmationLine]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoWithoutPriorMatchIsHarmless]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testStornoWithoutPriorMatchIsHarmless]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptParserStornoTests testVatSummaryRowWithNumericCodeIsNotMistakenForAnItem]' started.
+Test Case '-[RestockTests.ReceiptParserStornoTests testVatSummaryRowWithNumericCodeIsNotMistakenForAnItem]' passed (0.003 seconds).
+Test Suite 'ReceiptParserStornoTests' passed at 2026-10-02 12:30:59.471.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.012 (0.014) seconds
+Test Suite 'ReceiptParserSuggestionTests' started at 2026-10-02 12:30:59.471.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesDefaultLimitIsFive]' started.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesDefaultLimitIsFive]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesExcludesLooseFalsePositives]' started.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesExcludesLooseFalsePositives]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesKeepsPlausibleShortening]' started.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testCompletedItemCandidatesKeepsPlausibleShortening]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testResolutionServiceLimitsSuggestionsToThree]' started.
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testResolutionServiceLimitsSuggestionsToThree]' passed (0.010 seconds).
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testResolutionServiceSuggestsFromPendingNotOnlyCompletedItems]' started.
+2026-10-02 12:30:59.496326+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x10870d0a0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.496364+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x10870d0a0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptParserSuggestionTests testResolutionServiceSuggestsFromPendingNotOnlyCompletedItems]' passed (0.005 seconds).
+Test Suite 'ReceiptParserSuggestionTests' passed at 2026-10-02 12:30:59.498.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.026 (0.027) seconds
+Test Suite 'ReceiptResolutionStatsTests' started at 2026-10-02 12:30:59.498.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testAliasLineGetsAliasStage]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testAliasLineGetsAliasStage]' passed (0.005 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testCompletedItemLineGetsCompletedStageAndKeepsMatchedItem]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testCompletedItemLineGetsCompletedStageAndKeepsMatchedItem]' passed (0.005 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testDictionaryLineGetsDictionaryStage]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testDictionaryLineGetsDictionaryStage]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testHistoryLineGetsHistoryStage]' started.
+2026-10-02 12:30:59.516447+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832c1c0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.516487+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x11832c1c0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testHistoryLineGetsHistoryStage]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testLegacyPayloadWithoutStageDecodesWithNilStage]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testLegacyPayloadWithoutStageDecodesWithNilStage]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testMergeAIReresolutionSetsStageAndResolvedNameOnlyAtTargetedIndices]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testMergeAIReresolutionSetsStageAndResolvedNameOnlyAtTargetedIndices]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testRecordAddsUpAcrossReceiptsAndSurvivesNewInstance]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testRecordAddsUpAcrossReceiptsAndSurvivesNewInstance]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testResetClearsAllAndUnseenStageIsZero]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testResetClearsAllAndUnseenStageIsZero]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testResolveComparisonSetMatchesBehaviourBeforeStageTracking]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testResolveComparisonSetMatchesBehaviourBeforeStageTracking]' passed (0.005 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testResolvedByAILinesNeverCarryAnotherStage]' started.
+2026-10-02 12:30:59.537195+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832c540> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.537247+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x11832c540> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-02 12:30:59.537602+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832cb60> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-10-02 12:30:59.537651+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+2026-10-02 12:30:59.539521+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832c460> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-10-02 12:30:59.539638+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+2026-10-02 12:30:59.559378+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832c620> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.559423+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x11832c620> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-02 12:30:59.575710+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832ca80> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.575756+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x11832ca80> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-02 12:30:59.592355+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832dce0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.592396+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x11832dce0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-02 12:30:59.608103+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832c700> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.608146+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x11832c700> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-02 12:30:59.623607+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832da40> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.623649+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x11832da40> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-02 12:30:59.644818+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832e300> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.644882+0200 Restock[49069:4556091] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x11832e300> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-02 12:30:59.776922+0200 Restock[49069:4556091] [textAnalyzer] End sanitizeText with error: Error Domain=com.apple.SensitiveContentAnalysisML Code=15 "Failed model manager query for model com.apple.fm.language.instruct_300m.safety: InferenceError::hostFailed::InferenceError::inferenceFailed::TokenGenerationCore.ModelConfiguration.PrompteTemplateError.promptTemplateNotFound" UserInfo={NSLocalizedDescription=Failed model manager query for model com.apple.fm.language.instruct_300m.safety: InferenceError::hostFailed::InferenceError::inferenceFailed::TokenGenerationCore.ModelConfiguration.PrompteTemplateError.promptTemplateNotFound, NSUnderlyingError=0x118320b40 {Error Domain=ModelManagerServices.ModelManagerError Code=1001 "InferenceError::hostFailed::InferenceError::inferenceFailed::TokenGenerationCore.ModelConfiguration.PrompteTemplateError.promptTemplateNotFound"}}
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testResolvedByAILinesNeverCarryAnotherStage]' passed (0.252 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testStageHasExactlyTheSevenCasesAndStringRawValues]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testStageHasExactlyTheSevenCasesAndStringRawValues]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testStageRoundTripsThroughCodable]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testStageRoundTripsThroughCodable]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testStoredValueContainsNoLineNames]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testStoredValueContainsNoLineNames]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testTallyChangedOnlyWhenIncludedAndNameDiffersBeyondCaseAndWhitespace]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testTallyChangedOnlyWhenIncludedAndNameDiffersBeyondCaseAndWhitespace]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testTallyCountsAIStage]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testTallyCountsAIStage]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testTallyCountsEachLineOnceAtItsStageAndSkipsUnknownStage]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testTallyCountsEachLineOnceAtItsStageAndSkipsUnknownStage]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testTallyDeselectedLinesCountAsTotalAndDeselectedButNeverChanged]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testTallyDeselectedLinesCountAsTotalAndDeselectedButNeverChanged]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testTallyQuantityChangeIsNotAChangedName]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testTallyQuantityChangeIsNotAChangedName]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testUnresolvedLineWithoutAIKeepsRawTextAndGetsRawTextStage]' started.
+Test Case '-[RestockTests.ReceiptResolutionStatsTests testUnresolvedLineWithoutAIKeepsRawTextAndGetsRawTextStage]' passed (0.003 seconds).
+Test Suite 'ReceiptResolutionStatsTests' passed at 2026-10-02 12:30:59.796.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.294 (0.298) seconds
+Test Suite 'ReceiptReviewCardTests' started at 2026-10-02 12:30:59.796.
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiLineWithTwoSuggestionsOffersFourOptionsWithAiFirst]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiLineWithTwoSuggestionsOffersFourOptionsWithAiFirst]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiSuggestionIsDroppedWhenAListMatchCarriesTheSameName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testAiSuggestionIsDroppedWhenAListMatchCarriesTheSameName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameLeavesMatchedItemIDNilWhenNoSuggestionMatches]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameLeavesMatchedItemIDNilWhenNoSuggestionMatches]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameLinksMatchedItemIDWhenNameEqualsASuggestion]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameLinksMatchedItemIDWhenNameEqualsASuggestion]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackAppliesNonEmptyNameUnchanged]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackFallsBackToOriginalNameWhenPreviousSelectionIsWhitespaceOnly]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackFallsBackToOriginalNameWhenPreviousSelectionIsWhitespaceOnly]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresAIStateOnEmptyName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresAIStateOnEmptyName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnEmptyName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnEmptyName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnWhitespaceOnlyName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyCustomNameOrFallbackRestoresPreviousSelectionOnWhitespaceOnlyName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditFloorsPiecesAtOne]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditFloorsPiecesAtOne]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditNeverTouchesUnitOrOriginalName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditNeverTouchesUnitOrOriginalName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithGramsSetsWeightAndResetsQuantity]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithGramsSetsWeightAndResetsQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithPiecesSetsQuantityAndClearsWeight]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testApplyQuantityEditWithPiecesSetsQuantityAndClearsWeight]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingAiSuggestionRestoresAiStateAfterAnotherSelection]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingAiSuggestionRestoresAiStateAfterAnotherSelection]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingCurrentNameAfterAiSuggestionClearsMatchedItemIDAndResolvedByAI]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingCurrentNameAfterAiSuggestionClearsMatchedItemIDAndResolvedByAI]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingListMatchSetsNameAndItemAndClearsAiFlag]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingListMatchSetsNameAndItemAndClearsAiFlag]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingReceiptTextSetsNameAndClearsMatchAndAiFlag]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testChoosingReceiptTextSetsNameAndClearsMatchAndAiFlag]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testCurrentNameIsOfferedAndPreselectedWhenNoCandidateMatches]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testCurrentNameIsOfferedAndPreselectedWhenNoCandidateMatches]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testEmptyCurrentNameDoesNotAddExtraOptionWhenNoCandidateMatches]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testEnteringCustomNameClearsMatchAndAiFlag]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testEnteringCustomNameClearsMatchAndAiFlag]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testEveryNamedFixtureEndsWithExactlyOneMarkedOptionAfterIssue66]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testEveryNamedFixtureEndsWithExactlyOneMarkedOptionAfterIssue66]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testFiveSuggestionsAreCappedToThreeListMatches]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testFiveSuggestionsAreCappedToThreeListMatches]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testIsSelectedDoesNotMarkListMatchWhenMatchedItemIDPointsToAnotherItem]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testIsSelectedDoesNotMarkListMatchWhenMatchedItemIDPointsToAnotherItem]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testIsSelectedMarksListMatchWhenMatchedItemIDIsNilAndNameEqualsSuggestion]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testIsSelectedMarksListMatchWhenMatchedItemIDIsNilAndNameEqualsSuggestion]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testIsSelectedMatchesPreviousBehaviorForAiSuggestionCurrentNameReceiptTextAndCustom]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testIsSelectedMatchesPreviousBehaviorForAiSuggestionCurrentNameReceiptTextAndCustom]' passed (0.000 seconds).
+tMirroringDelegate: 0x11832cd20> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-02 12:30:59.813162+0200 Restock[49069:4556101] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x11832cd20> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.ReceiptReviewCardTests testIsSelectedStillMarksListMatchOnExactAssignment]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testLineWithoutSuggestionsAndWithoutAiKeepsCurrentName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testLineWithoutSuggestionsAndWithoutAiKeepsCurrentName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testNormalizedReceiptTextCapitalizesEachWord]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testNormalizedReceiptTextCapitalizesEachWord]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testNormalizedReceiptTextKeepsHyphenatedWordAsOneUnit]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testNormalizedReceiptTextKeepsHyphenatedWordAsOneUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testOriginalNameSurvivesAllThreeSelectionPaths]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testOriginalNameSurvivesAllThreeSelectionPaths]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPreselectedListMatchIsSortedFirstRegardlessOfCase]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPreselectedListMatchIsSortedFirstRegardlessOfCase]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryFallsBackToSinglePiece]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryFallsBackToSinglePiece]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesLitrePriceForLiquids]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesLitrePriceForLiquids]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesPrintedGramSize]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesPrintedGramSize]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesQuantityWhenGreaterThanOne]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesQuantityWhenGreaterThanOne]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesWeightBasisFirst]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testPriceSummaryUsesWeightBasisFirst]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testSectionHeaderTextShowsCountSelectedAndSum]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testSectionHeaderTextShowsCountSelectedAndSum]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionAcceptsDifferingName]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionAcceptsDifferingName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionAcceptsEmptySelection]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionAcceptsEmptySelection]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionRejectsNameEqualToSelection]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionRejectsNameEqualToSelection]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionRejectsNamesBelowMinLength]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testShouldOfferReceiptTextOptionRejectsNamesBelowMinLength]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptReviewCardTests testStaleOptionsNoLongerMatchAfterMatchedItemIDAndResolvedByAIChangeWithoutNameChange]' started.
+Test Case '-[RestockTests.ReceiptReviewCardTests testStaleOptionsNoLongerMatchAfterMatchedItemIDAndResolvedByAIChangeWithoutNameChange]' passed (0.000 seconds).
+Test Suite 'ReceiptReviewCardTests' passed at 2026-10-02 12:30:59.821.
+	 Executed 42 tests, with 0 failures (0 unexpected) in 0.018 (0.025) seconds
+Test Suite 'ReceiptSavePurchaseQuantityTests' started at 2026-10-02 12:30:59.821.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testAgreesWithLearningQuantityForWeightCases]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testAgreesWithLearningQuantityForWeightCases]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testEdgeKilogramInNameGivesGrams]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testEdgeKilogramInNameGivesGrams]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testEdgeMultipleSizesInNameTakesLast]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testEdgeMultipleSizesInNameTakesLast]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testEdgeQuantityZeroOrFractionWithoutSizeGivesOne]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testEdgeQuantityZeroOrFractionWithoutSizeGivesOne]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testEdgeWeightBeatsQuantity]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testEdgeWeightBeatsQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testLiterSizeInNameGivesMilliliters]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testLiterSizeInNameGivesMilliliters]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testNothingKnownGivesOneWithoutUnit]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testNothingKnownGivesOneWithoutUnit]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testPackageSizeInNameGivesGrams]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testPackageSizeInNameGivesGrams]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testQuantityGreaterOneGivesPieces]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testQuantityGreaterOneGivesPieces]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testSaveRecordPackageSizeIgnoresRawUnitText]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testSaveRecordPackageSizeIgnoresRawUnitText]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testSaveRecordQuantityGreaterOneStoresPieces]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testSaveRecordQuantityGreaterOneStoresPieces]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testSaveRecordWeightLineStoresGramsAndPrice]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testSaveRecordWeightLineStoresGramsAndPrice]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testSwitchingToPiecesFallsBackToQuantity]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testSwitchingToPiecesFallsBackToQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testWeightLineGivesGrams]' started.
+Test Case '-[RestockTests.ReceiptSavePurchaseQuantityTests testWeightLineGivesGrams]' passed (0.000 seconds).
+Test Suite 'ReceiptSavePurchaseQuantityTests' passed at 2026-10-02 12:30:59.828.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.004 (0.007) seconds
+Test Suite 'ReceiptScannerReResolutionTests' started at 2026-10-02 12:30:59.829.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testAlreadyResolvedByAILinesAreNotReResolvedAgain]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testAlreadyResolvedByAILinesAreNotReResolvedAgain]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testIsSavableKeepsIncludedNamedLineAndRejectsOldCases]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testIsSavableKeepsIncludedNamedLineAndRejectsOldCases]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testIsSavableRejectsLineWithEmptyName]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testIsSavableRejectsLineWithEmptyName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testMergeAppliesAIResolvedNameSuggestionsAndFlagOnlyAtTargetedIndices]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testMergeAppliesAIResolvedNameSuggestionsAndFlagOnlyAtTargetedIndices]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testUnresolvedShareHandoffLinesAreSelectedForReResolution]' started.
+Test Case '-[RestockTests.ReceiptScannerReResolutionTests testUnresolvedShareHandoffLinesAreSelectedForReResolution]' passed (0.000 seconds).
+Test Suite 'ReceiptScannerReResolutionTests' passed at 2026-10-02 12:30:59.831.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'ReplenishmentDigestTests' started at 2026-10-02 12:30:59.831.
+Test Case '-[RestockTests.ReplenishmentDigestTests testBackgroundRefreshRunsBeforeTheMorningDigest]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testBackgroundRefreshRunsBeforeTheMorningDigest]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testCandidatesIgnoreTheBannerWindowButRespectFeedbackAndOpenItems]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testCandidatesIgnoreTheBannerWindowButRespectFeedbackAndOpenItems]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testCountryChangeDoesNotRepeatTheNotification]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testCountryChangeDoesNotRepeatTheNotification]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testDeliveredItemIsNotAnnouncedAgainInTheSameCycle]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testDeliveredItemIsNotAnnouncedAgainInTheSameCycle]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testItemsDueOnTheSameDayShareOneDigestAtNine]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testItemsDueOnTheSameDayShareOneDigestAtNine]' passed (0.008 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testItemWhoseHabitEndsBeforeDeliveryIsSkipped]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testItemWhoseHabitEndsBeforeDeliveryIsSkipped]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testNewPurchaseMakesItemNotifiableAgain]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testNewPurchaseMakesItemNotifiableAgain]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testOverdueItemGoesIntoNextDigestInsteadOfImmediatePush]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testOverdueItemGoesIntoNextDigestInsteadOfImmediatePush]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testPlanningLooksSevenDaysAhead]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testPlanningLooksSevenDaysAhead]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testSingleItemKeepsItsOwnTextAndSeveralAreListed]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testSingleItemKeepsItsOwnTextAndSeveralAreListed]' passed (0.009 seconds).
+Test Case '-[RestockTests.ReplenishmentDigestTests testSnoozeAllowsOneMoreNotificationAtTheShiftedDate]' started.
+Test Case '-[RestockTests.ReplenishmentDigestTests testSnoozeAllowsOneMoreNotificationAtTheShiftedDate]' passed (0.003 seconds).
+Test Suite 'ReplenishmentDigestTests' passed at 2026-10-02 12:30:59.865.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.031 (0.033) seconds
+Test Suite 'ReplenishmentPackageATests' started at 2026-10-02 12:30:59.865.
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionDeletedWithoutPurchaseIsDismissed]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionDeletedWithoutPurchaseIsDismissed]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionPurchasedThenDeletedIsNoSignal]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionPurchasedThenDeletedIsNoSignal]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionReplacedBySamePendingItemIsNoSignal]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionReplacedBySamePendingItemIsNoSignal]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionStillOnListIsKeptTracked]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testAcceptedSuggestionStillOnListIsKeptTracked]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testIntervalIsNotScaledByPurchaseQuantity]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testIntervalIsNotScaledByPurchaseQuantity]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingKeepsEarlierPurchases]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingKeepsEarlierPurchases]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingKeepsRecordWithReceiptPrice]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingKeepsRecordWithReceiptPrice]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingRemovesRecordCreatedByMarkCompleted]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testMarkPendingRemovesRecordCreatedByMarkCompleted]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageATests testOverdueNotificationOnlyOncePerPurchaseCycle]' started.
+Test Case '-[RestockTests.ReplenishmentPackageATests testOverdueNotificationOnlyOncePerPurchaseCycle]' passed (0.002 seconds).
+Test Suite 'ReplenishmentPackageATests' passed at 2026-10-02 12:30:59.882.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.015 (0.017) seconds
+Test Suite 'ReplenishmentPackageBTests' started at 2026-10-02 12:30:59.882.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testAlternatingPackSizesAreNotIrregular]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testAlternatingPackSizesAreNotIrregular]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testBacktestOnRegularHistory]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testBacktestOnRegularHistory]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testBiweeklyPurchaseIsNotTreatedAsWeekdayPattern]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testBiweeklyPurchaseIsNotTreatedAsWeekdayPattern]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testDueSoonItemsRequireThreePurchases]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testDueSoonItemsRequireThreePurchases]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testDueWindowIsTwentyPercentOfCycle]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testDueWindowIsTwentyPercentOfCycle]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testEasterMondayIsMovedBeforeTheWeekend]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testEasterMondayIsMovedBeforeTheWeekend]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testGermanPublicHolidays]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testGermanPublicHolidays]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testHabitEndsAfterTwoAndAHalfTypicalGaps]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testHabitEndsAfterTwoAndAHalfTypicalGaps]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testHolidayOnWeekdayPatternMovesToSaturday]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testHolidayOnWeekdayPatternMovesToSaturday]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testIrregularIntervalsAreNotEligible]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testIrregularIntervalsAreNotEligible]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testLargerLastPurchaseMovesNextDateOut]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testLargerLastPurchaseMovesNextDateOut]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMetricsCountEachSuggestionOnce]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMetricsCountEachSuggestionOnce]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMixedUnitsFallBackToInterval]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMixedUnitsFallBackToInterval]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMondayWednesdayPatternPredictsNextMondayAfterWednesday]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMondayWednesdayPatternPredictsNextMondayAfterWednesday]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMondayWednesdayPatternPredictsNextWednesday]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testMondayWednesdayPatternPredictsNextWednesday]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testRecentIntervalsWeighMore]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testRecentIntervalsWeighMore]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testSameDayPurchasesCountOnce]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testSameDayPurchasesCountOnce]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testSundayIsMovedToSaturdayInGermany]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testSundayIsMovedToSaturdayInGermany]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageBTests testTwoPurchasesAreNotEligible]' started.
+Test Case '-[RestockTests.ReplenishmentPackageBTests testTwoPurchasesAreNotEligible]' passed (0.000 seconds).
+Test Suite 'ReplenishmentPackageBTests' passed at 2026-10-02 12:30:59.897.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.012 (0.015) seconds
+Test Suite 'ReplenishmentPackageCTests' started at 2026-10-02 12:30:59.897.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAcceptedSuggestionDeletedAfterCountryChangeIsStillDismissed]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAcceptedSuggestionDeletedAfterCountryChangeIsStillDismissed]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAliasTargetIsShownEvenIfOnlyReceiptRecordsExist]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAliasTargetIsShownEvenIfOnlyReceiptRecordsExist]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAlsoDueIsSortedByDate]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAlsoDueIsSortedByDate]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAlsoDueUsesTheSameFiltersAsTheBanner]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testAlsoDueUsesTheSameFiltersAsTheBanner]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBacktestUsesMergedHistory]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBacktestUsesMergedHistory]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBannerItemsAreAlwaysIncluded]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBannerItemsAreAlwaysIncluded]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlockedItemIsNeverSuggestedUntilUnblocked]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlockedItemIsNeverSuggestedUntilUnblocked]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlocklistAndSnoozeMatchFormalVariants]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlocklistAndSnoozeMatchFormalVariants]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlocklistIsCaseInsensitiveWithoutDuplicates]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testBlocklistIsCaseInsensitiveWithoutDuplicates]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testConfirmedReceiptAliasCountsTowardsTheListName]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testConfirmedReceiptAliasCountsTowardsTheListName]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testCountryChangeShiftsDateButKeepsPurchaseKey]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testCountryChangeShiftsDateButKeepsPurchaseKey]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testDifferentProductsAreNeverMerged]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testDifferentProductsAreNeverMerged]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testFormalKeyIgnoresCaseSpacesAndEdgePunctuationOnly]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testFormalKeyIgnoresCaseSpacesAndEdgePunctuationOnly]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testFormalVariantsAreMergedUnderTheLatestName]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testFormalVariantsAreMergedUnderTheLatestName]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testItemRunningOutBeforeNextVisitIsSuggestedEvenOutsideBannerWindow]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testItemRunningOutBeforeNextVisitIsSuggestedEvenOutsideBannerWindow]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testMetricsCountSnoozesAndBlocksSeparately]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testMetricsCountSnoozesAndBlocksSeparately]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testMigrationConvertsCurrentDateKeyedEntriesAndDropsStaleOnes]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testMigrationConvertsCurrentDateKeyedEntriesAndDropsStaleOnes]' passed (0.007 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testOverdueNotificationNotRepeatedAfterCountryChange]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testOverdueNotificationNotRepeatedAfterCountryChange]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testPendingVariantSuppressesTheSuggestion]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testPendingVariantSuppressesTheSuggestion]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testRemoveAndRemoveAllClearSnoozes]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testRemoveAndRemoveAllClearSnoozes]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testRepeatedSnoozeShiftsAgainFromTheShiftedDate]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testRepeatedSnoozeShiftsAgainFromTheShiftedDate]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testShiftIsHalfTheTypicalGapClampedToOneToFourteenDays]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testShiftIsHalfTheTypicalGapClampedToOneToFourteenDays]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeAvoidsSundayLikeFourB]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeAvoidsSundayLikeFourB]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeEndsWithTheNextPurchase]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeEndsWithTheNextPurchase]' passed (0.004 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeHidesSuggestionUntilShiftedDateIsDue]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeHidesSuggestionUntilShiftedDateIsDue]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeInStoreListLastsAtLeastUntilNextVisit]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeInStoreListLastsAtLeastUntilNextVisit]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeOfOverdueItemShiftsFromNow]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeOfOverdueItemShiftsFromNow]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeOfShortCycleOverdueItemDoesNotReappearImmediately]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeOfShortCycleOverdueItemDoesNotReappearImmediately]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeSurvivesCountryChange]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testSnoozeSurvivesCountryChange]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testTimeZoneChangeKeepsPurchaseKey]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testTimeZoneChangeKeepsPurchaseKey]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testTrackAcceptedStoresSuggestionForA4AndCountsIt]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testTrackAcceptedStoresSuggestionForA4AndCountsIt]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testVisitGapFallsBackToVisitFrequencyAndIsClamped]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testVisitGapFallsBackToVisitFrequencyAndIsClamped]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReplenishmentPackageCTests testVisitGapIsMedianOfRecentVisitDays]' started.
+Test Case '-[RestockTests.ReplenishmentPackageCTests testVisitGapIsMedianOfRecentVisitDays]' passed (0.000 seconds).
+Test Suite 'ReplenishmentPackageCTests' passed at 2026-10-02 12:30:59.945.
+	 Executed 33 tests, with 0 failures (0 unexpected) in 0.043 (0.048) seconds
+Test Suite 'SchemaCloudKitCompatibilityTests' started at 2026-10-02 12:30:59.945.
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testCloudKitMirroredContainerInitializesForRealSchema]' started.
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testCloudKitMirroredContainerInitializesForRealSchema]' passed (0.005 seconds).
+2026-10-02 12:30:59.950436+0200 Restock[49069:4556101] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x11832cee0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-10-02 12:30:59.950477+0200 Restock[49069:4556101] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testDemonstratesRedWithoutFix]' started.
+2026-10-02 12:30:59.957742+0200 Restock[49069:4556016] [error] CoreData: error: Store failed to load.  <NSPersistentStoreDescription: 0x118799740> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/71078018-B33F-4F09-A3CB-EE7043C952E5/tmp/broken-cktest-E1112ECF-A6E7-4520-8605-CE4654988C22.store) with error = Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+CoreData: error: Store failed to load.  <NSPersistentStoreDescription: 0x118799740> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/71078018-B33F-4F09-A3CB-EE7043C952E5/tmp/broken-cktest-E1112ECF-A6E7-4520-8605-CE4654988C22.store) with error = Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testDemonstratesRedWithoutFix]' passed (0.009 seconds).
+Test Suite 'SchemaCloudKitCompatibilityTests' passed at 2026-10-02 12:30:59.959.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.013 (0.014) seconds
+Test Suite 'SharedItemDataPhotoRegressionTests' started at 2026-10-02 12:30:59.960.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeItemsSetsHasPhotoTrueWhenPresent]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeItemsSetsHasPhotoTrueWhenPresent]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeOldFormatJSONStillWorks]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testDecodeOldFormatJSONStillWorks]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeDecodeRoundTripPreservesHasPhoto]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeDecodeRoundTripPreservesHasPhoto]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeItemsWithoutPhotoAddsOnlyHasPhotoKey]' started.
+Test Case '-[RestockTests.SharedItemDataPhotoRegressionTests testEncodeItemsWithoutPhotoAddsOnlyHasPhotoKey]' passed (0.001 seconds).
+Test Suite 'SharedItemDataPhotoRegressionTests' passed at 2026-10-02 12:30:59.963.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'SharedModelContainerExtensionDetectionTests' started at 2026-10-02 12:30:59.963.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testAppExtensionNeverBuildsACloudKitConfiguration]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testAppExtensionNeverBuildsACloudKitConfiguration]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresAppexInAnIntermediatePathComponent]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresAppexInAnIntermediatePathComponent]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresTrailingSlash]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresTrailingSlash]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsCaseInsensitive]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsCaseInsensitive]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForAnAppBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForAnAppBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForTheMainAppProcess]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForTheMainAppProcess]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheShareExtensionBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheShareExtensionBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheWidgetBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheWidgetBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testExtensionAndAppOpenTheSameStoreLocation]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testExtensionAndAppOpenTheSameStoreLocation]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testMainAppStillPrefersTheCloudKitMirroredConfiguration]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testMainAppStillPrefersTheCloudKitMirroredConfiguration]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testPreCloudBackupRunsOnlyInTheMainApp]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testPreCloudBackupRunsOnlyInTheMainApp]' passed (0.000 seconds).
+Test Suite 'SharedModelContainerExtensionDetectionTests' passed at 2026-10-02 12:30:59.969.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.005 (0.006) seconds
+Test Suite 'ShoppingItemFuzzyPriceMatchTests' started at 2026-10-02 12:30:59.969.
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testExistingSubstringMatchTakesPrecedenceOverFuzzyMatch]' started.
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testExistingSubstringMatchTakesPrecedenceOverFuzzyMatch]' passed (0.001 seconds).
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyGateRejectsApfelApfelsaftAboveDistanceThreshold]' started.
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyGateRejectsApfelApfelsaftAboveDistanceThreshold]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyGateRejectsReisEisBelowLengthGate]' started.
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyGateRejectsReisEisBelowLengthGate]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyMatchAppliesExistingTieBreakingAmongMultipleCandidates]' started.
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyMatchAppliesExistingTieBreakingAmongMultipleCandidates]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyMatchFindsLearnedPriceForTyposaitanSeitan]' started.
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyMatchFindsLearnedPriceForTyposaitanSeitan]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyMatchRejectsDistanceAboveThresholdBananenMandeln]' started.
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyMatchRejectsDistanceAboveThresholdBananenMandeln]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyMatchRejectsDistanceAboveThresholdMilchMehl]' started.
+Test Case '-[RestockTests.ShoppingItemFuzzyPriceMatchTests testFuzzyMatchRejectsDistanceAboveThresholdMilchMehl]' passed (0.000 seconds).
+Test Suite 'ShoppingItemFuzzyPriceMatchTests' passed at 2026-10-02 12:30:59.973.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+Test Suite 'ShoppingRouteManualOrderTests' started at 2026-10-02 12:30:59.974.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testEdgesStepOutwards]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testEdgesStepOutwards]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testInterpolatesMissingValueBetweenNeighbours]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testInterpolatesMissingValueBetweenNeighbours]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testKeepsLongestAscendingRunAndReplacesTheRest]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testKeepsLongestAscendingRunAndReplacesTheRest]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testLearningContinuesAfterManualMove]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testLearningContinuesAfterManualMove]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testMovingBetweenNeighboursUsesMidpoint]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testMovingBetweenNeighboursUsesMidpoint]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testMovingCategorySectionShiftsItsItems]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testMovingCategorySectionShiftsItsItems]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testMovingToTopPlacesItemBeforeFirst]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testMovingToTopPlacesItemBeforeFirst]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testMovingUnlearnedCategoryGivesItsItemsPositions]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testMovingUnlearnedCategoryGivesItsItemsPositions]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testRenameCategoryKeepsLearnedPosition]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testRenameCategoryKeepsLearnedPosition]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testUnlearnedItemsGetPositionsSoOrderSticks]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testUnlearnedItemsGetPositionsSoOrderSticks]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testWithoutAnyValuesSpreadsEvenly]' started.
+Test Case '-[RestockTests.ShoppingRouteManualOrderTests testWithoutAnyValuesSpreadsEvenly]' passed (0.001 seconds).
+Test Suite 'ShoppingRouteManualOrderTests' passed at 2026-10-02 12:30:59.980.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.004 (0.006) seconds
+Test Suite 'ShoppingRouteTests' started at 2026-10-02 12:30:59.980.
+Test Case '-[RestockTests.ShoppingRouteTests testAddedModeUsesAddedDate]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testAddedModeUsesAddedDate]' passed (0.001 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testBatchedQueueEntriesDoNotCountAsBulk]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testBatchedQueueEntriesDoNotCountAsBulk]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testBulkCheckOffAtHomeIsNotLearned]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testBulkCheckOffAtHomeIsNotLearned]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testCategoryModeOrdersCategoriesByLearnedRouteThenStaticOrder]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testCategoryModeOrdersCategoriesByLearnedRouteThenStaticOrder]' passed (0.002 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testCheckOffAfterTripGapLearnsPreviousTripAndStartsNewOne]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testCheckOffAfterTripGapLearnsPreviousTripAndStartsNewOne]' passed (0.001 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testCheckOffsWithinTripGapContinueSameTrip]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testCheckOffsWithinTripGapContinueSameTrip]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testDuplicateCheckOffCountsOnlyOnce]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testDuplicateCheckOffCountsOnlyOnce]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testFinalizeIfStale]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testFinalizeIfStale]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testFirstTripSetsNormalizedPositions]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testFirstTripSetsNormalizedPositions]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testItemKeyIgnoresOnlyFormalDifferences]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testItemKeyIgnoresOnlyFormalDifferences]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testItemsWithoutAnyLearnedPositionGoLastInCategoryOrder]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testItemsWithoutAnyLearnedPositionGoLastInCategoryOrder]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testLaterTripMovesPositionByLearningRate]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testLaterTripMovesPositionByLearningRate]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testMigratedDefaultKeepsPreviousSettings]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testMigratedDefaultKeepsPreviousSettings]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testNormalizedPositionIndependentOfTripLength]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testNormalizedPositionIndependentOfTripLength]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testOrderedCategories]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testOrderedCategories]' passed (0.001 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testQueuedCheckOffAfterLongGapStartsNewTrip]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testQueuedCheckOffAfterLongGapStartsNewTrip]' passed (0.002 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testQueuedCheckOffsContinueTripInsteadOfStartingNewOne]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testQueuedCheckOffsContinueTripInsteadOfStartingNewOne]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testReplenishmentFormalKeyUsesSameKey]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testReplenishmentFormalKeyUsesSameKey]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeFollowsLearnedOrder]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeFollowsLearnedOrder]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeUrgentItemsFirst]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeUrgentItemsFirst]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeWithoutLearningFallsBackToCategoryOrder]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeWithoutLearningFallsBackToCategoryOrder]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testSingleItemTripIsNotLearned]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testSingleItemTripIsNotLearned]' passed (0.002 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testSmallTripLearnsWithReducedWeight]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testSmallTripLearnsWithReducedWeight]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testTwoQuickNeighboursInStoreAreStillLearned]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testTwoQuickNeighboursInStoreAreStillLearned]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testUncheckAndRecheckMovesItemToNewPosition]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testUncheckAndRecheckMovesItemToNewPosition]' passed (0.001 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testUnknownItemIsPlacedByItsCategoryInThisStore]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testUnknownItemIsPlacedByItsCategoryInThisStore]' passed (0.000 seconds).
+Test Suite 'ShoppingRouteTests' passed at 2026-10-02 12:31:00.002.
+	 Executed 26 tests, with 0 failures (0 unexpected) in 0.015 (0.022) seconds
+Test Suite 'StoreCategoriesTests' started at 2026-10-02 12:31:00.002.
+Test Case '-[RestockTests.StoreCategoriesTests testBuiltInNameWinsRegardlessOfCase]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testBuiltInNameWinsRegardlessOfCase]' passed (0.002 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testCategoryIsStoreSpecific]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testCategoryIsStoreSpecific]' passed (0.001 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testChoosingBuiltInForgetsRememberedCategory]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testChoosingBuiltInForgetsRememberedCategory]' passed (0.000 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testDeletingCategoryResetsItemsAndMemory]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testDeletingCategoryResetsItemsAndMemory]' passed (0.004 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testExistingCustomIsReused]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testExistingCustomIsReused]' passed (0.000 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testMergeLaterEntryWinsIncludingDeletion]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testMergeLaterEntryWinsIncludingDeletion]' passed (0.000 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testNewItemLandsInRememberedCategory]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testNewItemLandsInRememberedCategory]' passed (0.001 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testNewNameIsNormalized]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testNewNameIsNormalized]' passed (0.000 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testRenamingMovesItemsAndMemory]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testRenamingMovesItemsAndMemory]' passed (0.002 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testSearchIgnoresCaseAndAccents]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testSearchIgnoresCaseAndAccents]' passed (0.000 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testStoreAddCreatesCategoryWithSuggestedEmoji]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testStoreAddCreatesCategoryWithSuggestedEmoji]' passed (0.001 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testStoreAddReturnsBuiltInInsteadOfDuplicate]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testStoreAddReturnsBuiltInInsteadOfDuplicate]' passed (0.000 seconds).
+Test Case '-[RestockTests.StoreCategoriesTests testSuggestedEmoji]' started.
+Test Case '-[RestockTests.StoreCategoriesTests testSuggestedEmoji]' passed (0.001 seconds).
+Test Suite 'StoreCategoriesTests' passed at 2026-10-02 12:31:00.019.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.014 (0.016) seconds
+Test Suite 'StorePresetsTests' started at 2026-10-02 12:31:00.019.
+Test Case '-[RestockTests.StorePresetsTests testIKEAIconMapsToSofaSymbol]' started.
+Test Case '-[RestockTests.StorePresetsTests testIKEAIconMapsToSofaSymbol]' passed (0.000 seconds).
+Test Case '-[RestockTests.StorePresetsTests testIKEAPresetExistsInEachSupportedCountry]' started.
+Test Case '-[RestockTests.StorePresetsTests testIKEAPresetExistsInEachSupportedCountry]' passed (0.002 seconds).
+Test Suite 'StorePresetsTests' passed at 2026-10-02 12:31:00.021.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-10-02 12:31:00.021.
+	 Executed 396 tests, with 0 failures (0 unexpected) in 2.050 (2.133) seconds
+Test Suite 'All tests' passed at 2026-10-02 12:31:00.022.
+	 Executed 396 tests, with 0 failures (0 unexpected) in 2.050 (2.134) seconds
+** TEST SUCCEEDED **

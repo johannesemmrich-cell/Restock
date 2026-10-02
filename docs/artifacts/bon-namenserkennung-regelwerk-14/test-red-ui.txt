@@ -1,0 +1,653 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/ReceiptResolutionStatsUITests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+SwiftDriver RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver RestockUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockUITests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ ReceiptResolutionStatsUITests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockUITests/ReceiptResolutionStatsUITests.swift (in target 'RestockUITests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockUITests/ReceiptResolutionStatsUITests.swift (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-SwiftPerFileCompile ReceiptResolutionStatsUITests.swift
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockUITests (in target 'RestockUITests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    
+
+SwiftCompile normal arm64 Compiling\ ReceiptResolutionStatsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptResolutionStatsTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockTests/ReceiptResolutionStatsTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-SwiftPerFileCompile ReceiptResolutionStatsTests.swift
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockTests (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ReceiptResolutionStatsTests.swift (in target 'RestockTests' from project 'Restock')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for RestockUITests (in target 'RestockUITests' from project 'Restock')
+
+SwiftDriver\ Compilation\ Requirements RestockUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockUITests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle -experimental-emit-module-separately -disable-cmo
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.abi.json (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.abi.json /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+SwiftDriverJobDiscovery normal arm64 Compiling ReceiptResolutionStatsUITests.swift (in target 'RestockUITests' from project 'Restock')
+
+SwiftDriver\ Compilation RestockUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockUITests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for RestockTests (in target 'RestockTests' from project 'Restock')
+
+SwiftDriver\ Compilation\ Requirements RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver\ Compilation RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle -experimental-emit-module-separately -disable-cmo
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockTests.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.abi.json (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.abi.json /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockTests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockTests.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockTests.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockTests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftsourceinfo (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftsourceinfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockTests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests normal (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -filelist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -bundle_loader /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/Restock -Xlinker -object_path_lto -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ExtractAppIntentsMetadata (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name RestockTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 18.0 --bundle-identifier com.johannesemmrich.Restock.RestockTests --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest --target-triple arm64-apple-ios18.0-simulator --binary-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests --dependency-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_dependency_info.dat --stringsdata-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests.DependencyMetadataFileList --static-metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-10-02 10:25:13.745 appintentsmetadataprocessor[66240:4005363] Starting appintentsmetadataprocessor export
+2026-10-02 10:25:13.812 appintentsmetadataprocessor[66240:4005363] Extracted no relevant App Intents symbols, skipping writing output
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib: replacing existing signature
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib: replacing existing signature
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.app.xcent --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app: replacing existing signature
+
+Validate /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-validationUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/Restock.app -shallow-bundle -infoplist-subpath Info.plist
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-infoPlistUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/ProductTypeInfoPlistAdditions.plist -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests normal (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -filelist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.xctest-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.xctest-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ExtractAppIntentsMetadata (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name RestockUITests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 18.0 --bundle-identifier com.johannesemmrich.Restock.RestockUITests --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest --target-triple arm64-apple-ios18.0-simulator --binary-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --dependency-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_dependency_info.dat --stringsdata-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.DependencyMetadataFileList --static-metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-10-02 10:25:14.116 appintentsmetadataprocessor[66247:4005409] Starting appintentsmetadataprocessor export
+2026-10-02 10:25:14.117 appintentsmetadataprocessor[66247:4005409] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app: replacing existing signature
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-10-02 10:25:22.295537+0200 RestockUITests-Runner[66370:4006195] [Default] Running tests...
+objc[66370]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10a8d8310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a954398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-02 10:25:24.279.
+Test Suite 'RestockUITests.xctest' started at 2026-10-02 10:25:24.279.
+Test Suite 'ReceiptResolutionStatsUITests' started at 2026-10-02 10:25:24.279.
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' started.
+    t =     0.00s Start Test at 2026-10-02 10:25:24.280
+    t =     0.16s Set Up
+    t =     0.16s Open com.johannesemmrich.Restock
+    t =     0.16s     Launch com.johannesemmrich.Restock
+2026-10-02 10:25:24.707 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-02 10:25:24.707 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.06s         Setting up automation session
+    t =     2.98s         Wait for com.johannesemmrich.Restock to idle
+    t =     6.04s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     6.05s Waiting 30.0s for Button (First Match) to exist
+    t =     7.09s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     7.09s         Checking existence of `Button (First Match)`
+    t =     7.32s Tap Button (First Match)
+    t =     7.32s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.32s     Find the Button (First Match)
+    t =     7.38s     Check for interrupting elements affecting "gearshape" Button
+    t =     7.67s     Synthesize event
+    t =     8.45s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.20s Checking existence of `"Bon-Auflösung" Button`
+    t =     9.47s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =     9.47s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.70s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =     9.73s     Check for interrupting elements affecting "Restock" Application
+    t =     9.78s     Synthesize event
+    t =    10.21s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.24s Checking existence of `"Bon-Auflösung" Button`
+    t =    11.29s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    11.29s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.30s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.33s     Check for interrupting elements affecting "Restock" Application
+    t =    11.37s     Synthesize event
+    t =    11.79s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.27s Checking existence of `"Bon-Auflösung" Button`
+    t =    12.32s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    12.32s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.32s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    12.35s     Check for interrupting elements affecting "Restock" Application
+    t =    12.39s     Synthesize event
+    t =    12.81s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.29s Checking existence of `"Bon-Auflösung" Button`
+    t =    13.33s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    13.33s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.34s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    13.36s     Check for interrupting elements affecting "Restock" Application
+    t =    13.39s     Synthesize event
+    t =    13.81s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.29s Checking existence of `"Bon-Auflösung" Button`
+    t =    14.34s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    14.34s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.34s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    14.37s     Check for interrupting elements affecting "Restock" Application
+    t =    14.40s     Synthesize event
+    t =    14.82s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.31s Checking existence of `"Bon-Auflösung" Button`
+    t =    15.35s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    15.35s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.35s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    15.38s     Check for interrupting elements affecting "Restock" Application
+    t =    15.42s     Synthesize event
+    t =    15.83s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.29s Checking existence of `"Bon-Auflösung" Button`
+    t =    16.34s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    16.34s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.34s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    16.37s     Check for interrupting elements affecting "Restock" Application
+    t =    16.41s     Synthesize event
+    t =    16.82s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.31s Checking existence of `"Bon-Auflösung" Button`
+    t =    17.34s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    17.34s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.34s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    17.37s     Check for interrupting elements affecting "Restock" Application
+    t =    17.40s     Synthesize event
+    t =    17.82s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.29s Checking existence of `"Bon-Auflösung" Button`
+    t =    18.34s Checking existence of `"Bon-Auflösung" Button`
+    t =    18.37s Tear Down
+    t =    18.38s     Open com.johannesemmrich.Restock
+    t =    18.38s         Launch com.johannesemmrich.Restock
+    t =    18.38s             Terminate com.johannesemmrich.Restock:66442
+2026-10-02 10:25:43.729 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-02 10:25:43.730 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    19.66s             Setting up automation session
+    t =    20.63s             Wait for com.johannesemmrich.Restock to idle
+    t =    22.29s     Terminate com.johannesemmrich.Restock:66619
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' passed (23.529 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' started.
+    t =     0.00s Start Test at 2026-10-02 10:25:47.811
+    t =     0.03s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+    t =     0.03s     Launch com.johannesemmrich.Restock
+2026-10-02 10:25:47.839 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-02 10:25:47.839 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     0.89s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+<unknown>:0: warning: -[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming] : Set a .modelContext in view's environment to use Query
+    t =     3.60s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.61s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.64s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.64s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.75s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =     5.78s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =     5.78s         Checking existence of `"receiptReview.saveButton" Button`
+    t =     5.82s Tap "receiptReview.saveButton" Button
+    t =     5.82s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.82s     Find the "receiptReview.saveButton" Button
+    t =     5.86s     Check for interrupting elements affecting "receiptReview.saveButton" Button
+    t =     5.89s     Synthesize event
+    t =     6.18s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.60s Waiting 10.0s for Button (First Match) to exist
+    t =     7.62s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     7.62s         Checking existence of `Button (First Match)`
+    t =     7.66s Waiting 30.0s for Button (First Match) to exist
+    t =     8.69s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     8.69s         Checking existence of `Button (First Match)`
+    t =     8.71s Tap Button (First Match)
+    t =     8.71s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.71s     Find the Button (First Match)
+    t =     8.72s     Check for interrupting elements affecting "gearshape" Button
+    t =     8.74s     Synthesize event
+    t =     9.03s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.13s Checking existence of `"Bon-Auflösung" Button`
+    t =     9.23s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =     9.23s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.63s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =     9.66s     Check for interrupting elements affecting "Restock" Application
+    t =     9.69s     Synthesize event
+    t =    10.11s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.25s Checking existence of `"Bon-Auflösung" Button`
+    t =    12.35s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    12.35s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.35s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    12.39s     Check for interrupting elements affecting "Restock" Application
+    t =    12.42s     Synthesize event
+    t =    12.85s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.38s Checking existence of `"Bon-Auflösung" Button`
+    t =    13.42s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    13.42s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.42s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    13.45s     Check for interrupting elements affecting "Restock" Application
+    t =    13.49s     Synthesize event
+    t =    13.91s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.38s Checking existence of `"Bon-Auflösung" Button`
+    t =    14.43s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    14.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.43s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    14.46s     Check for interrupting elements affecting "Restock" Application
+    t =    14.49s     Synthesize event
+    t =    14.91s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.40s Checking existence of `"Bon-Auflösung" Button`
+    t =    15.44s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    15.44s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.44s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    15.47s     Check for interrupting elements affecting "Restock" Application
+    t =    15.51s     Synthesize event
+    t =    15.93s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.41s Checking existence of `"Bon-Auflösung" Button`
+    t =    16.46s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    16.46s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.47s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    16.49s     Check for interrupting elements affecting "Restock" Application
+    t =    16.53s     Synthesize event
+    t =    16.95s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.43s Checking existence of `"Bon-Auflösung" Button`
+    t =    17.48s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    17.48s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.48s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    17.51s     Check for interrupting elements affecting "Restock" Application
+    t =    17.54s     Synthesize event
+    t =    17.96s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.45s Checking existence of `"Bon-Auflösung" Button`
+    t =    18.50s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    18.50s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.50s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    18.53s     Check for interrupting elements affecting "Restock" Application
+    t =    18.56s     Synthesize event
+    t =    18.98s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.47s Checking existence of `"Bon-Auflösung" Button`
+    t =    19.51s Checking existence of `"Bon-Auflösung" Button`
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockUITests/ReceiptResolutionStatsUITests.swift:82: error: -[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming] : XCTAssertTrue failed - Link „Bon-Auflösung“ fehlt in den Einstellungen (Entwicklermodus).
+    t =    19.75s Tear Down
+    t =    19.75s     Open com.johannesemmrich.Restock
+    t =    19.75s         Launch com.johannesemmrich.Restock
+    t =    19.75s             Terminate com.johannesemmrich.Restock:66627
+2026-10-02 10:26:08.632 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-02 10:26:08.632 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    21.03s             Setting up automation session
+    t =    22.09s             Wait for com.johannesemmrich.Restock to idle
+    t =    23.68s     Terminate com.johannesemmrich.Restock:66833
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' failed (24.833 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' started.
+    t =     0.00s Start Test at 2026-10-02 10:26:12.644
+    t =     0.02s Set Up
+    t =     0.02s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-10-02 10:26:12.669 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-02 10:26:12.669 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     0.89s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+<unknown>:0: warning: -[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected] : Set a .modelContext in view's environment to use Query
+    t =     3.63s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.64s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     4.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     4.66s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     4.82s Waiting 5.0s for "receiptReview.line.0.option.2" Any to exist
+    t =     5.84s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.option.2" Any`
+    t =     5.85s         Checking existence of `"receiptReview.line.0.option.2" Any`
+    t =     6.01s Tap "receiptReview.line.0.option.2" Any
+    t =     6.01s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.02s     Find the "receiptReview.line.0.option.2" Any
+    t =     6.16s     Check for interrupting elements affecting "receiptReview.line.0.option.2" Button
+    t =     6.22s     Synthesize event
+    t =     6.51s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.01s Waiting 5.0s for "receiptReview.line.0.customNameField" TextField to exist
+    t =     8.04s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     8.05s         Checking existence of `"receiptReview.line.0.customNameField" TextField`
+    t =     9.14s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     9.14s     Find the "receiptReview.line.0.customNameField" TextField
+    t =     9.19s Find the "receiptReview.line.0.customNameField" TextField
+    t =     9.24s Type '...' into "receiptReview.line.0.customNameField" TextField
+    t =     9.24s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.24s     Find the "receiptReview.line.0.customNameField" TextField
+    t =     9.29s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =     9.35s     Synthesize event
+    t =     9.94s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.05s Type 'Ziegenmilch' into "receiptReview.line.0.customNameField" TextField
+    t =    10.05s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.05s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    10.11s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    10.16s     Synthesize event
+    t =    10.55s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.55s Find the "receiptReview.line.3.checkbox" Any
+    t =    10.75s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    10.75s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.75s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    10.78s     Check for interrupting elements affecting "Restock" Application
+    t =    10.85s     Synthesize event
+    t =    11.27s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.40s Find the "receiptReview.line.3.checkbox" Button
+    t =    13.65s Find the "receiptReview.line.3.checkbox" Button
+    t =    13.85s Tap "receiptReview.line.3.checkbox" Button
+    t =    13.85s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.85s     Find the "receiptReview.line.3.checkbox" Button
+    t =    14.03s     Check for interrupting elements affecting "receiptReview.line.3.checkbox" Button
+    t =    14.11s     Synthesize event
+    t =    14.40s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.41s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =    15.42s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    15.43s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    15.48s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =    16.51s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =    16.51s         Checking existence of `"receiptReview.saveButton" Button`
+    t =    16.57s Tap "receiptReview.saveButton" Button
+    t =    16.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.57s     Find the "receiptReview.saveButton" Button
+    t =    16.62s     Check for interrupting elements affecting "receiptReview.saveButton" Button
+    t =    16.67s     Synthesize event
+    t =    16.96s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.50s Waiting 10.0s for Button (First Match) to exist
+    t =    18.51s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    18.51s         Checking existence of `Button (First Match)`
+    t =    18.55s Waiting 30.0s for Button (First Match) to exist
+    t =    19.56s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    19.56s         Checking existence of `Button (First Match)`
+    t =    19.57s Tap Button (First Match)
+    t =    19.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.58s     Find the Button (First Match)
+    t =    19.59s     Check for interrupting elements affecting "gearshape" Button
+    t =    19.60s     Synthesize event
+    t =    19.89s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.09s Checking existence of `"Bon-Auflösung" Button`
+    t =    20.17s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    20.17s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.59s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    20.63s     Check for interrupting elements affecting "Restock" Application
+    t =    20.66s     Synthesize event
+    t =    21.08s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.18s Checking existence of `"Bon-Auflösung" Button`
+    t =    23.24s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    23.24s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.24s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    23.28s     Check for interrupting elements affecting "Restock" Application
+    t =    23.31s     Synthesize event
+    t =    23.73s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.28s Checking existence of `"Bon-Auflösung" Button`
+    t =    24.33s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    24.33s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.33s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    24.36s     Check for interrupting elements affecting "Restock" Application
+    t =    24.40s     Synthesize event
+    t =    24.82s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.30s Checking existence of `"Bon-Auflösung" Button`
+    t =    25.35s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    25.35s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.35s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    25.38s     Check for interrupting elements affecting "Restock" Application
+    t =    25.41s     Synthesize event
+    t =    25.83s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.31s Checking existence of `"Bon-Auflösung" Button`
+    t =    26.37s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    26.37s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.37s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    26.40s     Check for interrupting elements affecting "Restock" Application
+    t =    26.43s     Synthesize event
+    t =    26.85s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.33s Checking existence of `"Bon-Auflösung" Button`
+    t =    27.39s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    27.39s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.39s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    27.42s     Check for interrupting elements affecting "Restock" Application
+    t =    27.45s     Synthesize event
+    t =    27.88s     Wait for com.johannesemmrich.Restock to idle
+    t =    28.36s Checking existence of `"Bon-Auflösung" Button`
+    t =    28.42s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    28.42s     Wait for com.johannesemmrich.Restock to idle
+    t =    28.42s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    28.45s     Check for interrupting elements affecting "Restock" Application
+    t =    28.48s     Synthesize event
+    t =    28.90s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.38s Checking existence of `"Bon-Auflösung" Button`
+    t =    29.43s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    29.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.43s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    29.46s     Check for interrupting elements affecting "Restock" Application
+    t =    29.49s     Synthesize event
+    t =    29.91s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.40s Checking existence of `"Bon-Auflösung" Button`
+    t =    30.44s Checking existence of `"Bon-Auflösung" Button`
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockUITests/ReceiptResolutionStatsUITests.swift:82: error: -[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected] : XCTAssertTrue failed - Link „Bon-Auflösung“ fehlt in den Einstellungen (Entwicklermodus).
+    t =    30.49s Tear Down
+    t =    30.49s     Open com.johannesemmrich.Restock
+    t =    30.49s         Launch com.johannesemmrich.Restock
+    t =    30.49s             Terminate com.johannesemmrich.Restock:66855
+2026-10-02 10:26:44.193 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-02 10:26:44.193 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    31.97s             Setting up automation session
+    t =    33.08s             Wait for com.johannesemmrich.Restock to idle
+    t =    34.63s     Terminate com.johannesemmrich.Restock:67124
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' failed (35.802 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' started.
+    t =     0.00s Start Test at 2026-10-02 10:26:48.447
+    t =     0.03s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+    t =     0.03s     Launch com.johannesemmrich.Restock
+2026-10-02 10:26:48.478 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-02 10:26:48.478 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.24s         Setting up automation session
+    t =     0.91s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals] : Set a .modelContext in view's environment to use Query
+    t =     3.32s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     3.32s Waiting 30.0s for Button (First Match) to exist
+    t =     4.34s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     4.34s         Checking existence of `Button (First Match)`
+    t =     4.39s Tap Button (First Match)
+    t =     4.39s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.39s     Find the Button (First Match)
+    t =     4.40s     Check for interrupting elements affecting "gearshape" Button
+    t =     4.42s     Synthesize event
+    t =     4.70s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.80s Checking existence of `"Bon-Auflösung" Button`
+    t =     4.90s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =     4.90s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.31s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =     5.34s     Check for interrupting elements affecting "Restock" Application
+    t =     5.37s     Synthesize event
+    t =     5.79s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.89s Checking existence of `"Bon-Auflösung" Button`
+    t =     7.95s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =     7.95s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.95s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =     7.98s     Check for interrupting elements affecting "Restock" Application
+    t =     8.02s     Synthesize event
+    t =     8.44s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.99s Checking existence of `"Bon-Auflösung" Button`
+    t =     9.04s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =     9.04s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.05s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =     9.07s     Check for interrupting elements affecting "Restock" Application
+    t =     9.11s     Synthesize event
+    t =     9.53s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.01s Checking existence of `"Bon-Auflösung" Button`
+    t =    10.06s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    10.06s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.06s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    10.09s     Check for interrupting elements affecting "Restock" Application
+    t =    10.12s     Synthesize event
+    t =    10.54s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.03s Checking existence of `"Bon-Auflösung" Button`
+    t =    11.08s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    11.08s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.08s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.11s     Check for interrupting elements affecting "Restock" Application
+    t =    11.14s     Synthesize event
+    t =    11.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.04s Checking existence of `"Bon-Auflösung" Button`
+    t =    12.09s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    12.09s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.10s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    12.12s     Check for interrupting elements affecting "Restock" Application
+    t =    12.15s     Synthesize event
+    t =    12.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.06s Checking existence of `"Bon-Auflösung" Button`
+    t =    13.11s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    13.11s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.11s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    13.14s     Check for interrupting elements affecting "Restock" Application
+    t =    13.17s     Synthesize event
+    t =    13.59s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.08s Checking existence of `"Bon-Auflösung" Button`
+    t =    14.13s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    14.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.13s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    14.16s     Check for interrupting elements affecting "Restock" Application
+    t =    14.19s     Synthesize event
+    t =    14.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.09s Checking existence of `"Bon-Auflösung" Button`
+    t =    15.14s Checking existence of `"Bon-Auflösung" Button`
+/Users/hem/Developer/Restock/.claude/worktrees/starry-foraging-eagle/RestockUITests/ReceiptResolutionStatsUITests.swift:82: error: -[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals] : XCTAssertTrue failed - Link „Bon-Auflösung“ fehlt in den Einstellungen (Entwicklermodus).
+    t =    15.18s Tear Down
+    t =    15.18s     Open com.johannesemmrich.Restock
+    t =    15.18s         Launch com.johannesemmrich.Restock
+    t =    15.18s             Terminate com.johannesemmrich.Restock:67132
+2026-10-02 10:27:04.665 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-02 10:27:04.665 xcodebuild[66197:4005071] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    16.42s             Setting up automation session
+    t =    17.10s             Wait for com.johannesemmrich.Restock to idle
+    t =    18.46s     Terminate com.johannesemmrich.Restock:67188
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' failed (19.555 seconds).
+Test Suite 'ReceiptResolutionStatsUITests' failed at 2026-10-02 10:27:08.001.
+	 Executed 4 tests, with 3 failures (0 unexpected) in 103.719 (103.722) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-10-02 10:27:08.002.
+	 Executed 4 tests, with 3 failures (0 unexpected) in 103.719 (103.723) seconds
+Test Suite 'Selected tests' failed at 2026-10-02 10:27:08.002.
+	 Executed 4 tests, with 3 failures (0 unexpected) in 103.719 (103.723) seconds
+2026-10-02 10:37:08.485 xcodebuild[66197:4005072]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Timed out after 600.0 seconds while waiting for a response from the invoked process
+2026-10-02 10:37:08.530 xcodebuild[66197:4005071] [MT] IDETestOperationsObserverDebug: 714.381 elapsed -- Testing started completed.
+2026-10-02 10:37:08.530 xcodebuild[66197:4005071] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-02 10:37:08.530 xcodebuild[66197:4005071] [MT] IDETestOperationsObserverDebug: 714.381 sec, +714.381 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fyiaxlfgyikbagelgbqwdaedeqah/Logs/Test/Test-Restock-2026.10.02_10-25-11-+0200.xcresult
+
+Failing tests:
+	ReceiptResolutionStatsUITests.testResetAsksForConfirmationAndClearsOnlyAfterConfirming()
+	ReceiptResolutionStatsUITests.testSavedReceiptIsCountedPerStageWithChangedAndDeselected()
+	ReceiptResolutionStatsUITests.testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals()
+
+** TEST FAILED **
+
+Testing started
