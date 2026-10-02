@@ -149,36 +149,38 @@ struct HomeView: View {
         Haptics.impact(.light)
     }
 
-    var body: some View {
-        // Re-runs body whenever a sync merge lands in SwiftData, so the category list mode
-        // (`groupedByCategory`) regroups immediately — its section derivation lives up here in
-        // the parent body, not in the item rows. Same pattern as StoreDetailView/AllItemsView.
-        let _ = SyncCoordinator.shared.applyGeneration
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    headerCard
-                    quickAddBar
-                    if developerMode && !dueSoonItems.isEmpty {
-                        replenishmentBanner
-                    }
-                    if !seasonalSuggestions.isEmpty {
-                        seasonalBanner
-                    }
-                    if !storelessPending.isEmpty {
-                        UnassignedItemsCard(items: storelessPending) { showUnassigned = true }
-                    }
-                    storeSection
+    /// Inhalt der Startseite (Liste, Kopfzeile). Aus `body` ausgelagert: die Modifier-Kette war
+    /// für den Typprüfer zu lang („unable to type-check this expression in reasonable time“).
+    private var homeScroll: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                headerCard
+                quickAddBar
+                if developerMode && !dueSoonItems.isEmpty {
+                    replenishmentBanner
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 4)
-                .padding(.bottom, 40)
+                if !seasonalSuggestions.isEmpty {
+                    seasonalBanner
+                }
+                if !storelessPending.isEmpty {
+                    UnassignedItemsCard(items: storelessPending) { showUnassigned = true }
+                }
+                storeSection
             }
-            .background(Color.canvas)
-            .navigationTitle("Restock")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar(.hidden, for: .navigationBar)
-            .safeAreaInset(edge: .top, spacing: 0) { customTopBar }
+            .padding(.horizontal, 16)
+            .padding(.top, 4)
+            .padding(.bottom, 40)
+        }
+        .background(Color.canvas)
+        .navigationTitle("Restock")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
+        .safeAreaInset(edge: .top, spacing: 0) { customTopBar }
+    }
+
+    /// Alle Sheets und Navigationsziele der Startseite (aus `body` ausgelagert, s. `homeScroll`).
+    private func withHomeSheets<V: View>(_ content: V) -> some View {
+        content
             .sheet(isPresented: $showAddItem)        { AddItemView() }
             .sheet(isPresented: $showRecipeImport)  { RecipeImportView() }
             .sheet(isPresented: $showSettings)      { SettingsView() }
@@ -196,36 +198,11 @@ struct HomeView: View {
             .sheet(item: $pendingReceiptScan) { pending in
                 ReceiptScannerView(store: pending.store, prefilled: pending.payload, storeConfidentlyDetected: pending.storeConfidentlyDetected)
             }
-            // Tap auf das Homescreen-Widget (außerhalb der Abhak-Buttons): öffnet die App
-            // direkt beim angezeigten Laden. widgetURL-Links werden vom System immer an die
-            // eigene App zugestellt — ein registriertes URL-Scheme ist dafür nicht nötig.
-            .onOpenURL { url in
-                if url.scheme == "restock", url.host == "store",
-                   let id = UUID(uuidString: url.lastPathComponent),
-                   let store = activeStores.first(where: { $0.id == id }) {
-                    deepLinkStore = store
-                    return
-                }
-                // Von der Share Extension: Bon-Bild wurde in einer anderen App geteilt, dort
-                // bereits erkannt+ausgewertet (siehe ReceiptShareHandoff). Dieser Zweig ist nur
-                // ein Bonus, falls extensionContext?.open(...) doch mal greift — siehe
-                // checkPendingReceiptScan() für den eigentlich verlässlichen Weg.
-                if url.scheme == "restock", url.host == "receiptscan" {
-                    checkPendingReceiptScan()
-                }
-                // Beitritts-Link aus StoreShareSheet (restock://join/<Code>) — Code kommt bereits
-                // sauber aus generateCode()'s Zeichensatz, keine Sonderzeichen zu decodieren.
-                if url.scheme == "restock", url.host == "join" {
-                    pendingJoinCode = url.lastPathComponent
-                    showJoinStore = true
-                    // SwiftUI kann denselben Link zusätzlich an SmartCartApps App-weiten
-                    // .onOpenURL-Handler ausliefern (Onboarding-Fallback, siehe dort), der ihn
-                    // unabhängig davon in pendingJoinCodeStorage cached — hier sofort leeren,
-                    // sonst zeigt der nächste App-Start via checkPendingJoinCode() ungefragt
-                    // erneut ein Join-Sheet mit diesem längst verbrauchten Code.
-                    pendingJoinCodeStorage = nil
-                }
-            }
+    }
+
+    /// Bestätigungs-Toast der Schnell-Eingabe samt Laden-Korrektur-Dialog (aus `body` ausgelagert).
+    private func withQuickAddToast<V: View>(_ content: V) -> some View {
+        content
             .overlay(alignment: .bottom) {
                 if let toast = quickAddToastMessage {
                     QuickAddConfirmationToast(
@@ -263,6 +240,45 @@ struct HomeView: View {
             ) {
                 ForEach(otherStoresForCorrection) { store in
                     Button("\(store.emoji) \(store.name)") { correctQuickAddStore(to: store) }
+                }
+            }
+    }
+
+    var body: some View {
+        // Re-runs body whenever a sync merge lands in SwiftData, so the category list mode
+        // (`groupedByCategory`) regroups immediately — its section derivation lives up here in
+        // the parent body, not in the item rows. Same pattern as StoreDetailView/AllItemsView.
+        let _ = SyncCoordinator.shared.applyGeneration
+        NavigationStack {
+            withQuickAddToast(withHomeSheets(homeScroll))
+            // Tap auf das Homescreen-Widget (außerhalb der Abhak-Buttons): öffnet die App
+            // direkt beim angezeigten Laden. widgetURL-Links werden vom System immer an die
+            // eigene App zugestellt — ein registriertes URL-Scheme ist dafür nicht nötig.
+            .onOpenURL { url in
+                if url.scheme == "restock", url.host == "store",
+                   let id = UUID(uuidString: url.lastPathComponent),
+                   let store = activeStores.first(where: { $0.id == id }) {
+                    deepLinkStore = store
+                    return
+                }
+                // Von der Share Extension: Bon-Bild wurde in einer anderen App geteilt, dort
+                // bereits erkannt+ausgewertet (siehe ReceiptShareHandoff). Dieser Zweig ist nur
+                // ein Bonus, falls extensionContext?.open(...) doch mal greift — siehe
+                // checkPendingReceiptScan() für den eigentlich verlässlichen Weg.
+                if url.scheme == "restock", url.host == "receiptscan" {
+                    checkPendingReceiptScan()
+                }
+                // Beitritts-Link aus StoreShareSheet (restock://join/<Code>) — Code kommt bereits
+                // sauber aus generateCode()'s Zeichensatz, keine Sonderzeichen zu decodieren.
+                if url.scheme == "restock", url.host == "join" {
+                    pendingJoinCode = url.lastPathComponent
+                    showJoinStore = true
+                    // SwiftUI kann denselben Link zusätzlich an SmartCartApps App-weiten
+                    // .onOpenURL-Handler ausliefern (Onboarding-Fallback, siehe dort), der ihn
+                    // unabhängig davon in pendingJoinCodeStorage cached — hier sofort leeren,
+                    // sonst zeigt der nächste App-Start via checkPendingJoinCode() ungefragt
+                    // erneut ein Join-Sheet mit diesem längst verbrauchten Code.
+                    pendingJoinCodeStorage = nil
                 }
             }
             .onAppear {
