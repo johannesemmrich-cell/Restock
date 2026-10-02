@@ -93,6 +93,7 @@ struct QuickAddTargetCard: View {
         .background(Color.surface)
         .clipShape(RoundedRectangle(cornerRadius: RCRadius.card))
         .overlay(RoundedRectangle(cornerRadius: RCRadius.card).strokeBorder(Color.hairline))
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("quickAdd.targetCard")
     }
 
@@ -135,6 +136,7 @@ struct QuickAddConfirmationToast: View {
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(.white)
                     .lineLimit(2)
+                    .accessibilityIdentifier("quickAdd.toast.message")
                 Spacer(minLength: 0)
             }
             if onUndo != nil || !changeTitle.isEmpty {
@@ -150,6 +152,7 @@ struct QuickAddConfirmationToast: View {
         }
         .padding(14)
         .background(Color.black.opacity(0.82), in: RoundedRectangle(cornerRadius: 18))
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("quickAdd.toast")
     }
 

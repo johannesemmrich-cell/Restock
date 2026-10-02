@@ -38,6 +38,8 @@ struct SmartCartApp: App {
             Self.seedShoppingRouteForUITestsIfNeeded(context: container.mainContext)
             Self.clearLegacyLearnedPriceSeedForUITestsIfNeeded(context: container.mainContext)
             Self.seedLegacyLearnedPriceForUITestsIfNeeded(context: container.mainContext)
+            Self.clearQuickAddAssignmentSeedForUITestsIfNeeded(context: container.mainContext)
+            Self.seedQuickAddAssignmentForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
 
@@ -325,6 +327,37 @@ struct SmartCartApp: App {
         guard ProcessInfo.processInfo.arguments.contains("-clearLegacyLearnedPriceSeedForUITests") else { return }
         deleteAllStoresAndItems(context: context)
         UserDefaults.standard.removeObject(forKey: LegacyLearnedPriceReset.flagKey)
+        try? context.save()
+    }
+
+    /// UI-Test-Seed für die Schnell-Eingabe-Zuordnung (`QuickAddAssignmentUITests`): Läden „Lidl“
+    /// (Lebensmittel) und „dm“ (Drogerie), keine Standard-Läden und keine gemerkten Korrekturen.
+    /// Mit zusätzlichem Argument `-quickAddSeedStoreless` liegen außerdem zwei offene Artikel ohne
+    /// Laden („Testartikel Eins“, „Testartikel Zwei“) vor. Löscht vorher alle Läden und Artikel.
+    /// Only runs on `-seedQuickAddAssignmentForUITests`, DEBUG-only.
+    private static func seedQuickAddAssignmentForUITestsIfNeeded(context: ModelContext) {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard arguments.contains("-seedQuickAddAssignmentForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        StoreAssignmentOverrideService.shared.removeAll()
+        DefaultStoreService.shared.removeAll()
+        context.insert(Store(name: "Lidl", emoji: "🛒", colorHex: "#0050AA", visitsPerWeek: 2, categories: Category.grocery))
+        context.insert(Store(name: "dm", emoji: "💄", colorHex: "#C2185B", visitsPerWeek: 1, categories: Category.drugstore))
+        if arguments.contains("-quickAddSeedStoreless") {
+            for name in ["Testartikel Eins", "Testartikel Zwei"] {
+                context.insert(ShoppingItem(name: name, store: nil))
+            }
+        }
+        try? context.save()
+    }
+
+    /// Räumt den Seed oben wieder weg — `QuickAddAssignmentUITests.tearDown()` startet die App
+    /// einmal mit diesem Argument. Only runs on `-clearQuickAddAssignmentSeedForUITests`, DEBUG-only.
+    private static func clearQuickAddAssignmentSeedForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-clearQuickAddAssignmentSeedForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        StoreAssignmentOverrideService.shared.removeAll()
+        DefaultStoreService.shared.removeAll()
         try? context.save()
     }
 
