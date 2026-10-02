@@ -28,6 +28,7 @@ struct SmartCartApp: App {
             #if DEBUG
             Self.seedSharedAssignmentForScreenshotsIfNeeded(context: container.mainContext)
             Self.clearReceiptReviewSeedForUITestsIfNeeded(context: container.mainContext)
+            Self.clearReceiptResolutionStatsForUITestsIfNeeded()
             Self.clearMenuPlanForUITestsIfNeeded()
             Self.seedReceiptReviewForUITestsIfNeeded(context: container.mainContext)
             Self.seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context: container.mainContext)
@@ -220,6 +221,16 @@ struct SmartCartApp: App {
         }
         try? context.save()
         _ = ReceiptShareHandoff.takePending()
+        // Issue #14: Speichern des Seeds zählt in `ReceiptResolutionStats` (App-Gruppe) — mit weg.
+        ReceiptResolutionStats().reset()
+    }
+
+    /// Setzt den Zähler der Bon-Auflösung zurück (Issue #14) — er liegt in der App-Gruppe und
+    /// überlebt sonst den Testlauf. `ReceiptResolutionStatsUITests` startet damit vor jedem Test
+    /// und in `tearDown()`. Only runs on `-clearReceiptResolutionStatsForUITests`, DEBUG-only.
+    private static func clearReceiptResolutionStatsForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-clearReceiptResolutionStatsForUITests") else { return }
+        ReceiptResolutionStats().reset()
     }
 
     /// UI-Test-Seed für die Mengen-Vorbelegung (Issue #57, `AddItemQuantitySuggestionUITests`):
@@ -397,16 +408,18 @@ struct SmartCartApp: App {
         // soeben vergebenen `id`s der Artikel.
         try? context.save()
 
+        // `stage` je Zeile (Issue #14, `ReceiptResolutionStatsUITests`): 0 KI, 1 und 2 Abgehakt,
+        // 3 Historie — die Zählung nach dem Speichern wird gegen genau diese Verteilung geprüft.
         let lines: [ResolvedReceiptLine] = [
             ResolvedReceiptLine(
                 name: "Frische Vollmilch 3,5 %", originalName: "MILCH 3,5% FRISCH",
                 price: 1.19, quantity: 1, unit: "", weightBasis: nil,
-                suggestions: [], matchedItemID: vollmilch.id, resolvedByAI: true),
+                suggestions: [], matchedItemID: vollmilch.id, resolvedByAI: true, stage: .ai),
             ResolvedReceiptLine(
                 name: "Bio-Hackfleisch gemischt Rind & Schwein 400 g",
                 originalName: "BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G",
                 price: 4.99, quantity: 1, unit: "400g", weightBasis: nil,
-                suggestions: [], matchedItemID: hackfleisch.id, resolvedByAI: false),
+                suggestions: [], matchedItemID: hackfleisch.id, resolvedByAI: false, stage: .completed),
             ResolvedReceiptLine(
                 name: "Milch", originalName: "MILCH",
                 price: 0.99, quantity: 1, unit: "", weightBasis: nil,
@@ -414,11 +427,11 @@ struct SmartCartApp: App {
                     ReceiptSuggestion(name: "Hafermilch", itemID: hafermilch.id),
                     ReceiptSuggestion(name: "Buttermilch", itemID: buttermilch.id),
                     ReceiptSuggestion(name: "Vollmilch", itemID: vollmilch.id),
-                ], matchedItemID: milch.id, resolvedByAI: false),
+                ], matchedItemID: milch.id, resolvedByAI: false, stage: .completed),
             ResolvedReceiptLine(
                 name: "Brötchen", originalName: "BROETCHEN",
                 price: 1.56, quantity: 4, unit: "", weightBasis: nil,
-                suggestions: [], matchedItemID: broetchen.id, resolvedByAI: false),
+                suggestions: [], matchedItemID: broetchen.id, resolvedByAI: false, stage: .history),
         ]
 
         // `storeConfidentlyDetected: true` ist Pflicht — sonst greift in

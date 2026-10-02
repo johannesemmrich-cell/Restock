@@ -290,6 +290,10 @@ struct ReceiptReviewCard: View {
                 .focused($customFocused)
                 .submitLabel(.done)
                 .accessibilityIdentifier("receiptReview.line.\(index).customNameField")
+                // Issue #68: Diese Zeile wird nur bei `customActive` gezeigt und ist dann die
+                // gewählte Option (`isSelected(.custom)`) — die Bedienhilfe muss das ebenso melden
+                // wie bei den übrigen Auswahlzeilen.
+                .accessibilityAddTraits(isSelected(.custom) ? [.isSelected] : [])
                 .onChange(of: customName) { _, newValue in
                     Self.applyCustomNameOrFallback(&line, name: newValue,
                                                    previousSelection: previousSelectionBeforeCustom
@@ -584,8 +588,10 @@ struct ReceiptReviewCard: View {
     ) {
         // Paket 1b (F002): derselbe getrimmte Leer-Begriff wie in `EditableReceiptLine.isSavable` —
         // ein Feld mit reinen Leerzeichen ist für den Nutzer leer und muss es auch hier sein.
-        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
-            let fallback = previousSelection.name.trimmingCharacters(in: .whitespaces).isEmpty
+        // Issue #69 (F104): `.whitespacesAndNewlines` — ein reiner Zeilenumbruch ist ebenso leer.
+        // Muss wörtlich dem Ausdruck in `EditableReceiptLine.isSavable` entsprechen.
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            let fallback = previousSelection.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 ? (name: line.originalName, matchedItemID: nil, resolvedByAI: false)
                 : previousSelection
             line.name = fallback.name

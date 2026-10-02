@@ -1,0 +1,78 @@
+<title>Bon-Auflösung Entwurf</title>
+<style>
+/* Layout: drei iPhone-Karten nebeneinander (Heute / Entwurf A / Alternative B), umbrechend auf Handybreite. Farben = RC*-Tokens der App. */
+:root{--bg:#F5F2E9;--surface:#FDFBF4;--ink:#201D16;--sub:#6F6A5B;--line:rgba(32,29,22,.13);--accent:#666F38;--amber:#A97F2E;--frame:#D9D4C4;
+--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141310;--surface:#1D1C16;--ink:#EBE7DA;--sub:#A29B8A;--line:rgba(235,231,218,.13);--accent:#A7AE6B;--amber:#C89A4A;--frame:#2B2A22;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141310;--surface:#1D1C16;--ink:#EBE7DA;--sub:#A29B8A;--line:rgba(235,231,218,.13);--accent:#A7AE6B;--amber:#C89A4A;--frame:#2B2A22;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);padding-inline:16px;padding-block:28px;line-height:1.45}
+main{max-width:1100px;margin:0 auto}
+h1{font-size:1.5rem;margin:0 0 6px;text-wrap:balance}
+.lead{color:var(--sub);max-width:65ch;margin:0 0 24px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;align-items:start}
+.col{min-width:0}
+.tag{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin:0 0 8px}
+.phone{background:var(--bg);border:8px solid var(--frame);border-radius:34px;padding:14px 12px 18px;max-width:340px;margin:0 auto}
+.nav{font-weight:600;text-align:center;font-size:.95rem;margin-bottom:12px}
+.sec{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--sub);margin:12px 6px 6px}
+.list{background:var(--surface);border-radius:14px;overflow:hidden}
+.li{display:flex;justify-content:space-between;gap:8px;padding:10px 14px;font-size:.86rem;border-top:1px solid var(--line)}
+.li:first-child{border-top:0}
+.li span:last-child{color:var(--sub);font-variant-numeric:tabular-nums;text-align:right}
+.warn{color:var(--amber)!important}
+.foot{font-size:.7rem;color:var(--sub);margin:6px 6px 0}
+.chev{color:var(--sub)}
+.note{margin-top:12px;font-size:.84rem;color:var(--sub)}
+.legend{margin-top:28px;border-top:1px solid var(--line);padding-top:16px;max-width:70ch;font-size:.9rem}
+.legend li{margin-bottom:6px}
+</style>
+<main>
+<h1>Bon-Auflösung: Dev-Anzeige</h1>
+<p class="lead">Zeigt, wie oft jede Stufe der Namenserkennung greift und wie oft du den Namen danach geändert hast. Nur im Entwicklermodus sichtbar. Die Zahlen sind Beispiele, keine Messwerte. Die Spalte „Heute“ ist die bestehende Nachkauf-Statistik, nachgebaut, kein Screenshot.</p>
+<div class="row">
+ <div class="col"><p class="tag">Heute (Nachkauf-Statistik)</p>
+  <div class="phone"><div class="nav">Nachkauf-Statistik</div>
+   <div class="sec">Reaktionen im Banner</div>
+   <div class="list"><div class="li"><span>Gezeigt</span><span>31</span></div><div class="li"><span>Übernommen</span><span>12 · 39 %</span></div><div class="li"><span>Hab noch</span><span>9 · 29 %</span></div></div>
+   <div class="foot">Gezählt wird ab dieser Version.</div>
+   <div class="sec">Rückblick über die Kaufhistorie</div>
+   <div class="list"><div class="li"><span>Bewertete Käufe</span><span>84</span></div><div class="li"><span>Mittlere Abweichung</span><span>1,8 Tage</span></div></div>
+  </div>
+  <p class="note">Einstellungen → Entwicklermodus → „Nachkauf-Statistik“. Für Bons gibt es nichts Vergleichbares.</p></div>
+
+ <div class="col"><p class="tag">Entwurf A (empfohlen): eigener Bildschirm</p>
+  <div class="phone"><div class="nav">Bon-Auflösung</div>
+   <div class="sec">Je Stufe (Zeilen · davon geändert)</div>
+   <div class="list">
+    <div class="li"><span>1 Gelernter Alias</span><span>14 · 0 %</span></div>
+    <div class="li"><span>2 Wörterbuch</span><span>9 · 11 %</span></div>
+    <div class="li"><span>3 Abgehakte Artikel</span><span>22 · 5 %</span></div>
+    <div class="li"><span>4 Kaufhistorie</span><span>6 · 17 %</span></div>
+    <div class="li"><span>5 Apple Intelligence</span><span class="warn">17 · 53 %</span></div>
+    <div class="li"><span>Rohtext geblieben</span><span>8 · 38 %</span></div>
+    <div class="li"><span>Als Nicht-Produkt abgewählt</span><span>3</span></div>
+   </div>
+   <div class="foot">Geändert = beim Speichern anderer Name als vorgeschlagen. Es werden nur Zahlen gespeichert, keine Namen.</div>
+   <div class="sec">&nbsp;</div>
+   <div class="list"><div class="li"><span>Zurücksetzen</span><span class="chev">›</span></div></div>
+  </div></div>
+
+ <div class="col"><p class="tag">Alternative B: Abschnitt in der Nachkauf-Statistik</p>
+  <div class="phone"><div class="nav">Nachkauf-Statistik</div>
+   <div class="sec">Reaktionen im Banner</div>
+   <div class="list"><div class="li"><span>Gezeigt</span><span>31</span></div><div class="li"><span>Übernommen</span><span>12 · 39 %</span></div></div>
+   <div class="sec">Bon-Namen: Quote je Stufe</div>
+   <div class="list">
+    <div class="li"><span>Regeln (1–4)</span><span>51 · 6 %</span></div>
+    <div class="li"><span>Apple Intelligence (5)</span><span class="warn">17 · 53 %</span></div>
+    <div class="li"><span>Rohtext</span><span>8 · 38 %</span></div>
+   </div>
+   <div class="foot">Wenig Platz, Stufen 1–4 sind zusammengefasst.</div>
+  </div>
+  <p class="note">Kein neuer Bildschirm, weniger Code. Dafür keine Trennung der Regelstufen, und die Messung gehört thematisch nicht zum Nachkauf.</p></div>
+</div>
+<ul class="legend">
+ <li><b>Lesart:</b> „53 % geändert“ bei Stufe 5 hieße, dass das Modell in jedem zweiten Fall danebenlag. Diese Zahl entscheidet über Stufe 5.</li>
+ <li><b>Empfehlung:</b> A. Nur dort ist sichtbar, welche Regelstufe trägt, bevor #89 und #91 Regeln ändern.</li>
+</ul>
+</main>

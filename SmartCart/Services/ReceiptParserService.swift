@@ -368,13 +368,13 @@ enum ReceiptParserService {
             //
             // Die Zeile wird IMMER konsumiert (nie eigene Position, Issue #9). Stückzahl bzw.
             // Gewicht werden der Vorposition nur dann zugeschrieben, wenn die Rechenprobe
-            // Menge × Rate ≈ Zeilenpreis aufgeht (Toleranz 0,01 wegen Bon-Rundung: 0,706 × 2,49 =
+            // Menge × Rate ≈ Zeilenpreis aufgeht (`amountsAgree`, Toleranz 0,01 wegen Bon-Rundung: 0,706 × 2,49 =
             // 1,75794, gedruckt 1,76) — andernfalls (OCR-Zahlendreher) wird nichts übernommen.
             // Der bereits korrekte Preis der Vorposition bleibt in jedem Fall unangetastet.
             if pendingName == nil, pendingPrice == nil, !pendingStornoCancel,
                isBareQuantityOrWeightConfirmationLine(trimmed) {
                 if let last = results.last, let wr = weightTimesRate(in: trimmed),
-                   abs(wr.weight * wr.rate - last.price) <= 0.01 {
+                   amountsAgree(wr.weight * wr.rate, last.price, tolerance: 0.01) {
                     if wr.unit == "kg" {
                         results[results.count - 1].weightBasis = wr.weight * 1000
                     } else if wr.unit == "stk" {
@@ -439,7 +439,7 @@ enum ReceiptParserService {
                         break
                     }
                 } else if let bare = priceTimesCount(in: trimmed), let currentPrice = price,
-                          abs(currentPrice - bare.unitPrice * bare.count) <= 0.05 {
+                          amountsAgree(currentPrice, bare.unitPrice * bare.count, tolerance: 0.05) {
                     // Lidl-Mehrfachkauf OHNE Einheiten-Wort ("BürgerSchwä.Maultas.  2,29 x  3
                     // 6,87 A" — Stückpreis × Anzahl, der Gesamtpreis 6,87 steht bereits als
                     // Trailing-Preis auf derselben Zeile fest). `weightTimesRate` oben griff hier
@@ -715,7 +715,7 @@ enum ReceiptParserService {
                    let p = Double(line[pRange].replacingOccurrences(of: ",", with: ".")),
                    n >= 2, n <= 99, !results.isEmpty {
                     let last = results.count - 1
-                    if abs(results[last].price - n * p) <= 0.05 {
+                    if amountsAgree(results[last].price, n * p, tolerance: 0.05) {
                         results[last].quantity = n
                     }
                 }
@@ -798,7 +798,7 @@ enum ReceiptParserService {
 
                 let cleaned = cleanEuroName(rawName)
                 var quantity = cleaned.quantity
-                if let inlineQty, abs(price - inlineQty.n * inlineQty.p) <= 0.05 {
+                if let inlineQty, amountsAgree(price, inlineQty.n * inlineQty.p, tolerance: 0.05) {
                     quantity = inlineQty.n
                 }
                 guard cleaned.name.count >= 2,
@@ -929,6 +929,17 @@ enum ReceiptParserService {
         else { return nil }
         let volume = ["ml", "cl", "dl", "l"].contains(name[unitRange].lowercased())
         return (amount, volume ? "ml" : "g")
+    }
+
+    /// Rechenprobe „Menge × Rate ≈ Zeilenpreis" mit inklusiver Toleranz (Issue #25).
+    ///
+    /// Ein nacktes `abs(a - b) <= 0.01` entschied bei einer Differenz von exakt einem Cent je
+    /// nach Fließkomma-Rundung: `4 × 0,39 − 1,57` ergibt `0.010000000000000009` (abgelehnt),
+    /// `2 × 3,44 − 6,87` dagegen `0.0099999999999997868` (angenommen). Der Puffer von 1e-9 liegt
+    /// weit unter jedem Cent-Betrag und macht die Grenze richtungsunabhängig inklusiv, ohne das
+    /// Verhalten abseits der Grenze zu verändern.
+    static func amountsAgree(_ a: Double, _ b: Double, tolerance: Double) -> Bool {
+        abs(a - b) <= tolerance + 1e-9
     }
 
     private static func weightTimesRate(in line: String) -> (weight: Double, unit: String, rate: Double)? {
@@ -1325,9 +1336,12 @@ actor ReceiptNameAIResolver {
     }
 
     nonisolated func sanitize(_ text: String) -> String? {
+        // Issue #69: nach dem Entfernen der Anführungszeichen erneut trimmen — sonst überlebt eine
+        // Antwort wie `" "` (Leerzeichen in Anführungszeichen) als Name aus reinem Leerraum.
         let trimmed = text
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
+            .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, trimmed.count <= 60, !trimmed.contains("\n") else { return nil }
         guard trimmed.caseInsensitiveCompare(Self.nonProductSentinel) != .orderedSame else { return nil }
         return trimmed
