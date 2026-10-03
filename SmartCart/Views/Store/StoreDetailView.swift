@@ -729,6 +729,7 @@ struct StoreDetailView: View {
                     .background(pattern.isOverdue ? Color.danger : Color.amber, in: RoundedRectangle(cornerRadius: RCRadius.tag))
             }
             .buttonStyle(.borderless)
+            .accessibilityIdentifier("replenish.also.add.\(pattern.itemName)")
             VStack(alignment: .leading, spacing: 2) {
                 Text(pattern.itemName)
                     .font(.system(size: 15, weight: .medium))
@@ -761,6 +762,7 @@ struct StoreDetailView: View {
                     .foregroundStyle(Color.textSecondary.opacity(0.7))
             }
             .buttonStyle(.borderless)
+            .accessibilityIdentifier("replenish.also.menu.\(pattern.itemName)")
         }
     }
 
