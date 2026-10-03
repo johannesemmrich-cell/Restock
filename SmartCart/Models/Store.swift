@@ -268,7 +268,7 @@ class Store {
     /// Einen seit `ShoppingRoute.tripGap` ruhenden Einkauf abschließen und lernen (beim Öffnen
     /// der Ladenansicht), damit die Liste schon vor dem ersten Haken des nächsten Einkaufs
     /// im gelernten Weg steht.
-    func finalizeStaleTrip(now: Date = Date()) {
+    func finalizeStaleTrip(now: Date = RouteClock.now) {
         let trip = currentTrip
         guard !trip.entries.isEmpty else { return }
         let result = ShoppingRoute.finalizeIfStale(trip: trip, model: routeModel, now: now)
@@ -722,4 +722,22 @@ enum Category {
     static let variety   = ["Haushaltswaren", "Elektronik", "Saisonales", "Schreibwaren", "Werkzeug", "Spielzeug", "Dekoration"]
     static let hardware  = ["Werkzeug", "Baumaterial", "Garten", "Farbe & Lack", "Sanitär"]
     static let sports    = ["Sport & Outdoor", "Fitness", "Fahrrad", "Camping", "Schwimmen", "Bekleidung"]
+}
+
+/// Uhr für das Abschließen eines ruhenden Einkaufs (`Store.finalizeStaleTrip`). In Release immer
+/// `Date()`. In DEBUG kann ein UI-Test mit `-routeClockOffsetMinutesForUITests <N>` die Zeit um
+/// N Minuten vorstellen, um die Ruhezeit von `ShoppingRoute.tripGap` zu simulieren (Issue #98).
+/// Die Haken-Zeitstempel (`recordCheckOff`) bleiben echte Zeit.
+enum RouteClock {
+    static var now: Date {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        if let index = arguments.firstIndex(of: "-routeClockOffsetMinutesForUITests"),
+           index + 1 < arguments.count,
+           let minutes = Double(arguments[index + 1]) {
+            return Date().addingTimeInterval(minutes * 60)
+        }
+        #endif
+        return Date()
+    }
 }

@@ -15,7 +15,10 @@ final class ShoppingRouteLearningUITests: XCTestCase {
 
     /// Abstand zwischen zwei Haken „im Laden": `ShoppingRoute.bulkGap` ist 2 s, darunter gilt ein
     /// Haken als „zu Hause nachgetragen". Auf dem Runner kommen Eingaben bis 3 s verspätet an,
-    /// größer ist hier also sicher. Ob 2,1 s reicht, wird im ersten Lauf gemessen.
+    /// größer ist hier also sicher. Messung 2026-10-03 (Restock-Validate, iOS 26.5): mit 2,1 s
+    /// lernte Test A in drei von drei Läufen den Weg Gouda → Brot → Apfel, 2,1 s reicht also.
+    /// „Drei von drei" gilt nur für Test A. Test B (Haken ohne Abstand) kam in dieser Messung nur
+    /// in zwei Läufen bis zum Abhaken; im dritten setzte sein erster Start aus (Kachel nicht gefunden).
     private let slowGap: TimeInterval = 2.1
 
     override func setUpWithError() throws {
