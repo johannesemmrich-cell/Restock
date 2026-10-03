@@ -41,6 +41,8 @@ struct SmartCartApp: App {
             Self.seedLegacyLearnedPriceForUITestsIfNeeded(context: container.mainContext)
             Self.clearQuickAddAssignmentSeedForUITestsIfNeeded(context: container.mainContext)
             Self.seedQuickAddAssignmentForUITestsIfNeeded(context: container.mainContext)
+            Self.clearReplenishmentForUITestsIfNeeded(context: container.mainContext)
+            Self.seedReplenishmentForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
 
@@ -372,6 +374,65 @@ struct SmartCartApp: App {
         StoreAssignmentOverrideService.shared.removeAll()
         DefaultStoreService.shared.removeAll()
         try? context.save()
+    }
+
+    /// Läden des Nachkauf-Seeds unten — die Seed-Käufe werden über diesen `storeName` gelöscht.
+    private static let replenishmentSeedStores = ["Bannerladen", "Listenladen"]
+
+    /// UI-Test-Seed für Nachkauf-Banner und „Vielleicht auch fällig" (Issue #98, Durchgang 2,
+    /// `ReplenishmentUITests`): nur Rohdaten — Läden „Bannerladen"/„Listenladen" und rückdatierte
+    /// Käufe (Banner-Artikel −29/−19/−9 Tage, Listen-Artikel −37/−23/−9 Tage, je 12:00 Uhr). Ob
+    /// etwas fällig ist, rechnet die App selbst. Setzt keine Vorschläge, Snoozes oder Sperren.
+    /// Only runs on `-seedReplenishmentForUITests`, DEBUG-only.
+    private static func seedReplenishmentForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedReplenishmentForUITests") else { return }
+        removeReplenishmentSeed(context: context)
+        context.insert(Store(name: "Bannerladen", emoji: "🧈", colorHex: "#C08A1E", visitsPerWeek: 1))
+        context.insert(Store(name: "Listenladen", emoji: "🍚", colorHex: "#4A7A3B", visitsPerWeek: 1))
+        let calendar = Calendar.current
+        let seeds: [(store: String, items: [String], daysAgo: [Int])] = [
+            ("Bannerladen", ["Bannerbutter", "Bannerquark"], [29, 19, 9]),
+            ("Listenladen", ["Listenreis", "Listennudeln"], [37, 23, 9])
+        ]
+        for seed in seeds {
+            for name in seed.items {
+                for days in seed.daysAgo {
+                    guard let day = calendar.date(byAdding: .day, value: -days, to: Date()),
+                          let noon = calendar.date(bySettingHour: 12, minute: 0, second: 0, of: day) else { continue }
+                    let record = PurchaseRecord(itemName: name, storeName: seed.store)
+                    record.date = noon
+                    context.insert(record)
+                }
+            }
+        }
+        try? context.save()
+    }
+
+    /// Räumt den Seed oben samt der Vorschlags-Zustände in UserDefaults wieder weg —
+    /// `ReplenishmentUITests.tearDown()` startet die App einmal mit diesem Argument.
+    /// Only runs on `-clearReplenishmentForUITests`, DEBUG-only.
+    private static func clearReplenishmentForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-clearReplenishmentForUITests") else { return }
+        removeReplenishmentSeed(context: context)
+        try? context.save()
+    }
+
+    private static func removeReplenishmentSeed(context: ModelContext) {
+        deleteAllStoresAndItems(context: context)
+        let names = replenishmentSeedStores
+        let seeded = FetchDescriptor<PurchaseRecord>(predicate: #Predicate { names.contains($0.storeName) })
+        if let records = try? context.fetch(seeded) {
+            for record in records { context.delete(record) }
+        }
+        let defaults = UserDefaults.standard
+        for key in [ReplenishmentSnoozes.defaultsKey, ReplenishmentBlocklist.defaultsKey,
+                    ReplenishmentKeyMigration.dismissedKey, ReplenishmentKeyMigration.acceptedKey,
+                    ReplenishmentKeyMigration.doneKey, ReplenishmentMetrics.countsKey,
+                    ReplenishmentMetrics.shownKey, OverdueNotificationLedger.defaultsKey,
+                    // Eingeklappter Banner bzw. Abschnitt (`@AppStorage` in HomeView/StoreDetailView).
+                    "replenishmentCollapsed", "storeReplenishmentCollapsed"] {
+            defaults.removeObject(forKey: key)
+        }
     }
 
     private static func deleteAllStoresAndItems(context: ModelContext) {

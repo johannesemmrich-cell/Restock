@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/ui-tests/replenishment-uitest.md
-spec_sha256: bd3de4caef2265ba79c0835209bda7ed5a6ad8ce12f1ab5adcc5b4d4026ae028
+spec_sha256: 80355daea2454ee908b453de77b521666ea74fc66ada6bd0b4b4115cc26ee982
 ---
 
 # PO-Briefing: test-98-durchgang-2-banner-schnelleingabe

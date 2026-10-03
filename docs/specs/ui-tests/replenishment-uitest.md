@@ -55,7 +55,7 @@ und nicht Gegenstand dieses Durchgangs.
   Zuordnung), `PurchaseRecord.swift`, Texte und Layout der Views, Schnelleingabe
   (`QuickAddAssignmentUITests` bleibt unverändert).
 
-Geschätzter Umfang: 5 Dateien, ca. +210 LoC, davon ca. 12 Zeilen Produktcode (Identifier) und ca. 60
+Geschätzter Umfang: 5 Dateien, ca. +210 LoC (tatsächlich ca. +330, davon ca. 65 Produktcode; Überschreitung des LoC-Limits vom PO am 2026-10-03 ausdrücklich akzeptiert, weil sie fast nur Testcode betrifft), davon ca. 12 Zeilen Produktcode (Identifier) und ca. 60
 Zeilen DEBUG-Seed.
 
 ## Verhalten
@@ -97,8 +97,8 @@ Löscht Läden, Artikel und Seed-Käufe wie der Seed und entfernt zusätzlich di
 Schlüssel, die die Tests berühren (App-Container überlebt den Test, siehe CLAUDE.md):
 `snoozedReplenishments` (`ReplenishmentSnoozes.defaultsKey`), `blockedReplenishments`
 (`ReplenishmentBlocklist.defaultsKey`), `dismissedReplenishments` und `acceptedReplenishments`
-(`ReplenishmentFeedback.dismissedKey/acceptedKey`), `replenishmentKeysByPurchaseDate`
-(`ReplenishmentFeedback.doneKey`), `replenishmentMetricsCounts` und `replenishmentMetricsShown`
+(`ReplenishmentKeyMigration.dismissedKey/acceptedKey`), `replenishmentKeysByPurchaseDate`
+(`ReplenishmentKeyMigration.doneKey`), `replenishmentMetricsCounts` und `replenishmentMetricsShown`
 (`ReplenishmentMetrics.countsKey/shownKey`), `notifiedOverdueReplenishments`
 (`OverdueNotificationLedger.defaultsKey`). Die Namen werden über die `static let`-Konstanten
 gelesen, nicht als Literale kopiert. Seed und Clear laufen nie im selben Start.
@@ -212,7 +212,7 @@ Start wie oben, Kachel „Listenladen,“ öffnen. Abschnitt „Vielleicht auch 
   Entwicklermodus starten, Banner und Ladenliste ansehen und bedienen (`+`, „Hab noch“, „Nicht mehr
   vorschlagen“, „Alle hinzufügen“); Nachweis als registriertes Artefakt (Commit-Kennung und
   Zeitstempel passen zum Stand), nicht von Hand gesetzt.
-- AC-20: Umfang eingehalten: ≤ 5 Dateien, ±250 LoC; keine Änderung an Regeln in `HabitService.swift`
+- AC-20: Umfang: ≤ 5 Dateien; das LoC-Limit (±250) ist mit ca. +330 überschritten, überwiegend Testcode, vom PO am 2026-10-03 ausdrücklich akzeptiert; keine Änderung an Regeln in `HabitService.swift`
   oder `PurchaseRecord.swift`; Schnelleingabe nicht angefasst.
 
 ## Tests
@@ -289,6 +289,7 @@ räumen in `tearDown()` auf; Simulator nie parallel nutzen, eigenes Testgerät R
   andere beeinflussen (Banner-Artikel erscheint auch in der Ladenliste, „Alle hinzufügen“ nimmt
   alles).
 - Gekippte Entscheidung: keine.
+- Seed und Clear entfernen zusätzlich die Einklapp-Zustände `replenishmentCollapsed` und `storeReplenishmentCollapsed` (@AppStorage), damit ein eingeklappter Bereich aus einem früheren Lauf die Tests nicht verfälscht (Befund der Prüfung, Runde 1).
 
 ## Offene Punkte
 

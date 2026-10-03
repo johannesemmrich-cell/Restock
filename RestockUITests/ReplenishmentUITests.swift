@@ -91,6 +91,12 @@ final class ReplenishmentUITests: XCTestCase {
         item.tap()
     }
 
+    /// Zeile der geöffneten Ladenliste (`List` → Cell). Trifft die Ladenkachel auf dem
+    /// Home-Screen nicht, die den Artikel ebenfalls als Text zeigt.
+    private func listRow(_ name: String, in app: XCUIApplication) -> XCUIElement {
+        app.cells.containing(.staticText, identifier: name).firstMatch
+    }
+
     private func gone(_ element: XCUIElement, _ message: String) {
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: element)
         waitForExpectations(timeout: 10)
@@ -118,12 +124,17 @@ final class ReplenishmentUITests: XCTestCase {
         let plus = control("replenish.add.Bannerbutter", in: app)
         XCTAssertTrue(plus.exists, "+ von „Bannerbutter“ fehlt")
         plus.tap()
-        gone(app.staticTexts["Bannerbutter"], "„Bannerbutter“ steht noch im Banner")
+        // Nicht über den Text prüfen: die Ladenkachel zeigt den neuen Artikel ebenfalls als
+        // StaticText „Bannerbutter“ an.
+        gone(app.buttons["replenish.add.Bannerbutter"], "„Bannerbutter“ steht noch im Banner")
         XCTAssertTrue(app.staticTexts["Bannerquark"].exists, "„Bannerquark“ muss im Banner bleiben")
 
         openStore("Bannerladen", in: app)
-        XCTAssertTrue(app.staticTexts["Bannerbutter"].waitForExistence(timeout: 10),
+        XCTAssertTrue(listRow("Bannerbutter", in: app).waitForExistence(timeout: 10),
                       "„Bannerbutter“ steht nicht in der Liste von „Bannerladen“")
+        // Auch die Vorschlagszeile in „Vielleicht auch fällig“ ist eine Cell mit diesem Text: erst
+        // ohne sie ist die gefundene Zeile der offene Artikel.
+        gone(app.buttons["replenish.also.add.Bannerbutter"], "„Bannerbutter“ ist nur Vorschlag, kein offener Artikel")
     }
 
     /// AC-4: „Hab noch" blendet den Vorschlag aus, auch nach App-Neustart.
@@ -161,8 +172,11 @@ final class ReplenishmentUITests: XCTestCase {
         gone(app.staticTexts["Zeit zum Nachkaufen"], "Banner steht nach „Alle hinzufügen“ noch da")
 
         openStore("Bannerladen", in: app)
-        XCTAssertTrue(app.staticTexts["Bannerbutter"].waitForExistence(timeout: 10), "„Bannerbutter“ fehlt in der Liste")
-        XCTAssertTrue(app.staticTexts["Bannerquark"].exists, "„Bannerquark“ fehlt in der Liste")
+        XCTAssertTrue(listRow("Bannerbutter", in: app).waitForExistence(timeout: 10), "„Bannerbutter“ fehlt in der Liste")
+        XCTAssertTrue(listRow("Bannerquark", in: app).exists, "„Bannerquark“ fehlt in der Liste")
+        for name in ["Bannerbutter", "Bannerquark"] {
+            gone(app.buttons["replenish.also.add.\(name)"], "„\(name)“ ist nur Vorschlag, kein offener Artikel")
+        }
         closeStore(in: app)
 
         openStore("Listenladen", in: app)
@@ -198,7 +212,7 @@ final class ReplenishmentUITests: XCTestCase {
         XCTAssertTrue(plus.exists, "+ von „Listenreis“ fehlt")
         plus.tap()
         gone(app.buttons["replenish.also.add.Listenreis"], "„Listenreis“ steht noch im Abschnitt")
-        XCTAssertTrue(app.staticTexts["Listenreis"].waitForExistence(timeout: 5),
+        XCTAssertTrue(listRow("Listenreis", in: app).waitForExistence(timeout: 5),
                       "„Listenreis“ steht nicht als offener Artikel in der Liste")
         XCTAssertTrue(control("replenish.also.add.Listennudeln", in: app).exists,
                       "„Listennudeln“ muss im Abschnitt bleiben")
@@ -244,6 +258,9 @@ final class ReplenishmentUITests: XCTestCase {
         XCTAssertFalse(app.staticTexts["Zeit zum Nachkaufen"].waitForExistence(timeout: 3),
                        "Banner erscheint ohne Entwicklermodus")
         openStore("Listenladen", in: app)
+        // Gegenprobe: die Ladenansicht ist wirklich offen, sonst wäre „nichts zu sehen“ wertlos.
+        XCTAssertTrue(app.navigationBars["Listenladen"].waitForExistence(timeout: 10),
+                      "Ladenansicht „Listenladen“ nicht geöffnet")
         XCTAssertFalse(app.staticTexts["Vielleicht auch fällig"].waitForExistence(timeout: 3),
                        "Abschnitt erscheint ohne Entwicklermodus")
     }

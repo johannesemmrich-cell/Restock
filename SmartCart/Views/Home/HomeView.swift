@@ -884,6 +884,7 @@ struct HomeView: View {
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(Color.amber)
                 .multilineTextAlignment(.trailing)
+                .accessibilityIdentifier("replenish.addAll")
             }
 
             if !replenishmentCollapsed {
@@ -901,6 +902,7 @@ struct HomeView: View {
                                     .foregroundStyle(Color.canvas)
                             }
                             .buttonStyle(.pressable)
+                            .accessibilityIdentifier("replenish.add.\(pattern.itemName)")
                         }
                         VStack(alignment: .leading, spacing: 2) {
                             Text(pattern.itemName)
@@ -934,6 +936,7 @@ struct HomeView: View {
                                 .font(.system(size: 18))
                                 .foregroundStyle(Color.textSecondary.opacity(0.7))
                         }
+                        .accessibilityIdentifier("replenish.menu.\(pattern.itemName)")
                     }
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
