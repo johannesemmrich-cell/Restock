@@ -35,6 +35,16 @@ final class StoreAssignmentOverrideService {
         persist()
     }
 
+    /// Setzt die Korrektur für einen Artikelnamen auf einen früheren Stand zurück (`nil` = keine) —
+    /// für „Rückgängig“ im Schnell-Eingabe-Toast, damit ein verworfener Artikel keine Korrektur
+    /// hinterlässt.
+    func restore(itemName: String, storeName: String?) {
+        let key = normalize(itemName)
+        guard overrides[key] != storeName else { return }
+        overrides[key] = storeName
+        persist()
+    }
+
     /// Vergisst alle gemerkten Korrekturen — nur für den UI-Test-Seed (`-seedQuickAddAssignmentForUITests`).
     func removeAll() {
         overrides.removeAll()

@@ -303,7 +303,12 @@ struct ReceiptReviewCard: View {
                 // die Bedienhilfe das am Feld ebenso melden wie bei den übrigen Auswahlzeilen.
                 .accessibilityAddTraits(isSelected(.custom) ? [.isSelected] : [])
                 .onChange(of: customName) { _, newValue in
-                    guard customActive else { return }
+                    // Tippt der Nutzer ins (noch fokussierte) Feld, nachdem er eine andere Option
+                    // gewählt hat, gilt das Feld wieder — sonst ginge die Eingabe still verloren.
+                    guard customActive else {
+                        if customFocused { activateCustom() }
+                        return
+                    }
                     Self.applyCustomNameOrFallback(&line, name: newValue,
                                                    previousSelection: previousSelectionBeforeCustom
                                                        ?? (line.name, line.matchedItemID, line.resolvedByAI))
@@ -444,6 +449,7 @@ struct ReceiptReviewCard: View {
             return
         }
         customActive = false
+        customFocused = false
         Self.applySelection(&line, option: option)
     }
 
