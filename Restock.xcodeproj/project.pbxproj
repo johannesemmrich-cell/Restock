@@ -175,6 +175,7 @@
 		54FBC057E3FD038294A3AEA0 /* AddItemQuantitySuggestionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */; };
 		A1C0DE110000000000000003 /* LegacyLearnedPriceResetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */; };
 		91DA57026009303F78C87BDB /* ShoppingRouteUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */; };
+		A98C0DE1A98C0DE1A98C0DE1 /* ShoppingRouteLearningUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98C0DE2A98C0DE2A98C0DE2 /* ShoppingRouteLearningUITests.swift */; };
 		6A1C2E4B8D3F4A5B9C7E1D31 /* QuickAddAssignmentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1C2E4B8D3F4A5B9C7E1D30 /* QuickAddAssignmentUITests.swift */; };
 /* End PBXBuildFile section */
 
@@ -369,6 +370,7 @@
 		3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemQuantitySuggestionUITests.swift; sourceTree = "<group>"; };
 		A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceResetUITests.swift; sourceTree = "<group>"; };
 		4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRouteUITests.swift; sourceTree = "<group>"; };
+		A98C0DE2A98C0DE2A98C0DE2 /* ShoppingRouteLearningUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRouteLearningUITests.swift; sourceTree = "<group>"; };
 		6A1C2E4B8D3F4A5B9C7E1D30 /* QuickAddAssignmentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddAssignmentUITests.swift; sourceTree = "<group>"; };
 		E2ECD600D24B6ACC3CB50C74 /* RestockUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		634FBBE2D9633DD7732C8BAF /* RestockTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -698,6 +700,7 @@
 				3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */,
 				A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */,
 				4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */,
+				A98C0DE2A98C0DE2A98C0DE2 /* ShoppingRouteLearningUITests.swift */,
 				6A1C2E4B8D3F4A5B9C7E1D30 /* QuickAddAssignmentUITests.swift */,
 			);
 			path = RestockUITests;
@@ -1063,6 +1066,7 @@
 				54FBC057E3FD038294A3AEA0 /* AddItemQuantitySuggestionUITests.swift in Sources */,
 				A1C0DE110000000000000003 /* LegacyLearnedPriceResetUITests.swift in Sources */,
 				91DA57026009303F78C87BDB /* ShoppingRouteUITests.swift in Sources */,
+				A98C0DE1A98C0DE1A98C0DE1 /* ShoppingRouteLearningUITests.swift in Sources */,
 				6A1C2E4B8D3F4A5B9C7E1D31 /* QuickAddAssignmentUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

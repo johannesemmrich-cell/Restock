@@ -239,4 +239,11 @@ final class ShoppingRouteTests: XCTestCase {
         XCTAssertEqual(StoreSortMode.migratedDefault(groupByCategory: false, autoSortByLearnedOrder: true), .route)
         XCTAssertEqual(StoreSortMode.migratedDefault(groupByCategory: false, autoSortByLearnedOrder: false), .added)
     }
+
+    // MARK: Test-Uhr (Issue #98, Durchgang 1)
+
+    /// Ohne Launch-Argument liefert die Test-Uhr die echte Zeit (AC-8).
+    func testRouteClockWithoutOffsetIsRealTime() {
+        XCTAssertLessThan(abs(RouteClock.now.timeIntervalSinceNow), 1)
+    }
 }

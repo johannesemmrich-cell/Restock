@@ -284,7 +284,9 @@ struct SmartCartApp: App {
             context.insert(item)
         }
         var model = ShoppingRouteModel()
-        for (index, name) in ["Gouda", "Brot", "Apfel"].enumerated() {
+        // Issue #98: ohne gelerntes Modell starten, gelernt wird dann nur durch die Haken im Test.
+        let learned = !ProcessInfo.processInfo.arguments.contains("-shoppingRouteNoLearnedModelForUITests")
+        for (index, name) in ["Gouda", "Brot", "Apfel"].enumerated() where learned {
             let key = ShoppingRoute.itemKey(name)
             model.itemPositions[key] = Double(index) / 2
             model.itemCategories[key] = AssignmentService.category(for: name)
