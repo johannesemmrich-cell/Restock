@@ -19,6 +19,8 @@ The `Restock` scheme's Test Action pins `language="de"` / `region="DE"`, so UI t
 
 Some UI tests need a fixture screen that's normally only reachable via camera/OCR; these use DEBUG-only launch arguments in `SmartCartApp.swift` to seed the required data directly through the app's real data path. Because the app-group container persists across tests in the same `xcodebuild test` run, every test class that seeds data this way **must** remove it again in `tearDown()` via its own matching cleanup launch argument — otherwise leftover stores/items break other tests' assumptions, since the existing suite does not reset its own state.
 
+`-seedReplenishmentForUITests` / `-clearReplenishmentForUITests` (Issue #98, Durchgang 2) seed two stores with backdated `PurchaseRecord`s only (the app computes what is due itself) for `ReplenishmentUITests`; the banner and „Vielleicht auch fällig“ exist only in developer mode, so these tests also pass `-developerMode YES`. Clear additionally removes the replenishment UserDefaults keys (snoozes, blocklist, feedback, metrics, collapse state). Details: `docs/specs/ui-tests/replenishment-uitest.md`.
+
 ## Adding new Swift files
 
 Xcode does **not** auto-discover files on disk. Every new `.swift` file must be manually registered in `Restock.xcodeproj/project.pbxproj` in three places:
