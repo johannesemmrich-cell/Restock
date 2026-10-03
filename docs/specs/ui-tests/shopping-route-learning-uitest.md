@@ -54,9 +54,14 @@ Geschätzter Umfang: 4 Dateien, ca. +150 LoC, davon ca. 20 Produktcode (alles `#
   `-routeClockOffsetMinutesForUITests <N>` gestartet wurde; ohne Argument oder bei nicht
   lesbarem Wert `Date()`.
 - Der Offset wirkt **nur** über die Vorgabe von `finalizeStaleTrip(now:)` (Öffnen der Ladenansicht,
-  Rückkehr in den Vordergrund). `Store.recordCheckOff(_:batched:at:)` behält `Date()`; die
-  Haken-Zeitstempel sind echte Zeit. Ein expliziter Aufruf `finalizeStaleTrip(now: x)` (Unit-Tests)
+  Rückkehr in den Vordergrund). Ein expliziter Aufruf `finalizeStaleTrip(now: x)` (Unit-Tests)
   bleibt unverändert.
+- **Nachtrag nach PR #104 (CI):** `RouteClock.checkOffTime()` ist die Vorgabe für
+  `Store.recordCheckOff(_:batched:at:)`. Release: immer `Date()`. DEBUG: mit
+  `-routeCheckOffStepSecondsForUITests <s>` liegt jeder Haken genau s Sekunden nach dem vorigen
+  (der erste bei `Date()`), unabhängig vom Tempo des Testläufers; ohne Argument `Date()`.
+  Grund: Auf dem CI-Runner lagen drei Taps > 2 s auseinander, Test B („zu Hause“) lernte dort den
+  Weg (Gouda, Brot, Apfel). Die Messung vom Mac (Taps ≪ 2 s) hatte das nicht gezeigt.
 
 ### Testhilfe 2: Seed ohne gelerntes Modell
 
@@ -73,8 +78,9 @@ Geschätzter Umfang: 4 Dateien, ca. +150 LoC, davon ca. 20 Produktcode (alles `#
    -shoppingRouteNoLearnedModelForUITests`; Kachel „Wegeladen,“ öffnen (Wartezeit 15 s wegen
    kaltem Start).
 2. Reihenfolge prüfen: Apfel, Brot, Gouda (Nachweis, dass noch nichts gelernt ist).
-3. Haken tippen in der Reihenfolge Gouda, Brot, Apfel, dazwischen jeweils ≥ 2,1 s Wartezeit
-   (Bulk-Erkennung: Abstände < `bulkGap` = 2 s zählen als „zu Hause“).
+3. Haken tippen in der Reihenfolge Gouda, Brot, Apfel; Start mit
+   `-routeCheckOffStepSecondsForUITests 5` (5 s zwischen den Haken, Bulk-Erkennung: Abstände
+   < `bulkGap` = 2 s zählen als „zu Hause“), keine Wartezeit im Test.
 4. App beenden; neu starten **ohne** Seed-Argumente, mit `-routeClockOffsetMinutesForUITests 31`;
    Laden öffnen. `finalizeStaleTrip` sieht > 30 min Ruhe und lernt.
 5. Alle drei Artikel sind jetzt im Laden wieder sichtbar: der Test setzt dazu die Haken am Ende
@@ -84,7 +90,8 @@ Geschätzter Umfang: 4 Dateien, ca. +150 LoC, davon ca. 20 Produktcode (alles `#
 
 ### Ablauf Test B „Schnelles Abhaken zu Hause lernt nichts“
 
-Gleiche Lage wie A; drei Haken im Abstand < 2 s (Gouda, Brot, Apfel unmittelbar nacheinander);
+Gleiche Lage wie A, aber `-routeCheckOffStepSecondsForUITests 0.1`; drei Haken (Gouda, Brot,
+Apfel) liegen damit 0,1 s auseinander;
 Neustart mit Offset 31; erwartet bleibt die feste Reihenfolge (Apfel, Brot, Gouda), es wurde nichts
 gelernt. Schließt die Gegenrichtung der Bulk-Regel.
 
@@ -96,11 +103,11 @@ gelernt. Schließt die Gegenrichtung der Bulk-Regel.
 - AC-2: Ohne `-shoppingRouteNoLearnedModelForUITests` ist der Seed unverändert (Gouda, Brot, Apfel
   gelernt); `ShoppingRouteUITests` läuft ohne Änderung grün.
 - AC-3: Test A tippt in der Ladenliste die Haken in der Reihenfolge Gouda, Brot, Apfel mit je
-  ≥ 2,1 s Abstand, beendet die App, startet sie mit `-routeClockOffsetMinutesForUITests 31`
+  5 s Abstand (Schrittweite per Launch-Argument), beendet die App, startet sie mit `-routeClockOffsetMinutesForUITests 31`
   neu und öffnet den Laden; die gelernte Reihenfolge ist Gouda, Brot, Apfel.
 - AC-4: Test A prüft vor den Haken, dass die Reihenfolge Apfel, Brot, Gouda ist (ohne Lernen
   wäre das Ergebnis dieselbe wie am Anfang, der Test könnte sonst nicht scheitern).
-- AC-5: Test B tippt drei Haken im Abstand < 2 s, startet mit Offset 31 neu; die Reihenfolge
+- AC-5: Test B tippt drei Haken mit 0,1 s Abstand (Schrittweite per Launch-Argument), startet mit Offset 31 neu; die Reihenfolge
   bleibt Apfel, Brot, Gouda (nichts gelernt).
 - AC-6: Beide Tests benutzen die echten Haken-Elemente der Ladenliste und
   `StoreDetailView.toggle`; es wird kein Trip, kein Modell und kein Zeitstempel von Hand
@@ -111,7 +118,7 @@ gelernt. Schließt die Gegenrichtung der Bulk-Regel.
   `deleteAllStoresAndItems` die `removeRouteData()`-Bereinigung, Z. ~381 SmartCartApp). Ein
   nachfolgender Test sieht kein Restmodell aus Test A.
 - AC-8: Der Offset wirkt nur über `Store.finalizeStaleTrip(now:)`-Vorgabe; `recordCheckOff`
-  verwendet weiter echte Zeit. Ein Unit-Test (oder UI-Beleg) zeigt: ohne Argument ist
+  verwendet `RouteClock.checkOffTime()` (ohne Argument echte Zeit). Ein Unit-Test (oder UI-Beleg) zeigt: ohne Argument ist
   `RouteClock.now` ≈ `Date()` (Abweichung < 1 s).
 - AC-9: Im Release-Build existiert weder `RouteClock`-Offset-Code noch lesen `Store` oder
   `SmartCartApp` ein Launch-Argument; `finalizeStaleTrip(now:)` hat dort das Verhalten
@@ -149,14 +156,16 @@ Simulator nie parallel nutzen, eigenes Testgerät Restock-Validate.
 
 ## Risiken
 
-- **Tippabstand auf dem CI-Runner:** Tasten kommen dort bis 3 s verspätet an; zwei Haken in Test A
-  könnten durch Verzögerung ungleichmäßig sein (kein Problem, größer ist sicher), in Test B
-  könnten sie durch Verzögerung > 2 s auseinanderliegen und damit nicht mehr „schnell“ sein.
-  Gegenmaßnahme: in Test B Haken ohne Zwischenwartezeit direkt nacheinander, Abstand im Test
-  nicht gemessen sondern über Erfolg des Verbleibs beobachtet; drei Läufe (AC-11), bei Flake
-  Messverfahren aus Memory „UI-Test liest Feld nach typeText zu früh“.
-- **Offene Messung:** „≥ 2,1 s reicht als im-Laden“ ist Vermutung aus dem Code (`bulkGap`,
-  `bulkShare`), wird im ersten Lauf gemessen.
+- **Tippabstand auf dem CI-Runner (eingetreten, PR #104):** Taps brauchen dort > 2 s; Test B lernte
+  den Weg. Behoben, indem die App den Abstand der Haken vorgibt (`RouteClock.checkOffTime()`),
+  nicht der Testläufer. Der Test hängt damit nicht mehr am Tempo des Runners.
+- **App startet ohne Launch-Argumente (eingetreten, PR #104 und lokal in rund jedem 5. Start des
+  ersten Tests):** Der Testläufer startet die App gelegentlich ganz ohne Argumente (gemessen am
+  App-Protokoll: Prozess ohne `-seed…`, `-AppleLanguages` usw.). Ohne Seed zeigt die Startseite
+  „Noch keine Läden“, die Kachel erscheint nie. Kein Produktfehler (CloudKit-Vermutung geprüft und
+  verworfen). `openStore` startet die App deshalb einmal neu, wenn die Kachel nach 15 s fehlt.
+  Belege: `attempts/b-repro-loop4*.txt`, `test-class-12runs-relaunch-output.txt` (7 von 7 grün).
+  Folgearbeit für alle gesäten UI-Tests: Issue #105.
 - **Produktcode-Berührung:** `finalizeStaleTrip` ist Produktpfad; Vorgabe `RouteClock.now` darf im
   Release exakt `Date()` bleiben (AC-9).
 - **Seed-Wechselwirkung:** `clear...` und `seed...` laufen im selben App-Start nacheinander
@@ -182,8 +191,6 @@ Simulator nie parallel nutzen, eigenes Testgerät Restock-Validate.
 - Der Haken über den Bearbeiten-Dialog (`EditItemView.swift:207`) und `applyPendingCheckoffs`
   (Widget/Island, `batched`) sind bewusst **ausgeschlossen**, um die Limits zu halten; sie kommen
   in Durchgang 2/3 von #98.
-- Wirken zwei Haken im Abstand ≥ 2,1 s auf dem Runner zuverlässig als „im Laden“? Wird im
-  ersten Lauf gemessen; Ergebnis in die Testdatei als Kommentar.
 - Genauer Ort von `RouteClock` (in `Store.swift` am Dateiende oder neben `ShoppingRoute`) wird in
   der Implementierung entschieden; Bedingung: ≤ 5 Dateien insgesamt.
 - Nach Abschluss: Verweis in `CLAUDE.md` (Abschnitt Build/UI-Tests, DEBUG-Argumente) ergänzen,

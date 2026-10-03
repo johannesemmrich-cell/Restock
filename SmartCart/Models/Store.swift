@@ -243,7 +243,7 @@ class Store {
 
     /// Einen Haken für den Einkaufsweg aufzeichnen. `batched`: aus der Dynamic-Island-/Widget-
     /// Warteschlange nachgetragen (Reihenfolge stimmt, Zeitpunkt nicht).
-    func recordCheckOff(_ item: ShoppingItem, batched: Bool = false, at date: Date = Date()) {
+    func recordCheckOff(_ item: ShoppingItem, batched: Bool = false, at date: Date = RouteClock.checkOffTime()) {
         let before = routeModel
         let result = ShoppingRoute.recordCheckOff(
             key: ShoppingRoute.itemKey(item.name),
@@ -727,8 +727,29 @@ enum Category {
 /// Uhr für das Abschließen eines ruhenden Einkaufs (`Store.finalizeStaleTrip`). In Release immer
 /// `Date()`. In DEBUG kann ein UI-Test mit `-routeClockOffsetMinutesForUITests <N>` die Zeit um
 /// N Minuten vorstellen, um die Ruhezeit von `ShoppingRoute.tripGap` zu simulieren (Issue #98).
-/// Die Haken-Zeitstempel (`recordCheckOff`) bleiben echte Zeit.
+/// Die Haken-Zeitstempel (`recordCheckOff`) bleiben echte Zeit, außer ein UI-Test gibt in DEBUG
+/// `-routeCheckOffStepSecondsForUITests <s>` vor: dann liegt jeder Haken genau s Sekunden nach
+/// dem vorigen, unabhängig vom Tempo des Testläufers (CI-Runner brauchen für einen Tap > 2 s).
 enum RouteClock {
+    #if DEBUG
+    private static var lastCheckOff: Date?
+    #endif
+
+    /// Zeitpunkt für den nächsten Haken (Release: immer `Date()`).
+    static func checkOffTime() -> Date {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        if let index = arguments.firstIndex(of: "-routeCheckOffStepSecondsForUITests"),
+           index + 1 < arguments.count,
+           let step = Double(arguments[index + 1]) {
+            let next = lastCheckOff.map { $0.addingTimeInterval(step) } ?? Date()
+            lastCheckOff = next
+            return next
+        }
+        #endif
+        return Date()
+    }
+
     static var now: Date {
         #if DEBUG
         let arguments = ProcessInfo.processInfo.arguments
