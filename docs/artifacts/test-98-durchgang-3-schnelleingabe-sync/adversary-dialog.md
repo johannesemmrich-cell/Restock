@@ -135,6 +135,67 @@ Zaehlung: CRITICAL 0, HIGH 0, MEDIUM 2, LOW 4.
 
 VERDICT: AMBIGUOUS - Verhaltens-ACs belegt (RED/GREEN, Release sauber), aber AC-9 (kein Gesamtlauf mit ReplenishmentUITests und Wiederholungen; ein Lauf waere unverzichtbar, nicht gestartet) und AC-11 (ca. 313 LoC ueber Limit) brauchen menschliche Entscheidung.
 
+### Runde 3
+
+Selbst geprueft: test-gesamtlauf-output.txt per grep. Unit: "Executed 434 tests, with 0 failures" (Z. 1199). UI: "Executed 71 tests, with 1 test skipped and 0 failures" (Z. 6080), `** TEST SUCCEEDED **` (Z. 6090), kein Treffer auf Restarting oder failed. Suites DataResetUITests (Z. 1749, 2 Tests), QuickAddAssignmentUITests (Z. 2618, 12 Tests), ReplenishmentUITests (Z. 4902, 10 Tests) passed. Commit 45873db enthaelt die unveraenderte SmartCartApp-Aenderung (44 Zeilen). Restvorbehalt: die drei Stabilitaetswiederholungen (T8) stehen noch aus und gehoeren zu /60-validate, kein Blocker.
+AC-11: Freigabe durch PO laut Koordinator (312 Zeilen, Grenze 250, Antwort "Umfang so lassen"); dokumentiert in der Memory-Datei issue-98-durchgang-3-umfang-akzeptiert.md, F006 damit aufgeloest.
+
+Code reference: SmartCart/SmartCartApp.swift:69
+Code reference: RestockUITests/QuickAddAssignmentUITests.swift:97
+Code reference: RestockUITests/DataResetUITests.swift:79
+
+Status: CONFIRMED
+AC: AC-1
+Evidence: Runde 1, QuickAddAssignmentUITests.swift:97; im Gesamtlauf Suite QuickAddAssignmentUITests passed (Z. 2618).
+
+Status: CONFIRMED
+AC: AC-2
+Evidence: Runde 1, QuickAddAssignmentUITests.swift:116; Suite im Gesamtlauf passed (12 Tests, 0 Failures).
+
+Status: CONFIRMED
+AC: AC-3
+Evidence: Runde 1, QuickAddAssignmentUITests.swift:153; Suite im Gesamtlauf passed.
+
+Status: CONFIRMED
+AC: AC-4
+Evidence: Runde 1, QuickAddAssignmentUITests.swift:170; Suite im Gesamtlauf passed.
+
+Status: CONFIRMED
+AC: AC-5
+Evidence: Runde 1, DataResetUITests.swift:92 mit RED/GREEN-Paar; DataResetUITests im Gesamtlauf passed (Z. 1749).
+
+Status: CONFIRMED
+AC: AC-6
+Evidence: Runde 1/2, DataResetUITests.swift:101; DataResetUITests im Gesamtlauf passed.
+
+Status: CONFIRMED
+AC: AC-7
+Evidence: Runde 1, SmartCartApp.swift:85 und :90 (Marker vor und precondition nach deleteStoreFiles); Notfalltests im Gesamtlauf passed, Wirksamkeitsgrenze als F003 (LOW) bekannt.
+
+Status: CONFIRMED
+AC: AC-8
+Evidence: Runde 2, Tests nutzen nur Launch-Argumente und Seed-Rohdaten, nichts von Hand gesetzt (DataResetUITests.swift:45).
+
+Status: CONFIRMED
+AC: AC-9
+Evidence: Frischer Gesamtlauf ohne -only-testing: 434 Unit- und 71 UI-Tests mit 0 Failures, ReplenishmentUITests passed (Z. 4902), keine Restarts, TEST SUCCEEDED (Z. 6090); T8-Wiederholungen als Restvorbehalt fuer /60-validate.
+
+Status: CONFIRMED
+AC: AC-10
+Evidence: Runde 1, SmartCartApp.swift:69 nur unter #if DEBUG, release-build-check.txt 0 Treffer; make() und deleteStoreFiles unveraendert.
+
+Status: CONFIRMED
+AC: AC-11
+Evidence: 4 Code-Dateien, Regeldienste, Texte, Layout unveraendert; ca. 312 Zeilen ueber Limit 250 mit dokumentierter PO-Freigabe ("Umfang so lassen", Memory-Datei issue-98-durchgang-3-umfang-akzeptiert.md).
+
+Status: CONFIRMED
+AC: AC-12
+Evidence: Runde 1, "OFFENE GRENZE" in DataResetUITests.swift:11 und in der Spec.
+
+Bestehende LOW-Findings F002 bis F005 bleiben als bekannt und nicht blockierend bestehen; F001 und F006 sind durch Gesamtlauf bzw. PO-Freigabe aufgeloest. Zaehlung final: CRITICAL 0, HIGH 0, MEDIUM 0 offen, LOW 4.
+
+VERDICT: VERIFIED - alle 12 ACs bestaetigt, Gesamtlauf (434 Unit, 71 UI, 0 Failures, keine Restarts) liegt vor, Umfang vom PO freigegeben, kein CRITICAL/HIGH; Restvorbehalt T8-Wiederholungen in /60-validate.
+
 ## Geprüfte Dateien
 
 - sha256:fd9a9732fd018cd112459f0fb1bdf9a657866ced086e3303dd3ea49a4b8f7783  Restock.xcodeproj/project.pbxproj
