@@ -1,0 +1,19 @@
+AC-10 / T6: Release-Bau enthält die Testzweige nicht (Issue #98, Durchgang 3)
+Stand: 2026-10-04, Commit-Basis 3868bcd + SmartCartApp.swift-Änderung (DEBUG-Zweig)
+
+Bau:
+  xcodebuild -scheme Restock -project Restock.xcodeproj -configuration Release \
+             -destination 'generic/platform=iOS Simulator' build
+  Ergebnis: ** BUILD SUCCEEDED **
+
+Prüfung der Binärdatei Restock.app/Restock (strings -a, 83615 Zeilen):
+  Treffer auf  forceContainerFailureForUITests | clearDataResetForUITests | uitest-foreign-marker : 0
+  Treffer auf  seedReplenishmentForUITests (bestehendes DEBUG-Argument, Kontrollprobe negativ)   : 0
+  Treffer auf  smartcart.dataResetOccurred (echter Schlüssel des Notfallpfads, Kontrollprobe positiv): 2
+
+Schluss: Die neuen Argumente und die Markerdatei sind im ausgelieferten Bau nicht enthalten;
+der Notfallpfad selbst (Schlüssel) ist unverändert vorhanden.
+
+Diff-Prüfung (git diff SmartCart/SmartCartApp.swift): SharedModelContainer.make() und
+deleteStoreFiles() unverändert, deleteStoreFiles bleibt private; +43/-1 Zeilen, alles Neue unter #if DEBUG
+(im Release-Zweig steht nur `let forceContainerFailure = false`).

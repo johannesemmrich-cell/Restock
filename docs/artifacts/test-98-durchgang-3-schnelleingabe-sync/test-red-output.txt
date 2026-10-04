@@ -1,0 +1,459 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/DataResetUITests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-10-04 09:33:18.983813+0200 RestockUITests-Runner[60414:10317669] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-04 09:33:19.747.
+Test Suite 'RestockUITests.xctest' started at 2026-10-04 09:33:19.748.
+Test Suite 'DataResetUITests' started at 2026-10-04 09:33:19.748.
+Test Case '-[RestockUITests.DataResetUITests testAppUsableAfterEmergencyReset]' started.
+    t =     0.00s Start Test at 2026-10-04 09:33:19.749
+    t =     0.05s Set Up
+    t =     0.06s Open com.johannesemmrich.Restock
+    t =     0.06s     Launch com.johannesemmrich.Restock
+2026-10-04 09:33:20.017 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 09:33:20.017 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[60414]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10aaa0310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10ab3c398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     0.93s         Setting up automation session
+    t =     1.45s         Wait for com.johannesemmrich.Restock to idle
+    t =     3.23s Waiting 15.0s for Button (First Match) to exist
+    t =     4.26s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     4.26s         Checking existence of `Button (First Match)`
+    t =     4.33s         Capturing element debug description
+    t =     5.26s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     5.26s         Checking existence of `Button (First Match)`
+    t =     5.27s         Capturing element debug description
+    t =     6.29s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     6.30s         Checking existence of `Button (First Match)`
+    t =     6.31s         Capturing element debug description
+    t =     7.33s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     7.33s         Checking existence of `Button (First Match)`
+    t =     7.34s         Capturing element debug description
+    t =     8.27s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     8.27s         Checking existence of `Button (First Match)`
+    t =     8.30s         Capturing element debug description
+    t =     9.33s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     9.33s         Checking existence of `Button (First Match)`
+    t =     9.36s         Capturing element debug description
+    t =    10.28s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    10.28s         Checking existence of `Button (First Match)`
+    t =    10.32s         Capturing element debug description
+    t =    11.25s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    11.25s         Checking existence of `Button (First Match)`
+    t =    11.28s         Capturing element debug description
+    t =    12.32s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    12.32s         Checking existence of `Button (First Match)`
+    t =    12.35s         Capturing element debug description
+    t =    13.28s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    13.28s         Checking existence of `Button (First Match)`
+    t =    13.31s         Capturing element debug description
+    t =    14.24s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    14.24s         Checking existence of `Button (First Match)`
+    t =    14.27s         Capturing element debug description
+    t =    15.31s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    15.31s         Checking existence of `Button (First Match)`
+    t =    15.34s         Capturing element debug description
+    t =    16.26s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    16.26s         Checking existence of `Button (First Match)`
+    t =    16.27s         Capturing element debug description
+    t =    17.30s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    17.30s         Checking existence of `Button (First Match)`
+    t =    17.33s         Capturing element debug description
+    t =    18.23s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    18.24s         Checking existence of `Button (First Match)`
+    t =    18.27s         Capturing element debug description
+    t =    18.27s     Checking existence of `Button (First Match)`
+    t =    18.28s Collecting debug information to assist test failure triage
+    t =    18.28s     Requesting snapshot of accessibility hierarchy for app with pid 60425
+    t =    18.31s Terminate com.johannesemmrich.Restock:60425
+    t =    19.36s Open com.johannesemmrich.Restock
+    t =    19.36s     Launch com.johannesemmrich.Restock
+2026-10-04 09:33:39.116 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 09:33:39.117 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    19.78s         Setting up automation session
+    t =    20.41s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.DataResetUITests testAppUsableAfterEmergencyReset] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    21.84s Waiting 15.0s for Button (First Match) to exist
+    t =    22.87s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    22.87s         Checking existence of `Button (First Match)`
+    t =    22.94s Checking existence of `Button (First Match)`
+    t =    22.96s Terminate com.johannesemmrich.Restock:60535
+    t =    24.01s Open com.johannesemmrich.Restock
+    t =    24.01s     Launch com.johannesemmrich.Restock
+2026-10-04 09:33:43.758 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 09:33:43.758 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    24.22s         Setting up automation session
+    t =    24.87s         Wait for com.johannesemmrich.Restock to idle
+    t =    26.23s Waiting 20.0s for "Daten neu geladen" Alert to exist
+    t =    27.26s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    27.26s         Checking existence of `"Daten neu geladen" Alert`
+    t =    27.34s         Capturing element debug description
+    t =    28.26s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    28.26s         Checking existence of `"Daten neu geladen" Alert`
+    t =    28.30s         Capturing element debug description
+    t =    29.23s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    29.23s         Checking existence of `"Daten neu geladen" Alert`
+    t =    29.27s         Capturing element debug description
+    t =    30.28s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    30.28s         Checking existence of `"Daten neu geladen" Alert`
+    t =    30.32s         Capturing element debug description
+    t =    31.24s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    31.24s         Checking existence of `"Daten neu geladen" Alert`
+    t =    31.27s         Capturing element debug description
+    t =    32.29s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    32.29s         Checking existence of `"Daten neu geladen" Alert`
+    t =    32.32s         Capturing element debug description
+    t =    33.25s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    33.25s         Checking existence of `"Daten neu geladen" Alert`
+    t =    33.28s         Capturing element debug description
+    t =    34.31s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    34.31s         Checking existence of `"Daten neu geladen" Alert`
+    t =    34.35s         Capturing element debug description
+    t =    35.27s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    35.27s         Checking existence of `"Daten neu geladen" Alert`
+    t =    35.30s         Capturing element debug description
+    t =    36.23s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    36.23s         Checking existence of `"Daten neu geladen" Alert`
+    t =    36.27s         Capturing element debug description
+    t =    37.29s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    37.29s         Checking existence of `"Daten neu geladen" Alert`
+    t =    37.33s         Capturing element debug description
+    t =    38.26s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    38.26s         Checking existence of `"Daten neu geladen" Alert`
+    t =    38.28s         Capturing element debug description
+    t =    39.31s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    39.31s         Checking existence of `"Daten neu geladen" Alert`
+    t =    39.35s         Capturing element debug description
+    t =    40.27s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    40.27s         Checking existence of `"Daten neu geladen" Alert`
+    t =    40.29s         Capturing element debug description
+    t =    41.33s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    41.33s         Checking existence of `"Daten neu geladen" Alert`
+    t =    41.36s         Capturing element debug description
+    t =    42.29s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    42.29s         Checking existence of `"Daten neu geladen" Alert`
+    t =    42.30s         Capturing element debug description
+    t =    43.23s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    43.23s         Checking existence of `"Daten neu geladen" Alert`
+    t =    43.26s         Capturing element debug description
+    t =    44.29s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    44.29s         Checking existence of `"Daten neu geladen" Alert`
+    t =    44.32s         Capturing element debug description
+    t =    45.25s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    45.25s         Checking existence of `"Daten neu geladen" Alert`
+    t =    45.28s         Capturing element debug description
+    t =    46.23s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    46.23s         Checking existence of `"Daten neu geladen" Alert`
+    t =    46.26s         Capturing element debug description
+    t =    46.26s     Checking existence of `"Daten neu geladen" Alert`
+    t =    46.28s Collecting debug information to assist test failure triage
+    t =    46.28s     Requesting snapshot of accessibility hierarchy for app with pid 60554
+    t =    46.31s Terminate com.johannesemmrich.Restock:60554
+    t =    47.35s Open com.johannesemmrich.Restock
+    t =    47.35s     Launch com.johannesemmrich.Restock
+2026-10-04 09:34:07.100 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 09:34:07.100 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    47.56s         Setting up automation session
+    t =    48.26s         Wait for com.johannesemmrich.Restock to idle
+    t =    49.63s Waiting 20.0s for "Daten neu geladen" Alert to exist
+    t =    50.67s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    50.67s         Checking existence of `"Daten neu geladen" Alert`
+    t =    50.73s         Capturing element debug description
+    t =    51.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    51.66s         Checking existence of `"Daten neu geladen" Alert`
+    t =    51.70s         Capturing element debug description
+    t =    52.73s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    52.73s         Checking existence of `"Daten neu geladen" Alert`
+    t =    52.76s         Capturing element debug description
+    t =    53.68s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    53.68s         Checking existence of `"Daten neu geladen" Alert`
+    t =    53.72s         Capturing element debug description
+    t =    54.64s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    54.64s         Checking existence of `"Daten neu geladen" Alert`
+    t =    54.68s         Capturing element debug description
+    t =    55.71s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    55.71s         Checking existence of `"Daten neu geladen" Alert`
+    t =    55.75s         Capturing element debug description
+    t =    56.68s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    56.68s         Checking existence of `"Daten neu geladen" Alert`
+    t =    56.71s         Capturing element debug description
+    t =    57.63s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    57.63s         Checking existence of `"Daten neu geladen" Alert`
+    t =    57.67s         Capturing element debug description
+    t =    58.69s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    58.70s         Checking existence of `"Daten neu geladen" Alert`
+    t =    58.73s         Capturing element debug description
+    t =    59.65s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    59.65s         Checking existence of `"Daten neu geladen" Alert`
+    t =    59.69s         Capturing element debug description
+    t =    60.71s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    60.71s         Checking existence of `"Daten neu geladen" Alert`
+    t =    60.75s         Capturing element debug description
+    t =    61.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    61.66s         Checking existence of `"Daten neu geladen" Alert`
+    t =    61.69s         Capturing element debug description
+    t =    62.71s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    62.71s         Checking existence of `"Daten neu geladen" Alert`
+    t =    62.73s         Capturing element debug description
+    t =    63.64s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    63.65s         Checking existence of `"Daten neu geladen" Alert`
+    t =    63.68s         Capturing element debug description
+    t =    64.71s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    64.71s         Checking existence of `"Daten neu geladen" Alert`
+    t =    64.74s         Capturing element debug description
+    t =    65.67s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    65.67s         Checking existence of `"Daten neu geladen" Alert`
+    t =    65.71s         Capturing element debug description
+    t =    66.63s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    66.63s         Checking existence of `"Daten neu geladen" Alert`
+    t =    66.67s         Capturing element debug description
+    t =    67.70s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    67.71s         Checking existence of `"Daten neu geladen" Alert`
+    t =    67.74s         Capturing element debug description
+    t =    68.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    68.66s         Checking existence of `"Daten neu geladen" Alert`
+    t =    68.70s         Capturing element debug description
+    t =    69.63s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    69.63s         Checking existence of `"Daten neu geladen" Alert`
+    t =    69.67s         Capturing element debug description
+    t =    69.67s     Checking existence of `"Daten neu geladen" Alert`
+    t =    69.69s Collecting debug information to assist test failure triage
+    t =    69.69s     Requesting snapshot of accessibility hierarchy for app with pid 60628
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockUITests/DataResetUITests.swift:116: error: -[RestockUITests.DataResetUITests testAppUsableAfterEmergencyReset] : XCTAssertTrue failed - Der Hinweis erscheint nicht
+    t =    69.75s Tear Down
+    t =    69.75s     Open com.johannesemmrich.Restock
+    t =    69.75s         Launch com.johannesemmrich.Restock
+    t =    69.75s             Terminate com.johannesemmrich.Restock:60628
+2026-10-04 09:34:30.535 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 09:34:30.535 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    71.00s             Setting up automation session
+    t =    71.73s             Wait for com.johannesemmrich.Restock to idle
+    t =    73.11s     Terminate com.johannesemmrich.Restock:60743
+Test Case '-[RestockUITests.DataResetUITests testAppUsableAfterEmergencyReset]' failed (74.319 seconds).
+Test Case '-[RestockUITests.DataResetUITests testEmergencyPathDeletesStoresAndShowsNoticeOnce]' started.
+    t =     0.00s Start Test at 2026-10-04 09:34:34.069
+    t =     0.03s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+    t =     0.03s     Launch com.johannesemmrich.Restock
+2026-10-04 09:34:34.103 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 09:34:34.103 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.24s         Setting up automation session
+    t =     0.89s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.DataResetUITests testEmergencyPathDeletesStoresAndShowsNoticeOnce] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     2.24s Waiting 15.0s for Button (First Match) to exist
+    t =     3.27s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     3.27s         Checking existence of `Button (First Match)`
+    t =     3.34s Waiting 15.0s for Button (First Match) to exist
+    t =     4.37s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     4.37s         Checking existence of `Button (First Match)`
+    t =     4.41s Checking existence of `Button (First Match)`
+    t =     4.43s Terminate com.johannesemmrich.Restock:60754
+    t =     5.47s Open com.johannesemmrich.Restock
+    t =     5.47s     Launch com.johannesemmrich.Restock
+2026-10-04 09:34:39.544 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 09:34:39.544 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     5.68s         Setting up automation session
+    t =     6.40s         Wait for com.johannesemmrich.Restock to idle
+    t =     7.76s Waiting 20.0s for "Daten neu geladen" Alert to exist
+    t =     8.78s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =     8.78s         Checking existence of `"Daten neu geladen" Alert`
+    t =     8.83s         Capturing element debug description
+    t =     9.85s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =     9.86s         Checking existence of `"Daten neu geladen" Alert`
+    t =     9.88s         Capturing element debug description
+    t =    10.80s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    10.80s         Checking existence of `"Daten neu geladen" Alert`
+    t =    10.83s         Capturing element debug description
+    t =    11.76s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    11.76s         Checking existence of `"Daten neu geladen" Alert`
+    t =    11.80s         Capturing element debug description
+    t =    12.83s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    12.83s         Checking existence of `"Daten neu geladen" Alert`
+    t =    12.86s         Capturing element debug description
+    t =    13.80s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    13.80s         Checking existence of `"Daten neu geladen" Alert`
+    t =    13.83s         Capturing element debug description
+    t =    14.76s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    14.76s         Checking existence of `"Daten neu geladen" Alert`
+    t =    14.79s         Capturing element debug description
+    t =    15.82s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    15.82s         Checking existence of `"Daten neu geladen" Alert`
+    t =    15.86s         Capturing element debug description
+    t =    16.78s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    16.78s         Checking existence of `"Daten neu geladen" Alert`
+    t =    16.81s         Capturing element debug description
+    t =    17.84s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    17.84s         Checking existence of `"Daten neu geladen" Alert`
+    t =    17.86s         Capturing element debug description
+    t =    18.79s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    18.79s         Checking existence of `"Daten neu geladen" Alert`
+    t =    18.80s         Capturing element debug description
+    t =    19.84s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    19.84s         Checking existence of `"Daten neu geladen" Alert`
+    t =    19.87s         Capturing element debug description
+    t =    20.80s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    20.80s         Checking existence of `"Daten neu geladen" Alert`
+    t =    20.82s         Capturing element debug description
+    t =    21.85s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    21.85s         Checking existence of `"Daten neu geladen" Alert`
+    t =    21.88s         Capturing element debug description
+    t =    22.80s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    22.81s         Checking existence of `"Daten neu geladen" Alert`
+    t =    22.84s         Capturing element debug description
+    t =    23.77s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    23.77s         Checking existence of `"Daten neu geladen" Alert`
+    t =    23.81s         Capturing element debug description
+    t =    24.84s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    24.84s         Checking existence of `"Daten neu geladen" Alert`
+    t =    24.87s         Capturing element debug description
+    t =    25.80s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    25.80s         Checking existence of `"Daten neu geladen" Alert`
+    t =    25.84s         Capturing element debug description
+    t =    26.76s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    26.76s         Checking existence of `"Daten neu geladen" Alert`
+    t =    26.80s         Capturing element debug description
+    t =    27.76s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    27.76s         Checking existence of `"Daten neu geladen" Alert`
+    t =    27.80s         Capturing element debug description
+    t =    27.80s     Checking existence of `"Daten neu geladen" Alert`
+    t =    27.82s Collecting debug information to assist test failure triage
+    t =    27.82s     Requesting snapshot of accessibility hierarchy for app with pid 60772
+    t =    27.85s Terminate com.johannesemmrich.Restock:60772
+    t =    28.89s Open com.johannesemmrich.Restock
+    t =    28.89s     Launch com.johannesemmrich.Restock
+2026-10-04 09:35:02.964 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 09:35:02.964 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    29.10s         Setting up automation session
+    t =    29.80s         Wait for com.johannesemmrich.Restock to idle
+    t =    31.19s Waiting 20.0s for "Daten neu geladen" Alert to exist
+    t =    32.22s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    32.22s         Checking existence of `"Daten neu geladen" Alert`
+    t =    32.30s         Capturing element debug description
+    t =    33.23s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    33.23s         Checking existence of `"Daten neu geladen" Alert`
+    t =    33.27s         Capturing element debug description
+    t =    34.20s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    34.20s         Checking existence of `"Daten neu geladen" Alert`
+    t =    34.23s         Capturing element debug description
+    t =    35.25s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    35.26s         Checking existence of `"Daten neu geladen" Alert`
+    t =    35.29s         Capturing element debug description
+    t =    36.21s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    36.22s         Checking existence of `"Daten neu geladen" Alert`
+    t =    36.25s         Capturing element debug description
+    t =    37.28s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    37.28s         Checking existence of `"Daten neu geladen" Alert`
+    t =    37.31s         Capturing element debug description
+    t =    38.24s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    38.24s         Checking existence of `"Daten neu geladen" Alert`
+    t =    38.28s         Capturing element debug description
+    t =    39.20s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    39.20s         Checking existence of `"Daten neu geladen" Alert`
+    t =    39.22s         Capturing element debug description
+    t =    40.25s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    40.25s         Checking existence of `"Daten neu geladen" Alert`
+    t =    40.29s         Capturing element debug description
+    t =    41.20s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    41.20s         Checking existence of `"Daten neu geladen" Alert`
+    t =    41.22s         Capturing element debug description
+    t =    42.24s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    42.24s         Checking existence of `"Daten neu geladen" Alert`
+    t =    42.27s         Capturing element debug description
+    t =    43.20s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    43.20s         Checking existence of `"Daten neu geladen" Alert`
+    t =    43.24s         Capturing element debug description
+    t =    44.26s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    44.26s         Checking existence of `"Daten neu geladen" Alert`
+    t =    44.30s         Capturing element debug description
+    t =    45.22s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    45.22s         Checking existence of `"Daten neu geladen" Alert`
+    t =    45.25s         Capturing element debug description
+    t =    46.28s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    46.28s         Checking existence of `"Daten neu geladen" Alert`
+    t =    46.32s         Capturing element debug description
+    t =    47.25s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    47.25s         Checking existence of `"Daten neu geladen" Alert`
+    t =    47.27s         Capturing element debug description
+    t =    48.20s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    48.20s         Checking existence of `"Daten neu geladen" Alert`
+    t =    48.23s         Capturing element debug description
+    t =    49.26s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    49.26s         Checking existence of `"Daten neu geladen" Alert`
+    t =    49.30s         Capturing element debug description
+    t =    50.23s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    50.23s         Checking existence of `"Daten neu geladen" Alert`
+    t =    50.27s         Capturing element debug description
+    t =    51.20s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    51.20s         Checking existence of `"Daten neu geladen" Alert`
+    t =    51.21s         Capturing element debug description
+    t =    51.21s     Checking existence of `"Daten neu geladen" Alert`
+    t =    51.23s Collecting debug information to assist test failure triage
+    t =    51.23s     Requesting snapshot of accessibility hierarchy for app with pid 60843
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockUITests/DataResetUITests.swift:84: error: -[RestockUITests.DataResetUITests testEmergencyPathDeletesStoresAndShowsNoticeOnce] : XCTAssertTrue failed - Der Hinweis „Daten neu geladen“ erscheint nach dem Notfalllauf nicht
+    t =    51.27s Tear Down
+    t =    51.27s     Open com.johannesemmrich.Restock
+    t =    51.27s         Launch com.johannesemmrich.Restock
+    t =    51.27s             Terminate com.johannesemmrich.Restock:60843
+2026-10-04 09:35:26.391 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 09:35:26.391 xcodebuild[60396:10317351] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    52.54s             Setting up automation session
+    t =    53.30s             Wait for com.johannesemmrich.Restock to idle
+    t =    54.64s     Terminate com.johannesemmrich.Restock:61060
+Test Case '-[RestockUITests.DataResetUITests testEmergencyPathDeletesStoresAndShowsNoticeOnce]' failed (55.743 seconds).
+Test Suite 'DataResetUITests' failed at 2026-10-04 09:35:29.812.
+	 Executed 2 tests, with 2 failures (0 unexpected) in 130.062 (130.064) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-10-04 09:35:29.813.
+	 Executed 2 tests, with 2 failures (0 unexpected) in 130.062 (130.065) seconds
+Test Suite 'Selected tests' failed at 2026-10-04 09:35:29.813.
+	 Executed 2 tests, with 2 failures (0 unexpected) in 130.062 (130.066) seconds
+2026-10-04 09:35:46.529 xcodebuild[60396:10317351] [MT] IDETestOperationsObserverDebug: 148.693 elapsed -- Testing started completed.
+2026-10-04 09:35:46.530 xcodebuild[60396:10317351] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-04 09:35:46.530 xcodebuild[60396:10317351] [MT] IDETestOperationsObserverDebug: 148.693 sec, +148.693 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Logs/Test/Test-Restock-2026.10.04_09-33-17-+0200.xcresult
+
+Failing tests:
+	DataResetUITests.testAppUsableAfterEmergencyReset()
+	DataResetUITests.testEmergencyPathDeletesStoresAndShowsNoticeOnce()
+
+** TEST FAILED **
+
+Testing started

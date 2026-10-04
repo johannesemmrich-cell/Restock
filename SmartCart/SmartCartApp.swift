@@ -30,6 +30,7 @@ struct SmartCartApp: App {
             Self.clearReceiptReviewSeedForUITestsIfNeeded(context: container.mainContext)
             Self.clearReceiptResolutionStatsForUITestsIfNeeded()
             Self.clearMenuPlanForUITestsIfNeeded()
+            Self.clearDataResetForUITestsIfNeeded()
             Self.seedReceiptReviewForUITestsIfNeeded(context: container.mainContext)
             Self.seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context: container.mainContext)
             Self.seedReceiptReviewWeightLineForUITestsIfNeeded(context: container.mainContext)
@@ -65,7 +66,12 @@ struct SmartCartApp: App {
         // alle Prozesse GARANTIERT dieselbe Schema-Deklaration + Fallback-Reihenfolge öffnen
         // (ein Mismatch hier hat historisch echten Datenverlust verursacht, siehe
         // SharedModelContainer.swift).
-        if let c = SharedModelContainer.make() {
+        #if DEBUG
+        let forceContainerFailure = ProcessInfo.processInfo.arguments.contains("-forceContainerFailureForUITests")
+        #else
+        let forceContainerFailure = false
+        #endif
+        if !forceContainerFailure, let c = SharedModelContainer.make() {
             container = c
             return
         }
@@ -75,7 +81,13 @@ struct SmartCartApp: App {
         // Hinweis, statt dass die App danach kommentarlos leer aussieht (siehe SharedModelContainer
         // für den analogen Logging-Mechanismus bei den zwei vorherigen, weniger drastischen Stufen).
         UserDefaults.standard.set(true, forKey: "smartcart.dataResetOccurred")
+        #if DEBUG
+        let foreignMarker = Self.placeForeignMarkerForUITestsIfNeeded()
+        #endif
         Self.deleteStoreFiles()
+        #if DEBUG
+        Self.verifyForeignMarkerForUITests(foreignMarker)
+        #endif
         if let c = try? ModelContainer(for: schema, configurations: groupConfig) {
             container = c
             return
@@ -149,6 +161,36 @@ struct SmartCartApp: App {
     }
 
     #if DEBUG
+    /// Fremddatei-Prüfung für den Notfallpfad (Issue #98, Durchgang 3, `DataResetUITests`): legt vor
+    /// `deleteStoreFiles()` eine Nicht-Store-Datei in den Ordner, den sie leert. Only runs on
+    /// `-forceContainerFailureForUITests`, DEBUG-only.
+    private static func placeForeignMarkerForUITestsIfNeeded() -> URL? {
+        guard ProcessInfo.processInfo.arguments.contains("-forceContainerFailureForUITests"),
+              let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID)
+        else { return nil }
+        let folder = groupURL.appendingPathComponent("Library/Application Support")
+        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let marker = folder.appendingPathComponent("uitest-foreign-marker.txt")
+        precondition(FileManager.default.createFile(atPath: marker.path, contents: Data("marker".utf8)),
+                     "UI-Test: Markerdatei konnte nicht angelegt werden")
+        return marker
+    }
+
+    /// Beendet die App, wenn `deleteStoreFiles()` die Markerdatei mitgelöscht hat; räumt sie sonst weg.
+    private static func verifyForeignMarkerForUITests(_ marker: URL?) {
+        guard let marker else { return }
+        precondition(FileManager.default.fileExists(atPath: marker.path),
+                     "deleteStoreFiles() hat eine Fremddatei gelöscht: \(marker.lastPathComponent)")
+        try? FileManager.default.removeItem(at: marker)
+    }
+
+    /// Entfernt den Hinweis-Schlüssel des Notfallpfads (überlebt sonst einen vor dem Alert
+    /// abgebrochenen Test). Only runs on `-clearDataResetForUITests`, DEBUG-only.
+    private static func clearDataResetForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-clearDataResetForUITests") else { return }
+        UserDefaults.standard.removeObject(forKey: "smartcart.dataResetOccurred")
+    }
+
     /// Screenshot-only seed for the "Wer bringt was mit?" marketing screenshot: a real shared
     /// store with real CloudKit members requires a second participant actually accepting a
     /// share, which a single-simulator screenshot run can't produce — `shareID`/`members` are

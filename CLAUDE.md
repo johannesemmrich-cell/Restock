@@ -21,6 +21,8 @@ Some UI tests need a fixture screen that's normally only reachable via camera/OC
 
 `-seedReplenishmentForUITests` / `-clearReplenishmentForUITests` (Issue #98, Durchgang 2) seed two stores with backdated `PurchaseRecord`s only (the app computes what is due itself) for `ReplenishmentUITests`; the banner and „Vielleicht auch fällig“ exist only in developer mode, so these tests also pass `-developerMode YES`. Clear additionally removes the replenishment UserDefaults keys (snoozes, blocklist, feedback, metrics, collapse state). Details: `docs/specs/ui-tests/replenishment-uitest.md`.
 
+`-forceContainerFailureForUITests` (Issue #98, Durchgang 3, `DataResetUITests`, DEBUG-only): `SmartCartApp.init()` überspringt `SharedModelContainer.make()`, sodass der Notfallpfad (Stufe 3: `smartcart.dataResetOccurred` setzen, `deleteStoreFiles()`, frischer Container, Alert „Daten neu geladen“ in `HomeView`) echt durchläuft. **ACHTUNG:** löscht die Store-Dateien im App-Group-Container — nur im Test-Simulator (Restock-Validate) verwenden, nie gegen echte Daten. Vorher legt der DEBUG-Zweig eine Markerdatei `uitest-foreign-marker.txt` an und prüft per `precondition`, dass `deleteStoreFiles()` sie nicht trifft (Fremddatei-Schutz). `-clearDataResetForUITests` entfernt den Schlüssel `smartcart.dataResetOccurred` aus `UserDefaults.standard` (wird im `tearDown()` von `DataResetUITests` zusammen mit `-clearQuickAddAssignmentSeedForUITests` benutzt). Offene Grenze: dass `make()` in der Praxis `nil` liefert, lässt sich im Simulator nicht erzeugen; geprüft wird alles ab Stufe 3.
+
 ## Adding new Swift files
 
 Xcode does **not** auto-discover files on disk. Every new `.swift` file must be manually registered in `Restock.xcodeproj/project.pbxproj` in three places:
