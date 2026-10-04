@@ -1,0 +1,627 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/DataResetUITests" "-only-testing:RestockUITests/QuickAddAssignmentUITests/testAddedItemAppearsInStoreList" "-only-testing:RestockUITests/QuickAddAssignmentUITests/testChangeStoreMovesItemAndRemembersCorrection" "-only-testing:RestockUITests/QuickAddAssignmentUITests/testQuantityAndUnitShownInList"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-10-04 23:24:12.132490+0200 RestockUITests-Runner[47679:10943446] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-04 23:24:12.853.
+Test Suite 'RestockUITests.xctest' started at 2026-10-04 23:24:12.853.
+Test Suite 'DataResetUITests' started at 2026-10-04 23:24:12.853.
+Test Case '-[RestockUITests.DataResetUITests testAppUsableAfterEmergencyReset]' started.
+    t =     0.00s Start Test at 2026-10-04 23:24:12.854
+    t =     0.03s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+    t =     0.03s     Launch com.johannesemmrich.Restock
+2026-10-04 23:24:13.082 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:24:13.082 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[47679]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105b2c310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x105bc8398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     0.88s         Setting up automation session
+    t =     1.35s         Wait for com.johannesemmrich.Restock to idle
+    t =     3.10s Waiting 15.0s for Button (First Match) to exist
+    t =     4.17s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     4.17s         Checking existence of `Button (First Match)`
+    t =     4.24s         Capturing element debug description
+    t =     5.17s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     5.17s         Checking existence of `Button (First Match)`
+    t =     5.21s         Capturing element debug description
+    t =     6.16s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     6.16s         Checking existence of `Button (First Match)`
+    t =     6.17s         Capturing element debug description
+    t =     7.12s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     7.12s         Checking existence of `Button (First Match)`
+    t =     7.13s         Capturing element debug description
+    t =     8.11s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     8.11s         Checking existence of `Button (First Match)`
+    t =     8.12s         Capturing element debug description
+    t =     9.17s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     9.17s         Checking existence of `Button (First Match)`
+    t =     9.20s         Capturing element debug description
+    t =    10.16s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    10.16s         Checking existence of `Button (First Match)`
+    t =    10.19s         Capturing element debug description
+    t =    11.14s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    11.14s         Checking existence of `Button (First Match)`
+    t =    11.16s         Capturing element debug description
+    t =    12.12s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    12.12s         Checking existence of `Button (First Match)`
+    t =    12.13s         Capturing element debug description
+    t =    13.19s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    13.19s         Checking existence of `Button (First Match)`
+    t =    13.20s         Capturing element debug description
+    t =    14.15s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    14.15s         Checking existence of `Button (First Match)`
+    t =    14.18s         Capturing element debug description
+    t =    15.14s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    15.14s         Checking existence of `Button (First Match)`
+    t =    15.17s         Capturing element debug description
+    t =    16.12s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    16.12s         Checking existence of `Button (First Match)`
+    t =    16.15s         Capturing element debug description
+    t =    17.11s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    17.11s         Checking existence of `Button (First Match)`
+    t =    17.14s         Capturing element debug description
+    t =    18.10s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    18.10s         Checking existence of `Button (First Match)`
+    t =    18.12s         Capturing element debug description
+    t =    18.12s     Checking existence of `Button (First Match)`
+    t =    18.13s Collecting debug information to assist test failure triage
+    t =    18.13s     Requesting snapshot of accessibility hierarchy for app with pid 47688
+    t =    18.16s Terminate com.johannesemmrich.Restock:47688
+    t =    19.23s Open com.johannesemmrich.Restock
+    t =    19.23s     Launch com.johannesemmrich.Restock
+2026-10-04 23:24:32.090 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:24:32.090 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    19.45s         Setting up automation session
+    t =    20.19s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.DataResetUITests testAppUsableAfterEmergencyReset] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    21.67s Waiting 15.0s for Button (First Match) to exist
+    t =    22.74s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    22.74s         Checking existence of `Button (First Match)`
+    t =    22.82s Checking existence of `Button (First Match)`
+    t =    22.84s Terminate com.johannesemmrich.Restock:47801
+    t =    23.92s Open com.johannesemmrich.Restock
+    t =    23.92s     Launch com.johannesemmrich.Restock
+2026-10-04 23:24:36.775 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:24:36.775 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    24.14s         Setting up automation session
+    t =    24.79s         Wait for com.johannesemmrich.Restock to idle
+    t =    26.25s Waiting 20.0s for "Daten neu geladen" Alert to exist
+    t =    27.29s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    27.29s         Checking existence of `"Daten neu geladen" Alert`
+    t =    27.37s Waiting 20.0s for "Daten neu geladen" Alert to exist
+    t =    28.43s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    28.43s         Checking existence of `"Daten neu geladen" Alert`
+    t =    28.47s Tap "OK" Button
+    t =    28.47s     Wait for com.johannesemmrich.Restock to idle
+    t =    28.47s     Find the "OK" Button
+    t =    28.50s     Check for interrupting elements affecting "OK" Button
+    t =    28.53s     Synthesize event
+    t =    28.83s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.10s Waiting 15.0s for "Schnell hinzufügen…" TextField to exist
+    t =    30.16s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =    30.16s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =    30.19s Tap "Schnell hinzufügen…" TextField
+    t =    30.19s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.20s     Find the "Schnell hinzufügen…" TextField
+    t =    30.21s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    30.23s     Synthesize event
+    t =    30.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.81s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    31.81s     Find the "Schnell hinzufügen…" TextField
+    t =    31.88s Type 'Nudeln' into "Schnell hinzufügen…" TextField
+    t =    31.88s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.88s     Find the "Schnell hinzufügen…" TextField
+    t =    31.91s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    31.94s     Synthesize event
+    t =    32.24s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.31s Checking `Expect predicate `value CONTAINS "Nudeln"` for object "Schnell hinzufügen…" TextField`
+    t =    33.31s     Find the "Schnell hinzufügen…" TextField
+    t =    33.36s Checking existence of `"Daten neu geladen" Alert`
+    t =    33.39s Tear Down
+    t =    33.40s     Open com.johannesemmrich.Restock
+    t =    33.40s         Launch com.johannesemmrich.Restock
+    t =    33.40s             Terminate com.johannesemmrich.Restock:47820
+2026-10-04 23:24:47.331 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:24:47.331 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    34.69s             Setting up automation session
+    t =    35.45s             Wait for com.johannesemmrich.Restock to idle
+    t =    36.86s     Terminate com.johannesemmrich.Restock:47852
+Test Case '-[RestockUITests.DataResetUITests testAppUsableAfterEmergencyReset]' passed (38.049 seconds).
+Test Case '-[RestockUITests.DataResetUITests testEmergencyPathDeletesStoresAndShowsNoticeOnce]' started.
+    t =     0.00s Start Test at 2026-10-04 23:24:50.905
+    t =     0.02s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+2026-10-04 23:24:50.936 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:24:50.936 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.03s     Launch com.johannesemmrich.Restock
+    t =     0.25s         Setting up automation session
+    t =     0.91s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.DataResetUITests testEmergencyPathDeletesStoresAndShowsNoticeOnce] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     2.28s Waiting 15.0s for Button (First Match) to exist
+    t =     3.31s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     3.31s         Checking existence of `Button (First Match)`
+    t =     3.39s Waiting 15.0s for Button (First Match) to exist
+    t =     4.44s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     4.44s         Checking existence of `Button (First Match)`
+    t =     4.48s Checking existence of `Button (First Match)`
+    t =     4.50s Terminate com.johannesemmrich.Restock:47866
+    t =     5.57s Open com.johannesemmrich.Restock
+    t =     5.58s     Launch com.johannesemmrich.Restock
+2026-10-04 23:24:56.480 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:24:56.480 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     5.78s         Setting up automation session
+    t =     6.45s         Wait for com.johannesemmrich.Restock to idle
+    t =     7.86s Waiting 20.0s for "Daten neu geladen" Alert to exist
+    t =     8.89s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =     8.90s         Checking existence of `"Daten neu geladen" Alert`
+    t =     8.95s Waiting 20.0s for "Daten neu geladen" Alert to exist
+    t =     9.99s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =     9.99s         Checking existence of `"Daten neu geladen" Alert`
+    t =    10.03s Tap "OK" Button
+    t =    10.03s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.03s     Find the "OK" Button
+    t =    10.05s     Check for interrupting elements affecting "OK" Button
+    t =    10.08s     Synthesize event
+    t =    10.36s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.66s Checking `Expect predicate `exists == 0` for object "Daten neu geladen" Alert`
+    t =    11.66s     Checking existence of `"Daten neu geladen" Alert`
+    t =    11.69s Waiting 15.0s for "Schnell hinzufügen…" TextField to exist
+    t =    12.75s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =    12.75s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =    12.78s Checking existence of `Button (First Match)`
+    t =    12.81s Checking existence of `Button (First Match)`
+    t =    12.84s Terminate com.johannesemmrich.Restock:47890
+    t =    13.90s Open com.johannesemmrich.Restock
+    t =    13.90s     Launch com.johannesemmrich.Restock
+2026-10-04 23:25:04.804 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:25:04.804 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    14.12s         Setting up automation session
+    t =    14.84s         Wait for com.johannesemmrich.Restock to idle
+    t =    16.18s Waiting 15.0s for "Schnell hinzufügen…" TextField to exist
+    t =    17.24s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =    17.24s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =    17.31s Waiting 3.0s for "Daten neu geladen" Alert to exist
+    t =    18.38s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    18.38s         Checking existence of `"Daten neu geladen" Alert`
+    t =    18.41s         Capturing element debug description
+    t =    19.36s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    19.36s         Checking existence of `"Daten neu geladen" Alert`
+    t =    19.38s         Capturing element debug description
+    t =    20.32s     Checking `Expect predicate `existsNoRetry == 1` for object "Daten neu geladen" Alert`
+    t =    20.32s         Checking existence of `"Daten neu geladen" Alert`
+    t =    20.34s         Capturing element debug description
+    t =    20.34s     Checking existence of `"Daten neu geladen" Alert`
+    t =    20.35s Collecting debug information to assist test failure triage
+    t =    20.35s     Requesting snapshot of accessibility hierarchy for app with pid 47918
+    t =    20.38s Checking existence of `Button (First Match)`
+    t =    20.40s Checking existence of `Button (First Match)`
+    t =    20.43s Tear Down
+    t =    20.43s     Open com.johannesemmrich.Restock
+    t =    20.43s         Launch com.johannesemmrich.Restock
+    t =    20.43s             Terminate com.johannesemmrich.Restock:47918
+2026-10-04 23:25:12.380 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:25:12.380 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    21.69s             Setting up automation session
+    t =    22.40s             Wait for com.johannesemmrich.Restock to idle
+    t =    23.76s     Terminate com.johannesemmrich.Restock:47941
+Test Case '-[RestockUITests.DataResetUITests testEmergencyPathDeletesStoresAndShowsNoticeOnce]' passed (24.878 seconds).
+Test Suite 'DataResetUITests' passed at 2026-10-04 23:25:15.782.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 62.927 (62.929) seconds
+Test Suite 'QuickAddAssignmentUITests' started at 2026-10-04 23:25:15.783.
+Test Case '-[RestockUITests.QuickAddAssignmentUITests testAddedItemAppearsInStoreList]' started.
+    t =     0.00s Start Test at 2026-10-04 23:25:15.784
+    t =     0.02s Set Up
+    t =     0.02s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-10-04 23:25:15.805 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:25:15.805 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     0.90s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.QuickAddAssignmentUITests testAddedItemAppearsInStoreList] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     2.27s Waiting 15.0s for "Schnell hinzufügen…" TextField to exist
+    t =     3.33s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =     3.33s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =     3.40s Tap "Schnell hinzufügen…" TextField
+    t =     3.40s     Wait for com.johannesemmrich.Restock to idle
+    t =     3.40s     Find the "Schnell hinzufügen…" TextField
+    t =     3.41s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     3.43s     Synthesize event
+    t =     3.72s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.83s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     4.83s     Find the "Schnell hinzufügen…" TextField
+    t =     4.88s Type 'Nudeln' into "Schnell hinzufügen…" TextField
+    t =     4.88s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.89s     Find the "Schnell hinzufügen…" TextField
+    t =     4.91s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     4.94s     Synthesize event
+    t =     5.23s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.24s Waiting 5.0s for "quickAdd.targetCard" Any to exist
+    t =     6.29s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =     6.29s         Checking existence of `"quickAdd.targetCard" Any`
+    t =     6.40s Type '
+' into "Schnell hinzufügen…" TextField
+    t =     6.40s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.40s     Find the "Schnell hinzufügen…" TextField
+    t =     6.43s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     6.46s     Synthesize event
+    t =     6.67s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.07s Waiting 5.0s for "quickAdd.toast" Any to exist
+    t =     8.14s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.toast" Any`
+    t =     8.14s         Checking existence of `"quickAdd.toast" Any`
+    t =     8.23s Waiting 15.0s for Button (First Match) to exist
+    t =     9.29s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     9.29s         Checking existence of `Button (First Match)`
+    t =     9.34s Checking existence of `Keyboard (First Match)`
+    t =     9.35s Waiting 3.0s for "Fertig" Button to exist
+    t =    10.40s     Checking `Expect predicate `existsNoRetry == 1` for object "Fertig" Button`
+    t =    10.40s         Checking existence of `"Fertig" Button`
+    t =    10.41s Tap "Fertig" Button
+    t =    10.41s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.42s     Find the "Fertig" Button
+    t =    10.44s     Check for interrupting elements affecting "Done" Button
+    t =    10.46s     Synthesize event
+    t =    10.75s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.05s Checking `Expect predicate `exists == 0` for object Keyboard (First Match)`
+    t =    12.06s     Checking existence of `Keyboard (First Match)`
+    t =    13.17s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    13.17s     Find the Button (First Match)
+    t =    13.23s Tap "Lidl, · 1, 2x pro Woche, Nudeln" Button
+    t =    13.23s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.23s     Find the "Lidl, · 1, 2x pro Woche, Nudeln" Button
+    t =    13.25s     Check for interrupting elements affecting "Lidl, · 1, 2x pro Woche, Nudeln" Button
+    t =    13.27s     Synthesize event
+    t =    13.55s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.76s Waiting 10.0s for Cell (First Match) to exist
+    t =    14.81s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    14.81s         Checking existence of `Cell (First Match)`
+    t =    14.88s Tap Button (First Match)
+    t =    14.88s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.88s     Find the Button (First Match)
+    t =    14.90s     Check for interrupting elements affecting "BackButton" Button
+    t =    14.92s     Synthesize event
+    t =    15.21s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.05s Waiting 15.0s for Button (First Match) to exist
+    t =    17.10s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    17.10s         Checking existence of `Button (First Match)`
+    t =    17.14s Checking existence of `Keyboard (First Match)`
+    t =    18.23s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    18.23s     Find the Button (First Match)
+    t =    18.27s Tap "dm, 1x pro Woche, Liste ist leer" Button
+    t =    18.27s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.27s     Find the "dm, 1x pro Woche, Liste ist leer" Button
+    t =    18.29s     Check for interrupting elements affecting "dm, 1x pro Woche, Liste ist leer" Button
+    t =    18.31s     Synthesize event
+    t =    18.60s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.97s Waiting 10.0s for NavigationBar (First Match) to exist
+    t =    20.03s     Checking `Expect predicate `existsNoRetry == 1` for object NavigationBar (First Match)`
+    t =    20.03s         Checking existence of `NavigationBar (First Match)`
+    t =    20.05s Waiting 3.0s for Cell (First Match) to exist
+    t =    21.09s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    21.09s         Checking existence of `Cell (First Match)`
+    t =    21.14s         Capturing element debug description
+    t =    22.08s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    22.08s         Checking existence of `Cell (First Match)`
+    t =    22.14s         Capturing element debug description
+    t =    23.06s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    23.06s         Checking existence of `Cell (First Match)`
+    t =    23.13s         Capturing element debug description
+    t =    23.13s     Checking existence of `Cell (First Match)`
+    t =    23.16s Collecting debug information to assist test failure triage
+    t =    23.16s     Requesting snapshot of accessibility hierarchy for app with pid 47959
+    t =    23.20s Tear Down
+    t =    23.20s     Open com.johannesemmrich.Restock
+    t =    23.20s         Launch com.johannesemmrich.Restock
+    t =    23.20s             Terminate com.johannesemmrich.Restock:47959
+2026-10-04 23:25:40.041 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:25:40.041 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    24.47s             Setting up automation session
+    t =    25.24s             Wait for com.johannesemmrich.Restock to idle
+    t =    26.60s     Terminate com.johannesemmrich.Restock:48078
+Test Case '-[RestockUITests.QuickAddAssignmentUITests testAddedItemAppearsInStoreList]' passed (27.726 seconds).
+Test Case '-[RestockUITests.QuickAddAssignmentUITests testChangeStoreMovesItemAndRemembersCorrection]' started.
+    t =     0.00s Start Test at 2026-10-04 23:25:43.510
+    t =     0.02s Set Up
+    t =     0.02s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-10-04 23:25:43.532 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:25:43.532 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.24s         Setting up automation session
+    t =     0.91s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.QuickAddAssignmentUITests testChangeStoreMovesItemAndRemembersCorrection] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     2.29s Waiting 15.0s for "Schnell hinzufügen…" TextField to exist
+    t =     3.30s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =     3.30s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =     3.38s Tap "Schnell hinzufügen…" TextField
+    t =     3.38s     Wait for com.johannesemmrich.Restock to idle
+    t =     3.38s     Find the "Schnell hinzufügen…" TextField
+    t =     3.40s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     3.41s     Synthesize event
+    t =     3.69s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.77s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     4.77s     Find the "Schnell hinzufügen…" TextField
+    t =     4.83s Type 'Nudeln' into "Schnell hinzufügen…" TextField
+    t =     4.83s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.83s     Find the "Schnell hinzufügen…" TextField
+    t =     4.86s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     4.89s     Synthesize event
+    t =     5.19s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.19s Waiting 5.0s for "quickAdd.targetCard" Any to exist
+    t =     6.23s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =     6.23s         Checking existence of `"quickAdd.targetCard" Any`
+    t =     6.34s Type '
+' into "Schnell hinzufügen…" TextField
+    t =     6.34s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.34s     Find the "Schnell hinzufügen…" TextField
+    t =     6.37s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     6.40s     Synthesize event
+    t =     6.61s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.96s Waiting 5.0s for "quickAdd.toast.change" Any to exist
+    t =     7.97s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.toast.change" Any`
+    t =     7.97s         Checking existence of `"quickAdd.toast.change" Any`
+    t =     8.08s Tap "quickAdd.toast.change" Any
+    t =     8.08s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.08s     Find the "quickAdd.toast.change" Any
+    t =     8.16s     Check for interrupting elements affecting "quickAdd.toast.change" Button
+    t =     8.20s     Synthesize event
+    t =     8.49s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.57s Checking existence of `Button (First Match)`
+    t =     8.60s Checking existence of `Button (First Match)`
+    t =     8.62s Checking existence of `Button (First Match)`
+    t =     8.65s Checking existence of `Button (First Match)`
+    t =     8.71s Tap Button (First Match)
+    t =     8.71s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.71s     Find the Button (First Match)
+    t =     8.73s     Check for interrupting elements affecting "💄 dm" Button
+    t =     8.76s     Synthesize event
+    t =     9.06s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.35s Checking `Expect predicate `label CONTAINS "dm"` for object "quickAdd.toast.message" Any`
+    t =    10.35s     Find the "quickAdd.toast.message" Any
+    t =    10.47s Waiting 15.0s for Button (First Match) to exist
+    t =    11.50s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    11.50s         Checking existence of `Button (First Match)`
+    t =    11.56s Checking existence of `Keyboard (First Match)`
+    t =    11.57s Waiting 3.0s for "Fertig" Button to exist
+    t =    12.61s     Checking `Expect predicate `existsNoRetry == 1` for object "Fertig" Button`
+    t =    12.61s         Checking existence of `"Fertig" Button`
+    t =    12.65s Tap "Fertig" Button
+    t =    12.65s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.65s     Find the "Fertig" Button
+    t =    12.67s     Check for interrupting elements affecting "Done" Button
+    t =    12.70s     Synthesize event
+    t =    12.99s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.25s Checking `Expect predicate `exists == 0` for object Keyboard (First Match)`
+    t =    14.25s     Checking existence of `Keyboard (First Match)`
+    t =    15.35s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    15.35s     Find the Button (First Match)
+    t =    15.40s Tap "dm, · 1, 1x pro Woche, Nudeln" Button
+    t =    15.40s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.41s     Find the "dm, · 1, 1x pro Woche, Nudeln" Button
+    t =    15.43s     Check for interrupting elements affecting "dm, · 1, 1x pro Woche, Nudeln" Button
+    t =    15.44s     Synthesize event
+    t =    15.73s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.79s Waiting 10.0s for Cell (First Match) to exist
+    t =    16.83s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    16.84s         Checking existence of `Cell (First Match)`
+    t =    16.95s Tap Button (First Match)
+    t =    16.95s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.96s     Find the Button (First Match)
+    t =    16.97s     Check for interrupting elements affecting "BackButton" Button
+    t =    17.00s     Synthesize event
+    t =    17.29s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.16s Waiting 15.0s for Button (First Match) to exist
+    t =    19.20s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    19.20s         Checking existence of `Button (First Match)`
+    t =    19.23s Checking existence of `Keyboard (First Match)`
+    t =    20.30s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    20.30s     Find the Button (First Match)
+    t =    20.36s Tap "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    20.36s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.36s     Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    20.38s     Check for interrupting elements affecting "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    20.39s     Synthesize event
+    t =    20.68s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.06s Waiting 10.0s for NavigationBar (First Match) to exist
+    t =    22.10s     Checking `Expect predicate `existsNoRetry == 1` for object NavigationBar (First Match)`
+    t =    22.10s         Checking existence of `NavigationBar (First Match)`
+    t =    22.13s Waiting 3.0s for Cell (First Match) to exist
+    t =    23.17s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    23.17s         Checking existence of `Cell (First Match)`
+    t =    23.24s         Capturing element debug description
+    t =    24.18s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    24.18s         Checking existence of `Cell (First Match)`
+    t =    24.22s         Capturing element debug description
+    t =    25.13s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    25.13s         Checking existence of `Cell (First Match)`
+    t =    25.20s         Capturing element debug description
+    t =    25.20s     Checking existence of `Cell (First Match)`
+    t =    25.24s Collecting debug information to assist test failure triage
+    t =    25.24s     Requesting snapshot of accessibility hierarchy for app with pid 48090
+    t =    25.29s Tap Button (First Match)
+    t =    25.29s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.29s     Find the Button (First Match)
+    t =    25.30s     Check for interrupting elements affecting "BackButton" Button
+    t =    25.32s     Synthesize event
+    t =    25.62s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.46s Waiting 15.0s for "Schnell hinzufügen…" TextField to exist
+    t =    27.50s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =    27.50s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =    27.53s Tap "Schnell hinzufügen…" TextField
+    t =    27.53s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.53s     Find the "Schnell hinzufügen…" TextField
+    t =    27.55s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    27.57s     Synthesize event
+    t =    27.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.19s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    29.19s     Find the "Schnell hinzufügen…" TextField
+    t =    29.22s Type 'Nudeln' into "Schnell hinzufügen…" TextField
+    t =    29.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.22s     Find the "Schnell hinzufügen…" TextField
+    t =    29.25s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    29.27s     Synthesize event
+    t =    29.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.58s Waiting 5.0s for "quickAdd.targetCard" Any to exist
+    t =    30.62s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =    30.62s         Checking existence of `"quickAdd.targetCard" Any`
+    t =    31.76s Checking `Expect predicate `label CONTAINS "dm"` for object "quickAdd.target" Any`
+    t =    31.76s     Find the "quickAdd.target" Any
+    t =    32.92s Checking `Expect predicate `label CONTAINS "früher in diesen Laden verschoben"` for object "quickAdd.reason" Any`
+    t =    32.92s     Find the "quickAdd.reason" Any
+    t =    33.04s Type '' into "Schnell hinzufügen…" TextField
+    t =    33.04s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.04s     Find the "Schnell hinzufügen…" TextField
+    t =    33.07s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    33.10s     Synthesize event
+    t =    33.42s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.42s Type 'Joghurt' into "Schnell hinzufügen…" TextField
+    t =    33.42s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.42s     Find the "Schnell hinzufügen…" TextField
+    t =    33.46s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    33.48s     Synthesize event
+    t =    33.80s     Wait for com.johannesemmrich.Restock to idle
+    t =    34.86s Checking `Expect predicate `label CONTAINS "Lidl"` for object "quickAdd.target" Any`
+    t =    34.86s     Find the "quickAdd.target" Any
+    t =    34.98s Tear Down
+    t =    34.98s     Open com.johannesemmrich.Restock
+    t =    34.98s         Launch com.johannesemmrich.Restock
+    t =    34.99s             Terminate com.johannesemmrich.Restock:48090
+2026-10-04 23:26:19.536 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:26:19.536 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    36.24s             Setting up automation session
+    t =    37.07s             Wait for com.johannesemmrich.Restock to idle
+    t =    38.46s     Terminate com.johannesemmrich.Restock:48202
+Test Case '-[RestockUITests.QuickAddAssignmentUITests testChangeStoreMovesItemAndRemembersCorrection]' passed (39.574 seconds).
+Test Case '-[RestockUITests.QuickAddAssignmentUITests testQuantityAndUnitShownInList]' started.
+    t =     0.00s Start Test at 2026-10-04 23:26:23.085
+    t =     0.01s Set Up
+    t =     0.02s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-10-04 23:26:23.104 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:26:23.104 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     0.87s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.QuickAddAssignmentUITests testQuantityAndUnitShownInList] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     2.21s Waiting 15.0s for "Schnell hinzufügen…" TextField to exist
+    t =     3.26s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =     3.26s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =     3.33s Tap "Schnell hinzufügen…" TextField
+    t =     3.33s     Wait for com.johannesemmrich.Restock to idle
+    t =     3.33s     Find the "Schnell hinzufügen…" TextField
+    t =     3.34s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     3.36s     Synthesize event
+    t =     3.65s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.73s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     4.73s     Find the "Schnell hinzufügen…" TextField
+    t =     4.79s Type '500 gramm Hackflei...' into "Schnell hinzufügen…" TextField
+    t =     4.79s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.80s     Find the "Schnell hinzufügen…" TextField
+    t =     4.82s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     4.85s     Synthesize event
+    t =     5.40s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.40s Waiting 5.0s for "quickAdd.targetCard" Any to exist
+    t =     6.44s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =     6.44s         Checking existence of `"quickAdd.targetCard" Any`
+    t =     7.59s Checking `Expect predicate `label CONTAINS "Lidl"` for object "quickAdd.target" Any`
+    t =     7.59s     Find the "quickAdd.target" Any
+    t =     7.72s Type '
+' into "Schnell hinzufügen…" TextField
+    t =     7.72s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.72s     Find the "Schnell hinzufügen…" TextField
+    t =     7.75s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     7.77s     Synthesize event
+    t =     7.98s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.35s Waiting 5.0s for "quickAdd.toast" Any to exist
+    t =     9.41s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.toast" Any`
+    t =     9.41s         Checking existence of `"quickAdd.toast" Any`
+    t =     9.51s Waiting 15.0s for Button (First Match) to exist
+    t =    10.56s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    10.56s         Checking existence of `Button (First Match)`
+    t =    10.62s Checking existence of `Keyboard (First Match)`
+    t =    10.63s Waiting 3.0s for "Fertig" Button to exist
+    t =    11.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Fertig" Button`
+    t =    11.66s         Checking existence of `"Fertig" Button`
+    t =    11.70s Tap "Fertig" Button
+    t =    11.70s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.70s     Find the "Fertig" Button
+    t =    11.72s     Check for interrupting elements affecting "Done" Button
+    t =    11.75s     Synthesize event
+    t =    12.03s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.33s Checking `Expect predicate `exists == 0` for object Keyboard (First Match)`
+    t =    13.33s     Checking existence of `Keyboard (First Match)`
+    t =    14.41s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    14.41s     Find the Button (First Match)
+    t =    14.43s Tap "Lidl, · 1, 2x pro Woche, Hackfleisch" Button
+    t =    14.44s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.44s     Find the "Lidl, · 1, 2x pro Woche, Hackfleisch" Button
+    t =    14.46s     Check for interrupting elements affecting "Lidl, · 1, 2x pro Woche, Hackfleisch" Button
+    t =    14.47s     Synthesize event
+    t =    14.75s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.93s Waiting 10.0s for Cell (First Match) to exist
+    t =    15.98s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    15.98s         Checking existence of `Cell (First Match)`
+    t =    16.10s Waiting 5.0s for "500 gramm" StaticText to exist
+    t =    17.14s     Checking `Expect predicate `existsNoRetry == 1` for object "500 gramm" StaticText`
+    t =    17.14s         Checking existence of `"500 gramm" StaticText`
+    t =    17.19s Checking existence of `"ca. 500 gramm" StaticText`
+    t =    17.22s Checking existence of `"500 gramm Hackfleisch" StaticText`
+    t =    17.24s Tear Down
+    t =    17.24s     Open com.johannesemmrich.Restock
+    t =    17.24s         Launch com.johannesemmrich.Restock
+    t =    17.24s             Terminate com.johannesemmrich.Restock:48241
+2026-10-04 23:26:41.399 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-04 23:26:41.399 xcodebuild[47666:10943044] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    18.53s             Setting up automation session
+    t =    19.28s             Wait for com.johannesemmrich.Restock to idle
+    t =    20.66s     Terminate com.johannesemmrich.Restock:48321
+Test Case '-[RestockUITests.QuickAddAssignmentUITests testQuantityAndUnitShownInList]' passed (21.821 seconds).
+Test Suite 'QuickAddAssignmentUITests' passed at 2026-10-04 23:26:44.906.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 89.121 (89.123) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-04 23:26:44.907.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 152.048 (152.054) seconds
+Test Suite 'Selected tests' passed at 2026-10-04 23:26:44.908.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 152.048 (152.055) seconds
+2026-10-04 23:27:01.126 xcodebuild[47666:10943044] [MT] IDETestOperationsObserverDebug: 170.375 elapsed -- Testing started completed.
+2026-10-04 23:27:01.127 xcodebuild[47666:10943044] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-04 23:27:01.127 xcodebuild[47666:10943044] [MT] IDETestOperationsObserverDebug: 170.375 sec, +170.375 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Logs/Test/Test-Restock-2026.10.04_23-24-09-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started
