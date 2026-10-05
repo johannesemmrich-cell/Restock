@@ -44,7 +44,8 @@ jobs:
 
       - name: Write API key
         run: |
-          echo "$ASC_KEY_P8" | base64 -d > "$RUNNER_TEMP/AuthKey.p8"
+          # Der Schlüssel darf als eingefügter Text der .p8 oder als Base64 davon im Secret stehen.
+          if grep -q 'BEGIN PRIVATE KEY' <<< "$ASC_KEY_P8"; then printf '%s\n' "$ASC_KEY_P8"; else base64 -d <<< "$ASC_KEY_P8"; fi > "$RUNNER_TEMP/AuthKey.p8"
           chmod 600 "$RUNNER_TEMP/AuthKey.p8"
 
       - name: Archive
