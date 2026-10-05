@@ -1,0 +1,354 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockTests/SharedStoreMergeTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/SmartCart/Assets.xcassets /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/SmartCart/Preview Content/Preview Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: 93d2a064853f3836a1f62f10c89c1e30
+Build description path: /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/XCBuildData/93d2a064853f3836a1f62f10c89c1e30.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/SmartCartWidgets/Info.plist (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/SmartCartWidgets/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockShareExtension/Info.plist (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockShareExtension/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist
+
+AppIntentsSSUTraining (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist --temp-dir-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/ssu --bundle-id com.johannesemmrich.Restock.RestockShareExtension --product-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex --extracted-metadata-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Metadata.appintents --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension.DependencyMetadataFileList --source-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist --archive-ssu-assets
+2026-10-05 15:44:37.706 appintentsnltrainingprocessor[92956:14208890] Parsing options for appintentsnltrainingprocessor
+2026-10-05 15:44:37.706 appintentsnltrainingprocessor[92956:14208890] Starting AppIntents SSU YAML Generation
+2026-10-05 15:44:37.708 appintentsnltrainingprocessor[92956:14208890] No AppShortcuts found - Skipping.
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftConstValuesFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.LinkFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.LinkFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json
+
+AppIntentsSSUTraining (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist --temp-dir-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/ssu --bundle-id com.johannesemmrich.Restock.SmartCartWidgets --product-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex --extracted-metadata-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Metadata.appintents --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets.DependencyMetadataFileList --source-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist --archive-ssu-assets
+2026-10-05 15:44:37.706 appintentsnltrainingprocessor[92957:14208891] Parsing options for appintentsnltrainingprocessor
+2026-10-05 15:44:37.707 appintentsnltrainingprocessor[92957:14208891] Starting AppIntents SSU YAML Generation
+2026-10-05 15:44:37.736 appintentsnltrainingprocessor[92957:14208891] No AppShortcuts found - Skipping.
+
+SwiftDriver RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco -experimental-emit-module-separately -disable-cmo
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension.debug.dylib (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension.debug.dylib
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/RestockShareExtension.debug.dylib: replacing existing signature
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets.debug.dylib (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets.debug.dylib
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/SmartCartWidgets.debug.dylib: replacing existing signature
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/__preview.dylib (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/__preview.dylib
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/__preview.dylib: replacing existing signature
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockShareExtension.build/RestockShareExtension.appex.xcent --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex: replacing existing signature
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/__preview.dylib (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/__preview.dylib
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/__preview.dylib: replacing existing signature
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/SmartCartWidgets.build/SmartCartWidgets.appex.xcent --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex: replacing existing signature
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks -remove-static-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks -remove-static-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+AppIntentsSSUTraining (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist --temp-dir-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/ssu --bundle-id com.johannesemmrich.Restock --product-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app --extracted-metadata-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/Metadata.appintents --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.DependencyMetadataFileList --source-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist --archive-ssu-assets
+2026-10-05 15:44:37.895 appintentsnltrainingprocessor[93025:14209045] Parsing options for appintentsnltrainingprocessor
+2026-10-05 15:44:37.896 appintentsnltrainingprocessor[93025:14209045] Starting AppIntents SSU YAML Generation
+2026-10-05 15:44:37.924 appintentsnltrainingprocessor[93025:14209045] Training 'Artikel zu ${+applicationName} hinzufügen|Etwas zu ${+applicationName} hinzufügen|Zur Einkaufsliste in ${+applicationName} hinzufügen|Zur ${+applicationName} Einkaufsliste hinzufügen|Einkaufsliste in ${+applicationName} ergänzen|Neuer Artikel bei ${+applicationName}|Add item to ${+applicationName}|Add to ${+applicationName} shopping list' for en
+2026-10-05 15:44:37.924 appintentsnltrainingprocessor[93025:14209045] Training 'Artikel zu ${+applicationName} hinzufügen|Etwas zu ${+applicationName} hinzufügen|Zur Einkaufsliste in ${+applicationName} hinzufügen|Zur ${+applicationName} Einkaufsliste hinzufügen|Einkaufsliste in ${+applicationName} ergänzen|Neuer Artikel bei ${+applicationName}|Add item to ${+applicationName}|Add to ${+applicationName} shopping list' for de
+2026-10-05 15:44:37.924 appintentsnltrainingprocessor[93025:14209045] Training Negative Phrases '' for en
+2026-10-05 15:44:37.924 appintentsnltrainingprocessor[93025:14209045] Training Negative Phrases '' for de
+2026-10-05 15:44:37.924 appintentsnltrainingprocessor[93025:14209045] Application name 'Restock' for en
+2026-10-05 15:44:37.924 appintentsnltrainingprocessor[93025:14209045] Application name 'Restock' for de
+2026-10-05 15:44:37.940 appintentsnltrainingprocessor[93025:14209045] Generated AppIntents SSU YAML files in file:///Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/ssu/
+2026-10-05 15:44:37.941 appintentsnltrainingprocessor[93025:14209045] Copied AppIntents SSU YAML files to file:///Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/Metadata.appintents/
+Archiving all locales.
+[------------------------------------------------------------] 0% archiving de[🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢------------------------------] 50% archived de[🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢------------------------------] 50% archiving en[🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢] 100% archived en[🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢] 100% archived 2 locales/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/de.lproj/nlu.appintents
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/de.lproj/nlu.appintents/46ab8d7191f20bba336609a4704c0932.version
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/en.lproj/nlu.appintents
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/en.lproj/nlu.appintents/95f9fea181675b00fa480cbb6563a631.version
+
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    builtin-infoPlistUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist
+
+SwiftCompile normal arm64 Compiling\ SharedStoreMergeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift (in target 'RestockTests' from project 'Restock')
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift:193:36: error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+191 |         let record = await makeRecord(code: code, items: [remote])
+192 | 
+193 |         let result = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+    |                                    `- error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+194 | 
+195 |         XCTAssertEqual(Set(result.items.map(\.id)), [local.id, remote.id])
+
+Restock.SharedStoreService.mergeIntoRecord:2:14: note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+1 | actor SharedStoreService {
+2 | private func mergeIntoRecord(_ record: CKRecord, store: Restock.Store, code: String, isNewRecord: Bool) -> (items: [Restock.SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String : Double], priceDates: [String : Date], priceUnits: [String : String], categories: [String : Restock.CustomCategoryEntry], assignments: [String : Restock.CategoryAssignmentEntry])}
+  |              `- note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift:195:45: error: cannot infer key path type from context; consider explicitly specifying a root type
+193 |         let result = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+194 | 
+195 |         XCTAssertEqual(Set(result.items.map(\.id)), [local.id, remote.id])
+    |                                             `- error: cannot infer key path type from context; consider explicitly specifying a root type
+196 |         let written = await service.decodeItems(record["itemsJSON"] as? String ?? "[]")
+197 |         XCTAssertEqual(Set(written.map(\.id)), [local.id, remote.id])
+
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift:209:36: error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+207 |         localNewer.lastModified = t3
+208 |         var record = await makeRecord(code: code, items: [remoteItem(id: id, name: "Server älter", lastModified: t1)])
+209 |         var result = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+    |                                    `- error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+210 |         XCTAssertEqual(result.items.first { $0.id == id }?.name, "Lokal neuer")
+211 | 
+
+Restock.SharedStoreService.mergeIntoRecord:2:14: note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+1 | actor SharedStoreService {
+2 | private func mergeIntoRecord(_ record: CKRecord, store: Restock.Store, code: String, isNewRecord: Bool) -> (items: [Restock.SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String : Double], priceDates: [String : Date], priceUnits: [String : String], categories: [String : Restock.CustomCategoryEntry], assignments: [String : Restock.CategoryAssignmentEntry])}
+  |              `- note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift:214:32: error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+212 |         localNewer.lastModified = t1
+213 |         record = await makeRecord(code: code, items: [remoteItem(id: id, name: "Server neuer", lastModified: t3)])
+214 |         result = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+    |                                `- error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+215 |         XCTAssertEqual(result.items.first { $0.id == id }?.name, "Server neuer")
+216 |     }
+
+Restock.SharedStoreService.mergeIntoRecord:2:14: note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+1 | actor SharedStoreService {
+2 | private func mergeIntoRecord(_ record: CKRecord, store: Restock.Store, code: String, isNewRecord: Bool) -> (items: [Restock.SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String : Double], priceDates: [String : Date], priceUnits: [String : String], categories: [String : Restock.CustomCategoryEntry], assignments: [String : Restock.CategoryAssignmentEntry])}
+  |              `- note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift:226:36: error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+224 |         let record = await makeRecord(code: code, items: [locallyDeleted], deleted: [remotelyDeleted.id])
+225 | 
+226 |         let result = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+    |                                    `- error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+227 | 
+228 |         XCTAssertTrue(result.items.isEmpty, "Artikel mit Vermerk fehlen, auch wenn die Gegenseite sie noch hat")
+
+Restock.SharedStoreService.mergeIntoRecord:2:14: note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+1 | actor SharedStoreService {
+2 | private func mergeIntoRecord(_ record: CKRecord, store: Restock.Store, code: String, isNewRecord: Bool) -> (items: [Restock.SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String : Double], priceDates: [String : Date], priceUnits: [String : String], categories: [String : Restock.CustomCategoryEntry], assignments: [String : Restock.CategoryAssignmentEntry])}
+  |              `- note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift:240:36: error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+238 |         let record = await makeRecord(code: code, members: ["Zed", "Anna", ""])
+239 | 
+240 |         let result = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+    |                                    `- error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+241 | 
+242 |         let expected = Set(["Zed", "Anna", "Ben", UserIdentity.displayName]).sorted()
+
+Restock.SharedStoreService.mergeIntoRecord:2:14: note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+1 | actor SharedStoreService {
+2 | private func mergeIntoRecord(_ record: CKRecord, store: Restock.Store, code: String, isNewRecord: Bool) -> (items: [Restock.SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String : Double], priceDates: [String : Date], priceUnits: [String : String], categories: [String : Restock.CustomCategoryEntry], assignments: [String : Restock.CategoryAssignmentEntry])}
+  |              `- note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift:253:27: error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+251 | 
+252 |         let fresh = await makeRecord(code: code)
+253 |         _ = await service.mergeIntoRecord(fresh, store: store, code: code, isNewRecord: true)
+    |                           `- error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+254 |         XCTAssertEqual(fresh["ownerDevice"] as? String, UserIdentity.displayName)
+255 | 
+
+Restock.SharedStoreService.mergeIntoRecord:2:14: note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+1 | actor SharedStoreService {
+2 | private func mergeIntoRecord(_ record: CKRecord, store: Restock.Store, code: String, isNewRecord: Bool) -> (items: [Restock.SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String : Double], priceDates: [String : Date], priceUnits: [String : String], categories: [String : Restock.CustomCategoryEntry], assignments: [String : Restock.CategoryAssignmentEntry])}
+  |              `- note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift:258:27: error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+256 |         let existing = await makeRecord(code: code)
+257 |         existing["ownerDevice"] = "Besitzer" as CKRecordValue
+258 |         _ = await service.mergeIntoRecord(existing, store: store, code: code, isNewRecord: false)
+    |                           `- error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+259 |         XCTAssertEqual(existing["ownerDevice"] as? String, "Besitzer")
+260 |     }
+
+Restock.SharedStoreService.mergeIntoRecord:2:14: note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+1 | actor SharedStoreService {
+2 | private func mergeIntoRecord(_ record: CKRecord, store: Restock.Store, code: String, isNewRecord: Bool) -> (items: [Restock.SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String : Double], priceDates: [String : Date], priceUnits: [String : String], categories: [String : Restock.CustomCategoryEntry], assignments: [String : Restock.CategoryAssignmentEntry])}
+  |              `- note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift:275:27: error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+273 |         record["pricesJSON"] = LearnedPriceSync.encode(.init(prices: ["käse": 4.0], dates: ["käse": t1], units: ["käse": "g"])) as CKRecordValue
+274 | 
+275 |         _ = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+    |                           `- error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+276 | 
+277 |         XCTAssertEqual(record["storeName"] as? String, store.name)
+
+Restock.SharedStoreService.mergeIntoRecord:2:14: note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+1 | actor SharedStoreService {
+2 | private func mergeIntoRecord(_ record: CKRecord, store: Restock.Store, code: String, isNewRecord: Bool) -> (items: [Restock.SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String : Double], priceDates: [String : Date], priceUnits: [String : String], categories: [String : Restock.CustomCategoryEntry], assignments: [String : Restock.CategoryAssignmentEntry])}
+  |              `- note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+3 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift:302:36: error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+300 | 
+301 |         let record = await makeRecord(code: code, items: [tied])
+302 |         let pushed = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+    |                                    `- error: 'mergeIntoRecord' is inaccessible due to 'private' protection level
+303 |         XCTAssertEqual(pushed.items.first?.name, "Lokal", "Push-Merge: bei Gleichstand gewinnt lokal")
+304 | 
+
+Restock.SharedStoreService.mergeIntoRecord:2:14: note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+1 | actor SharedStoreService {
+2 | private func mergeIntoRecord(_ record: CKRecord, store: Restock.Store, code: String, isNewRecord: Bool) -> (items: [Restock.SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String : Double], priceDates: [String : Date], priceUnits: [String : String], categories: [String : Restock.CustomCategoryEntry], assignments: [String : Restock.CategoryAssignmentEntry])}
+  |              `- note: 'mergeIntoRecord(_:store:code:isNewRecord:)' declared here
+3 | 
+Failed frontend command:
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    builtin-SwiftPerFileCompile SharedStoreMergeTests.swift
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ExistingDataSurvivesCloudEnableTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SchemaCloudKitCompatibilityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptHistoryMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptResolutionStatsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptKnownItemNamesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedItemDataPhotoRegressionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/PhotoCompressorTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptParserPriceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptSavePurchaseQuantityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/PriceProvenanceMigrationTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/LegacyLearnedPriceResetTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/LearnedPriceSyncTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptLearningTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ShoppingItemFuzzyPriceMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/PriceEstimatorCategoryFallbackTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/PriceEstimatorStagesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptParserReweTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptParserLidlFullReceiptTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptNameAIResolverSanitizeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/AssignmentServiceDetectStoreTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptParserStornoTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/LiveActivityServiceReattachTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptAbbreviationExpansionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/QuickAddParserTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ConsumptionPatternTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/StorePresetsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ShoppingRouteManualOrderTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/StoreCategoriesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ShoppingRouteTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/AssignmentServiceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/PurchaseRecordDeletionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReplenishmentPackageATests.swift -primary-file /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReplenishmentPackageBTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReplenishmentPackageCTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReplenishmentDigestTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptParserSuggestionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/ReceiptScannerReResolutionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/DateFixtures.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedModelContainerExtensionDetectionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/AssignmentServiceQuantitySuggestionTests.swift -emit-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreMergeTests.d -emit-const-values-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreMergeTests.swiftconstvalues -emit-reference-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreMergeTests.swiftdeps -serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreMergeTests.dia -target arm64-apple-ios18.0-simulator -disable-cross-import-overlay-search -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/CoreData.swiftoverlay -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationModelsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationModelsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftDataMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftDataMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco -enable-anonymous-context-mangled-names -file-compilation-dir /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name RestockTests -const-gather-protocols-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -disable-clang-spi -clang-target arm64-apple-ios27.0-simulator -target-sdk-version 27.0 -target-sdk-name iphonesimulator27.0 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreMergeTests.o -debug-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -index-unit-output-path /Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreMergeTests.o -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Index.noindex/DataStore -index-system-modules
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockTests (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco
+    
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Logs/Test/Test-Restock-2026.10.05_15-44-34-+0200.xcresult
+
+Testing failed:
+	'mergeIntoRecord' is inaccessible due to 'private' protection level
+	Cannot infer key path type from context; consider explicitly specifying a root type
+	'mergeIntoRecord' is inaccessible due to 'private' protection level
+	'mergeIntoRecord' is inaccessible due to 'private' protection level
+	'mergeIntoRecord' is inaccessible due to 'private' protection level
+	'mergeIntoRecord' is inaccessible due to 'private' protection level
+	'mergeIntoRecord' is inaccessible due to 'private' protection level
+	'mergeIntoRecord' is inaccessible due to 'private' protection level
+	'mergeIntoRecord' is inaccessible due to 'private' protection level
+	'mergeIntoRecord' is inaccessible due to 'private' protection level
+	Testing cancelled because the build failed.
+
+** TEST FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift (in target 'RestockTests' from project 'Restock')
+	SwiftCompile normal arm64 Compiling\ SharedStoreMergeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockTests/SharedStoreMergeTests.swift (in target 'RestockTests' from project 'Restock')
+	Testing project Restock with scheme Restock
+(3 failures)

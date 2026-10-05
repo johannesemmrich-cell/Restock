@@ -280,17 +280,22 @@ final class QuickAddAssignmentUITests: XCTestCase {
         change.tap()
 
         // Der Dialog „Zu welchem Laden?“ bietet nur den anderen Laden an. Je nach iOS-Version liegen
-        // die Knöpfe in einem Sheet oder direkt in der App; die Kachel „dm,“ zählt nicht.
-        let predicate = NSPredicate(format: "label ENDSWITH %@", "dm")
-        let inSheet = app.sheets.buttons.matching(predicate).firstMatch
-        let inApp = app.buttons.matching(predicate).firstMatch
+        // die Knöpfe in einem Sheet oder direkt in der App. Gesucht wird per CONTAINS (das Knopf-Label
+        // trägt das Emoji vorn), die Ladenkachel („dm, …“ / „Lidl, …“) ist ausgenommen.
+        func dialogChoice(_ name: String) -> NSPredicate {
+            NSPredicate(format: "label CONTAINS %@ AND NOT (label BEGINSWITH %@)", name, "\(name),")
+        }
+        let inSheet = app.sheets.buttons.matching(dialogChoice("dm")).firstMatch
+        let inApp = app.buttons.matching(dialogChoice("dm")).firstMatch
         let deadline = Date().addingTimeInterval(10)
         while !inSheet.exists && !inApp.exists && Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.25))
         }
-        let dmChoice = inSheet.exists ? inSheet : inApp
-        XCTAssertTrue(dmChoice.exists, "Dialog bietet „dm“ nicht an")
-        XCTAssertFalse(app.sheets.buttons.matching(NSPredicate(format: "label ENDSWITH %@", "Lidl")).firstMatch.exists,
+        // Derselbe Dialog-Ort für Probe und Gegenprobe: dort, wo „dm“ gefunden wurde.
+        let dialogButtons = inSheet.exists ? app.sheets.buttons : app.buttons
+        let dmChoice = dialogButtons.matching(dialogChoice("dm")).firstMatch
+        XCTAssertTrue(dmChoice.exists, "Dialog bietet „dm“ nicht an (Gegenprobe: der Zugriff findet nichts)")
+        XCTAssertFalse(dialogButtons.matching(dialogChoice("Lidl")).firstMatch.exists,
                        "Der Dialog bietet den Laden an, in dem der Artikel schon liegt")
         dmChoice.tap()
 
@@ -333,11 +338,12 @@ final class QuickAddAssignmentUITests: XCTestCase {
         XCTAssertTrue(element(app, "quickAdd.toast").waitForExistence(timeout: 5), "Toast erscheint nicht")
 
         openStore("Lidl", in: app)
-        XCTAssertTrue(listRow("Hackfleisch", in: app).waitForExistence(timeout: 10),
+        let row = listRow("Hackfleisch", in: app)
+        XCTAssertTrue(row.waitForExistence(timeout: 10),
                       "„Hackfleisch“ steht nicht als Name in der Liste von Lidl")
-        XCTAssertTrue(app.staticTexts["500 gramm"].waitForExistence(timeout: 5),
-                      "Die Mengenzeile „500 gramm“ fehlt in der Liste")
-        XCTAssertFalse(app.staticTexts["ca. 500 gramm"].exists,
+        XCTAssertTrue(row.staticTexts["500 gramm"].waitForExistence(timeout: 5),
+                      "Die Mengenzeile „500 gramm“ fehlt in der Zeile von „Hackfleisch“")
+        XCTAssertFalse(row.staticTexts["ca. 500 gramm"].exists,
                        "Die selbst getippte Menge ist fälschlich als Annahme („ca. “) markiert")
         XCTAssertFalse(app.staticTexts["500 gramm Hackfleisch"].exists,
                        "Der Rohtext steht als Name in der Liste statt „Hackfleisch“")

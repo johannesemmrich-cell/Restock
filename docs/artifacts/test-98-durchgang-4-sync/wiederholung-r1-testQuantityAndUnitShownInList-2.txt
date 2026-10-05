@@ -1,0 +1,156 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/QuickAddAssignmentUITests/testQuantityAndUnitShownInList"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-10-05 17:29:22.377342+0200 RestockUITests-Runner[30791:15016482] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-05 17:29:23.462.
+Test Suite 'RestockUITests.xctest' started at 2026-10-05 17:29:23.463.
+Test Suite 'QuickAddAssignmentUITests' started at 2026-10-05 17:29:23.463.
+Test Case '-[RestockUITests.QuickAddAssignmentUITests testQuantityAndUnitShownInList]' started.
+    t =     0.00s Start Test at 2026-10-05 17:29:23.464
+    t =     0.06s Set Up
+    t =     0.06s Open com.johannesemmrich.Restock
+    t =     0.06s     Launch com.johannesemmrich.Restock
+2026-10-05 17:29:23.761 xcodebuild[30774:15016149] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-05 17:29:23.761 xcodebuild[30774:15016149] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[30791]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10a2c4310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a340398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     1.40s         Setting up automation session
+    t =     1.95s         Wait for com.johannesemmrich.Restock to idle
+    t =     3.91s Waiting 15.0s for "Schnell hinzufügen…" TextField to exist
+    t =     4.95s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =     4.95s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =     5.07s Tap "Schnell hinzufügen…" TextField
+    t =     5.07s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.08s     Find the "Schnell hinzufügen…" TextField
+    t =     5.09s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     5.12s     Synthesize event
+    t =     5.43s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.71s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     6.71s     Find the "Schnell hinzufügen…" TextField
+    t =     6.74s Type '500 gramm Hackflei...' into "Schnell hinzufügen…" TextField
+    t =     6.74s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.74s     Find the "Schnell hinzufügen…" TextField
+    t =     6.76s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =     6.79s     Synthesize event
+    t =     7.33s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.34s Waiting 5.0s for "quickAdd.targetCard" Any to exist
+    t =     8.38s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =     8.38s         Checking existence of `"quickAdd.targetCard" Any`
+    t =     9.46s Checking `Expect predicate `label CONTAINS "Lidl"` for object "quickAdd.target" Any`
+    t =     9.47s     Find the "quickAdd.target" Any
+    t =     9.54s     Capturing element debug description
+    t =     9.57s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =     9.62s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =     9.66s         Find: Descendants matching type Any
+    t =     9.66s         Find: Elements matching predicate '"quickAdd.target" IN identifiers'
+    t =     9.66s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =     9.69s         Find: Descendants matching type Any
+    t =     9.70s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    10.49s Checking `Expect predicate `label CONTAINS "Lidl"` for object "quickAdd.target" Any`
+    t =    10.49s     Find the "quickAdd.target" StaticText
+    t =    10.56s     Capturing element debug description
+    t =    10.59s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    10.64s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    10.68s         Find: Descendants matching type Any
+    t =    10.68s         Find: Elements matching predicate '"quickAdd.target" IN identifiers'
+    t =    10.68s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    10.73s         Find: Descendants matching type Any
+    t =    10.73s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    11.46s Checking `Expect predicate `label CONTAINS "Lidl"` for object "quickAdd.target" Any`
+    t =    11.47s     Find the "quickAdd.target" StaticText
+    t =    11.55s     Capturing element debug description
+    t =    11.72s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    11.77s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    11.80s         Find: Descendants matching type Any
+    t =    11.80s         Find: Elements matching predicate '"quickAdd.target" IN identifiers'
+    t =    11.81s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    11.84s         Find: Descendants matching type Any
+    t =    11.84s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    12.53s Checking `Expect predicate `label CONTAINS "Lidl"` for object "quickAdd.target" Any`
+    t =    12.53s     Find the "quickAdd.target" StaticText
+    t =    12.60s     Capturing element debug description
+    t =    12.63s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    12.68s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    12.71s         Find: Descendants matching type Any
+    t =    12.71s         Find: Elements matching predicate '"quickAdd.target" IN identifiers'
+    t =    12.71s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    12.75s         Find: Descendants matching type Any
+    t =    12.75s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    13.44s Checking `Expect predicate `label CONTAINS "Lidl"` for object "quickAdd.target" Any`
+    t =    13.45s     Find the "quickAdd.target" StaticText
+    t =    13.50s     Capturing element debug description
+    t =    13.53s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    13.58s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    13.61s         Find: Descendants matching type Any
+    t =    13.61s         Find: Elements matching predicate '"quickAdd.target" IN identifiers'
+    t =    13.62s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+    t =    13.65s         Find: Descendants matching type Any
+    t =    13.65s         Requesting snapshot of accessibility hierarchy for app with pid 30817
+/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/RestockUITests/QuickAddAssignmentUITests.swift:335: error: -[RestockUITests.QuickAddAssignmentUITests testQuantityAndUnitShownInList] : XCTAssertTrue failed - Ziel-Karte nennt Lidl nicht
+    t =    13.98s Tear Down
+    t =    13.98s     Open com.johannesemmrich.Restock
+    t =    13.98s         Launch com.johannesemmrich.Restock
+    t =    13.98s             Terminate com.johannesemmrich.Restock:30817
+2026-10-05 17:29:38.463 xcodebuild[30774:15016149] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-05 17:29:38.463 xcodebuild[30774:15016149] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    15.41s             Setting up automation session
+    t =    16.22s             Wait for com.johannesemmrich.Restock to idle
+    t =    17.86s     Terminate com.johannesemmrich.Restock:30887
+Test Case '-[RestockUITests.QuickAddAssignmentUITests testQuantityAndUnitShownInList]' failed (19.055 seconds).
+Test Suite 'QuickAddAssignmentUITests' failed at 2026-10-05 17:29:42.520.
+	 Executed 1 test, with 1 failure (0 unexpected) in 19.055 (19.057) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-10-05 17:29:42.520.
+	 Executed 1 test, with 1 failure (0 unexpected) in 19.055 (19.057) seconds
+Test Suite 'Selected tests' failed at 2026-10-05 17:29:42.520.
+	 Executed 1 test, with 1 failure (0 unexpected) in 19.055 (19.058) seconds
+2026-10-05 17:39:42.933 xcodebuild[30774:15016162]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Timed out after 600.0 seconds while waiting for a response from the invoked process
+2026-10-05 17:39:42.988 xcodebuild[30774:15016149] [MT] IDETestOperationsObserverDebug: 622.446 elapsed -- Testing started completed.
+2026-10-05 17:39:42.989 xcodebuild[30774:15016149] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-05 17:39:42.989 xcodebuild[30774:15016149] [MT] IDETestOperationsObserverDebug: 622.447 sec, +622.447 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-chblushwslxuizfjqonnstxvvpvp/Logs/Test/Test-Restock-2026.10.05_17-29-19-+0200.xcresult
+
+Failing tests:
+	QuickAddAssignmentUITests.testQuantityAndUnitShownInList()
+
+** TEST FAILED **
+
+Testing started

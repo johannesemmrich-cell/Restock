@@ -1,0 +1,63 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-jaunty-kindling-taco/1929ab28-2656-4fcb-bf31-c0888663be61/scratchpad/dd/Build/Products/r4242.xctestrun -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockTests/SharedStoreMergeTests"
+
+2026-10-05 17:15:31.314093+0200 Restock[26133:14978034] [General] Failed to connect to linkd to request update AppShortcut parameters, error: Kommunikation mit der Hilfs-App nicht möglich.
+2026-10-05 17:15:31.419111+0200 Restock[26133:14977816] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-05 17:15:31.462056+0200 Restock[26133:14978036] [CK] Could not validate account info cache. (This is a potential performance issue.)
+2026-10-05 17:15:31.499202+0200 Restock[26133:14978034] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1043000e0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x104298500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/1DCC318A-3AEB-4793-AA9F-2B25B14CB5CF/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-05 17:15:31.499466+0200 Restock[26133:14978034] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1043000e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-05 17:15:31.499588+0200 Restock[26133:14978034] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1043000e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-05 17:15:31.514406+0200 Restock[26133:14977816] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-10-05 17:15:31.667334+0200 Restock[26133:14978050] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+Test Suite 'Selected tests' started at 2026-10-05 17:15:32.249.
+Test Suite 'RestockTests.xctest' started at 2026-10-05 17:15:32.250.
+Test Suite 'SharedStoreMergeTests' started at 2026-10-05 17:15:32.250.
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyAddsMembersWithoutDuplicates]' started.
+[AppDelegate] push registration succeeded, token length: 80
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyAddsMembersWithoutDuplicates]' passed (0.037 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyDeletesOnlyTombstonedItems]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyDeletesOnlyTombstonedItems]' passed (0.026 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeOwnerOnlyForNewRecord]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeOwnerOnlyForNewRecord]' passed (0.012 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeLastWriteWinsBothDirections]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeLastWriteWinsBothDirections]' passed (0.006 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeWritesMetadataCategoriesAssignmentsPrices]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeWritesMetadataCategoriesAssignmentsPrices]' passed (0.008 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyWithoutShareIDWritesNoWatermark]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyWithoutShareIDWritesNoWatermark]' passed (0.011 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeMembersIncludeOwnNameSortedUnique]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeMembersIncludeOwnNameSortedUnique]' passed (0.010 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeTombstonesOnlyGrowAndRemoveItems]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeTombstonesOnlyGrowAndRemoveItems]' passed (0.007 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyMergesCategoriesAssignmentsAndPrices]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyMergesCategoriesAssignmentsAndPrices]' passed (0.012 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeKeepsItemsFromBothSides]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeKeepsItemsFromBothSides]' passed (0.008 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testTieOnLastModifiedPushLocalWinsApplyRemoteWins]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testTieOnLastModifiedPushLocalWinsApplyRemoteWins]' passed (0.013 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testTearDownLeavesNoSyncKeys]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testTearDownLeavesNoSyncKeys]' passed (0.022 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyAdvancesWatermarkOnlyAfterSaveAndWithModifiedAt]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyAdvancesWatermarkOnlyAfterSaveAndWithModifiedAt]' passed (0.038 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyLastWriteWinsPerItem]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyLastWriteWinsPerItem]' passed (0.012 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyCreatesUnknownRemoteItemWithSenderCategory]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyCreatesUnknownRemoteItemWithSenderCategory]' passed (0.015 seconds).
+Test Suite 'SharedStoreMergeTests' passed at 2026-10-05 17:15:32.492.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.237 (0.242) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-10-05 17:15:32.492.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.237 (0.243) seconds
+Test Suite 'Selected tests' passed at 2026-10-05 17:15:32.492.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.237 (0.243) seconds
+2026-10-05 17:15:32.798 xcodebuild[26120:14977482] [MT] IDETestOperationsObserverDebug: 4.922 elapsed -- Testing started completed.
+2026-10-05 17:15:32.798 xcodebuild[26120:14977482] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-05 17:15:32.798 xcodebuild[26120:14977482] [MT] IDETestOperationsObserverDebug: 4.922 sec, +4.922 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fnxgobnxvjgetnfolzbsjrxswgfq/Logs/Test/Test-Restock-2026.10.05_17-15-27-+0200.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
