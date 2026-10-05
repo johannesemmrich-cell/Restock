@@ -1,0 +1,109 @@
+test_plist (__main__.ExportOptions.test_plist) ... ERROR
+test_ci_unchanged (__main__.Repository.test_ci_unchanged) ... ok
+test_documentation (__main__.Repository.test_documentation) ... ERROR
+test_scope (__main__.Repository.test_scope) ... ok
+test_actions_and_secrets (__main__.Workflow.test_actions_and_secrets) ... FAIL
+test_archive_and_export (__main__.Workflow.test_archive_and_export) ... FAIL
+test_cleanup_always (__main__.Workflow.test_cleanup_always) ... FAIL
+test_protection (__main__.Workflow.test_protection) ... FAIL
+test_trigger_and_inputs (__main__.Workflow.test_trigger_and_inputs) ... FAIL
+test_upload_guard (__main__.Workflow.test_upload_guard) ... FAIL
+test_xcode_like_ci (__main__.Workflow.test_xcode_like_ci) ... FAIL
+
+======================================================================
+ERROR: test_plist (__main__.ExportOptions.test_plist)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/scripts/test_testflight_workflow.py", line 76, in test_plist
+    o = plistlib.loads(PLIST.read_bytes())
+                       ~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/scripts/ExportOptions-testflight.plist'
+
+======================================================================
+ERROR: test_documentation (__main__.Repository.test_documentation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/scripts/test_testflight_workflow.py", line 94, in test_documentation
+    self.assertIn(w, DOC.read_text())
+                     ~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/docs/testflight-setup.md'
+
+======================================================================
+FAIL: test_actions_and_secrets (__main__.Workflow.test_actions_and_secrets)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/scripts/test_testflight_workflow.py", line 21, in setUp
+    self.assertTrue(self.wf, "testflight.yml ist leer")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {} is not true : testflight.yml ist leer
+
+======================================================================
+FAIL: test_archive_and_export (__main__.Workflow.test_archive_and_export)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/scripts/test_testflight_workflow.py", line 21, in setUp
+    self.assertTrue(self.wf, "testflight.yml ist leer")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {} is not true : testflight.yml ist leer
+
+======================================================================
+FAIL: test_cleanup_always (__main__.Workflow.test_cleanup_always)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/scripts/test_testflight_workflow.py", line 21, in setUp
+    self.assertTrue(self.wf, "testflight.yml ist leer")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {} is not true : testflight.yml ist leer
+
+======================================================================
+FAIL: test_protection (__main__.Workflow.test_protection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/scripts/test_testflight_workflow.py", line 21, in setUp
+    self.assertTrue(self.wf, "testflight.yml ist leer")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {} is not true : testflight.yml ist leer
+
+======================================================================
+FAIL: test_trigger_and_inputs (__main__.Workflow.test_trigger_and_inputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/scripts/test_testflight_workflow.py", line 21, in setUp
+    self.assertTrue(self.wf, "testflight.yml ist leer")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {} is not true : testflight.yml ist leer
+
+======================================================================
+FAIL: test_upload_guard (__main__.Workflow.test_upload_guard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/scripts/test_testflight_workflow.py", line 21, in setUp
+    self.assertTrue(self.wf, "testflight.yml ist leer")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {} is not true : testflight.yml ist leer
+
+======================================================================
+FAIL: test_xcode_like_ci (__main__.Workflow.test_xcode_like_ci)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/jaunty-kindling-taco/scripts/test_testflight_workflow.py", line 21, in setUp
+    self.assertTrue(self.wf, "testflight.yml ist leer")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {} is not true : testflight.yml ist leer
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.033s
+
+FAILED (failures=7, errors=2)

@@ -1,1 +1,90 @@
+name: TestFlight  # Issue #109, Einrichtung und Rückfall: docs/testflight-setup.md
 
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Nur archivieren und Signatur prüfen, nicht hochladen"
+        type: boolean
+        default: true
+      build_number:
+        description: "Optionale Build-Nummer (CURRENT_PROJECT_VERSION)"
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+jobs:
+  testflight:
+    runs-on: macos-26
+    timeout-minutes: 30
+    environment: testflight
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      BUILD_NUMBER: ${{ inputs.build_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select latest available Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$LATEST" ]; then LATEST="/Applications/Xcode.app"; fi
+          echo "Using $LATEST"
+          echo "DEVELOPER_DIR=$LATEST/Contents/Developer" >> "$GITHUB_ENV"
+
+      - name: Show Xcode and SDKs
+        run: |
+          { echo '```'; xcodebuild -version; xcodebuild -showsdks; echo '```'; } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Write API key
+        run: |
+          echo "$ASC_KEY_P8" | base64 -d > "$RUNNER_TEMP/AuthKey.p8"
+          chmod 600 "$RUNNER_TEMP/AuthKey.p8"
+
+      - name: Archive
+        run: |
+          xcodebuild archive -project Restock.xcodeproj -scheme Restock -configuration Release \
+            -destination generic/platform=iOS -archivePath "$RUNNER_TEMP/Restock.xcarchive" \
+            -allowProvisioningUpdates -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            -skipMacroValidation ${BUILD_NUMBER:+CURRENT_PROJECT_VERSION=$BUILD_NUMBER}
+
+      - name: Check signing (dry run)
+        if: inputs.dry_run
+        run: |
+          APPS="$RUNNER_TEMP/Restock.xcarchive/Products/Applications"
+          for b in "$APPS"/*.app "$APPS"/*.app/PlugIns/*.appex; do
+            {
+              echo "### $(basename "$b") (Build $(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$b/Info.plist"))"
+              echo '```'
+              codesign -dvv "$b" 2>&1 | grep -E '^(Identifier|TeamIdentifier)=' || true
+              codesign -d --entitlements :- "$b" 2>&1 | plutil -p - | grep -A2 -E 'aps-environment|application-groups' || true
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          done
+
+      - name: Upload archive (dry run)
+        if: inputs.dry_run
+        uses: actions/upload-artifact@v4
+        with:
+          name: Restock.xcarchive
+          path: ${{ runner.temp }}/Restock.xcarchive
+          retention-days: 7
+
+      - name: Export and upload to TestFlight
+        if: github.ref == 'refs/heads/main' && !inputs.dry_run
+        run: |
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Restock.xcarchive" \
+            -exportOptionsPlist scripts/ExportOptions-testflight.plist -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Remove API key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/AuthKey.p8"
