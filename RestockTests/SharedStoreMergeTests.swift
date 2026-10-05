@@ -27,6 +27,11 @@ final class SharedStoreMergeTests: XCTestCase {
     private var service: SharedStoreService { SharedStoreService.shared }
 
     override func setUpWithError() throws {
+        // Reste eines vorherigen Tests (gleich welcher Reihenfolge) oder Laufs fallen hier auf.
+        // Sie werden danach entfernt, damit ein einmaliger Fehler nicht jeden Folgelauf rot färbt.
+        let leftovers = Self.utSyncKeys()
+        XCTAssertEqual(leftovers, [], "Sync-Schlüssel eines früheren Tests wurden nicht aufgeräumt")
+        leftovers.forEach(UserDefaults.standard.removeObject(forKey:))
         let schema = Schema(versionedSchema: SchemaV1.self)
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         container = try ModelContainer(for: schema, configurations: config)
@@ -38,6 +43,7 @@ final class SharedStoreMergeTests: XCTestCase {
     override func tearDown() {
         SyncCoordinator.shared.modelContext = originalContext
         removeSyncKeys()
+        XCTAssertEqual(Self.utSyncKeys(), [], "tearDown hat Sync-Schlüssel stehen lassen")
         container = nil
         context = nil
     }
@@ -164,6 +170,24 @@ final class SharedStoreMergeTests: XCTestCase {
         let afterSave = await service.lastSyncDate(shareID: shareID)
         XCTAssertEqual(afterSave, t2)
 
+        // Reihenfolge: Im Moment des Speicherns (`ModelContext.willSave`) darf der Wasserstand
+        // noch nicht vorgerückt sein — sonst bliebe er bei einem fehlschlagenden Save stehen.
+        // Ein echter Save-Fehler lässt sich im In-Memory-Kontext ohne Produkteingriff nicht
+        // erzeugen; dieser Beobachter fängt das Verschieben von `markSynced` vor `save`.
+        // GRENZE: Belegt ist nur die Reihenfolge (der Wasserstand rückt erst nach Beginn des
+        // Speicherns vor), NICHT das Verhalten bei einem tatsächlich fehlschlagenden `save`.
+        let probe = WatermarkAtSave(key: "lastSync_\(shareID)")
+        let token = NotificationCenter.default.addObserver(
+            forName: ModelContext.willSave, object: context, queue: nil
+        ) { _ in probe.capture() }
+        defer { NotificationCenter.default.removeObserver(token) }
+        await SyncCoordinator.shared.apply(
+            items: [remoteItem(id: UUID(), name: "Erzwingt Änderung", lastModified: t3)],
+            members: [], modifiedAt: t3, to: store)
+        XCTAssertEqual(probe.seen, [t2], "beim Speichern stand noch der alte Wasserstand")
+        let afterSecondSave = await service.lastSyncDate(shareID: shareID)
+        XCTAssertEqual(afterSecondSave, t3)
+
         // Ohne Kontext bricht `apply` vor dem Speichern ab: der Wasserstand darf nicht vorrücken.
         let orphan = Store(name: "Waise", emoji: "🛒", colorHex: "#000000")
         let orphanShare = register(shareID: "UT-\(UUID().uuidString)", for: orphan)
@@ -176,9 +200,14 @@ final class SharedStoreMergeTests: XCTestCase {
     func testApplyWithoutShareIDWritesNoWatermark() async {
         let store = makeStore()
         XCTAssertNil(store.shareID)
+        // Der Schlüssel trägt die shareID, die es hier nicht gibt — also alle `lastSync_*`
+        // vorher/nachher vergleichen statt nach einem erwarteten Namen zu suchen.
+        let before = Self.lastSyncSnapshot()
         await SyncCoordinator.shared.apply(items: [], members: [], modifiedAt: t2, to: store)
-        let keys = UserDefaults.standard.dictionaryRepresentation().keys.filter { $0.hasPrefix("lastSync_") && $0.contains(store.id.uuidString) }
-        XCTAssertTrue(keys.isEmpty)
+        let after = Self.lastSyncSnapshot()
+        // Was auch immer fälschlich geschrieben wurde, wird wieder entfernt.
+        for key in after.keys where before[key] == nil { UserDefaults.standard.removeObject(forKey: key) }
+        XCTAssertEqual(after, before, "ohne shareID darf kein Wasserstand geschrieben werden")
     }
 
     // MARK: - Teil B: Push-Merge
@@ -262,15 +291,36 @@ final class SharedStoreMergeTests: XCTestCase {
     func testPushMergeWritesMetadataCategoriesAssignmentsPrices() async {
         let store = makeStore()
         let code = register(shareID: "UT-\(UUID().uuidString)", for: store)
-        store.customCategoryEntries = ["Lokal": CustomCategoryEntry(emoji: "🧊", date: t2)]
-        store.categoryAssignmentEntries = ["feta": CategoryAssignmentEntry(category: "Lokal", date: t2)]
-        store.learnedPrices = ["milch": 1.5]
-        store.learnedPriceDates = ["milch": t2]
-        store.learnedPriceUnits = ["milch": "stk"]
+        // Je Art: ein Schlüssel nur lokal, einer nur auf dem Server, ein gemeinsamer mit lokal
+        // neuerem Stand („L-neu“) und einer mit Server-neuerem Stand („S-neu“).
+        store.customCategoryEntries = [
+            "Lokal": CustomCategoryEntry(emoji: "🧊", date: t2),
+            "L-neu": CustomCategoryEntry(emoji: "🍏", date: t3),
+            "S-neu": CustomCategoryEntry(emoji: "🍐", date: t1),
+        ]
+        store.categoryAssignmentEntries = [
+            "feta": CategoryAssignmentEntry(category: "Lokal", date: t2),
+            "apfel": CategoryAssignmentEntry(category: "Lokal", date: t3),
+            "birne": CategoryAssignmentEntry(category: "Lokal", date: t1),
+        ]
+        store.learnedPrices = ["milch": 1.5, "butter": 2.0, "quark": 0.8]
+        store.learnedPriceDates = ["milch": t2, "butter": t3, "quark": t1]
+        store.learnedPriceUnits = ["milch": "stk", "butter": "stk", "quark": "stk"]
         let record = await makeRecord(code: code)
-        record["categoriesJSON"] = await service.encodeCategories(["Server": CustomCategoryEntry(emoji: "🥫", date: t1)]) as CKRecordValue
-        record["assignmentsJSON"] = await service.encodeAssignments(["brot": CategoryAssignmentEntry(category: "Server", date: t1)]) as CKRecordValue
-        record["pricesJSON"] = LearnedPriceSync.encode(.init(prices: ["käse": 4.0], dates: ["käse": t1], units: ["käse": "g"])) as CKRecordValue
+        record["categoriesJSON"] = await service.encodeCategories([
+            "Server": CustomCategoryEntry(emoji: "🥫", date: t1),
+            "L-neu": CustomCategoryEntry(emoji: "🥝", date: t1),
+            "S-neu": CustomCategoryEntry(emoji: "🍌", date: t3),
+        ]) as CKRecordValue
+        record["assignmentsJSON"] = await service.encodeAssignments([
+            "brot": CategoryAssignmentEntry(category: "Server", date: t1),
+            "apfel": CategoryAssignmentEntry(category: "Server", date: t1),
+            "birne": CategoryAssignmentEntry(category: "Server", date: t3),
+        ]) as CKRecordValue
+        record["pricesJSON"] = LearnedPriceSync.encode(.init(
+            prices: ["käse": 4.0, "butter": 9.0, "quark": 1.2],
+            dates: ["käse": t1, "butter": t1, "quark": t3],
+            units: ["käse": "g", "butter": "g", "quark": "g"])) as CKRecordValue
 
         _ = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
 
@@ -278,11 +328,18 @@ final class SharedStoreMergeTests: XCTestCase {
         XCTAssertEqual(record["storeEmoji"] as? String, store.emoji)
         XCTAssertEqual(record["storeColorHex"] as? String, store.colorHex)
         let categories = await service.decodeCategories(record["categoriesJSON"] as? String ?? "{}")
-        XCTAssertEqual(Set(categories.keys), ["Lokal", "Server"])
+        XCTAssertEqual(categories.mapValues(\.emoji), ["Lokal": "🧊", "Server": "🥫", "L-neu": "🍏", "S-neu": "🍌"])
+        XCTAssertEqual(categories["L-neu"]?.date, t3, "lokal neuer gewinnt samt Datum")
+        XCTAssertEqual(categories["S-neu"]?.date, t3, "Server neuer gewinnt samt Datum")
         let assignments = await service.decodeAssignments(record["assignmentsJSON"] as? String ?? "{}")
-        XCTAssertEqual(Set(assignments.keys), ["feta", "brot"])
+        XCTAssertEqual(assignments.mapValues(\.category),
+                       ["feta": "Lokal", "brot": "Server", "apfel": "Lokal", "birne": "Server"])
+        XCTAssertEqual(assignments["apfel"]?.date, t3)
+        XCTAssertEqual(assignments["birne"]?.date, t3)
         let prices = LearnedPriceSync.decode(record["pricesJSON"] as? String ?? "{}")
-        XCTAssertEqual(prices.prices, ["milch": 1.5, "käse": 4.0])
+        XCTAssertEqual(prices.prices, ["milch": 1.5, "käse": 4.0, "butter": 2.0, "quark": 1.2])
+        XCTAssertEqual(prices.dates, ["milch": t2, "käse": t1, "butter": t3, "quark": t3])
+        XCTAssertEqual(prices.units, ["milch": "stk", "käse": "g", "butter": "stk", "quark": "g"])
     }
 
     // MARK: - Gleichstand (Ist-Verhalten festgehalten, kein Beschluss)
@@ -308,19 +365,18 @@ final class SharedStoreMergeTests: XCTestCase {
 
     // MARK: - Aufräumen
 
-    func testCleanupLeavesNoSyncKeys() async {
+    /// Schreibt beide Schlüsselarten und lässt sie bewusst stehen: Aufräumen muss das echte
+    /// `tearDown()` leisten. Geprüft wird das dort (Assertion nach `removeSyncKeys`) und im
+    /// `setUp` jedes folgenden Tests (keine Reste aus `utSyncKeys()`),
+    /// unabhängig von der Reihenfolge der Tests.
+    func testTearDownLeavesNoSyncKeys() async {
         let store = makeStore()
         let code = register(shareID: "UT-\(UUID().uuidString)", for: store)
         await SyncCoordinator.shared.apply(items: [], members: [], modifiedAt: t2, to: store)
         await service.recordLocalDeletion(shareID: code, itemID: UUID())
         XCTAssertNotNil(UserDefaults.standard.object(forKey: "lastSync_\(code)"))
         XCTAssertNotNil(UserDefaults.standard.object(forKey: "deletedTombstones_\(code)"))
-
-        removeSyncKeys()
-
-        XCTAssertNil(UserDefaults.standard.object(forKey: "lastSync_\(code)"))
-        XCTAssertNil(UserDefaults.standard.object(forKey: "deletedTombstones_\(code)"))
-        XCTAssertNil(UserDefaults.standard.object(forKey: "shareID_\(store.id.uuidString)"))
+        XCTAssertEqual(Self.utSyncKeys(), ["deletedTombstones_\(code)", "lastSync_\(code)"])
     }
 
     // MARK: - Helpers
@@ -393,5 +449,31 @@ final class SharedStoreMergeTests: XCTestCase {
         }
         shareIDs = []
         storeIDs = []
+    }
+
+    /// Alle Sync-Schlüssel mit Test-shareID (`lastSync_UT-…`, `deletedTombstones_UT-…`) in
+    /// `UserDefaults.standard`, sortiert. `shareID_<Laden>` ist bewusst nicht dabei: es wird von
+    /// `CloudPreferencesSync` in den iCloud-KV-Speicher gespiegelt und beim App-Start von dort
+    /// wieder eingesetzt, ein Entfernen allein aus `UserDefaults` hält also nicht.
+    private static func utSyncKeys() -> [String] {
+        UserDefaults.standard.dictionaryRepresentation().keys
+            .filter { $0.hasPrefix("lastSync_UT-") || $0.hasPrefix("deletedTombstones_UT-") }
+            .sorted()
+    }
+
+    private static func lastSyncSnapshot() -> [String: Date] {
+        UserDefaults.standard.dictionaryRepresentation()
+            .filter { $0.key.hasPrefix("lastSync_") }
+            .compactMapValues { $0 as? Date }
+    }
+}
+
+/// Liest den Wasserstand in dem Moment, in dem `ModelContext.willSave` feuert.
+private final class WatermarkAtSave: @unchecked Sendable {
+    private let key: String
+    private(set) var seen: [Date] = []
+    init(key: String) { self.key = key }
+    func capture() {
+        seen.append(UserDefaults.standard.object(forKey: key) as? Date ?? .distantPast)
     }
 }

@@ -80,7 +80,7 @@ actor SharedStoreService {
 
     /// Merges local store state into `record` in place and returns the merged items/members/
     /// tombstones/prices.
-    private func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool) -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry]) {
+    func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool) -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry]) {
         let remoteItems = decodeItems(record["itemsJSON"] as? String ?? "[]")
         let remoteMembers = decodeMembers(record["membersJSON"] as? String ?? "[]")
         let remoteDeletedIDs = decodeIDs(record["deletedJSON"] as? String ?? "[]")
@@ -131,7 +131,7 @@ actor SharedStoreService {
 
     /// Per-item last-write-wins merge: an id present in both is resolved by the newer `lastModified`.
     /// Ids the caller has tombstoned (deleted locally or by another device) are dropped entirely.
-    private func merge(local: [SharedItemData], remote: [SharedItemData], tombstones: Set<UUID>) -> [SharedItemData] {
+    func merge(local: [SharedItemData], remote: [SharedItemData], tombstones: Set<UUID>) -> [SharedItemData] {
         var byID: [UUID: SharedItemData] = [:]
         for item in remote where !tombstones.contains(item.id) {
             byID[item.id] = item
