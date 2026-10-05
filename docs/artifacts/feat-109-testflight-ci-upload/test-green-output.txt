@@ -1,0 +1,17 @@
+test_plist (__main__.ExportOptions.test_plist) ... ok
+test_ci_unchanged (__main__.Repository.test_ci_unchanged) ... ok
+test_documentation (__main__.Repository.test_documentation) ... ok
+test_scope (__main__.Repository.test_scope) ... ok
+test_actions_and_secrets (__main__.Workflow.test_actions_and_secrets) ... ok
+test_archive_and_export (__main__.Workflow.test_archive_and_export) ... ok
+test_cleanup_always (__main__.Workflow.test_cleanup_always) ... ok
+test_protection (__main__.Workflow.test_protection) ... ok
+test_trigger_and_inputs (__main__.Workflow.test_trigger_and_inputs) ... ok
+test_upload_guard (__main__.Workflow.test_upload_guard) ... ok
+test_xcode_like_ci (__main__.Workflow.test_xcode_like_ci) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.069s
+
+OK
+Executed 11 tests, with 0 failures

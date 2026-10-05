@@ -107,4 +107,6 @@ class Repository(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    res = unittest.main(verbosity=2, exit=False).result
+    print(f"Executed {res.testsRun} tests, with {len(res.failures) + len(res.errors)} failures")
+    raise SystemExit(0 if res.wasSuccessful() else 1)
