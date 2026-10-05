@@ -6,7 +6,7 @@ Ablauf: `.github/workflows/testflight.yml`, nur manuell (Actions → TestFlight 
 
 1. App Store Connect → Benutzer und Zugriff → Integrationen → Team-Schlüssel: API-Schlüssel mit Rolle **Admin** anlegen, `.p8` einmalig laden.
 2. GitHub → Settings → Environments → Environment `testflight` anlegen: Reviewer = Henning, Deployment nur von `main`.
-3. Secrets im Environment `testflight` setzen: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (Inhalt der `.p8` als Base64).
+3. Secrets im Environment `testflight` setzen: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (Inhalt der `.p8`: Datei im Texteditor öffnen, alles kopieren und einfügen; Base64 geht auch).
 4. Im Developer-Portal die Zahl der Distribution-Zertifikate prüfen (Limit).
 
 Stufe B braucht Hennings Schlüssel: erst Probelauf mit `dry_run` an, dann echter Lauf mit `dry_run` aus.
