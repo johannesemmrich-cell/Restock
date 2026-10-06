@@ -97,6 +97,15 @@ ist #111 **nicht** erledigt; es gibt keine Zusage „alle Flakes behoben“. Ebe
   --stat` gegen den Tip-Commit zu prüfen. Wird das Limit überschritten, zuerst Rückmeldung mit
   Schätzung, nicht das Limit anheben.
 
+## Definition of Done
+
+- [ ] UI-Test-Target baut, neue Datei an allen vier Stellen in `project.pbxproj` registriert (AC-12)
+- [ ] Hilfstests T1–T4 grün (AC-1 bis AC-5)
+- [ ] Gesamte UI- und Unit-Suite lokal auf `Restock-Validate` grün, Testzahl > 0, kein Abbruch (AC-7)
+- [ ] Runner-Nachweis vorher/nachher mit `-test-iterations 30` dokumentiert, nachher 0 Fehler (AC-8, AC-9)
+- [ ] Kein Diff unter `SmartCart/`, `ci.yml` auf `main` unverändert, Umfang im Limit (AC-9, AC-10)
+- [ ] Toast-Fehlschlag in Ticket und Bericht als offen benannt, #111 bleibt offen (AC-11)
+
 ## Implementation Details
 
 **Hilfen (`UITestWait.swift`).** Wo sie liegen (Extension auf `XCUIElement` bzw. freie Funktion mit
