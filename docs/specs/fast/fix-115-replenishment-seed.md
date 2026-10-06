@@ -42,6 +42,14 @@ und `daysUntilNeeded` zählt volle 24-h-Blöcke ab Uhrzeit (`PurchaseRecord.swif
 5. Die Anwendung wird vor der Übergabe im Simulator mit dem Seed gestartet und der Banner-Ablauf
    durchgespielt (Banner zeigt genau zwei Artikel, Listenladen zeigt „Vielleicht auch fällig“).
 
+## Acceptance Criteria
+- AC-1: `SmartCartApp.replenishmentSeedDaysAgo` existiert (internal, innerhalb `#if DEBUG`) und wird vom Seed benutzt.
+- AC-2: Die Listen-Artikel haben die Abstände [46, 26, 6]; die Banner-Artikel bleiben bei [29, 19, 9].
+- AC-3: `ReplenishmentSeedYearTests` ist für alle 8760 Stunden grün (Banner: Bannerbutter und Bannerquark ja, Listenreis und Listennudeln nein; „Vielleicht auch fällig“ im Listenladen: beide ja) — vorher mit den alten Werten zur Laufzeit rot.
+- AC-4: Die gesamte Unit-Suite ist grün (getrennt von der UI-Suite).
+- AC-5: `ReplenishmentUITests` (10 Tests) sind am Nachmittag auf Restock-Validate grün, und der Job `ui-test` der CI ist für diese Klasse grün.
+- AC-6: `docs/specs/ui-tests/replenishment-uitest.md` nennt die neuen Werte samt Begründung; unter `SmartCart/` ändert sich nur `SmartCartApp.swift` innerhalb `#if DEBUG`.
+
 ## Umfang
 - 4 Dateien (SmartCartApp.swift, neue Testdatei, project.pbxproj, replenishment-uitest.md), ca. +70/−10 LoC.
 
