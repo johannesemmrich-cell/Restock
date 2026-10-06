@@ -75,3 +75,79 @@ Rote Läufe mit evtl. noch vorhandenem `UITestResults.xcresult` (7 Tage Aufbewah
   bewusst zuvor verworfen? — #172 in globaler Regel nennt „CI-Wiederholung entfernen“), Pfadfilter für
   reine Doku-/CI-Änderungen, Aufteilen der Suite.
 - Simulator nie parallel nutzen; eigenes Testgerät `Restock-Validate`.
+
+## Analysis
+
+### Type
+Bug (Testinfrastruktur) — App-Verhalten ist nicht betroffen.
+
+### Root Cause (belegt, 7 von 7 roten CI-Tests ausgewertet)
+Auswertung der xcresult-Bündel der Läufe 37268450172 (V1, V2), 37282304307 (V1–V3) und 37298002522
+(Zeitachse aus `activities`, Video-Einzelbilder über pts zugeordnet):
+- **Einzelne XCUITest-Abfragen/Bedienungshilfen-Momentaufnahmen dauern auf dem Runner sporadisch
+  4,0–4,3 s** (Median 0,15–0,25 s, p90 0,5–1,2 s, je Lauf 1–8 Ausreißer > 2,5 s; in grünen Tests
+  auch bis 14,3 s — die bleiben grün, weil dort 10–15 s Frist gilt). Eine solche Abfrage frisst eine
+  5-s-Frist fast vollständig: 6 von 7 Fällen.
+- **2 von 7 („Activation point invalid“):** Momentaufnahme kam ohne Rahmen zurück (ganzer Baum
+  `{{inf, inf}, {0, 0}}`); das Prädikat `isHittable == true` scheitert dann hart statt `false` zu liefern.
+- **Toast-Test:** Toast stand korrekt 6 s (Video 17,0–23,05 s). Vier nacheinander gestellte Abfragen
+  (Toast, Lidl-Label, change, undo) brauchten zusammen 5,4 s; die undo-Prüfung lief 23,15–24,42 s —
+  nach Ablauf. Abfragen bei sichtbarem Toast dauern in allen 6 Bündeln durchgehend 3,3–4,0 s.
+- **testUnassignedCardShowsCountAndNames:** Karte zeigte den richtigen Text ruhig auf dem Video;
+  zwei Abfragen (4,01 s + 2,36 s) überschritten die 5-s-Frist. Die Fehlermeldung enthält das richtige Label.
+- **Nicht** die Ursache: Element verdeckt/in Bewegung (0/7, Videos ruhig, kein Banner/Scrollen/Tastatur),
+  App zu langsam (App idle, „Wait for app to idle“ 0,3–0,9 s). Offen: ob die Verzögerung im
+  Testrunner- oder App-Prozess (AX-Server) entsteht — für den Fix unerheblich.
+Recherche: [banal PR #229](https://github.com/drawmeanelephant/banal/pull/229) (exists+hittable gemeinsam
+abwarten, Koordinaten-Rückfall), [Apple-Forum 720155](https://developer.apple.com/forums/thread/720155),
+[Apple-Forum 107779](https://developer.apple.com/forums/thread/107779), [Q42/Salad PR #6](https://github.com/Q42/Salad/pull/6)
+(Prädikat-Warten pollt in Abständen), WWDC21 10296 (Test-Wiederholungen).
+
+### Affected Files (with changes)
+| File | Change Type | Durchgang | Description |
+|------|-------------|-----------|-------------|
+| `RestockUITests/UITestWait.swift` | CREATE | 1 | Gemeinsame Hilfen: `waitUntilHittable` (eigene Schleife mit Deadline: exists → Rahmen endlich und nicht leer → isHittable; kein harter Fehler bei inf-Rahmen), `waitForLabel(contains:)` (liefert zuletzt gelesenen Zustand für die Fehlermeldung, keine Extra-Abfrage), Konstante Standardfrist 20 s |
+| `Restock.xcodeproj/project.pbxproj` | MODIFY | 1 | Neue Datei registrieren (kein synchronisierter Ordner, 4 Stellen) |
+| `RestockUITests/ShoppingRouteUITests.swift` | MODIFY | 1 | `openedStore()` Z. 33–35 auf `waitUntilHittable` |
+| `RestockUITests/AddItemQuantitySuggestionUITests.swift` | MODIFY | 1 | Z. 60–62 auf `waitUntilHittable`; 5-s-Wert-Prädikat nach `typeText` auf Standardfrist |
+| `RestockUITests/QuickAddAssignmentUITests.swift` | MODIFY | 1+2 | `labelOf`/`openStore` auf gemeinsame Hilfen (D1); Toast-Tests mit Launch-Argument (D2) |
+| `SmartCart/SmartCartApp.swift` bzw. `SmartCart/Views/Home/HomeView.swift` | MODIFY | 2 | DEBUG-only Launch-Argument `-quickAddToastSecondsForUITests <n>`; ohne Argument und im Release bleibt es bei 6 s |
+| übrige 7 UI-Testdateien | MODIFY | 3 (nur bei Bedarf) | restliche `timeout: 5` auf Standardfrist — erst nach Messung, wenn dort Fehlschläge auftreten |
+
+### Scope Assessment
+- Durchgang 1: 5 Dateien, ca. +110/−20 LoC (behebt 6 der 7 beobachteten Fehlschläge)
+- Durchgang 2: 3 Dateien, ca. +40/−10 LoC (Toast)
+- Durchgang 3: offen, nur bei gemessenem Bedarf
+- Risk Level: LOW für die App (DEBUG-only Argument, sonst nur Testcode); MEDIUM für die Suite (gemeinsame Hilfsdatei, pbxproj)
+
+### Technical Approach (Empfehlung)
+1. **Frist größer als die längste Einzelabfrage**, aber zustandsbasiert: grüne Läufe werden nicht
+   langsamer, nur rote warten länger (max. 20 s je Stelle).
+2. **isHittable nie als Prädikat direkt lesen**, sondern erst nach endlichem Rahmen — behebt den harten
+   „Activation point invalid“-Fehler.
+3. **Toast:** DEBUG-Launch-Argument für längere Anzeigedauer nur in den Tests, die den Toast-Inhalt lesen
+   (`testToastNamesStoreAndOffersChangeAndUndo`, `testUndoRemovesToastAndItem`,
+   `testChangeStoreMovesItemAndRemembersCorrection`). `testToastStaysVisibleLongerThanTwoSeconds` läuft
+   bewusst OHNE Argument und prüft weiter die echte Dauer. Etabliertes Muster (Seeds in `SmartCartApp`).
+4. **Nachweis (Pflicht, auf dem Runner):** Wegwerf-Zweig, `ci.yml` auf die betroffenen Klassen +
+   `-test-iterations 30` (ohne Retry), Start per `gh workflow run`. Vorher-Lauf auf main-Stand zeigt die
+   Fehlerquote, Nachher-Lauf mit Fix dieselbe Messung mit 0 Fehlern; dazu aus dem xcresult belegen,
+   dass weiterhin Einzelabfragen > 4 s vorkommen (gleiche Runner-Lage, Tests trotzdem grün).
+
+### Alternativen (bewertet)
+- **Toast per einmaliger `snapshot()`-Abfrage** statt Launch-Argument: kein App-Eingriff, aber 6 s
+  Anzeige gegen 3–4 s je Abfrage bleibt ein Wettlauf (bei 14-s-Ausreißer chancenlos). Verworfen als
+  Hauptweg, ergänzend nutzbar.
+- **`-retry-tests-on-failure` in der CI:** eine Zeile, kaschiert aber die Ursache, verlängert rote Läufe;
+  Wiederholungen wurden früher bewusst wieder entfernt. Nicht empfohlen.
+- **Direktes `tap()` ohne isHittable-Warten:** kleinster Eingriff; ob `tap()` bei inf-Rahmen nicht
+  ebenfalls hart scheitert, ist unbelegt → nicht als Hauptweg.
+- **Größerer/anderer Runner:** würde die Ursache treffen, kostet Geld, Wirkung unbelegt.
+- **Pfadfilter für reine Doku-/CI-Änderungen:** anderes Ziel (Laufzeit, nicht Stabilität) → eigenes Issue.
+
+### Dependencies
+- Später nutzbar für #32 (Fokus-Warten), #105 (zentraler Start), #82 Teil 2 — gleiches Ziel, aber eigene
+  Belege; nicht in diesen Durchgang gezogen (Scoping-Limit).
+
+### Open Questions
+- keine PO-Fragen; Umfang je Durchgang innerhalb der Limits.
