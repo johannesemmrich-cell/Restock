@@ -70,8 +70,8 @@ final class QuickAddAssignmentUITests: XCTestCase {
         let t = tile(storeName, in: app)
         XCTAssertTrue(t.waitForExistence(timeout: 15), "Kachel „\(storeName)“ nicht gefunden")
         dismissKeyboard(in: app)
-        expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: t)
-        waitForExpectations(timeout: 10)
+        let ready = t.waitUntilHittable()
+        XCTAssertTrue(ready.matched, "Kachel „\(storeName)“ nicht antippbar — zuletzt: \(ready.last)")
         t.tap()
     }
 
@@ -203,8 +203,10 @@ final class QuickAddAssignmentUITests: XCTestCase {
 
         let card = element(app, "home.unassignedCard")
         XCTAssertTrue(card.waitForExistence(timeout: 15), "Karte „Ohne Laden“ fehlt")
-        XCTAssertTrue(labelOf(card, contains: "2 Artikel ohne Laden"), "Anzahl fehlt — bekommen: \(card.label)")
-        XCTAssertTrue(labelOf(card, contains: "Testartikel Eins"), "Name fehlt — bekommen: \(card.label)")
+        let count = card.waitForLabel(contains: "2 Artikel ohne Laden")
+        XCTAssertTrue(count.matched, "Anzahl fehlt — bekommen: \(count.lastLabel)")
+        let name = card.waitForLabel(contains: "Testartikel Eins")
+        XCTAssertTrue(name.matched, "Name fehlt — bekommen: \(name.lastLabel)")
     }
 
     /// „Alle Vorschläge übernehmen“ ordnet alles zu; das Sheet schließt sich, die Karte verschwindet.

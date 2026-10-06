@@ -53,9 +53,9 @@ ist #111 **nicht** erledigt; es gibt keine Zusage „alle Flakes behoben“. Ebe
 - **Geändert:** `RestockUITests/AddItemQuantitySuggestionUITests.swift` — `openQuittenhofStoreDetail`
   (Zeilen 59–62) auf `waitUntilHittable`; die Erwartung `value == "l"` nach `typeText` in
   `testStaleSuggestionIsDroppedWhenNameIsTypedFurther` (Zeilen 204–205, 5 s) auf die Standardfrist.
-- **Geändert:** `RestockUITests/QuickAddAssignmentUITests.swift` — `labelOf` (Zeilen 58–62, 5 s,
-  `XCTNSPredicateExpectation`) und `openStore` (Zeilen 69–76, `isHittable` mit 10 s) auf die
-  gemeinsamen Hilfen. Betrifft `testUnassignedCardShowsCountAndNames` (Zeilen 206–207, die
+- **Geändert:** `RestockUITests/QuickAddAssignmentUITests.swift` — `openStore` (Zeilen 69–76,
+  `isHittable` mit 10 s) und die Label-Prüfungen in `testUnassignedCardShowsCountAndNames` auf die
+  gemeinsamen Hilfen; `labelOf` (Zeilen 58–62, 5 s, `XCTNSPredicateExpectation`) bleibt unverändert. Betrifft `testUnassignedCardShowsCountAndNames` (Zeilen 206–207, die
   Fehlermeldungen lesen heute `card.label` mit einer **weiteren** Abfrage) und alle Tests, die
   `openStore` nutzen.
 - **Hinweis zur Zuordnung:** `testCreatingCustomCategoryFromItemDialog` liegt in
@@ -87,7 +87,7 @@ ist #111 **nicht** erledigt; es gibt keine Zusage „alle Flakes behoben“. Ebe
 | `Restock.xcodeproj/project.pbxproj` | MODIFY | Neue Datei in vier Abschnitten registrieren |
 | `RestockUITests/ShoppingRouteUITests.swift` | MODIFY | `openedStore()` und Neustart-Zweig in `testSortModeIsRememberedPerStore` auf `waitUntilHittable` |
 | `RestockUITests/AddItemQuantitySuggestionUITests.swift` | MODIFY | `openQuittenhofStoreDetail` auf `waitUntilHittable`; Wert-Erwartung nach `typeText` auf Standardfrist |
-| `RestockUITests/QuickAddAssignmentUITests.swift` | MODIFY | `labelOf` und `openStore` auf die gemeinsamen Hilfen |
+| `RestockUITests/QuickAddAssignmentUITests.swift` | MODIFY | `openStore` und die Label-Prüfungen in `testUnassignedCardShowsCountAndNames` auf die gemeinsamen Hilfen (`labelOf` unverändert) |
 
 ### Estimated Changes
 
@@ -140,10 +140,18 @@ ist #111 **nicht** erledigt; es gibt keine Zusage „alle Flakes behoben“. Ebe
 2. `AddItemQuantitySuggestionUITests.openQuittenhofStoreDetail`: gleiche Umstellung. Die Erwartung
    `value == "l"` bekommt `UITestWait.defaultTimeout` statt 5 s (Tasten kommen auf dem Runner bis 3 s
    verspätet an, Memory „UI-Test liest Feld nach typeText zu früh“); die Prüfung bleibt `value == "l"`.
-3. `QuickAddAssignmentUITests`: `labelOf` ruft `waitForLabel` auf (Signatur bleibt für die Aufrufer
-   kompatibel, Standardfrist statt 5 s); `testUnassignedCardShowsCountAndNames` nutzt den
-   zurückgegebenen `lastLabel` statt `card.label` in der Meldung; `openStore` nutzt `waitUntilHittable`
+3. `QuickAddAssignmentUITests`: `testUnassignedCardShowsCountAndNames` ruft `waitForLabel` direkt auf
+   und nutzt den zurückgegebenen `lastLabel` statt `card.label` in der Meldung. `labelOf` bleibt im
+   Ausgangsstand (`XCTNSPredicateExpectation`, 5 s), weil es nur noch von anderen Tests, darunter den
+   Toast-Tests, genutzt wird — eine Umstellung würde dort eine zusätzliche Abfrage ins 6-s-Fenster
+   des Toasts legen (Adversary-Finding F001, Widerspruch zu AC-13); `openStore` nutzt `waitUntilHittable`
    statt `isHittable` mit 10 s. Die Toast-Tests werden **nicht** angefasst (Durchgang 2).
+4. (Ergänzung nach Messung, AC-13) In den fünf Tests aus AC-6 und den privaten Hilfen, die sie
+   aufrufen (u. a. `choose`, `waitForOrder` in `ShoppingRouteUITests`), werden alle positiven
+   Wartestellen mit Frist unter 20 s auf `UITestWait.defaultTimeout` gestellt, darunter
+   `ShoppingRouteUITests.swift:101` (Überschrift verschwindet). Negative Prüfungen,
+   Ausweich-Abfragen und Toast-Tests bleiben. Die Dateien bleiben dieselben, Umfang zusätzlich
+   ca. ±25 geänderte Zeilen.
 
 **Nachweis auf dem Runner (Pflicht, Wegwerf-Zweig).** Messverfahren aus #82 (Memory „UI-Test liest
 Feld nach typeText zu früh“): Wegwerf-Zweig mit `ci.yml`, eingeschränkt auf die betroffenen Klassen
@@ -234,9 +242,19 @@ nicht, hat der Nachweis der Regel Vorrang vor einer breiteren Zustandsausgabe.
   und ca. +110/−20 LoC.
 - **AC-11:** GIVEN der Abschluss des Durchgangs, WHEN Ticket und Berichte formuliert werden, THEN ist
   der Fehlschlag `testToastNamesStoreAndOffersChangeAndUndo` ausdrücklich als offen genannt
-  (Durchgang 2); es gibt keine Aussage „alle Flakes behoben“, und #111 bleibt offen.
+  (Durchgang 2), ebenso XCTests eigene Abfrage-Zeitgrenze („Timed out while evaluating UI query“),
+  gegen die keine Frist im Test hilft, und der Wettlauf zwischen den getrennten Abfragen `frame` →
+  `isHittable` → `tap()`: meldet der Runner den `inf`-Rahmen erst beim Lesen von `isHittable` oder
+  beim Tippen, scheitert der Test weiterhin hart (in den Messläufen nicht beobachtet); es gibt keine
+  Aussage „alle Flakes behoben“, und #111 bleibt offen.
 - **AC-12:** GIVEN die neue Datei, WHEN `xcodebuild` das UI-Test-Target baut, THEN ist sie in
   `project.pbxproj` an allen vier Stellen registriert, und der Build läuft ohne Fehler.
+- **AC-13:** GIVEN die fünf Tests aus AC-6 samt der privaten Hilfen, die sie aufrufen, WHEN eine
+  Stelle positiv wartet (Element erscheint, Wert stellt sich ein, Element verschwindet) und dafür eine
+  Frist unter der Standardfrist hat, THEN nutzt sie `UITestWait.defaultTimeout`. Negative Prüfungen
+  („erscheint nicht“, `XCTAssertFalse(…waitForExistence…)`), Ausweich-Abfragen
+  (`x.waitForExistence(…) ? x : y`) und die Toast-Tests (Durchgang 2) bleiben unverändert;
+  Kaltstart-Fristen ≥ 15 s ebenfalls. Die Prüfungen selbst bleiben wie in AC-6.
 
 ## Architektur-Entscheidung (ADR)
 
@@ -300,6 +318,21 @@ nur die Arbeitsannahme „5 s genügen für eine Abfrage“ (Memory „CI-UI-Abf
   ohne Vermerk.
 
 ## Changelog
+
+- 2026-10-06: Nach Adversary-Runde 2 (PO-Freigabe per `override`): `labelOf` bleibt im
+  Ausgangsstand (Umstellung Punkt 3 korrigiert, F001 — Widerspruch zu AC-13, Nebenwirkung auf die
+  Toast-Tests); AC-11 um den Wettlauf `frame` → `isHittable` → `tap()` als offene Grenze ergänzt (F002).
+  Nachher-Lauf 3 (`cf89d2b`, mit AC-13): 0/150, zwölf Abfragen > 4 s in den neuen 20-s-Wartestellen.
+
+- 2026-10-06: Nach den Runner-Messläufen erweitert (AC-13, PO-Freigabe per `override`). Vorher-Lauf 2
+  (Stand `main`, 30 Wiederholungen) scheiterte 2× in `testSwitchingSortModesReordersList` an der
+  5-s-Erwartung „Überschrift verschwindet“ (`ShoppingRouteUITests.swift:101`) — dieselbe Ursache
+  (langsame Einzelabfrage frisst die 5-s-Frist) an einer Stelle, die die erste Fassung nicht
+  umstellte. Deshalb alle positiven Kurzfristen in den fünf betroffenen Tests. Als offene Grenze
+  ergänzt (AC-11): „Failed to get matching snapshots: Timed out while evaluating UI query“
+  (Vorher-Lauf 1, `ShoppingRouteUITests.swift:128`, Einzelabfrage 31 s) ist XCTests eigene
+  Abfrage-Zeitgrenze. Messwerte: Vorher 3/150 und 2/150 Fehlschläge, Nachher (erste Fassung) 0/150
+  und 0/150; Belege unter `docs/artifacts/fix-111-ui-test-flakes/messlauf-*`.
 
 - 2026-10-06: Initial spec created (Durchgang 1 von #111; Durchgang 2 und 3 als Folge-Durchgänge
   dokumentiert)

@@ -17,19 +17,29 @@ struct UITestElementState: CustomStringConvertible {
 
 enum UITestWait {
     /// Länger als die längste belegte Einzelabfrage (14,3 s) plus Reserve.
-    static let defaultTimeout: TimeInterval = 5
+    static let defaultTimeout: TimeInterval = 20
     static let pollInterval: TimeInterval = 0.25
 
     /// Liest exists → frame → isHittable; `isHittable` nur bei endlichem, nicht leerem Rahmen.
     static func readState(exists: () -> Bool, frame: () -> CGRect,
                           isHittable: () -> Bool) -> UITestElementState {
-        UITestElementState(exists: false, frame: .zero, isHittable: false)
+        guard exists() else { return UITestElementState(exists: false, frame: .zero, isHittable: false) }
+        let rect = frame()
+        let finite = [rect.origin.x, rect.origin.y, rect.width, rect.height].allSatisfy { $0.isFinite }
+        guard finite, !rect.isEmpty else { return UITestElementState(exists: true, frame: rect, isHittable: false) }
+        return UITestElementState(exists: true, frame: rect, isHittable: isHittable())
     }
 
     /// Wiederholt `read`, bis `done` zutrifft oder die Frist abläuft; liefert den zuletzt gelesenen Wert.
     static func poll<T>(timeout: TimeInterval, read: () -> T,
                         done: (T) -> Bool) -> (matched: Bool, last: T) {
-        (false, read())
+        let deadline = Date().addingTimeInterval(timeout)
+        while true {
+            let value = read()
+            if done(value) { return (true, value) }
+            if Date() >= deadline { return (false, value) }
+            Thread.sleep(forTimeInterval: pollInterval)
+        }
     }
 }
 

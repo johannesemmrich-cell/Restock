@@ -1,0 +1,158 @@
+  9.69 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 1: Check for interrupting elements affecting "Artikelname" TextField
+           in: Type 'reis' into "Artikelname" TextField
+           ~ Type 'reis' into "Artikelname" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "Artikelname" TextField
+           ~ Check for interrupting elements affecting "Artikelname" TextField
+           ~ Synthesize event
+           ~ Wait for com.johannesemmrich.Restock to idle
+ 10.53 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 1: Wait for com.johannesemmrich.Restock to idle
+           in: Type 'reis' into "Artikelname" TextField
+           ~ Find the "Artikelname" TextField
+           ~ Check for interrupting elements affecting "Artikelname" TextField
+           ~ Synthesize event
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 5.0s for "Hinzufügen" Button to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Hinzufügen" Button`
+  9.40 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 2: Wait for com.johannesemmrich.Restock to idle
+           in: Tap "Artikelname" TextField
+           ~ Find the "Artikelname" TextField
+           ~ Check for interrupting elements affecting "Artikelname" TextField
+           ~ Synthesize event
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Type 'Milch' into "Artikelname" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+  4.24 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 3: Wait for com.johannesemmrich.Restock to idle
+           in: Tear Down
+           in: Open com.johannesemmrich.Restock
+           in: Launch com.johannesemmrich.Restock
+           ~ Launch com.johannesemmrich.Restock
+           ~ Terminate com.johannesemmrich.Restock:19259
+           ~ Setting up automation session
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Terminate com.johannesemmrich.Restock:20164
+  4.25 s  testCreatingCustomCategoryFromItemDialog() Iteration 20: Checking existence of `"Kühltheke hinten" StaticText`
+           in: Waiting 5.0s for "Kühltheke hinten" StaticText to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "Kühltheke 
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 5.0s for "Kühltheke hinten" StaticText to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Kühltheke hinten" StaticText`
+           ~ Checking existence of `"Kühltheke hinten" StaticText`
+           ~ Capturing element debug description
+           ~ Checking existence of `"Kühltheke hinten" StaticText`
+ 10.15 s  testCreatingCustomCategoryFromItemDialog() Iteration 20: Checking existence of `"Kühltheke hinten" StaticText`
+           in: Waiting 5.0s for "Kühltheke hinten" StaticText to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Kühltheke hinten" StaticText`
+           ~ Checking existence of `"Kühltheke hinten" StaticText`
+           ~ Capturing element debug description
+           ~ Checking existence of `"Kühltheke hinten" StaticText`
+           ~ Waiting 5.0s for "storeDetail.moreMenu" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "storeDetail.moreMenu" Any`
+  9.42 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Checking existence of `Button (First Match)`
+           in: Waiting 15.0s for Button (First Match) to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object Button (Fir
+           ~ Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported i
+           ~ Waiting 15.0s for Button (First Match) to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+           ~ Checking existence of `Button (First Match)`
+           ~ Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+           ~ Find the Button (First Match)
+  4.30 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Find the Button (First Match)
+           in: Checking `Expect predicate `isHittable == 1` for object Button (First 
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+           ~ Checking existence of `Button (First Match)`
+           ~ Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+           ~ Find the Button (First Match)
+           ~ Tap "Wegeladen, · 3, 1x pro Woche, Gouda, Brot…" Button
+           ~ Wait for com.johannesemmrich.Restock to idle
+  5.80 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Find the "Wegeladen, · 3, 1x pro Woche, Gouda, Brot…" Button
+           in: Tap "Wegeladen, · 3, 1x pro Woche, Gouda, Brot…" Button
+           ~ Find the Button (First Match)
+           ~ Tap "Wegeladen, · 3, 1x pro Woche, Gouda, Brot…" Button
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "Wegeladen, · 3, 1x pro Woche, Gouda, Brot…" Button
+           ~ Check for interrupting elements affecting "Wegeladen, · 3, 1x pro Woche, Gouda, Brot…" But
+           ~ Synthesize event
+  6.57 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Find the "Gouda" StaticText
+           in: Tap "Gouda" StaticText
+           ~ Checking existence of `"Gouda" StaticText`
+           ~ Tap "Gouda" StaticText
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "Gouda" StaticText
+           ~ Check for interrupting elements affecting "Gouda" StaticText
+           ~ Synthesize event
+  4.19 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Checking existence of `"item.categoryRow" Any`
+           in: Waiting 5.0s for "item.categoryRow" Any to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "item.categ
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 5.0s for "item.categoryRow" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "item.categoryRow" Any`
+           ~ Checking existence of `"item.categoryRow" Any`
+           ~ Debug description for `"item.categoryRow" Any`
+           ~ Capturing element debug description
+ 31.03 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Checking existence of `"item.categoryRow" Any`
+           in: Waiting 5.0s for "item.categoryRow" Any to exist
+           ~ Checking existence of `"item.categoryRow" Any`
+           ~ Debug description for `"item.categoryRow" Any`
+           ~ Capturing element debug description
+           ~ Checking existence of `"item.categoryRow" Any`
+           ~ Checking existence of `"item.categoryRow" Any` (retry 1)
+           ~ Checking existence of `"item.categoryRow" Any` (retry 2)
+ 31.05 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Checking existence of `"item.categoryRow" Any` (retry 1)
+           in: Waiting 5.0s for "item.categoryRow" Any to exist
+           ~ Debug description for `"item.categoryRow" Any`
+           ~ Capturing element debug description
+           ~ Checking existence of `"item.categoryRow" Any`
+           ~ Checking existence of `"item.categoryRow" Any` (retry 1)
+           ~ Checking existence of `"item.categoryRow" Any` (retry 2)
+           ~ Failed to get matching snapshots: Timed out while evaluating UI query.
+ 30.05 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Checking existence of `"item.categoryRow" Any` (retry 2)
+           in: Waiting 5.0s for "item.categoryRow" Any to exist
+           ~ Capturing element debug description
+           ~ Checking existence of `"item.categoryRow" Any`
+           ~ Checking existence of `"item.categoryRow" Any` (retry 1)
+           ~ Checking existence of `"item.categoryRow" Any` (retry 2)
+           ~ Failed to get matching snapshots: Timed out while evaluating UI query.
+           ~ Tear Down
+  4.25 s  testCreatingCustomCategoryFromItemDialog() Iteration 23: Checking existence of `StaticText (First Match)`
+           in: Waiting 5.0s for StaticText (First Match) to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object StaticText 
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 5.0s for StaticText (First Match) to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+           ~ Checking existence of `StaticText (First Match)`
+           ~ Capturing element debug description
+           ~ Checking existence of `StaticText (First Match)`
+  4.44 s  testCreatingCustomCategoryFromItemDialog() Iteration 23: Checking existence of `StaticText (First Match)`
+           in: Waiting 5.0s for StaticText (First Match) to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+           ~ Checking existence of `StaticText (First Match)`
+           ~ Capturing element debug description
+           ~ Checking existence of `StaticText (First Match)`
+           ~ Tear Down
+           ~ Open com.johannesemmrich.Restock
+ 13.03 s  testCreatingCustomCategoryFromItemDialog() Iteration 24: Checking existence of `Button (First Match)`
+           in: Waiting 15.0s for Button (First Match) to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object Button (Fir
+           ~ Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported i
+           ~ Waiting 15.0s for Button (First Match) to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+           ~ Checking existence of `Button (First Match)`
+           ~ Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+           ~ Find the Button (First Match)
+  4.20 s  testCreatingCustomCategoryFromItemDialog() Iteration 24: Find the Button (First Match)
+           in: Checking `Expect predicate `isHittable == 1` for object Button (First 
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+           ~ Checking existence of `Button (First Match)`
+           ~ Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+           ~ Find the Button (First Match)
+           ~ Debug description for `Button (First Match)`
+           ~ Capturing element debug description
+  4.19 s  testCreatingCustomCategoryFromItemDialog() Iteration 25: Find the Button (First Match)
+           in: Checking `Expect predicate `isHittable == 1` for object Button (First 
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+           ~ Checking existence of `Button (First Match)`
+           ~ Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+           ~ Find the Button (First Match)
+           ~ Capturing element debug description
+           ~ Debug description for `Button (First Match)`

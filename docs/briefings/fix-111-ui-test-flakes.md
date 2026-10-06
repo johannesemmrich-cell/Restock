@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/ui-tests/test-111-durchgang-1-ui-test-wait.md
-spec_sha256: 35239b5552bc0c283fd98336ee67ad7bd6a499a73ebede774d26d67fc72e0b82
+spec_sha256: c4975e928e8e460e2cb540aeec86048b909dc546bc126ffb860fc187f0f632ca
 ---
 
 # PO-Briefing: fix-111-ui-test-flakes
@@ -11,22 +11,22 @@ spec_sha256: 35239b5552bc0c283fd98336ee67ad7bd6a499a73ebede774d26d67fc72e0b82
 
 ## Was gebaut wird
 
-Die Wartezeiten in fünf der sechs unzuverlässigen Oberflächentests werden so verbessert, dass sie auf langsamen Testrechnern nicht mehr zufällig scheitern.
+Oberflächentests warten bei langsamen Rechnern geduldiger und scheitern seltener zufällig; die App bleibt unverändert.
 
 ## Definition of Done
 
-Die gesamte Testsuite läuft lokal grün, und 30 Wiederholungen auf dem Testrechner der CI zeigen für die betroffenen Tests keinen einzigen Fehler.
+Fünf zufällig scheiternde Tests liefen in 150 Cloud-Wiederholungen fehlerfrei, die App ist unverändert; #111 bleibt offen.
 
 ## Wie geprüft wird
 
-Kleine Hilfstests, ein lokaler Gesamtlauf und 30 Läufe auf dem Server; nicht bewiesen wird, dass alle sporadischen Fehler verschwunden sind.
+30 Wiederholungen je Test auf dem Cloud-Rechner: vorher 5 Fehler, nachher 0; beweist keine dauerhafte Stabilität.
 
 ## Kritische Anmerkungen
 
-- Der Toast-Test, einer der sechs Fehlerfälle, bleibt ungelöst; Ticket #111 bleibt offen, „grün beim ersten Versuch“ ist noch nicht erreicht.
-- Zeigt der Vergleichslauf vorher 0 Fehler, ist die Wirkung des Fixes nur eingeschränkt belegt.
-- Sieben weitere Testdateien bleiben ungeprüft.
+- Gesamte Testsuite nicht grün: zwei Nachkauf-Tests scheitern auch ohne diese Änderung (Ticket #115).
+- Toast-Test bleibt zufällig anfällig, ebenso ein Wettlauf beim Antippen; Behebung erst Durchgang 2.
+- Ziel „beim ersten Versuch grün“ ist nicht erreicht.
 
 ## Freigabe-Frage
 
-Soll zuerst nur dieser Teil umgesetzt werden, obwohl der Toast-Fehler offen bleibt?
+Durchgang 1 freigeben, obwohl Toast-Test und zwei Nachkauf-Tests offen bleiben und #111 nicht schließt?

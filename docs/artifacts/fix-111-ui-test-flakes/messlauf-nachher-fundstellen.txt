@@ -1,0 +1,52 @@
+  5.03 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 1: Wait for com.johannesemmrich.Restock to idle
+           in: Tear Down
+           in: Open com.johannesemmrich.Restock
+           in: Launch com.johannesemmrich.Restock
+           ~ Launch com.johannesemmrich.Restock
+           ~ Terminate com.johannesemmrich.Restock:13607
+           ~ Setting up automation session
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Terminate com.johannesemmrich.Restock:15874
+  4.04 s  testUnassignedCardShowsCountAndNames() Iteration 18: Wait for com.johannesemmrich.Restock to idle
+           in: Tear Down
+           in: Open com.johannesemmrich.Restock
+           in: Launch com.johannesemmrich.Restock
+           ~ Launch com.johannesemmrich.Restock
+           ~ Terminate com.johannesemmrich.Restock:60213
+           ~ Setting up automation session
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Terminate com.johannesemmrich.Restock:60318
+  6.45 s  testSortModeIsRememberedPerStore() Iteration 5: Find the "Apfel" StaticText
+           ~ Synthesize event
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "Brot" StaticText
+           ~ Find the "Apfel" StaticText
+           ~ Find the "Gouda" StaticText
+           ~ Terminate com.johannesemmrich.Restock:34017
+  4.36 s  testSortModeIsRememberedPerStore() Iteration 5: Checking existence of `Button (First Match)`
+           in: Waiting 15.0s for Button (First Match) to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object Button (Fir
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 15.0s for Button (First Match) to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+           ~ Checking existence of `Button (First Match)`
+           ~ Checking existence of `Button (First Match)`
+           ~ Find the Button (First Match)
+  7.63 s  testSortModeIsRememberedPerStore() Iteration 6: Checking existence of `Button (First Match)`
+           in: Waiting 15.0s for Button (First Match) to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object Button (Fir
+           ~ Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported i
+           ~ Waiting 15.0s for Button (First Match) to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+           ~ Checking existence of `Button (First Match)`
+           ~ Checking existence of `Button (First Match)`
+           ~ Find the Button (First Match)
+  4.29 s  testSortModeIsRememberedPerStore() Iteration 6: Checking existence of `"storeDetail.moreMenu" Any`
+           in: Waiting 5.0s for "storeDetail.moreMenu" Any to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "storeDetai
+           ~ Checking existence of `"Gouda" StaticText`
+           ~ Waiting 5.0s for "storeDetail.moreMenu" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "storeDetail.moreMenu" Any`
+           ~ Checking existence of `"storeDetail.moreMenu" Any`
+           ~ Capturing element debug description
+           ~ Checking existence of `"storeDetail.moreMenu" Any`

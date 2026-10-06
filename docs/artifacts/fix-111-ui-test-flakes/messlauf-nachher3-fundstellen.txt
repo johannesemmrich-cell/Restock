@@ -1,0 +1,179 @@
+  4.74 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 7: Wait for com.johannesemmrich.Restock to idle
+           in: Tap "Artikelname" TextField
+           ~ Find the "Artikelname" TextField
+           ~ Check for interrupting elements affecting "Artikelname" TextField
+           ~ Synthesize event
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Type 'Milch' into "Artikelname" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+  8.29 s  testCreatingCustomCategoryFromItemDialog() Iteration 2: Checking existence of `"item.categoryRow" Any`
+           in: Waiting 20.0s for "item.categoryRow" Any to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "item.categ
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 20.0s for "item.categoryRow" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "item.categoryRow" Any`
+           ~ Checking existence of `"item.categoryRow" Any`
+           ~ Tap "item.categoryRow" Any
+           ~ Wait for com.johannesemmrich.Restock to idle
+  4.77 s  testCreatingCustomCategoryFromItemDialog() Iteration 14: Checking existence of `"categoryPicker.create" Any`
+           in: Waiting 20.0s for "categoryPicker.create" Any to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "categoryPi
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 20.0s for "categoryPicker.create" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "categoryPicker.create" Any`
+           ~ Checking existence of `"categoryPicker.create" Any`
+           ~ Tap "categoryPicker.create" Any
+           ~ Wait for com.johannesemmrich.Restock to idle
+  4.52 s  testCreatingCustomCategoryFromItemDialog() Iteration 17: Checking existence of `"item.categoryRow" Any`
+           in: Waiting 20.0s for "item.categoryRow" Any to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "item.categ
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 20.0s for "item.categoryRow" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "item.categoryRow" Any`
+           ~ Checking existence of `"item.categoryRow" Any`
+           ~ Tap "item.categoryRow" Any
+           ~ Wait for com.johannesemmrich.Restock to idle
+ 19.23 s  testCreatingCustomCategoryFromItemDialog() Iteration 18: Checking existence of `"categoryPicker.create" Any`
+           in: Waiting 20.0s for "categoryPicker.create" Any to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "categoryPi
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 20.0s for "categoryPicker.create" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "categoryPicker.create" Any`
+           ~ Checking existence of `"categoryPicker.create" Any`
+           ~ Capturing element debug description
+           ~ Checking existence of `"categoryPicker.create" Any`
+ 15.89 s  testCreatingCustomCategoryFromItemDialog() Iteration 18: Checking existence of `"categoryPicker.create" Any`
+           in: Waiting 20.0s for "categoryPicker.create" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "categoryPicker.create" Any`
+           ~ Checking existence of `"categoryPicker.create" Any`
+           ~ Capturing element debug description
+           ~ Checking existence of `"categoryPicker.create" Any`
+           ~ Tap "categoryPicker.create" Any
+           ~ Wait for com.johannesemmrich.Restock to idle
+  6.52 s  testCreatingCustomCategoryFromItemDialog() Iteration 20: Checking existence of `"Kühltheke hinten" StaticText`
+           in: Waiting 20.0s for "Kühltheke hinten" StaticText to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "Kühltheke 
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 20.0s for "Kühltheke hinten" StaticText to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Kühltheke hinten" StaticText`
+           ~ Checking existence of `"Kühltheke hinten" StaticText`
+           ~ Waiting 20.0s for "storeDetail.moreMenu" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "storeDetail.moreMenu" Any`
+  6.78 s  testCreatingCustomCategoryFromItemDialog() Iteration 20: Checking existence of `Any (First Match)`
+           in: Waiting 20.0s for Any (First Match) to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object Any (First 
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 20.0s for Any (First Match) to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+           ~ Checking existence of `Any (First Match)`
+           ~ Tap Any (First Match)
+           ~ Wait for com.johannesemmrich.Restock to idle
+  6.32 s  testCreatingCustomCategoryFromItemDialog() Iteration 20: Checking existence of `StaticText (First Match)`
+           in: Waiting 20.0s for StaticText (First Match) to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object StaticText 
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 20.0s for StaticText (First Match) to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+           ~ Checking existence of `StaticText (First Match)`
+           ~ Tear Down
+           ~ Open com.johannesemmrich.Restock
+ 11.05 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Find the "item.categoryRow" Any
+           in: Tap "item.categoryRow" Any
+           ~ Checking existence of `"item.categoryRow" Any`
+           ~ Tap "item.categoryRow" Any
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "item.categoryRow" Any
+           ~ Check for interrupting elements affecting "item.categoryRow" Button
+           ~ Synthesize event
+  5.41 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Find the "categoryPicker.search" TextField
+           in: Tap "categoryPicker.search" TextField
+           ~ Checking existence of `"categoryPicker.search" TextField`
+           ~ Tap "categoryPicker.search" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "categoryPicker.search" TextField
+           ~ Check for interrupting elements affecting "categoryPicker.search" TextField
+           ~ Synthesize event
+  7.44 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Find the "categoryPicker.search" TextField
+           in: Type 'Kühltheke hinten' into "categoryPicker.search" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Type 'Kühltheke hinten' into "categoryPicker.search" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "categoryPicker.search" TextField
+           ~ Check for interrupting elements affecting "categoryPicker.search" TextField
+           ~ Synthesize event
+ 10.18 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Checking existence of `"categoryPicker.create" Any`
+           in: Waiting 20.0s for "categoryPicker.create" Any to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "categoryPi
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 20.0s for "categoryPicker.create" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "categoryPicker.create" Any`
+           ~ Checking existence of `"categoryPicker.create" Any`
+           ~ Tap "categoryPicker.create" Any
+           ~ Wait for com.johannesemmrich.Restock to idle
+ 27.62 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Find the "categoryPicker.create" Any
+           in: Tap "categoryPicker.create" Any
+           ~ Checking existence of `"categoryPicker.create" Any`
+           ~ Tap "categoryPicker.create" Any
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "categoryPicker.create" Any
+           ~ Check for interrupting elements affecting "categoryPicker.create" Button
+           ~ Synthesize event
+  4.20 s  testCreatingCustomCategoryFromItemDialog() Iteration 21: Checking existence of `"Speichern" Button`
+           in: Waiting 20.0s for "Speichern" Button to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "Speichern"
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 20.0s for "Speichern" Button to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Speichern" Button`
+           ~ Checking existence of `"Speichern" Button`
+           ~ Tap "Speichern" Button
+           ~ Wait for com.johannesemmrich.Restock to idle
+  4.06 s  testSwitchingSortModesReordersList() Iteration 3: Checking existence of `"storeDetail.moreMenu" Any`
+           in: Waiting 20.0s for "storeDetail.moreMenu" Any to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "storeDetai
+           ~ Checking existence of `"Gouda" StaticText`
+           ~ Waiting 20.0s for "storeDetail.moreMenu" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "storeDetail.moreMenu" Any`
+           ~ Checking existence of `"storeDetail.moreMenu" Any`
+           ~ Tap "storeDetail.moreMenu" Any
+           ~ Wait for com.johannesemmrich.Restock to idle
+  4.23 s  testSwitchingSortModesReordersList() Iteration 3: Checking existence of `"Hinzugefügt" Button`
+           in: Waiting 5.0s for "Hinzugefügt" Button to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "Hinzugefüg
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 5.0s for "Hinzugefügt" Button to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Hinzugefügt" Button`
+           ~ Checking existence of `"Hinzugefügt" Button`
+           ~ Capturing element debug description
+           ~ Checking existence of `"Hinzugefügt" Button`
+ 18.14 s  testSwitchingSortModesReordersList() Iteration 3: Checking existence of `"Hinzugefügt" Button`
+           in: Waiting 5.0s for "Hinzugefügt" Button to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Hinzugefügt" Button`
+           ~ Checking existence of `"Hinzugefügt" Button`
+           ~ Capturing element debug description
+           ~ Checking existence of `"Hinzugefügt" Button`
+           ~ Waiting 20.0s for "Hinzugefügt" Button to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Hinzugefügt" Button`
+  7.47 s  testSwitchingSortModesReordersList() Iteration 3: Checking existence of `"Kategorie" Button`
+           in: Waiting 20.0s for "Kategorie" Button to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "Kategorie"
+           ~ Checking existence of `"Kategorie" Button`
+           ~ Waiting 20.0s for "Kategorie" Button to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Kategorie" Button`
+           ~ Checking existence of `"Kategorie" Button`
+           ~ Tap "Kategorie" Button
+           ~ Wait for com.johannesemmrich.Restock to idle
+ 10.51 s  testSwitchingSortModesReordersList() Iteration 3: Find the "Kategorie" Button
+           in: Tap "Kategorie" Button
+           ~ Checking existence of `"Kategorie" Button`
+           ~ Tap "Kategorie" Button
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "Kategorie" Button
+           ~ Check for interrupting elements affecting "square.grid.3x1.below.line.grid.1x2" Button
+           ~ Synthesize event
+  6.73 s  testSwitchingSortModesReordersList() Iteration 3: Find the "Brot" StaticText
+           ~ Check for interrupting elements affecting "square.grid.3x1.below.line.grid.1x2" Button
+           ~ Synthesize event
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "Brot" StaticText
+           ~ Find the "Apfel" StaticText
+           ~ Find the "Gouda" StaticText
