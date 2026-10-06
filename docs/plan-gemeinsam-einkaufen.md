@@ -66,8 +66,20 @@ Getroffen (2026-10-06):
 2. Plattform: **iOS zuerst**; PWA/Android als späterer Pfad, daher nichts bauen, was es verbaut.
 3. Start: **Phase 0/1 zuerst**, dann Differenzierung.
 
+4. Betriebsrahmen: aktuell **einziger Nutzer**, Serverzugang nur per SSH-Key, **Ausfallzeit unkritisch**. Skalierung und Hochverfügbarkeit sind deshalb später zu lösen, nicht jetzt.
+
 Offen, per Messung zu entscheiden (Phase 0):
-4. Backend: CloudKit/CKShare oder Websocket-Backend. Favorit: **selbst gehostet auf dem vorhandenen Hetzner-Server** (EU, keine Kosten pro Nutzer).
+5. Backend: CloudKit/CKShare oder Websocket-Backend. Favorit: **Postgres plus schlanker Websocket-Dienst auf dem vorhandenen Hetzner-Server** (EU, keine Kosten pro Nutzer). Selbst gehostetes Supabase scheidet aus (siehe Server-Bestandsaufnahme).
+6. Auth der App (nicht des Servers): Konten und Einladung für Mitglieder, sobald weitere Nutzer dazukommen. Noch zu klären, ob Apple-Login nötig ist.
+
+### Server-Bestandsaufnahme (2026-10-06, nur gelesen)
+
+- 4 vCPU (AMD EPYC, geteilt), 7,6 GiB RAM, davon 4,6 GiB verfügbar, 2 GiB Swap, 52 GB Platte frei, Ubuntu 24.04. CPU und Platte sind kein Engpass, RAM ist der einzige begrenzende Faktor.
+- Läuft produktiv: Mail (Stalwart), n8n, Gregor (Prod und Staging), nginx, Docker. Kein Postgres, kein Redis. Ein Speicherengpass durch das neue Backend würde diese Dienste mitreißen.
+- Backups: täglich 03:00 (`backup.sh`), restic Off-Site auf einen Heimserver, Hetzner-Image-Backup laut Doku. Kein Restore-Test erkennbar. Die neue Datenbank muss ins Backup (z. B. `pg_dump`).
+- Sicherheit: SSH nur mit Key, kein Root-Login, fail2ban, unattended-upgrades. Firewall-Regeln nicht prüfbar. Websocket-Port nie direkt öffnen, nur über nginx. Dateirechte des neuen Dienstes eng halten (auf demselben Server wurde eine lesbare App-Datenbank gemeldet).
+- Eignung: Supabase selbst gehostet (10 bis 12 Container, grob 2 bis 4 GB RAM) nicht empfohlen. Postgres im Container auf `127.0.0.1` plus Websocket-Dienst (geschätzt 300 bis 600 MB) passt.
+- Größter Hebel für Stabilität: eigene kleine Maschine statt Mitbenutzung des Mail-Servers, sobald es mehr als einen Nutzer gibt.
 
 ### Backend-Vergleich
 
