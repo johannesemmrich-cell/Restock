@@ -58,8 +58,8 @@ final class AddItemQuantitySuggestionUITests: XCTestCase {
     private func openQuittenhofStoreDetail(_ app: XCUIApplication) {
         let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Quittenhof,")).firstMatch
         XCTAssertTrue(tile.waitForExistence(timeout: 15), "Quittenhof-Kachel nicht auf dem Home-Screen gefunden")
-        expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: tile)
-        waitForExpectations(timeout: 5)
+        let ready = tile.waitUntilHittable()
+        XCTAssertTrue(ready.matched, "Quittenhof-Kachel nicht antippbar — zuletzt: \(ready.last)")
         tile.tap()
     }
 
@@ -183,7 +183,7 @@ final class AddItemQuantitySuggestionUITests: XCTestCase {
     private func openAddItemFromQuittenhof(_ app: XCUIApplication) {
         openQuittenhofStoreDetail(app)
         let addButton = app.buttons.matching(NSPredicate(format: "identifier == 'plus'")).firstMatch
-        XCTAssertTrue(addButton.waitForExistence(timeout: 5), "'+'-Button in StoreDetailView nicht gefunden")
+        XCTAssertTrue(addButton.waitForExistence(timeout: UITestWait.defaultTimeout), "'+'-Button in StoreDetailView nicht gefunden")
         addButton.tap()
     }
 
@@ -195,22 +195,22 @@ final class AddItemQuantitySuggestionUITests: XCTestCase {
         openAddItemFromQuittenhof(app)
 
         let nameField = app.textFields["Artikelname"]
-        XCTAssertTrue(nameField.waitForExistence(timeout: 5), "Artikelname-Feld in AddItemView nicht gefunden")
+        XCTAssertTrue(nameField.waitForExistence(timeout: UITestWait.defaultTimeout), "Artikelname-Feld in AddItemView nicht gefunden")
         nameField.tap()
         nameField.typeText("Milch")
 
         let unitField = app.textFields["Einheit"]
-        XCTAssertTrue(unitField.waitForExistence(timeout: 5), "Einheiten-Feld in AddItemView nicht gefunden")
+        XCTAssertTrue(unitField.waitForExistence(timeout: UITestWait.defaultTimeout), "Einheiten-Feld in AddItemView nicht gefunden")
         expectation(for: NSPredicate(format: "value == %@", "l"), evaluatedWith: unitField)
-        waitForExpectations(timeout: 5)
+        waitForExpectations(timeout: UITestWait.defaultTimeout)
 
         nameField.typeText("reis")
 
         let addConfirmButton = app.navigationBars["Artikel hinzufügen"].buttons["Hinzufügen"]
-        XCTAssertTrue(addConfirmButton.waitForExistence(timeout: 5), "'Hinzufügen'-Button in AddItemView nicht gefunden")
+        XCTAssertTrue(addConfirmButton.waitForExistence(timeout: UITestWait.defaultTimeout), "'Hinzufügen'-Button in AddItemView nicht gefunden")
         addConfirmButton.tap()
 
-        XCTAssertTrue(app.staticTexts["Milchreis"].waitForExistence(timeout: 10), "Neu angelegter Artikel 'Milchreis' erscheint nicht in der Liste")
+        XCTAssertTrue(app.staticTexts["Milchreis"].waitForExistence(timeout: UITestWait.defaultTimeout), "Neu angelegter Artikel 'Milchreis' erscheint nicht in der Liste")
         let staleSuggestion = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "ca. 2 l")).firstMatch
         XCTAssertFalse(staleSuggestion.exists, "Die Vorbelegung aus dem Zwischenstand 'Milch' darf bei 'Milchreis' nicht übernommen werden (F001)")
         XCTAssertFalse(app.staticTexts["2 l"].exists, "Auch ohne 'ca.' darf die überholte Menge 2 l nicht bei 'Milchreis' landen (F001)")

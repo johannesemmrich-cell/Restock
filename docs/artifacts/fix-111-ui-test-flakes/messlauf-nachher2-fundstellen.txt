@@ -1,0 +1,91 @@
+  5.23 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 5: Wait for com.johannesemmrich.Restock to idle
+           in: Type 'reis' into "Artikelname" TextField
+           ~ Find the "Artikelname" TextField
+           ~ Check for interrupting elements affecting "Artikelname" TextField
+           ~ Synthesize event
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 5.0s for "Hinzufügen" Button to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Hinzufügen" Button`
+ 11.42 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 6: Wait for com.johannesemmrich.Restock to idle
+           in: Tap "Artikelname" TextField
+           ~ Find the "Artikelname" TextField
+           ~ Check for interrupting elements affecting "Artikelname" TextField
+           ~ Synthesize event
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Type 'Milch' into "Artikelname" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+  5.68 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 6: Checking existence of `StaticText (First Match)`
+           ~ Waiting 10.0s for "Milchreis" StaticText to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "Milchreis" StaticText`
+           ~ Checking existence of `"Milchreis" StaticText`
+           ~ Checking existence of `StaticText (First Match)`
+           ~ Checking existence of `"2 l" StaticText`
+           ~ Tear Down
+  4.74 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 8: Wait for com.johannesemmrich.Restock to idle
+           in: Tap "Artikelname" TextField
+           ~ Find the "Artikelname" TextField
+           ~ Check for interrupting elements affecting "Artikelname" TextField
+           ~ Synthesize event
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Type 'Milch' into "Artikelname" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+  9.94 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 9: Wait for com.johannesemmrich.Restock to idle
+           in: Tear Down
+           in: Open com.johannesemmrich.Restock
+           in: Launch com.johannesemmrich.Restock
+           ~ Launch com.johannesemmrich.Restock
+           ~ Terminate com.johannesemmrich.Restock:29575
+           ~ Setting up automation session
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Terminate com.johannesemmrich.Restock:30428
+  4.50 s  testStaleSuggestionIsDroppedWhenNameIsTypedFurther() Iteration 30: Wait for com.johannesemmrich.Restock to idle
+           in: Tear Down
+           in: Open com.johannesemmrich.Restock
+           in: Launch com.johannesemmrich.Restock
+           ~ Launch com.johannesemmrich.Restock
+           ~ Terminate com.johannesemmrich.Restock:55445
+           ~ Setting up automation session
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Terminate com.johannesemmrich.Restock:56453
+  4.16 s  testCreatingCustomCategoryFromItemDialog() Iteration 12: Find the "categoryPicker.search" TextField
+           in: Type 'Kühltheke hinten' into "categoryPicker.search" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Type 'Kühltheke hinten' into "categoryPicker.search" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "categoryPicker.search" TextField
+           ~ Check for interrupting elements affecting "categoryPicker.search" TextField
+           ~ Synthesize event
+  4.22 s  testCreatingCustomCategoryFromItemDialog() Iteration 12: Checking existence of `"categoryPicker.create" Any`
+           in: Waiting 5.0s for "categoryPicker.create" Any to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "categoryPi
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 5.0s for "categoryPicker.create" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "categoryPicker.create" Any`
+           ~ Checking existence of `"categoryPicker.create" Any`
+           ~ Capturing element debug description
+           ~ Checking existence of `"categoryPicker.create" Any`
+  5.61 s  testCreatingCustomCategoryFromItemDialog() Iteration 13: Find the "categoryPicker.search" TextField
+           in: Type 'Kühltheke hinten' into "categoryPicker.search" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Type 'Kühltheke hinten' into "categoryPicker.search" TextField
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Find the "categoryPicker.search" TextField
+           ~ Check for interrupting elements affecting "categoryPicker.search" TextField
+           ~ Synthesize event
+  4.24 s  testCreatingCustomCategoryFromItemDialog() Iteration 13: Checking existence of `"categoryPicker.create" Any`
+           in: Waiting 5.0s for "categoryPicker.create" Any to exist
+           in: Checking `Expect predicate `existsNoRetry == 1` for object "categoryPi
+           ~ Wait for com.johannesemmrich.Restock to idle
+           ~ Waiting 5.0s for "categoryPicker.create" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "categoryPicker.create" Any`
+           ~ Checking existence of `"categoryPicker.create" Any`
+           ~ Capturing element debug description
+           ~ Checking existence of `"categoryPicker.create" Any`
+ 21.13 s  testCreatingCustomCategoryFromItemDialog() Iteration 13: Checking existence of `"categoryPicker.create" Any`
+           in: Waiting 5.0s for "categoryPicker.create" Any to exist
+           ~ Checking `Expect predicate `existsNoRetry == 1` for object "categoryPicker.create" Any`
+           ~ Checking existence of `"categoryPicker.create" Any`
+           ~ Capturing element debug description
+           ~ Checking existence of `"categoryPicker.create" Any`
+           ~ Tap "categoryPicker.create" Any
+           ~ Wait for com.johannesemmrich.Restock to idle

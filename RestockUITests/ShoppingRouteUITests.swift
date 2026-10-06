@@ -31,10 +31,10 @@ final class ShoppingRouteUITests: XCTestCase {
         app.launch()
         let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Wegeladen,")).firstMatch
         XCTAssertTrue(tile.waitForExistence(timeout: 15), "Wegeladen-Kachel nicht auf dem Home-Screen gefunden")
-        expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: tile)
-        waitForExpectations(timeout: 5)
+        let ready = tile.waitUntilHittable()
+        XCTAssertTrue(ready.matched, "Wegeladen-Kachel nicht antippbar — zuletzt: \(ready.last)")
         tile.tap()
-        XCTAssertTrue(app.staticTexts["Gouda"].waitForExistence(timeout: 10), "Ladenliste nicht geöffnet")
+        XCTAssertTrue(app.staticTexts["Gouda"].waitForExistence(timeout: UITestWait.defaultTimeout), "Ladenliste nicht geöffnet")
         return app
     }
 
@@ -48,22 +48,22 @@ final class ShoppingRouteUITests: XCTestCase {
 
     private func choose(_ mode: String, in app: XCUIApplication) {
         let more = app.descendants(matching: .any)["storeDetail.moreMenu"].firstMatch
-        XCTAssertTrue(more.waitForExistence(timeout: 5), "···-Menü fehlt")
+        XCTAssertTrue(more.waitForExistence(timeout: UITestWait.defaultTimeout), "···-Menü fehlt")
         more.tap()
         let sortMenu = app.descendants(matching: .any)
             .matching(NSPredicate(format: "label BEGINSWITH %@", "Sortieren")).firstMatch
-        XCTAssertTrue(sortMenu.waitForExistence(timeout: 5), "Menüpunkt „Sortieren“ fehlt")
+        XCTAssertTrue(sortMenu.waitForExistence(timeout: UITestWait.defaultTimeout), "Menüpunkt „Sortieren“ fehlt")
         sortMenu.tap()
         let button = app.buttons[mode].firstMatch
         let option = button.waitForExistence(timeout: 5)
             ? button
             : app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", mode)).firstMatch
-        XCTAssertTrue(option.waitForExistence(timeout: 5), "Sortieroption „\(mode)“ fehlt")
+        XCTAssertTrue(option.waitForExistence(timeout: UITestWait.defaultTimeout), "Sortieroption „\(mode)“ fehlt")
         option.tap()
     }
 
     private func waitForOrder(_ expected: [String], in app: XCUIApplication, _ message: String) {
-        let deadline = Date().addingTimeInterval(5)
+        let deadline = Date().addingTimeInterval(UITestWait.defaultTimeout)
         var order = visibleOrder(app)
         while order != expected && Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.25))
@@ -91,14 +91,14 @@ final class ShoppingRouteUITests: XCTestCase {
         // Kategorie-Zeile, die `ItemRow` in jedem Modus unter „Gouda“ zeigt (ohne Emoji).
         let header = app.staticTexts.matching(NSPredicate(
             format: "label CONTAINS %@ AND label CONTAINS[c] %@", "🥛", "Milchprodukte")).firstMatch
-        XCTAssertTrue(header.waitForExistence(timeout: 5), "Im Modus Kategorie fehlt die Abschnittsüberschrift")
+        XCTAssertTrue(header.waitForExistence(timeout: UITestWait.defaultTimeout), "Im Modus Kategorie fehlt die Abschnittsüberschrift")
 
         choose("Einkaufsweg", in: app)
         waitForOrder(["Gouda", "Brot", "Apfel"], in: app, "Zurück auf Einkaufsweg muss wieder die gelernte Reihenfolge zeigen")
         // Die Reihenfolge ist in beiden Modi gleich — `waitForOrder` kehrt also sofort zurück, bevor
         // die Liste neu gezeichnet ist. Deshalb aufs Verschwinden der Überschrift warten.
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: header)
-        waitForExpectations(timeout: 5)
+        waitForExpectations(timeout: UITestWait.defaultTimeout)
     }
 
     func testSortModeIsRememberedPerStore() {
@@ -113,8 +113,10 @@ final class ShoppingRouteUITests: XCTestCase {
         relaunched.launch()
         let tile = relaunched.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Wegeladen,")).firstMatch
         XCTAssertTrue(tile.waitForExistence(timeout: 15), "Wegeladen-Kachel nach Neustart nicht gefunden")
+        let ready = tile.waitUntilHittable()
+        XCTAssertTrue(ready.matched, "Wegeladen-Kachel nach Neustart nicht antippbar — zuletzt: \(ready.last)")
         tile.tap()
-        XCTAssertTrue(relaunched.staticTexts["Gouda"].waitForExistence(timeout: 10), "Ladenliste nicht geöffnet")
+        XCTAssertTrue(relaunched.staticTexts["Gouda"].waitForExistence(timeout: UITestWait.defaultTimeout), "Ladenliste nicht geöffnet")
         waitForOrder(["Brot", "Apfel", "Gouda"], in: relaunched, "Der gewählte Sortiermodus muss nach einem Neustart erhalten bleiben")
     }
 
@@ -125,29 +127,29 @@ final class ShoppingRouteUITests: XCTestCase {
         app.staticTexts["Gouda"].firstMatch.tap()
 
         let categoryRow = app.descendants(matching: .any)["item.categoryRow"].firstMatch
-        XCTAssertTrue(categoryRow.waitForExistence(timeout: 5), "Zeile „Kategorie“ im Bearbeiten-Dialog fehlt")
+        XCTAssertTrue(categoryRow.waitForExistence(timeout: UITestWait.defaultTimeout), "Zeile „Kategorie“ im Bearbeiten-Dialog fehlt")
         categoryRow.tap()
 
         let search = app.textFields["categoryPicker.search"].firstMatch
-        XCTAssertTrue(search.waitForExistence(timeout: 5), "Suchfeld der Kategorieliste fehlt")
+        XCTAssertTrue(search.waitForExistence(timeout: UITestWait.defaultTimeout), "Suchfeld der Kategorieliste fehlt")
         search.tap()
         search.typeText("Kühltheke hinten")
 
         let create = app.descendants(matching: .any)["categoryPicker.create"].firstMatch
-        XCTAssertTrue(create.waitForExistence(timeout: 5), "„… bei Wegeladen anlegen“ fehlt")
+        XCTAssertTrue(create.waitForExistence(timeout: UITestWait.defaultTimeout), "„… bei Wegeladen anlegen“ fehlt")
         create.tap()
 
         let save = app.buttons["Speichern"].firstMatch
-        XCTAssertTrue(save.waitForExistence(timeout: 10), "Zurück im Dialog fehlt „Speichern“")
+        XCTAssertTrue(save.waitForExistence(timeout: UITestWait.defaultTimeout), "Zurück im Dialog fehlt „Speichern“")
         save.tap()
 
         let caption = app.staticTexts["Kühltheke hinten"].firstMatch
-        XCTAssertTrue(caption.waitForExistence(timeout: 5), "Gouda zeigt die neue Kategorie nicht")
+        XCTAssertTrue(caption.waitForExistence(timeout: UITestWait.defaultTimeout), "Gouda zeigt die neue Kategorie nicht")
 
         choose("Kategorie", in: app)
         let header = app.staticTexts.matching(NSPredicate(
             format: "label CONTAINS %@ AND label CONTAINS[c] %@", "🧊", "Kühltheke hinten")).firstMatch
-        XCTAssertTrue(header.waitForExistence(timeout: 5), "Die eigene Kategorie erscheint nicht als Abschnitt mit ihrem Emoji")
+        XCTAssertTrue(header.waitForExistence(timeout: UITestWait.defaultTimeout), "Die eigene Kategorie erscheint nicht als Abschnitt mit ihrem Emoji")
     }
 
     // MARK: - Von Hand verschieben (Issue #86)
