@@ -421,9 +421,16 @@ struct SmartCartApp: App {
     /// Läden des Nachkauf-Seeds unten — die Seed-Käufe werden über diesen `storeName` gelöscht.
     private static let replenishmentSeedStores = ["Bannerladen", "Listenladen"]
 
+    /// Kauf-Abstände (Tage zurück) des Nachkauf-Seeds je Laden — `internal`, damit
+    /// `ReplenishmentSeedYearTests` (Issue #115) denselben Seed nachbauen kann.
+    static let replenishmentSeedDaysAgo: [(store: String, items: [String], daysAgo: [Int])] = [
+        ("Bannerladen", ["Bannerbutter", "Bannerquark"], [29, 19, 9]),
+        ("Listenladen", ["Listenreis", "Listennudeln"], [46, 26, 6])
+    ]
+
     /// UI-Test-Seed für Nachkauf-Banner und „Vielleicht auch fällig" (Issue #98, Durchgang 2,
     /// `ReplenishmentUITests`): nur Rohdaten — Läden „Bannerladen"/„Listenladen" und rückdatierte
-    /// Käufe (Banner-Artikel −29/−19/−9 Tage, Listen-Artikel −37/−23/−9 Tage, je 12:00 Uhr). Ob
+    /// Käufe (Banner-Artikel −29/−19/−9 Tage, Listen-Artikel −46/−26/−6 Tage, je 12:00 Uhr). Ob
     /// etwas fällig ist, rechnet die App selbst. Setzt keine Vorschläge, Snoozes oder Sperren.
     /// Only runs on `-seedReplenishmentForUITests`, DEBUG-only.
     private static func seedReplenishmentForUITestsIfNeeded(context: ModelContext) {
@@ -432,11 +439,7 @@ struct SmartCartApp: App {
         context.insert(Store(name: "Bannerladen", emoji: "🧈", colorHex: "#C08A1E", visitsPerWeek: 1))
         context.insert(Store(name: "Listenladen", emoji: "🍚", colorHex: "#4A7A3B", visitsPerWeek: 1))
         let calendar = Calendar.current
-        let seeds: [(store: String, items: [String], daysAgo: [Int])] = [
-            ("Bannerladen", ["Bannerbutter", "Bannerquark"], [29, 19, 9]),
-            ("Listenladen", ["Listenreis", "Listennudeln"], [37, 23, 9])
-        ]
-        for seed in seeds {
+        for seed in replenishmentSeedDaysAgo {
             for name in seed.items {
                 for days in seed.daysAgo {
                     guard let day = calendar.date(byAdding: .day, value: -days, to: Date()),

@@ -73,9 +73,12 @@ Käufe von „Quittenhof“; die Seed-Käufe werden in der eigenen Funktion übe
   (also −29, −19, −9 Tage relativ zu jetzt). Die App errechnet daraus „in 1 Tag fällig“ und damit
   Banner-Fenster (Fenster bei 10-Tage-Zyklus: 2 Tage).
 - **Listen-Artikel „Listenreis“ und „Listennudeln“**, gekauft nur im Listenladen: je drei Kaufdaten
-  im Abstand von 14 Tagen, das letzte vor 9 Tagen (−37, −23, −9). Nächster Kauf in 5 Tagen: außerhalb
-  des Banner-Fensters (3 Tage), aber vor dem nächsten Besuch (Besuchsabstand aus den Kaufdaten 14
-  Tage), also genau der Fall von „Vielleicht auch fällig“ und **nicht** im Banner.
+  im Abstand von 20 Tagen, das letzte vor 6 Tagen (−46, −26, −6). Nächster Kauf in 14 Tagen: außerhalb
+  des Banner-Fensters (4 Tage), aber vor dem nächsten Besuch (Besuchsabstand aus den Kaufdaten 20
+  Tage), also genau der Fall von „Vielleicht auch fällig“ und **nicht** im Banner. Begründung
+  (Issue #115): die alten Werte −37/−23/−9 hatten nur 1 Tag Reserve; Schließtag-Regel (Di) und
+  Uhrzeit ließen „Listenreis“ in 678 von 8760 Stunden eines Jahres im Banner erscheinen
+  (`ReplenishmentSeedYearTests`).
 - `PurchaseRecord.date` wird nach `init` von Hand gesetzt (der Konstruktor setzt `Date()`).
   Alle Daten relativ zu `Date()`, keine festen Kalendertage. Kaufdaten Mittag (12:00) des jeweiligen
   Tages, damit die Tagesgrenze um Mitternacht keine Rolle spielt.
@@ -162,7 +165,7 @@ Start wie oben, Kachel „Listenladen,“ öffnen. Abschnitt „Vielleicht auch 
 
 - AC-1: Mit `-seedReplenishmentForUITests` startet die App mit Laden „Bannerladen“ und
   „Listenladen“ und Käufen für „Bannerbutter“, „Bannerquark“ (nur Bannerladen, −29/−19/−9 Tage) sowie
-  „Listenreis“, „Listennudeln“ (nur Listenladen, −37/−23/−9 Tage), alle relativ zu `Date()` gesetzt;
+  „Listenreis“, „Listennudeln“ (nur Listenladen, −46/−26/−6 Tage), alle relativ zu `Date()` gesetzt;
   der Seed setzt nur Läden und `PurchaseRecord`s, keine Vorschlagsliste, keinen Snooze/Sperr-Eintrag.
 - AC-2: Mit `-developerMode YES` zeigt der Startbildschirm den Banner „Zeit zum Nachkaufen“ mit
   genau „Bannerbutter“ und „Bannerquark“ (Test B1); die Listen-Artikel stehen nicht im Banner.
@@ -252,12 +255,12 @@ räumen in `tearDown()` auf; Simulator nie parallel nutzen, eigenes Testgerät R
   innerhalb der Zeile; Menüpunkt über `app.buttons["Hab noch"]`. Die Ladenliste ist eine `List`
   mit `.buttonStyle(.borderless)` — dort besonders prüfen. Scheitert die Bedienung dort grundsätzlich,
   Rückmeldung mit Schätzung statt Auslassen des Tests.
-- **Fälligkeit hängt von `Date()`:** Seed relativ zu jetzt, mittags, mit 1 bzw. 5 Tagen Reserve; das
-  Banner-Fenster (2 Tage) und das Listen-Fenster (3 Tage) überlappen so nicht.
+- **Fälligkeit hängt von `Date()`:** Seed relativ zu jetzt, mittags, mit 1 bzw. 14 Tagen Reserve; das
+  Banner-Fenster (2 Tage) und das Listen-Fenster (4 Tage) überlappen so nicht.
 - **Kaufhistorie-Zuordnung:** „Vielleicht auch fällig“ erscheint nur im Laden, den
   `AssignmentService.assign` wählt. Die Seed-Käufe tragen den passenden `storeName`; AC-7/AC-3 belegen
   die Zuordnung im echten Lauf. Der Besuchsabstand der Ladenliste (`StoreVisitForecast`) hängt von
-  den Seed-Kaufdaten ab (alle Käufe eines Ladens an denselben drei Tagen → Abstand 14 Tage, mind. 3).
+  den Seed-Kaufdaten ab (alle Käufe eines Ladens an denselben drei Tagen → Abstand 20 Tage bei den Listen-Artikeln, mind. 3).
 - **Zustand außerhalb von SwiftData:** Snoozes, Sperrliste, Feedback und Metrik liegen in
   UserDefaults und überleben den Test → Clear-Argument löscht sie (AC-14); ohne das würden Tests
   einander die Banner-Artikel wegnehmen.
