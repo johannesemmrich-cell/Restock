@@ -40,9 +40,10 @@ Nicht verfolgen: Rezept-Plattform (AnyList), Gutscheine/Werbung, Android.
 ## 4. Phasen
 
 **Phase 0 — Fundament (vor jedem neuen Feature)**
-- Echter Zwei-Konten-Test des Teilens (Einladung, Push, Offline-Konflikt). Ohne den bleibt jede Aussage „funktioniert“ unbelegt.
-- Entscheidung Sicherheitsmodell: bei Ausbau von Teilen auf `CKShare` migrieren (Backlog „CKShare-Migration“ ist dann nicht mehr optional, weil mehr Nutzer und mehr Daten im Share).
-- Latenz messen: Wie schnell sieht Person B den Haken von A?
+- Echter Zwei-Konten-Test des heutigen Teilens (Einladung, Push, Offline-Konflikt). Ohne den bleibt jede Aussage „funktioniert“ unbelegt.
+- Server-Bestandsaufnahme Hetzner (CPU, RAM, Last, Backups, offene Ports).
+- Latenz-Prototyp CloudKit gegen selbst gehostetes Websocket-Backend (siehe Abschnitt 5), danach Backend-Entscheidung.
+- Sicherheitsmodell mit der Backend-Entscheidung festlegen: Bleibt es bei CloudKit, ist die `CKShare`-Migration (Backlog) nicht mehr optional; beim eigenen Backend ersetzen Konten und Zeilenrechte den Einladungscode als Geheimnis.
 
 **Phase 1 — Teilen so gut wie der Standard**
 - Sichtbare Mitglieder, Einladung per Link (nicht nur Code), Entfernen/Verlassen.
@@ -58,17 +59,37 @@ Nicht verfolgen: Rezept-Plattform (AnyList), Gutscheine/Werbung, Android.
 - Haushalt als Einheit mit mehreren Läden statt Einzel-Share pro Laden.
 - Einkaufsabschluss mit Bon: Kosten pro Person sichtbar (optional, kein Splitwise-Nachbau).
 
-## 5. Entscheidungen, die du treffen musst
+## 5. Entscheidungen
 
-1. Zielgruppe: Paare/Familien in einem Haushalt (Empfehlung) oder auch WG/Gruppen?
-2. Android/Web: ja oder bewusst iOS-only? (Beeinflusst die Backend-Wahl.)
-3. CloudKit/CKShare beibehalten oder eigenes Backend? Empfehlung: CKShare, kein Server, keine laufenden Kosten, keine Konten.
-4. Hebel 1 und 2 zuerst, oder erst Phase 0/1?
+Getroffen (2026-10-06):
+1. Zielgruppe: Paare, Familien **und WGs/Gruppen** (Rollen, Rechte, mehr Mitglieder).
+2. Plattform: **iOS zuerst**; PWA/Android als späterer Pfad, daher nichts bauen, was es verbaut.
+3. Start: **Phase 0/1 zuerst**, dann Differenzierung.
+
+Offen, per Messung zu entscheiden (Phase 0):
+4. Backend: CloudKit/CKShare oder Websocket-Backend. Favorit: **selbst gehostet auf dem vorhandenen Hetzner-Server** (EU, keine Kosten pro Nutzer).
+
+### Backend-Vergleich
+
+| | CloudKit / CKShare | Websocket-Backend (Supabase selbst gehostet, Postgres + eigener Dienst) |
+|---|---|---|
+| Abgleich im Laden | Push über APNs, von iOS gedrosselt, Sekunden bis Minuten, nicht garantiert | Offene Verbindung, meist unter 1 s im Vordergrund (nicht gemessen) |
+| PWA/Android | CloudKit JS braucht Apple-ID je Nutzer, unrealistisch | Läuft in jedem Browser |
+| WGs/Gruppen | Rollen und Rechte begrenzt | Konten, Rollen, Zeilenrechte Standard |
+| Aufwand | Kein Server | Konten, DSGVO, Backups, Updates, TLS, Überwachung; Ausfall des Servers = kein Teilen |
+| Offen | – | Ausstattung des Hetzner-Servers (CPU/RAM, Last, Backups) |
+
+Hinweise: SwiftData bleibt lokal die Quelle; das Backend ist eine austauschbare Sync-Schicht. Push an iPhones läuft weiter über APNs (Apple-Developer-Zugang nötig). Supabase selbst gehostet besteht aus mehreren Containern; reicht der Server nicht, ist ein schlankerer Stack die Alternative.
+
+### Phase-0-Messung
+Prototyp mit zwei Geräten auf dem Hetzner-Server gegen CloudKit: Zeit von „Haken gesetzt“ bis „beim Partner sichtbar“, im Vordergrund, im Hintergrund und bei schlechtem Netz. Danach Backend-Entscheidung.
 
 ## 6. Risiken
 
-- Teilen funktioniert nur mit iCloud-Konto: Familienmitglieder ohne iPhone sind ausgeschlossen.
+- Mit CloudKit funktioniert Teilen nur mit iCloud-Konto: Mitglieder ohne iPhone sind ausgeschlossen.
 - Echtzeit über CloudKit ist Push-basiert und nicht garantiert sofort; „live“ nicht versprechen.
+- Selbst gehostet: Server-Ausfall, Backups, Sicherheitsupdates und DSGVO (Auftragsdaten, Löschung, Konten) liegen beim Betreiber.
+- Migration bestehender CloudKit-Shares auf ein neues Backend ist eigener Aufwand.
 - Ohne echten Mehrkonten-Test sind Konflikte beim gleichzeitigen Einkaufen ungetestet.
 - Datenschutz: Mitglieder-Anzeigenamen werden gespeichert (Datenschutzerklärung ist angepasst).
 
