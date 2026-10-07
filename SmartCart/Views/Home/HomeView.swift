@@ -1497,7 +1497,13 @@ struct HomeView: View {
         let token = quickAddToastToken
         quickAddToastItem = item
         quickAddToastMessage = message
-        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+        var effectiveDuration = duration
+        #if DEBUG
+        // Nur UI-Tests (Issue #111): `-quickAddToastDurationForUITests <s>` ersetzt die Frist.
+        let override = UserDefaults.standard.double(forKey: "quickAddToastDurationForUITests")
+        if override > 0 { effectiveDuration = override }
+        #endif
+        DispatchQueue.main.asyncAfter(deadline: .now() + effectiveDuration) {
             // Solange die Laden-Auswahl offen ist, bleibt der Toast stehen (sonst wäre der Artikel
             // beim Antippen schon weg); beim Schließen des Dialogs läuft die Frist neu an.
             guard token == quickAddToastToken, !showStoreCorrection else { return }
