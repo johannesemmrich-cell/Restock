@@ -1,0 +1,1355 @@
+ui-test	Set up job	﻿2026-10-07T11:55:07.2981460Z Current runner version: '2.337.0'
+ui-test	Set up job	2026-10-07T11:55:07.2998740Z ##[group]Runner Image Provisioner
+ui-test	Set up job	2026-10-07T11:55:07.2999280Z Hosted Compute Agent
+ui-test	Set up job	2026-10-07T11:55:07.2999640Z Version: 20260828.587
+ui-test	Set up job	2026-10-07T11:55:07.3000040Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+ui-test	Set up job	2026-10-07T11:55:07.3000500Z Build Date: 2026-08-28T16:44:25Z
+ui-test	Set up job	2026-10-07T11:55:07.3000930Z Worker ID: {56c445ec-e3e7-4434-81f2-25e48f9c5e5e}
+ui-test	Set up job	2026-10-07T11:55:07.3001380Z Azure Region: westus
+ui-test	Set up job	2026-10-07T11:55:07.3001740Z ##[endgroup]
+ui-test	Set up job	2026-10-07T11:55:07.3002630Z ##[group]Operating System
+ui-test	Set up job	2026-10-07T11:55:07.3003020Z macOS
+ui-test	Set up job	2026-10-07T11:55:07.3003340Z 26.6.2
+ui-test	Set up job	2026-10-07T11:55:07.3003660Z 25G83
+ui-test	Set up job	2026-10-07T11:55:07.3003980Z ##[endgroup]
+ui-test	Set up job	2026-10-07T11:55:07.3004320Z ##[group]Runner Image
+ui-test	Set up job	2026-10-07T11:55:07.3004690Z Image: macos-26-arm64
+ui-test	Set up job	2026-10-07T11:55:07.3005070Z Version: 20260907.0351.1
+ui-test	Set up job	2026-10-07T11:55:07.3005850Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20260907.0351/images/macos/macos-26-arm64-Readme.md
+ui-test	Set up job	2026-10-07T11:55:07.3007020Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20260907.0351
+ui-test	Set up job	2026-10-07T11:55:07.3007690Z ##[endgroup]
+ui-test	Set up job	2026-10-07T11:55:07.3008470Z ##[group]GITHUB_TOKEN Permissions
+ui-test	Set up job	2026-10-07T11:55:07.3009640Z Contents: read
+ui-test	Set up job	2026-10-07T11:55:07.3010000Z Metadata: read
+ui-test	Set up job	2026-10-07T11:55:07.3010330Z Packages: read
+ui-test	Set up job	2026-10-07T11:55:07.3010670Z ##[endgroup]
+ui-test	Set up job	2026-10-07T11:55:07.3012100Z Secret source: Actions
+ui-test	Set up job	2026-10-07T11:55:07.3012690Z Cache mode: write
+ui-test	Set up job	2026-10-07T11:55:07.3013110Z Prepare workflow directory
+ui-test	Set up job	2026-10-07T11:55:07.3245610Z Prepare all required actions
+ui-test	Set up job	2026-10-07T11:55:07.3277480Z Getting action download info
+ui-test	Set up job	2026-10-07T11:55:07.4539290Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+ui-test	Set up job	2026-10-07T11:55:07.6447840Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+ui-test	Set up job	2026-10-07T11:55:07.8195840Z Complete job name: ui-test
+ui-test	Run actions/checkout@v4	﻿2026-10-07T11:55:07.8603100Z ##[group]Run actions/checkout@v4
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8604000Z with:
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8604370Z   repository: johannesemmrich-cell/Restock
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8608550Z   token: ***
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8608970Z   ssh-strict: true
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8609320Z   ssh-user: git
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8609650Z   persist-credentials: true
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8610000Z   clean: true
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8610380Z   sparse-checkout-cone-mode: true
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8610760Z   fetch-depth: 1
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8611090Z   fetch-tags: false
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8611450Z   show-progress: true
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8611750Z   lfs: false
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8612030Z   submodules: false
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8612340Z   set-safe-directory: true
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8612680Z   allow-unsafe-pr-checkout: false
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:07.8613220Z ##[endgroup]
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1153620Z Syncing repository: johannesemmrich-cell/Restock
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1155430Z ##[group]Getting Git version info
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1156030Z Working directory is '/Users/runner/work/Restock/Restock'
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1157100Z [command]/opt/homebrew/bin/git version
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1670510Z git version 2.55.0
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1686890Z ##[endgroup]
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1693420Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/5208f6c6-060b-4686-964b-6aeb05ee8176/.gitconfig'
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1703370Z Temporarily overriding HOME='/Users/runner/work/_temp/5208f6c6-060b-4686-964b-6aeb05ee8176' before making global git config changes
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1705080Z Adding repository directory to the temporary git global config as a safe directory
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1707770Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Restock/Restock
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1817750Z Deleting the contents of '/Users/runner/work/Restock/Restock'
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1841040Z ##[group]Initializing the repository
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.1842320Z [command]/opt/homebrew/bin/git init /Users/runner/work/Restock/Restock
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2151340Z hint: Using 'master' as the name for the initial branch. This default branch name
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2154030Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2155490Z hint: to use in all of your new repositories, which will suppress this warning,
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2156650Z hint: call:
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2157200Z hint:
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2158760Z hint: 	git config --global init.defaultBranch <name>
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2159690Z hint:
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2160170Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2160980Z hint: 'development'. The just-created branch can be renamed via this command:
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2161600Z hint:
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2162120Z hint: 	git branch -m <name>
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2162560Z hint:
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2163170Z hint: Disable this message with "git config set advice.defaultBranchName false"
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2163940Z Initialized empty Git repository in /Users/runner/work/Restock/Restock/.git/
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2165650Z [command]/opt/homebrew/bin/git remote add origin https://github.com/johannesemmrich-cell/Restock
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2267630Z ##[endgroup]
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2268310Z ##[group]Disabling automatic garbage collection
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2270440Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2336980Z ##[endgroup]
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2337620Z ##[group]Setting up auth
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2342090Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.2406830Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.3353600Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.3413420Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.4250980Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.4329460Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.5047330Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.5105020Z ##[endgroup]
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.5105680Z ##[group]Fetching the repository
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:08.5110150Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f15c8c1ffcae616f20a778580772123a8619dfc9:refs/remotes/origin/tmp-111d2-vorher
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.4730470Z From https://github.com/johannesemmrich-cell/Restock
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.4732520Z  * [new ref]         f15c8c1ffcae616f20a778580772123a8619dfc9 -> origin/tmp-111d2-vorher
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.4734430Z ##[endgroup]
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.4735850Z ##[group]Determining the checkout info
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.4736740Z ##[endgroup]
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.4738120Z [command]/opt/homebrew/bin/git sparse-checkout disable
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.4816680Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.4883480Z ##[group]Checking out the ref
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.4885040Z [command]/opt/homebrew/bin/git checkout --progress --force -B tmp-111d2-vorher refs/remotes/origin/tmp-111d2-vorher
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.6202580Z Switched to a new branch 'tmp-111d2-vorher'
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.6206680Z branch 'tmp-111d2-vorher' set up to track 'origin/tmp-111d2-vorher'.
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.6222490Z ##[endgroup]
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.6317130Z [command]/opt/homebrew/bin/git log -1 --format=%H
+ui-test	Run actions/checkout@v4	2026-10-07T11:55:10.6398600Z f15c8c1ffcae616f20a778580772123a8619dfc9
+ui-test	Select latest available Xcode	﻿2026-10-07T11:55:10.6668310Z ##[group]Run LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+ui-test	Select latest available Xcode	2026-10-07T11:55:10.6670000Z ^[[36;1mLATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)^[[0m
+ui-test	Select latest available Xcode	2026-10-07T11:55:10.6671430Z ^[[36;1mif [ -z "$LATEST" ]; then LATEST="/Applications/Xcode.app"; fi^[[0m
+ui-test	Select latest available Xcode	2026-10-07T11:55:10.6672730Z ^[[36;1mecho "DEVELOPER_DIR=$LATEST/Contents/Developer" >> "$GITHUB_ENV"^[[0m
+ui-test	Select latest available Xcode	2026-10-07T11:55:10.6717000Z shell: /bin/bash -e {0}
+ui-test	Select latest available Xcode	2026-10-07T11:55:10.6717860Z ##[endgroup]
+ui-test	Install xcpretty	﻿2026-10-07T11:55:10.7170620Z ##[group]Run gem install xcpretty --no-document
+ui-test	Install xcpretty	2026-10-07T11:55:10.7171640Z ^[[36;1mgem install xcpretty --no-document^[[0m
+ui-test	Install xcpretty	2026-10-07T11:55:10.7202570Z shell: /bin/bash -e {0}
+ui-test	Install xcpretty	2026-10-07T11:55:10.7203230Z env:
+ui-test	Install xcpretty	2026-10-07T11:55:10.7204010Z   DEVELOPER_DIR: /Applications/Xcode_26.6.0.app/Contents/Developer
+ui-test	Install xcpretty	2026-10-07T11:55:10.7205020Z ##[endgroup]
+ui-test	Install xcpretty	2026-10-07T11:55:11.3196200Z Successfully installed xcpretty-0.4.1
+ui-test	Install xcpretty	2026-10-07T11:55:11.3197270Z 1 gem installed
+ui-test	Pick newest available iPhone simulator	﻿2026-10-07T11:55:11.3264630Z ##[group]Run DEVICES=$(xcrun simctl list -j devices available)
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3265400Z ^[[36;1mDEVICES=$(xcrun simctl list -j devices available)^[[0m
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3266200Z ^[[36;1mRUNTIME=$(echo "$DEVICES" | jq -r '.devices | keys | map(select(test("iOS"))) | sort | last')^[[0m
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3267270Z ^[[36;1mUDID=$(echo "$DEVICES" | jq -r --arg rt "$RUNTIME" '.devices[$rt] | map(select(.isAvailable and (.name | test("^iPhone")))) | .[0].udid')^[[0m
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3268410Z ^[[36;1mNAME=$(echo "$DEVICES" | jq -r --arg rt "$RUNTIME" '.devices[$rt] | map(select(.isAvailable and (.name | test("^iPhone")))) | .[0].name')^[[0m
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3269300Z ^[[36;1mif [ -z "$UDID" ] || [ "$UDID" = "null" ]; then^[[0m
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3269850Z ^[[36;1m  echo "No available iPhone simulator found" >&2^[[0m
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3270330Z ^[[36;1m  exit 1^[[0m
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3270680Z ^[[36;1mfi^[[0m
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3271070Z ^[[36;1mecho "Using $NAME ($UDID) on runtime $RUNTIME"^[[0m
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3271600Z ^[[36;1mecho "udid=$UDID" >> "$GITHUB_OUTPUT"^[[0m
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3302140Z shell: /bin/bash -e {0}
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3302580Z env:
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3303060Z   DEVELOPER_DIR: /Applications/Xcode_26.6.0.app/Contents/Developer
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:11.3303650Z ##[endgroup]
+ui-test	Pick newest available iPhone simulator	2026-10-07T11:55:17.0746580Z Using iPhone 17 Pro (22452A91-4697-4369-8812-53ADB77EB73B) on runtime com.apple.CoreSimulator.SimRuntime.iOS-26-5
+ui-test	Boot simulator	﻿2026-10-07T11:55:17.0875940Z ##[group]Run xcrun simctl boot 22452A91-4697-4369-8812-53ADB77EB73B
+ui-test	Boot simulator	2026-10-07T11:55:17.0876610Z ^[[36;1mxcrun simctl boot 22452A91-4697-4369-8812-53ADB77EB73B^[[0m
+ui-test	Boot simulator	2026-10-07T11:55:17.0877060Z ^[[36;1mxcrun simctl bootstatus 22452A91-4697-4369-8812-53ADB77EB73B -b^[[0m
+ui-test	Boot simulator	2026-10-07T11:55:17.0921150Z shell: /bin/bash -e {0}
+ui-test	Boot simulator	2026-10-07T11:55:17.0921420Z env:
+ui-test	Boot simulator	2026-10-07T11:55:17.0921880Z   DEVELOPER_DIR: /Applications/Xcode_26.6.0.app/Contents/Developer
+ui-test	Boot simulator	2026-10-07T11:55:17.0922260Z ##[endgroup]
+ui-test	Boot simulator	2026-10-07T11:55:59.8874130Z Monitoring boot status for iPhone 17 Pro (22452A91-4697-4369-8812-53ADB77EB73B).
+ui-test	Boot simulator	2026-10-07T11:55:59.8962020Z [2026-10-07 11:55:59 +0000] Status=2, isTerminal=NO, Elapsed=00:41.
+ui-test	Boot simulator	2026-10-07T11:55:59.8965990Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:55:59.8980230Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:55:59.9023830Z 		Migration Elapsed:00:33 seconds
+ui-test	Boot simulator	2026-10-07T11:55:59.9049640Z 
+ui-test	Boot simulator	2026-10-07T11:56:00.9443260Z [2026-10-07 11:56:00 +0000] Status=2, isTerminal=NO, Elapsed=00:42.
+ui-test	Boot simulator	2026-10-07T11:56:00.9447980Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:00.9452410Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:00.9453430Z 		Migration Elapsed:00:34 seconds
+ui-test	Boot simulator	2026-10-07T11:56:00.9454940Z 
+ui-test	Boot simulator	2026-10-07T11:56:01.8832190Z [2026-10-07 11:56:01 +0000] Status=2, isTerminal=NO, Elapsed=00:43.
+ui-test	Boot simulator	2026-10-07T11:56:01.8832990Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:01.8835490Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:01.9326560Z 		Migration Elapsed:00:35 seconds
+ui-test	Boot simulator	2026-10-07T11:56:01.9326820Z 
+ui-test	Boot simulator	2026-10-07T11:56:02.9670150Z [2026-10-07 11:56:02 +0000] Status=2, isTerminal=NO, Elapsed=00:44.
+ui-test	Boot simulator	2026-10-07T11:56:02.9671350Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:02.9676970Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:02.9679720Z 		Migration Elapsed:00:36 seconds
+ui-test	Boot simulator	2026-10-07T11:56:02.9681310Z 
+ui-test	Boot simulator	2026-10-07T11:56:04.0710640Z [2026-10-07 11:56:04 +0000] Status=2, isTerminal=NO, Elapsed=00:45.
+ui-test	Boot simulator	2026-10-07T11:56:04.0814070Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:04.0918420Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:04.0973240Z 		Migration Elapsed:00:37 seconds
+ui-test	Boot simulator	2026-10-07T11:56:04.1015550Z 
+ui-test	Boot simulator	2026-10-07T11:56:04.8866060Z [2026-10-07 11:56:04 +0000] Status=2, isTerminal=NO, Elapsed=00:46.
+ui-test	Boot simulator	2026-10-07T11:56:04.8869670Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:04.8913780Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:04.8920070Z 		Migration Elapsed:00:38 seconds
+ui-test	Boot simulator	2026-10-07T11:56:04.8926530Z 
+ui-test	Boot simulator	2026-10-07T11:56:05.8948130Z [2026-10-07 11:56:05 +0000] Status=2, isTerminal=NO, Elapsed=00:47.
+ui-test	Boot simulator	2026-10-07T11:56:05.9054460Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:05.9094990Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:05.9209280Z 		Migration Elapsed:00:39 seconds
+ui-test	Boot simulator	2026-10-07T11:56:05.9235720Z 
+ui-test	Boot simulator	2026-10-07T11:56:06.8892440Z [2026-10-07 11:56:06 +0000] Status=2, isTerminal=NO, Elapsed=00:48.
+ui-test	Boot simulator	2026-10-07T11:56:06.8898480Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:06.8899810Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:06.8900630Z 		Migration Elapsed:00:40 seconds
+ui-test	Boot simulator	2026-10-07T11:56:06.8903910Z 
+ui-test	Boot simulator	2026-10-07T11:56:08.1721530Z [2026-10-07 11:56:08 +0000] Status=2, isTerminal=NO, Elapsed=00:49.
+ui-test	Boot simulator	2026-10-07T11:56:08.2589740Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:08.3301990Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:08.3407720Z 		Migration Elapsed:00:41 seconds
+ui-test	Boot simulator	2026-10-07T11:56:08.3563000Z 
+ui-test	Boot simulator	2026-10-07T11:56:09.2644610Z [2026-10-07 11:56:08 +0000] Status=2, isTerminal=NO, Elapsed=00:50.
+ui-test	Boot simulator	2026-10-07T11:56:09.4299520Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:09.5125820Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:09.5127600Z 		Migration Elapsed:00:42 seconds
+ui-test	Boot simulator	2026-10-07T11:56:09.5948800Z 
+ui-test	Boot simulator	2026-10-07T11:56:10.0874730Z [2026-10-07 11:56:10 +0000] Status=2, isTerminal=NO, Elapsed=00:51.
+ui-test	Boot simulator	2026-10-07T11:56:10.1365510Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:10.1475460Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:10.1600830Z 		Migration Elapsed:00:43 seconds
+ui-test	Boot simulator	2026-10-07T11:56:10.1730900Z 
+ui-test	Boot simulator	2026-10-07T11:56:11.0875670Z [2026-10-07 11:56:11 +0000] Status=2, isTerminal=NO, Elapsed=00:52.
+ui-test	Boot simulator	2026-10-07T11:56:11.2783890Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:11.3598650Z 		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:11.6256740Z 		Migration Elapsed:00:44 seconds
+ui-test	Boot simulator	2026-10-07T11:56:11.7074970Z 
+ui-test	Boot simulator	2026-10-07T11:56:14.3210650Z [2026-10-07 11:56:14 +0000] Status=2, isTerminal=NO, Elapsed=00:55.
+ui-test	Boot simulator	2026-10-07T11:56:14.3211550Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:14.3211980Z 		Reason:Running plugin com.apple.securityd.KeychainMigrator (KeychainMigrator.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:14.3212530Z 		Migration Elapsed:00:45 seconds
+ui-test	Boot simulator	2026-10-07T11:56:14.3212740Z 
+ui-test	Boot simulator	2026-10-07T11:56:15.5603060Z [2026-10-07 11:56:15 +0000] Status=2, isTerminal=NO, Elapsed=00:56.
+ui-test	Boot simulator	2026-10-07T11:56:15.7234810Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:15.7235450Z 		Reason:Running plugin com.apple.managedconfiguration.migrator (MCProfile.migrator, user-agnostic)
+ui-test	Boot simulator	2026-10-07T11:56:15.7237130Z 		Migration Elapsed:00:47 seconds
+ui-test	Boot simulator	2026-10-07T11:56:15.7237370Z 
+ui-test	Boot simulator	2026-10-07T11:56:17.7705770Z [2026-10-07 11:56:17 +0000] Status=2, isTerminal=NO, Elapsed=00:59.
+ui-test	Boot simulator	2026-10-07T11:56:17.7706240Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:17.8522190Z 		Reason:Running plugin com.apple.addressbook.migrator (AddressBookLegacy.migrator)
+ui-test	Boot simulator	2026-10-07T11:56:17.9343590Z 		Migration Elapsed:00:49 seconds
+ui-test	Boot simulator	2026-10-07T11:56:18.0162130Z 
+ui-test	Boot simulator	2026-10-07T11:56:18.8797480Z [2026-10-07 11:56:18 +0000] Status=2, isTerminal=NO, Elapsed=01:00.
+ui-test	Boot simulator	2026-10-07T11:56:19.0523490Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:19.0527850Z 		Reason:Running plugin com.apple.dataaccess.migrator (DAAccount.migrator)
+ui-test	Boot simulator	2026-10-07T11:56:19.2200540Z 		Migration Elapsed:00:51 seconds
+ui-test	Boot simulator	2026-10-07T11:56:19.3017390Z 
+ui-test	Boot simulator	2026-10-07T11:56:21.4392140Z [2026-10-07 11:56:21 +0000] Status=2, isTerminal=NO, Elapsed=01:02.
+ui-test	Boot simulator	2026-10-07T11:56:21.4393360Z 	Waiting on Data Migration
+ui-test	Boot simulator	2026-10-07T11:56:21.5210830Z 		Reason:Running plugin com.apple.coreaudio.HAENDataMigrator (HAENDataMigrator.migrator)
+ui-test	Boot simulator	2026-10-07T11:56:21.6036350Z 		Migration Elapsed:00:52 seconds
+ui-test	Boot simulator	2026-10-07T11:56:21.6854880Z 
+ui-test	Boot simulator	2026-10-07T11:56:22.4257770Z [2026-10-07 11:56:22 +0000] Status=4, isTerminal=NO, Elapsed=01:03.
+ui-test	Boot simulator	2026-10-07T11:56:22.5488840Z 	Waiting on System App
+ui-test	Boot simulator	2026-10-07T11:56:22.6711990Z 
+ui-test	Boot simulator	2026-10-07T11:56:23.7455290Z [2026-10-07 11:56:23 +0000] Status=4, isTerminal=NO, Elapsed=01:05.
+ui-test	Boot simulator	2026-10-07T11:56:23.8275670Z 	Waiting on System App
+ui-test	Boot simulator	2026-10-07T11:56:23.9075630Z 
+ui-test	Boot simulator	2026-10-07T11:56:24.2326980Z [2026-10-07 11:56:24 +0000] Status=4, isTerminal=NO, Elapsed=01:05.
+ui-test	Boot simulator	2026-10-07T11:56:24.3140730Z 	Waiting on System App
+ui-test	Boot simulator	2026-10-07T11:56:24.3142040Z 
+ui-test	Boot simulator	2026-10-07T11:56:24.8866870Z [2026-10-07 11:56:24 +0000] Status=4, isTerminal=NO, Elapsed=01:06.
+ui-test	Boot simulator	2026-10-07T11:56:24.9673750Z 	Waiting on System App
+ui-test	Boot simulator	2026-10-07T11:56:25.1313580Z 
+ui-test	Boot simulator	2026-10-07T11:56:25.6194920Z [2026-10-07 11:56:25 +0000] Status=4, isTerminal=NO, Elapsed=01:07.
+ui-test	Boot simulator	2026-10-07T11:56:25.6990210Z 	Waiting on System App
+ui-test	Boot simulator	2026-10-07T11:56:25.6994530Z 
+ui-test	Boot simulator	2026-10-07T11:56:26.3526310Z [2026-10-07 11:56:26 +0000] Status=4, isTerminal=NO, Elapsed=01:07.
+ui-test	Boot simulator	2026-10-07T11:56:26.4323070Z 	Waiting on System App
+ui-test	Boot simulator	2026-10-07T11:56:26.5140010Z 
+ui-test	Boot simulator	2026-10-07T11:56:28.2770130Z [2026-10-07 11:56:28 +0000] Status=4, isTerminal=NO, Elapsed=01:09.
+ui-test	Boot simulator	2026-10-07T11:56:28.6856160Z 	Waiting on System App
+ui-test	Boot simulator	2026-10-07T11:56:28.6862430Z 
+ui-test	Boot simulator	2026-10-07T11:56:34.5510610Z [2026-10-07 11:56:34 +0000] Status=4294967295, isTerminal=YES, Elapsed=01:15.
+ui-test	Boot simulator	2026-10-07T11:56:34.5520270Z 	Finished
+ui-test	Boot simulator	2026-10-07T11:56:34.7186650Z 
+ui-test	Grant app permissions	﻿2026-10-07T11:56:40.0059060Z ##[group]Run xcrun simctl privacy 22452A91-4697-4369-8812-53ADB77EB73B grant camera com.johannesemmrich.Restock
+ui-test	Grant app permissions	2026-10-07T11:56:40.0060060Z ^[[36;1mxcrun simctl privacy 22452A91-4697-4369-8812-53ADB77EB73B grant camera com.johannesemmrich.Restock^[[0m
+ui-test	Grant app permissions	2026-10-07T11:56:40.0061590Z ^[[36;1mxcrun simctl privacy 22452A91-4697-4369-8812-53ADB77EB73B grant photos com.johannesemmrich.Restock^[[0m
+ui-test	Grant app permissions	2026-10-07T11:56:43.2282780Z shell: /bin/bash -e {0}
+ui-test	Grant app permissions	2026-10-07T11:56:43.2283150Z env:
+ui-test	Grant app permissions	2026-10-07T11:56:43.2283550Z   DEVELOPER_DIR: /Applications/Xcode_26.6.0.app/Contents/Developer
+ui-test	Grant app permissions	2026-10-07T11:56:43.2283890Z ##[endgroup]
+ui-test	Vorher-Verhalten herstellen (Argument weglassen)	﻿2026-10-07T11:56:46.8923320Z ##[group]Run sed -i '' 's/launchedApp(toastDuration: 60)/launchedApp()/' RestockUITests/QuickAddAssignmentUITests.swift
+ui-test	Vorher-Verhalten herstellen (Argument weglassen)	2026-10-07T11:56:46.8924240Z ^[[36;1msed -i '' 's/launchedApp(toastDuration: 60)/launchedApp()/' RestockUITests/QuickAddAssignmentUITests.swift^[[0m
+ui-test	Vorher-Verhalten herstellen (Argument weglassen)	2026-10-07T11:56:46.8925000Z ^[[36;1mgrep -c 'launchedApp(toastDuration: 60)' RestockUITests/QuickAddAssignmentUITests.swift || true^[[0m
+ui-test	Vorher-Verhalten herstellen (Argument weglassen)	2026-10-07T11:56:46.8959290Z shell: /bin/bash -e {0}
+ui-test	Vorher-Verhalten herstellen (Argument weglassen)	2026-10-07T11:56:46.8959580Z env:
+ui-test	Vorher-Verhalten herstellen (Argument weglassen)	2026-10-07T11:56:46.8959870Z   DEVELOPER_DIR: /Applications/Xcode_26.6.0.app/Contents/Developer
+ui-test	Vorher-Verhalten herstellen (Argument weglassen)	2026-10-07T11:56:46.8960340Z ##[endgroup]
+ui-test	Vorher-Verhalten herstellen (Argument weglassen)	2026-10-07T11:56:47.0164070Z 0
+ui-test	Build and run UI tests	﻿2026-10-07T11:56:47.0317280Z ##[group]Run set -o pipefail
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0317680Z ^[[36;1mset -o pipefail^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0318090Z ^[[36;1mxcodebuild test \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0318360Z ^[[36;1m  -project Restock.xcodeproj \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0318830Z ^[[36;1m  -scheme Restock \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0319140Z ^[[36;1m  -destination 'platform=iOS Simulator,id=22452A91-4697-4369-8812-53ADB77EB73B' \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0319720Z ^[[36;1m  -only-testing:RestockUITests/QuickAddAssignmentUITests/testToastNamesStoreAndOffersChangeAndUndo \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0320440Z ^[[36;1m  -only-testing:RestockUITests/QuickAddAssignmentUITests/testUndoRemovesToastAndItem \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0321080Z ^[[36;1m  -only-testing:RestockUITests/QuickAddAssignmentUITests/testChangeStoreMovesItemAndRemembersCorrection \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0322130Z ^[[36;1m  -only-testing:RestockUITests/QuickAddAssignmentUITests/testToastStaysVisibleLongerThanTwoSeconds \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0322840Z ^[[36;1m  -test-iterations 30 \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0323340Z ^[[36;1m  -resultBundlePath UITestResults.xcresult \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0323590Z ^[[36;1m  -skipMacroValidation \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0323910Z ^[[36;1m  CODE_SIGN_IDENTITY="-" \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0324130Z ^[[36;1m  CODE_SIGNING_REQUIRED=NO \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0324460Z ^[[36;1m  CODE_SIGNING_ALLOWED=YES \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0324750Z ^[[36;1m  AD_HOC_CODE_SIGNING_ALLOWED=YES \^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0327110Z ^[[36;1m  | xcpretty^[[0m
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0369650Z shell: /bin/bash -e {0}
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0369990Z env:
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0370380Z   DEVELOPER_DIR: /Applications/Xcode_26.6.0.app/Contents/Developer
+ui-test	Build and run UI tests	2026-10-07T11:56:47.0370660Z ##[endgroup]
+ui-test	Build and run UI tests	2026-10-07T11:57:04.9011440Z --- xcodebuild: WARNING: Using the first of multiple matching destinations:
+ui-test	Build and run UI tests	2026-10-07T11:57:04.9019880Z { platform:iOS Simulator, arch:arm64, id:22452A91-4697-4369-8812-53ADB77EB73B, OS:26.5, name:iPhone 17 Pro }
+ui-test	Build and run UI tests	2026-10-07T11:57:04.9021470Z { platform:iOS Simulator, arch:x86_64, id:22452A91-4697-4369-8812-53ADB77EB73B, OS:26.5, name:iPhone 17 Pro }
+ui-test	Build and run UI tests	2026-10-07T11:57:16.7035970Z ▸ Linking __preview.dylib
+ui-test	Build and run UI tests	2026-10-07T11:57:16.7037480Z ▸ Processing Info.plist
+ui-test	Build and run UI tests	2026-10-07T11:57:16.7037930Z ▸ Linking __preview.dylib
+ui-test	Build and run UI tests	2026-10-07T11:57:16.7038240Z ▸ Processing Info.plist
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4213710Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4299610Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:94:29: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4301000Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4301840Z             let storeName = store.name
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4302300Z                             ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4302950Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4302950Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4302950Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4304270Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:130:98: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4308960Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4309420Z                 } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4313810Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4314710Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4314730Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4314730Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4316310Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:79: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4317120Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4320040Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4323590Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4325200Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4325220Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4325220Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4339820Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:98: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4345750Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4347050Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4348040Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4348190Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4348200Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4348200Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4349230Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:94:29: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4351750Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4352000Z             let storeName = store.name
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4352390Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4353770Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4353780Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4353780Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4354790Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:130:98: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4355760Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4356630Z                 } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4358090Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4358340Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4358340Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4358360Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4360580Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:79: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4362070Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4362440Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4364060Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4364630Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4364710Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4364720Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4366330Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:98: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4367000Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4368970Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4372760Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4374070Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4374070Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4374080Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4376820Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:94:29: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4377720Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4377950Z             let storeName = store.name
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4379270Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4379740Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4379760Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4379760Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4380830Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:130:98: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4382810Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4383230Z                 } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4384380Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4385280Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4385280Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4385280Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4386040Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:79: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4387970Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4388740Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4397460Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4397730Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4397740Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4397740Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4398610Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:98: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4400310Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4400600Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4401490Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4401750Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4401760Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4401760Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4403050Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:94:29: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4404030Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4404110Z             let storeName = store.name
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4405600Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4405960Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4405970Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4405970Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4407430Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:130:98: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4409140Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4410000Z                 } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4410840Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4410910Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4410920Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4410920Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4412520Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:79: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4418920Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4419300Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4419960Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4420600Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4420600Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4420610Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4422120Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:98: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4428640Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4429030Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4429600Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4430360Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4430370Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4430370Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4431300Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:94:29: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4432100Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4432360Z             let storeName = store.name
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4432620Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4432950Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4432960Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4432960Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4434600Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:130:98: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4435530Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4435850Z                 } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4436560Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4436810Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4436810Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4436810Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4437580Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:79: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4439020Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4439330Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4440250Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4440890Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4440950Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4440960Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4442370Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:98: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4443260Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4443690Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4444810Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4445210Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4445400Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4445410Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4447090Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:94:29: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4448550Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4448900Z             let storeName = store.name
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4449450Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4450410Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4450420Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4450430Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4451540Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:130:98: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4453740Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4454470Z                 } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4458320Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4460670Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4460680Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4460690Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4469650Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:79: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4472850Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4474550Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4475870Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4475980Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4475980Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4475990Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4478850Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:98: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4479600Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4479950Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4481960Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4482240Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4482250Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4482250Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4484750Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:94:29: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4486270Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4486960Z             let storeName = store.name
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4487240Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4488170Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4488170Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4488170Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4493810Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:130:98: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4498820Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4499180Z                 } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4500730Z       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4500900Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4500900Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4500910Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4501720Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:79: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4502490Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4502750Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4503420Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4503690Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4503700Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4503700Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4504370Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:98: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4505170Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4505810Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4506570Z                       ^
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4506720Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4506720Z 
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4613830Z ▸ Linking SmartCartWidgets.debug.dylib
+ui-test	Build and run UI tests	2026-10-07T11:57:30.4673490Z ▸ Linking SmartCartWidgets
+ui-test	Build and run UI tests	2026-10-07T12:00:04.3091330Z ▸ Linking RestockShareExtension.debug.dylib
+ui-test	Build and run UI tests	2026-10-07T12:00:04.3095460Z ▸ Linking RestockShareExtension
+ui-test	Build and run UI tests	2026-10-07T12:00:04.3215460Z ▸ Touching SmartCartWidgets.appex (in target 'SmartCartWidgets' from project 'Restock')
+ui-test	Build and run UI tests	2026-10-07T12:00:04.3323110Z ▸ Touching RestockShareExtension.appex (in target 'RestockShareExtension' from project 'Restock')
+ui-test	Build and run UI tests	2026-10-07T12:00:04.3640390Z ▸ Copying /Users/runner/Library/Developer/Xcode/DerivedData/Restock-cbsclmyjfjvxppfkarskbfkbnfts/Build/Products/Debug-iphonesimulator/Restock.app/PrivacyInfo.xcprivacy
+ui-test	Build and run UI tests	2026-10-07T12:00:04.3650400Z ▸ Linking __preview.dylib
+ui-test	Build and run UI tests	2026-10-07T12:00:04.3805370Z ▸ Copying /Users/runner/Library/Developer/Xcode/DerivedData/Restock-cbsclmyjfjvxppfkarskbfkbnfts/Build/Products/Debug-iphonesimulator/Restock.app/ClashDisplay-Semibold.ttf
+ui-test	Build and run UI tests	2026-10-07T12:00:04.3909730Z ▸ Copying Localizable.strings
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4065220Z ▸ Copying Localizable.strings
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4195190Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4210450Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Views/Store/EditItemView.swift:276:58: immutable value 'shareID' was never used; consider replacing with '_' or removing it
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4211320Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4313300Z         guard stagedPhotoData == nil, item.hasPhoto, let shareID = selectedStore?.shareID else { return }
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4418820Z       ^
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4520140Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4622970Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4633170Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4652970Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/QuickAddParser.swift:46:13: variable 'tokens' was never mutated; consider changing to 'let' constant
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4654250Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4654710Z         var tokens = trimmed.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4655300Z                                                      ~~~~^~~~~~~
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4658340Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4658370Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4658370Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4788750Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:94:29: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4797070Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4798030Z             let storeName = store.name
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4798920Z         ~~~ ^
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4799460Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4799470Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4799470Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4801130Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:130:98: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4832920Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4834080Z                 } else if let historical = ReceiptParserService.historyMatch(for: line.name, in: allRecords, storeName: storeName) {
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4834770Z       ^
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4834850Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4835620Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4835620Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4836570Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:79: capture of 'allRecords' with non-Sendable type '[PurchaseRecord]' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4837620Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4838820Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4840730Z                       ^
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4840880Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4841680Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.4906400Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5008350Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/ReceiptResolutionService.swift:182:98: capture of 'store' with non-Sendable type 'Store' in a '@Sendable' closure; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5108190Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5241440Z             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5386000Z                       ^
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5486410Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5594860Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5667150Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5687230Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Views/Prices/ReceiptScannerView.swift:732:90: non-Sendable type 'Store' of property 'store' cannot exit main actor-isolated context; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5688810Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5690070Z             let resolved = await ReceiptResolutionService.resolve(parsed: parsed, store: store, allRecords: allRecords)
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5690950Z       ^
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5691550Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5691600Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5691600Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5693000Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Views/Prices/ReceiptScannerView.swift:732:109: non-Sendable type '[PurchaseRecord]' of property 'allRecords' cannot exit main actor-isolated context; this is an error in the Swift 6 language mode
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5695850Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5696440Z             let resolved = await ReceiptResolutionService.resolve(parsed: parsed, store: store, allRecords: allRecords)
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5697130Z       ^
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5698400Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5698480Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5698490Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5701760Z ⚠️  /Users/runner/work/Restock/Restock/SmartCart/Services/SharedStoreService.swift:235:9: result of 'try?' is unused
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5702940Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5703460Z         try? await db.deleteSubscription(withID: "sub-\(shareID)")
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5704050Z                       ^
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5704310Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5704320Z 
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5705190Z ▸ Linking Restock.debug.dylib
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5705610Z ▸ Linking Restock
+ui-test	Build and run UI tests	2026-10-07T12:00:04.5706070Z ▸ Processing Generated-Info.plist
+ui-test	Build and run UI tests	2026-10-07T12:00:17.3391780Z ▸ Linking RestockTests
+ui-test	Build and run UI tests	2026-10-07T12:00:22.1621280Z ▸ Processing empty-RestockTests.plist
+ui-test	Build and run UI tests	2026-10-07T12:00:22.7190650Z ▸ Touching RestockTests.xctest (in target 'RestockTests' from project 'Restock')
+ui-test	Build and run UI tests	2026-10-07T12:00:25.6269280Z ▸ Touching Restock.app (in target 'Restock' from project 'Restock')
+ui-test	Build and run UI tests	2026-10-07T12:00:25.6396900Z ▸ Processing empty-RestockUITests.plist
+ui-test	Build and run UI tests	2026-10-07T12:00:25.6612780Z ▸ Linking RestockUITests
+ui-test	Build and run UI tests	2026-10-07T12:00:26.1945440Z ▸ Copying Info.plist
+ui-test	Build and run UI tests	2026-10-07T12:00:26.4312430Z ▸ Touching RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+ui-test	Build and run UI tests	2026-10-07T12:01:32.7905130Z Selected tests
+ui-test	Build and run UI tests	2026-10-07T12:01:32.8018770Z Test Suite RestockUITests.xctest started
+ui-test	Build and run UI tests	2026-10-07T12:01:32.8120600Z QuickAddAssignmentUITests
+ui-test	Build and run UI tests	2026-10-07T12:01:34.7004810Z 2026-10-07 12:01:34.673 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:01:34.7265810Z 2026-10-07 12:01:34.674 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:02:08.9539800Z     ✗ testChangeStoreMovesItemAndRemembersCorrection, XCTAssertTrue failed - „Laden ändern“ fehlt
+ui-test	Build and run UI tests	2026-10-07T12:02:10.1006650Z 2026-10-07 12:02:10.098 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:02:10.1115730Z 2026-10-07 12:02:10.098 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:02:19.6955710Z 2026-10-07 12:02:19.693 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:02:19.6988880Z 2026-10-07 12:02:19.694 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:05:03.1210490Z 2026-10-07 12:05:03.084 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:05:03.1219290Z 2026-10-07 12:05:03.086 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:05:37.7444830Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (197.909 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:05:37.7458570Z 2026-10-07 12:05:37.744 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:05:37.7461870Z 2026-10-07 12:05:37.744 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:06:43.7169890Z 2026-10-07 12:06:43.708 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:06:43.7202140Z 2026-10-07 12:06:43.708 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:06:56.7174790Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (79.142 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:06:56.9092780Z 2026-10-07 12:06:56.908 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:06:56.9097310Z 2026-10-07 12:06:56.908 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:08:10.7458470Z 2026-10-07 12:08:10.701 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:08:10.7469040Z 2026-10-07 12:08:10.714 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:08:26.9948050Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (90.149 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:08:27.3394960Z 2026-10-07 12:08:27.338 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:08:27.3405340Z 2026-10-07 12:08:27.338 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:09:47.4627440Z 2026-10-07 12:09:47.458 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:09:47.4631950Z 2026-10-07 12:09:47.458 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:09:57.1860670Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (90.374 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:09:57.4684580Z 2026-10-07 12:09:57.464 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:09:57.4690490Z 2026-10-07 12:09:57.465 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:11:03.6138470Z 2026-10-07 12:11:03.610 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:11:03.6156770Z 2026-10-07 12:11:03.610 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:11:16.9849630Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (79.856 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:11:17.0906080Z 2026-10-07 12:11:17.081 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:11:17.1051590Z 2026-10-07 12:11:17.081 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:12:14.4186960Z 2026-10-07 12:12:14.407 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:12:14.4199470Z 2026-10-07 12:12:14.407 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:12:24.9983160Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (67.971 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:12:25.1744800Z 2026-10-07 12:12:25.172 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:12:25.1749690Z 2026-10-07 12:12:25.172 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:13:16.7487810Z 2026-10-07 12:13:16.740 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:13:16.7499220Z 2026-10-07 12:13:16.741 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:13:26.6215210Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (61.725 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:13:26.7251410Z 2026-10-07 12:13:26.717 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:13:26.7587050Z 2026-10-07 12:13:26.717 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:14:20.3312310Z 2026-10-07 12:14:20.327 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:14:20.3439310Z 2026-10-07 12:14:20.327 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:14:27.5857340Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (61.009 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:14:27.6256270Z 2026-10-07 12:14:27.624 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:14:27.6259710Z 2026-10-07 12:14:27.624 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:15:18.7572760Z 2026-10-07 12:15:18.748 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:15:18.7665830Z 2026-10-07 12:15:18.748 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:15:29.8390320Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (62.259 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:15:29.9450060Z 2026-10-07 12:15:29.944 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:15:29.9456350Z 2026-10-07 12:15:29.944 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:16:36.4994420Z 2026-10-07 12:16:36.494 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:16:36.4997650Z 2026-10-07 12:16:36.494 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:16:57.5855660Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (87.693 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:16:57.9155910Z 2026-10-07 12:16:57.910 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:16:57.9182400Z 2026-10-07 12:16:57.910 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:17:28.8266310Z     ✗ testChangeStoreMovesItemAndRemembersCorrection, XCTAssertTrue failed - Der Toast nennt den neuen Laden nicht
+ui-test	Build and run UI tests	2026-10-07T12:17:31.8616720Z 2026-10-07 12:17:31.848 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:17:31.9179590Z 2026-10-07 12:17:31.848 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:17:40.0991490Z 2026-10-07 12:17:40.097 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:17:40.1136150Z 2026-10-07 12:17:40.099 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:18:32.1600840Z 2026-10-07 12:18:32.156 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:18:32.1604130Z 2026-10-07 12:18:32.156 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:18:40.3321130Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (60.495 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:18:40.3414510Z 2026-10-07 12:18:40.337 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:18:40.3516970Z 2026-10-07 12:18:40.337 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:19:32.7626860Z 2026-10-07 12:19:32.760 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:19:32.7895780Z 2026-10-07 12:19:32.760 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:19:42.6568020Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (62.428 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:19:42.7205830Z 2026-10-07 12:19:42.714 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:19:42.7298110Z 2026-10-07 12:19:42.714 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:20:35.1734440Z 2026-10-07 12:20:35.164 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:20:35.1890020Z 2026-10-07 12:20:35.164 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:20:42.0812470Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (59.200 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:20:42.2188390Z 2026-10-07 12:20:42.218 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:20:42.2190310Z 2026-10-07 12:20:42.218 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:21:33.1117060Z 2026-10-07 12:21:33.101 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:21:33.1124460Z 2026-10-07 12:21:33.102 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:21:42.5637720Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (60.338 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:21:42.6812300Z 2026-10-07 12:21:42.680 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:21:42.6999680Z 2026-10-07 12:21:42.680 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:22:40.9926270Z 2026-10-07 12:22:40.985 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:22:41.0115800Z 2026-10-07 12:22:40.985 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:22:50.2690210Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (68.000 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:22:50.4109510Z 2026-10-07 12:22:50.410 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:22:50.4114570Z 2026-10-07 12:22:50.410 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:23:49.3697180Z 2026-10-07 12:23:49.366 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:23:49.3793240Z 2026-10-07 12:23:49.366 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:23:57.8553440Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (67.585 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:23:57.8960220Z 2026-10-07 12:23:57.894 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:23:57.8963810Z 2026-10-07 12:23:57.894 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:24:52.4050740Z 2026-10-07 12:24:52.390 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:24:52.4090450Z 2026-10-07 12:24:52.390 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:25:00.5258620Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (62.499 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:25:00.7315560Z 2026-10-07 12:25:00.730 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:25:00.7323170Z 2026-10-07 12:25:00.730 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:25:54.8449440Z 2026-10-07 12:25:54.837 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:25:54.8569420Z 2026-10-07 12:25:54.837 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:26:03.1009910Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (62.750 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:26:03.2139990Z 2026-10-07 12:26:03.177 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:26:03.2408470Z 2026-10-07 12:26:03.177 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:27:03.4388440Z 2026-10-07 12:27:03.435 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:27:03.4395930Z 2026-10-07 12:27:03.436 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:27:11.4805470Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (68.440 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:27:11.5871060Z 2026-10-07 12:27:11.586 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:27:11.5881570Z 2026-10-07 12:27:11.586 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:28:09.0443180Z 2026-10-07 12:28:09.039 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:28:09.6888060Z 2026-10-07 12:28:09.040 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:28:17.2626690Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (65.748 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:28:17.3352260Z 2026-10-07 12:28:17.334 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:28:17.3353960Z 2026-10-07 12:28:17.334 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:29:13.4142430Z 2026-10-07 12:29:13.409 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:29:13.4232580Z 2026-10-07 12:29:13.409 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:29:22.9577460Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (65.692 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:29:23.0233440Z 2026-10-07 12:29:23.022 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:29:23.0242160Z 2026-10-07 12:29:23.022 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:30:14.4890330Z 2026-10-07 12:30:14.450 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:30:14.4894700Z 2026-10-07 12:30:14.451 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:30:22.4103800Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (59.392 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:30:22.6283800Z 2026-10-07 12:30:22.618 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:30:22.6762780Z 2026-10-07 12:30:22.619 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:31:25.5733290Z 2026-10-07 12:31:25.566 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:31:25.5842210Z 2026-10-07 12:31:25.566 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:31:33.6500400Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (71.287 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:31:33.7255040Z 2026-10-07 12:31:33.724 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:31:33.7259810Z 2026-10-07 12:31:33.724 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:32:30.6211210Z 2026-10-07 12:32:30.619 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:32:30.6323520Z 2026-10-07 12:32:30.619 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:32:38.5681450Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (64.945 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:32:38.6317230Z 2026-10-07 12:32:38.631 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:32:38.6319160Z 2026-10-07 12:32:38.631 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:33:33.4393080Z 2026-10-07 12:33:33.434 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:33:33.4399290Z 2026-10-07 12:33:33.434 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:33:42.3080630Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (63.746 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:33:42.3665090Z 2026-10-07 12:33:42.366 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:33:42.3667050Z 2026-10-07 12:33:42.366 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:34:33.0117170Z 2026-10-07 12:34:32.978 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:34:33.0120950Z 2026-10-07 12:34:32.978 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:34:39.9796960Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (57.677 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:34:40.0314800Z 2026-10-07 12:34:40.029 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:34:40.0327130Z 2026-10-07 12:34:40.029 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:35:28.7752450Z 2026-10-07 12:35:28.762 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:35:28.7758370Z 2026-10-07 12:35:28.764 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:35:39.2067380Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (59.200 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:35:39.3431580Z 2026-10-07 12:35:39.333 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:35:39.3503170Z 2026-10-07 12:35:39.334 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:36:33.2930130Z 2026-10-07 12:36:33.282 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:36:33.2976030Z 2026-10-07 12:36:33.282 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:36:43.4393260Z     ✓ testChangeStoreMovesItemAndRemembersCorrection (64.235 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:36:43.5651970Z 2026-10-07 12:36:43.564 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:36:43.5654680Z 2026-10-07 12:36:43.564 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:37:02.0695550Z 2026-10-07 12:37:02.067 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:37:02.0738760Z 2026-10-07 12:37:02.067 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:37:08.0439030Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (24.634 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:37:08.1258060Z 2026-10-07 12:37:08.125 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:37:08.1259710Z 2026-10-07 12:37:08.125 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:37:25.5338450Z 2026-10-07 12:37:25.532 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:37:25.5507720Z 2026-10-07 12:37:25.532 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:37:31.9116540Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (23.857 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:37:31.9676400Z 2026-10-07 12:37:31.967 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:37:31.9764620Z 2026-10-07 12:37:31.967 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:37:50.1492800Z 2026-10-07 12:37:50.145 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:37:50.1854420Z 2026-10-07 12:37:50.145 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:37:56.5887050Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (24.673 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:37:56.6547950Z 2026-10-07 12:37:56.653 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:37:56.6575430Z 2026-10-07 12:37:56.654 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:38:16.0074760Z 2026-10-07 12:38:16.004 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:38:16.0115790Z 2026-10-07 12:38:16.005 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:38:22.4879810Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (25.904 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:38:22.5459470Z 2026-10-07 12:38:22.545 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:38:22.5463510Z 2026-10-07 12:38:22.545 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:38:40.0957150Z 2026-10-07 12:38:40.094 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:38:40.0968380Z 2026-10-07 12:38:40.094 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:38:45.7997020Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (23.313 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:38:45.8433960Z 2026-10-07 12:38:45.842 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:38:45.8436840Z 2026-10-07 12:38:45.843 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:39:02.7995740Z 2026-10-07 12:39:02.798 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:39:02.8045700Z 2026-10-07 12:39:02.798 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:39:10.0111270Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (24.109 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:39:10.0993590Z 2026-10-07 12:39:10.097 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:39:10.0996530Z 2026-10-07 12:39:10.098 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:39:27.9678840Z 2026-10-07 12:39:27.955 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:39:27.9681470Z 2026-10-07 12:39:27.955 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:39:36.2729520Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (26.085 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:39:36.3281580Z 2026-10-07 12:39:36.327 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:39:36.3284020Z 2026-10-07 12:39:36.327 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:39:52.4623870Z 2026-10-07 12:39:52.461 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:39:52.4745580Z 2026-10-07 12:39:52.461 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:39:58.7042770Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (22.693 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:39:58.7660160Z 2026-10-07 12:39:58.764 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:39:58.7726810Z 2026-10-07 12:39:58.764 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:40:18.6305280Z 2026-10-07 12:40:18.628 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:40:18.6363310Z 2026-10-07 12:40:18.628 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:40:26.7358650Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (28.032 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:40:26.8144000Z 2026-10-07 12:40:26.813 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:40:26.8145700Z 2026-10-07 12:40:26.814 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:40:45.7637960Z 2026-10-07 12:40:45.762 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:40:45.7640910Z 2026-10-07 12:40:45.762 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:40:52.7386150Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (26.013 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:40:52.8202790Z 2026-10-07 12:40:52.819 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:40:52.8204780Z 2026-10-07 12:40:52.819 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:41:09.5524250Z 2026-10-07 12:41:09.515 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:41:09.6356970Z 2026-10-07 12:41:09.515 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:41:16.1193740Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (23.367 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:41:16.1756320Z 2026-10-07 12:41:16.175 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:41:16.2155980Z 2026-10-07 12:41:16.175 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:41:32.7278660Z 2026-10-07 12:41:32.726 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:41:32.7281050Z 2026-10-07 12:41:32.727 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:41:38.1384560Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (22.031 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:41:38.1748580Z 2026-10-07 12:41:38.173 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:41:38.1754980Z 2026-10-07 12:41:38.174 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:41:53.6223020Z 2026-10-07 12:41:53.620 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:41:53.6270000Z 2026-10-07 12:41:53.620 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:41:59.6852320Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (21.497 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:41:59.7537390Z 2026-10-07 12:41:59.752 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:41:59.7680740Z 2026-10-07 12:41:59.752 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:42:17.0890500Z 2026-10-07 12:42:17.087 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:42:17.0897470Z 2026-10-07 12:42:17.088 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:42:23.4266230Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (23.370 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:42:23.5860180Z 2026-10-07 12:42:23.585 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:42:23.5867170Z 2026-10-07 12:42:23.585 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:42:43.6062040Z 2026-10-07 12:42:43.603 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:42:43.6495440Z 2026-10-07 12:42:43.603 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:42:49.7149880Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (26.685 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:42:49.8343100Z 2026-10-07 12:42:49.833 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:42:49.8439300Z 2026-10-07 12:42:49.833 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:43:05.5295160Z 2026-10-07 12:43:05.528 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:43:05.5297810Z 2026-10-07 12:43:05.528 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:43:11.6885800Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (21.989 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:43:11.7457830Z 2026-10-07 12:43:11.745 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:43:11.7459890Z 2026-10-07 12:43:11.745 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:43:28.3547510Z 2026-10-07 12:43:28.289 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:43:28.3649950Z 2026-10-07 12:43:28.290 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:43:35.0582440Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (23.353 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:43:35.0825200Z 2026-10-07 12:43:35.082 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:43:35.0829080Z 2026-10-07 12:43:35.082 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:43:50.1824120Z 2026-10-07 12:43:50.180 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:43:50.1827490Z 2026-10-07 12:43:50.180 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:43:56.7769590Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (21.736 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:43:56.9056130Z 2026-10-07 12:43:56.903 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:43:56.9068100Z 2026-10-07 12:43:56.904 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:44:22.1520680Z     ✗ testToastNamesStoreAndOffersChangeAndUndo, XCTAssertTrue failed - „Rückgängig“ fehlt
+ui-test	Build and run UI tests	2026-10-07T12:44:22.5359360Z 2026-10-07 12:44:22.535 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:44:22.5362980Z 2026-10-07 12:44:22.535 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:44:29.5879560Z 2026-10-07 12:44:29.581 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:44:29.5999370Z 2026-10-07 12:44:29.581 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:44:47.2468730Z 2026-10-07 12:44:47.245 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:44:47.2471370Z 2026-10-07 12:44:47.245 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:44:53.3282590Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (23.847 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:44:53.3924660Z 2026-10-07 12:44:53.392 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:44:53.3926200Z 2026-10-07 12:44:53.392 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:45:10.2404480Z 2026-10-07 12:45:10.239 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:45:10.2406170Z 2026-10-07 12:45:10.239 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:45:16.8892520Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (23.554 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:45:16.9588580Z 2026-10-07 12:45:16.958 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:45:16.9590170Z 2026-10-07 12:45:16.958 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:45:34.8731920Z 2026-10-07 12:45:34.871 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:45:34.8753730Z 2026-10-07 12:45:34.871 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:45:41.2266720Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (24.335 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:45:41.2781060Z 2026-10-07 12:45:41.277 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:45:41.2783310Z 2026-10-07 12:45:41.277 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:45:56.9519100Z 2026-10-07 12:45:56.947 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:45:56.9648480Z 2026-10-07 12:45:56.947 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:46:03.4319790Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (22.204 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:46:03.4921950Z 2026-10-07 12:46:03.491 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:46:03.4925020Z 2026-10-07 12:46:03.491 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:46:19.8930290Z 2026-10-07 12:46:19.889 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:46:19.8943190Z 2026-10-07 12:46:19.890 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:46:26.4115950Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (22.982 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:46:26.4640390Z 2026-10-07 12:46:26.463 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:46:26.4644060Z 2026-10-07 12:46:26.463 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:46:49.6461040Z     ✗ testToastNamesStoreAndOffersChangeAndUndo, XCTAssertTrue failed - „Rückgängig“ fehlt
+ui-test	Build and run UI tests	2026-10-07T12:46:49.8972140Z 2026-10-07 12:46:49.892 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:46:49.9332520Z 2026-10-07 12:46:49.892 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:46:57.5150850Z 2026-10-07 12:46:57.464 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:46:57.5255610Z 2026-10-07 12:46:57.519 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:47:15.5319340Z 2026-10-07 12:47:15.528 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:47:15.5339100Z 2026-10-07 12:47:15.528 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:47:21.8780780Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (24.908 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:47:21.9521370Z 2026-10-07 12:47:21.951 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:47:21.9525830Z 2026-10-07 12:47:21.951 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:47:38.8889950Z 2026-10-07 12:47:38.888 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:47:38.8895970Z 2026-10-07 12:47:38.888 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:47:45.7379070Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (23.865 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:47:45.8024650Z 2026-10-07 12:47:45.801 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:47:45.8126460Z 2026-10-07 12:47:45.802 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:48:00.3207580Z 2026-10-07 12:48:00.316 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:48:00.3329880Z 2026-10-07 12:48:00.316 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:48:10.0737290Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (24.320 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:48:10.1230690Z 2026-10-07 12:48:10.122 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:48:10.1412920Z 2026-10-07 12:48:10.122 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:48:28.6257730Z 2026-10-07 12:48:28.618 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:48:28.6409030Z 2026-10-07 12:48:28.618 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:48:36.9456610Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (26.853 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:48:36.9783160Z 2026-10-07 12:48:36.977 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:48:36.9952360Z 2026-10-07 12:48:36.977 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:48:53.6476330Z 2026-10-07 12:48:53.646 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:48:53.6513260Z 2026-10-07 12:48:53.646 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:48:58.9569590Z     ✓ testToastNamesStoreAndOffersChangeAndUndo (22.051 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:48:59.0068560Z 2026-10-07 12:48:59.006 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:48:59.0070550Z 2026-10-07 12:48:59.006 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:49:15.1668780Z 2026-10-07 12:49:15.165 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:49:15.1675390Z 2026-10-07 12:49:15.165 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:49:20.5460700Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (21.591 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:49:20.6154270Z 2026-10-07 12:49:20.605 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:49:20.6310480Z 2026-10-07 12:49:20.605 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:49:36.3301930Z 2026-10-07 12:49:36.326 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:49:36.3333990Z 2026-10-07 12:49:36.326 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:49:41.5019930Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (20.948 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:49:41.5625050Z 2026-10-07 12:49:41.559 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:49:41.5722890Z 2026-10-07 12:49:41.560 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:49:57.6952840Z 2026-10-07 12:49:57.694 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:49:57.6982350Z 2026-10-07 12:49:57.694 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:50:03.0992350Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (21.600 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:50:03.1327440Z 2026-10-07 12:50:03.132 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:50:03.1431670Z 2026-10-07 12:50:03.132 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:50:18.5416580Z 2026-10-07 12:50:18.540 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:50:18.5496430Z 2026-10-07 12:50:18.540 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:50:23.6271400Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (20.490 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:50:23.6794980Z 2026-10-07 12:50:23.669 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:50:23.6802370Z 2026-10-07 12:50:23.669 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:50:38.7681030Z 2026-10-07 12:50:38.766 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:50:38.7724310Z 2026-10-07 12:50:38.766 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:50:43.5703920Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (19.988 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:50:43.6268510Z 2026-10-07 12:50:43.626 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:50:43.6274160Z 2026-10-07 12:50:43.626 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:50:59.4286960Z 2026-10-07 12:50:59.427 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:50:59.4289040Z 2026-10-07 12:50:59.427 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:51:04.8113870Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (21.235 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:51:04.8535160Z 2026-10-07 12:51:04.853 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:51:04.8573530Z 2026-10-07 12:51:04.853 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:51:20.1864260Z 2026-10-07 12:51:20.185 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:51:20.1868520Z 2026-10-07 12:51:20.185 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:51:25.2040070Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (20.397 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:51:25.2510400Z 2026-10-07 12:51:25.250 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:51:25.2512160Z 2026-10-07 12:51:25.250 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:51:39.5449640Z 2026-10-07 12:51:39.543 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:51:39.5454170Z 2026-10-07 12:51:39.543 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:51:44.7074830Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (19.502 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:51:44.7402410Z 2026-10-07 12:51:44.739 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:51:44.7404280Z 2026-10-07 12:51:44.739 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:51:59.1277320Z 2026-10-07 12:51:59.126 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:51:59.1279380Z 2026-10-07 12:51:59.126 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:52:03.8347740Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (19.125 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:52:03.8708400Z 2026-10-07 12:52:03.870 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:52:03.8709570Z 2026-10-07 12:52:03.870 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:52:18.0773620Z 2026-10-07 12:52:18.076 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:52:18.0775850Z 2026-10-07 12:52:18.076 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:52:22.6981380Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (18.863 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:52:22.7519090Z 2026-10-07 12:52:22.751 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:52:22.7520560Z 2026-10-07 12:52:22.751 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:52:37.2122810Z 2026-10-07 12:52:37.211 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:52:37.2124460Z 2026-10-07 12:52:37.211 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:52:41.9310660Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (19.224 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:52:41.9665070Z 2026-10-07 12:52:41.965 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:52:41.9768440Z 2026-10-07 12:52:41.965 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:52:58.2634480Z 2026-10-07 12:52:58.261 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:52:58.2636620Z 2026-10-07 12:52:58.261 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:53:04.1810470Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (22.254 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:53:04.2738620Z 2026-10-07 12:53:04.272 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:53:04.2746690Z 2026-10-07 12:53:04.273 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:53:21.4500560Z 2026-10-07 12:53:21.448 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:53:21.4513560Z 2026-10-07 12:53:21.448 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:53:28.4785460Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (24.280 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:53:28.5122640Z 2026-10-07 12:53:28.511 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:53:28.5124250Z 2026-10-07 12:53:28.511 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:53:45.5833510Z 2026-10-07 12:53:45.581 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:53:45.5835080Z 2026-10-07 12:53:45.581 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:53:51.5836660Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (23.004 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:53:51.6434130Z 2026-10-07 12:53:51.642 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:53:51.6447070Z 2026-10-07 12:53:51.642 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:54:11.5394700Z 2026-10-07 12:54:11.535 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:54:11.5523860Z 2026-10-07 12:54:11.535 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:54:19.8946110Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (28.415 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:54:19.9727800Z 2026-10-07 12:54:19.972 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:54:19.9876050Z 2026-10-07 12:54:19.972 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:54:41.5449880Z 2026-10-07 12:54:41.527 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:54:41.5463330Z 2026-10-07 12:54:41.527 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:54:47.4007970Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (27.517 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:54:47.4807200Z 2026-10-07 12:54:47.480 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:54:47.4866790Z 2026-10-07 12:54:47.480 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:55:05.6795700Z 2026-10-07 12:55:05.674 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:55:05.7253960Z 2026-10-07 12:55:05.675 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:55:12.4196510Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (25.017 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:55:12.4589930Z 2026-10-07 12:55:12.458 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:55:12.4591290Z 2026-10-07 12:55:12.458 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:55:29.0634620Z 2026-10-07 12:55:29.061 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:55:29.0637160Z 2026-10-07 12:55:29.061 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:55:34.6920580Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (22.273 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:55:34.7315610Z 2026-10-07 12:55:34.731 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:55:34.7319400Z 2026-10-07 12:55:34.731 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:55:50.2852960Z 2026-10-07 12:55:50.283 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:55:50.2871860Z 2026-10-07 12:55:50.283 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:55:55.6446720Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (20.932 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:55:55.6954790Z 2026-10-07 12:55:55.683 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:55:55.6978140Z 2026-10-07 12:55:55.683 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:56:11.8708960Z 2026-10-07 12:56:11.858 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:56:11.8712030Z 2026-10-07 12:56:11.858 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:56:17.9098470Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (22.283 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:56:17.9531000Z 2026-10-07 12:56:17.952 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:56:17.9558230Z 2026-10-07 12:56:17.952 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:56:34.0474250Z 2026-10-07 12:56:34.046 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:56:34.0527970Z 2026-10-07 12:56:34.046 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:56:39.5391130Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (21.625 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:56:39.5906530Z 2026-10-07 12:56:39.588 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:56:39.6022660Z 2026-10-07 12:56:39.588 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:56:54.7517490Z 2026-10-07 12:56:54.750 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:56:54.7522410Z 2026-10-07 12:56:54.750 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:56:59.8795640Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (20.319 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:56:59.9001690Z 2026-10-07 12:56:59.899 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:56:59.9116340Z 2026-10-07 12:56:59.899 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:57:18.7017950Z 2026-10-07 12:57:18.699 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:57:18.7047530Z 2026-10-07 12:57:18.699 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:57:26.0300840Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (26.151 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:57:26.0524090Z 2026-10-07 12:57:26.047 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:57:26.0550900Z 2026-10-07 12:57:26.047 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:57:42.5145420Z 2026-10-07 12:57:42.512 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:57:42.5253930Z 2026-10-07 12:57:42.512 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:57:48.2262730Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (22.213 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:57:48.2687270Z 2026-10-07 12:57:48.268 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:57:48.2719130Z 2026-10-07 12:57:48.268 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:58:04.0963140Z 2026-10-07 12:58:04.090 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:58:04.1050260Z 2026-10-07 12:58:04.090 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:58:11.5351110Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (23.306 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:58:11.5852100Z 2026-10-07 12:58:11.584 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:58:11.5855290Z 2026-10-07 12:58:11.584 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:58:28.8951510Z 2026-10-07 12:58:28.894 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:58:28.8953130Z 2026-10-07 12:58:28.894 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:58:34.8611660Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (23.310 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:58:34.8853130Z 2026-10-07 12:58:34.884 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:58:34.9177920Z 2026-10-07 12:58:34.884 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:58:56.1799460Z 2026-10-07 12:58:56.134 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:58:56.1837360Z 2026-10-07 12:58:56.134 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:58:57.6121060Z     ✗ testToastStaysVisibleLongerThanTwoSeconds, XCTAssertTrue failed - Der Toast ist nach drei Sekunden schon weg
+ui-test	Build and run UI tests	2026-10-07T12:59:04.2762710Z 2026-10-07 12:59:04.275 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:59:04.2766020Z 2026-10-07 12:59:04.275 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:59:23.0915600Z 2026-10-07 12:59:23.090 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:59:23.0923010Z 2026-10-07 12:59:23.090 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:59:28.8525950Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (24.790 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:59:28.9129770Z 2026-10-07 12:59:28.909 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:59:28.9181220Z 2026-10-07 12:59:28.909 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:59:45.3008620Z 2026-10-07 12:59:45.299 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:59:45.3015030Z 2026-10-07 12:59:45.299 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T12:59:50.6935920Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (21.879 seconds)
+ui-test	Build and run UI tests	2026-10-07T12:59:50.7261740Z 2026-10-07 12:59:50.725 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T12:59:50.7264730Z 2026-10-07 12:59:50.725 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:00:05.3072970Z 2026-10-07 13:00:05.302 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:00:05.3075430Z 2026-10-07 13:00:05.302 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:00:10.4685760Z     ✓ testToastStaysVisibleLongerThanTwoSeconds (19.781 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:00:10.5499880Z 2026-10-07 13:00:10.549 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:00:10.5533190Z 2026-10-07 13:00:10.549 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:00:26.9973530Z 2026-10-07 13:00:26.995 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:00:26.9981810Z 2026-10-07 13:00:26.995 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:00:33.2198370Z     ✓ testUndoRemovesToastAndItem (22.745 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:00:33.2583890Z 2026-10-07 13:00:33.255 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:00:33.2586720Z 2026-10-07 13:00:33.255 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:00:49.8289950Z 2026-10-07 13:00:49.828 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:00:49.8292000Z 2026-10-07 13:00:49.828 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:00:54.9719260Z     ✓ testUndoRemovesToastAndItem (21.739 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:00:54.9946330Z 2026-10-07 13:00:54.994 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:00:54.9948100Z 2026-10-07 13:00:54.994 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:01:10.3126100Z 2026-10-07 13:01:10.311 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:01:10.3130250Z 2026-10-07 13:01:10.311 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:01:15.9895630Z     ✓ testUndoRemovesToastAndItem (21.028 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:01:16.0291250Z 2026-10-07 13:01:16.028 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:01:16.0292680Z 2026-10-07 13:01:16.028 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:01:30.6479490Z 2026-10-07 13:01:30.646 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:01:30.6483070Z 2026-10-07 13:01:30.646 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:01:36.3500950Z     ✓ testUndoRemovesToastAndItem (20.363 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:01:36.3983840Z 2026-10-07 13:01:36.390 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:01:36.4095700Z 2026-10-07 13:01:36.390 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:01:51.7986090Z 2026-10-07 13:01:51.794 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:01:51.8014200Z 2026-10-07 13:01:51.794 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:01:57.7231240Z     ✓ testUndoRemovesToastAndItem (21.354 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:01:57.7728340Z 2026-10-07 13:01:57.772 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:01:57.7730030Z 2026-10-07 13:01:57.772 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:02:13.2191580Z 2026-10-07 13:02:13.200 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:02:13.2256220Z 2026-10-07 13:02:13.200 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:02:18.5448390Z     ✓ testUndoRemovesToastAndItem (20.837 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:02:18.6405400Z 2026-10-07 13:02:18.639 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:02:18.6448360Z 2026-10-07 13:02:18.639 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:02:34.2117810Z 2026-10-07 13:02:34.210 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:02:34.2123040Z 2026-10-07 13:02:34.210 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:02:39.1901890Z     ✓ testUndoRemovesToastAndItem (20.645 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:02:39.2295200Z 2026-10-07 13:02:39.228 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:02:39.2306360Z 2026-10-07 13:02:39.229 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:02:53.3172120Z 2026-10-07 13:02:53.316 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:02:53.3173690Z 2026-10-07 13:02:53.316 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:02:58.0571050Z     ✓ testUndoRemovesToastAndItem (18.870 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:02:58.1060260Z 2026-10-07 13:02:58.105 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:02:58.1063060Z 2026-10-07 13:02:58.105 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:03:12.0372390Z 2026-10-07 13:03:12.028 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:03:12.0475990Z 2026-10-07 13:03:12.028 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:03:16.5165360Z     ✓ testUndoRemovesToastAndItem (18.461 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:03:16.5664320Z 2026-10-07 13:03:16.566 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:03:16.5696750Z 2026-10-07 13:03:16.566 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:03:30.9038780Z 2026-10-07 13:03:30.903 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:03:30.9058510Z 2026-10-07 13:03:30.903 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:03:36.0000030Z     ✓ testUndoRemovesToastAndItem (19.452 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:03:36.0215200Z 2026-10-07 13:03:36.021 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:03:36.0216900Z 2026-10-07 13:03:36.021 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:03:53.5078340Z 2026-10-07 13:03:53.507 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:03:53.5080200Z 2026-10-07 13:03:53.507 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:03:59.9534070Z     ✓ testUndoRemovesToastAndItem (23.927 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:04:00.0668990Z 2026-10-07 13:03:59.979 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:04:00.0672410Z 2026-10-07 13:03:59.979 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:04:17.5259220Z 2026-10-07 13:04:17.524 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:04:17.5262450Z 2026-10-07 13:04:17.524 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:04:23.0096570Z     ✓ testUndoRemovesToastAndItem (23.089 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:04:23.0347900Z 2026-10-07 13:04:23.031 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:04:23.0349080Z 2026-10-07 13:04:23.031 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:04:39.8917470Z 2026-10-07 13:04:39.891 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:04:39.8933080Z 2026-10-07 13:04:39.891 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:04:45.6364070Z     ✓ testUndoRemovesToastAndItem (22.648 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:04:45.6901810Z 2026-10-07 13:04:45.689 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:04:45.6905480Z 2026-10-07 13:04:45.689 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:05:01.4761670Z 2026-10-07 13:05:01.474 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:05:01.4865570Z 2026-10-07 13:05:01.474 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:05:06.7921180Z     ✓ testUndoRemovesToastAndItem (21.149 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:05:06.8304710Z 2026-10-07 13:05:06.830 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:05:06.8307620Z 2026-10-07 13:05:06.830 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:05:23.0619080Z 2026-10-07 13:05:23.061 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:05:23.0620190Z 2026-10-07 13:05:23.061 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:05:28.2343920Z     ✓ testUndoRemovesToastAndItem (21.435 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:05:28.3167000Z 2026-10-07 13:05:28.315 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:05:28.3280430Z 2026-10-07 13:05:28.315 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:05:43.5592910Z 2026-10-07 13:05:43.558 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:05:43.5594430Z 2026-10-07 13:05:43.558 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:05:48.9494080Z     ✓ testUndoRemovesToastAndItem (20.719 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:05:49.0763340Z 2026-10-07 13:05:48.998 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:05:49.0810460Z 2026-10-07 13:05:48.998 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:06:04.3259300Z 2026-10-07 13:06:04.325 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:06:04.3290360Z 2026-10-07 13:06:04.325 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:06:09.6204790Z     ✓ testUndoRemovesToastAndItem (20.660 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:06:09.6757710Z 2026-10-07 13:06:09.669 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:06:09.6888570Z 2026-10-07 13:06:09.670 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:06:26.2606430Z 2026-10-07 13:06:26.253 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:06:26.2722140Z 2026-10-07 13:06:26.253 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:06:31.9002670Z     ✓ testUndoRemovesToastAndItem (22.281 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:06:31.9507250Z 2026-10-07 13:06:31.950 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:06:31.9508970Z 2026-10-07 13:06:31.950 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:06:48.3124270Z 2026-10-07 13:06:48.310 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:06:48.3128090Z 2026-10-07 13:06:48.311 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:06:53.9859540Z     ✓ testUndoRemovesToastAndItem (22.053 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:06:54.0216810Z 2026-10-07 13:06:54.021 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:06:54.0218360Z 2026-10-07 13:06:54.021 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:07:09.2271110Z 2026-10-07 13:07:09.226 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:07:09.2273090Z 2026-10-07 13:07:09.226 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:07:14.2066070Z     ✓ testUndoRemovesToastAndItem (20.261 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:07:14.2482040Z 2026-10-07 13:07:14.248 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:07:14.2589350Z 2026-10-07 13:07:14.248 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:07:28.8976180Z 2026-10-07 13:07:28.896 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:07:28.8978720Z 2026-10-07 13:07:28.896 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:07:34.5171830Z     ✓ testUndoRemovesToastAndItem (20.304 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:07:34.5692370Z 2026-10-07 13:07:34.565 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:07:34.5757760Z 2026-10-07 13:07:34.565 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:07:48.0931050Z 2026-10-07 13:07:48.092 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:07:48.0934520Z 2026-10-07 13:07:48.092 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:07:52.9450310Z     ✓ testUndoRemovesToastAndItem (18.420 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:07:53.0106440Z 2026-10-07 13:07:53.010 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:07:53.0135910Z 2026-10-07 13:07:53.010 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:08:07.0600800Z 2026-10-07 13:08:07.059 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:08:07.0605650Z 2026-10-07 13:08:07.059 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:08:12.0617710Z     ✓ testUndoRemovesToastAndItem (19.125 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:08:12.1227480Z 2026-10-07 13:08:12.122 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:08:12.1244850Z 2026-10-07 13:08:12.122 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:08:27.1690130Z 2026-10-07 13:08:27.166 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:08:27.1821750Z 2026-10-07 13:08:27.166 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:08:32.4978310Z     ✓ testUndoRemovesToastAndItem (20.432 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:08:32.5489380Z 2026-10-07 13:08:32.548 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:08:32.5490800Z 2026-10-07 13:08:32.548 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:08:48.9601680Z 2026-10-07 13:08:48.959 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:08:48.9606100Z 2026-10-07 13:08:48.959 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:08:54.6186910Z     ✓ testUndoRemovesToastAndItem (22.125 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:08:54.6605290Z 2026-10-07 13:08:54.660 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:08:54.6607590Z 2026-10-07 13:08:54.660 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:09:10.5336380Z 2026-10-07 13:09:10.531 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:09:10.5340120Z 2026-10-07 13:09:10.531 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:09:16.4257970Z     ✓ testUndoRemovesToastAndItem (21.807 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:09:16.4899590Z 2026-10-07 13:09:16.483 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:09:16.4994790Z 2026-10-07 13:09:16.483 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:09:35.2164520Z 2026-10-07 13:09:35.211 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:09:35.2268130Z 2026-10-07 13:09:35.211 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:09:41.3387600Z     ✓ testUndoRemovesToastAndItem (24.903 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:09:41.4096210Z 2026-10-07 13:09:41.404 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:09:41.4380250Z 2026-10-07 13:09:41.404 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:09:58.5927500Z 2026-10-07 13:09:58.589 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:09:58.6044490Z 2026-10-07 13:09:58.589 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:10:05.5848590Z     ✓ testUndoRemovesToastAndItem (24.255 seconds)
+ui-test	Build and run UI tests	2026-10-07T13:10:05.6915490Z 2026-10-07 13:10:05.688 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:10:05.7133090Z 2026-10-07 13:10:05.688 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:10:28.3980520Z     ✗ testUndoRemovesToastAndItem, Asynchronous wait failed: Exceeded timeout of 5 seconds, with unfulfilled expectations: &quot;Expect predicate `exists == 0` for object &quot;quickAdd.toast&quot; Any&quot;.
+ui-test	Build and run UI tests	2026-10-07T13:10:28.4813420Z 2026-10-07 13:10:28.460 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:10:28.5022380Z 2026-10-07 13:10:28.460 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:10:36.6029470Z 2026-10-07 13:10:36.600 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:10:36.6169910Z 2026-10-07 13:10:36.603 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:11:17.8313310Z     ✗ testUndoRemovesToastAndItem, XCTAssertTrue failed - „Rückgängig“ fehlt
+ui-test	Build and run UI tests	2026-10-07T13:11:20.6395380Z 2026-10-07 13:11:20.609 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+ui-test	Build and run UI tests	2026-10-07T13:11:20.6511760Z 2026-10-07 13:11:20.609 xcodebuild[2953:14316] [MT] IDELaunchParametersSnapshot: no debugger version
+ui-test	Build and run UI tests	2026-10-07T13:11:32.3276630Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:32.3325050Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:32.3503200Z RestockUITests.QuickAddAssignmentUITests
+ui-test	Build and run UI tests	2026-10-07T13:11:32.3841690Z   testChangeStoreMovesItemAndRemembersCorrection, XCTAssertTrue failed - „Laden ändern“ fehlt
+ui-test	Build and run UI tests	2026-10-07T13:11:32.3968100Z   /Users/runner/work/Restock/Restock/RestockUITests/QuickAddAssignmentUITests.swift:300
+ui-test	Build and run UI tests	2026-10-07T13:11:32.4095450Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:32.4929320Z         let change = element(app, "quickAdd.toast.change")
+ui-test	Build and run UI tests	2026-10-07T13:11:32.5187020Z         XCTAssertTrue(change.waitForExistence(timeout: 5), "„Laden ändern“ fehlt")
+ui-test	Build and run UI tests	2026-10-07T13:11:32.5639040Z         change.tap()
+ui-test	Build and run UI tests	2026-10-07T13:11:32.7396150Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:32.9756390Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:33.2563720Z   testChangeStoreMovesItemAndRemembersCorrection, XCTAssertTrue failed - Der Toast nennt den neuen Laden nicht
+ui-test	Build and run UI tests	2026-10-07T13:11:33.5444400Z   /Users/runner/work/Restock/Restock/RestockUITests/QuickAddAssignmentUITests.swift:323
+ui-test	Build and run UI tests	2026-10-07T13:11:33.5952110Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:33.6974480Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:33.9220310Z         XCTAssertTrue(labelOf(element(app, "quickAdd.toast.message"), contains: "dm"),
+ui-test	Build and run UI tests	2026-10-07T13:11:34.3551250Z                       "Der Toast nennt den neuen Laden nicht")
+ui-test	Build and run UI tests	2026-10-07T13:11:34.3551770Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:34.4393760Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:34.6074750Z   testToastNamesStoreAndOffersChangeAndUndo, XCTAssertTrue failed - „Rückgängig“ fehlt
+ui-test	Build and run UI tests	2026-10-07T13:11:34.9910800Z   /Users/runner/work/Restock/Restock/RestockUITests/QuickAddAssignmentUITests.swift:155
+ui-test	Build and run UI tests	2026-10-07T13:11:35.1191560Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:35.1820580Z         XCTAssertTrue(element(app, "quickAdd.toast.change").exists, "„Laden ändern“ fehlt")
+ui-test	Build and run UI tests	2026-10-07T13:11:35.2058260Z         XCTAssertTrue(element(app, "quickAdd.toast.undo").exists, "„Rückgängig“ fehlt")
+ui-test	Build and run UI tests	2026-10-07T13:11:35.2321600Z     }
+ui-test	Build and run UI tests	2026-10-07T13:11:35.2494230Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:35.2925570Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:35.3062690Z   testToastNamesStoreAndOffersChangeAndUndo, XCTAssertTrue failed - „Rückgängig“ fehlt
+ui-test	Build and run UI tests	2026-10-07T13:11:35.3232780Z   /Users/runner/work/Restock/Restock/RestockUITests/QuickAddAssignmentUITests.swift:155
+ui-test	Build and run UI tests	2026-10-07T13:11:35.3412580Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:35.3619260Z         XCTAssertTrue(element(app, "quickAdd.toast.change").exists, "„Laden ändern“ fehlt")
+ui-test	Build and run UI tests	2026-10-07T13:11:35.5433840Z         XCTAssertTrue(element(app, "quickAdd.toast.undo").exists, "„Rückgängig“ fehlt")
+ui-test	Build and run UI tests	2026-10-07T13:11:35.7108670Z     }
+ui-test	Build and run UI tests	2026-10-07T13:11:36.5895500Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:36.6232210Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:36.6512730Z   testToastStaysVisibleLongerThanTwoSeconds, XCTAssertTrue failed - Der Toast ist nach drei Sekunden schon weg
+ui-test	Build and run UI tests	2026-10-07T13:11:36.6663260Z   /Users/runner/work/Restock/Restock/RestockUITests/QuickAddAssignmentUITests.swift:184
+ui-test	Build and run UI tests	2026-10-07T13:11:36.6777100Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:36.6777800Z         Thread.sleep(forTimeInterval: 3)
+ui-test	Build and run UI tests	2026-10-07T13:11:36.6781930Z         XCTAssertTrue(toast.exists, "Der Toast ist nach drei Sekunden schon weg")
+ui-test	Build and run UI tests	2026-10-07T13:11:36.6968150Z     }
+ui-test	Build and run UI tests	2026-10-07T13:11:36.6973160Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:36.7088730Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:36.7090810Z   testUndoRemovesToastAndItem, Asynchronous wait failed: Exceeded timeout of 5 seconds, with unfulfilled expectations: "Expect predicate `exists == 0` for object "quickAdd.toast" Any".
+ui-test	Build and run UI tests	2026-10-07T13:11:36.7093920Z   /Users/runner/work/Restock/Restock/RestockUITests/QuickAddAssignmentUITests.swift:170
+ui-test	Build and run UI tests	2026-10-07T13:11:36.7095080Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:36.7096170Z         expectation(for: gone, evaluatedWith: element(app, "quickAdd.toast"))
+ui-test	Build and run UI tests	2026-10-07T13:11:36.7097240Z         waitForExpectations(timeout: 5)
+ui-test	Build and run UI tests	2026-10-07T13:11:36.7098410Z         XCTAssertFalse(element(app, "home.unassignedCard").exists,
+ui-test	Build and run UI tests	2026-10-07T13:11:36.7099400Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:36.7099590Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:36.7100860Z   testUndoRemovesToastAndItem, XCTAssertTrue failed - „Rückgängig“ fehlt
+ui-test	Build and run UI tests	2026-10-07T13:11:37.4195180Z   /Users/runner/work/Restock/Restock/RestockUITests/QuickAddAssignmentUITests.swift:165
+ui-test	Build and run UI tests	2026-10-07T13:11:37.4199180Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:37.4199980Z         let undo = element(app, "quickAdd.toast.undo")
+ui-test	Build and run UI tests	2026-10-07T13:11:37.4201770Z         XCTAssertTrue(undo.waitForExistence(timeout: 5), "„Rückgängig“ fehlt")
+ui-test	Build and run UI tests	2026-10-07T13:11:37.4202470Z         undo.tap()
+ui-test	Build and run UI tests	2026-10-07T13:11:37.4202880Z   ```
+ui-test	Build and run UI tests	2026-10-07T13:11:37.4203020Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:37.4203030Z 
+ui-test	Build and run UI tests	2026-10-07T13:11:37.4203490Z 	 Executed 120 tests, with 7 failures (0 unexpected) in 4198.632 (4198.832) seconds
+ui-test	Build and run UI tests	2026-10-07T13:13:21.2190810Z 2026-10-07 13:13:21.217 xcodebuild[2953:14316] [MT] IDETestOperationsObserverDebug: 4374.517 elapsed -- Testing started completed.
+ui-test	Build and run UI tests	2026-10-07T13:13:21.2199000Z 2026-10-07 13:13:21.217 xcodebuild[2953:14316] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+ui-test	Build and run UI tests	2026-10-07T13:13:21.2201310Z 2026-10-07 13:13:21.217 xcodebuild[2953:14316] [MT] IDETestOperationsObserverDebug: 4374.517 sec, +4374.517 sec -- end
+ui-test	Build and run UI tests	2026-10-07T13:13:21.8133640Z Failing tests:
+ui-test	Build and run UI tests	2026-10-07T13:13:21.8183440Z 	QuickAddAssignmentUITests.testChangeStoreMovesItemAndRemembersCorrection()
+ui-test	Build and run UI tests	2026-10-07T13:13:21.8187180Z 	QuickAddAssignmentUITests.testChangeStoreMovesItemAndRemembersCorrection()
+ui-test	Build and run UI tests	2026-10-07T13:13:21.8192670Z 	QuickAddAssignmentUITests.testToastNamesStoreAndOffersChangeAndUndo()
+ui-test	Build and run UI tests	2026-10-07T13:13:21.8193790Z 	QuickAddAssignmentUITests.testToastStaysVisibleLongerThanTwoSeconds()
+ui-test	Build and run UI tests	2026-10-07T13:13:21.8194910Z 	QuickAddAssignmentUITests.testUndoRemovesToastAndItem()
+ui-test	Build and run UI tests	2026-10-07T13:13:21.8195640Z 	QuickAddAssignmentUITests.testUndoRemovesToastAndItem()
+ui-test	Build and run UI tests	2026-10-07T13:13:21.8195930Z 
+ui-test	Build and run UI tests	2026-10-07T13:13:21.8198270Z ** TEST FAILED **
+ui-test	Build and run UI tests	2026-10-07T13:13:21.8199130Z 
+ui-test	Build and run UI tests	2026-10-07T13:13:38.0797990Z ##[error]Process completed with exit code 65.
+ui-test	Upload xcresult	﻿2026-10-07T13:13:38.1614900Z ##[group]Run actions/upload-artifact@v4
+ui-test	Upload xcresult	2026-10-07T13:13:38.1615270Z with:
+ui-test	Upload xcresult	2026-10-07T13:13:38.1615630Z   name: UITestResults.xcresult
+ui-test	Upload xcresult	2026-10-07T13:13:38.1616030Z   path: UITestResults.xcresult
+ui-test	Upload xcresult	2026-10-07T13:13:38.1616340Z   retention-days: 7
+ui-test	Upload xcresult	2026-10-07T13:13:38.1616870Z   if-no-files-found: warn
+ui-test	Upload xcresult	2026-10-07T13:13:38.1617240Z   compression-level: 6
+ui-test	Upload xcresult	2026-10-07T13:13:38.1617650Z   overwrite: false
+ui-test	Upload xcresult	2026-10-07T13:13:38.1617990Z   include-hidden-files: false
+ui-test	Upload xcresult	2026-10-07T13:13:38.1618440Z env:
+ui-test	Upload xcresult	2026-10-07T13:13:38.1618970Z   DEVELOPER_DIR: /Applications/Xcode_26.6.0.app/Contents/Developer
+ui-test	Upload xcresult	2026-10-07T13:13:38.1619490Z ##[endgroup]
+ui-test	Upload xcresult	2026-10-07T13:13:39.1617700Z (node:71028) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+ui-test	Upload xcresult	2026-10-07T13:13:39.1619840Z (Use `node --trace-deprecation ...` to show where the warning was created)
+ui-test	Upload xcresult	2026-10-07T13:13:39.6463530Z With the provided path, there will be 1913 files uploaded
+ui-test	Upload xcresult	2026-10-07T13:13:39.6464690Z Artifact name is valid!
+ui-test	Upload xcresult	2026-10-07T13:13:39.6471960Z Root directory input is valid!
+ui-test	Upload xcresult	2026-10-07T13:13:39.9121540Z Beginning upload of artifact content to blob storage
+ui-test	Upload xcresult	2026-10-07T13:13:40.8772270Z (node:71028) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+ui-test	Upload xcresult	2026-10-07T13:13:41.0806160Z Uploaded bytes 8388608
+ui-test	Upload xcresult	2026-10-07T13:13:41.8683000Z Uploaded bytes 16777216
+ui-test	Upload xcresult	2026-10-07T13:13:42.4986790Z Uploaded bytes 25165824
+ui-test	Upload xcresult	2026-10-07T13:13:42.9970110Z Uploaded bytes 33554432
+ui-test	Upload xcresult	2026-10-07T13:13:43.4768200Z Uploaded bytes 41943040
+ui-test	Upload xcresult	2026-10-07T13:13:43.8905870Z Uploaded bytes 50331648
+ui-test	Upload xcresult	2026-10-07T13:13:44.4206740Z Uploaded bytes 58720256
+ui-test	Upload xcresult	2026-10-07T13:13:44.7943850Z Uploaded bytes 67108864
+ui-test	Upload xcresult	2026-10-07T13:13:45.2913890Z Uploaded bytes 75497472
+ui-test	Upload xcresult	2026-10-07T13:13:45.6910620Z Uploaded bytes 83886080
+ui-test	Upload xcresult	2026-10-07T13:13:46.7117550Z Uploaded bytes 92274688
+ui-test	Upload xcresult	2026-10-07T13:13:48.2763840Z Uploaded bytes 100663296
+ui-test	Upload xcresult	2026-10-07T13:13:49.4666320Z Uploaded bytes 109051904
+ui-test	Upload xcresult	2026-10-07T13:13:50.8357080Z Uploaded bytes 117440512
+ui-test	Upload xcresult	2026-10-07T13:13:51.9267590Z Uploaded bytes 125829120
+ui-test	Upload xcresult	2026-10-07T13:13:54.4058220Z Uploaded bytes 134217728
+ui-test	Upload xcresult	2026-10-07T13:13:57.6634480Z Uploaded bytes 142606336
+ui-test	Upload xcresult	2026-10-07T13:14:01.7221890Z Uploaded bytes 150994944
+ui-test	Upload xcresult	2026-10-07T13:14:39.8674000Z Uploaded bytes 159383552
+ui-test	Upload xcresult	2026-10-07T13:14:47.5352430Z Uploaded bytes 167772160
+ui-test	Upload xcresult	2026-10-07T13:14:48.4622850Z Uploaded bytes 176160768
+ui-test	Upload xcresult	2026-10-07T13:14:49.5847360Z Uploaded bytes 184549376
+ui-test	Upload xcresult	2026-10-07T13:14:50.4846820Z Uploaded bytes 192937984
+ui-test	Upload xcresult	2026-10-07T13:14:51.4380190Z Uploaded bytes 201326592
+ui-test	Upload xcresult	2026-10-07T13:14:52.2957990Z Uploaded bytes 209715200
+ui-test	Upload xcresult	2026-10-07T13:14:53.0409550Z Uploaded bytes 218103808
+ui-test	Upload xcresult	2026-10-07T13:14:54.1455950Z Uploaded bytes 226492416
+ui-test	Upload xcresult	2026-10-07T13:14:55.7951320Z Uploaded bytes 234881024
+ui-test	Upload xcresult	2026-10-07T13:14:57.8682060Z Uploaded bytes 243269632
+ui-test	Upload xcresult	2026-10-07T13:14:58.7656860Z Uploaded bytes 251658240
+ui-test	Upload xcresult	2026-10-07T13:14:59.3713920Z Uploaded bytes 260046848
+ui-test	Upload xcresult	2026-10-07T13:15:00.3007040Z Uploaded bytes 268435456
+ui-test	Upload xcresult	2026-10-07T13:15:01.4946580Z Uploaded bytes 276824064
+ui-test	Upload xcresult	2026-10-07T13:15:03.6773910Z Uploaded bytes 285212672
+ui-test	Upload xcresult	2026-10-07T13:15:05.6116870Z Uploaded bytes 293601280
+ui-test	Upload xcresult	2026-10-07T13:15:08.5147610Z Uploaded bytes 301989888
+ui-test	Upload xcresult	2026-10-07T13:15:11.7239220Z Uploaded bytes 310378496
+ui-test	Upload xcresult	2026-10-07T13:15:15.2164690Z Uploaded bytes 318767104
+ui-test	Upload xcresult	2026-10-07T13:15:18.6801310Z Uploaded bytes 327155712
+ui-test	Upload xcresult	2026-10-07T13:15:20.4049270Z Uploaded bytes 335544320
+ui-test	Upload xcresult	2026-10-07T13:15:21.6196060Z Uploaded bytes 343932928
+ui-test	Upload xcresult	2026-10-07T13:15:22.5612670Z Uploaded bytes 352321536
+ui-test	Upload xcresult	2026-10-07T13:15:23.7543310Z Uploaded bytes 360710144
+ui-test	Upload xcresult	2026-10-07T13:15:24.8435630Z Uploaded bytes 369098752
+ui-test	Upload xcresult	2026-10-07T13:15:25.5005370Z Uploaded bytes 377487360
+ui-test	Upload xcresult	2026-10-07T13:15:26.3739130Z Uploaded bytes 385875968
+ui-test	Upload xcresult	2026-10-07T13:15:27.1403010Z Uploaded bytes 394264576
+ui-test	Upload xcresult	2026-10-07T13:15:27.7738270Z Uploaded bytes 402653184
+ui-test	Upload xcresult	2026-10-07T13:15:28.2899630Z Uploaded bytes 411041792
+ui-test	Upload xcresult	2026-10-07T13:15:29.4381270Z Uploaded bytes 419430400
+ui-test	Upload xcresult	2026-10-07T13:15:30.9928570Z Uploaded bytes 427819008
+ui-test	Upload xcresult	2026-10-07T13:15:31.8730100Z Uploaded bytes 436207616
+ui-test	Upload xcresult	2026-10-07T13:15:32.6575230Z Uploaded bytes 444596224
+ui-test	Upload xcresult	2026-10-07T13:15:33.2684700Z Uploaded bytes 452984832
+ui-test	Upload xcresult	2026-10-07T13:15:34.8909210Z Uploaded bytes 460094026
+ui-test	Upload xcresult	2026-10-07T13:15:34.9182670Z Finished uploading artifact content to blob storage!
+ui-test	Upload xcresult	2026-10-07T13:15:34.9183810Z SHA256 digest of uploaded artifact zip is 59b762ff8534d5251531b56fd373695a1546e09419c22881ddde72530f6dcf3b
+ui-test	Upload xcresult	2026-10-07T13:15:34.9184460Z Finalizing artifact upload
+ui-test	Upload xcresult	2026-10-07T13:15:35.1896890Z Artifact UITestResults.xcresult.zip successfully finalized. Artifact ID 11483854275
+ui-test	Upload xcresult	2026-10-07T13:15:35.1898070Z Artifact UITestResults.xcresult has been successfully uploaded! Final size is 460094026 bytes. Artifact ID is 11483854275
+ui-test	Upload xcresult	2026-10-07T13:15:35.1911030Z Artifact download URL: https://github.com/johannesemmrich-cell/Restock/actions/runs/37617325110/artifacts/11483854275
+ui-test	Post Run actions/checkout@v4	﻿2026-10-07T13:15:35.2782470Z Post job cleanup.
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:35.7293060Z [command]/opt/homebrew/bin/git version
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:35.8386150Z git version 2.55.0
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:35.8458430Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/08a76e78-ff07-4bac-ba93-e690d2feac67/.gitconfig'
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:35.8491430Z Temporarily overriding HOME='/Users/runner/work/_temp/08a76e78-ff07-4bac-ba93-e690d2feac67' before making global git config changes
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:35.8547580Z Adding repository directory to the temporary git global config as a safe directory
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:35.8549150Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Restock/Restock
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:36.1148650Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:36.2122090Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:36.4880690Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:36.5082640Z http.https://github.com/.extraheader
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:36.5101190Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:36.5276350Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:36.6980650Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+ui-test	Post Run actions/checkout@v4	2026-10-07T13:15:36.7116460Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+ui-test	Complete job	﻿2026-10-07T13:15:36.9654850Z Cleaning up orphan processes
+ui-test	Complete job	2026-10-07T13:15:42.5547540Z Terminate orphan process: pid (9158) (DTServiceHub)
+ui-test	Complete job	2026-10-07T13:15:52.6916760Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
