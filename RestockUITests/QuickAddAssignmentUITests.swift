@@ -30,10 +30,16 @@ final class QuickAddAssignmentUITests: XCTestCase {
 
     // MARK: - Hilfen
 
-    private func launchedApp(storeless: Bool = false) -> XCUIApplication {
+    /// `toastDuration` verlängert die Anzeigedauer des Toasts (Sekunden, nur DEBUG, Issue #111): auf dem
+    /// CI-Runner brauchen einzelne Abfragen 3–4 s, die feste Frist von 6 s reicht dort nicht für Tests,
+    /// die den Toast-Inhalt lesen. Ohne Argument gilt die echte Frist.
+    private func launchedApp(storeless: Bool = false, toastDuration: Int? = nil) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedQuickAddAssignmentForUITests"]
         if storeless { app.launchArguments.append("-quickAddSeedStoreless") }
+        if let toastDuration {
+            app.launchArguments += ["-quickAddToastDurationForUITests", "\(toastDuration)"]
+        }
         app.launch()
         return app
     }
@@ -137,7 +143,7 @@ final class QuickAddAssignmentUITests: XCTestCase {
 
     /// Nach dem Hinzufügen nennt der Toast den Laden und bietet „Laden ändern“ und „Rückgängig“ an.
     func testToastNamesStoreAndOffersChangeAndUndo() {
-        let app = launchedApp()
+        let app = launchedApp(toastDuration: 60)
         let field = typeIntoQuickAdd("Nudeln", in: app)
         field.typeText("\n")
 
@@ -151,7 +157,7 @@ final class QuickAddAssignmentUITests: XCTestCase {
 
     /// „Rückgängig“ räumt den Toast ab und legt den Artikel nicht als Artikel ohne Laden ab.
     func testUndoRemovesToastAndItem() {
-        let app = launchedApp()
+        let app = launchedApp(toastDuration: 60)
         let field = typeIntoQuickAdd("Nudeln", in: app)
         field.typeText("\n")
 
@@ -176,6 +182,19 @@ final class QuickAddAssignmentUITests: XCTestCase {
         XCTAssertTrue(toast.waitForExistence(timeout: 5), "Bestätigungs-Toast erscheint nicht")
         Thread.sleep(forTimeInterval: 3)
         XCTAssertTrue(toast.exists, "Der Toast ist nach drei Sekunden schon weg")
+    }
+
+    /// Mit `-quickAddToastDurationForUITests 60` steht der Toast auch nach der Standardfrist (6 s) noch
+    /// (Issue #111, Durchgang 2). Ohne Umsetzung des Arguments ist er nach 8 s weg.
+    func testToastDurationLaunchArgumentKeepsToastBeyondDefault() {
+        let app = launchedApp(toastDuration: 60)
+        let field = typeIntoQuickAdd("Nudeln", in: app)
+        field.typeText("\n")
+
+        let toast = element(app, "quickAdd.toast")
+        XCTAssertTrue(toast.waitForExistence(timeout: 5), "Bestätigungs-Toast erscheint nicht")
+        Thread.sleep(forTimeInterval: 8)
+        XCTAssertTrue(toast.exists, "Der Toast ist nach acht Sekunden weg, obwohl 60 s verlangt waren")
     }
 
     // MARK: - 3A/3B: Artikel ohne Laden
@@ -273,7 +292,7 @@ final class QuickAddAssignmentUITests: XCTestCase {
     /// „Laden ändern“ im Toast verschiebt den Artikel wirklich, und die Korrektur gilt beim nächsten
     /// Eintippen desselben Namens — für einen anderen Namen nicht.
     func testChangeStoreMovesItemAndRemembersCorrection() {
-        let app = launchedApp()
+        let app = launchedApp(toastDuration: 60)
         let field = typeIntoQuickAdd("Nudeln", in: app)
         field.typeText("\n")
 
