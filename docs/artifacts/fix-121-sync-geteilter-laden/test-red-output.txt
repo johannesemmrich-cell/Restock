@@ -1,0 +1,503 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockTests/SharedStoreSchemaTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+SwiftDriver RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver RestockUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockUITests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan -experimental-emit-module-separately -disable-cmo
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockUITests (in target 'RestockUITests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan
+    
+
+SwiftCompile normal arm64 Compiling\ QuickAddAssignmentUITests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockUITests/QuickAddAssignmentUITests.swift (in target 'RestockUITests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockUITests/QuickAddAssignmentUITests.swift (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan
+    builtin-SwiftPerFileCompile QuickAddAssignmentUITests.swift
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockTests (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan
+    
+
+SwiftCompile normal arm64 Compiling\ SharedStoreSchemaTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift (in target 'RestockTests' from project 'Restock')
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:437:38: error: cannot find type 'SharedStoreDatabase' in scope
+435 | /// Fake der CloudKit-Produktion: kennt nur `allowedFields` (`nil` = jedes Feld erlaubt) und lehnt
+436 | /// Records mit anderen Feldern wie die Produktion ab. Zählt Speicherversuche.
+437 | final class FakeSharedStoreDatabase: SharedStoreDatabase, @unchecked Sendable {
+    |                                      `- error: cannot find type 'SharedStoreDatabase' in scope
+438 |     private let lock = NSLock()
+439 |     private let allowedFields: Set<String>?
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:80:50: error: value of type 'SyncCoordinator' has no member 'sharedStoreService'
+ 78 |         originalContext = SyncCoordinator.shared.modelContext
+ 79 |         SyncCoordinator.shared.modelContext = context
+ 80 |         originalService = SyncCoordinator.shared.sharedStoreService
+    |                                                  `- error: value of type 'SyncCoordinator' has no member 'sharedStoreService'
+ 81 |     }
+ 82 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:84:57: error: value of type 'SyncCoordinator' has no member 'sharedStoreService'
+ 82 | 
+ 83 |     override func tearDown() {
+ 84 |         if let originalService { SyncCoordinator.shared.sharedStoreService = originalService }
+    |                                                         `- error: value of type 'SyncCoordinator' has no member 'sharedStoreService'
+ 85 |         SyncCoordinator.shared.modelContext = originalContext
+ 86 |         removeSyncKeys()
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:98:52: error: argument passed to call that takes no arguments
+ 96 |     func testT1_pushAgainstProductionSchemaWithoutExtensionFieldsSucceeds() async throws {
+ 97 |         let fake = FakeSharedStoreDatabase(allowedFields: Self.coreFields)
+ 98 |         let service = SharedStoreService(database: fake)
+    |                                                    `- error: argument passed to call that takes no arguments
+ 99 |         let store = makeSharedStore()
+100 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:104:58: error: cannot find 'SyncLog' in scope
+102 |             _ = try await service.push(store: store)
+103 |         } catch {
+104 |             XCTFail("Push scheitert an der Produktion: \(SyncLog.message(for: error))")
+    |                                                          `- error: cannot find 'SyncLog' in scope
+105 |         }
+106 |         XCTAssertTrue(fake.rejections.contains { SharedStoreSchema.isProductionSchemaRejection($0) },
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:106:50: error: cannot find 'SharedStoreSchema' in scope
+104 |             XCTFail("Push scheitert an der Produktion: \(SyncLog.message(for: error))")
+105 |         }
+106 |         XCTAssertTrue(fake.rejections.contains { SharedStoreSchema.isProductionSchemaRejection($0) },
+    |                                                  `- error: cannot find 'SharedStoreSchema' in scope
+107 |                       "Der Fake hat den ersten Speicherversuch wegen Produktions-Schema abgelehnt")
+108 |         assertNoExtensionFields(in: try XCTUnwrap(fake.lastSaved, "kein Record gespeichert"))
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:115:52: error: argument passed to call that takes no arguments
+113 |     func testT2_fallbackSavesOnceMoreWithCoreFieldsOnly() async throws {
+114 |         let fake = FakeSharedStoreDatabase(allowedFields: Self.coreFields)
+115 |         let service = SharedStoreService(database: fake)
+    |                                                    `- error: argument passed to call that takes no arguments
+116 |         let store = makeSharedStore()
+117 |         let item = makeItem(in: store, name: "Milch")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:131:34: error: cannot infer key path type from context; consider explicitly specifying a root type
+129 |         assertNoExtensionFields(in: saved)
+130 |         let items = await service.decodeItems(saved["itemsJSON"] as? String ?? "[]")
+131 |         XCTAssertEqual(items.map(\.id), [item.id], "Artikel gleichen ab")
+    |                                  `- error: cannot infer key path type from context; consider explicitly specifying a root type
+132 |         XCTAssertEqual(LearnedPriceSync.decode(saved["pricesJSON"] as? String ?? "{}").prices, ["milch": 1.29])
+133 |         let members = await service.decodeMembers(saved["membersJSON"] as? String ?? "[]")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:137:38: error: type 'Equatable' has no member 'distantPast'
+135 |         XCTAssertEqual(result?.categories["Kühltheke"]?.emoji, "🧊", "lokale Kategorien bleiben im Ergebnis")
+136 |         let lastSync = await service.lastSyncDate(shareID: try XCTUnwrap(store.shareID))
+137 |         XCTAssertNotEqual(lastSync, .distantPast, "Wasserstand rückt nach erfolgreichem Speichern vor")
+    |                                      `- error: type 'Equatable' has no member 'distantPast'
+138 |     }
+139 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:151:56: error: argument passed to call that takes no arguments
+149 |             let fake = FakeSharedStoreDatabase(allowedFields: nil)
+150 |             fake.saveError = CKError(code)
+151 |             let service = SharedStoreService(database: fake)
+    |                                                        `- error: argument passed to call that takes no arguments
+152 |             let store = makeSharedStore()
+153 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:164:36: error: value of type 'SyncCoordinator' has no member 'sharedStoreService'
+162 |             let coordinatorFake = FakeSharedStoreDatabase(allowedFields: nil)
+163 |             coordinatorFake.saveError = CKError(code)
+164 |             SyncCoordinator.shared.sharedStoreService = SharedStoreService(database: coordinatorFake)
+    |                                    `- error: value of type 'SyncCoordinator' has no member 'sharedStoreService'
+165 |             let ok = await SyncCoordinator.shared.push(store: makeSharedStore())
+166 |             XCTAssertFalse(ok)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:164:86: error: argument passed to call that takes no arguments
+162 |             let coordinatorFake = FakeSharedStoreDatabase(allowedFields: nil)
+163 |             coordinatorFake.saveError = CKError(code)
+164 |             SyncCoordinator.shared.sharedStoreService = SharedStoreService(database: coordinatorFake)
+    |                                                                                      `- error: argument passed to call that takes no arguments
+165 |             let ok = await SyncCoordinator.shared.push(store: makeSharedStore())
+166 |             XCTAssertFalse(ok)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:177:52: error: argument passed to call that takes no arguments
+175 |         let fake = FakeSharedStoreDatabase(allowedFields: Self.coreFields)
+176 |         fake.rejectEverySave = true
+177 |         let service = SharedStoreService(database: fake)
+    |                                                    `- error: argument passed to call that takes no arguments
+178 |         let store = makeSharedStore()
+179 |         let shareID = try XCTUnwrap(store.shareID)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:185:27: error: cannot find 'SharedStoreSchema' in scope
+183 |             XCTFail("Push hätte werfen müssen")
+184 |         } catch {
+185 |             XCTAssertTrue(SharedStoreSchema.isProductionSchemaRejection(error), "Fehler des zweiten Versuchs")
+    |                           `- error: cannot find 'SharedStoreSchema' in scope
+186 |         }
+187 |         XCTAssertEqual(fake.saveAttempts, 2, "genau zwei Versuche, kein dritter")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:189:35: error: type 'Equatable' has no member 'distantPast'
+187 |         XCTAssertEqual(fake.saveAttempts, 2, "genau zwei Versuche, kein dritter")
+188 |         let lastSync = await service.lastSyncDate(shareID: shareID)
+189 |         XCTAssertEqual(lastSync, .distantPast, "Wasserstand bleibt bei fehlgeschlagenem Speichern")
+    |                                   `- error: type 'Equatable' has no member 'distantPast'
+190 |     }
+191 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:208:56: error: argument passed to call that takes no arguments
+206 |                 return FakeSharedStoreDatabase.serverRecordChanged(serverRecord: server)
+207 |             }
+208 |             let service = SharedStoreService(database: fake)
+    |                                                        `- error: argument passed to call that takes no arguments
+209 |             let store = makeSharedStore()
+210 |             let shareID = try XCTUnwrap(store.shareID)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:216:69: error: cannot find 'SharedStoreSchema' in scope
+214 |                 XCTFail("\(label): Push hätte werfen müssen")
+215 |             } catch let error as CKError {
+216 |                 XCTAssertTrue(error.code == .serverRecordChanged || SharedStoreSchema.isProductionSchemaRejection(error),
+    |                                                                     `- error: cannot find 'SharedStoreSchema' in scope
+217 |                               "\(label): Fehler des letzten Versuchs wird geworfen, nicht \(error)")
+218 |             } catch {
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:225:39: error: type 'Equatable' has no member 'distantPast'
+223 |             XCTAssertLessThan(fake.saveAttempts, FakeSharedStoreDatabase.attemptCeiling)
+224 |             let lastSync = await service.lastSyncDate(shareID: shareID)
+225 |             XCTAssertEqual(lastSync, .distantPast, "\(label): Wasserstand bleibt")
+    |                                       `- error: type 'Equatable' has no member 'distantPast'
+226 |         }
+227 |     }
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:233:52: error: argument passed to call that takes no arguments
+231 |     func testT5_fullSchemaSavesOnceWithExtensionFields() async throws {
+232 |         let fake = FakeSharedStoreDatabase(allowedFields: Self.coreFields.union(Self.extensionFields))
+233 |         let service = SharedStoreService(database: fake)
+    |                                                    `- error: argument passed to call that takes no arguments
+234 |         let store = makeSharedStore()
+235 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:249:24: error: cannot find 'SharedStoreSchema' in scope
+247 | 
+248 |     func testT6_productionSchemaRejectionDetection() {
+249 |         XCTAssertEqual(SharedStoreSchema.optionalExtensionFields, ["categoriesJSON", "assignmentsJSON"])
+    |                        `- error: cannot find 'SharedStoreSchema' in scope
+250 | 
+251 |         let otherCase = CKError(.serverRejectedRequest, userInfo: [
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:254:23: error: cannot find 'SharedStoreSchema' in scope
+252 |             "ServerErrorDescription": "Cannot create or modify field 'assignmentsJSON' in record 'SharedStore' in Production SCHEMA",
+253 |         ])
+254 |         XCTAssertTrue(SharedStoreSchema.isProductionSchemaRejection(otherCase), "Groß/Klein egal")
+    |                       `- error: cannot find 'SharedStoreSchema' in scope
+255 | 
+256 |         let viaLocalized = CKError(.invalidArguments, userInfo: [
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:260:23: error: cannot find 'SharedStoreSchema' in scope
+258 |         ])
+259 |         XCTAssertTrue(viaLocalized.localizedDescription.contains("production schema"), "Vorbedingung des Tests")
+260 |         XCTAssertTrue(SharedStoreSchema.isProductionSchemaRejection(viaLocalized),
+    |                       `- error: cannot find 'SharedStoreSchema' in scope
+261 |                       "ohne ServerErrorDescription zählt localizedDescription")
+262 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:264:24: error: cannot find 'SharedStoreSchema' in scope
+262 | 
+263 |         let network = CKError(.networkUnavailable, userInfo: ["ServerErrorDescription": "Network unavailable"])
+264 |         XCTAssertFalse(SharedStoreSchema.isProductionSchemaRejection(network))
+    |                        `- error: cannot find 'SharedStoreSchema' in scope
+265 | 
+266 |         let recordID = CKRecord.ID(recordName: "UT-PARTIAL")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:270:23: error: cannot find 'SharedStoreSchema' in scope
+268 |             CKPartialErrorsByItemIDKey: [recordID: FakeSharedStoreDatabase.schemaRejection()],
+269 |         ])
+270 |         XCTAssertTrue(SharedStoreSchema.isProductionSchemaRejection(partialSchema), "Teilfehler zählen")
+    |                       `- error: cannot find 'SharedStoreSchema' in scope
+271 |         let partialNetwork = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: [recordID: network]])
+272 |         XCTAssertFalse(SharedStoreSchema.isProductionSchemaRejection(partialNetwork))
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:272:24: error: cannot find 'SharedStoreSchema' in scope
+270 |         XCTAssertTrue(SharedStoreSchema.isProductionSchemaRejection(partialSchema), "Teilfehler zählen")
+271 |         let partialNetwork = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: [recordID: network]])
+272 |         XCTAssertFalse(SharedStoreSchema.isProductionSchemaRejection(partialNetwork))
+    |                        `- error: cannot find 'SharedStoreSchema' in scope
+273 |     }
+274 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:281:32: error: value of type 'SyncCoordinator' has no member 'sharedStoreService'
+279 | 
+280 |         let production = FakeSharedStoreDatabase(allowedFields: Self.coreFields)
+281 |         SyncCoordinator.shared.sharedStoreService = SharedStoreService(database: production)
+    |                                `- error: value of type 'SyncCoordinator' has no member 'sharedStoreService'
+282 |         let fallbackOK = await SyncCoordinator.shared.push(store: store)
+283 |         XCTAssertTrue(fallbackOK, "Kern abgeglichen, Push liefert true")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:281:82: error: argument passed to call that takes no arguments
+279 | 
+280 |         let production = FakeSharedStoreDatabase(allowedFields: Self.coreFields)
+281 |         SyncCoordinator.shared.sharedStoreService = SharedStoreService(database: production)
+    |                                                                                  `- error: argument passed to call that takes no arguments
+282 |         let fallbackOK = await SyncCoordinator.shared.push(store: store)
+283 |         XCTAssertTrue(fallbackOK, "Kern abgeglichen, Push liefert true")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:284:65: error: type 'SyncCoordinator.SyncFailureKind' has no member 'schemaIncomplete'
+282 |         let fallbackOK = await SyncCoordinator.shared.push(store: store)
+283 |         XCTAssertTrue(fallbackOK, "Kern abgeglichen, Push liefert true")
+284 |         XCTAssertEqual(SyncCoordinator.shared.lastFailureKind, .schemaIncomplete)
+    |                                                                 `- error: type 'SyncCoordinator.SyncFailureKind' has no member 'schemaIncomplete'
+285 |         XCTAssertTrue(SyncCoordinator.shared.lastFailureDetail.lowercased().contains("production schema"),
+286 |                       "Detail benennt die Ablehnungsursache: \(SyncCoordinator.shared.lastFailureDetail)")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:285:77: error: cannot convert value of type '_' to expected argument type 'Bool'
+283 |         XCTAssertTrue(fallbackOK, "Kern abgeglichen, Push liefert true")
+284 |         XCTAssertEqual(SyncCoordinator.shared.lastFailureKind, .schemaIncomplete)
+285 |         XCTAssertTrue(SyncCoordinator.shared.lastFailureDetail.lowercased().contains("production schema"),
+    |                                                                             `- error: cannot convert value of type '_' to expected argument type 'Bool'
+286 |                       "Detail benennt die Ablehnungsursache: \(SyncCoordinator.shared.lastFailureDetail)")
+287 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:285:46: error: value of type 'SyncCoordinator' has no member 'lastFailureDetail'
+283 |         XCTAssertTrue(fallbackOK, "Kern abgeglichen, Push liefert true")
+284 |         XCTAssertEqual(SyncCoordinator.shared.lastFailureKind, .schemaIncomplete)
+285 |         XCTAssertTrue(SyncCoordinator.shared.lastFailureDetail.lowercased().contains("production schema"),
+    |                                              `- error: value of type 'SyncCoordinator' has no member 'lastFailureDetail'
+286 |                       "Detail benennt die Ablehnungsursache: \(SyncCoordinator.shared.lastFailureDetail)")
+287 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:286:87: error: value of type 'SyncCoordinator' has no member 'lastFailureDetail'
+284 |         XCTAssertEqual(SyncCoordinator.shared.lastFailureKind, .schemaIncomplete)
+285 |         XCTAssertTrue(SyncCoordinator.shared.lastFailureDetail.lowercased().contains("production schema"),
+286 |                       "Detail benennt die Ablehnungsursache: \(SyncCoordinator.shared.lastFailureDetail)")
+    |                                                                                       `- error: value of type 'SyncCoordinator' has no member 'lastFailureDetail'
+287 | 
+288 |         let full = FakeSharedStoreDatabase(allowedFields: nil)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:289:32: error: value of type 'SyncCoordinator' has no member 'sharedStoreService'
+287 | 
+288 |         let full = FakeSharedStoreDatabase(allowedFields: nil)
+289 |         SyncCoordinator.shared.sharedStoreService = SharedStoreService(database: full)
+    |                                `- error: value of type 'SyncCoordinator' has no member 'sharedStoreService'
+290 |         let fullOK = await SyncCoordinator.shared.push(store: store)
+291 |         XCTAssertTrue(fullOK)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:289:82: error: argument passed to call that takes no arguments
+287 | 
+288 |         let full = FakeSharedStoreDatabase(allowedFields: nil)
+289 |         SyncCoordinator.shared.sharedStoreService = SharedStoreService(database: full)
+    |                                                                                  `- error: argument passed to call that takes no arguments
+290 |         let fullOK = await SyncCoordinator.shared.push(store: store)
+291 |         XCTAssertTrue(fullOK)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:298:65: error: cannot convert value of type '_' to expected argument type 'Bool'
+296 |         XCTAssertFalse(failed)
+297 |         XCTAssertEqual(SyncCoordinator.shared.lastFailureKind, .other)
+298 |         XCTAssertFalse(SyncCoordinator.shared.lastFailureDetail.isEmpty, "Detail nach Fehler gesetzt")
+    |                                                                 `- error: cannot convert value of type '_' to expected argument type 'Bool'
+299 | 
+300 |         let pulled = await SyncCoordinator.shared.pull(store: store)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:298:47: error: value of type 'SyncCoordinator' has no member 'lastFailureDetail'
+296 |         XCTAssertFalse(failed)
+297 |         XCTAssertEqual(SyncCoordinator.shared.lastFailureKind, .other)
+298 |         XCTAssertFalse(SyncCoordinator.shared.lastFailureDetail.isEmpty, "Detail nach Fehler gesetzt")
+    |                                               `- error: value of type 'SyncCoordinator' has no member 'lastFailureDetail'
+299 | 
+300 |         let pulled = await SyncCoordinator.shared.pull(store: store)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:325:17: error: cannot find 'SyncBanner' in scope
+323 |         let detail = "CKErrorDomain 15: Cannot create or modify field 'categoriesJSON' in record 'SharedStore' in production schema"
+324 | 
+325 |         let a = SyncBanner.decision(syncFailed: false, kind: .schemaIncomplete, developerMode: false, detail: detail)
+    |                 `- error: cannot find 'SyncBanner' in scope
+326 |         XCTAssertTrue(a.isVisible, "(a) sichtbar, obwohl der Push als Erfolg zählte")
+327 |         XCTAssertEqual(a.text, Self.schemaIncompleteText)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:330:17: error: cannot find 'SyncBanner' in scope
+328 |         XCTAssertNil(a.detailLine, "(a) ohne Entwicklermodus keine Detailzeile")
+329 | 
+330 |         let b = SyncBanner.decision(syncFailed: true, kind: .other, developerMode: false, detail: detail)
+    |                 `- error: cannot find 'SyncBanner' in scope
+331 |         XCTAssertTrue(b.isVisible)
+332 |         XCTAssertEqual(b.text, Self.otherFailureText, "(b) bisheriger Text wörtlich")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:335:17: error: cannot find 'SyncBanner' in scope
+333 |         XCTAssertNil(b.detailLine)
+334 | 
+335 |         let c = SyncBanner.decision(syncFailed: false, kind: nil, developerMode: true, detail: "")
+    |                 `- error: cannot find 'SyncBanner' in scope
+336 |         XCTAssertFalse(c.isVisible, "(c) kein Fehler, kein Banner")
+337 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:338:17: error: cannot find 'SyncBanner' in scope
+336 |         XCTAssertFalse(c.isVisible, "(c) kein Fehler, kein Banner")
+337 | 
+338 |         let d = SyncBanner.decision(syncFailed: false, kind: .schemaIncomplete, developerMode: true, detail: detail)
+    |                 `- error: cannot find 'SyncBanner' in scope
+339 |         XCTAssertTrue(d.isVisible)
+340 |         XCTAssertEqual(d.text, Self.schemaIncompleteText)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:343:26: error: cannot find 'SyncBanner' in scope
+341 |         XCTAssertEqual(d.detailLine, detail, "(d) Entwicklermodus zeigt die Detailzeile")
+342 | 
+343 |         let permission = SyncBanner.decision(syncFailed: true, kind: .permissionDenied, developerMode: true, detail: detail)
+    |                          `- error: cannot find 'SyncBanner' in scope
+344 |         XCTAssertEqual(permission.text,
+345 |                        "Keine Schreibberechtigung für diese geteilte Liste — deine Änderungen erreichen die anderen Mitglieder nicht")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:348:21: error: cannot find 'SyncBanner' in scope
+346 |         XCTAssertEqual(permission.detailLine, detail, "Detailzeile auch bei Syncfehlern im Entwicklermodus")
+347 | 
+348 |         let login = SyncBanner.decision(syncFailed: true, kind: .notAuthenticated, developerMode: false, detail: detail)
+    |                     `- error: cannot find 'SyncBanner' in scope
+349 |         XCTAssertEqual(login.text,
+350 |                        "Nicht bei iCloud angemeldet — Änderungen werden nicht geteilt (Einstellungen → beim iPhone anmelden)")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:366:23: error: cannot find 'SyncLog' in scope
+364 |         ])
+365 | 
+366 |         let message = SyncLog.message(for: error)
+    |                       `- error: cannot find 'SyncLog' in scope
+367 | 
+368 |         XCTAssertTrue(message.contains(CKErrorDomain), "Domain: \(message)")
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:379:56: error: value of type 'SharedStoreService' has no member 'database'
+377 | 
+378 |     func testT15_defaultDatabaseIsPublicCloudDatabase() async throws {
+379 |         let database = await SharedStoreService.shared.database
+    |                                                        `- error: value of type 'SharedStoreService' has no member 'database'
+380 |         let ckDatabase = try XCTUnwrap(database as? CKDatabase, "Produktivinstanz ist eine CKDatabase")
+381 |         XCTAssertEqual(ckDatabase.databaseScope, .public)
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:381:51: error: type 'Equatable' has no member 'public'
+379 |         let database = await SharedStoreService.shared.database
+380 |         let ckDatabase = try XCTUnwrap(database as? CKDatabase, "Produktivinstanz ist eine CKDatabase")
+381 |         XCTAssertEqual(ckDatabase.databaseScope, .public)
+    |                                                   `- error: type 'Equatable' has no member 'public'
+382 |         // Übersetzbarkeit: CKDatabase erfüllt das Protokoll.
+383 |         let conforming: SharedStoreDatabase = ckDatabase
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:383:25: error: cannot find type 'SharedStoreDatabase' in scope
+381 |         XCTAssertEqual(ckDatabase.databaseScope, .public)
+382 |         // Übersetzbarkeit: CKDatabase erfüllt das Protokoll.
+383 |         let conforming: SharedStoreDatabase = ckDatabase
+    |                         `- error: cannot find type 'SharedStoreDatabase' in scope
+384 |         XCTAssertNotNil(conforming)
+385 |     }
+
+/Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift:379:24: warning: no 'async' operations occur within 'await' expression [#UnnecessaryEffectMarker]
+377 | 
+378 |     func testT15_defaultDatabaseIsPublicCloudDatabase() async throws {
+379 |         let database = await SharedStoreService.shared.database
+    |                        `- warning: no 'async' operations occur within 'await' expression [#UnnecessaryEffectMarker]
+380 |         let ckDatabase = try XCTUnwrap(database as? CKDatabase, "Produktivinstanz ist eine CKDatabase")
+381 |         XCTAssertEqual(ckDatabase.databaseScope, .public)
+
+[#UnnecessaryEffectMarker]: <https://docs.swift.org/compiler/documentation/diagnostics/unnecessary-effect-marker>
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ExistingDataSurvivesCloudEnableTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SchemaCloudKitCompatibilityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptHistoryMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptResolutionStatsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptKnownItemNamesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedItemDataPhotoRegressionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/PhotoCompressorTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptParserPriceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptSavePurchaseQuantityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/PriceProvenanceMigrationTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/LegacyLearnedPriceResetTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/LearnedPriceSyncTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptLearningTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ShoppingItemFuzzyPriceMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/PriceEstimatorCategoryFallbackTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/PriceEstimatorStagesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptParserReweTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptParserLidlFullReceiptTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptNameAIResolverSanitizeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/AssignmentServiceDetectStoreTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptParserStornoTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/LiveActivityServiceReattachTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptAbbreviationExpansionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/QuickAddParserTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ConsumptionPatternTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/StorePresetsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ShoppingRouteManualOrderTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/StoreCategoriesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ShoppingRouteTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/AssignmentServiceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/PurchaseRecordDeletionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReplenishmentPackageATests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreMergeTests.swift -primary-file /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReplenishmentPackageBTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReplenishmentSeedYearTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReplenishmentPackageCTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReplenishmentDigestTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptParserSuggestionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/ReceiptScannerReResolutionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/DateFixtures.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedModelContainerExtensionDetectionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/AssignmentServiceQuantitySuggestionTests.swift -emit-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreSchemaTests.d -emit-const-values-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreSchemaTests.swiftconstvalues -emit-reference-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreSchemaTests.swiftdeps -serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreSchemaTests.dia -target arm64-apple-ios18.0-simulator -disable-cross-import-overlay-search -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/CoreData.swiftoverlay -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationModelsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationModelsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftDataMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftDataMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan -enable-anonymous-context-mangled-names -file-compilation-dir /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name RestockTests -const-gather-protocols-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -disable-clang-spi -clang-target arm64-apple-ios27.0-simulator -target-sdk-version 27.0 -target-sdk-name iphonesimulator27.0 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreSchemaTests.o -debug-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -index-unit-output-path /Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/SharedStoreSchemaTests.o -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan
+    builtin-SwiftPerFileCompile SharedStoreSchemaTests.swift
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dvtarinzxeywhheltrlmwskobhae/Logs/Test/Test-Restock-2026.10.07_20-38-51-+0200.xcresult
+
+Testing failed:
+	Cannot find type 'SharedStoreDatabase' in scope
+	Value of type 'SyncCoordinator' has no member 'sharedStoreService'
+	Value of type 'SyncCoordinator' has no member 'sharedStoreService'
+	Argument passed to call that takes no arguments
+	Cannot find 'SyncLog' in scope
+	Cannot find 'SharedStoreSchema' in scope
+	Argument passed to call that takes no arguments
+	Cannot infer key path type from context; consider explicitly specifying a root type
+	Type 'Equatable' has no member 'distantPast'
+	Argument passed to call that takes no arguments
+	Value of type 'SyncCoordinator' has no member 'sharedStoreService'
+	Argument passed to call that takes no arguments
+	Argument passed to call that takes no arguments
+	Cannot find 'SharedStoreSchema' in scope
+	Type 'Equatable' has no member 'distantPast'
+	Argument passed to call that takes no arguments
+	Cannot find 'SharedStoreSchema' in scope
+	Type 'Equatable' has no member 'distantPast'
+	Argument passed to call that takes no arguments
+	Cannot find 'SharedStoreSchema' in scope
+	Cannot find 'SharedStoreSchema' in scope
+	Cannot find 'SharedStoreSchema' in scope
+	Cannot find 'SharedStoreSchema' in scope
+	Cannot find 'SharedStoreSchema' in scope
+	Cannot find 'SharedStoreSchema' in scope
+	Value of type 'SyncCoordinator' has no member 'sharedStoreService'
+	Argument passed to call that takes no arguments
+	Type 'SyncCoordinator.SyncFailureKind' has no member 'schemaIncomplete'
+	Cannot convert value of type '_' to expected argument type 'Bool'
+	Value of type 'SyncCoordinator' has no member 'lastFailureDetail'
+	Value of type 'SyncCoordinator' has no member 'lastFailureDetail'
+	Value of type 'SyncCoordinator' has no member 'sharedStoreService'
+	Argument passed to call that takes no arguments
+	Cannot convert value of type '_' to expected argument type 'Bool'
+	Value of type 'SyncCoordinator' has no member 'lastFailureDetail'
+	Cannot find 'SyncBanner' in scope
+	Cannot find 'SyncBanner' in scope
+	Cannot find 'SyncBanner' in scope
+	Cannot find 'SyncBanner' in scope
+	Cannot find 'SyncBanner' in scope
+	Cannot find 'SyncBanner' in scope
+	Cannot find 'SyncLog' in scope
+	Value of type 'SharedStoreService' has no member 'database'
+	Type 'Equatable' has no member 'public'
+	Cannot find type 'SharedStoreDatabase' in scope
+	Testing cancelled because the build failed.
+
+** TEST FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ SharedStoreSchemaTests.swift /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift (in target 'RestockTests' from project 'Restock')
+	SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/zesty-tumbling-swan/RestockTests/SharedStoreSchemaTests.swift (in target 'RestockTests' from project 'Restock')
+	Testing project Restock with scheme Restock
+(3 failures)

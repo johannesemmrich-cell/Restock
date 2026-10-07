@@ -1,6 +1,7 @@
 import CloudKit
 import Foundation
 import Observation
+import os
 import SwiftData
 import WidgetKit
 
@@ -32,9 +33,13 @@ final class SyncCoordinator {
     /// old section in the list.
     private(set) var applyGeneration = 0
 
+    /// Dienst für Push/Pull geteilter Läden; Tests setzen einen mit Fake-Datenbank (Issue #121).
+    @ObservationIgnored var sharedStoreService: SharedStoreService = .shared
+
     enum SyncFailureKind {
         case permissionDenied   // CKError.permissionFailure: server rejected the write (schema security roles)
         case notAuthenticated   // no iCloud account signed in on this device
+        case schemaIncomplete   // Issue #121: saved without the extension fields (production schema lacks them)
         case other
     }
 
@@ -42,7 +47,33 @@ final class SyncCoordinator {
     /// banner distinguish "no network right now" from "the server permanently rejects writes
     /// from this account", which would otherwise look identical and be nearly undebuggable
     /// from a TestFlight report.
-    private(set) var lastFailureKind: SyncFailureKind = .other
+    private(set) var lastFailureKind: SyncFailureKind?
+
+    /// Domain, Code und Fehlertext des letzten Fehlers bzw. der Schema-Ablehnung (Issue #121).
+    private(set) var lastFailureDetail = ""
+
+    private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "SmartCart", category: "sync")
+
+    /// Merkt Art und Detail eines Fehlers von `pull`/`push` und protokolliert ihn ohne
+    /// Personendaten (Issue #121).
+    /// `keepingSchemaIncomplete` (Pull): der Fehler wird nur protokolliert, ein stehendes
+    /// `schemaIncomplete` samt Detail bleibt (AC-10).
+    private func recordFailure(_ error: Error, during operation: String, keepingSchemaIncomplete: Bool = false) {
+        let message = SyncLog.message(for: error)
+        let ns = error as NSError
+        Self.logger.error("\(operation, privacy: .public) failed (\(ns.domain, privacy: .public) \(ns.code, privacy: .public)): \(message, privacy: .private)")
+        if keepingSchemaIncomplete && lastFailureKind == .schemaIncomplete { return }
+        lastFailureKind = classify(error)
+        lastFailureDetail = message
+    }
+
+    /// Ein erfolgreicher Pull lässt `schemaIncomplete` stehen (der Abruf alle 15 s gelingt auch bei
+    /// unvollständigem Schema); nur ein vollständiger Push löscht es (Issue #121, AC-10).
+    private func clearFailure(keepingSchemaIncomplete: Bool = false) {
+        if keepingSchemaIncomplete && lastFailureKind == .schemaIncomplete { return }
+        lastFailureKind = nil
+        lastFailureDetail = ""
+    }
 
     private func classify(_ error: Error) -> SyncFailureKind {
         guard let ck = error as? CKError else { return .other }
@@ -67,11 +98,15 @@ final class SyncCoordinator {
     func pull(store: Store) async -> Bool {
         guard let shareID = store.shareID else { return true }
         do {
-            guard let result = try await SharedStoreService.shared.pull(shareID: shareID) else { return true }
+            guard let result = try await sharedStoreService.pull(shareID: shareID) else {
+                clearFailure(keepingSchemaIncomplete: true)
+                return true
+            }
             await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, priceUnits: result.priceUnits, categories: result.categories, assignments: result.assignments, modifiedAt: result.modifiedAt, to: store)
+            clearFailure(keepingSchemaIncomplete: true)
             return true
         } catch {
-            lastFailureKind = classify(error)
+            recordFailure(error, during: "pull", keepingSchemaIncomplete: true)
             return false
         }
     }
@@ -80,18 +115,26 @@ final class SyncCoordinator {
     /// gets clobbered, then applies that same merged result locally — all in one round trip.
     ///
     /// Returns `true` if the push succeeded or there was nothing to push, `false` only if
-    /// `SharedStoreService` actually threw.
+    /// `SharedStoreService` actually threw. Gelang das Speichern nur ohne die Erweiterungsfelder
+    /// (Schema-Fallback, Issue #121), ist es trotzdem `true`, aber `lastFailureKind` steht auf
+    /// `.schemaIncomplete`.
     @discardableResult
     func push(store: Store) async -> Bool {
         guard let shareID = store.shareID, !shareID.isEmpty else { return true }
         do {
-            guard let result = try await SharedStoreService.shared.push(store: store) else { return true }
+            guard let result = try await sharedStoreService.push(store: store) else { return true }
             // syncToCloud's save already advanced the watermark to the server's modificationDate
             // (see SharedStoreService.markSynced), so apply() shouldn't override it here.
             await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, priceUnits: result.priceUnits, categories: result.categories, assignments: result.assignments, modifiedAt: nil, to: store)
+            if let rejection = result.schemaRejection {
+                recordFailure(rejection, during: "push (schema fallback)")
+                lastFailureKind = .schemaIncomplete
+            } else {
+                clearFailure()
+            }
             return true
         } catch {
-            lastFailureKind = classify(error)
+            recordFailure(error, during: "push")
             return false
         }
     }
@@ -310,5 +353,13 @@ final class SyncCoordinator {
         } catch {
             // Leave the watermark where it was so the next pull retries this merge.
         }
+    }
+}
+
+/// Log-Zeile eines Syncfehlers: nur Domain, Code und Fehlertext, keine Personendaten (Issue #121).
+enum SyncLog {
+    static func message(for error: Error) -> String {
+        let ns = error as NSError
+        return "\(ns.domain) \(ns.code): \(SharedStoreSchema.errorText(error))"
     }
 }

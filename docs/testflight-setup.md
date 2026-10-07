@@ -22,3 +22,12 @@ Lokaler Upload über Xcode (Organizer) oder `xcodebuild -exportArchive` wie bish
 ## Regel: nie dieselbe Build-Nummer auf zwei Wegen
 
 Lokaler Weg und CI teilen den Zähler in App Store Connect. Vor jedem Upload die letzte Nummer dort prüfen; nie beide Wege gleichzeitig nutzen.
+
+## CloudKit-Schema veröffentlichen, wenn sich die Felder von `SharedStore` ändern
+
+TestFlight und App Store nutzen die CloudKit-**Produktion**, Xcode-Läufe die **Entwicklung**. Die Produktion legt unbekannte Felder nicht an und lehnt das Speichern ab („… in production schema“, Issue #121). Deshalb vor jedem Upload, der neue Felder von `SharedStore` mitbringt:
+
+1. CloudKit-Dashboard → Container `iCloud.com.johannesemmrich.SmartCart` → Development → Record-Typ `SharedStore`: prüfen, dass alle Felder (insbesondere neue) dort stehen. Ein Feld entsteht in Development erst, wenn ein Xcode-Lauf einen geteilten Laden damit gespeichert hat.
+2. „Deploy Schema Changes…“ → nach Production übernehmen.
+
+Der Drift-Test `testT8_sharedStoreFieldListMatchesPublishedSchema` in `RestockTests/SharedStoreSchemaTests.swift` schlägt fehl, sobald sich die Feldliste ändert; dann diesen Schritt ausführen und die Liste im Test nachziehen. Fehlen in der Produktion nur `categoriesJSON`/`assignmentsJSON`, speichert die App ohne sie weiter (Artikel, Preise, Mitglieder gleichen ab) und zeigt im Laden „Server-Einrichtung unvollständig …“.
