@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/services/shared-store-schema-fallback.md
-spec_sha256: e231150849d047ce60d75110edb3c87db6d65ee068d3709024db420562ad925d
+spec_sha256: d923cbc0e2349ae35eac86ee9a214b42b351fb05b2e4c7711dfe5b391a8a1d9e
 ---
 
 # PO-Briefing: fix-121-sync-geteilter-laden
@@ -11,21 +11,22 @@ spec_sha256: e231150849d047ce60d75110edb3c87db6d65ee068d3709024db420562ad925d
 
 ## Was gebaut wird
 
-Geteilte Läden gleichen Artikel, Preise und Mitglieder auch bei unvollständig eingerichtetem Server ab; Fehler werden sichtbar benannt.
+Geteilte Läden gleichen Artikel, Preise und Mitglieder wieder ab, auch bei unvollständiger Server-Einrichtung.
 
 ## Definition of Done
 
-Im Laden erscheint bei unvollständigem Server ein klarer Hinweis, Artikel gleichen ab; vollständig behoben erst nach Veröffentlichung des Schemas und Prüfung auf deinem TestFlight-Gerät.
+Auf einem neuen TestFlight-Stand erscheinen Artikel auf dem zweiten Gerät, und ein Hinweis nennt die unvollständige Server-Einrichtung.
 
 ## Wie geprüft wird
 
-Automatische Tests mit nachgebautem Server belegen Ersatzverhalten und Hinweise; sie beweisen nicht, dass es gegen den echten Apple-Server funktioniert.
+Ein nachgebauter Produktionsserver belegt das Verhalten (462 Tests grün); echtes CloudKit wird nicht automatisch geprüft.
 
 ## Kritische Anmerkungen
 
-- Ursache ist unbewiesen; die eigentliche Behebung ist eine Einstellung des Kontoinhabers im CloudKit-Dashboard, nicht der Code.
-- Bis das Schema veröffentlicht ist, werden Kategorien und gemerkte Zuordnungen nicht geteilt; die Spec benennt das ehrlich.
+- Ursache unbewiesen; Behebung ist vermutlich Schema-Veröffentlichung im CloudKit-Dashboard durch den Kontoinhaber. Bis dahin werden Kategorien und Zuordnungen nicht geteilt.
+- Hinweis bleibt, bis ein vollständiges Speichern gelingt; nur im Arbeitsspeicher, nach App-Neustart bis zum nächsten Speichern weg.
+- Wirkung in Produktion erst nach neuem TestFlight-Stand auf Ihrem Gerät belegbar; „Sync repariert“ gilt vorher nicht.
 
 ## Freigabe-Frage
 
-Soll dieser Härtungs-Durchgang starten, obwohl Kategorien erst nach Schema-Veröffentlichung durch den Kontoinhaber wieder geteilt werden?
+Geben Sie diese Härtung frei, im Wissen, dass das Schema im Dashboard separat veröffentlicht werden muss?

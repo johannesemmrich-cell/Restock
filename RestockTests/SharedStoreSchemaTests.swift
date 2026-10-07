@@ -284,6 +284,23 @@ final class SharedStoreSchemaTests: XCTestCase {
         XCTAssertEqual(SyncCoordinator.shared.lastFailureKind, .schemaIncomplete)
         XCTAssertTrue(SyncCoordinator.shared.lastFailureDetail.lowercased().contains("production schema"),
                       "Detail benennt die Ablehnungsursache: \(SyncCoordinator.shared.lastFailureDetail)")
+        let fallbackDetail = SyncCoordinator.shared.lastFailureDetail
+
+        // AC-10 (geändert per PO-„override“): ein fehlschlagender Pull überschreibt den Hinweis nicht.
+        SyncCoordinator.shared.sharedStoreService = SharedStoreService(database: FakeSharedStoreDatabase(allowedFields: nil))
+        let failedPull = await SyncCoordinator.shared.pull(store: store)
+        XCTAssertFalse(failedPull, "leerer Fake: record(for:) wirft, Pull scheitert")
+        XCTAssertEqual(SyncCoordinator.shared.lastFailureKind, .schemaIncomplete,
+                       "fehlschlagender Pull lässt schemaIncomplete stehen")
+        XCTAssertEqual(SyncCoordinator.shared.lastFailureDetail, fallbackDetail, "Detail des Fallbacks bleibt nach Pull-Fehler")
+        SyncCoordinator.shared.sharedStoreService = SharedStoreService(database: production)
+
+        // AC-10 (geändert per PO-„override“): der Abruf alle 15 s löscht den Hinweis nicht.
+        let pulledAfterFallback = await SyncCoordinator.shared.pull(store: store)
+        XCTAssertTrue(pulledAfterFallback)
+        XCTAssertEqual(SyncCoordinator.shared.lastFailureKind, .schemaIncomplete,
+                       "erfolgreicher Pull lässt schemaIncomplete stehen")
+        XCTAssertEqual(SyncCoordinator.shared.lastFailureDetail, fallbackDetail, "Detail des Fallbacks bleibt")
 
         let full = FakeSharedStoreDatabase(allowedFields: nil)
         SyncCoordinator.shared.sharedStoreService = SharedStoreService(database: full)
@@ -382,6 +399,50 @@ final class SharedStoreSchemaTests: XCTestCase {
         // Übersetzbarkeit: CKDatabase erfüllt das Protokoll.
         let conforming: SharedStoreDatabase = ckDatabase
         XCTAssertNotNil(conforming)
+    }
+
+    // MARK: - T16: vorhandener Produktions-Record ohne Erweiterungsfelder (Fall der PO-Meldung)
+
+    /// Ein anderes Gerät hat den Laden mit einer älteren Version gespeichert: Der Server-Record
+    /// hat Artikel, Mitglieder und Löschvermerke, aber weder `categoriesJSON` noch `assignmentsJSON`.
+    /// Das Fallback muss gegen diesen Record mergen (Server + lokal) und darf die
+    /// Erweiterungsfelder weder setzen noch als geändert markieren.
+    func testT16_fallbackAgainstExistingProductionRecordMergesServerAndLocalItems() async throws {
+        let fake = FakeSharedStoreDatabase(allowedFields: Self.coreFields)
+        let service = SharedStoreService(database: fake)
+        let store = makeSharedStore()
+        let shareID = try XCTUnwrap(store.shareID)
+        let localItem = makeItem(in: store, name: "Brot")
+        let serverItem = SharedItemData(
+            id: UUID(), name: "Eier", category: "", categoryManuallySet: false, quantity: "1",
+            quantityAmount: 1, unit: "", isCompleted: false, isUrgent: false, note: "",
+            assignedTo: "", addedBy: "Anderes Gerät", completedBy: "",
+            lastModified: Date(timeIntervalSince1970: 1_000_000), hasPhoto: false
+        )
+        let server = CKRecord(recordType: "SharedStore", recordID: CKRecord.ID(recordName: shareID))
+        server["storeName"] = "Testladen" as CKRecordValue
+        server["storeEmoji"] = "🛒" as CKRecordValue
+        server["storeColorHex"] = "#4A90D9" as CKRecordValue
+        server["ownerDevice"] = "Anderes Gerät" as CKRecordValue
+        server["itemsJSON"] = await service.encodeItems([serverItem]) as CKRecordValue
+        server["membersJSON"] = await service.encodeMembers(["Anderes Gerät"]) as CKRecordValue
+        server["deletedJSON"] = "[]" as CKRecordValue
+        server["pricesJSON"] = "{}" as CKRecordValue
+        fake.seed(server)
+
+        let result = try await service.push(store: store)
+
+        XCTAssertEqual(result?.usedSchemaFallback, true)
+        XCTAssertEqual(fake.saveAttempts, 2, "Erstversuch abgelehnt, genau ein Fallback")
+        let saved = try XCTUnwrap(fake.lastSaved)
+        assertNoExtensionFields(in: saved)
+        let items = await service.decodeItems(saved["itemsJSON"] as? String ?? "[]")
+        XCTAssertEqual(Set(items.map(\.id)), [serverItem.id, localItem.id], "Server- und lokale Artikel gemergt")
+        let members = await service.decodeMembers(saved["membersJSON"] as? String ?? "[]")
+        XCTAssertTrue(members.contains("Anderes Gerät"), "Mitglied des anderen Geräts bleibt")
+        XCTAssertEqual(saved["ownerDevice"] as? String, "Anderes Gerät", "Eigentümer nicht überschrieben")
+        let lastSync = await service.lastSyncDate(shareID: shareID)
+        XCTAssertNotEqual(lastSync, .distantPast, "Wasserstand rückt nach erfolgreichem Speichern vor")
     }
 
     // MARK: - Helpers
@@ -486,10 +547,16 @@ final class FakeSharedStoreDatabase: SharedStoreDatabase, @unchecked Sendable {
         ])
     }
 
+    /// Hinterlegt einen vorhandenen Server-Record (z. B. von einem anderen Gerät gespeichert).
+    func seed(_ record: CKRecord) {
+        lock.withLock { stored[record.recordID] = record }
+    }
+
+    /// Wie echtes CloudKit eine eigene Instanz je Abruf, nicht den gespeicherten Record selbst.
     func record(for recordID: CKRecord.ID) async throws -> CKRecord {
         try lock.withLock {
             guard let record = stored[recordID] else { throw CKError(.unknownItem) }
-            return record
+            return record.copy() as! CKRecord
         }
     }
 

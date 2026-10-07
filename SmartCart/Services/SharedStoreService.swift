@@ -2,12 +2,27 @@ import CloudKit
 import Foundation
 import UIKit
 
-actor SharedStoreService {
-    static let shared = SharedStoreService()
+/// Datenbankzugriff von `SharedStoreService` (Issue #121): `CKDatabase` ist die Produktivinstanz,
+/// Tests hängen einen Fake ein, der die CloudKit-Produktion nachstellt.
+protocol SharedStoreDatabase {
+    func record(for recordID: CKRecord.ID) async throws -> CKRecord
+    func save(_ record: CKRecord) async throws -> CKRecord
+}
 
-    private let container = CKContainer(identifier: "iCloud.com.johannesemmrich.SmartCart")
-    private var db: CKDatabase { container.publicCloudDatabase }
+extension CKDatabase: SharedStoreDatabase {}
+
+actor SharedStoreService {
+    private static let containerID = "iCloud.com.johannesemmrich.SmartCart"
+    static let shared = SharedStoreService(database: CKContainer(identifier: containerID).publicCloudDatabase)
+
+    private let container = CKContainer(identifier: containerID)
+    /// Records lesen und speichern; Subscriptions laufen weiter direkt über `container`.
+    let database: SharedStoreDatabase
     private static let recordType = "SharedStore"
+
+    init(database: SharedStoreDatabase) {
+        self.database = database
+    }
 
     // MARK: - Code generation
 
@@ -15,7 +30,7 @@ actor SharedStoreService {
     // valid code against the public database is computationally infeasible, unlike the previous
     // 6-char code (~1.07×10^9 combinations, guessable by a scripted client). This is a mitigation
     // for the code-guessing attack vector; it does not change the underlying public-database
-    // access model (see SharedStoreService's public db property).
+    // access model (see SharedStoreService's public `database` property).
     static func generateCode() -> String {
         let chars = Array("ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
         return String((0..<10).map { _ in chars.randomElement()! })
@@ -39,48 +54,61 @@ actor SharedStoreService {
     }
 
     @discardableResult
-    func push(store: Store) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry])? {
+    func push(store: Store) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry], usedSchemaFallback: Bool, schemaRejection: Error?)? {
         guard store.shareID != nil else { return nil }
-        let (_, items, members, deletedIDs, prices, priceDates, priceUnits, categories, assignments) = try await syncToCloud(store: store)
-        return (items, members, deletedIDs, prices, priceDates, priceUnits, categories, assignments)
+        let (_, m, schemaRejection) = try await syncToCloud(store: store)
+        return (m.items, m.members, m.deletedIDs, m.prices, m.priceDates, m.priceUnits, m.categories, m.assignments, schemaRejection != nil, schemaRejection)
     }
 
-    private func syncToCloud(store: Store) async throws -> (code: String, items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry]) {
+    /// Issue #121: Lehnt die CloudKit-Produktion das Speichern ab, weil ihr Schema ein Feld nicht
+    /// kennt („production schema“), wird genau einmal ohne `SharedStoreSchema.optionalExtensionFields`
+    /// gespeichert. Der Record dafür wird frisch geladen bzw. neu angelegt, damit die Felder auch
+    /// nicht als geändert (`changedKeys()`) mitreisen. `schemaRejection` meldet dem Aufrufer, dass
+    /// das Fallback griff. Fallback und `serverRecordChanged`-Wiederholung erlauben je einen
+    /// Zusatzversuch, zusammen also höchstens drei Speicherversuche.
+    private func syncToCloud(store: Store) async throws -> (code: String, merged: MergedState, schemaRejection: Error?) {
         let code = store.shareID ?? Self.generateCode()
-        let recordID = CKRecord.ID(recordName: code)
-
-        var record: CKRecord
-        var isNewRecord: Bool
-        do {
-            record = try await db.record(for: recordID)
-            isNewRecord = false
-        } catch {
-            record = CKRecord(recordType: Self.recordType, recordID: recordID)
-            isNewRecord = true
-        }
-
-        var attempt = 0
+        var (record, isNewRecord) = await currentRecord(code: code)
+        var retriedServerChange = false
+        var schemaRejection: Error?
         while true {
-            let (mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates, mergedPriceUnits, mergedCategories, mergedAssignments) = mergeIntoRecord(record, store: store, code: code, isNewRecord: isNewRecord)
+            let merged = mergeIntoRecord(record, store: store, code: code, isNewRecord: isNewRecord,
+                                         includeExtensionFields: schemaRejection == nil)
             do {
-                let saved = try await db.save(record)
+                let saved = try await database.save(record)
                 markSynced(shareID: code, at: saved.modificationDate ?? Date())
-                pruneDeletions(shareID: code, stillPresent: Set(mergedItems.map(\.id)))
-                return (code, mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates, mergedPriceUnits, mergedCategories, mergedAssignments)
-            } catch let error as CKError where error.code == .serverRecordChanged && attempt == 0 {
+                pruneDeletions(shareID: code, stillPresent: Set(merged.items.map(\.id)))
+                return (code, merged, schemaRejection)
+            } catch let error as CKError where error.code == .serverRecordChanged && !retriedServerChange {
                 // Another device saved between our fetch and our save. Re-merge against the
                 // record that actually won instead of blindly overwriting it a second time.
                 guard let serverRecord = error.serverRecord else { throw error }
                 record = serverRecord
                 isNewRecord = false
-                attempt += 1
+                retriedServerChange = true
+            } catch let error where schemaRejection == nil && SharedStoreSchema.isProductionSchemaRejection(error) {
+                schemaRejection = error
+                (record, isNewRecord) = await currentRecord(code: code)
             }
         }
     }
 
+    /// Der aktuelle Server-Record oder, falls keiner geladen werden kann, ein neuer.
+    private func currentRecord(code: String) async -> (record: CKRecord, isNew: Bool) {
+        let recordID = CKRecord.ID(recordName: code)
+        do {
+            return (try await database.record(for: recordID), false)
+        } catch {
+            return (CKRecord(recordType: Self.recordType, recordID: recordID), true)
+        }
+    }
+
+    typealias MergedState = (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry])
+
     /// Merges local store state into `record` in place and returns the merged items/members/
-    /// tombstones/prices.
-    func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool) -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry]) {
+    /// tombstones/prices. `includeExtensionFields == false` (Schema-Fallback, Issue #121) schreibt
+    /// `categoriesJSON`/`assignmentsJSON` nicht; der Merge selbst bleibt gleich.
+    func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool, includeExtensionFields: Bool = true) -> MergedState {
         let remoteItems = decodeItems(record["itemsJSON"] as? String ?? "[]")
         let remoteMembers = decodeMembers(record["membersJSON"] as? String ?? "[]")
         let remoteDeletedIDs = decodeIDs(record["deletedJSON"] as? String ?? "[]")
@@ -124,8 +152,10 @@ actor SharedStoreService {
         record["membersJSON"] = encodeMembers(mergedMembers) as CKRecordValue
         record["deletedJSON"] = encodeIDs(mergedDeletedIDs) as CKRecordValue
         record["pricesJSON"] = LearnedPriceSync.encode(mergedPriceState) as CKRecordValue
-        record["categoriesJSON"] = encodeCategories(mergedCategories) as CKRecordValue
-        record["assignmentsJSON"] = encodeAssignments(mergedAssignments) as CKRecordValue
+        if includeExtensionFields {
+            record["categoriesJSON"] = encodeCategories(mergedCategories) as CKRecordValue
+            record["assignmentsJSON"] = encodeAssignments(mergedAssignments) as CKRecordValue
+        }
         return (mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates, mergedPriceUnits, mergedCategories, mergedAssignments)
     }
 
@@ -149,7 +179,7 @@ actor SharedStoreService {
 
     func fetchPreview(shareID: String) async throws -> SharedStorePreview {
         let recordID = CKRecord.ID(recordName: shareID.uppercased())
-        let record = try await db.record(for: recordID)
+        let record = try await database.record(for: recordID)
         return SharedStorePreview(
             shareID: shareID.uppercased(),
             storeName: record["storeName"] as? String ?? "Unbekannt",
@@ -164,7 +194,7 @@ actor SharedStoreService {
 
     func pull(shareID: String) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry], modifiedAt: Date)? {
         let recordID = CKRecord.ID(recordName: shareID)
-        let record = try await db.record(for: recordID)
+        let record = try await database.record(for: recordID)
         let remoteModified = record.modificationDate ?? .distantPast
         let lastSync = lastSyncDate(shareID: shareID)
 
@@ -196,7 +226,7 @@ actor SharedStoreService {
         let recordID = CKRecord.ID(recordName: shareID)
         let record: CKRecord
         do {
-            record = try await db.record(for: recordID)
+            record = try await database.record(for: recordID)
         } catch {
             return []
         }
@@ -205,7 +235,7 @@ actor SharedStoreService {
         if !name.isEmpty, !members.contains(name) {
             members.append(name)
             record["membersJSON"] = encodeMembers(members) as CKRecordValue
-            try await db.save(record)
+            _ = try await database.save(record)
         }
         return members
     }
@@ -228,11 +258,11 @@ actor SharedStoreService {
         let info = CKSubscription.NotificationInfo()
         info.shouldSendContentAvailable = true
         subscription.notificationInfo = info
-        _ = try await db.save(subscription)
+        _ = try await container.publicCloudDatabase.save(subscription)
     }
 
     func unsubscribe(shareID: String) async {
-        try? await db.deleteSubscription(withID: "sub-\(shareID)")
+        try? await container.publicCloudDatabase.deleteSubscription(withID: "sub-\(shareID)")
     }
 
     /// Räumt die Sharing-Verbindung eines geteilten Stores auf (Push-Abmeldung), wenn er lokal
@@ -418,6 +448,36 @@ actor SharedStoreService {
         guard let data = json.data(using: .utf8),
               let arr = try? JSONSerialization.jsonObject(with: data) as? [String] else { return [] }
         return Set(arr.compactMap(UUID.init))
+    }
+}
+
+// MARK: - Schema (Issue #121)
+
+/// Felder des Record-Typs `SharedStore` und die Erkennung einer Ablehnung durch das
+/// CloudKit-Produktions-Schema.
+/// Neue Felder müssen vor dem TestFlight-Upload im CloudKit-Dashboard nach Production
+/// veröffentlicht werden (docs/testflight-setup.md, Drift-Test in `SharedStoreSchemaTests`).
+enum SharedStoreSchema {
+    /// Felder, ohne die kein Abgleich möglich ist (`ownerDevice` nur beim neuen Record).
+    static let coreFields: Set<String> = [
+        "storeName", "storeEmoji", "storeColorHex", "ownerDevice",
+        "itemsJSON", "membersJSON", "deletedJSON", "pricesJSON",
+    ]
+    /// Später hinzugekommene Felder, ohne die der Kern (Artikel, Preise, Mitglieder) abgleicht.
+    static let optionalExtensionFields: Set<String> = ["categoriesJSON", "assignmentsJSON"]
+
+    /// Regel statt Feldabgleich: Der Fehlertext (`ServerErrorDescription`, sonst
+    /// `localizedDescription`) enthält „production schema“, Groß-/Kleinschreibung egal. Bei
+    /// `partialFailure` zählen die Teilfehler.
+    static func isProductionSchemaRejection(_ error: Error) -> Bool {
+        if let ck = error as? CKError, ck.code == .partialFailure {
+            return ck.partialErrorsByItemID?.values.contains { isProductionSchemaRejection($0) } ?? false
+        }
+        return errorText(error).range(of: "production schema", options: .caseInsensitive) != nil
+    }
+
+    static func errorText(_ error: Error) -> String {
+        (error as NSError).userInfo["ServerErrorDescription"] as? String ?? error.localizedDescription
     }
 }
 

@@ -272,7 +272,7 @@ struct StoreDetailView: View {
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
 
-        if syncFailed && store.shareID != nil {
+        if syncBanner.isVisible && store.shareID != nil {
             Section {
                 Button {
                     let generation = nextSyncGeneration()
@@ -284,8 +284,14 @@ struct StoreDetailView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .font(.system(size: 13))
-                        Text(syncFailureText)
-                            .font(.system(size: 13))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(syncBanner.text)
+                                .font(.system(size: 13))
+                            if let detail = syncBanner.detailLine {
+                                Text(detail)
+                                    .font(.system(size: 11))
+                            }
+                        }
                         Spacer()
                         Image(systemName: "arrow.clockwise")
                             .font(.system(size: 13))
@@ -1068,18 +1074,9 @@ struct StoreDetailView: View {
         syncPush()
     }
 
-    /// Names the concrete failure instead of a generic "sync broken": a permanent server-side
-    /// write rejection (CloudKit security roles) and a missing iCloud login need completely
-    /// different reactions than a flaky network, but they'd all look identical otherwise.
-    private var syncFailureText: String {
-        switch SyncCoordinator.shared.lastFailureKind {
-        case .permissionDenied:
-            return "Keine Schreibberechtigung für diese geteilte Liste — deine Änderungen erreichen die anderen Mitglieder nicht"
-        case .notAuthenticated:
-            return "Nicht bei iCloud angemeldet — Änderungen werden nicht geteilt (Einstellungen → beim iPhone anmelden)"
-        case .other:
-            return "Sync fehlgeschlagen — Änderungen werden möglicherweise nicht mit anderen geteilt"
-        }
+    private var syncBanner: SyncBanner.Decision {
+        SyncBanner.decision(syncFailed: syncFailed, kind: SyncCoordinator.shared.lastFailureKind,
+                            developerMode: developerMode, detail: SyncCoordinator.shared.lastFailureDetail)
     }
 
     /// Bumps and returns the current sync generation. Call this synchronously on the main actor
@@ -1411,3 +1408,32 @@ private struct TemplatePickerSheet: View {
     }
 }
 
+/// Entscheidung über den Sync-Banner in `StoreDetailView` (Issue #121).
+enum SyncBanner {
+    struct Decision: Equatable {
+        let isVisible: Bool
+        let text: String
+        let detailLine: String?
+    }
+
+    /// Sichtbar bei einem Syncfehler und bei `schemaIncomplete`, auch wenn das Fallback als
+    /// Erfolg zählte (`syncFailed == false`). Benennt die konkrete Ursache statt „Sync kaputt“:
+    /// fehlende Schreibrechte und fehlende iCloud-Anmeldung brauchen eine andere Reaktion als ein
+    /// wackliges Netz. Im Entwicklermodus folgt Domain, Code und Fehlertext als Detailzeile.
+    static func decision(syncFailed: Bool, kind: SyncCoordinator.SyncFailureKind?, developerMode: Bool, detail: String) -> Decision {
+        let isVisible = syncFailed || kind == .schemaIncomplete
+        let text: String
+        switch kind {
+        case .permissionDenied:
+            text = "Keine Schreibberechtigung für diese geteilte Liste — deine Änderungen erreichen die anderen Mitglieder nicht"
+        case .notAuthenticated:
+            text = "Nicht bei iCloud angemeldet — Änderungen werden nicht geteilt (Einstellungen → beim iPhone anmelden)"
+        case .schemaIncomplete:
+            text = "Server-Einrichtung unvollständig — Kategorien und gemerkte Zuordnungen werden noch nicht geteilt; Artikel gleichen ab"
+        case .other, nil:
+            text = "Sync fehlgeschlagen — Änderungen werden möglicherweise nicht mit anderen geteilt"
+        }
+        let detailLine = isVisible && developerMode && !detail.isEmpty ? detail : nil
+        return Decision(isVisible: isVisible, text: text, detailLine: detailLine)
+    }
+}

@@ -65,7 +65,7 @@ Zeilennummern Stand 2026-10-07; maßgeblich sind die Funktionen.
     geschieht beim Speichern, nicht im Merge.
 - **Geändert:** `SmartCart/Services/SyncCoordinator.swift`
   - `SyncFailureKind` (Zeile 35) um `schemaIncomplete`; `lastFailureKind` (Zeile 45) wird bei Erfolg von
-    `pull`/`push` zurückgesetzt; neues `lastFailureDetail` (Domain, Code, `ServerErrorDescription` bzw.
+    `pull`/`push` zurückgesetzt, `schemaIncomplete` nur durch einen vollständigen `push`; neues `lastFailureDetail` (Domain, Code, `ServerErrorDescription` bzw.
     `localizedDescription`); `os.Logger` (Subsystem Bundle-ID, Kategorie `sync`) in den `catch`-Zweigen von
     `pull` (Zeile 73) und `push` (Zeile 93). `classify` (Zeile 47) erkennt „production schema“ regelbasiert.
 - **Geändert:** `SmartCart/Views/Store/StoreDetailView.swift` — `syncFailureText` (Zeile 1074-1083) um den
@@ -103,7 +103,7 @@ Zeilennummern Stand 2026-10-07; maßgeblich sind die Funktionen.
 | File | Change Type | Description |
 |------|-------------|-------------|
 | `SmartCart/Services/SharedStoreService.swift` | MODIFY | Datenbank hinter kleinem Protokoll; Fallback ohne `categoriesJSON`/`assignmentsJSON` bei Ablehnung wegen Produktions-Schema; Feldlisten als Konstanten |
-| `SmartCart/Services/SyncCoordinator.swift` | MODIFY | `schemaIncomplete`, `lastFailureDetail`, `Logger`, Zurücksetzen bei Erfolg |
+| `SmartCart/Services/SyncCoordinator.swift` | MODIFY | `schemaIncomplete`, `lastFailureDetail`, `Logger`, Zurücksetzen bei Erfolg (`schemaIncomplete` nur durch vollständigen `push`) |
 | `SmartCart/Views/Store/StoreDetailView.swift` | MODIFY | Hinweistext „Server-Einrichtung unvollständig …“, Detailzeile im Entwicklermodus |
 | `RestockTests/SharedStoreSchemaTests.swift` | CREATE | Fake-Produktion, RED-Test, Fallback-Tests, Drift-Test |
 | `docs/testflight-setup.md` | MODIFY | Schritt „CloudKit-Schema veröffentlichen“ |
@@ -128,8 +128,9 @@ Zeilennummern Stand 2026-10-07; maßgeblich sind die Funktionen.
 - [ ] Andere Fehler lösen kein Fallback aus (AC-6)
 - [ ] Wasserstand `lastSync` nur nach erfolgreichem Speichern (AC-7)
 - [ ] Vollständiges Produktions-Schema: unveränderter Pfad, Erweiterungsfelder werden geschrieben (AC-8)
-- [ ] Zustand `schemaIncomplete` gesetzt und zurückgesetzt, `lastFailureKind` bleibt nach Erfolg nicht
-  stehen (AC-9, AC-10)
+- [ ] Zustand `schemaIncomplete` gesetzt; nur ein vollständiger `push` setzt ihn zurück, weder ein
+  erfolgreicher noch ein fehlgeschlagener `pull`; die übrigen Fehlerarten werden bei Erfolg zurückgesetzt
+  und bleiben nicht stehen (AC-9, AC-10)
 - [ ] Banner-Text und Banner bei gelungenem Fallback (AC-11, AC-12)
 - [ ] Diagnose: `lastFailureDetail`, `os.Logger`, Detailzeile im Entwicklermodus, keine Personendaten
   (AC-13, AC-14, AC-15)
@@ -188,8 +189,11 @@ dass das Fallback gegriffen hat (z. B. Rückgabewert oder Flag; Form legt Phase 
 
 **Zustand und Diagnose (`SyncCoordinator`).** Greift das Fallback, setzt `push` `lastFailureKind =
 .schemaIncomplete` und liefert dennoch `true` (der Kern wurde abgeglichen). Nach einem vollständigen Speichern
-(ohne Fallback) wird der Zustand zurückgesetzt, ebenso `lastFailureKind` bei jedem erfolgreichen `pull`/
-`push` (heute bleibt der alte Wert stehen). `lastFailureDetail` hält eine Zeile mit Domain, Code und
+(ohne Fallback) wird der Zustand zurückgesetzt. Bei jedem erfolgreichen `pull`/`push` werden die übrigen
+Fehlerarten zurückgesetzt (heute bleibt der alte Wert stehen); **`schemaIncomplete` löscht jedoch nur ein
+vollständiger `push`, nie ein `pull`** (Änderung 2026-10-07, PO-„override“: der Abruf alle 15 s gelingt auch
+bei unvollständigem Schema und würde den Hinweis sonst nach spätestens rund 15 s entfernen). Der Zustand
+liegt im Arbeitsspeicher; nach einem App-Neustart erscheint der Hinweis mit dem nächsten Speichern wieder. `lastFailureDetail` hält eine Zeile mit Domain, Code und
 `ServerErrorDescription`/`localizedDescription`; beim Fallback enthält sie die Ablehnungsursache. Der
 `os.Logger` (Subsystem = Bundle-ID, Kategorie `sync`) protokolliert Fehler von `pull`/`push` mit Domain, Code
 und Fehlertext. **Keine Personendaten:** kein Ladenname, keine Artikel, kein Anzeigename, kein Code der
@@ -255,7 +259,9 @@ prüfbar; ein künstliches Erzeugen des Fehlerzustands per Launch-Argument entf�
   WHEN die Erkennung läuft, THEN erkennt sie die ersten beiden und nicht den dritten.
 - [ ] T7: GIVEN `SyncCoordinator` mit Fallback-Push, WHEN er abgeschlossen ist, THEN
   `lastFailureKind == .schemaIncomplete` und `lastFailureDetail` nicht leer; nach vollständigem Push ist der
-  Zustand zurückgesetzt; nach einem erfolgreichen Pull steht kein alter Fehler mehr.
+  Zustand zurückgesetzt; nach einem erfolgreichen Pull steht kein alter Fehler der Arten `other`/
+  `permissionDenied`/`notAuthenticated` mehr, ein erfolgreicher Pull lässt `schemaIncomplete` jedoch stehen
+  (Änderung 2026-10-07, PO-„override“).
 - [ ] T8: GIVEN der Drift-Test, WHEN die Feldliste von `mergeIntoRecord` mit der festgeschriebenen
   übereinstimmt, THEN grün; bei Abweichung (Gegenprobe im Entwurf, nicht eingecheckt) Meldung wörtlich wie
   in AC-16.
@@ -318,9 +324,12 @@ dem Gerät des PO (AC-23).
 - **AC-9:** GIVEN das Fallback greift, WHEN `SyncCoordinator.push` endet, THEN ist `lastFailureKind ==
   .schemaIncomplete`, der Aufruf liefert `true` (Kern abgeglichen), und `lastFailureDetail` benennt die
   Ablehnungsursache.
-- **AC-10:** GIVEN der Zustand `schemaIncomplete` oder ein früherer Fehler, WHEN danach ein `pull` oder
-  vollständiger `push` erfolgreich endet, THEN ist der Zustand bzw. `lastFailureKind` zurückgesetzt und
-  bleibt nicht stehen.
+- **AC-10 (geändert 2026-10-07 per PO-„override“):** GIVEN der Zustand `schemaIncomplete`, WHEN danach ein
+  `pull` erfolgreich endet, THEN bleibt `schemaIncomplete` stehen (der App-weite Abruf alle 15 s darf den
+  Hinweis nicht löschen); ein fehlschlagender `pull` überschreibt `schemaIncomplete` ebenfalls nicht (der
+  Fehler wird protokolliert); erst ein vollständiger `push` (ohne Fallback) setzt ihn zurück. GIVEN ein früherer
+  anderer Fehler (`other`, `permissionDenied`, `notAuthenticated`), WHEN danach ein `pull` oder
+  vollständiger `push` erfolgreich endet, THEN ist `lastFailureKind` zurückgesetzt und bleibt nicht stehen.
 - **AC-11:** GIVEN `lastFailureKind == .schemaIncomplete`, WHEN der Banner in `StoreDetailView` erscheint,
   THEN lautet der Text „Server-Einrichtung unvollständig — Kategorien und gemerkte Zuordnungen werden noch
   nicht geteilt; Artikel gleichen ab“; die Texte der übrigen Fehlerarten sind wörtlich unverändert.
@@ -433,6 +442,12 @@ frühere Entscheidung: keine. Ausdrücklich nicht gekippt: öffentliche Datenban
 - **Zeilennummern verschieben sich:** maßgeblich sind die Funktionen.
 
 ## Changelog
+
+- 2026-10-07 (Änderung nach Umsetzung, PO-Wort „override“): AC-10, T7 und der Absatz „Zustand und Diagnose“
+  geändert — `schemaIncomplete` bleibt nach erfolgreichem `pull` stehen und wird nur durch einen vollständigen
+  `push` zurückgesetzt. Grund: Der App-weite Abruf alle 15 s gelingt auch bei unvollständigem Schema und hätte
+  den Hinweis nach spätestens rund 15 s gelöscht (Fund der Umsetzung, AC-10 alt). Betroffen: Test T7 und die
+  Rücksetz-Logik in `SyncCoordinator`.
 
 - 2026-10-07: Initial spec created (Issue #121; Protokoll vor der Datenbank, Fake-Produktion als RED-Test,
   Fallback ohne `categoriesJSON`/`assignmentsJSON` bei Ablehnung wegen Produktions-Schema, Zustand „Schema
