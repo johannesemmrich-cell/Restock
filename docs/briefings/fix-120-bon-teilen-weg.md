@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/services/receipt-share-extension-recognizer.md
-spec_sha256: e7260be332cef71b273428c3ef90b71289fa2d911b177964fd4cbaa71bbd9dca
+spec_sha256: f9e7f9a10ec5fbb23cc15ddca92d820b9e5d2e1a7f84883db25375ae1674308f
 ---
 
 # PO-Briefing: fix-120-bon-teilen-weg
@@ -15,16 +15,17 @@ Beim Teilen eines langen Kassenbons an Restock werden alle Artikel erkannt, nich
 
 ## Definition of Done
 
-Im Simulator erkennt der Teilen-Weg beim echten Lidl-Bon mindestens 18 Positionen und die Endsumme 68,69 €, ohne Absturz.
+Im Simulator liefert der Teilen-Weg beim echten Lidl-Bon mindestens 18 Positionen und die Endsumme 68,69 €, ohne Absturz.
 
 ## Wie geprüft wird
 
-Ein Simulator-Durchlauf mit dem echten Bon belegt das Ergebnis; ein Quelltext-Test sichert den gemeinsamen Erkenner. Dein iPhone wird nicht geprüft.
+Simulator-Durchläufe mit dem echten Bon: vorher 14 Positionen (iOS 26.5) bzw. nichts (iOS 27), nachher je 19 plus Endsumme.
 
 ## Kritische Anmerkungen
 
-- Auf dem iPhone unbewiesen: Das Speicherlimit der Erweiterung (120 MB) könnte reißen, der App-Scanner brauchte 134 MB.
-- Der Fall „Bild ohne Text" ist nicht automatisch getestet, nur per Code-Lesen belegt.
+- Speicherlimit (120 MB) am iPhone unbewiesen, Scanner brauchte 134 MB; Gerätetest nur nach Build 11 und deinem Wort.
+- Bei Limit-Verstoß Rückfall Alternative B als eigenes Ticket; keine Zusage „auf dem iPhone repariert“.
+- Prüfskript spielt App jetzt selbst ein; UI-Suite-Nachweis auf unberührtem Simulator, Altlast auf Validate als eigenes Ticket.
 
 ## Freigabe-Frage
 

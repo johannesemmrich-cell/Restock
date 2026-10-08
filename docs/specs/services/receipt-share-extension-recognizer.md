@@ -21,7 +21,7 @@ PO-Meldung 2026-10-08 (#120, Build 10): Der echte Lidl-Plus-Bon (1206 × 9089 px
 (`docs/specs/services/receipt-text-recognizer-tiling.md`) greift nur im App-Scanner, nicht in der
 Teilen-Erweiterung. Hat es bisher funktioniert? Nein, nie: Der Teilen-Weg hatte nie Streifen.
 
-**Root Cause (am Simulator nachgestellt, Restock-Validate, iOS 27, Weg Fotos → Teilen → Restock, mit
+**Root Cause (am Simulator nachgestellt, Restock-Validate = iOS 26.5, Gegenprobe Restock-UITest-Verify = iOS 27.0, Weg Fotos → Teilen → Restock, mit
 `scripts/run-share-extension-uitest.sh` und dem echten Bon):**
 `ShareViewController.recognizeText` ist ein zweiter, eigener `VNRecognizeTextRequest` auf dem Gesamtbild und
 umgeht `ReceiptTextRecognizer`. `ReceiptTextRecognizer.swift` ist zudem nicht im Ziel der Erweiterung (pbxproj:
@@ -30,12 +30,20 @@ umgeht `ReceiptTextRecognizer`. `ReceiptTextRecognizer.swift` ist zudem nicht im
 
 | Weg (gleiches Bild) | Positionen | Endsumme |
 |---|---|---|
-| Teilen-Erweiterung, Simulator, heute | 14 (93 Rohzeilen) | nein |
+| Teilen-Erweiterung, alter Code, Simulator iOS 26.5 | 14 (93 Rohzeilen) | nein |
+| Teilen-Erweiterung, alter Code, Simulator iOS 27.0 | 0 (keine Nutzlast, 14 Blöcke) | nein |
+| Teilen-Erweiterung, neuer Code, Simulator iOS 26.5 und 27.0 | 19 (93 Zeilen, 5 Streifen) | 68,69 € |
 | App-Scanner, Simulator | 19 | 68,69 € |
 | Teilen-Erweiterung, Gerät (Build 10, Hennings Meldung) | ca. 3 | — |
 
 Analyse und Ablaufbeleg: `docs/context/fix-120-bon-teilen-weg.md` (der Beleg selbst liegt im Scratchpad, das Bild
-mit persönlichen Angaben bleibt außerhalb des Repos).
+mit persönlichen Angaben bleibt außerhalb des Repos). Messbelege der Umsetzung: `docs/artifacts/fix-120-bon-teilen-weg/`
+(`messmatrix-*`, `share-e2e-final-*`).
+
+**Korrektur 2026-10-08 (PO-`override`, Prüfrunde 3):** Frühere Läufe liefen gegen einen alten, im Simulator
+installierten App-Stand, weil `xcodebuild test` Restock nicht installiert (der Test startet die App nie selbst).
+Gültig sind nur Läufe, in denen das Skript den frisch gebauten Stand einspielt und per Prüfsumme belegt. Die
+Angabe „Restock-Validate, iOS 27“ war falsch (es ist iOS 26.5); der Vorher-Wert 14 gilt nur dort, auf iOS 27.0 sind es 0.
 
 Diese Spec (Weg A, vom Analysebefund vorgegeben) macht aus zwei Erkennungswegen einen:
 
@@ -93,12 +101,12 @@ Zeilennummern verschieben sich; maßgeblich sind die Funktionen.
 |------|-------------|-------------|
 | `RestockShareExtension/ShareViewController.swift` | MODIFY | `recognizeText` entfällt; Aufruf `reconstructLines(ReceiptTextRecognizer.recognizeBlocks(...))` (ca. −20/+6). `import Vision` darf entfallen, wenn die Datei Vision sonst nicht braucht. |
 | `Restock.xcodeproj/project.pbxproj` | MODIFY | Neuer `PBXBuildFile` `A1200D0000000000000000B3` (fileRef `A1200D0000000000000000B2`, vorher auf Kollision geprüft: 0 Treffer) + Eintrag in Sources-Phase `67BDC10E19FEF56A93370E2E` (+2 Zeilen). `PBXFileReference` und Gruppe bleiben (Datei ist schon registriert). |
-| `scripts/run-share-extension-uitest.sh` | MODIFY | Positionszahl und Endsumme aus `pendingShareExtensionReceipt` lesen, ausgeben, Mindestzahl prüfen (ca. +25). |
+| `scripts/run-share-extension-uitest.sh` | MODIFY | Positionszahl und Endsumme aus `pendingShareExtensionReceipt` lesen, ausgeben, Mindestzahl prüfen; zusätzlich (Korrektur 2026-10-08) die frisch gebaute App selbst bauen und einspielen, den installierten Stand der Erweiterung per md5 vor und nach dem Lauf belegen, iOS-Version und Commit ausgeben (insgesamt ca. +120). |
 | `RestockUITests/ReceiptShareExtensionTests.swift` | MODIFY | Kachel-Tipp per Koordinate (ca. +3, liegt vor). |
 | `RestockTests/ReceiptTextRecognizerTests.swift` | MODIFY | Drift-Test (ca. +40). |
 
 ### Estimated Changes
-- Dateien: 5 (Grenze 4-5 eingehalten). LoC: ca. +90/−25 (Testcode zählt im LoC-Gate als Produktivcode;
+- Dateien: 5 (Grenze 4-5 eingehalten). LoC: ca. +190/−40 (Korrektur 2026-10-08: Skript-Reparatur) (Testcode zählt im LoC-Gate als Produktivcode;
   unter ±250).
 - Risiko: mittel. Zentrale Bon-Erkennung im Teilen-Weg; das Speicherlimit der Erweiterung ist nur am Gerät
   prüfbar (siehe Purpose und Risiken).
@@ -108,7 +116,7 @@ Zeilennummern verschieben sich; maßgeblich sind die Funktionen.
 
 ## Definition of Done
 
-- [ ] Reproduktion vorher belegt: Skript meldet am echten Bon 14 Positionen, keine Endsumme (AC-1)
+- [ ] Reproduktion vorher belegt: Alt-Stand meldet am echten Bon auf iOS 26.5 14 Positionen ohne Endsumme, auf iOS 27.0 keine Nutzlast (AC-1)
 - [ ] Drift-Test vor der Umsetzung rot, danach grün (AC-2, AC-3)
 - [ ] Erweiterung nutzt `ReceiptTextRecognizer`, `recognizeText` und eigener `VNRecognizeTextRequest` entfernt (AC-3, AC-4)
 - [ ] Erkennungsfehler → leere Zeilen → `.noItemsFound` wie bisher (AC-5)
@@ -200,7 +208,7 @@ Erweiterungsziel über den Namen im pbxproj (`PBXNativeTarget` mit `RestockShare
 - [ ] T8 (AC-11): GIVEN der Release-Build (`-configuration Release`, Simulator), WHEN er kompiliert, THEN
   gelingt er, einschließlich Erweiterungsziel.
 - [ ] T9 (AC-13): GIVEN der Diff gegen den Tip-Commit, WHEN `git diff --stat` läuft, THEN genau die fünf Dateien,
-  ca. +90/−25 LoC, `ReceiptParserService.swift` und `ReceiptTextRecognizer.swift` unverändert.
+  ca. +190/−40 (Korrektur 2026-10-08: Skript-Reparatur) LoC, `ReceiptParserService.swift` und `ReceiptTextRecognizer.swift` unverändert.
 
 Nicht automatisiert: Speicherspitze der Erweiterung am echten Bon auf dem Gerät (AC-12). Der Simulator erzwingt
 das Limit nicht. Eine Simulator-Messung der Spitze (z. B. `xcrun simctl spawn … footprint` oder Instruments
@@ -209,9 +217,10 @@ auf dem Erweiterungsprozess) ist erlaubt und wird, falls gemessen, als Näherung
 ## Acceptance Criteria
 
 - **AC-1:** GIVEN der Stand vor der Umsetzung und das echte Bon-Bild aus #120 (außerhalb des Repos), WHEN
-  `scripts/run-share-extension-uitest.sh` auf `Restock-Validate` läuft, THEN enthält die Nutzlast 14 Positionen
-  und keine Endsumme (Reproduktion, Ist-Zustand; die erweiterte Auswertung aus AC-6 macht den Wert sichtbar und
-  das Skript ROT).
+  `scripts/run-share-extension-uitest.sh` (Alt-Stand per `simctl install` eingespielt und per md5 belegt) läuft,
+  THEN enthält die Nutzlast auf iOS 26.5 (`Restock-Validate`) 14 Positionen und keine Endsumme, auf iOS 27.0
+  (`Restock-UITest-Verify`) keine Nutzlast (Reproduktion, Ist-Zustand; Skript ROT). Belege:
+  `messmatrix-m-alt-*.txt`.
 - **AC-2:** GIVEN der Drift-Test vor der Umsetzung, WHEN er läuft, THEN ist er rot (RED), weil
   `ReceiptTextRecognizer.swift` nicht in der Sources-Phase des Erweiterungsziels steht und
   `ShareViewController.swift` einen `VNRecognizeTextRequest` enthält.
@@ -229,9 +238,12 @@ auf dem Erweiterungsprozess) ist erlaubt und wird, falls gemessen, als Näherung
 - **AC-6:** GIVEN das Skript nach der Umsetzung, WHEN es eine Nutzlast auswertet, THEN gibt es Positionszahl und
   Endsumme der Nutzlast aus und beendet sich ROT, wenn die Positionszahl unter `MIN_POSITIONS` (Vorgabe 18)
   liegt, die Endsumme fehlt oder von `EXPECT_TOTAL` (Vorgabe 68,69) abweicht oder die Nutzlast nicht dekodierbar
-  ist; „Nutzlast ja“ allein führt nicht mehr zu GRÜN.
+  ist; „Nutzlast ja“ allein führt nicht mehr zu GRÜN. Ergänzt 2026-10-08: Das Skript baut und installiert die App
+  selbst und ist ROT, wenn der Bau scheitert oder die Prüfsumme der installierten Erweiterung vor oder nach dem
+  Lauf nicht der frisch gebauten entspricht; der Ergebnisblock nennt iOS-Version, Commit und Prüfsumme.
 - **AC-7:** GIVEN die Umsetzung und das echte Bon-Bild, WHEN `scripts/run-share-extension-uitest.sh` auf
-  `Restock-Validate` im Simulator durchläuft, THEN meldet es mindestens 18 Positionen (Referenz App-Scanner: 19)
+  `Restock-Validate` (iOS 26.5) und `Restock-UITest-Verify` (iOS 27.0) im Simulator durchläuft, THEN meldet es
+  jeweils mindestens 18 Positionen (Referenz App-Scanner: 19)
   und die Endsumme 68,69 € bei 0 neuen Absturzberichten der Erweiterung; die Ausgabe ist als Artefakt
   registriert (Commit-Kennung und Zeitstempel passen zum Stand). Diese Zusage gilt für den Simulator und nicht für
   das Gerät (AC-12).
@@ -240,9 +252,13 @@ auf dem Erweiterungsprozess) ist erlaubt und wird, falls gemessen, als Näherung
   Teilen-Knopf auch bei teilweise verdeckter Kachelreihe.
 - **AC-9:** GIVEN die gesamte Unit-Suite, WHEN sie lokal läuft, THEN sind alle Tests grün, die Testzahl ist > 0,
   es gab keinen Abbruch.
-- **AC-10:** GIVEN die gesamte UI-Suite, WHEN sie lokal auf `Restock-Validate` im gemeinsamen Lauf läuft, THEN
-  sind alle Tests grün, die Testzahl ist > 0, ohne Abbruch und Retry-Flag. (Bei Flakes #111 bleibt eine Ausnahme
-  dem PO vorbehalten und wird nicht vorab angenommen.)
+- **AC-10:** GIVEN die gesamte UI-Suite, WHEN sie lokal auf einem unberührten Simulator (`Restock-CI-Repro`,
+  iOS 26.5) im gemeinsamen Lauf läuft, THEN sind alle Tests grün, die Testzahl ist > 0, ohne Abbruch und
+  Retry-Flag. (Bei Flakes #111 bleibt eine Ausnahme dem PO vorbehalten und wird nicht vorab angenommen.)
+  Korrektur 2026-10-08 (PO-Entscheidung): Auf `Restock-Validate` scheiterte in zwei Gesamtläufen derselbe
+  fachfremde Test (`AddItemQuantitySuggestionUITests.testAssumedQuantityIsMarkedAsAssumptionInList`), einzeln und
+  auf `main`-CI grün; Ursache nicht bewiesen (Verdacht Altlast des Simulators). Der grüne Lauf auf dem
+  unberührten Simulator gilt als Nachweis; die Klärung auf Validate steht in einem eigenen Ticket.
 - **AC-11:** GIVEN der Release-Build (`-configuration Release`, Simulator), WHEN er kompiliert, THEN gelingt er
   ohne Fehler, Erweiterungsziel eingeschlossen.
 - **AC-12:** GIVEN Ticket und Berichte, WHEN sie formuliert werden, THEN nennen sie ausdrücklich: das
@@ -254,7 +270,7 @@ auf dem Erweiterungsprozess) ist erlaubt und wird, falls gemessen, als Näherung
 - **AC-13:** GIVEN der Diff dieses Durchgangs, WHEN gegen den Tip-Commit geprüft wird, THEN umfasst er genau
   `RestockShareExtension/ShareViewController.swift`, `Restock.xcodeproj/project.pbxproj`,
   `scripts/run-share-extension-uitest.sh`, `RestockUITests/ReceiptShareExtensionTests.swift` und
-  `RestockTests/ReceiptTextRecognizerTests.swift` (ca. +90/−25 LoC), ohne neue Dependencies,
+  `RestockTests/ReceiptTextRecognizerTests.swift` (ca. +190/−40 (Korrektur 2026-10-08: Skript-Reparatur) LoC), ohne neue Dependencies,
   `Info.plist`-Änderung, neuen `@AppStorage`-Schlüssel, und ohne Änderung an `ReceiptParserService.swift`,
   `ReceiptTextRecognizer.swift` oder `ReceiptResolutionService.swift`.
 

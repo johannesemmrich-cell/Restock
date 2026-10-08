@@ -71,6 +71,7 @@
 		7E0F9A1304D50BDA6BC9B811 /* ReceiptResolutionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC528160F1AD80A0C4650A6 /* ReceiptResolutionService.swift */; };
 		C14A0005D3E24B7F8A1B2C05 /* ReceiptResolutionStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A0006D3E24B7F8A1B2C06 /* ReceiptResolutionStats.swift */; };
 		A1200D0000000000000000B1 /* ReceiptTextRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1200D0000000000000000B2 /* ReceiptTextRecognizer.swift */; };
+		A1200D0000000000000000B3 /* ReceiptTextRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1200D0000000000000000B2 /* ReceiptTextRecognizer.swift */; };
 		C14A0007D3E24B7F8A1B2C07 /* ReceiptResolutionStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A0008D3E24B7F8A1B2C08 /* ReceiptResolutionStatsView.swift */; };
 		83F7A018CC455374AA300D07 /* SmartCartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F284820C68BD8D5DFB6B618 /* SmartCartApp.swift */; };
 		86AF02F353829B169AD82B87 /* ShoppingLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E93E36DB4037B719B4BD29 /* ShoppingLiveActivity.swift */; };
@@ -1012,6 +1013,7 @@
 			files = (
 				CB7B598D69B866E2A165B196 /* ShareViewController.swift in Sources */,
 				52C8EBC70575CE1543785171 /* ReceiptParserService.swift in Sources */,
+				A1200D0000000000000000B3 /* ReceiptTextRecognizer.swift in Sources */,
 				FE6E95A3D85D504494220D42 /* ReceiptAliasService.swift in Sources */,
 				BF41CB2B055AF1806850C81F /* ReceiptResolutionService.swift in Sources */,
 				C79D40337E438C71F75EAE89 /* ReceiptShareHandoff.swift in Sources */,

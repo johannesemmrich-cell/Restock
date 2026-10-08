@@ -218,7 +218,9 @@ final class ReceiptShareExtensionTests: XCTestCase {
 
         let lastTile = tiles.element(boundBy: tiles.count - 1)
         XCTAssertTrue(lastTile.exists, "Letzte Bildkachel nach dem Scrollen nicht mehr auffindbar.")
-        lastTile.tap()
+        // Koordinaten-Tipp statt `tap()`: Die schwebende Leiste der Fotos-App verdeckt die
+        // unterste Kachelreihe teilweise, XCUITest meldet sie dann als „not hittable" (#120).
+        lastTile.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).tap()
     }
 
     /// Der Teilen-Knopf der Einzelbildansicht. Die Kennung ist stabiler als die je nach
