@@ -17,6 +17,10 @@ import Vision
 ///   `recognizeBlocks(imageSize:crop:recognize:)` — einhängbare Fassung für T9/T10: `crop` wird für
 ///   JEDEN Streifen aufgerufen (auch für den einen Gesamtbild-Streifen), `recognize` liefert die
 ///   Vision-Blöcke eines Streifens (Box bezogen auf den Streifen) oder wirft.
+/// - `recognizeBlocks(in:orientation:recognize:)` — einhängbare Fassung der Bild-Erkennung (Prüfdialog
+///   Runde 1, F001/F004): `recognize` bekommt je Durchgang Bild und Ausrichtung. Streifen nur auf dem
+///   aufrechten Bild (Ausrichtung `.up`); ohne Streifenbedarf genau ein Durchgang mit dem ORIGINAL-Bild
+///   und der Original-Ausrichtung (kein Zuschnitt).
 /// - Bildgröße 0 (Breite oder Höhe): `tiles` liefert `[]` (kein Streifen der Höhe 0), die Erkennung
 ///   ruft nichts auf und gibt `[]` zurück.
 /// - Toleranzen: Streifenhöhe 2 × Breite und Überlappung 0,25 × Breite je ± 5 % (ganzzahlig gerundet).
@@ -40,6 +44,8 @@ final class ReceiptTextRecognizerTests: XCTestCase {
         let tiled = ReceiptParserService.parse(tiledLines)
 
         // Ist-Zustand (Messung Simulator: Einzelzug 11 Positionen ohne Endsumme, Streifen 18 + 68,69).
+        // Diese Prüfung hängt vom Vision-Modell der Laufzeitumgebung ab: Erkennt eine künftige iOS-Version
+        // das hohe Bild auch im Einzelzug vollständig, schlägt sie fehl, ohne dass der Erkenner falsch ist.
         XCTAssertLessThan(single.count, GeneratedReceipt.items.count, "Einzelzug verliert Text nicht mehr — Bild prüfen")
         // Alle Artikelzeilen da, keine doppelten aus der Überlappung, jeder Preis genau einmal. Namen: OCR darf
         // höchstens einen Buchstaben verlesen (beobachtet: „Lahnpasta“ bei um 1 px verschobener Streifenkante).
@@ -231,6 +237,7 @@ final class ReceiptTextRecognizerTests: XCTestCase {
         let dummy = GeneratedReceipt.makeTallImage(width: 4, height: 4, withFooter: false)
         let tiles = ReceiptTextRecognizer.tiles(imageSize: tall)
         XCTAssertGreaterThanOrEqual(tiles.count, 3)
+        guard tiles.count >= 3 else { return }
         struct VisionFailure: Error {}
         var cropped: [CGRect] = []
         let result = ReceiptTextRecognizer.recognizeBlocks(imageSize: tall, crop: { rect in
@@ -252,6 +259,50 @@ final class ReceiptTextRecognizerTests: XCTestCase {
         let empty = ReceiptTextRecognizer.recognizeBlocks(imageSize: .zero, crop: { _ in called = true; return dummy },
                                                           recognize: { _ in called = true; return [] })
         XCTAssertTrue(empty.isEmpty); XCTAssertFalse(called)
+    }
+
+    // MARK: - T9/AC-9 Ausrichtung (Prüfdialog Runde 1, F001/F004)
+
+    private func blankImage(width: Int, height: Int) -> CGImage {
+        let ctx = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                            space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue)!
+        ctx.setFillColor(gray: 1, alpha: 1)
+        ctx.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        return ctx.makeImage()!
+    }
+
+    func test_T9_gedreht_ausgerichtetQuer_einDurchgangMitOriginalbildUndAusrichtung() {
+        // Rohbild hoch (1000 × 3000), aber `.right` → ausgerichtet 3000 × 1000: kein Streifenbedarf.
+        let raw = blankImage(width: 1000, height: 3000)
+        var calls: [(image: CGImage, orientation: CGImagePropertyOrientation)] = []
+        _ = ReceiptTextRecognizer.recognizeBlocks(in: raw, orientation: .right) { image, orientation in
+            calls.append((image, orientation)); return []
+        }
+        XCTAssertEqual(calls.count, 1, "genau ein Durchgang, keine Streifen auf der Rohgröße")
+        XCTAssertTrue(calls.first?.image === raw, "Original-Bild ohne Zuschnitt")
+        XCTAssertEqual(calls.first?.orientation, .right, "Original-Ausrichtung")
+
+        // Normales aufrechtes Bild: ebenfalls das Original-Bild unverändert (F004).
+        let normal = blankImage(width: 1000, height: 1500)
+        var normalCalls: [CGImage] = []
+        _ = ReceiptTextRecognizer.recognizeBlocks(in: normal, orientation: .up) { image, _ in
+            normalCalls.append(image); return []
+        }
+        XCTAssertEqual(normalCalls.count, 1)
+        XCTAssertTrue(normalCalls.first === normal)
+    }
+
+    func test_T9_gedreht_ausgerichtetHoch_streifenAufDemAufgerichtetenBild() {
+        // Rohbild quer (3000 × 1000) mit `.right` → ausgerichtet 1000 × 3000: Streifen auf dem aufrechten Bild.
+        let raw = blankImage(width: 3000, height: 1000)
+        let expected = ReceiptTextRecognizer.tiles(imageSize: CGSize(width: 1000, height: 3000))
+        var calls: [(size: CGSize, orientation: CGImagePropertyOrientation)] = []
+        _ = ReceiptTextRecognizer.recognizeBlocks(in: raw, orientation: .right) { image, orientation in
+            calls.append((CGSize(width: image.width, height: image.height), orientation)); return []
+        }
+        XCTAssertGreaterThan(expected.count, 1)
+        XCTAssertEqual(calls.map(\.size), expected.map(\.size), "Streifen des aufgerichteten Bildes")
+        XCTAssertTrue(calls.allSatisfy { $0.orientation == .up }, "Streifen gehen aufrecht an Vision")
     }
 }
 
