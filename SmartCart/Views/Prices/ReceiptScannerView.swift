@@ -688,40 +688,10 @@ struct ReceiptScannerView: View {
                 return
             }
             let orientation = CGImagePropertyOrientation(image.imageOrientation)
-            let lines: [String] = await withCheckedContinuation { continuation in
-                let request = VNRecognizeTextRequest { req, _ in
-                    let obs = req.results as? [VNRecognizedTextObservation] ?? []
-                    // Vision liefert bei Spaltenlayout (Name links, Preis rechts) getrennte
-                    // Blöcke statt fertiger Zeilen — anhand der BoundingBoxen zu physischen
-                    // Bon-Zeilen zusammensetzen, sonst findet der Parser keine Name+Preis-Paare.
-                    let blocks: [(text: String, box: CGRect)] = obs.compactMap { o in
-                        guard let candidate = o.topCandidates(1).first else { return nil }
-                        return (text: candidate.string, box: o.boundingBox)
-                    }
-                    continuation.resume(returning: ReceiptParserService.reconstructLines(blocks))
-                }
-                request.recognitionLevel = .accurate
-                request.recognitionLanguages = ["de-DE", "fr-FR", "en-US"]
-                // Bons bestehen aus Abkürzungen ("SHAK.MOUTARDE", "DBLE CCTRE") — Sprachkorrektur
-                // würde sie zu Wörterbuch-Wörtern "verbessern" und damit verfälschen.
-                request.usesLanguageCorrection = false
-                do {
-                    // WICHTIG: orientation muss mitgegeben werden — sonst verwirft Vision die
-                    // UIImage.imageOrientation-Metadaten und interpretiert Hochkant-Fotos (der
-                    // Sensor liefert die Pixel meist quer, iOS taggt nur die Rotation) als quer
-                    // liegenden Text. Ergebnis: "Keine Positionen erkannt" trotz gutem Foto.
-                    try VNImageRequestHandler(
-                        cgImage: cgImage,
-                        orientation: orientation,
-                        options: [:]
-                    ).perform([request])
-                } catch {
-                    // perform() can throw synchronously before the request's completion handler
-                    // ever runs — without this, the continuation would never resume and the
-                    // "Bon wird ausgelesen…" spinner would spin forever.
-                    continuation.resume(returning: [])
-                }
-            }
+            // Issue #120: sehr hohe Bilder werden in Streifen erkannt, normale im Einzelzug; wirft
+            // Vision, kommen leere Blöcke zurück, sodass der Spinner endet.
+            let lines = ReceiptParserService.reconstructLines(
+                ReceiptTextRecognizer.recognizeBlocks(in: cgImage, orientation: orientation))
             await MainActor.run {
                 debugRawLines = lines
                 detectedTotal = ReceiptParserService.detectedTotal(from: lines)

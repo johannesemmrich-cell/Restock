@@ -1,0 +1,53 @@
+Durchlauf echter Bon #120 (AC-16) — App im Simulator Restock-Validate (8F696920-4B9A-40A7-96F0-7697BE887CC7), iOS-27-Simulator
+Stand: Tip-Commit 0376f10 + uncommittete Änderungen dieses Durchgangs (ReceiptTextRecognizer.swift, ReceiptScannerView.swift,
+ReceiptTextRecognizerTests.swift, project.pbxproj); Zeitpunkt 2026-10-08 07:46 +0200 (Lauf unmittelbar davor).
+Weg: DEBUG-Build der App, simctl launch mit vorübergehendem Launch-Argument; in SmartCartApp.init() lief die Kette aus
+ReceiptScannerView.process(_:): UIImage(contentsOfFile:) -> cgImage + CGImagePropertyOrientation(imageOrientation) ->
+ReceiptTextRecognizer.recognizeBlocks -> ReceiptParserService.reconstructLines -> detectedTotal / parse.
+Gegenprobe: die alte Einzelzug-Anfrage (gleiche Einstellungen) im selben Prozess. Der Haken ist danach restlos entfernt.
+Das Bild (1206 x 9089 px, persönliche Angaben) liegt nur im Scratchpad, nicht im Repo. Nur Positionsnamen, Preise, Summe.
+
+Bild 1206x9089, Ausrichtung 1 (.up)
+NEU (Streifen): 19 Positionen, Endsumme 68.69, Dauer 4.95 s, Speicher aktuell 79 MB, Spitze seit Prozessstart 134 MB
+  Antip.-Crem.Bärlauch | 1.49
+  Aoste Walnuss Salami | 2.79
+  Bio Birnen 500g | 1.99
+  Bio Ingwer Shot | 1.29
+  Bio Trauben kernlos | 3.29
+  Bioland Tempeh Natur 2,99 x | 5.98
+  Brot Bauernbag | 0.79
+  Cashewkerne XXL  2,99 х  3 | 8.97
+  Guacamole Chunky | 1.99
+  HighProt.Grießp.Pur | 1.59
+  Hummus Ras el-Hanout | 0.99
+  Ingwer Bio | 0.68
+  Kase m.Walnuss | 2.79
+  Mandeln geröstet | 3.49
+  Mildessa Sauerkraut | 1.49
+  Prestige Savaron Käs | 3.79
+  Reese's Sh. B.Pieces 1,79 x | 12.53
+  Rote Grütze | 2.29
+  Segaf.ZanettiCaf.Cre | 13.49
+  Summe der Positionen: 71.71
+
+ALT (Einzelzug): 14 Positionen, Endsumme nicht erkannt, Dauer 1.79 s
+  Antip.-Crem.Bärlauch | 1.49
+  Aoste Walnuss Salami | 2.79
+  Bio Ingwer Shot | 1.54
+  Cashewkerne XXL | 8.97
+  Guacamole Chunky | 1.99
+  HighProt.Grießp.Pur | 1.59
+  Hummus Ras el-Hanout | 0.99
+  Ingwer Bio | 0.68
+  Käse m. Walnuss | 2.79
+  Mildessa Sauerkraut | 1.49
+  Prestige Savaron Kas | 3.79
+  Reese's Sh. B.Pieces | 12.53
+  Rote Grütze | 2.29
+  Segaf.ZanettiCaf.Cre | 13.49
+
+Abgleich mit der Mac-Messung (18 Positionen, Summe 70,67): Der Simulator erkennt zusätzlich „Bio Ingwer Shot 1,29“
+(auf dem Mac fehlte die Position, dort wurde der Pfand 0,25 an „Antip.-Crem.Bärlauch“ angehängt: 1,74). 71,71 − 70,67
+= 1,29 − 0,25. Im Streifenweg fehlt der Pfand 0,25 bei „Bio Ingwer Shot“ (Einzelzug: 1,54); Pfand-Zuordnung ist Parser-
+verhalten, nicht Teil dieses Durchgangs. Der Einzelzug liefert im Simulator 14 Positionen (Mac 4, Gerät laut PO 3),
+also hängt das Ausmaß des Verlusts von der Vision-Version ab; die Endsumme fehlt in beiden Messungen.

@@ -1,0 +1,183 @@
+Ist-Zustand #120 mit erzeugtem Bon-Bild (fix-120-bon-lange-bilder, Phase TDD RED, 2026-10-08)
+==========================================================================================
+Bild: erzeugt per UIGraphicsImageRenderer (Skalierung 1), 1206 x 9000 px, Menlo 40 pt,
+Zeilenabstand 66 px, Namen bei x = 0,05, Preise rechtsbuendig bis x = 0,93, 18 Artikel
+(Suffix "A"), je Artikel eine blaue Zeile "Lidl Plus Rabatt  -0,08", "Zu zahlen 68,69",
+"Kreditkarte 68,69", danach TSE-Fuellzeilen bis zum Bildende.
+Generator: GeneratedReceipt.makeTallImage() in RestockTests/ReceiptTextRecognizerTests.swift.
+
+Einzelzug = Kopie der heutigen Anfrage aus ReceiptScannerView.process(_:)
+(.accurate, de-DE/fr-FR/en-US, usesLanguageCorrection = false, orientation .up).
+Streifen = Verfahren der Messskripte (Hoehe 2 x Breite = 2412, Ueberlappung 0,25 x Breite = 301,
+Duplikate gleicher Text < 15 px), test-lokal, KEIN Produktionscode.
+
+Ergebnis Simulator Restock-Validate (8F696920-4B9A-40A7-96F0-7697BE887CC7), xcodebuild test:
+  Einzelzug: 151 Bloecke, 11 Positionen, Endsumme nicht erkannt
+             (ohne Namen, nur Preis: Bananen lose, Nektarinen, Kaffee Bohnen, Mineralwasser,
+              Zahnpasta; 6 "Lidl Plus Rabatt"-Namen fehlen; "Zu zahlen" und "Kreditkarte" fehlen,
+              nur "68,69" bleibt; zusaetzlich bei Schlagsahne/Broetchen das Suffix als
+              kyrillisches "А" gelesen -> 7 Positionen fehlen)
+  Streifen:  167 Bloecke, 18 Positionen, Endsumme 68,69
+
+Gegenmessung Mac (macOS-Vision, gleiches Bild per CoreText, Wegwerf-Werkzeug im Scratchpad):
+  Einzelzug:   9 Bloecke,  0 Positionen, Endsumme nicht erkannt
+  Streifen:  167 Bloecke, 18 Positionen, Endsumme 68,69
+  (erster Versuch mit zwei "B"-Suffixen: Streifen 17 Positionen, weil Vision "1,29 B" als
+   "1,29 ął" las; danach alle Suffixe "A")
+
+Schluss: Das erzeugte Bild zeigt den Textverlust des Einzelzugs (Simulator 11 statt 18
+Positionen, keine Endsumme). T1 ist damit als echter Vorher/Nachher-Schalter moeglich.
+
+Rohzeilen der Simulator-Messung (Test test_messung_istZustand_erzeugtesBild, danach entfernt):
+------------------------------------------------------------------------------------------
+MESSUNG Bild 1206x9000
+MESSUNG Einzelzug: Bloecke=151 Positionen=11 Endsumme=nil
+MESSUNG   W| EUR
+MESSUNG   W| 1,29 A
+MESSUNG   W| -0,08
+MESSUNG   W| 1,89 A
+MESSUNG   W| -0,08
+MESSUNG   W| Gouda Scheiben  2,45 A
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Schlagsahne  0,89 А
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Penne Rigate  0,69 A
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Spaghetti  0,69 A
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Eier Freiland  2,29 A
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Haferflocken  0,85 A
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Olivenoel nativ  4,99 A
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Mandelkerne  2,49 A
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Broetchen Laugen  0,78 А
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Joghurt Natur  0,59 A
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Butter mild  2,19 A
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Tomaten Rispe  1,99 A
+MESSUNG   W| Lidl Plus Rabatt  -0,08
+MESSUNG   W| Gurke  0,79 A
+MESSUNG   W| -0,08
+MESSUNG   W| 8,99 А
+MESSUNG   W| -0,08
+MESSUNG   W| 1,49 A
+MESSUNG   W| -0,08
+MESSUNG   W| 1,29 A
+MESSUNG   W| -0,08
+MESSUNG   W| 68,69
+MESSUNG   W| 68,69
+MESSUNG   W| TSE Signatur 1000 Kasse 0
+MESSUNG   W| TSE Signatur 1001 Kasse 1
+MESSUNG   W| TSE Signatur 1002 Kasse 2
+MESSUNG   W| TSE Signatur 1003 Kasse 3
+MESSUNG   W| TSE Signatur 1004 Kasse 4
+MESSUNG   W| TSE Signatur 1005 Kasse 5
+MESSUNG   W| TSE Signatur 1006 Kasse 6
+MESSUNG   W| TSE Signatur 1007 Kasse 0
+MESSUNG   W| TSE Signatur 1008 Kasse 1
+MESSUNG   W| TSE Signatur 1009 Kasse 2
+MESSUNG   W| TSE Signatur 1010 Kasse 3
+MESSUNG   W| TSE Signatur 1011 Kasse 4
+MESSUNG   W| TSE Signatur 1012 Kasse 5
+MESSUNG   W| TSE Signatur 1013 Kasse 6
+MESSUNG   W| TSE Signatur 1014 Kasse 0
+MESSUNG   W| TSE Signatur 1015 Kasse 1
+MESSUNG   W| TSE Signatur 1016 Kasse 2
+MESSUNG   W| TSE Signatur 1017 Kasse 3
+MESSUNG   W| TSE Signatur 1018 Kasse 4
+MESSUNG   W| TSE Signatur 1019 Kasse 5
+MESSUNG   W| TSE Signatur 1020 Kasse 6
+MESSUNG   W| TSE Signatur 1021 Kasse 0
+MESSUNG   W| TSE Signatur 1022 Kasse 1
+MESSUNG   W| TSE Signatur 1023 Kasse 2
+MESSUNG   W| TSE Signatur 1024 Kasse 3
+MESSUNG   W| TSE Signatur 1025 Kasse 4
+MESSUNG   W| TSE Signatur 1026 Kasse 5
+MESSUNG   W| TSE Signatur 1027 Kasse 6
+MESSUNG   W| TSE Signatur 1028 Kasse 0
+MESSUNG   W| TSE Signatur 1029 Kasse 1
+MESSUNG   W| TSE Signatur 1030 Kasse 2
+MESSUNG   W| TSE Signatur 1031 Kasse 3
+MESSUNG   W| TSE Signatur 1032 Kasse 4
+MESSUNG   W| TSE Signatur 1033 Kasse 5
+MESSUNG   W| TSE Signatur 1034 Kasse 6
+MESSUNG   W| TSE Signatur 1035 Kasse 0
+MESSUNG   W| TSE Signatur 1036 Kasse 1
+MESSUNG   W| TSE Signatur 1037 Kasse 2
+MESSUNG   W| TSE Signatur 1038 Kasse 3
+MESSUNG   W| TSE Signatur 1039 Kasse 4
+MESSUNG   W| TSE Signatur 1040 Kasse 5
+MESSUNG   W| TSE Signatur 1041 Kasse 6
+MESSUNG   W| TSE Signatur 1042 Kasse 0
+MESSUNG   W| TSE Signatur 1043 Kasse 1
+MESSUNG   W| TSE Signatur 1044 Kasse 2
+MESSUNG   W| TSE Signatur 1045 Kasse 3
+MESSUNG   W| TSE Signatur 1046 Kasse 4
+MESSUNG   W| TSE Signatur 1047 Kasse 5
+MESSUNG   W| TSE Signatur 1048 Kasse 6
+MESSUNG   W| TSE Signatur 1049 Kasse 0
+MESSUNG   W| TSE Signatur 1050 Kasse 1
+MESSUNG   W| TSE Signatur 1051 Kasse 2
+MESSUNG   W| TSE Signatur 1052 Kasse 3
+MESSUNG   W| TSE Signatur 1053 Kasse 4
+MESSUNG   W| TSE Signatur 1054 Kasse 5
+MESSUNG   W| TSE Signatur 1055 Kasse 6
+MESSUNG   W| TSE Signatur 1056 Kasse ø
+MESSUNG   W| TSE Signatur 1057 Kasse 1
+MESSUNG   W| TSE Signatur 1058 Kasse 2
+MESSUNG   W| TSE Signatur 1059 Kasse 3
+MESSUNG   W| TSE Signatur 1060 Kasse 4
+MESSUNG   W| TSE Signatur 1061 Kasse 5
+MESSUNG   W| TSE Signatur 1062 Kasse 6
+MESSUNG   W| TSE Signatur 1063 Kasse 0
+MESSUNG   W| TSE Signatur 1064 Kasse 1
+MESSUNG   W| TSE Signatur 1065 Kasse 2
+MESSUNG   W| TSE Signatur 1066 Kasse 3
+MESSUNG   W| TSE Signatur 1067 Kasse 4
+MESSUNG   W| TSE Signatur 1068 Kasse 5
+MESSUNG   W| TSE Signatur 1069 Kasse 6
+MESSUNG   W| TSE Signatur 1070 Kasse 0
+MESSUNG   W| TSE Signatur 1071 Kasse 1
+MESSUNG   W| TSE Signatur 1072 Kasse 2
+MESSUNG   W| TSE Signatur 1073 Kasse 3
+MESSUNG   W| TSE Signatur 1074 Kasse 4
+MESSUNG   W| TSE Signatur 1075 Kasse 5
+MESSUNG   W| TSE Signatur 1076 Kasse 6
+MESSUNG   W| TSE Signatur 1077 Kasse 0
+MESSUNG   W| TSE Signatur 1078 Kasse 1
+MESSUNG   W| TSE Signatur 1079 Kasse 2
+MESSUNG   W| TSE Signatur 1080 Kasse 3
+MESSUNG   W| TSE Signatur 1081 Kasse 4
+MESSUNG   W| TSE Signatur 1082 Kasse 5
+MESSUNG   W| TSE Signatur 1083 Kasse 6
+MESSUNG   W| TSE Signatur 1084 Kasse 0
+MESSUNG   W| TSE Signatur 1085 Kasse 1
+MESSUNG   W| TSE Signatur 1086 Kasse 2
+MESSUNG Streifen: Bloecke=167 Positionen=18 Endsumme=Optional(68.69)
+MESSUNG   P| Bananen lose 1.29
+MESSUNG   P| Broetchen Laugen 0.78
+MESSUNG   P| Butter mild 2.19
+MESSUNG   P| Eier Freiland 2.29
+MESSUNG   P| Gouda Scheiben 2.45
+MESSUNG   P| Gurke 0.79
+MESSUNG   P| Haferflocken 0.85
+MESSUNG   P| Joghurt Natur 0.59
+MESSUNG   P| Kaffee Bohnen 8.99
+MESSUNG   P| Mandelkerne 2.49
+MESSUNG   P| Mineralwasser 1.49
+MESSUNG   P| Nektarinen 1.89
+MESSUNG   P| Olivenoel nativ 4.99
+MESSUNG   P| Penne Rigate 0.69
+MESSUNG   P| Schlagsahne 0.89
+MESSUNG   P| Spaghetti 0.69
+MESSUNG   P| Tomaten Rispe 1.99
+MESSUNG   P| Zahnpasta 1.29
+	 Executed 1 test, with 0 failures (0 unexpected) in 7.293 (7.294) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 7.293 (7.294) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 7.293 (7.295) seconds
+** TEST SUCCEEDED **
