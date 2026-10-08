@@ -372,3 +372,85 @@ enum GeneratedReceipt {
         return blocks
     }
 }
+
+/// Issue #120, Teilen-Weg (Spec `docs/specs/services/receipt-share-extension-recognizer.md`, T1/T2, AC-2 bis AC-4):
+/// App-Scanner und Teilen-Erweiterung müssen denselben Erkenner benutzen. Die Lücke von Build 10 entstand,
+/// weil die Erweiterung eine eigene Vision-Anfrage auf dem Gesamtbild hatte und `ReceiptTextRecognizer.swift`
+/// nicht in ihrem Ziel stand. Die Prüfung liest Projektdatei und Quelltext; sie nimmt Texte als Eingabe,
+/// damit auch der Negativfall geprüft werden kann.
+final class ShareExtensionRecognizerWiringTests: XCTestCase {
+
+    /// Liefert die Verstöße gegen die Verdrahtung (leer = in Ordnung).
+    static func violations(pbxproj: String, shareViewController: String) -> [String] {
+        var result: [String] = []
+        if !extensionSourcesPhase(in: pbxproj).contains("ReceiptTextRecognizer.swift in Sources") {
+            result.append("ReceiptTextRecognizer.swift fehlt in der Sources-Phase von RestockShareExtension")
+        }
+        if shareViewController.contains("VNRecognizeTextRequest") {
+            result.append("ShareViewController enthält eine eigene VNRecognizeTextRequest")
+        }
+        if shareViewController.contains("func recognizeText") {
+            result.append("ShareViewController enthält noch func recognizeText")
+        }
+        if !shareViewController.contains("ReceiptTextRecognizer.recognizeBlocks") {
+            result.append("ShareViewController ruft ReceiptTextRecognizer.recognizeBlocks nicht auf")
+        }
+        return result
+    }
+
+    /// Text der Sources-Build-Phase des Ziels `RestockShareExtension` (gefunden über den Namen, nicht über UUIDs).
+    static func extensionSourcesPhase(in pbxproj: String) -> String {
+        // Nur der PBXNativeTarget-Block zählt: "name = RestockShareExtension;" steht auch in PBXTargetDependency.
+        var searchFrom = pbxproj.startIndex
+        var phasesStart: Range<String.Index>?
+        while let block = pbxproj[searchFrom...].range(of: "isa = PBXNativeTarget;") {
+            let end = pbxproj[block.upperBound...].range(of: "productType")?.lowerBound ?? pbxproj.endIndex
+            if pbxproj[block.upperBound..<end].contains("name = RestockShareExtension;") {
+                phasesStart = pbxproj[block.upperBound..<end].range(of: "buildPhases = (")
+                break
+            }
+            searchFrom = block.upperBound
+        }
+        guard let phasesStart else { return "" }
+        let afterPhases = pbxproj[phasesStart.upperBound...]
+        guard let phasesEnd = afterPhases.range(of: ");") else { return "" }
+        let phaseIDs: [String] = String(afterPhases[..<phasesEnd.lowerBound])
+            .components(separatedBy: CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: ",")))
+            .filter { $0.count == 24 }
+        for id in phaseIDs {
+            guard let phase = pbxproj.range(of: "\(id) /* Sources */ = {"),
+                  let filesStart = pbxproj[phase.upperBound...].range(of: "files = ("),
+                  let filesEnd = pbxproj[filesStart.upperBound...].range(of: ");")
+            else { continue }
+            return String(pbxproj[filesStart.upperBound..<filesEnd.lowerBound])
+        }
+        return ""
+    }
+
+    private func repoFile(_ relative: String) throws -> String {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+        return try String(contentsOf: root.appendingPathComponent(relative), encoding: .utf8)
+    }
+
+    /// T1/AC-2/AC-3/AC-4: auf dem echten Stand.
+    func testExtensionUsesSharedRecognizer() throws {
+        let violations = Self.violations(
+            pbxproj: try repoFile("Restock.xcodeproj/project.pbxproj"),
+            shareViewController: try repoFile("RestockShareExtension/ShareViewController.swift")
+        )
+        XCTAssertEqual(violations, [], "Teilen-Erweiterung und App müssen denselben Erkenner benutzen")
+    }
+
+    /// T2: die Prüfung schlägt an, wenn Eintrag fehlt bzw. eine eigene Anfrage vorhanden ist.
+    func testWiringCheckDetectsViolations() throws {
+        let pbx = try repoFile("Restock.xcodeproj/project.pbxproj")
+        let bad = Self.violations(
+            pbxproj: pbx.replacingOccurrences(of: "ReceiptTextRecognizer.swift in Sources", with: "X.swift in Sources"),
+            shareViewController: "let r = VNRecognizeTextRequest { _, _ in }\nfunc recognizeText() {}"
+        )
+        XCTAssertEqual(bad.count, 4, "alle vier Verstöße müssen erkannt werden: \(bad)")
+        XCTAssertFalse(Self.extensionSourcesPhase(in: pbx).isEmpty, "Sources-Phase der Erweiterung muss gefunden werden")
+        XCTAssertTrue(Self.extensionSourcesPhase(in: pbx).contains("ReceiptParserService.swift in Sources"),
+                      "die Prüfung liest die Phase der Erweiterung, nicht die der App")
+    }
+}
