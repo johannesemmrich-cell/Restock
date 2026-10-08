@@ -31,3 +31,17 @@ TestFlight und App Store nutzen die CloudKit-**Produktion**, Xcode-Läufe die **
 2. „Deploy Schema Changes…“ → nach Production übernehmen.
 
 Der Drift-Test `testT8_sharedStoreFieldListMatchesPublishedSchema` in `RestockTests/SharedStoreSchemaTests.swift` schlägt fehl, sobald sich die Feldliste ändert; dann diesen Schritt ausführen und die Liste im Test nachziehen. Fehlen in der Produktion nur `categoriesJSON`/`assignmentsJSON`, speichert die App ohne sie weiter (Artikel, Preise, Mitglieder gleichen ab) und zeigt im Laden „Server-Einrichtung unvollständig …“.
+
+### Werkzeugweg mit cktool (statt Felder im Dashboard anzulegen)
+
+Neue Felder lassen sich ohne Klicken im Dashboard in Development anlegen. Container `iCloud.com.johannesemmrich.SmartCart`, Team `XK87E2B3VR`; im Dashboard öffnet sich zuerst oft ein fremder Container, die ID immer prüfen.
+
+1. Management-Token im Dashboard erzeugen (Name → Settings → Tokens → Create Management Token) und mit `cktool save-token --type management --method keychain` in den Schlüsselbund legen. Den Wert nie anzeigen oder ins Repo schreiben.
+2. `cktool export-schema` (Environment `development`) → die Schemadatei um die neuen Felder ergänzen (gleicher Typ wie die vorhandenen JSON-Felder: `STRING`).
+3. `cktool validate-schema`, danach `cktool import-schema` (nur Development).
+4. Gegenprobe: Schema erneut exportieren und mit der ergänzten Datei per `diff` vergleichen.
+5. Token wieder entfernen: `cktool remove-token --type management`.
+
+**Grenze:** Nach Production hochstufen kann `cktool` nicht. Das geht nur im Dashboard: „Deploy Schema Changes…“ → Diff prüfen (es dürfen nur die erwarteten Felder und deren Indizes auftauchen) → Deploy. Danach Production und Development jeweils exportieren und vergleichen.
+
+Stand 2026-10-08: `categoriesJSON` und `assignmentsJSON` (`STRING`) liegen in Development und Production.
