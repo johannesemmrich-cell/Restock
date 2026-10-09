@@ -57,9 +57,10 @@ final class RestockUITests: XCTestCase {
     /// Manueller Klick-Durch-Test für den heute (13./14.08.2026) behobenen "Beitreten"-Button-Bug:
     /// `JoinStoreSheet` steckt jetzt in einer `ScrollView` statt einem reinen `VStack`. Beweist,
     /// dass Code-Feld UND Abbrechen-Button (beide im selben ScrollView-Inhalt) tatsächlich
-    /// gerendert UND antippbar sind — nicht nur, dass die View kompiliert. Ohne echten iCloud-
-    /// Account im Simulator kann der eigentliche "Beitreten"-Button (nur sichtbar nach einem
-    /// erfolgreichen CloudKit-Preview-Lookup) hier nicht erreicht werden; das Feld/Cancel-Paar
+    /// gerendert UND antippbar sind — nicht nur, dass die View kompiliert. Der eigentliche
+    /// "Beitreten"-Button (nur sichtbar nach einem erfolgreichen CloudKit-Preview-Lookup) wird
+    /// hier bewusst nicht erreicht, weil der Code je Lauf zufällig und damit unbekannt ist (Issue
+    /// #131: die öffentliche Datenbank ist ohne iCloud-Konto lesbar); das Feld/Cancel-Paar
     /// deckt trotzdem exakt dieselbe ScrollView-Layout-Fläche ab, die den Bug verursacht hat.
     func testJoinSharedListSheetIsScrollableAndUsable() throws {
         let app = XCUIApplication()
@@ -88,10 +89,13 @@ final class RestockUITests: XCTestCase {
         XCTAssertTrue(cancelButton.isHittable, "Abbrechen-Button liegt außerhalb des sichtbaren/antippbaren Bereichs — exakt der gemeldete Bug")
 
         codeField.tap()
-        codeField.typeText("TESTCODE12")
+        let code = randomJoinCode(length: 10)
+        XCTAssertTrue(code.count == 10 && code.allSatisfy { ("A"..."Z").contains($0) }, "Zufallscode ungültig: \(code)")
+        codeField.typeText(code)
 
-        // Ohne echten iCloud-Account schlägt der CloudKit-Lookup fehl — erwartet ist die
-        // "nicht gefunden"-Fehlermeldung, NICHT ein Absturz oder eine leere/eingefrorene Ansicht.
+        // Die öffentliche CloudKit-Datenbank ist ohne iCloud-Konto lesbar; "nicht gefunden"
+        // erscheint nur für einen Code, den es nicht gibt — deshalb je Lauf ein zufälliger (#131).
+        // Erwartet ist die Fehlermeldung, NICHT ein Absturz oder eine leere/eingefrorene Ansicht.
         let notFoundText = app.staticTexts["Kein Store mit diesem Code gefunden."]
         XCTAssertTrue(notFoundText.waitForExistence(timeout: 15), "Erwartete Fehlermeldung nach ungültigem Code erschien nicht — App könnte abgestürzt/eingefroren sein")
 
@@ -112,7 +116,10 @@ final class RestockUITests: XCTestCase {
     /// (kein Spinner, kein Fehler, kein Beitreten-Button), obwohl der Code selbst gültig war.
     /// Manuelles Tippen eines 6-stelligen Codes durchläuft denselben `onChange`-Codepfad wie ein
     /// vorausgefüllter Link (`JoinStoreSheet.onAppear` weist `prefilledCode` demselben `@State
-    /// code` zu) — dieser Test deckt damit beide Auslöser gleichzeitig ab.
+    /// code` zu) — dieser Test deckt damit beide Auslöser gleichzeitig ab. Der gemeldete Code
+    /// war `CGU5ZN`; seit es ihn in der öffentlichen Datenbank gibt (Issue #131), tippt der Test
+    /// je Lauf einen zufälligen 6-Zeichen-Code und belegt so weiter den 6-Zeichen-Auslösepfad
+    /// (`JoinStoreSheet.triggerLookup`).
     func testJoinWithLegacySixCharacterCodeTriggersLookup() throws {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES"]
@@ -126,14 +133,23 @@ final class RestockUITests: XCTestCase {
         XCTAssertTrue(codeField.waitForExistence(timeout: 5), "Code-Eingabefeld im JoinStoreSheet nicht sichtbar")
         sleep(1)
         codeField.tap()
-        codeField.typeText("CGU5ZN") // exakt der vom Nutzer gemeldete, echte (alte) Code
+        let code = randomJoinCode(length: 6)
+        XCTAssertTrue(code.count == 6 && code.allSatisfy { ("A"..."Z").contains($0) }, "Zufallscode ungültig: \(code)")
+        codeField.typeText(code)
 
         // Vor dem Fix: hier passiert schlicht NICHTS — kein Spinner, kein Fehler. Der Fix löst
-        // nach kurzer Verzögerung trotzdem eine echte Suche aus; ohne echten iCloud-Account im
-        // Simulator schlägt sie erwartungsgemäß fehl, aber genau DAS beweist, dass überhaupt
-        // gesucht wurde.
+        // nach kurzer Verzögerung eine echte Suche in der (ohne iCloud-Konto lesbaren) öffentlichen
+        // Datenbank aus; der Zufallscode existiert dort nicht, die Meldung beweist also, dass
+        // überhaupt gesucht wurde.
         let notFoundText = app.staticTexts["Kein Store mit diesem Code gefunden."]
         XCTAssertTrue(notFoundText.waitForExistence(timeout: 15), "6-stelliger Code löste keine Suche aus — exakt der gemeldete Bug")
+    }
+
+    /// Je Aufruf zufälliger Code aus `length` Großbuchstaben A–Z, damit er garantiert keinem
+    /// echten geteilten Laden entspricht (Issue #131).
+    private func randomJoinCode(length: Int) -> String {
+        let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        return String((0..<length).map { _ in letters.randomElement()! })
     }
 
     /// Klick-Durch-Test für Laden hinzufügen → Artikel per Schnelleingabe → Preis wird angezeigt,

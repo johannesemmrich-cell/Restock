@@ -1,0 +1,157 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/RestockUITests/testJoinWithLegacySixCharacterCodeTriggersLookup" "-only-testing:RestockUITests/RestockUITests/testJoinSharedListSheetIsScrollableAndUsable"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/mossy-skipping-metcalfe/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dsoiexrtlpvugobznvrqmylcxylm/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dsoiexrtlpvugobznvrqmylcxylm/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-10-09 13:28:37.459278+0200 RestockUITests-Runner[48919:29336482] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-09 13:28:40.060.
+Test Suite 'RestockUITests.xctest' started at 2026-10-09 13:28:40.063.
+Test Suite 'RestockUITests' started at 2026-10-09 13:28:40.063.
+Test Case '-[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable]' started.
+    t =     0.00s Start Test at 2026-10-09 13:28:40.068
+    t =     0.10s Set Up
+    t =     0.10s Open com.johannesemmrich.Restock
+    t =     0.11s     Launch com.johannesemmrich.Restock
+2026-10-09 13:28:41.090 xcodebuild[48648:29334597] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-09 13:28:41.090 xcodebuild[48648:29334597] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[48919]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x1084b8310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x108530398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     3.48s         Setting up automation session
+    t =     5.38s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     7.81s Waiting 15.0s for "Geteilter Liste beitreten" Button to exist
+    t =     8.83s     Checking `Expect predicate `existsNoRetry == 1` for object "Geteilter Liste beitreten" Button`
+    t =     8.83s         Checking existence of `"Geteilter Liste beitreten" Button`
+    t =     9.03s Tap "Geteilter Liste beitreten" Button
+    t =     9.04s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.04s     Find the "Geteilter Liste beitreten" Button
+    t =     9.12s     Check for interrupting elements affecting "Geteilter Liste beitreten" Button
+    t =     9.24s     Synthesize event
+    t =     9.57s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.62s Waiting 5.0s for TextField (First Match) to exist
+    t =    10.65s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =    10.65s         Checking existence of `TextField (First Match)`
+    t =    11.80s Find the TextField (First Match)
+    t =    11.99s Waiting 5.0s for "Abbrechen" Button to exist
+    t =    13.01s     Checking `Expect predicate `existsNoRetry == 1` for object "Abbrechen" Button`
+    t =    13.01s         Checking existence of `"Abbrechen" Button`
+    t =    13.07s Find the "Abbrechen" Button
+    t =    13.14s Tap "Z.B. ABCD-EFG-HIJ" TextField
+    t =    13.14s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.15s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    13.26s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    13.31s     Synthesize event
+    t =    13.62s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.15s Type 'EXQFYHULXP' into "Z.B. ABCD-EFG-HIJ" TextField
+    t =    14.15s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.51s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    14.84s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    14.91s     Synthesize event
+    t =    15.28s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.28s Waiting 15.0s for "Kein Store mit diesem Code gefunden." StaticText to exist
+    t =    16.31s     Checking `Expect predicate `existsNoRetry == 1` for object "Kein Store mit diesem Code gefunden." StaticText`
+    t =    16.31s         Checking existence of `"Kein Store mit diesem Code gefunden." StaticText`
+    t =    16.41s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    16.67s Added attachment named 'JoinStoreSheet-nach-ungueltigem-Code'
+    t =    16.68s Tap "Abbrechen" Button
+    t =    16.68s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.69s     Find the "Abbrechen" Button
+    t =    16.79s     Check for interrupting elements affecting "Abbrechen" Button
+    t =    16.89s     Synthesize event
+    t =    17.23s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.69s Waiting 5.0s for "Restock" StaticText to exist
+    t =    18.70s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock" StaticText`
+    t =    18.70s         Checking existence of `"Restock" StaticText`
+    t =    18.76s Tear Down
+Test Case '-[RestockUITests.RestockUITests testJoinSharedListSheetIsScrollableAndUsable]' passed (19.057 seconds).
+Test Case '-[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup]' started.
+    t =     0.00s Start Test at 2026-10-09 13:28:59.126
+    t =     0.05s Set Up
+    t =     0.05s Open com.johannesemmrich.Restock
+    t =     0.05s     Launch com.johannesemmrich.Restock
+    t =     0.05s         Terminate com.johannesemmrich.Restock:49192
+2026-10-09 13:29:00.251 xcodebuild[48648:29334597] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-09 13:29:00.251 xcodebuild[48648:29334597] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.55s         Setting up automation session
+    t =     4.02s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.15s Waiting 15.0s for "Geteilter Liste beitreten" Button to exist
+    t =     7.18s     Checking `Expect predicate `existsNoRetry == 1` for object "Geteilter Liste beitreten" Button`
+    t =     7.18s         Checking existence of `"Geteilter Liste beitreten" Button`
+    t =     7.35s Tap "Geteilter Liste beitreten" Button
+    t =     7.35s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.35s     Find the "Geteilter Liste beitreten" Button
+    t =     7.41s     Check for interrupting elements affecting "Geteilter Liste beitreten" Button
+    t =     7.46s     Synthesize event
+    t =     7.77s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.90s Waiting 5.0s for TextField (First Match) to exist
+    t =     8.92s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =     8.92s         Checking existence of `TextField (First Match)`
+    t =    10.03s Tap TextField (First Match)
+    t =    10.03s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.04s     Find the TextField (First Match)
+    t =    10.11s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    10.16s     Synthesize event
+    t =    10.46s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.79s Type 'LRLNWW' into "Z.B. ABCD-EFG-HIJ" TextField
+    t =    10.79s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.17s     Find the "Z.B. ABCD-EFG-HIJ" TextField
+    t =    11.39s     Check for interrupting elements affecting "Z.B. ABCD-EFG-HIJ" TextField
+    t =    11.46s     Synthesize event
+    t =    11.77s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.78s Waiting 15.0s for "Kein Store mit diesem Code gefunden." StaticText to exist
+    t =    12.85s     Checking `Expect predicate `existsNoRetry == 1` for object "Kein Store mit diesem Code gefunden." StaticText`
+    t =    12.85s         Checking existence of `"Kein Store mit diesem Code gefunden." StaticText`
+    t =    12.94s Tear Down
+Test Case '-[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup]' passed (13.191 seconds).
+Test Suite 'RestockUITests' passed at 2026-10-09 13:29:12.318.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 32.248 (32.254) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-09 13:29:12.318.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 32.248 (32.255) seconds
+Test Suite 'Selected tests' passed at 2026-10-09 13:29:12.319.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 32.248 (32.258) seconds
+2026-10-09 13:29:31.205 xcodebuild[48648:29334597] [MT] IDETestOperationsObserverDebug: 56.512 elapsed -- Testing started completed.
+2026-10-09 13:29:31.209 xcodebuild[48648:29334597] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-09 13:29:31.209 xcodebuild[48648:29334597] [MT] IDETestOperationsObserverDebug: 56.512 sec, +56.512 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dsoiexrtlpvugobznvrqmylcxylm/Logs/Test/Test-Restock-2026.10.09_13-28-33-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started
