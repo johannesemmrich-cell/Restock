@@ -1,0 +1,22 @@
+# RED-Lauf 2026-10-09 (Issue #131)
+Unveränderter Test testJoinWithLegacySixCharacterCodeTriggersLookup, fester Code CGU5ZN,
+Simulator Restock-Validate, xcodebuild test mit Scheme Restock (ohne Extra-Build-Settings),
+-only-testing:RestockUITests/RestockUITests/testJoinWithLegacySixCharacterCodeTriggersLookup
+
+Test Case '-[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup]' started.
+RestockUITests/RestockUITests.swift:136: error: -[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup] : XCTAssertTrue failed - 6-stelliger Code löste keine Suche aus — exakt der gemeldete Bug
+Test Case '-[RestockUITests.RestockUITests testJoinWithLegacySixCharacterCodeTriggersLookup]' failed (26.509 seconds).
+Executed 1 test, with 1 failure (0 unexpected) in 26.509 (26.511) seconds
+** TEST FAILED **
+
+# UI-Hierarchie im Fehlmoment (Anhang "App UI hierarchy" der xcresult), Auszug
+TextField, placeholderValue: 'Z.B. ABCD-EFG-HIJ', value: CGU5ZN, Keyboard Focused
+StaticText, label: 'Lidl'
+StaticText, label: 'Von Henning'
+Button, label: '🛒 Lidl hinzufügen'
+
+# Befund
+Die Suche war erfolgreich und lieferte eine Vorschau (Lidl, Von Henning) statt des Fehlertexts
+"Kein Store mit diesem Code gefunden." Gleicher Fehlerort und gleiche Dauer wie auf CI
+(Run 37888378658: ~29 s, Zeile 136). Der frühere lokale Fehler "Code-Eingabefeld nicht sichtbar"
+trat in diesem Lauf nicht auf (Feld sichtbar, Code getippt).
