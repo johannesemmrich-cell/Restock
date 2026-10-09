@@ -1,0 +1,16 @@
+Nachweis des installierten Stands je Messlauf (Issue #120, 2026-10-08)
+Quelle: Messauftrag mit scratchpad/check-variant.sh; Varianten per `xcrun simctl install` eingespielt,
+md5 der installierten RestockShareExtension.debug.dylib vor und nach jedem Lauf gleich.
+
+Stand | md5 der Erweiterung                | Marker 'variant=alt' | Marker 'tiles=' | Symbole ReceiptTextRecognizer
+alt   | 97f58a376f85a6ad6fc53de0a4f72529   | 1                    | 0               | 0
+neu   | 49c38fbde6948d7e5a18e6cb815aa081   | 0                    | 2               | 90
+
+(Diagnose-Varianten mit zusaetzlichen Logzeilen: 'alt' = vorheriger Code, 'neu' = Code dieses Durchgangs.)
+
+Messmatrix, derselbe lange Bon (1206x9089, 2137911 Bytes), siehe messmatrix-m-*.txt:
+alt iOS 27.0: ROT, keine Nutzlast | alt iOS 26.5: ROT, 14 Positionen, keine Endsumme
+neu iOS 27.0: GRUEN, 19, 68,69    | neu iOS 26.5: GRUEN, 19, 68,69
+
+Endlaeufe mit repariertem Skript (Build-Nachweis im Ergebnisblock): share-e2e-final-ios265.txt,
+share-e2e-final-ios27.txt (md5 2f7e090eda88d20d29824c459f9b9b78 vor und nach dem Lauf).

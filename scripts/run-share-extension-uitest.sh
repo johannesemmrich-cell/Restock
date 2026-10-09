@@ -21,6 +21,10 @@ TEST_IMAGE="${TEST_IMAGE:-$HOME/.claude/uploads/825e909c-a32a-4c05-a27e-7fd41a00
 CRASH_DIR="$HOME/Library/Logs/DiagnosticReports"
 APP_GROUP="group.com.johannesemmrich.SmartCart"
 PAYLOAD_KEY="pendingShareExtensionReceipt"
+# Issue #120: Mindestzahl Positionen und erwartete Endsumme der Nutzlast (Vorgaben für den echten
+# Lidl-Plus-Bon; mit anderem TEST_IMAGE anpassen). MIN_POSITIONS=0 schaltet die Mindestzahl ab.
+MIN_POSITIONS="${MIN_POSITIONS:-18}"
+EXPECT_TOTAL="${EXPECT_TOTAL:-68,69}"
 BACKUP_FLAG="smartcart.preCloudBackupDone.v2"
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
@@ -37,6 +41,43 @@ if [ -z "$DEVICE" ]; then
   sleep 15
 fi
 echo "→ Simulator: $DEVICE"
+
+# --- Aktuellen Stand bauen und einspielen (Issue #120) ---
+# `xcodebuild test` installiert Restock hier NICHT (der Test startet die App nie selbst); ohne
+# diesen Schritt lief die Erweiterung eines alten Stands (gemessen: Build 5 auf iOS 27).
+XB_DEST="platform=iOS Simulator,id=$DEVICE"
+echo "→ Baue Restock samt Erweiterung …"
+if ! DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build -scheme Restock \
+    -project Restock.xcodeproj -destination "$XB_DEST" 2>&1 | grep -E "error:|BUILD (SUCCEEDED|FAILED)"; then
+  echo "ROT — Bau fehlgeschlagen, kein Testlauf."; exit 1
+fi
+BUILD_SETTINGS=$(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -showBuildSettings \
+  -scheme Restock -project Restock.xcodeproj -destination "$XB_DEST" 2>/dev/null)
+BUILT_APP="$(echo "$BUILD_SETTINGS" | awk -F' = ' '/^ *TARGET_BUILD_DIR = /{print $2; exit}')/$(echo "$BUILD_SETTINGS" | awk -F' = ' '/^ *FULL_PRODUCT_NAME = /{print $2; exit}')"
+if [ ! -d "$BUILT_APP/PlugIns/RestockShareExtension.appex" ] || ! xcrun simctl install "$DEVICE" "$BUILT_APP"; then
+  echo "ROT — gebaute App fehlt oder Installation fehlgeschlagen: $BUILT_APP"; exit 1
+fi
+echo "→ Installiert: $BUILT_APP"
+# md5 des Erweiterungscodes: im Debug-Bau liegt er in der .debug.dylib, sonst in der Binärdatei.
+ext_md5() {
+  local appex="$1/PlugIns/RestockShareExtension.appex" bin
+  bin="$appex/RestockShareExtension.debug.dylib"; [ -f "$bin" ] || bin="$appex/RestockShareExtension"
+  md5 -q "$bin" 2>/dev/null || echo "fehlt"
+}
+# Setzt INSTALLED_MD5 und INSTALLED_MATCH (ja/nein) global — ohne $(...) aufrufen (Unterschale).
+check_installed() {
+  local installed
+  installed=$(xcrun simctl get_app_container "$DEVICE" com.johannesemmrich.Restock app 2>/dev/null)
+  INSTALLED_MD5=$(ext_md5 "$installed"); [ -n "$installed" ] || INSTALLED_MD5="fehlt"
+  INSTALLED_MATCH="nein"
+  [ "$INSTALLED_MD5" = "$BUILT_MD5" ] && [ "$BUILT_MD5" != "fehlt" ] && INSTALLED_MATCH="ja"
+}
+BUILT_MD5=$(ext_md5 "$BUILT_APP")
+check_installed; MATCH_BEFORE="$INSTALLED_MATCH"; MD5_BEFORE="$INSTALLED_MD5"
+echo "→ Installierte Erweiterung vor dem Lauf: md5 $MD5_BEFORE, entspricht frisch gebautem Stand: $MATCH_BEFORE"
+SIM_RUNTIME=$(xcrun simctl getenv "$DEVICE" SIMULATOR_RUNTIME_VERSION 2>/dev/null || echo "unbekannt")
+COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unbekannt")
+DIRTY="nein"; [ -n "$(git status --porcelain 2>/dev/null)" ] && DIRTY="ja"
 
 # --- Testbild in die Fotos-Bibliothek ---
 if [ ! -f "$TEST_IMAGE" ]; then
@@ -145,6 +186,7 @@ xcodebuild test \
 TEST_STATUS=$?
 
 # --- Auswertung ---
+check_installed; MATCH_AFTER="$INSTALLED_MATCH"; MD5_AFTER="$INSTALLED_MD5"
 sleep 5   # der Berichtsschreiber des Systems hängt dem Absturz ein paar Sekunden hinterher
 
 AFTER=$(ls "$CRASH_DIR" 2>/dev/null | grep -c "^RestockShareExtension-")
@@ -159,6 +201,35 @@ BACKUP_CONSUMED="nein"
 if [ -n "$GROUP_PLIST" ]; then
   /usr/libexec/PlistBuddy -c "Print :$PAYLOAD_KEY" "$GROUP_PLIST" >/dev/null 2>&1 && PAYLOAD="ja"
   /usr/libexec/PlistBuddy -c "Print :$BACKUP_FLAG" "$GROUP_PLIST" >/dev/null 2>&1 && BACKUP_CONSUMED="ja"
+fi
+
+# --- Issue #120: Inhalt der Nutzlast (Positionen, Endsumme) ---
+# Die Nutzlast ist JSON (`ReceiptShareHandoff.store`), als Data-Wert in der plist abgelegt.
+# Dekodierung mit Mac-Bordmitteln: plutil wandelt die plist nach XML, plistlib (Python 3 der
+# Command Line Tools) liest den Data-Wert, json zählt die Positionen. Gelingt das nicht, bleibt
+# DECODED=nein und das Urteil ist ROT.
+POSITIONS="—"
+TOTAL="keine"
+DECODED="nein"
+if [ "$PAYLOAD" = "ja" ]; then
+  PAYLOAD_INFO=$(plutil -convert xml1 -o - "$GROUP_PLIST" 2>&1 | /usr/bin/python3 -c '
+import json, plistlib, sys
+try:
+    data = plistlib.loads(sys.stdin.buffer.read())[sys.argv[1]]
+    payload = json.loads(bytes(data))
+    total = payload.get("detectedTotal")
+    print(len(payload["lines"]), ("%.2f" % total).replace(".", ",") if total is not None else "keine")
+except Exception as error:
+    print("FEHLER", error)
+    sys.exit(1)
+' "$PAYLOAD_KEY")
+  if [ $? -eq 0 ]; then
+    DECODED="ja"
+    POSITIONS="${PAYLOAD_INFO%% *}"
+    TOTAL="${PAYLOAD_INFO#* }"
+  else
+    echo "FEHLER: Nutzlast nicht dekodierbar: $PAYLOAD_INFO" >&2
+  fi
 fi
 
 # --- Gemessen statt unterstellt: Sicherungskopien und beteiligte Prozesse ---
@@ -181,9 +252,20 @@ PROCESSES=$(xcrun simctl spawn "$DEVICE" log show --start "$LOG_START" --style c
 
 echo ""
 echo "=================== ERGEBNIS ==================="
+echo "Simulator / iOS:              $DEVICE / $SIM_RUNTIME"
+echo "Commit:                       $COMMIT   (uncommittete Änderungen: $DIRTY)"
+echo "Installierte Erweiterung vor dem Lauf:  md5 $MD5_BEFORE, entspricht frisch gebautem Stand: $MATCH_BEFORE"
+echo "Installierte Erweiterung nach dem Lauf: md5 $MD5_AFTER, entspricht frisch gebautem Stand: $MATCH_AFTER"
 echo "Testlauf-Status:              $TEST_STATUS (0 = Ablauf hergestellt)"
 echo "Bon-Nutzlast in App-Gruppe:   $PAYLOAD   (muss nach dem Fix: ja)"
 echo "Neue Absturzberichte:         $NEW_CRASHES   (muss nach dem Fix: 0)"
+echo "Nutzlast dekodierbar:         $DECODED"
+echo "Positionen in der Nutzlast: $POSITIONS   (Mindestzahl: $MIN_POSITIONS, 0 = aus)"
+if [ "$TOTAL" = "keine" ]; then
+  echo "Endsumme: keine   (erwartet: $EXPECT_TOTAL €)"
+else
+  echo "Endsumme: $TOTAL €   (erwartet: $EXPECT_TOTAL €)"
+fi
 echo "Sicherungsflag vor dem Lauf:  $BACKUP_BEFORE"
 echo "Sicherungsflag nach dem Lauf: $BACKUP_CONSUMED   (nur die App darf es verbrauchen)"
 echo "Sicherungskopien vor/nach:    $BACKUP_FILES_BEFORE / $BACKUP_FILES_AFTER Datei(en), neueste: $BACKUP_NEWEST"
@@ -203,10 +285,26 @@ if [ "$NEW_CRASHES" -gt 0 ]; then
 fi
 echo "================================================"
 
-# Bestanden heißt: Nutzlast angekommen UND kein neuer Absturzbericht.
-if [ "$PAYLOAD" = "ja" ] && [ "$NEW_CRASHES" -eq 0 ]; then
-  echo "GRÜN — der Bon ist ohne Absturz in der App angekommen."
+# Bestanden heißt: Nutzlast angekommen und dekodierbar, kein neuer Absturzbericht, Positionen
+# mindestens MIN_POSITIONS (außer 0) und Endsumme wie EXPECT_TOTAL. "Nutzlast ja" allein genügt
+# seit Issue #120 nicht mehr (der Teilen-Weg lieferte Nutzlasten mit 3 bzw. 14 Positionen).
+FAILURES=""
+[ "$MATCH_BEFORE" = "ja" ] || FAILURES="$FAILURES installierte Erweiterung vor dem Lauf nicht der frisch gebaute Stand;"
+[ "$MATCH_AFTER" = "ja" ] || FAILURES="$FAILURES installierte Erweiterung nach dem Lauf nicht der frisch gebaute Stand;"
+[ "$PAYLOAD" = "ja" ] || FAILURES="$FAILURES keine Nutzlast;"
+[ "$NEW_CRASHES" -eq 0 ] || FAILURES="$FAILURES $NEW_CRASHES neue Absturzberichte;"
+if [ "$PAYLOAD" = "ja" ] && [ "$DECODED" != "ja" ]; then
+  FAILURES="$FAILURES Nutzlast nicht dekodierbar;"
+fi
+if [ "$DECODED" = "ja" ]; then
+  if [ "$MIN_POSITIONS" -ne 0 ] && [ "$POSITIONS" -lt "$MIN_POSITIONS" ]; then
+    FAILURES="$FAILURES $POSITIONS Positionen statt mindestens $MIN_POSITIONS;"
+  fi
+  [ "$TOTAL" = "$EXPECT_TOTAL" ] || FAILURES="$FAILURES Endsumme $TOTAL statt $EXPECT_TOTAL;"
+fi
+if [ -z "$FAILURES" ]; then
+  echo "GRÜN — der Bon ist ohne Absturz mit $POSITIONS Positionen und Endsumme $TOTAL € in der App angekommen."
   exit 0
 fi
-echo "ROT — siehe Ergebnisblock oben."
+echo "ROT —$FAILURES siehe Ergebnisblock oben."
 exit 1

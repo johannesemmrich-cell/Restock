@@ -1,7 +1,6 @@
 import UIKit
 import SwiftUI
 import SwiftData
-import Vision
 import PDFKit
 import UniformTypeIdentifiers
 import UserNotifications
@@ -118,13 +117,12 @@ struct ShareReceiptView: View {
     // MARK: - Verarbeitung
 
     /// @MainActor statt einzelner `MainActor.run`-Wraps (anders als das Schwester-Pattern in
-    /// `ReceiptScannerView.process(_:)`): erzwingt, dass nach JEDEM `await` — insbesondere nach
-    /// `recognizeText()`, dessen Continuation aus einem Vision-Completion-Handler auf einem
-    /// beliebigen Hintergrund-Thread resumed wird — die Ausführung wieder auf den Main Actor
-    /// hoppt, bevor `state` mutiert wird. Ohne das lief `state = .success(...)` (und die anderen
-    /// Zuweisungen) je nach Timing/Gerät auf einem Hintergrund-Thread weiter — undefiniertes
-    /// SwiftUI-Rendering (kein Crash, aber die Erfolgs-Animation blieb bei manchen Nutzern
-    /// stillschweigend aus, gemeldet 19.08.2026).
+    /// `ReceiptScannerView.process(_:)`): erzwingt, dass nach JEDEM `await` — insbesondere nach der
+    /// Bon-Erkennung, die in einem `Task.detached` außerhalb des Main Actors läuft — die Ausführung
+    /// wieder auf den Main Actor hoppt, bevor `state` mutiert wird. Ohne das lief
+    /// `state = .success(...)` (und die anderen Zuweisungen) je nach Timing/Gerät auf einem
+    /// Hintergrund-Thread weiter — undefiniertes SwiftUI-Rendering (kein Crash, aber die
+    /// Erfolgs-Animation blieb bei manchen Nutzern stillschweigend aus, gemeldet 19.08.2026).
     @MainActor
     private func process() async {
         guard let attachment = await loadSharedAttachment() else {
@@ -140,7 +138,12 @@ struct ShareReceiptView: View {
                 return
             }
             let orientation = CGImagePropertyOrientation(image.imageOrientation)
-            lines = await recognizeText(cgImage: cgImage, orientation: orientation)
+            // Issue #120: derselbe Erkenner wie der App-Scanner (sehr hohe Bilder in Streifen, sonst
+            // Einzelzug, dieselben Vision-Einstellungen). Synchron, daher abseits des Main Actors, damit
+            // der Spinner weiterläuft. Leere Blöcke → leere Zeilen → `.noItemsFound` unten.
+            lines = await Task.detached(priority: .userInitiated) {
+                ReceiptParserService.reconstructLines(ReceiptTextRecognizer.recognizeBlocks(in: cgImage, orientation: orientation))
+            }.value
         case .pdfLines(let pdfLines):
             lines = pdfLines
         }
@@ -244,29 +247,6 @@ struct ShareReceiptView: View {
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2, repeats: false)
         let request = UNNotificationRequest(identifier: "share-receipt-pending", content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
-    }
-
-    /// Exakt dieselben Vision-Einstellungen wie `ReceiptScannerView.process()` — dieselbe
-    /// Erkennungsqualität, keine abgespeckte Zweitversion.
-    private func recognizeText(cgImage: CGImage, orientation: CGImagePropertyOrientation) async -> [String] {
-        await withCheckedContinuation { continuation in
-            let request = VNRecognizeTextRequest { req, _ in
-                let obs = req.results as? [VNRecognizedTextObservation] ?? []
-                let blocks: [(text: String, box: CGRect)] = obs.compactMap { o in
-                    guard let candidate = o.topCandidates(1).first else { return nil }
-                    return (text: candidate.string, box: o.boundingBox)
-                }
-                continuation.resume(returning: ReceiptParserService.reconstructLines(blocks))
-            }
-            request.recognitionLevel = .accurate
-            request.recognitionLanguages = ["de-DE", "fr-FR", "en-US"]
-            request.usesLanguageCorrection = false
-            do {
-                try VNImageRequestHandler(cgImage: cgImage, orientation: orientation, options: [:]).perform([request])
-            } catch {
-                continuation.resume(returning: [])
-            }
-        }
     }
 
     private enum SharedAttachment {
