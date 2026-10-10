@@ -51,12 +51,16 @@ final class AddItemQuantitySuggestionUITests: XCTestCase {
     private func launchedApp() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedQuantitySuggestionForUITests"]
-        app.launch()
+        UITestLaunch.start(app, expecting: quittenhofTile(app), description: "Kachel „Quittenhof“")
         return app
     }
 
+    private func quittenhofTile(_ app: XCUIApplication) -> XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Quittenhof,")).firstMatch
+    }
+
     private func openQuittenhofStoreDetail(_ app: XCUIApplication) {
-        let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Quittenhof,")).firstMatch
+        let tile = quittenhofTile(app)
         XCTAssertTrue(tile.waitForExistence(timeout: 15), "Quittenhof-Kachel nicht auf dem Home-Screen gefunden")
         let ready = tile.waitUntilHittable()
         XCTAssertTrue(ready.matched, "Quittenhof-Kachel nicht antippbar — zuletzt: \(ready.last)")

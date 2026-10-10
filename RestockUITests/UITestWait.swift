@@ -60,6 +60,64 @@ extension XCUIElement {
     }
 }
 
+// Start-Helfer für gesäte UI-Tests (Issue #105 / #128, Durchgang 1).
+// Gemessen (#98, #128, App-Protokoll): Der Testläufer startet die App gelegentlich, im vollen Lauf
+// auf Restock-Validate beim ersten Start fast immer, ganz ohne Launch-Argumente; ohne Seed fehlt die
+// erwartete Kachel. Ursache unbekannt — der zweite Start ist Abhilfe, nicht Erklärung. Deshalb:
+// starten, Gegenprobe auf das Seed-Element, bei Fehlen genau einmal neu starten und das Messdatum
+// `UITestLaunch: zweiter Start nötig` ausgeben, sonst mit klarer Meldung scheitern.
+enum UITestLaunch {
+    struct Outcome {
+        enum Kind { case firstLaunch, secondLaunch, failed }
+        let kind: Kind
+        let launches: Int
+        let detail: String
+    }
+
+    static let secondLaunchMarker = "UITestLaunch: zweiter Start nötig"
+
+    /// Reine Entscheidungslogik: launch, probe; bei Fehlschlag genau einmal terminate, launch, probe.
+    static func run(launch: () -> Void, terminate: () -> Void,
+                    probe: () -> (matched: Bool, detail: String),
+                    report: (String) -> Void) -> Outcome {
+        launch()
+        let first = probe()
+        if first.matched { return Outcome(kind: .firstLaunch, launches: 1, detail: first.detail) }
+        terminate()
+        launch()
+        let second = probe()
+        guard second.matched else { return Outcome(kind: .failed, launches: 2, detail: second.detail) }
+        report("\(secondLaunchMarker) — erster Versuch: \(first.detail)")
+        return Outcome(kind: .secondLaunch, launches: 2, detail: second.detail)
+    }
+
+    static func failureMessage(launches: Int, expected: String, detail: String) -> String {
+        "App-Start gescheitert nach \(launches) Starts: \(expected) nicht antippbar, zuletzt: \(detail). "
+            + "Launch-Argumente des Tests nicht angekommen oder Seed fehlgeschlagen."
+    }
+
+    /// Startet `app` und prüft, ob `element` (vom Seed erzeugt) antippbar wird; siehe `run`.
+    @discardableResult
+    static func start(_ app: XCUIApplication, expecting element: XCUIElement, description: String? = nil,
+                      file: StaticString = #filePath, fileID: String = #fileID,
+                      function: String = #function, line: UInt = #line) -> Outcome {
+        let expected = description ?? "erwartetes Element"
+        let outcome = run(
+            launch: { app.launch() },
+            terminate: { app.terminate() },
+            probe: {
+                let result = element.waitUntilHittable()
+                return (result.matched, result.last.description)
+            },
+            report: { NSLog("%@ [%@ %@, %@]", $0, fileID, function, expected) })
+        if outcome.kind == .failed {
+            XCTFail(failureMessage(launches: outcome.launches, expected: expected, detail: outcome.detail),
+                    file: file, line: line)
+        }
+        return outcome
+    }
+}
+
 // MARK: - Prüfung der Hilfen ohne App (T1–T4)
 
 final class UITestWaitTests: XCTestCase {
@@ -133,5 +191,68 @@ final class UITestWaitTests: XCTestCase {
     // AC-5: Standardfrist an einer Stelle, 20 s.
     func testDefaultTimeoutIsTwentySeconds() {
         XCTAssertEqual(UITestWait.defaultTimeout, 20)
+    }
+}
+
+// MARK: - Prüfung des Start-Helfers ohne App (Issue #105 / #128, Durchgang 1: T1–T4)
+
+final class UITestLaunchTests: XCTestCase {
+    private let marker = "UITestLaunch: zweiter Start nötig"
+
+    /// Zeichnet die Aufrufe der injizierten Closures in Reihenfolge auf.
+    private func run(probes: [(matched: Bool, detail: String)])
+        -> (outcome: UITestLaunch.Outcome, calls: [String], reports: [String]) {
+        var calls: [String] = []
+        var reports: [String] = []
+        var remaining = probes
+        let outcome = UITestLaunch.run(
+            launch: { calls.append("launch") },
+            terminate: { calls.append("terminate") },
+            probe: {
+                calls.append("probe")
+                return remaining.isEmpty ? (false, "keine weitere Antwort") : remaining.removeFirst()
+            },
+            report: { reports.append($0) })
+        return (outcome, calls, reports)
+    }
+
+    // T1 / AC-1: Gegenprobe beim ersten Start gelungen → ein Start, kein Neustart, keine Meldung.
+    func testFirstLaunchMatchedDoesNotRestartOrReport() {
+        let result = run(probes: [(true, "exists=true hittable=true")])
+        XCTAssertEqual(result.calls, ["launch", "probe"])
+        XCTAssertTrue(result.reports.isEmpty, "Keine Messmeldung beim ersten Treffer")
+        XCTAssertEqual(result.outcome.kind, .firstLaunch)
+        XCTAssertEqual(result.outcome.launches, 1)
+    }
+
+    // T2 / AC-2: Erst der zweite Start trägt die Argumente → genau ein Neustart, genau eine Meldung.
+    func testSecondLaunchRecoversAndReportsOnce() {
+        let result = run(probes: [(false, "exists=false"), (true, "exists=true hittable=true")])
+        XCTAssertEqual(result.calls, ["launch", "probe", "terminate", "launch", "probe"])
+        XCTAssertEqual(result.outcome.kind, .secondLaunch)
+        XCTAssertEqual(result.outcome.launches, 2)
+        XCTAssertEqual(result.reports.count, 1, "Genau eine Messmeldung")
+        XCTAssertTrue(result.reports[0].hasPrefix(marker), "Präfix fehlt: \(result.reports[0])")
+        XCTAssertTrue(result.reports[0].contains("exists=false"), "Befund des ersten Versuchs fehlt")
+    }
+
+    // T3 / AC-3: Auch der zweite Start ohne Treffer → kein dritter Start, Befund des letzten Versuchs.
+    func testBothLaunchesFailedStopsAfterTwoStarts() {
+        let result = run(probes: [(false, "exists=false"), (false, "exists=true hittable=false")])
+        XCTAssertEqual(result.calls, ["launch", "probe", "terminate", "launch", "probe"])
+        XCTAssertEqual(result.outcome.kind, .failed)
+        XCTAssertEqual(result.outcome.launches, 2)
+        XCTAssertEqual(result.outcome.detail, "exists=true hittable=false")
+        XCTAssertTrue(result.reports.isEmpty, "Das Messdatum gibt es nur bei Erfolg im zweiten Start")
+    }
+
+    // T4 / AC-3: Die Fehlermeldung nennt Anzahl Starts, erwartetes Element und Befund.
+    func testFailureMessageNamesLaunchesElementAndState() {
+        let message = UITestLaunch.failureMessage(launches: 2, expected: "Kachel „Quittenhof“",
+                                                  detail: "exists=false")
+        XCTAssertTrue(message.contains("2"), message)
+        XCTAssertTrue(message.contains("Kachel „Quittenhof“"), message)
+        XCTAssertTrue(message.contains("exists=false"), message)
+        XCTAssertFalse(message.contains(marker), "Meldung darf nicht den Messdaten-Präfix tragen")
     }
 }

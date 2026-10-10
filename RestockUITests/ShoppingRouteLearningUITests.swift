@@ -35,15 +35,9 @@ final class ShoppingRouteLearningUITests: XCTestCase {
     }
 
     private func openStore(_ app: XCUIApplication) {
-        app.launch()
         let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Wegeladen,")).firstMatch
-        if !tile.waitForExistence(timeout: 15) {
-            // Gemessen (Issue #98, App-Protokoll): der Testläufer startet die App gelegentlich ganz
-            // ohne Launch-Argumente; ohne Seed zeigt die Startseite „Noch keine Läden". Das liegt
-            // nicht am Produkt. Ein zweiter Start trägt die Argumente wieder.
-            app.terminate()
-            app.launch()
-        }
+        // Fehlstart ohne Launch-Argumente (#98, #105, #128): Gegenprobe und einmaliger Neustart im Helfer.
+        UITestLaunch.start(app, expecting: tile, description: "Kachel „Wegeladen“")
         XCTAssertTrue(tile.waitForExistence(timeout: 15), "Wegeladen-Kachel nicht auf dem Home-Screen gefunden")
         expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: tile)
         waitForExpectations(timeout: 5)
