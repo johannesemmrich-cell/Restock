@@ -89,5 +89,5 @@ Frühere Entscheidung, die A kippen würde: keine; B würde die Zusage „keine 
 `XCUIApplication.launch()/terminate()`, `UITestWait` (#111), Seed-/Clear-Argumente in `SmartCartApp.swift:22-48`. Aufräumstarts (`cleaner.launch()`) bleiben unverändert: jeder Seed löscht ohnehin alle Läden, ein leerer Aufräumstart hinterlässt keinen Schaden.
 
 ### Offene Fragen
-- [ ] Umfang: 10 Testdateien > 4–5-Dateien-Limit. Vorschlag: drei Durchgänge wie bei #98 (PO-Entscheidung nötig).
+- [x] Umfang: drei Durchgänge wie bei #98 (PO-Entscheidung 2026-10-10).
 - [ ] Nachweis: voller Lauf Restock-Validate vorher rot (4/4 belegt), nachher mindestens 3 grüne Gesamtläufe, Testzahl prüfen (kein Null-Test-Lauf).
