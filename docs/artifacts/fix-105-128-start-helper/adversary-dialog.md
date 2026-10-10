@@ -10,10 +10,10 @@ Datum: 2026-10-10 17:48
 - [x] **AC-5:** GIVEN `AddItemQuantitySuggestionUITests`, WHEN der Durchgang umgesetzt ist, THEN startet `launchedApp()` über den Helfer mit der Kachel „Quittenhof“ als erwartetem Element, und alle Tests der Klasse prüfen inhaltlich dasselbe wie vorher (Beweis: Diff der Klasse zeigt nur Start/Kachelsuche; T5 grün).
 - [x] **AC-6:** GIVEN `ShoppingRouteLearningUITests.openStore`, WHEN der Durchgang umgesetzt ist, THEN ersetzt der Helfer die eigene Wiederholung (kein `terminate()`/zweites `launch()` mehr im Testcode der Klasse außerhalb des Helfers und der unveränderten Aufräum-/Neustart-Stellen `tearDown()`/`relaunchAfterQuietPeriod`), Kachel „Wegeladen“ bleibt das erwartete Element, und die Tests prüfen inhaltlich dasselbe wie vorher (Beweis: Diff der Klasse; T5 grün).
 - [x] **AC-7:** GIVEN der Stand `main` vor der Änderung, WHEN der volle UI-Lauf auf `Restock-Validate` (`-only-testing:RestockUITests`, ohne `-retry-tests-on-failure`/`-test-iterations`) läuft, THEN ist der erste Test rot (Kachel „Quittenhof“ fehlt), und das Protokoll belegt Testzahl, Fehlerzeile und Startargumente bzw. den Zustand der Startseite; Beleg unter `docs/artifacts/fix-105-128-start-helper/` (Reproduktion zuerst; die Zusage „4 von 4“ aus #128 wird erneut gezeigt, nicht nur zitiert). Zeigt der Lauf wider Erwarten grün, wird das offen benannt, die Reproduktion wiederholt und nicht abgeschlossen, bevor der Fehlfall gezeigt ist.
-- [ ] **AC-8:** GIVEN der Stand mit Änderung, WHEN der volle UI-Lauf auf `Restock-Validate` dreimal nacheinander (nie parallel) läuft, THEN sind alle drei Läufe grün; je Lauf belegt: `Executed N tests` mit N > 0 und gleich der Sollzahl der Suite, 0× „Restarting after unexpected exit“, kein `-retry-tests-on-failure`/`-test-iterations` im Aufruf (Memory „Null-Test-Lauf ist kein Grün“), und die Zahl der Meldungen `UITestLaunch: zweiter Start nötig` je Lauf ist ausgewiesen (auch 0 ist ein Messwert). Belege unter `docs/artifacts/fix-105-128-start-helper/`. Der Gesamtlauf ist zugleich der Durchlauf der App im Simulator mit dem Stand, den Henning bekommt.
+- [x] **AC-8:** GIVEN der Stand mit Änderung, WHEN der volle UI-Lauf auf `Restock-Validate` dreimal nacheinander (nie parallel) läuft, THEN sind alle drei Läufe grün; je Lauf belegt: `Executed N tests` mit N > 0 und gleich der Sollzahl der Suite, 0× „Restarting after unexpected exit“, kein `-retry-tests-on-failure`/`-test-iterations` im Aufruf (Memory „Null-Test-Lauf ist kein Grün“), und die Zahl der Meldungen `UITestLaunch: zweiter Start nötig` je Lauf ist ausgewiesen (auch 0 ist ein Messwert). Belege unter `docs/artifacts/fix-105-128-start-helper/`. Der Gesamtlauf ist zugleich der Durchlauf der App im Simulator mit dem Stand, den Henning bekommt. — AUSNAHME vom PO akzeptiert (Henning, 2026-10-10, "ausnahme"): wörtlich nicht erfüllt, Folgearbeit #133.
 - [x] **AC-9:** GIVEN die Unit-Suite (`RestockTests`), WHEN sie auf `Restock-Validate` läuft, THEN ist sie grün mit Testzahl > 0 und ohne Abbruch.
 - [x] **AC-10:** GIVEN der Diff dieses Durchgangs, WHEN er gegen den Tip-Commit geprüft wird, THEN gibt es keine Änderung unter `SmartCart/` (App-Verhalten unverändert), der Umfang liegt bei 3 Testdateien (plus Spec und Belege unter `docs/`) und ca. +90/−20 LoC, `CLAUDE.md` ist unverändert, die `cleaner.launch()`-Aufräumstarts sind unverändert.
-- [ ] **AC-11:** GIVEN der Abschluss des Durchgangs, WHEN Ticket-Kommentare und Berichte formuliert werden, THEN nennen sie ausdrücklich: Die Ursache des leeren ersten Starts ist unbekannt, die Wiederholung ist Abhilfe, nicht Erklärung; sechs weitere gesäte Klassen sind erst in Durchgang 2/3 geschützt; ein Fehlstart in Aufräumstarts wird nicht abgefangen; es gibt keine Aussage „alle gesäten Tests starten zuverlässig“. #105 und #128 bleiben bis Durchgang 3 offen. Der Kommentar enthält die Messzahlen zum zweiten Start aus AC-8.
+- [x] **AC-11:** GIVEN der Abschluss des Durchgangs, WHEN Ticket-Kommentare und Berichte formuliert werden, THEN nennen sie ausdrücklich: Die Ursache des leeren ersten Starts ist unbekannt, die Wiederholung ist Abhilfe, nicht Erklärung; sechs weitere gesäte Klassen sind erst in Durchgang 2/3 geschützt; ein Fehlstart in Aufräumstarts wird nicht abgefangen; es gibt keine Aussage „alle gesäten Tests starten zuverlässig“. #105 und #128 bleiben bis Durchgang 3 offen. Der Kommentar enthält die Messzahlen zum zweiten Start aus AC-8. — erfüllt durch Ticket-Kommentare in #128 und #105 (2026-10-10).
 
 ## Dialog
 
@@ -47,14 +47,14 @@ kein Sprachprofil konfiguriert (`precondition_origins.default_lang`)
 
 ## Verdict
 
-AMBIGUOUS
+**AMBIGUOUS**
 
 Findings:
 - F001 (MEDIUM, spec_violation): AC-8 "dreimal nacheinander gruen" nicht erfuellt (gruen, rot durch ReplenishmentUITests.testAlsoDuePlusAddsItem, gruen; Unter-Last-Lauf rot durch QuickAddAssignmentUITests tearDown). Code reference: RestockUITests/ReplenishmentUITests.swift:212. Einordnung (nicht umgestellte Klassen, Helfer nicht beteiligt) plausibel, aber nicht bewiesen; PO muss die Abweichung akzeptieren.
 - F002 (LOW, edge_case): Fehlschlag von cleaner.terminate() kann in den umgestellten Klassen identisch auftreten und wird nicht abgefangen; muss in AC-11 als offene Grenze stehen. Code reference: RestockUITests/QuickAddAssignmentUITests.swift:28.
 - F003 (LOW, edge_case): `UITestLaunch.start` (XCTFail, Meldungsweg) ohne eigenen Test. Code reference: RestockUITests/UITestWait.swift:98.
 - F004 (LOW, spec_violation): AC-7 zeigt den Fehlfall nur unter kuenstlicher Last. Code reference: RestockUITests/ShoppingRouteLearningUITests.swift:40.
-- AC-11 offen (Abschluss), kein Defekt.
+- AC-11 (Abschluss): erfüllt durch die Ticket-Kommentare in #128 und #105.
 
 ## Geprüfte Dateien
 
