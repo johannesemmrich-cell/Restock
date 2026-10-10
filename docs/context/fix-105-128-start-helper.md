@@ -50,3 +50,44 @@ Von den elf Testdateien starten neun die App gesät, drei haben bereits eine eig
 - **Wiederholung kann die Ursache nur überdecken:** Der zweite Start ist die Abhilfe, nicht die Erklärung. Die Analyse muss prüfen, ob sich der erste Start sauber abwarten lässt (z. B. Sitzung des Testläufers vor dem ersten `launch()` aufbauen).
 - **Nachweis:** voller Lauf auf Restock-Validate vorher rot (4/4 belegt), nachher mehrfach grün; keine Null-Test-Läufe als Grün zählen; Simulator nie parallel nutzen.
 - **Aufräumstarts** (`cleaner.launch()`) können dieselbe Lücke haben und würden dann den Rest des Seeds stehen lassen.
+
+## Analysis
+
+### Type
+Bugfix (Testinfrastruktur, kein Produktfehler). Gebündelt aus #105 und #128.
+
+### Befund
+Reproduziert (#128: 4 von 4 rot, Einzellauf grün) und per Startargument-Messung belegt: Der erste App-Prozess des Gesamtlaufs trägt leere Launch-Argumente. Der Seed greift nicht, die Startseite zeigt den Rest des vorigen Laufs. Websuche (Apple-Foren, Blogs) ergab keinen dokumentierten Fall. Ursache des leeren Starts bleibt unbekannt, gesichert ist nur: Sitzungsaufbau des Testläufers ist beim ersten Start spät (1,05 s statt 0,22 s), `launch()` läuft dabei an.
+
+### Affected Files (with changes)
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `RestockUITests/UITestWait.swift` | MODIFY | Neuer Start-Helfer `UITestLaunch.start(_:expecting:)`: launch, Gegenprobe „erwartetes Seed-Element", bei Fehlen einmal terminate + launch; Meldung, wenn der zweite Start nötig war (Messdaten für die Ursache). Keine neue Datei, daher kein pbxproj-Eintrag |
+| `RestockUITests/AddItemQuantitySuggestionUITests.swift` | MODIFY | `launchedApp()` + Quittenhof-Kachel über Helfer (belegter Fall #128) |
+| `RestockUITests/ShoppingRouteLearningUITests.swift` | MODIFY | eigene Wiederholung in `openStore` durch Helfer ersetzen |
+| `RestockUITests/QuickAddAssignmentUITests.swift` | MODIFY | `launchedApp(...)` über Helfer |
+| `RestockUITests/ShoppingRouteUITests.swift`, `LegacyLearnedPriceResetUITests.swift` | MODIFY | Seed-Start über Helfer |
+| `RestockUITests/ReceiptReviewUITests.swift`, `ReceiptResolutionStatsUITests.swift`, `ReplenishmentUITests.swift`, `DataResetUITests.swift` | MODIFY | Start über Helfer (Replenishment/DataReset ersetzen eigene Varianten) |
+| `CLAUDE.md` | MODIFY | Absatz zum Start-Helfer (Architektur-/Testregel) |
+`RestockUITests.swift` (Start ohne Seed) und `ReceiptShareExtensionTests.swift` bleiben unberührt.
+
+### Scope Assessment
+- Files: 10 Testdateien + CLAUDE.md, über drei Durchgänge verteilt (je ≤ 5 Dateien)
+- Estimated LoC: Helfer ~45, je Klasse ~10–25 → insgesamt +170/−70
+- Risk Level: LOW (nur Testcode; Gefahr: Gegenprobe mit falscher Erwartung macht Tests rot)
+
+### Technical Approach
+Empfehlung: **Zentraler Helfer mit klassenspezifischer Gegenprobe** (wie im Intake beschlossen). Regelweg, kein Modell. Der Helfer nimmt die App und ein Erwartungs-Element (die Kachel, die der Seed erzeugt), prüft nach `launch()` mit `UITestWait.defaultTimeout`, startet bei Fehlen genau einmal neu und scheitert danach mit klarer Meldung. Zusätzlich hält er fest, ob der zweite Start nötig war, damit die Ursache mit Zahlen statt Vermutung eingegrenzt werden kann. Durchgänge: (1) Helfer + AddItemQuantity + ShoppingRouteLearning, voller Lauf auf Restock-Validate vorher/nachher; (2) QuickAdd, ShoppingRoute, LegacyLearned; (3) ReceiptReview, ReceiptResolutionStats, Replenishment, DataReset + CLAUDE.md.
+
+### Alternativen
+- **A) Ursache beheben statt Start wiederholen:** vor dem ersten Test einen leeren Aufwärm-Start (launch + terminate) im Klassen-`setUp`, damit die Sitzung des Testläufers steht. Würde die Gegenprobe überflüssig machen, ist aber unbewiesen (Ursache nicht belegt) und kostet je Klasse einen Start. Als Messversuch in Durchgang 1 sinnvoll, nicht als alleinige Lösung.
+- **B) Klassenunabhängiger Beweis über Produktcode:** DEBUG-Marker in `SmartCartApp` (z. B. unsichtbares Element „Argumente angekommen"). Ein Helfer ohne Kachel-Wissen, aber Eingriff in Produktcode und ein weiterer Seed-Pfad im bereits langen `init()`. Gekippt würde die Linie „UI-Tests prüfen Text statt Produkt-Marker" nicht, aber CLAUDE.md-Konvention zu DEBUG-Argumenten wüchse.
+- **C) Nichts tun, CI-Wiederholung:** bereits durch #172 entfernt, daher keine Option.
+Frühere Entscheidung, die A kippen würde: keine; B würde die Zusage „keine Produktänderung für Testhilfen" aus #98 aufweichen.
+
+### Dependencies
+`XCUIApplication.launch()/terminate()`, `UITestWait` (#111), Seed-/Clear-Argumente in `SmartCartApp.swift:22-48`. Aufräumstarts (`cleaner.launch()`) bleiben unverändert: jeder Seed löscht ohnehin alle Läden, ein leerer Aufräumstart hinterlässt keinen Schaden.
+
+### Offene Fragen
+- [ ] Umfang: 10 Testdateien > 4–5-Dateien-Limit. Vorschlag: drei Durchgänge wie bei #98 (PO-Entscheidung nötig).
+- [ ] Nachweis: voller Lauf Restock-Validate vorher rot (4/4 belegt), nachher mindestens 3 grüne Gesamtläufe, Testzahl prüfen (kein Null-Test-Lauf).
