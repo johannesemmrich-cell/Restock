@@ -135,3 +135,66 @@ final class UITestWaitTests: XCTestCase {
         XCTAssertEqual(UITestWait.defaultTimeout, 20)
     }
 }
+
+// MARK: - Prüfung des Start-Helfers ohne App (Issue #105 / #128, Durchgang 1: T1–T4)
+
+final class UITestLaunchTests: XCTestCase {
+    private let marker = "UITestLaunch: zweiter Start nötig"
+
+    /// Zeichnet die Aufrufe der injizierten Closures in Reihenfolge auf.
+    private func run(probes: [(matched: Bool, detail: String)])
+        -> (outcome: UITestLaunch.Outcome, calls: [String], reports: [String]) {
+        var calls: [String] = []
+        var reports: [String] = []
+        var remaining = probes
+        let outcome = UITestLaunch.run(
+            launch: { calls.append("launch") },
+            terminate: { calls.append("terminate") },
+            probe: {
+                calls.append("probe")
+                return remaining.isEmpty ? (false, "keine weitere Antwort") : remaining.removeFirst()
+            },
+            report: { reports.append($0) })
+        return (outcome, calls, reports)
+    }
+
+    // T1 / AC-1: Gegenprobe beim ersten Start gelungen → ein Start, kein Neustart, keine Meldung.
+    func testFirstLaunchMatchedDoesNotRestartOrReport() {
+        let result = run(probes: [(true, "exists=true hittable=true")])
+        XCTAssertEqual(result.calls, ["launch", "probe"])
+        XCTAssertTrue(result.reports.isEmpty, "Keine Messmeldung beim ersten Treffer")
+        XCTAssertEqual(result.outcome.kind, .firstLaunch)
+        XCTAssertEqual(result.outcome.launches, 1)
+    }
+
+    // T2 / AC-2: Erst der zweite Start trägt die Argumente → genau ein Neustart, genau eine Meldung.
+    func testSecondLaunchRecoversAndReportsOnce() {
+        let result = run(probes: [(false, "exists=false"), (true, "exists=true hittable=true")])
+        XCTAssertEqual(result.calls, ["launch", "probe", "terminate", "launch", "probe"])
+        XCTAssertEqual(result.outcome.kind, .secondLaunch)
+        XCTAssertEqual(result.outcome.launches, 2)
+        XCTAssertEqual(result.reports.count, 1, "Genau eine Messmeldung")
+        XCTAssertTrue(result.reports[0].hasPrefix(marker), "Präfix fehlt: \(result.reports[0])")
+        XCTAssertTrue(result.reports[0].contains("exists=false"), "Befund des ersten Versuchs fehlt")
+    }
+
+    // T3 / AC-3: Auch der zweite Start ohne Treffer → kein dritter Start, Befund des letzten Versuchs.
+    func testBothLaunchesFailedStopsAfterTwoStarts() {
+        let result = run(probes: [(false, "exists=false"), (false, "exists=true hittable=false")])
+        XCTAssertEqual(result.calls, ["launch", "probe", "terminate", "launch", "probe"])
+        XCTAssertEqual(result.outcome.kind, .failed)
+        XCTAssertEqual(result.outcome.launches, 2)
+        XCTAssertEqual(result.outcome.detail, "exists=true hittable=false")
+        XCTAssertTrue(result.reports.isEmpty, "Das Messdatum gibt es nur bei Erfolg im zweiten Start")
+    }
+
+    // T4 / AC-3: Die Fehlermeldung nennt Anzahl Starts, erwartetes Element und Befund.
+    func testFailureMessageNamesLaunchesElementAndState() {
+        let message = UITestLaunch.failureMessage(launches: 2, expected: "Kachel „Quittenhof“",
+                                                  detail: "exists=false")
+        XCTAssertTrue(message.contains("2"), message)
+        XCTAssertTrue(message.contains("Kachel „Quittenhof“"), message)
+        XCTAssertTrue(message.contains("exists=false"), message)
+        XCTAssertFalse(message.contains(marker), "Meldung darf nicht den Messdaten-Präfix tragen")
+    }
+}
