@@ -1,0 +1,115 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/UITestLaunchTests" "-only-testing:RestockUITests/UITestWaitTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/mossy-skipping-metcalfe/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dsoiexrtlpvugobznvrqmylcxylm/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-dsoiexrtlpvugobznvrqmylcxylm/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-10-10 17:50:24.652789+0200 RestockUITests-Runner[36798:33084151] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-10 17:50:25.345.
+Test Suite 'RestockUITests.xctest' started at 2026-10-10 17:50:25.345.
+Test Suite 'UITestLaunchTests' started at 2026-10-10 17:50:25.345.
+Test Case '-[RestockUITests.UITestLaunchTests testBothLaunchesFailedStopsAfterTwoStarts]' started.
+    t =     0.00s Start Test at 2026-10-10 17:50:25.346
+    t =     0.06s Set Up
+    t =     0.06s Tear Down
+Test Case '-[RestockUITests.UITestLaunchTests testBothLaunchesFailedStopsAfterTwoStarts]' passed (0.112 seconds).
+Test Case '-[RestockUITests.UITestLaunchTests testFailureMessageNamesLaunchesElementAndState]' started.
+    t =     0.00s Start Test at 2026-10-10 17:50:25.458
+    t =     0.01s Set Up
+    t =     0.01s Tear Down
+Test Case '-[RestockUITests.UITestLaunchTests testFailureMessageNamesLaunchesElementAndState]' passed (0.039 seconds).
+Test Case '-[RestockUITests.UITestLaunchTests testFirstLaunchMatchedDoesNotRestartOrReport]' started.
+    t =     0.00s Start Test at 2026-10-10 17:50:25.498
+    t =     0.01s Set Up
+    t =     0.01s Tear Down
+Test Case '-[RestockUITests.UITestLaunchTests testFirstLaunchMatchedDoesNotRestartOrReport]' passed (0.037 seconds).
+Test Case '-[RestockUITests.UITestLaunchTests testSecondLaunchRecoversAndReportsOnce]' started.
+    t =     0.00s Start Test at 2026-10-10 17:50:25.535
+    t =     0.01s Set Up
+    t =     0.01s Tear Down
+Test Case '-[RestockUITests.UITestLaunchTests testSecondLaunchRecoversAndReportsOnce]' passed (0.037 seconds).
+Test Suite 'UITestLaunchTests' passed at 2026-10-10 17:50:25.571.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.225 (0.226) seconds
+Test Suite 'UITestWaitTests' started at 2026-10-10 17:50:25.572.
+Test Case '-[RestockUITests.UITestWaitTests testDefaultTimeoutIsTwentySeconds]' started.
+    t =     0.00s Start Test at 2026-10-10 17:50:25.572
+    t =     0.01s Set Up
+    t =     0.01s Tear Down
+Test Case '-[RestockUITests.UITestWaitTests testDefaultTimeoutIsTwentySeconds]' passed (0.037 seconds).
+Test Case '-[RestockUITests.UITestWaitTests testInfiniteOrEmptyFrameIsNotReadyAndSkipsHittable]' started.
+    t =     0.00s Start Test at 2026-10-10 17:50:25.609
+    t =     0.01s Set Up
+    t =     0.01s Tear Down
+Test Case '-[RestockUITests.UITestWaitTests testInfiniteOrEmptyFrameIsNotReadyAndSkipsHittable]' passed (0.038 seconds).
+Test Case '-[RestockUITests.UITestWaitTests testLabelTimeoutReturnsLastReadLabel]' started.
+    t =     0.00s Start Test at 2026-10-10 17:50:25.647
+    t =     0.01s Set Up
+objc[36798]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x107c28310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x107cb4398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     0.79s Tear Down
+Test Case '-[RestockUITests.UITestWaitTests testLabelTimeoutReturnsLastReadLabel]' passed (0.908 seconds).
+Test Case '-[RestockUITests.UITestWaitTests testPollKeepsWaitingThroughInfiniteFrames]' started.
+    t =     0.00s Start Test at 2026-10-10 17:50:26.556
+    t =     0.02s Set Up
+    t =     0.54s Tear Down
+Test Case '-[RestockUITests.UITestWaitTests testPollKeepsWaitingThroughInfiniteFrames]' passed (0.549 seconds).
+Test Case '-[RestockUITests.UITestWaitTests testPollReturnsInFirstRoundWhenReady]' started.
+    t =     0.00s Start Test at 2026-10-10 17:50:27.106
+    t =     0.03s Set Up
+    t =     0.03s Tear Down
+Test Case '-[RestockUITests.UITestWaitTests testPollReturnsInFirstRoundWhenReady]' passed (0.064 seconds).
+Test Case '-[RestockUITests.UITestWaitTests testTimeoutReportsLastSeenStateWithoutExtraRead]' started.
+    t =     0.00s Start Test at 2026-10-10 17:50:27.170
+    t =     0.02s Set Up
+    t =     1.06s Tear Down
+Test Case '-[RestockUITests.UITestWaitTests testTimeoutReportsLastSeenStateWithoutExtraRead]' passed (1.073 seconds).
+Test Suite 'UITestWaitTests' passed at 2026-10-10 17:50:28.243.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 2.669 (2.671) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-10 17:50:28.243.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 2.894 (2.899) seconds
+Test Suite 'Selected tests' passed at 2026-10-10 17:50:28.244.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 2.894 (2.899) seconds
+2026-10-10 17:50:28.545 xcodebuild[36788:33083844] [MT] IDETestOperationsObserverDebug: 4.725 elapsed -- Testing started completed.
+2026-10-10 17:50:28.545 xcodebuild[36788:33083844] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-10 17:50:28.545 xcodebuild[36788:33083844] [MT] IDETestOperationsObserverDebug: 4.725 sec, +4.725 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-dsoiexrtlpvugobznvrqmylcxylm/Logs/Test/Test-Restock-2026.10.10_17-50-23-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

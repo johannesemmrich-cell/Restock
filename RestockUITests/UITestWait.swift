@@ -60,6 +60,64 @@ extension XCUIElement {
     }
 }
 
+// Start-Helfer für gesäte UI-Tests (Issue #105 / #128, Durchgang 1).
+// Gemessen (#98, #128, App-Protokoll): Der Testläufer startet die App gelegentlich, im vollen Lauf
+// auf Restock-Validate beim ersten Start fast immer, ganz ohne Launch-Argumente; ohne Seed fehlt die
+// erwartete Kachel. Ursache unbekannt — der zweite Start ist Abhilfe, nicht Erklärung. Deshalb:
+// starten, Gegenprobe auf das Seed-Element, bei Fehlen genau einmal neu starten und das Messdatum
+// `UITestLaunch: zweiter Start nötig` ausgeben, sonst mit klarer Meldung scheitern.
+enum UITestLaunch {
+    struct Outcome {
+        enum Kind { case firstLaunch, secondLaunch, failed }
+        let kind: Kind
+        let launches: Int
+        let detail: String
+    }
+
+    static let secondLaunchMarker = "UITestLaunch: zweiter Start nötig"
+
+    /// Reine Entscheidungslogik: launch, probe; bei Fehlschlag genau einmal terminate, launch, probe.
+    static func run(launch: () -> Void, terminate: () -> Void,
+                    probe: () -> (matched: Bool, detail: String),
+                    report: (String) -> Void) -> Outcome {
+        launch()
+        let first = probe()
+        if first.matched { return Outcome(kind: .firstLaunch, launches: 1, detail: first.detail) }
+        terminate()
+        launch()
+        let second = probe()
+        guard second.matched else { return Outcome(kind: .failed, launches: 2, detail: second.detail) }
+        report("\(secondLaunchMarker) — erster Versuch: \(first.detail)")
+        return Outcome(kind: .secondLaunch, launches: 2, detail: second.detail)
+    }
+
+    static func failureMessage(launches: Int, expected: String, detail: String) -> String {
+        "App-Start gescheitert nach \(launches) Starts: \(expected) nicht antippbar, zuletzt: \(detail). "
+            + "Launch-Argumente des Tests nicht angekommen oder Seed fehlgeschlagen."
+    }
+
+    /// Startet `app` und prüft, ob `element` (vom Seed erzeugt) antippbar wird; siehe `run`.
+    @discardableResult
+    static func start(_ app: XCUIApplication, expecting element: XCUIElement, description: String? = nil,
+                      file: StaticString = #filePath, fileID: String = #fileID,
+                      function: String = #function, line: UInt = #line) -> Outcome {
+        let expected = description ?? "erwartetes Element"
+        let outcome = run(
+            launch: { app.launch() },
+            terminate: { app.terminate() },
+            probe: {
+                let result = element.waitUntilHittable()
+                return (result.matched, result.last.description)
+            },
+            report: { NSLog("%@ [%@ %@, %@]", $0, fileID, function, expected) })
+        if outcome.kind == .failed {
+            XCTFail(failureMessage(launches: outcome.launches, expected: expected, detail: outcome.detail),
+                    file: file, line: line)
+        }
+        return outcome
+    }
+}
+
 // MARK: - Prüfung der Hilfen ohne App (T1–T4)
 
 final class UITestWaitTests: XCTestCase {
