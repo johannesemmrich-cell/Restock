@@ -76,19 +76,76 @@ enum UITestLaunch {
 
     static let secondLaunchMarker = "UITestLaunch: zweiter Start nötig"
 
+    /// Messwerte für die Meldung „zweiter Start nötig“ (Issue #105, Durchgang 2); `nil` = nicht ermittelbar.
+    struct Measurement {
+        var secondsSinceRunStart: Double?    // Prozessstart des Testläufers
+        var secondsSinceHelperCall: Double?  // Eintritt in UITestLaunch.start
+        var load: (Double, Double, Double)?  // getloadavg: 1/5/15 min
+        var pidBefore: Int32?                // App-Prozesskennung (nicht öffentliche processID, siehe appProcessID) vor terminate()
+        var pidAfter: Int32?                 // nach dem zweiten launch()
+        var launchOrdinal: Int               // laufende Nummer der Starts im Lauf
+    }
+
+    /// Laufende Nummer der Starts über alle Aufrufe des Helfers im Lauf.
+    static var launchCount = 0
+
+    /// Einzeilige Messzeile; nicht ermittelbare Werte stehen als „unbekannt“, nie als erfundene Zahl.
+    static func measurementLine(_ m: Measurement) -> String {
+        let posix = Locale(identifier: "en_US_POSIX")
+        func num(_ v: Double) -> String { String(format: "%.1f", locale: posix, v) }
+        func secs(_ v: Double?) -> String { v.map { "\(num($0)) s" } ?? "unbekannt" }
+        let load = m.load.map { "\(num($0.0))/\(num($0.1))/\(num($0.2))" } ?? "unbekannt"
+        let pid = (m.pidBefore == nil && m.pidAfter == nil) ? "unbekannt"
+            : "\(m.pidBefore.map(String.init) ?? "unbekannt") → \(m.pidAfter.map(String.init) ?? "unbekannt")"
+        return "seit Lauf \(secs(m.secondsSinceRunStart)), seit Helferaufruf \(secs(m.secondsSinceHelperCall)), "
+            + "Last \(load), pid \(pid), Start Nr. \(m.launchOrdinal)"
+    }
+
     /// Reine Entscheidungslogik: launch, probe; bei Fehlschlag genau einmal terminate, launch, probe.
+    /// Messwerte (`pid`, `snapshot`) werden nur gelesen, und nur nach dem ersten Fehlschlag.
     static func run(launch: () -> Void, terminate: () -> Void,
                     probe: () -> (matched: Bool, detail: String),
+                    pid: () -> Int32?, snapshot: () -> Measurement,
                     report: (String) -> Void) -> Outcome {
         launch()
         let first = probe()
         if first.matched { return Outcome(kind: .firstLaunch, launches: 1, detail: first.detail) }
+        let pidBefore = pid()
         terminate()
         launch()
+        let pidAfter = pid()
         let second = probe()
         guard second.matched else { return Outcome(kind: .failed, launches: 2, detail: second.detail) }
-        report("\(secondLaunchMarker) — erster Versuch: \(first.detail)")
+        var measurement = snapshot()
+        measurement.pidBefore = pidBefore
+        measurement.pidAfter = pidAfter
+        report("\(secondLaunchMarker) — erster Versuch: \(first.detail) — \(measurementLine(measurement))")
         return Outcome(kind: .secondLaunch, launches: 2, detail: second.detail)
+    }
+
+    /// Prozessstart des Testläufers (sysctl KERN_PROC_PID, p_starttime); `nil`, wenn nicht ermittelbar.
+    static func runnerStartDate() -> Date? {
+        var info = kinfo_proc()
+        var size = MemoryLayout<kinfo_proc>.stride
+        var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid()]
+        guard sysctl(&mib, u_int(mib.count), &info, &size, nil, 0) == 0, size > 0 else { return nil }
+        let start = info.kp_proc.p_un.__p_starttime
+        guard start.tv_sec > 0 else { return nil }
+        return Date(timeIntervalSince1970: Double(start.tv_sec) + Double(start.tv_usec) / 1_000_000)
+    }
+
+    /// Prozesskennung der App. `XCUIApplication` hat unter iOS keine öffentliche Eigenschaft dafür;
+    /// gelesen wird die nicht öffentliche `processID` nur, wenn vorhanden. Fehlt sie oder ist sie ≤ 0: `nil`.
+    static func appProcessID(_ app: XCUIApplication) -> Int32? {
+        guard app.responds(to: NSSelectorFromString("processID")),
+              let pid = (app.value(forKey: "processID") as? NSNumber)?.int32Value, pid > 0 else { return nil }
+        return pid
+    }
+
+    static func loadAverage() -> (Double, Double, Double)? {
+        var values = [Double](repeating: 0, count: 3)
+        guard getloadavg(&values, 3) == 3 else { return nil }
+        return (values[0], values[1], values[2])
     }
 
     static func failureMessage(launches: Int, expected: String, detail: String) -> String {
@@ -101,13 +158,20 @@ enum UITestLaunch {
     static func start(_ app: XCUIApplication, expecting element: XCUIElement, description: String? = nil,
                       file: StaticString = #filePath, fileID: String = #fileID,
                       function: String = #function, line: UInt = #line) -> Outcome {
+        let helperCall = Date()
         let expected = description ?? "erwartetes Element"
         let outcome = run(
-            launch: { app.launch() },
+            launch: { launchCount += 1; app.launch() },
             terminate: { app.terminate() },
             probe: {
                 let result = element.waitUntilHittable()
                 return (result.matched, result.last.description)
+            },
+            pid: { appProcessID(app) },
+            snapshot: {
+                Measurement(secondsSinceRunStart: runnerStartDate().map { Date().timeIntervalSince($0) },
+                            secondsSinceHelperCall: Date().timeIntervalSince(helperCall),
+                            load: loadAverage(), pidBefore: nil, pidAfter: nil, launchOrdinal: launchCount)
             },
             report: { NSLog("%@ [%@ %@, %@]", $0, fileID, function, expected) })
         if outcome.kind == .failed {
@@ -199,12 +263,18 @@ final class UITestWaitTests: XCTestCase {
 final class UITestLaunchTests: XCTestCase {
     private let marker = "UITestLaunch: zweiter Start nötig"
 
+    private let fullMeasurement = UITestLaunch.Measurement(
+        secondsSinceRunStart: 12.4, secondsSinceHelperCall: 11.9, load: (3.1, 2.4, 2.0),
+        pidBefore: nil, pidAfter: nil, launchOrdinal: 1)
+
     /// Zeichnet die Aufrufe der injizierten Closures in Reihenfolge auf.
-    private func run(probes: [(matched: Bool, detail: String)])
-        -> (outcome: UITestLaunch.Outcome, calls: [String], reports: [String]) {
+    private func run(probes: [(matched: Bool, detail: String)], pids: [Int32?] = [100, 200])
+        -> (outcome: UITestLaunch.Outcome, calls: [String], reports: [String], measureCalls: Int) {
         var calls: [String] = []
         var reports: [String] = []
         var remaining = probes
+        var remainingPids = pids
+        var measureCalls = 0
         let outcome = UITestLaunch.run(
             launch: { calls.append("launch") },
             terminate: { calls.append("terminate") },
@@ -212,8 +282,34 @@ final class UITestLaunchTests: XCTestCase {
                 calls.append("probe")
                 return remaining.isEmpty ? (false, "keine weitere Antwort") : remaining.removeFirst()
             },
+            pid: { measureCalls += 1; return remainingPids.isEmpty ? nil : remainingPids.removeFirst() },
+            snapshot: { measureCalls += 1; return self.fullMeasurement },
             report: { reports.append($0) })
-        return (outcome, calls, reports)
+        return (outcome, calls, reports, measureCalls)
+    }
+
+    // T1 / AC-1: Die Messzeile nennt alle Felder mit Namen und Einheit.
+    func testMeasurementLineNamesAllFields() {
+        var m = fullMeasurement
+        m.pidBefore = 4711
+        m.pidAfter = 4802
+        let line = UITestLaunch.measurementLine(m)
+        XCTAssertFalse(line.contains("\n"), "Einzeilig erwartet: \(line)")
+        for part in ["seit Lauf 12.4 s", "seit Helferaufruf 11.9 s", "Last 3.1/2.4/2.0",
+                     "pid 4711 → 4802", "Start Nr. 1"] {
+            XCTAssertTrue(line.contains(part), "„\(part)“ fehlt in: \(line)")
+        }
+    }
+
+    // T2 / AC-2: Fehlende Werte erscheinen als „unbekannt“, nie als erfundene Zahl.
+    func testMeasurementLineShowsUnknownForMissingValues() {
+        let m = UITestLaunch.Measurement(secondsSinceRunStart: nil, secondsSinceHelperCall: nil, load: nil,
+                                         pidBefore: nil, pidAfter: nil, launchOrdinal: 2)
+        let line = UITestLaunch.measurementLine(m)
+        XCTAssertEqual(line.components(separatedBy: "unbekannt").count - 1, 4,
+                       "Lauf, Helferaufruf, Last und pid je einmal „unbekannt“: \(line)")
+        XCTAssertTrue(line.contains("Start Nr. 2"), line)
+        XCTAssertFalse(line.contains("0.0"), "Keine erfundene Zahl: \(line)")
     }
 
     // T1 / AC-1: Gegenprobe beim ersten Start gelungen → ein Start, kein Neustart, keine Meldung.
@@ -223,6 +319,8 @@ final class UITestLaunchTests: XCTestCase {
         XCTAssertTrue(result.reports.isEmpty, "Keine Messmeldung beim ersten Treffer")
         XCTAssertEqual(result.outcome.kind, .firstLaunch)
         XCTAssertEqual(result.outcome.launches, 1)
+        // T4 / AC-4: Bei Erfolg im ersten Start wird nichts gemessen oder gemeldet.
+        XCTAssertEqual(result.measureCalls, 0, "Messwerte dürfen ohne Meldung nicht ausgewertet werden")
     }
 
     // T2 / AC-2: Erst der zweite Start trägt die Argumente → genau ein Neustart, genau eine Meldung.
@@ -234,6 +332,9 @@ final class UITestLaunchTests: XCTestCase {
         XCTAssertEqual(result.reports.count, 1, "Genau eine Messmeldung")
         XCTAssertTrue(result.reports[0].hasPrefix(marker), "Präfix fehlt: \(result.reports[0])")
         XCTAssertTrue(result.reports[0].contains("exists=false"), "Befund des ersten Versuchs fehlt")
+        // T3 / AC-3: Messzeile mit beiden Prozesskennungen hängt an derselben Meldung.
+        XCTAssertTrue(result.reports[0].contains("pid 100 → 200"), "Messzeile fehlt: \(result.reports[0])")
+        XCTAssertTrue(result.reports[0].contains("seit Lauf 12.4 s"), "Messzeile fehlt: \(result.reports[0])")
     }
 
     // T3 / AC-3: Auch der zweite Start ohne Treffer → kein dritter Start, Befund des letzten Versuchs.
@@ -244,6 +345,9 @@ final class UITestLaunchTests: XCTestCase {
         XCTAssertEqual(result.outcome.launches, 2)
         XCTAssertEqual(result.outcome.detail, "exists=true hittable=false")
         XCTAssertTrue(result.reports.isEmpty, "Das Messdatum gibt es nur bei Erfolg im zweiten Start")
+        // T5 / AC-5: Gesamtscheitern bleibt ohne Meldung und ohne dritten Start (Kennung vor terminate
+        // wird gelesen, bevor man weiß, wie der zweite Versuch ausgeht).
+        XCTAssertEqual(result.calls.filter { $0 == "launch" }.count, 2, "Kein dritter Start")
     }
 
     // T4 / AC-3: Die Fehlermeldung nennt Anzahl Starts, erwartetes Element und Befund.
