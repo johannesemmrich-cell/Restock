@@ -76,19 +76,76 @@ enum UITestLaunch {
 
     static let secondLaunchMarker = "UITestLaunch: zweiter Start nötig"
 
+    /// Messwerte für die Meldung „zweiter Start nötig“ (Issue #105, Durchgang 2); `nil` = nicht ermittelbar.
+    struct Measurement {
+        var secondsSinceRunStart: Double?    // Prozessstart des Testläufers
+        var secondsSinceHelperCall: Double?  // Eintritt in UITestLaunch.start
+        var load: (Double, Double, Double)?  // getloadavg: 1/5/15 min
+        var pidBefore: Int32?                // App-Prozesskennung (nicht öffentliche processID, siehe appProcessID) vor terminate()
+        var pidAfter: Int32?                 // nach dem zweiten launch()
+        var launchOrdinal: Int               // laufende Nummer der Starts im Lauf
+    }
+
+    /// Laufende Nummer der Starts über alle Aufrufe des Helfers im Lauf.
+    static var launchCount = 0
+
+    /// Einzeilige Messzeile; nicht ermittelbare Werte stehen als „unbekannt“, nie als erfundene Zahl.
+    static func measurementLine(_ m: Measurement) -> String {
+        let posix = Locale(identifier: "en_US_POSIX")
+        func num(_ v: Double) -> String { String(format: "%.1f", locale: posix, v) }
+        func secs(_ v: Double?) -> String { v.map { "\(num($0)) s" } ?? "unbekannt" }
+        let load = m.load.map { "\(num($0.0))/\(num($0.1))/\(num($0.2))" } ?? "unbekannt"
+        let pid = (m.pidBefore == nil && m.pidAfter == nil) ? "unbekannt"
+            : "\(m.pidBefore.map(String.init) ?? "unbekannt") → \(m.pidAfter.map(String.init) ?? "unbekannt")"
+        return "seit Lauf \(secs(m.secondsSinceRunStart)), seit Helferaufruf \(secs(m.secondsSinceHelperCall)), "
+            + "Last \(load), pid \(pid), Start Nr. \(m.launchOrdinal)"
+    }
+
     /// Reine Entscheidungslogik: launch, probe; bei Fehlschlag genau einmal terminate, launch, probe.
+    /// Messwerte (`pid`, `snapshot`) werden nur gelesen, und nur nach dem ersten Fehlschlag.
     static func run(launch: () -> Void, terminate: () -> Void,
                     probe: () -> (matched: Bool, detail: String),
+                    pid: () -> Int32?, snapshot: () -> Measurement,
                     report: (String) -> Void) -> Outcome {
         launch()
         let first = probe()
         if first.matched { return Outcome(kind: .firstLaunch, launches: 1, detail: first.detail) }
+        let pidBefore = pid()
         terminate()
         launch()
+        let pidAfter = pid()
         let second = probe()
         guard second.matched else { return Outcome(kind: .failed, launches: 2, detail: second.detail) }
-        report("\(secondLaunchMarker) — erster Versuch: \(first.detail)")
+        var measurement = snapshot()
+        measurement.pidBefore = pidBefore
+        measurement.pidAfter = pidAfter
+        report("\(secondLaunchMarker) — erster Versuch: \(first.detail) — \(measurementLine(measurement))")
         return Outcome(kind: .secondLaunch, launches: 2, detail: second.detail)
+    }
+
+    /// Prozessstart des Testläufers (sysctl KERN_PROC_PID, p_starttime); `nil`, wenn nicht ermittelbar.
+    static func runnerStartDate() -> Date? {
+        var info = kinfo_proc()
+        var size = MemoryLayout<kinfo_proc>.stride
+        var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid()]
+        guard sysctl(&mib, u_int(mib.count), &info, &size, nil, 0) == 0, size > 0 else { return nil }
+        let start = info.kp_proc.p_un.__p_starttime
+        guard start.tv_sec > 0 else { return nil }
+        return Date(timeIntervalSince1970: Double(start.tv_sec) + Double(start.tv_usec) / 1_000_000)
+    }
+
+    /// Prozesskennung der App. `XCUIApplication` hat unter iOS keine öffentliche Eigenschaft dafür;
+    /// gelesen wird die nicht öffentliche `processID` nur, wenn vorhanden. Fehlt sie oder ist sie ≤ 0: `nil`.
+    static func appProcessID(_ app: XCUIApplication) -> Int32? {
+        guard app.responds(to: NSSelectorFromString("processID")),
+              let pid = (app.value(forKey: "processID") as? NSNumber)?.int32Value, pid > 0 else { return nil }
+        return pid
+    }
+
+    static func loadAverage() -> (Double, Double, Double)? {
+        var values = [Double](repeating: 0, count: 3)
+        guard getloadavg(&values, 3) == 3 else { return nil }
+        return (values[0], values[1], values[2])
     }
 
     static func failureMessage(launches: Int, expected: String, detail: String) -> String {
@@ -101,13 +158,20 @@ enum UITestLaunch {
     static func start(_ app: XCUIApplication, expecting element: XCUIElement, description: String? = nil,
                       file: StaticString = #filePath, fileID: String = #fileID,
                       function: String = #function, line: UInt = #line) -> Outcome {
+        let helperCall = Date()
         let expected = description ?? "erwartetes Element"
         let outcome = run(
-            launch: { app.launch() },
+            launch: { launchCount += 1; app.launch() },
             terminate: { app.terminate() },
             probe: {
                 let result = element.waitUntilHittable()
                 return (result.matched, result.last.description)
+            },
+            pid: { appProcessID(app) },
+            snapshot: {
+                Measurement(secondsSinceRunStart: runnerStartDate().map { Date().timeIntervalSince($0) },
+                            secondsSinceHelperCall: Date().timeIntervalSince(helperCall),
+                            load: loadAverage(), pidBefore: nil, pidAfter: nil, launchOrdinal: launchCount)
             },
             report: { NSLog("%@ [%@ %@, %@]", $0, fileID, function, expected) })
         if outcome.kind == .failed {
