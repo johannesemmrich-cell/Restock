@@ -1,0 +1,11 @@
+FAIL AC-1 Matrix mit zwei Hälften A und B – matrix={}
+FAIL AC-1 Jobname enthält die Hälfte – name=None
+FAIL AC-5 fail-fast false
+PASS AC-8 timeout-minutes bleibt 60
+FAIL AC-7 Artefaktname je Hälfte verschieden – UITestResults.xcresult
+FAIL AC-6 Hälfte B nutzt -skip-testing
+FAIL AC-6 Hälfte A wählt Klassen per -only-testing:RestockUITests/<Klasse>
+FAIL AC-8 Klassenliste genau einmal in ci.yml – Treffer je Klasse: [0, 0, 0, 0]
+FAIL AC-8 Kommentar nennt die Teilung
+
+8 Prüfung(en) fehlgeschlagen
