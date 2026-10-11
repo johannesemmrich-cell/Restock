@@ -1,0 +1,11 @@
+PASS AC-1 Matrix mit zwei Hälften A und B
+PASS AC-1 Jobname enthält die Hälfte
+PASS AC-5 fail-fast false
+PASS AC-8 timeout-minutes bleibt 60
+PASS AC-7 Artefaktname je Hälfte verschieden
+PASS AC-6 Hälfte B nutzt -skip-testing
+PASS AC-6 Hälfte A wählt Klassen per -only-testing:RestockUITests/<Klasse>
+PASS AC-8 Klassenliste genau einmal in ci.yml
+PASS AC-8 Kommentar nennt die Teilung
+
+0 Prüfung(en) fehlgeschlagen
