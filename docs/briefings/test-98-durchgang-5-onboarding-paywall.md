@@ -1,6 +1,6 @@
 ---
 spec_file: docs/specs/ui-tests/test-98-durchgang-5-onboarding-paywall.md
-spec_sha256: e7e2fce83cd8d6bff52e06e861e637041e9fe918cdda961b34bbd3b63bd0fdea
+spec_sha256: 4e2f96e627724e03acbf78a6e4da2a04a0f479048559e727a86ad2cf668376de
 ---
 
 # PO-Briefing: test-98-durchgang-5-onboarding-paywall
@@ -11,22 +11,22 @@ spec_sha256: e7e2fce83cd8d6bff52e06e861e637041e9fe918cdda961b34bbd3b63bd0fdea
 
 ## Was gebaut wird
 
-Automatische Tests spielen Onboarding, Paywall-Sperre und falsche Dev-Passwort-Eingabe wie ein echter Nutzer durch.
+Automatische Tests für Onboarding, Bezahlsperre und falsches Entwickler-Passwort, plus Korrektur des Paywall-Textes.
 
 ## Definition of Done
 
-Neue und bestehende Oberflächentests laufen gemeinsam dreimal grün, ohne Rückstände zu hinterlassen.
+Alle neuen Tests laufen grün, auch dreimal wiederholt und zusammen mit den Bestandstests; die Paywall nennt "Rezeptplan" statt "dieses Feature".
 
 ## Wie geprüft wird
 
-Tests bedienen sichtbare Elemente und beweisen Sperre, Läden, Name und Neustart, nicht aber Kauf, Wiederherstellen oder richtiges Passwort.
+Tests bedienen die echte Oberfläche und prüfen Läden, Name, Sperre und Fehlermeldung; Kauf, Wiederherstellen und richtiges Passwort bleiben ungeprüft.
 
 ## Kritische Anmerkungen
 
-- Kauf, Wiederherstellen und richtiges Dev-Passwort bleiben ungetestet; Punkt 7 ist nur teilweise erledigt.
-- Laden-Einrichtung fehlt bewusst (Durchgang 6); Punkt 7 ist erst danach vollständig.
-- Umfang etwa 265 statt 250 Zeilen; bei Überschreitung Rückmeldung vor Weiterbau.
+- Fund: Paywall zeigte "dieses Feature" statt Funktionsname; wird nun mitkorrigiert, einzige sichtbare Textänderung am Produkt.
+- Umfang: 5 Dateien, ca. 275 Zeilen, über der 250er-Grenze; Kürzung möglich.
+- Kauf, Wiederherstellen, richtiges Dev-Passwort und Ladeneinrichtung bleiben ungetestet.
 
 ## Freigabe-Frage
 
-Gibst du Durchgang 5 frei, obwohl Kauf, richtiges Passwort und Laden-Einrichtung noch offen bleiben?
+Gibst du Durchgang 5 mit fünf geänderten Dateien, ungeprüftem Kauf und der Paywall-Textkorrektur frei?

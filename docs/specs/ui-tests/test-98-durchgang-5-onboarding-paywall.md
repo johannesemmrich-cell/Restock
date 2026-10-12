@@ -36,7 +36,12 @@ Scoping-Limits gelten je Durchgang. Dies ist Durchgang 5 = Onboarding + Paywall-
 (Falsch-Pfad). **`StoreSetupView` (Laden-Einrichtung) ist Durchgang 6** und nicht Teil dieser Spec.
 Punkte 5 (Tagesmitteilung) und 6 (Siri/Widget) bleiben offen für einen späteren Durchgang.
 
-Kein Produktverhalten ändert sich. Produktcode bekommt nur einen `#if DEBUG`-Zweig. Kein Modell
+Produktcode bekommt einen `#if DEBUG`-Zweig und (Nachtrag nach RED, PO-Entscheidung „jetzt mitfixen“
+2026-10-12) eine kleine Korrektur in `HomeView`: Der RED-Lauf von P1 reproduzierte, dass die Paywall aus
+fork.knife/chart.bar „Schalte dieses Feature …“ statt „den Rezeptplan“/„die Ausgaben-Analyse“ zeigt
+(`.sheet(isPresented:)` liest `paywallFeature` beim ersten Öffnen mit dem alten Wert; bekannte
+SwiftUI-Eigenheit, Abhilfe `.sheet(item:)`; Quellen: Apple-Forum 694462, swiftjectivec „Presenting
+Sheets: Item, or a Boolean Binding?“). Sonst ändert sich kein Produktverhalten. Kein Modell
 beteiligt, alles deterministisch (Regel vor Modell: nichts hier braucht ein Sprachmodell).
 
 **Offene Grenzen (gelten für jede positive Zusage dieses Durchgangs):**
@@ -66,13 +71,18 @@ beteiligt, alles deterministisch (Regel vor Modell: nichts hier braucht ein Spra
 - **Geändert:** `Restock.xcodeproj/project.pbxproj` — zwei neue Testdateien in `PBXBuildFile`,
   `PBXFileReference`, `PBXGroup` (RestockUITests), `PBXSourcesBuildPhase` des UITests-Targets (~10 LoC).
 - **Nicht geändert (ausdrücklich):** `OnboardingView`, `OnboardingGate` (Auswertung von
-  `hasCompletedOnboarding`; alle UI-Tests hängen daran), `PaywallView`, `PremiumService`, `HomeView`,
+  `hasCompletedOnboarding`; alle UI-Tests hängen daran), `PaywallView`, `PremiumService`, `HomeView`
+  (außer der Paywall-Korrektur unten),
   `SettingsView` (inklusive `DevPasswordSheet` und Hash), `CloudPreferencesSync`, alle Texte und
   Layout. Keine neue `Info.plist`-Berechtigung, kein neuer `@AppStorage`-Schlüssel, keine neue
   Datei im Produktziel, keine Scheme-Änderung.
 
-Geschätzter Umfang: 4 Dateien (2 Tests, `SmartCartApp.swift`, `project.pbxproj`), ca. +265 LoC,
-davon ca. 15 DEBUG-Produktcode. Das liegt im Dateilimit (4–5) und **an der Grenze des Zeilenlimits
+- **Geändert (Nachtrag):** `SmartCart/Views/Home/HomeView.swift` — nur die Paywall-Darstellung:
+  `showPaywall` + `paywallFeature` werden durch eine Identifiable-Anfrage und `.sheet(item:)` ersetzt
+  (~8 LoC); Texte und Layout der Paywall bleiben, nur der Funktionsname stimmt nun.
+
+Geschätzter Umfang: 5 Dateien (2 Tests, `SmartCartApp.swift`, `HomeView.swift`, `project.pbxproj`),
+ca. +275 LoC (Tests zählen nach tatsächlichem Diff), davon ca. 23 Produktcode. Das liegt im Dateilimit (4–5) und **an der Grenze des Zeilenlimits
 (±250)**. Kandidaten zum Kürzen, falls das Scope-Gate anschlägt: Gegenprobe P4 (~25 LoC) und der
 Neustart-Teil von O1 (~15 LoC). Wird es trotzdem mehr, Rückmeldung mit Schätzung vor dem Weiterbau.
 
@@ -257,10 +267,14 @@ Aufräum-Argument für `developerMode`; deshalb nicht hier.
   ein Abbruch ist kein Grün.
 - AC-11: Produktcode: `-clearOnboardingForUITests` existiert ausschließlich unter `#if DEBUG`
   (Release-Build enthält keinen Verweis darauf; nachgewiesen durch Release-Build und Suche im Diff).
-  `OnboardingView`, `OnboardingGate`, `PaywallView`, `PremiumService`, `HomeView`, `SettingsView`
+  `OnboardingView`, `OnboardingGate`, `PaywallView`, `PremiumService`, `SettingsView`
   bleiben im Diff unverändert; kein neuer `@AppStorage`-Schlüssel, keine `Info.plist`-Änderung, keine
   Scheme-Änderung.
-- AC-12: Umfang: ≤ 5 Dateien (geplant 4), ca. +265 LoC; keine Änderung an sichtbaren Texten oder
+- AC-14: Paywall-Text (Nachtrag nach RED): Aus fork.knife und chart.bar zeigt die Paywall den
+  passenden Funktionsnamen schon beim ersten Öffnen und bei jedem weiteren („Schalte den Rezeptplan …“,
+  „Schalte die Ausgaben-Analyse …“), nicht „dieses Feature“. Nachweis: P1 und P2 rot vor, grün nach
+  der Korrektur in `HomeView`; im Diff ist nur die Paywall-Darstellung dort geändert.
+- AC-12: Umfang: ≤ 5 Dateien (geplant 5 mit `HomeView`), ca. +275 LoC; keine Änderung an sichtbaren Texten außer dem Funktionsnamen in der Paywall (AC-14) und keine am
   Layout. Überschreitung von ±250 LoC wird vor dem Weiterbau gemeldet.
 - AC-13: Offene Grenzen sind in Spec, Testkommentar (Kopf beider Klassen) und Ticketkommentar benannt:
   Kauf, Wiederherstellen und Release-Fehlermeldung der Paywall (DEBUG-Zweig `dismiss()` ist nicht der
@@ -273,8 +287,8 @@ Aufräum-Argument für `developerMode`; deshalb nicht hier.
 | # | Testfall | Datei | Art | Prüft |
 |---|----------|-------|-----|-------|
 | T1 | `testOnboardingWalkthroughCreatesChosenStoresAndName` (O1, inkl. Neustart) | `OnboardingUITests` | UI | AC-1, 2, 3, 4, 9 |
-| T2 | `testRecipePlanLockedOpensPaywall` (P1) | `PaywallUITests` | UI | AC-5, 6, 9 |
-| T3 | `testExpensesAnalysisLockedOpensPaywall` (P2) | `PaywallUITests` | UI | AC-5, 6 |
+| T2 | `testRecipePlanLockedOpensPaywall` (P1) | `PaywallUITests` | UI | AC-5, 6, 9, 14 |
+| T3 | `testExpensesAnalysisLockedOpensPaywall` (P2) | `PaywallUITests` | UI | AC-5, 6, 14 |
 | T4 | `testSettingsProRowOpensPaywall` (P3) | `PaywallUITests` | UI | AC-5, 6 |
 | T5 | `testPremiumAccessOpensMenuPlanWithoutPaywall` (P4, Gegenprobe) | `PaywallUITests` | UI | AC-7 |
 | T6 | `testWrongDevPasswordShowsErrorAndKeepsSheetOpen` (P5) | `PaywallUITests` | UI | AC-8, 9 |
