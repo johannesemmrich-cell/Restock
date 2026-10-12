@@ -17,6 +17,14 @@ private struct PendingReceiptScan: Identifiable {
     let payload: SharedReceiptPayload
 }
 
+/// `.sheet(item:)`-Ziel für die Paywall — trägt den Feature-Namen mit, damit das Sheet schon
+/// beim ersten Öffnen den richtigen Text zeigt (bei `isPresented` + separatem `@State` las der
+/// Sheet-Inhalt noch den alten Wert).
+private struct PaywallRequest: Identifiable {
+    let id = UUID()
+    let feature: String
+}
+
 struct HomeView: View {
     @Query(filter: #Predicate<Store> { $0.isActive }, sort: \Store.sortIndex) private var activeStores: [Store]
     @Query private var allRecords: [PurchaseRecord]
@@ -88,8 +96,7 @@ struct HomeView: View {
     @AppStorage("replenishmentCollapsed") private var replenishmentCollapsed = false
     @AppStorage("developerMode") private var developerMode = false
     @EnvironmentObject private var premium: PremiumService
-    @State private var showPaywall = false
-    @State private var paywallFeature: String = "dieses Feature"
+    @State private var paywallRequest: PaywallRequest?
     @State private var showStoreSetup = false
     @State private var storeToDelete: Store?
     @State private var showJoinStore = false
@@ -194,7 +201,7 @@ struct HomeView: View {
             .sheet(isPresented: $showAllItems) { AllItemsView() }
             .sheet(isPresented: $showStoreSetup) { NavigationStack { StoreSetupView() } }
             .sheet(isPresented: $showJoinStore) { JoinStoreSheet(prefilledCode: pendingJoinCode) }
-            .sheet(isPresented: $showPaywall) { PaywallView(feature: paywallFeature) }
+            .sheet(item: $paywallRequest) { request in PaywallView(feature: request.feature) }
             .navigationDestination(item: $deepLinkStore) { store in
                 StoreDetailView(store: store)
             }
@@ -1389,8 +1396,7 @@ struct HomeView: View {
                     if premium.hasPremiumAccess {
                         showMenuPlan = true
                     } else {
-                        paywallFeature = "den Rezeptplan"
-                        showPaywall = true
+                        paywallRequest = PaywallRequest(feature: "den Rezeptplan")
                     }
                 } label: {
                     Image(systemName: "fork.knife")
@@ -1401,8 +1407,7 @@ struct HomeView: View {
                     if premium.hasPremiumAccess {
                         showPriceOverview = true
                     } else {
-                        paywallFeature = "die Ausgaben-Analyse"
-                        showPaywall = true
+                        paywallRequest = PaywallRequest(feature: "die Ausgaben-Analyse")
                     }
                 } label: {
                     Image(systemName: "chart.bar")

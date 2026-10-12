@@ -44,6 +44,7 @@ struct SmartCartApp: App {
             Self.seedQuickAddAssignmentForUITestsIfNeeded(context: container.mainContext)
             Self.clearReplenishmentForUITestsIfNeeded(context: container.mainContext)
             Self.seedReplenishmentForUITestsIfNeeded(context: container.mainContext)
+            Self.clearOnboardingForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
 
@@ -460,6 +461,20 @@ struct SmartCartApp: App {
         guard ProcessInfo.processInfo.arguments.contains("-clearReplenishmentForUITests") else { return }
         removeReplenishmentSeed(context: context)
         try? context.save()
+    }
+
+    /// Setzt die App auf den Erststart zurück: Läden und Artikel weg, Onboarding-Flag,
+    /// Länderwahl und Anzeigename gelöscht — `OnboardingUITests` startet die App mit diesem
+    /// Argument, damit das Onboarding wie bei einer frischen Installation erscheint.
+    /// Läuft als letzter DEBUG-Schritt in `init()`, damit kein Seed danach wieder Läden anlegt.
+    /// Only runs on `-clearOnboardingForUITests`, DEBUG-only.
+    private static func clearOnboardingForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-clearOnboardingForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        try? context.save()
+        UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
+        UserDefaults.standard.removeObject(forKey: "selectedCountry")
+        UserDefaults(suiteName: appGroupID)?.removeObject(forKey: UserIdentity.storageKey)
     }
 
     private static func removeReplenishmentSeed(context: ModelContext) {

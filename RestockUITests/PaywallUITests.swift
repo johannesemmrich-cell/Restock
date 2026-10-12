@@ -118,12 +118,13 @@ final class PaywallUITests: XCTestCase {
         scrollTo(version, in: app)
         XCTAssertTrue(version.waitUntilHittable().matched, "Zeile „Version“ nicht antippbar")
 
-        // Fünf Tipps mit einer aufgelösten Koordinate (2-s-Fenster); bei verschlucktem Tipp einmal wiederholen.
-        let spot = version.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        // Fünf Tipps als ein Mehrfachtipp-Ereignis: Einzeltipps brauchen auf langsamen Läufern je
+        // bis zu 4 s und reißen das 2-s-Fenster der Zählung. Bei verschlucktem Ereignis einmal
+        // wiederholen, mit 2,5 s Pause, damit die Zählung vorher sicher zurückgesetzt ist.
         let sheetTitle = app.staticTexts["Developer Mode"]
         for attempt in 0..<2 where !sheetTitle.exists {
             if attempt == 1 { Thread.sleep(forTimeInterval: 2.5) }
-            for _ in 0..<5 { spot.tap() }
+            version.tap(withNumberOfTaps: 5, numberOfTouches: 1)
             _ = sheetTitle.waitForExistence(timeout: UITestWait.defaultTimeout)
         }
         XCTAssertTrue(sheetTitle.exists, "Das Sheet „Developer Mode“ erscheint nach fünf Tipps nicht")
