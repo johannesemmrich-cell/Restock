@@ -466,8 +466,9 @@ struct ReceiptReviewCard: View {
 
     private func syncEditorFields() {
         priceText = Self.plainNumber(line.price, fractionDigits: 2)
-        quantityMode = line.weightBasis != nil ? .grams : .pieces
-        quantityText = Self.plainNumber(line.weightBasis ?? line.quantity, fractionDigits: 0)
+        let grams = line.weightBasis ?? line.estimatedPackageGrams
+        quantityMode = grams != nil ? .grams : .pieces
+        quantityText = Self.plainNumber(grams ?? line.quantity, fractionDigits: 0)
     }
 
     private func applyQuantityFromEditor() {
@@ -622,6 +623,10 @@ struct ReceiptReviewCard: View {
             let rate = "\(currency(line.price / printed * 1000)) \(per)"
             return [total, size, rate].compactMap { $0 }.joined(separator: " · ")
         }
+        if let estimate = line.estimatedPackageGrams, estimate > 0 {
+            // Abgepacktes Obst/Gemüse ohne Gewicht auf dem Bon: geschätzte Packung, als „ca.“.
+            return "\(total) · ca. \(Int(estimate.rounded())) g · \(currency(line.price / estimate * 1000)) je kg"
+        }
         return "\(total) · 1 St. · \(total) je Stück"
     }
 
@@ -634,6 +639,7 @@ struct ReceiptReviewCard: View {
     /// Schreibt ausschließlich die Felder, die `learningQuantity` liest — `unit` und
     /// `originalName` (die gedruckte Größe bzw. der Bontext) bleiben immer unverändert.
     static func applyQuantityEdit(_ line: inout EditableReceiptLine, mode: ReceiptQuantityMode, value: Double) {
+        line.quantityConfirmedByUser = true
         switch mode {
         case .pieces:
             // Untergrenze 1: eine Null würde in `learningQuantity` durch null teilen.

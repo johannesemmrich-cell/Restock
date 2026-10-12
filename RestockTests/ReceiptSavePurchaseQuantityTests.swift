@@ -162,3 +162,95 @@ final class ReceiptSavePurchaseQuantityTests: XCTestCase {
         XCTAssertEqual(result.unit, "g")
     }
 }
+
+/// Abgepacktes Obst/Gemüse ohne Gewicht auf dem Bon (Lidl-Bon 12.10.2026: „Bio Trauben kernlos
+/// 3,19 A“, „Bio Pflaumen dunkel 2,99 A“, keine „… kg x … EUR/kg“-Zeile). Vorher: „1 St. · 3,19 €
+/// je Stück“ und ein gelernter Stückpreis. Jetzt: geschätztes Packungsgewicht, Kilopreis.
+///
+/// Spec: docs/specs/views/receipt-produce-package-estimate.md
+final class ReceiptProducePackageEstimateTests: XCTestCase {
+
+    private func line(_ name: String, price: Double = 3.19) -> EditableReceiptLine {
+        EditableReceiptLine(name: name, price: price, originalName: name)
+    }
+
+    private func summary(_ line: EditableReceiptLine) -> String {
+        ReceiptReviewCard.priceSummary(for: line)
+            .replacingOccurrences(of: "\u{00A0}", with: " ")
+            .replacingOccurrences(of: "\u{202F}", with: " ")
+            .replacingOccurrences(of: "\u{2009}", with: " ")
+    }
+
+    func testLidlGrapesAreEstimatedAsPackageNotPiece() {
+        let trauben = line("Bio Trauben kernlos")
+        XCTAssertEqual(trauben.estimatedPackageGrams, 500)
+        XCTAssertEqual(summary(trauben), "3,19 € · ca. 500 g · 6,38 € je kg")
+        XCTAssertEqual(trauben.learningUnit(matchUnit: nil), "g")
+        XCTAssertEqual(trauben.learningQuantity(matchQuantityAmount: nil), 500)
+        let record = trauben.purchaseRecordQuantity()
+        XCTAssertEqual(record.amount, 500)
+        XCTAssertEqual(record.unit, "g")
+    }
+
+    func testLidlPlumsAreEstimated() {
+        XCTAssertEqual(line("Bio Pflaumen dunkel", price: 2.99).estimatedPackageGrams, 500)
+    }
+
+    /// Kein Obst/Gemüse: unverändert ein Stück.
+    func testBreadStaysPiece() {
+        let brot = line("Brot Bauernbag", price: 0.79)
+        XCTAssertNil(brot.estimatedPackageGrams)
+        XCTAssertEqual(summary(brot), "0,79 € · 1 St. · 0,79 € je Stück")
+        XCTAssertEqual(brot.learningUnit(matchUnit: nil), "stk")
+    }
+
+    /// Einzeln verkaufte Ware steht nicht in der Tabelle — „Stück“ bleibt richtig.
+    func testSinglePieceProduceStaysPiece() {
+        XCTAssertNil(line("Salatgurke", price: 0.69).estimatedPackageGrams)
+        XCTAssertNil(line("Brokkoli", price: 1.29).estimatedPackageGrams)
+    }
+
+    /// Ganze Wörter, keine Verarbeitungsprodukte.
+    func testProcessedOrCompoundNamesAreNotEstimated() {
+        XCTAssertNil(ReceiptParserService.estimatedProducePackageGrams(for: "Traubenzucker"))
+        XCTAssertNil(ReceiptParserService.estimatedProducePackageGrams(for: "Kartoffelsalat"))
+        XCTAssertNil(ReceiptParserService.estimatedProducePackageGrams(for: "Tomaten passiert"))
+        XCTAssertNil(ReceiptParserService.estimatedProducePackageGrams(for: "Kirschen Konfitüre"))
+    }
+
+    /// Eine gedruckte Größe im Namen hat Vorrang vor der Schätzung.
+    func testPrintedSizeWins() {
+        let tomaten = line("Cherrytomaten 250g", price: 1.29)
+        XCTAssertNil(tomaten.estimatedPackageGrams)
+        XCTAssertEqual(tomaten.learningQuantity(matchQuantityAmount: nil), 250)
+    }
+
+    /// Eine Gewichtszeile des Bons (gewogene Ware) hat Vorrang.
+    func testWeightLineWins() {
+        var trauben = line("Trauben hell")
+        trauben.weightBasis = 734
+        XCTAssertNil(trauben.estimatedPackageGrams)
+        XCTAssertEqual(trauben.purchaseRecordQuantity().amount, 734)
+    }
+
+    /// Menge des bereits gelisteten Artikels schlägt die Schätzung.
+    func testMatchedItemQuantityWins() {
+        XCTAssertEqual(line("Trauben").learningQuantity(matchQuantityAmount: 1000), 1000)
+    }
+
+    /// Stellt der Nutzer im Editor auf Stück, gilt das — keine Schätzung mehr.
+    func testUserChoiceOfPiecesDisablesEstimate() {
+        var trauben = line("Bio Trauben kernlos")
+        ReceiptReviewCard.applyQuantityEdit(&trauben, mode: .pieces, value: 1)
+        XCTAssertNil(trauben.estimatedPackageGrams)
+        XCTAssertEqual(trauben.learningUnit(matchUnit: nil), "stk")
+        XCTAssertEqual(summary(trauben), "3,19 € · 1 St. · 3,19 € je Stück")
+    }
+
+    /// Nach Umbenennung in einen Artikel ohne Tabelleneintrag greift die Schätzung nicht mehr.
+    func testRenamedLineUsesNewName() {
+        var trauben = line("Bio Trauben kernlos")
+        trauben.name = "Gurke"
+        XCTAssertNil(trauben.estimatedPackageGrams)
+    }
+}
