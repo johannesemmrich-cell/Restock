@@ -1,0 +1,7 @@
+Release-Nachweis AC-11 (Issue #98, Durchgang 5), erneut erzeugt 2026-10-12
+Build: xcodebuild -scheme Restock -configuration Release -destination 'generic/platform=iOS Simulator' -> BUILD SUCCEEDED (release-build-log.txt)
+Binary: Release-iphonesimulator/Restock.app/Restock
+strings | grep -c "clearOnboardingForUITests"  -> 0   (Argument nicht im Release-Binary)
+strings | grep -c "clearReplenishmentForUITests" -> 0   (Vergleich: bestehendes DEBUG-Argument, ebenfalls 0)
+Restock.debug.dylib: 0 Treffer fuer clearOnboardingForUITests
+Aenderung liegt ausschliesslich in SmartCart/SmartCartApp.swift unter #if DEBUG.
