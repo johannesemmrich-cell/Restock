@@ -133,3 +133,24 @@ Neustart-Schritt: der Seed darf beim zweiten Start nicht mitlaufen (Seed löscht
 ### Open Questions
 - [ ] Schalter in der Zeile (`Toggle("")`): eindeutig je Zeile findbar? Wird in der TDD-RED-Phase geprüft; sonst nur Wischweg testen.
 - [ ] Offene Grenzen für Spec: „Teilen beenden“ beim Löschen geteilter Läden (CloudKit), Emoji-Eingabe, Farbwähler; Punkte 5/6 aus #98 bleiben offen.
+
+## RED-Befunde (2026-10-12, Simulator Restock-Validate, Commit 2098f07)
+
+Stand: `StoreSetupUITests` mit 7 Tests, 6 grün, 1 rot. Beleg: `docs/artifacts/test-98-durchgang-6-laden-einrichtung/test-red-output.txt`, `s1-doppelte-zeile.png`.
+
+1. **Produktfehler (PO 2026-10-12: „jetzt mitfixen“):** Nach dem Deaktivieren steht der Laden doppelt in `StoreSetupView`: weiter in „Aktiv“
+   (Zeile ohne Picker, Schalter aus) und zusätzlich in „Inaktiv“. Ursache nach Code: `orderedActiveStores` ist eine lokale Kopie, die nur
+   `syncOrder()` neu füllt (`onAppear`, `onChange(of: allStores)` außerhalb des Bearbeiten-Modus); `store.isActive = false` ändert das Array
+   `allStores` nicht, `onChange` feuert nicht. Rot: `testDeactivateBySwipeMovesStoreToInactiveAndRemovesTile` (Zeile 119 „Lidl“ steht noch unter „Aktiv“).
+   Fix-Richtung: nach dem Deaktivieren (Wischknopf UND Zeilenschalter) `orderedActiveStores` neu aufbauen. Danach prüfen, ob Aktivieren
+   (Wisch, Schalter) in „Aktiv“ sauber erscheint und ob Löschen eines Ladens, der noch in `orderedActiveStores` steht, abstürzt (S3 lief grün).
+2. **Spec-Abweichungen, die einen Nachtrag brauchen (Spec ist freigegeben; Änderung nur mit „override“ des PO):**
+   - Rückfrage „Markt löschen?“ erscheint auf dem iPhone als Einblendmenü (`Popover`/`Sheet`) **ohne** „Abbrechen“-Knopf; Abbrechen = außerhalb tippen
+     (`otherElements["PopoverDismissRegion"]`). Der Dialogknopf „Löschen“ steht in `app.sheets`.
+   - Weggewischte Zeilen hinterlassen eine Geisterzeile (x < 0) in der Hierarchie; Helfer `rows(_:in:)` filtert `frame.minX >= 0`.
+   - Verschiebegriff-Label: „🛒 neu anordnen“ / „💄 neu anordnen“; Ziehen: `press(forDuration: 0.8, thenDragTo:, withVelocity: .slow, thenHoldForDuration: 0.5)` auf Mitte des zweiten Griffs + 20 pt.
+   - Neustart-Teil von S6: Reihenfolge überlebt nur, wenn die App vorher in den Hintergrund ging (`XCUIDevice.shared.press(.home)`) bzw. 8 s gewartet wurde;
+     direktes `terminate()` nach dem Ziehen verlor die Reihenfolge (2/2). `onMove` ruft kein `context.save()` auf. Als Beobachtung vermerkt, kein Fix beschlossen
+     (Nutzerweg „Home, dann beenden“ speichert).
+   - AC-10: Zeilenschalter ist in der Hierarchie als `Switch` je Zelle vorhanden (`value` 1/0); noch nicht bedient. In GREEN entscheiden (S8) oder als offene Grenze nennen.
+3. Sheet schließen per Ziehen von der Titelzeile (0,15 → 0,95) funktioniert; „Verwalten“ trägt das Label „Verwalten“.
