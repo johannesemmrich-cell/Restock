@@ -1,6 +1,7 @@
 import BackgroundTasks
 import Foundation
 import SwiftData
+import UserNotifications
 
 // MARK: - Gebündelte Nachkauf-Nachricht (Issue #30, C3)
 
@@ -175,7 +176,11 @@ enum ReplenishmentBackgroundRefresh {
     /// übernommener und wieder gelöschter Vorschläge (A4) bleibt der App vorbehalten; bis dahin
     /// gilt ein solcher Artikel hier noch nicht als abgelehnt.
     @MainActor
-    static func run(container: ModelContainer, now: Date = Date()) async {
+    static func run(
+        container: ModelContainer,
+        now: Date = Date(),
+        center: DigestNotificationCenter = UNUserNotificationCenter.current()
+    ) async {
         schedule(now: now)
         guard isEnabled else { return }
         let context = container.mainContext
@@ -198,6 +203,6 @@ enum ReplenishmentBackgroundRefresh {
             dismissed: ReplenishmentFeedback.storedDismissals(),
             pendingNames: pendingNames
         )
-        await NotificationService.shared.scheduleReplenishmentDigests(candidates: candidates, now: now)
+        await NotificationService.shared.scheduleReplenishmentDigests(candidates: candidates, now: now, center: center)
     }
 }
