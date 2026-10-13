@@ -7,6 +7,11 @@ import XCTest
 /// mit `sortIndex` 0 — die Startreihenfolge ist daher nicht festgelegt; der Reihenfolge-Test liest sie
 /// vorher und prüft die Umkehrung. Löschen läuft nur gegen gesäte Läden im Test-Simulator.
 ///
+/// Zeilenschalter: per S8 bedient (Aus und wieder An). Reihenfolge: `onMove` speichert seit dem Fix mit
+/// PO-Wort vom 2026-10-13 sofort; S6 beendet die App deshalb direkt, ohne Umweg über den Hintergrund.
+/// Rückfrage „Markt löschen?“: erscheint auf dem iPhone als Einblendmenü ohne „Abbrechen“-Knopf;
+/// Abbrechen heißt, außerhalb tippen (S3).
+///
 /// Offene Grenzen: „Teilen beenden“ beim Löschen geteilter Läden (CloudKit), Emoji-Eingabe, Farbwähler,
 /// Tagesmitteilung und Siri/Widget (Punkte 5/6 aus #98) sind nicht geprüft.
 final class StoreSetupUITests: XCTestCase {
@@ -37,12 +42,29 @@ final class StoreSetupUITests: XCTestCase {
         app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "\(name),")).firstMatch
     }
 
-    private func openSetup(_ app: XCUIApplication) {
+    /// Gemessen (Lauf 2): nach einem Kaltstart von ca. 18 s kam der Tipp auf „Verwalten“ einmal nicht an,
+    /// Ursache unbekannt. Deshalb: höchstens ein zweiter Tipp, mit Messzeile — keine stille Abhilfe.
+    private func openSetup(_ app: XCUIApplication, function: String = #function) {
         let manage = app.buttons["Verwalten"]
+        let edit = app.buttons["Bearbeiten"]
         let ready = manage.waitUntilHittable()
         XCTAssertTrue(ready.matched, "„Verwalten“ nicht antippbar — zuletzt: \(ready.last)")
+        let firstTap = Date()
         manage.tap()
-        XCTAssertTrue(app.buttons["Bearbeiten"].waitForExistence(timeout: UITestWait.defaultTimeout),
+        if !edit.waitForExistence(timeout: 10) {
+            let again = manage.waitUntilHittable(timeout: 0)
+            if again.matched {
+                let load = UITestLaunch.loadAverage().map {
+                    String(format: "%.1f/%.1f/%.1f", locale: Locale(identifier: "en_US_POSIX"), $0.0, $0.1, $0.2)
+                } ?? "unbekannt"
+                let since = String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"),
+                                   Date().timeIntervalSince(firstTap))
+                NSLog("%@", "StoreSetupUITests: zweiter Tipp auf Verwalten nötig — seit erstem Tipp \(since) s, "
+                      + "Verwalten: \(again.last), Last \(load) [\(function)]")
+                manage.tap()
+            }
+        }
+        XCTAssertTrue(edit.waitForExistence(timeout: UITestWait.defaultTimeout),
                       "Laden-Einrichtung nicht geöffnet")
     }
 
@@ -83,10 +105,32 @@ final class StoreSetupUITests: XCTestCase {
         XCTAssertTrue(result.matched, "\(message) — erwartet \(expected), zuletzt \(result.last)")
     }
 
-    private func swipeAndTap(_ action: String, on r: XCUIElement, in app: XCUIApplication) {
+    /// Gemessen (Runde 2, 3 von 5 Läufen): die erste Wischgeste nach dem Kaltstart, 2–5 s nach dem Öffnen
+    /// des Sheets, kam nicht an — der Knopf erschien nie. Ursache unbekannt. Deshalb: vorher warten, bis
+    /// die Zeile stillsteht, und höchstens eine zweite Geste, mit Messzeile — keine stille Abhilfe.
+    private func swipeAndTap(_ action: String, on r: XCUIElement, in app: XCUIApplication,
+                             function: String = #function) {
         XCTAssertTrue(r.waitForExistence(timeout: UITestWait.defaultTimeout), "Zeile für „\(action)“ fehlt")
+        var previous: CGRect?
+        _ = UITestWait.poll(timeout: 4, read: { () -> Bool in
+            let current = r.frame
+            defer { previous = current }
+            return previous == current
+        }, done: { $0 })
+        let firstSwipe = Date()
         r.swipeLeft()
         let button = app.buttons[action]
+        let early = button.waitUntilHittable(timeout: 4)
+        if !early.matched {
+            let load = UITestLaunch.loadAverage().map {
+                String(format: "%.1f/%.1f/%.1f", locale: Locale(identifier: "en_US_POSIX"), $0.0, $0.1, $0.2)
+            } ?? "unbekannt"
+            let since = String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"),
+                               Date().timeIntervalSince(firstSwipe))
+            NSLog("%@", "StoreSetupUITests: zweite Wischgeste für \(action) nötig — seit erster Geste \(since) s, "
+                  + "Knopf: \(early.last), Last \(load) [\(function)]")
+            r.swipeLeft()
+        }
         let ready = button.waitUntilHittable()
         XCTAssertTrue(ready.matched, "Wischknopf „\(action)“ nicht antippbar — zuletzt: \(ready.last)")
         button.tap()
@@ -128,9 +172,44 @@ final class StoreSetupUITests: XCTestCase {
         deactivate("Lidl", in: app)
         swipeAndTap("Aktivieren", on: row("Lidl", in: app, inactive: true), in: app)
         waitForGone(app.staticTexts["Inaktiv"], "Abschnitt „Inaktiv“ bleibt trotz Aktivieren")
+        // Ohne Überschrift „Inaktiv“ zählt jede sichtbare Zeile als „Aktiv“.
+        XCTAssertTrue(row("Lidl", in: app).exists, "„Lidl“ steht nach dem Aktivieren nicht wieder unter „Aktiv“")
         closeSetup(app)
         let ready = tile("Lidl", in: app).waitUntilHittable()
         XCTAssertTrue(ready.matched, "Kachel „Lidl“ fehlt nach dem Aktivieren — zuletzt: \(ready.last)")
+    }
+
+    // MARK: - S8
+
+    /// AC-10: Der Schalter in der Zeile (je Zelle ein `Switch`, `value` „1“/„0“) deaktiviert und aktiviert.
+    func testRowSwitchDeactivatesAndActivates() {
+        let app = launchedApp()
+        openSetup(app)
+        let activeSwitch = row("Lidl", in: app).switches.firstMatch
+        XCTAssertTrue(activeSwitch.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Schalter in der Zeile „Lidl“ fehlt")
+        XCTAssertEqual(activeSwitch.value as? String, "1", "Schalter „Lidl“ steht vor dem Tipp nicht auf an")
+        activeSwitch.tap()
+        XCTAssertTrue(app.staticTexts["Inaktiv"].waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Abschnitt „Inaktiv“ erscheint nach dem Schalter nicht")
+        XCTAssertTrue(row("Lidl", in: app, inactive: true).exists, "„Lidl“ steht nicht unter „Inaktiv“")
+        XCTAssertFalse(row("Lidl", in: app).exists, "„Lidl“ steht noch unter „Aktiv“")
+        closeSetup(app)
+        waitForGone(tile("Lidl", in: app), "Kachel „Lidl“ steht nach dem Ausschalten noch auf der Startseite")
+
+        openSetup(app)
+        let inactiveRow = row("Lidl", in: app, inactive: true)
+        XCTAssertTrue(inactiveRow.exists, "„Lidl“ steht nach erneutem Öffnen nicht unter „Inaktiv“")
+        let inactiveSwitch = inactiveRow.switches.firstMatch
+        XCTAssertTrue(inactiveSwitch.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Schalter in der inaktiven Zeile „Lidl“ fehlt")
+        XCTAssertEqual(inactiveSwitch.value as? String, "0", "Schalter „Lidl“ steht unter „Inaktiv“ nicht auf aus")
+        inactiveSwitch.tap()
+        waitForGone(app.staticTexts["Inaktiv"], "Abschnitt „Inaktiv“ bleibt nach dem Einschalten")
+        XCTAssertTrue(row("Lidl", in: app).exists, "„Lidl“ steht nach dem Einschalten nicht wieder unter „Aktiv“")
+        closeSetup(app)
+        let ready = tile("Lidl", in: app).waitUntilHittable()
+        XCTAssertTrue(ready.matched, "Kachel „Lidl“ fehlt nach dem Einschalten — zuletzt: \(ready.last)")
     }
 
     // MARK: - S3
@@ -154,8 +233,10 @@ final class StoreSetupUITests: XCTestCase {
         swipeAndTap("Löschen", on: row("dm", in: app, inactive: true), in: app)
         XCTAssertTrue(app.staticTexts["Markt löschen?"].waitForExistence(timeout: UITestWait.defaultTimeout))
         app.sheets.buttons["Löschen"].firstMatch.tap()
-        waitForGone(row("dm", in: app, inactive: true), "„dm“ steht nach dem Löschen noch in der Liste")
+        // Nicht `row(…inactive: true)`: mit dem letzten inaktiven Laden verschwindet auch die Überschrift
+        // „Inaktiv“, und zwischen deren exists und frame scheitert die Abfrage (gemessen, Lauf 1).
         waitForGone(app.staticTexts["Inaktiv"], "Abschnitt „Inaktiv“ bleibt ohne inaktive Läden")
+        XCTAssertTrue(rows("dm", in: app).isEmpty, "„dm“ steht nach dem Löschen noch in der Liste")
         closeSetup(app)
         waitForGone(tile("dm", in: app), "Kachel „dm“ steht nach dem Löschen noch auf der Startseite")
         XCTAssertTrue(tile("Lidl", in: app).waitUntilHittable().matched, "Kachel „Lidl“ fehlt")
@@ -234,11 +315,8 @@ final class StoreSetupUITests: XCTestCase {
         assertTileOrder(app, reversed, "Kachelreihenfolge nach dem Ziehen")
 
         // Neustart ohne Seed (der Seed würde alle Läden neu anlegen).
-        // Wie beim Nutzer: erst in den Hintergrund (dabei speichert SwiftData), dann beenden.
-        XCUIDevice.shared.press(.home)
-        expectation(for: NSPredicate(format: "state == %d", XCUIApplication.State.runningBackground.rawValue),
-                    evaluatedWith: app)
-        waitForExpectations(timeout: UITestWait.defaultTimeout)
+        // Direkt beenden, kein Hintergrund: Eine frühere Fassung von `onMove` ohne save() verlor dabei
+        // die Reihenfolge (2/2 gemessen) — dieser Weg beweist, dass sofort gespeichert wird.
         app.terminate()
         let restarted = XCUIApplication()
         restarted.launchArguments += ["-hasCompletedOnboarding", "YES"]

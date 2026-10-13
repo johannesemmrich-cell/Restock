@@ -1,0 +1,1102 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/StoreSetupUITests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-10-13 13:10:27.514822+0200 RestockUITests-Runner[59717:3125180] [Default] Running tests...
+objc[59717]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10773c310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x1077d8398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-13 13:10:29.581.
+Test Suite 'RestockUITests.xctest' started at 2026-10-13 13:10:29.582.
+Test Suite 'StoreSetupUITests' started at 2026-10-13 13:10:29.582.
+Test Case '-[RestockUITests.StoreSetupUITests testActivateBySwipeRestoresStoreAndTile]' started.
+    t =     0.00s Start Test at 2026-10-13 13:10:29.584
+    t =     0.31s Set Up
+    t =     0.32s Open com.johannesemmrich.Restock
+    t =     0.32s     Launch com.johannesemmrich.Restock
+2026-10-13 13:10:30.316 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:10:30.316 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.43s         Setting up automation session
+    t =     3.31s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testActivateBySwipeRestoresStoreAndTile] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testActivateBySwipeRestoresStoreAndTile] : Set a .modelContext in view's environment to use Query
+    t =     5.03s Checking existence of `Button (First Match)`
+    t =     5.11s Find the Button (First Match)
+    t =     5.17s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =     5.24s Checking existence of `"Verwalten" Button`
+    t =     5.27s Find the "Verwalten" Button
+    t =     5.30s Find the "Verwalten" Button
+    t =     5.34s Tap "Verwalten" Button
+    t =     5.34s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.35s     Find the "Verwalten" Button
+    t =     5.37s     Check for interrupting elements affecting "Verwalten" Button
+    t =     5.42s     Synthesize event
+    t =     5.83s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.07s Waiting 10.0s for "Bearbeiten" Button to exist
+    t =     7.11s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     7.11s         Checking existence of `"Bearbeiten" Button`
+    t =     7.24s Waiting 20.0s for "Bearbeiten" Button to exist
+    t =     8.29s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     8.29s         Checking existence of `"Bearbeiten" Button`
+    t =     8.35s Checking existence of `"Inaktiv" StaticText`
+    t =     8.41s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =     8.46s Checking existence of `Cell (Element at index 0)`
+    t =     8.56s Find the Cell (Element at index 0)
+    t =     8.74s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =     8.84s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =     8.89s Waiting 20.0s for Cell at {{16.0, 219.7}, {370.0, 106.3}} to exist
+    t =     9.91s     Checking `Expect predicate `existsNoRetry == 1` for object Cell at {{16.0, 219.7}, {370.0, 106.3}}`
+    t =     9.91s         Checking existence of `Cell at {{16.0, 219.7}, {370.0, 106.3}}`
+    t =     9.97s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    10.27s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    10.32s Swipe left Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    10.32s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.32s     Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    10.37s     Check for interrupting elements affecting Cell
+    t =    10.40s     Synthesize event
+    t =    10.87s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.40s Checking existence of `"Deaktivieren" Button`
+    t =    11.45s Find the "Deaktivieren" Button
+    t =    11.51s Find the "pause.circle" Button
+    t =    11.56s Checking existence of `"pause.circle" Button`
+    t =    11.61s Find the "pause.circle" Button
+    t =    11.66s Find the "pause.circle" Button
+    t =    11.73s Tap "pause.circle" Button
+    t =    11.73s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.74s     Find the "pause.circle" Button
+    t =    11.81s     Check for interrupting elements affecting "pause.circle" Button
+    t =    11.85s     Synthesize event
+    t =    12.14s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.88s Waiting 20.0s for "Inaktiv" StaticText to exist
+    t =    13.90s     Checking `Expect predicate `existsNoRetry == 1` for object "Inaktiv" StaticText`
+    t =    13.91s         Checking existence of `"Inaktiv" StaticText`
+    t =    13.95s Checking existence of `"Inaktiv" StaticText`
+    t =    13.99s Find the "Inaktiv" StaticText
+    t =    14.03s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =    14.06s Checking existence of `Cell (Element at index 0)`
+    t =    14.10s Find the Cell (Element at index 0)
+    t =    14.14s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    14.18s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    14.22s Waiting 20.0s for Cell at {{16.0, 379.3}, {370.0, 76.0}} to exist
+    t =    15.30s     Checking `Expect predicate `existsNoRetry == 1` for object Cell at {{16.0, 379.3}, {370.0, 76.0}}`
+    t =    15.30s         Checking existence of `Cell at {{16.0, 379.3}, {370.0, 76.0}}`
+    t =    15.34s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    15.65s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    15.76s Swipe left Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    15.76s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.76s     Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    15.81s     Check for interrupting elements affecting Cell
+    t =    15.85s     Synthesize event
+    t =    16.32s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.86s Checking existence of `"Aktivieren" Button`
+    t =    16.96s Find the "Aktivieren" Button
+    t =    17.03s Find the "play.circle" Button
+    t =    17.09s Checking existence of `"play.circle" Button`
+    t =    17.13s Find the "play.circle" Button
+    t =    17.20s Find the "play.circle" Button
+    t =    17.29s Tap "play.circle" Button
+    t =    17.29s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.29s     Find the "play.circle" Button
+    t =    17.40s     Check for interrupting elements affecting "play.circle" Button
+    t =    17.50s     Synthesize event
+    t =    17.81s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.21s Checking `Expect predicate `exists == 0` for object "Inaktiv" StaticText`
+    t =    19.21s     Checking existence of `"Inaktiv" StaticText`
+    t =    19.26s Checking existence of `"Inaktiv" StaticText`
+    t =    19.29s Checking existence of `"Inaktiv" StaticText`
+    t =    19.34s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =    19.38s Checking existence of `Cell (Element at index 0)`
+    t =    19.42s Find the Cell (Element at index 0)
+    t =    19.46s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    19.51s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    19.56s Checking existence of `Cell at {{16.0, 219.7}, {370.0, 106.3}}`
+    t =    19.60s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.15] for 0.2 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.95] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    19.60s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.61s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    19.63s     Check for interrupting elements affecting "Restock" Application
+    t =    19.67s     Synthesize event
+    t =    19.67s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    19.70s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    19.72s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    19.75s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    19.78s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    21.64s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.98s Checking existence of `Button (First Match)`
+    t =    22.01s Find the Button (First Match)
+    t =    22.04s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    22.07s Tear Down
+    t =    22.07s     Open com.johannesemmrich.Restock
+    t =    22.07s         Launch com.johannesemmrich.Restock
+    t =    22.07s             Terminate com.johannesemmrich.Restock:59809
+2026-10-13 13:10:52.683 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:10:52.683 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    23.32s             Setting up automation session
+    t =    25.21s             Wait for com.johannesemmrich.Restock to idle
+    t =    26.92s     Terminate com.johannesemmrich.Restock:60022
+Test Case '-[RestockUITests.StoreSetupUITests testActivateBySwipeRestoresStoreAndTile]' passed (28.134 seconds).
+Test Case '-[RestockUITests.StoreSetupUITests testAddCustomStoreCreatesTileAndBlocksEmptyName]' started.
+    t =     0.00s Start Test at 2026-10-13 13:10:57.719
+2026-10-13 13:10:57.758 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:10:57.758 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.03s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+    t =     0.03s     Launch com.johannesemmrich.Restock
+    t =     0.26s         Setting up automation session
+    t =     1.28s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testAddCustomStoreCreatesTileAndBlocksEmptyName] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testAddCustomStoreCreatesTileAndBlocksEmptyName] : Set a .modelContext in view's environment to use Query
+    t =     2.80s Checking existence of `Button (First Match)`
+    t =     2.88s Find the Button (First Match)
+    t =     2.93s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =     3.00s Checking existence of `"Verwalten" Button`
+    t =     3.03s Find the "Verwalten" Button
+    t =     3.06s Find the "Verwalten" Button
+    t =     3.09s Tap "Verwalten" Button
+    t =     3.10s     Wait for com.johannesemmrich.Restock to idle
+    t =     3.10s     Find the "Verwalten" Button
+    t =     3.13s     Check for interrupting elements affecting "Verwalten" Button
+    t =     3.20s     Synthesize event
+    t =     3.50s     Wait for com.johannesemmrich.Restock to idle
+    t =     3.61s Waiting 10.0s for "Bearbeiten" Button to exist
+    t =     4.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     4.66s         Checking existence of `"Bearbeiten" Button`
+    t =     4.73s Waiting 20.0s for "Bearbeiten" Button to exist
+    t =     5.80s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     5.80s         Checking existence of `"Bearbeiten" Button`
+    t =     5.85s Tap "Eigenen Laden hinzufügen" Button
+    t =     5.85s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.85s     Find the "Eigenen Laden hinzufügen" Button
+    t =     5.89s     Check for interrupting elements affecting "Eigenen Laden hinzufügen" Button
+    t =     5.93s     Synthesize event
+    t =     6.22s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.67s Waiting 20.0s for "Hinzufügen" Button to exist
+    t =     7.68s     Checking `Expect predicate `existsNoRetry == 1` for object "Hinzufügen" Button`
+    t =     7.68s         Checking existence of `"Hinzufügen" Button`
+    t =     7.77s Find the "Hinzufügen" Button
+    t =     7.84s Tap "Name des Ladens" TextField
+    t =     7.84s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.84s     Find the "Name des Ladens" TextField
+    t =     7.91s     Check for interrupting elements affecting "Name des Ladens" TextField
+    t =     7.96s     Synthesize event
+    t =     8.26s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.83s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Name des Ladens" TextField`
+    t =     9.84s     Find the "Name des Ladens" TextField
+    t =     9.93s Type 'Testmarkt' into "Name des Ladens" TextField
+    t =     9.93s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.94s     Find the "Name des Ladens" TextField
+    t =    10.02s     Check for interrupting elements affecting "Name des Ladens" TextField
+    t =    10.08s     Synthesize event
+    t =    10.44s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.47s Checking `Expect predicate `isEnabled == 1` for object "Hinzufügen" Button`
+    t =    11.47s     Find the "Hinzufügen" Button
+    t =    11.56s Tap "Hinzufügen" Button
+    t =    11.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.57s     Find the "Hinzufügen" Button
+    t =    11.65s     Check for interrupting elements affecting "Hinzufügen" Button
+    t =    11.72s     Synthesize event
+    t =    12.00s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.40s Checking existence of `"Inaktiv" StaticText`
+    t =    12.46s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Testmarkt'
+    t =    12.50s Checking existence of `Cell (Element at index 0)`
+    t =    12.54s Find the Cell (Element at index 0)
+    t =    12.58s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    12.63s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    12.67s Waiting 20.0s for Cell at {{16.0, 219.7}, {370.0, 106.3}} to exist
+    t =    13.72s     Checking `Expect predicate `existsNoRetry == 1` for object Cell at {{16.0, 219.7}, {370.0, 106.3}}`
+    t =    13.72s         Checking existence of `Cell at {{16.0, 219.7}, {370.0, 106.3}}`
+    t =    13.77s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.15] for 0.2 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.95] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    13.77s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.77s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    13.80s     Check for interrupting elements affecting "Restock" Application
+    t =    13.83s     Synthesize event
+    t =    13.84s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    13.86s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    13.89s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    13.92s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    13.95s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    15.81s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.16s Checking existence of `Button (First Match)`
+    t =    16.19s Find the Button (First Match)
+    t =    16.22s Find the "Testmarkt, 1x pro Woche, Liste ist leer" Button
+    t =    16.25s Find the "Testmarkt, 1x pro Woche, Liste ist leer" Button
+    t =    16.28s Tear Down
+    t =    16.28s     Open com.johannesemmrich.Restock
+    t =    16.28s         Launch com.johannesemmrich.Restock
+    t =    16.28s             Terminate com.johannesemmrich.Restock:60062
+2026-10-13 13:11:15.089 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:11:15.089 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    17.58s             Setting up automation session
+    t =    18.45s             Wait for com.johannesemmrich.Restock to idle
+    t =    19.90s     Terminate com.johannesemmrich.Restock:60168
+Test Case '-[RestockUITests.StoreSetupUITests testAddCustomStoreCreatesTileAndBlocksEmptyName]' passed (21.061 seconds).
+Test Case '-[RestockUITests.StoreSetupUITests testChangingVisitFrequencyUpdatesTileLabel]' started.
+    t =     0.00s Start Test at 2026-10-13 13:11:18.781
+    t =     0.03s Set Up
+    t =     0.03s Open com.johannesemmrich.Restock
+    t =     0.03s     Launch com.johannesemmrich.Restock
+2026-10-13 13:11:18.821 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:11:18.821 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.29s         Setting up automation session
+    t =     1.31s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testChangingVisitFrequencyUpdatesTileLabel] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testChangingVisitFrequencyUpdatesTileLabel] : Set a .modelContext in view's environment to use Query
+    t =     2.78s Checking existence of `Button (First Match)`
+    t =     2.84s Find the Button (First Match)
+    t =     2.87s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =     2.90s Checking existence of `"Verwalten" Button`
+    t =     2.92s Find the "Verwalten" Button
+    t =     2.95s Find the "Verwalten" Button
+    t =     2.97s Tap "Verwalten" Button
+    t =     2.98s     Wait for com.johannesemmrich.Restock to idle
+    t =     2.98s     Find the "Verwalten" Button
+    t =     3.00s     Check for interrupting elements affecting "Verwalten" Button
+    t =     3.02s     Synthesize event
+    t =     3.31s     Wait for com.johannesemmrich.Restock to idle
+    t =     3.32s Waiting 10.0s for "Bearbeiten" Button to exist
+    t =     4.37s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     4.38s         Checking existence of `"Bearbeiten" Button`
+    t =     4.43s Waiting 20.0s for "Bearbeiten" Button to exist
+    t =     5.49s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     5.49s         Checking existence of `"Bearbeiten" Button`
+    t =     5.54s Checking existence of `"Inaktiv" StaticText`
+    t =     5.57s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =     5.61s Checking existence of `Cell (Element at index 0)`
+    t =     5.65s Find the Cell (Element at index 0)
+    t =     5.68s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =     5.72s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =     5.76s Waiting 20.0s for Button (First Match) to exist
+    t =     6.81s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     6.81s         Checking existence of `Button (First Match)`
+    t =     6.86s Tap Button (First Match)
+    t =     6.86s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.86s     Find the Button (First Match)
+    t =     6.90s     Check for interrupting elements affecting "Besuche pro Woche, 2x pro Woche" Button
+    t =     6.94s     Synthesize event
+    t =     7.23s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.42s Tap "3x pro Woche" Button
+    t =     8.42s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.42s     Find the "3x pro Woche" Button
+    t =     8.48s     Check for interrupting elements affecting "3x pro Woche" Button
+    t =     8.52s     Synthesize event
+    t =     8.81s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.23s Checking existence of `"Inaktiv" StaticText`
+    t =    10.28s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =    10.31s Checking existence of `Cell (Element at index 0)`
+    t =    10.35s Find the Cell (Element at index 0)
+    t =    10.39s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    10.43s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    10.47s Waiting 20.0s for "3x pro Woche" StaticText to exist
+    t =    11.51s     Checking `Expect predicate `existsNoRetry == 1` for object "3x pro Woche" StaticText`
+    t =    11.51s         Checking existence of `"3x pro Woche" StaticText`
+    t =    11.55s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.15] for 0.2 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.95] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    11.55s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.55s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.58s     Check for interrupting elements affecting "Restock" Application
+    t =    11.60s     Synthesize event
+    t =    11.61s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.63s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.65s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.68s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.71s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    13.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.90s Checking existence of `Button (First Match)`
+    t =    13.93s Find the Button (First Match)
+    t =    13.95s Find the "Lidl, 3x pro Woche, Liste ist leer" Button
+    t =    13.98s Tear Down
+    t =    13.98s     Open com.johannesemmrich.Restock
+    t =    13.98s         Launch com.johannesemmrich.Restock
+    t =    13.98s             Terminate com.johannesemmrich.Restock:60187
+2026-10-13 13:11:33.858 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:11:33.858 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    15.33s             Setting up automation session
+    t =    16.38s             Wait for com.johannesemmrich.Restock to idle
+    t =    17.94s     Terminate com.johannesemmrich.Restock:60268
+Test Case '-[RestockUITests.StoreSetupUITests testChangingVisitFrequencyUpdatesTileLabel]' passed (19.045 seconds).
+Test Case '-[RestockUITests.StoreSetupUITests testDeactivateBySwipeMovesStoreToInactiveAndRemovesTile]' started.
+    t =     0.00s Start Test at 2026-10-13 13:11:37.827
+    t =     0.01s Set Up
+    t =     0.02s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-10-13 13:11:37.845 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:11:37.845 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     1.04s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testDeactivateBySwipeMovesStoreToInactiveAndRemovesTile] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testDeactivateBySwipeMovesStoreToInactiveAndRemovesTile] : Set a .modelContext in view's environment to use Query
+    t =     2.45s Checking existence of `Button (First Match)`
+    t =     2.50s Find the Button (First Match)
+    t =     2.53s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =     2.56s Checking existence of `"Verwalten" Button`
+    t =     2.58s Find the "Verwalten" Button
+    t =     2.61s Find the "Verwalten" Button
+    t =     2.63s Tap "Verwalten" Button
+    t =     2.63s     Wait for com.johannesemmrich.Restock to idle
+    t =     2.64s     Find the "Verwalten" Button
+    t =     2.66s     Check for interrupting elements affecting "Verwalten" Button
+    t =     2.67s     Synthesize event
+    t =     2.96s     Wait for com.johannesemmrich.Restock to idle
+    t =     2.97s Waiting 10.0s for "Bearbeiten" Button to exist
+    t =     4.00s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     4.00s         Checking existence of `"Bearbeiten" Button`
+    t =     4.06s Waiting 20.0s for "Bearbeiten" Button to exist
+    t =     5.11s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     5.11s         Checking existence of `"Bearbeiten" Button`
+    t =     5.16s Checking existence of `"Inaktiv" StaticText`
+    t =     5.19s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =     5.22s Checking existence of `Cell (Element at index 0)`
+    t =     5.26s Find the Cell (Element at index 0)
+    t =     5.29s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =     5.33s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =     5.38s Waiting 20.0s for Cell at {{16.0, 326.0}, {370.0, 106.3}} to exist
+    t =     6.39s     Checking `Expect predicate `existsNoRetry == 1` for object Cell at {{16.0, 326.0}, {370.0, 106.3}}`
+    t =     6.39s         Checking existence of `Cell at {{16.0, 326.0}, {370.0, 106.3}}`
+    t =     6.44s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =     6.74s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =     6.79s Swipe left Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =     6.79s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.79s     Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =     6.82s     Check for interrupting elements affecting Cell
+    t =     6.85s     Synthesize event
+    t =     7.30s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.80s Checking existence of `"Deaktivieren" Button`
+    t =     7.84s Find the "Deaktivieren" Button
+    t =     7.88s Find the "pause.circle" Button
+    t =     7.94s Checking existence of `"pause.circle" Button`
+    t =     7.98s Find the "pause.circle" Button
+    t =     8.02s Find the "pause.circle" Button
+    t =     8.06s Tap "pause.circle" Button
+    t =     8.06s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.07s     Find the "pause.circle" Button
+    t =     8.10s     Check for interrupting elements affecting "pause.circle" Button
+    t =     8.14s     Synthesize event
+    t =     8.43s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.13s Waiting 20.0s for "Inaktiv" StaticText to exist
+    t =    10.17s     Checking `Expect predicate `existsNoRetry == 1` for object "Inaktiv" StaticText`
+    t =    10.17s         Checking existence of `"Inaktiv" StaticText`
+    t =    10.21s Checking existence of `"Inaktiv" StaticText`
+    t =    10.24s Find the "Inaktiv" StaticText
+    t =    10.31s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =    10.35s Checking existence of `Cell (Element at index 0)`
+    t =    10.38s Find the Cell (Element at index 0)
+    t =    10.42s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    10.46s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    10.50s Checking existence of `Cell at {{16.0, 379.3}, {370.0, 76.0}}`
+    t =    10.53s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    10.66s Added attachment named 'S1-nach-Deaktivieren'
+    t =    10.66s Checking existence of `"Inaktiv" StaticText`
+    t =    10.69s Find the "Inaktiv" StaticText
+    t =    10.72s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =    10.75s Checking existence of `Cell (Element at index 0)`
+    t =    10.79s Find the Cell (Element at index 0)
+    t =    10.82s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    10.86s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    10.89s Checking existence of `"keine-Zeile-Lidl" Cell`
+    t =    10.93s Checking existence of `"Inaktiv" StaticText`
+    t =    10.96s Find the "Inaktiv" StaticText
+    t =    10.99s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'dm'
+    t =    11.02s Checking existence of `Cell (Element at index 0)`
+    t =    11.05s Find the Cell (Element at index 0)
+    t =    11.09s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    11.12s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =    11.16s Checking existence of `Cell at {{16.0, 219.7}, {370.0, 106.3}}`
+    t =    11.19s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.15] for 0.2 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.95] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    11.19s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.19s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.22s     Check for interrupting elements affecting "Restock" Application
+    t =    11.24s     Synthesize event
+    t =    11.25s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.27s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.29s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.32s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.34s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    13.20s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.55s Checking `Expect predicate `exists == 0` for object Button (First Match)`
+    t =    14.56s     Checking existence of `Button (First Match)`
+    t =    14.60s Checking existence of `Button (First Match)`
+    t =    14.63s Checking existence of `Button (First Match)`
+    t =    14.65s Find the Button (First Match)
+    t =    14.67s Find the "dm, 1x pro Woche, Liste ist leer" Button
+    t =    14.70s Tear Down
+    t =    14.70s     Open com.johannesemmrich.Restock
+    t =    14.70s         Launch com.johannesemmrich.Restock
+    t =    14.70s             Terminate com.johannesemmrich.Restock:60333
+2026-10-13 13:11:53.601 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:11:53.601 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    15.99s             Setting up automation session
+    t =    16.89s             Wait for com.johannesemmrich.Restock to idle
+    t =    18.31s     Terminate com.johannesemmrich.Restock:60445
+Test Case '-[RestockUITests.StoreSetupUITests testDeactivateBySwipeMovesStoreToInactiveAndRemovesTile]' passed (19.421 seconds).
+Test Case '-[RestockUITests.StoreSetupUITests testDeleteInactiveStoreAsksFirstCancelKeepsConfirmRemoves]' started.
+    t =     0.00s Start Test at 2026-10-13 13:11:57.248
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.01s     Launch com.johannesemmrich.Restock
+2026-10-13 13:11:57.261 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:11:57.261 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.24s         Setting up automation session
+    t =     1.04s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testDeleteInactiveStoreAsksFirstCancelKeepsConfirmRemoves] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testDeleteInactiveStoreAsksFirstCancelKeepsConfirmRemoves] : Set a .modelContext in view's environment to use Query
+    t =     2.48s Checking existence of `Button (First Match)`
+    t =     2.54s Find the Button (First Match)
+    t =     2.56s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =     2.60s Checking existence of `"Verwalten" Button`
+    t =     2.62s Find the "Verwalten" Button
+    t =     2.65s Find the "Verwalten" Button
+    t =     2.67s Tap "Verwalten" Button
+    t =     2.67s     Wait for com.johannesemmrich.Restock to idle
+    t =     2.67s     Find the "Verwalten" Button
+    t =     2.69s     Check for interrupting elements affecting "Verwalten" Button
+    t =     2.71s     Synthesize event
+    t =     3.01s     Wait for com.johannesemmrich.Restock to idle
+    t =     3.07s Waiting 10.0s for "Bearbeiten" Button to exist
+    t =     4.11s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     4.11s         Checking existence of `"Bearbeiten" Button`
+    t =     4.17s Waiting 20.0s for "Bearbeiten" Button to exist
+    t =     5.23s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     5.23s         Checking existence of `"Bearbeiten" Button`
+    t =     5.27s Checking existence of `"Inaktiv" StaticText`
+    t =     5.30s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'dm'
+    t =     5.33s Checking existence of `Cell (Element at index 0)`
+    t =     5.36s Find the Cell (Element at index 0)
+    t =     5.40s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =     5.44s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =     5.48s Waiting 20.0s for Cell at {{16.0, 219.7}, {370.0, 106.3}} to exist
+    t =     6.53s     Checking `Expect predicate `existsNoRetry == 1` for object Cell at {{16.0, 219.7}, {370.0, 106.3}}`
+    t =     6.53s         Checking existence of `Cell at {{16.0, 219.7}, {370.0, 106.3}}`
+    t =     6.58s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =     6.89s Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =     6.93s Swipe left Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =     6.93s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.94s     Find the Cell at {{16.0, 219.7}, {370.0, 106.3}}
+    t =     6.97s     Check for interrupting elements affecting Cell
+    t =     7.00s     Synthesize event
+    t =     7.46s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.98s Checking existence of `"Deaktivieren" Button`
+    t =     8.03s Find the "Deaktivieren" Button
+    t =     8.07s Find the "pause.circle" Button
+    t =     8.11s Checking existence of `"pause.circle" Button`
+    t =     8.14s Find the "pause.circle" Button
+    t =     8.18s Find the "pause.circle" Button
+    t =     8.23s Tap "pause.circle" Button
+    t =     8.23s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.23s     Find the "pause.circle" Button
+    t =     8.27s     Check for interrupting elements affecting "pause.circle" Button
+    t =     8.30s     Synthesize event
+    t =     8.59s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.31s Waiting 20.0s for "Inaktiv" StaticText to exist
+    t =    10.36s     Checking `Expect predicate `existsNoRetry == 1` for object "Inaktiv" StaticText`
+    t =    10.36s         Checking existence of `"Inaktiv" StaticText`
+    t =    10.39s Checking existence of `"Inaktiv" StaticText`
+    t =    10.42s Find the "Inaktiv" StaticText
+    t =    10.46s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'dm'
+    t =    10.50s Checking existence of `Cell (Element at index 0)`
+    t =    10.53s Find the Cell (Element at index 0)
+    t =    10.57s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    10.61s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    10.65s Waiting 20.0s for Cell at {{16.0, 379.3}, {370.0, 76.0}} to exist
+    t =    11.69s     Checking `Expect predicate `existsNoRetry == 1` for object Cell at {{16.0, 379.3}, {370.0, 76.0}}`
+    t =    11.69s         Checking existence of `Cell at {{16.0, 379.3}, {370.0, 76.0}}`
+    t =    11.73s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    12.03s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    12.18s Swipe left Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    12.18s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.18s     Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    12.22s     Check for interrupting elements affecting Cell
+    t =    12.25s     Synthesize event
+    t =    12.70s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.25s Checking existence of `"Löschen" Button`
+    t =    13.29s Find the "Löschen" Button
+    t =    13.33s Find the "trash" Button
+    t =    13.37s Checking existence of `"trash" Button`
+    t =    13.40s Find the "trash" Button
+    t =    13.44s Find the "trash" Button
+    t =    13.49s Tap "trash" Button
+    t =    13.49s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.49s     Find the "trash" Button
+    t =    13.54s     Check for interrupting elements affecting "trash" Button
+    t =    13.57s     Synthesize event
+    t =    13.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.92s Waiting 20.0s for "Markt löschen?" StaticText to exist
+    t =    14.96s     Checking `Expect predicate `existsNoRetry == 1` for object "Markt löschen?" StaticText`
+    t =    14.96s         Checking existence of `"Markt löschen?" StaticText`
+    t =    15.01s Checking existence of `StaticText (First Match)`
+    t =    15.04s Tap "PopoverDismissRegion" Other[0.05, 0.50]
+    t =    15.04s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.05s     Find the "PopoverDismissRegion" Other
+    t =    15.08s     Check for interrupting elements affecting "PopoverDismissRegion" Other
+    t =    15.12s     Synthesize event
+    t =    15.12s         Find the "PopoverDismissRegion" Other
+    t =    15.16s         Find the "PopoverDismissRegion" Other
+    t =    15.21s         Find the "PopoverDismissRegion" Other
+    t =    15.53s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.94s Checking `Expect predicate `exists == 0` for object "Markt löschen?" StaticText`
+    t =    16.94s     Checking existence of `"Markt löschen?" StaticText`
+    t =    16.99s Checking existence of `"Markt löschen?" StaticText`
+    t =    17.03s Checking existence of `"Inaktiv" StaticText`
+    t =    17.06s Find the "Inaktiv" StaticText
+    t =    17.10s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'dm'
+    t =    17.14s Checking existence of `Cell (Element at index 0)`
+    t =    17.18s Find the Cell (Element at index 0)
+    t =    17.23s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    17.28s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    17.32s Checking existence of `Cell at {{16.0, 379.3}, {370.0, 76.0}}`
+    t =    17.36s Checking existence of `"Inaktiv" StaticText`
+    t =    17.39s Find the "Inaktiv" StaticText
+    t =    17.43s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'dm'
+    t =    17.47s Checking existence of `Cell (Element at index 0)`
+    t =    17.51s Find the Cell (Element at index 0)
+    t =    17.55s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    17.59s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    17.63s Waiting 20.0s for Cell at {{16.0, 379.3}, {370.0, 76.0}} to exist
+    t =    18.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell at {{16.0, 379.3}, {370.0, 76.0}}`
+    t =    18.66s         Checking existence of `Cell at {{16.0, 379.3}, {370.0, 76.0}}`
+    t =    18.70s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    19.00s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    19.03s Swipe left Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    19.03s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.03s     Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    19.07s     Check for interrupting elements affecting Cell
+    t =    19.10s     Synthesize event
+    t =    19.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.10s Checking existence of `"Löschen" Button`
+    t =    20.14s Find the "Löschen" Button
+    t =    20.18s Find the "trash" Button
+    t =    20.22s Checking existence of `"trash" Button`
+    t =    20.25s Find the "trash" Button
+    t =    20.29s Find the "trash" Button
+    t =    20.34s Tap "trash" Button
+    t =    20.34s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.34s     Find the "trash" Button
+    t =    20.38s     Check for interrupting elements affecting "trash" Button
+    t =    20.41s     Synthesize event
+    t =    20.70s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.07s Waiting 20.0s for "Markt löschen?" StaticText to exist
+    t =    22.08s     Checking `Expect predicate `existsNoRetry == 1` for object "Markt löschen?" StaticText`
+    t =    22.08s         Checking existence of `"Markt löschen?" StaticText`
+    t =    22.13s Tap "Löschen" Button
+    t =    22.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.13s     Find the "Löschen" Button
+    t =    22.15s     Check for interrupting elements affecting "Löschen" Button
+    t =    22.18s     Synthesize event
+    t =    22.47s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.88s Checking `Expect predicate `exists == 0` for object "Inaktiv" StaticText`
+    t =    23.88s     Checking existence of `"Inaktiv" StaticText`
+    t =    23.92s Checking existence of `"Inaktiv" StaticText`
+    t =    23.95s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'dm'
+    t =    23.98s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.15] for 0.2 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.95] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    23.98s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.98s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    24.00s     Check for interrupting elements affecting "Restock" Application
+    t =    24.02s     Synthesize event
+    t =    24.03s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    24.05s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    24.07s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    24.09s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    24.11s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    25.96s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.36s Checking `Expect predicate `exists == 0` for object Button (First Match)`
+    t =    27.36s     Checking existence of `Button (First Match)`
+    t =    27.41s Checking existence of `Button (First Match)`
+    t =    27.44s Checking existence of `Button (First Match)`
+    t =    27.47s Find the Button (First Match)
+    t =    27.49s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    27.52s Tear Down
+    t =    27.52s     Open com.johannesemmrich.Restock
+    t =    27.52s         Launch com.johannesemmrich.Restock
+    t =    27.52s             Terminate com.johannesemmrich.Restock:60463
+2026-10-13 13:12:25.839 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:12:25.839 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    28.80s             Setting up automation session
+    t =    29.67s             Wait for com.johannesemmrich.Restock to idle
+    t =    31.12s     Terminate com.johannesemmrich.Restock:60680
+Test Case '-[RestockUITests.StoreSetupUITests testDeleteInactiveStoreAsksFirstCancelKeepsConfirmRemoves]' passed (32.236 seconds).
+Test Case '-[RestockUITests.StoreSetupUITests testDragReorderingReversesStoresAndSurvivesRestart]' started.
+    t =     0.00s Start Test at 2026-10-13 13:12:29.484
+    t =     0.01s Set Up
+    t =     0.02s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-10-13 13:12:29.503 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:12:29.503 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     1.01s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testDragReorderingReversesStoresAndSurvivesRestart] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testDragReorderingReversesStoresAndSurvivesRestart] : Set a .modelContext in view's environment to use Query
+    t =     2.44s Checking existence of `Button (First Match)`
+    t =     2.50s Find the Button (First Match)
+    t =     2.54s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =     2.57s Checking existence of `"Verwalten" Button`
+    t =     2.59s Find the "Verwalten" Button
+    t =     2.62s Find the "Verwalten" Button
+    t =     2.65s Tap "Verwalten" Button
+    t =     2.65s     Wait for com.johannesemmrich.Restock to idle
+    t =     2.65s     Find the "Verwalten" Button
+    t =     2.67s     Check for interrupting elements affecting "Verwalten" Button
+    t =     2.69s     Synthesize event
+    t =     2.98s     Wait for com.johannesemmrich.Restock to idle
+    t =     3.02s Waiting 10.0s for "Bearbeiten" Button to exist
+    t =     4.04s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     4.04s         Checking existence of `"Bearbeiten" Button`
+    t =     4.11s Waiting 20.0s for "Bearbeiten" Button to exist
+    t =     5.14s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     5.14s         Checking existence of `"Bearbeiten" Button`
+    t =     5.19s Get all elements bound by index for: Descendants matching type StaticText
+    t =     5.22s Checking existence of `StaticText (Element at index 0)`
+    t =     5.25s Find the StaticText (Element at index 0)
+    t =     5.28s Find the "Aktiv" StaticText
+    t =     5.31s Checking existence of `StaticText (Element at index 1)`
+    t =     5.34s Find the StaticText (Element at index 1)
+    t =     5.39s Find the "Lidl" StaticText
+    t =     5.43s Checking existence of `StaticText (Element at index 2)`
+    t =     5.46s Find the StaticText (Element at index 2)
+    t =     5.50s Find the "2x pro Woche" StaticText
+    t =     5.53s Checking existence of `StaticText (Element at index 3)`
+    t =     5.56s Find the StaticText (Element at index 3)
+    t =     5.60s Find the "Besuche pro Woche" StaticText
+    t =     5.63s Checking existence of `StaticText (Element at index 4)`
+    t =     5.66s Find the StaticText (Element at index 4)
+    t =     5.70s Find the "2x pro Woche" StaticText
+    t =     5.73s Checking existence of `StaticText (Element at index 5)`
+    t =     5.76s Find the StaticText (Element at index 5)
+    t =     5.80s Find the "dm" StaticText
+    t =     5.83s Checking existence of `StaticText (Element at index 6)`
+    t =     5.86s Find the StaticText (Element at index 6)
+    t =     5.90s Find the "1x pro Woche" StaticText
+    t =     5.93s Checking existence of `StaticText (Element at index 7)`
+    t =     5.96s Find the StaticText (Element at index 7)
+    t =     6.00s Find the "Besuche pro Woche" StaticText
+    t =     6.03s Checking existence of `StaticText (Element at index 8)`
+    t =     6.06s Find the StaticText (Element at index 8)
+    t =     6.11s Find the "1x pro Woche" StaticText
+    t =     6.14s Checking existence of `StaticText (Element at index 9)`
+    t =     6.18s Find the StaticText (Element at index 9)
+    t =     6.23s Find the "Läden aus anderen Ländern hinzufügen" StaticText
+    t =     6.31s Checking existence of `StaticText (Element at index 10)`
+    t =     6.34s Find the StaticText (Element at index 10)
+    t =     6.38s Find the "Eigenen Laden hinzufügen" StaticText
+    t =     6.42s Find the "dm" StaticText
+    t =     6.46s Find the "Lidl" StaticText
+    t =     6.50s Find the "Lidl" StaticText
+    t =     6.54s Find the "dm" StaticText
+    t =     6.57s Tap "Bearbeiten" Button
+    t =     6.57s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.58s     Find the "Bearbeiten" Button
+    t =     6.62s     Check for interrupting elements affecting "Bearbeiten" Button
+    t =     6.66s     Synthesize event
+    t =     6.95s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.24s Waiting 20.0s for Button (Element at index 0) to exist
+    t =     8.29s     Checking `Expect predicate `existsNoRetry == 1` for object Button (Element at index 0)`
+    t =     8.29s         Checking existence of `Button (Element at index 0)`
+    t =     8.34s Checking existence of `Button (Element at index 1)`
+    t =     8.38s Press Button (Element at index 0)[0.50, 0.50] for 0.8 seconds, then drag to Button (Element at index 1)[0.50, 0.50] -> (0.0, 20.0) with velocity of 250.00 pixels per second, and then hold for 0.5 seconds 
+    t =     8.38s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.38s     Find the Button (Element at index 0)
+    t =     8.42s     Check for interrupting elements affecting "🛒 neu anordnen" Button
+    t =     8.45s     Synthesize event
+    t =     8.45s         Find the "🛒 neu anordnen" Button
+    t =     8.50s         Find the "🛒 neu anordnen" Button
+    t =     8.54s         Find the Button (Element at index 1)
+    t =     8.58s         Find the "💄 neu anordnen" Button
+    t =     8.62s         Find the "🛒 neu anordnen" Button
+    t =    10.69s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.83s Tap "Fertig" Button
+    t =    11.83s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.83s     Find the "Fertig" Button
+    t =    11.91s     Check for interrupting elements affecting "Fertig" Button
+    t =    11.95s     Synthesize event
+    t =    12.25s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.52s Get all elements bound by index for: Descendants matching type StaticText
+    t =    12.56s Checking existence of `StaticText (Element at index 0)`
+    t =    12.60s Find the StaticText (Element at index 0)
+    t =    12.63s Find the "Aktiv" StaticText
+    t =    12.67s Checking existence of `StaticText (Element at index 1)`
+    t =    12.70s Find the StaticText (Element at index 1)
+    t =    12.75s Find the "dm" StaticText
+    t =    12.79s Checking existence of `StaticText (Element at index 2)`
+    t =    12.82s Find the StaticText (Element at index 2)
+    t =    13.03s Find the "1x pro Woche" StaticText
+    t =    13.07s Checking existence of `StaticText (Element at index 3)`
+    t =    13.10s Find the StaticText (Element at index 3)
+    t =    13.14s Find the "Besuche pro Woche" StaticText
+    t =    13.17s Checking existence of `StaticText (Element at index 4)`
+    t =    13.20s Find the StaticText (Element at index 4)
+    t =    13.23s Find the "1x pro Woche" StaticText
+    t =    13.27s Checking existence of `StaticText (Element at index 5)`
+    t =    13.30s Find the StaticText (Element at index 5)
+    t =    13.34s Find the "Lidl" StaticText
+    t =    13.37s Checking existence of `StaticText (Element at index 6)`
+    t =    13.40s Find the StaticText (Element at index 6)
+    t =    13.44s Find the "2x pro Woche" StaticText
+    t =    13.47s Checking existence of `StaticText (Element at index 7)`
+    t =    13.50s Find the StaticText (Element at index 7)
+    t =    13.54s Find the "Besuche pro Woche" StaticText
+    t =    13.57s Checking existence of `StaticText (Element at index 8)`
+    t =    13.61s Find the StaticText (Element at index 8)
+    t =    13.64s Find the "2x pro Woche" StaticText
+    t =    13.68s Checking existence of `StaticText (Element at index 9)`
+    t =    13.71s Find the StaticText (Element at index 9)
+    t =    13.75s Find the "Läden aus anderen Ländern hinzufügen" StaticText
+    t =    13.78s Checking existence of `StaticText (Element at index 10)`
+    t =    13.82s Find the StaticText (Element at index 10)
+    t =    13.87s Find the "Eigenen Laden hinzufügen" StaticText
+    t =    13.91s Find the "Lidl" StaticText
+    t =    13.95s Find the "dm" StaticText
+    t =    13.99s Find the "dm" StaticText
+    t =    14.03s Find the "Lidl" StaticText
+    t =    14.07s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.15] for 0.2 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.95] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    14.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.08s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    14.10s     Check for interrupting elements affecting "Restock" Application
+    t =    14.14s     Synthesize event
+    t =    14.14s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    14.16s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    14.19s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    14.22s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    14.25s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    16.11s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.49s Find the Button (First Match)
+    t =    16.52s Find the Button (First Match)
+    t =    16.56s Terminate com.johannesemmrich.Restock:60710
+    t =    17.62s Open com.johannesemmrich.Restock
+    t =    17.62s     Launch com.johannesemmrich.Restock
+2026-10-13 13:12:47.129 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:12:47.129 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    18.06s         Setting up automation session
+    t =    19.24s         Wait for com.johannesemmrich.Restock to idle
+    t =    20.94s Checking existence of `Button (First Match)`
+    t =    21.00s Find the Button (First Match)
+    t =    21.03s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    21.06s Find the Button (First Match)
+    t =    21.09s Find the Button (First Match)
+    t =    21.11s Checking existence of `"Verwalten" Button`
+    t =    21.14s Find the "Verwalten" Button
+    t =    21.16s Find the "Verwalten" Button
+    t =    21.19s Tap "Verwalten" Button
+    t =    21.19s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.19s     Find the "Verwalten" Button
+    t =    21.22s     Check for interrupting elements affecting "Verwalten" Button
+    t =    21.24s     Synthesize event
+    t =    21.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.58s Waiting 10.0s for "Bearbeiten" Button to exist
+    t =    22.61s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =    22.61s         Checking existence of `"Bearbeiten" Button`
+    t =    22.68s Waiting 20.0s for "Bearbeiten" Button to exist
+    t =    23.74s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =    23.74s         Checking existence of `"Bearbeiten" Button`
+    t =    23.78s Get all elements bound by index for: Descendants matching type StaticText
+    t =    23.81s Checking existence of `StaticText (Element at index 0)`
+    t =    23.84s Find the StaticText (Element at index 0)
+    t =    23.87s Find the "Aktiv" StaticText
+    t =    23.90s Checking existence of `StaticText (Element at index 1)`
+    t =    23.93s Find the StaticText (Element at index 1)
+    t =    23.96s Find the "dm" StaticText
+    t =    23.99s Checking existence of `StaticText (Element at index 2)`
+    t =    24.02s Find the StaticText (Element at index 2)
+    t =    24.05s Find the "1x pro Woche" StaticText
+    t =    24.08s Checking existence of `StaticText (Element at index 3)`
+    t =    24.10s Find the StaticText (Element at index 3)
+    t =    24.14s Find the "Besuche pro Woche" StaticText
+    t =    24.17s Checking existence of `StaticText (Element at index 4)`
+    t =    24.20s Find the StaticText (Element at index 4)
+    t =    24.23s Find the "1x pro Woche" StaticText
+    t =    24.26s Checking existence of `StaticText (Element at index 5)`
+    t =    24.29s Find the StaticText (Element at index 5)
+    t =    24.32s Find the "Lidl" StaticText
+    t =    24.36s Checking existence of `StaticText (Element at index 6)`
+    t =    24.38s Find the StaticText (Element at index 6)
+    t =    24.42s Find the "2x pro Woche" StaticText
+    t =    24.45s Checking existence of `StaticText (Element at index 7)`
+    t =    24.48s Find the StaticText (Element at index 7)
+    t =    24.51s Find the "Besuche pro Woche" StaticText
+    t =    24.54s Checking existence of `StaticText (Element at index 8)`
+    t =    24.57s Find the StaticText (Element at index 8)
+    t =    24.60s Find the "2x pro Woche" StaticText
+    t =    24.63s Checking existence of `StaticText (Element at index 9)`
+    t =    24.66s Find the StaticText (Element at index 9)
+    t =    24.70s Find the "Läden aus anderen Ländern hinzufügen" StaticText
+    t =    24.73s Checking existence of `StaticText (Element at index 10)`
+    t =    24.76s Find the StaticText (Element at index 10)
+    t =    24.80s Find the "Eigenen Laden hinzufügen" StaticText
+    t =    24.83s Find the "Lidl" StaticText
+    t =    24.86s Find the "dm" StaticText
+    t =    24.89s Find the "dm" StaticText
+    t =    24.92s Find the "Lidl" StaticText
+    t =    24.96s Tear Down
+    t =    24.96s     Open com.johannesemmrich.Restock
+    t =    24.96s         Launch com.johannesemmrich.Restock
+    t =    24.96s             Terminate com.johannesemmrich.Restock:60832
+2026-10-13 13:12:55.489 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:12:55.489 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    26.37s             Setting up automation session
+    t =    27.20s             Wait for com.johannesemmrich.Restock to idle
+    t =    28.66s     Terminate com.johannesemmrich.Restock:60867
+Test Case '-[RestockUITests.StoreSetupUITests testDragReorderingReversesStoresAndSurvivesRestart]' passed (29.856 seconds).
+Test Case '-[RestockUITests.StoreSetupUITests testEmojiSheetOpensAndCancelsWithoutChange]' started.
+    t =     0.00s Start Test at 2026-10-13 13:12:59.341
+    t =     0.04s Set Up
+    t =     0.04s Open com.johannesemmrich.Restock
+2026-10-13 13:12:59.385 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:12:59.385 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.04s     Launch com.johannesemmrich.Restock
+    t =     0.38s         Setting up automation session
+    t =     1.32s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testEmojiSheetOpensAndCancelsWithoutChange] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testEmojiSheetOpensAndCancelsWithoutChange] : Set a .modelContext in view's environment to use Query
+    t =     2.74s Checking existence of `Button (First Match)`
+    t =     2.80s Find the Button (First Match)
+    t =     2.85s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =     2.89s Checking existence of `"Verwalten" Button`
+    t =     2.92s Find the "Verwalten" Button
+    t =     2.94s Find the "Verwalten" Button
+    t =     2.97s Tap "Verwalten" Button
+    t =     2.97s     Wait for com.johannesemmrich.Restock to idle
+    t =     2.97s     Find the "Verwalten" Button
+    t =     2.99s     Check for interrupting elements affecting "Verwalten" Button
+    t =     3.02s     Synthesize event
+    t =     3.30s     Wait for com.johannesemmrich.Restock to idle
+    t =     3.34s Waiting 10.0s for "Bearbeiten" Button to exist
+    t =     4.40s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     4.40s         Checking existence of `"Bearbeiten" Button`
+    t =     4.46s Waiting 20.0s for "Bearbeiten" Button to exist
+    t =     5.50s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     5.50s         Checking existence of `"Bearbeiten" Button`
+    t =     5.54s Checking existence of `"Inaktiv" StaticText`
+    t =     5.57s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =     5.61s Checking existence of `Cell (Element at index 0)`
+    t =     5.64s Find the Cell (Element at index 0)
+    t =     5.68s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =     5.72s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =     5.75s Waiting 20.0s for Button (First Match) to exist
+    t =     6.76s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     6.76s         Checking existence of `Button (First Match)`
+    t =     6.82s Tap Button (First Match)
+    t =     6.82s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.83s     Find the Button (First Match)
+    t =     6.87s     Check for interrupting elements affecting "🛒" Button
+    t =     6.91s     Synthesize event
+    t =     7.20s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.58s Waiting 20.0s for "Emoji ändern" StaticText to exist
+    t =     8.63s     Checking `Expect predicate `existsNoRetry == 1` for object "Emoji ändern" StaticText`
+    t =     8.63s         Checking existence of `"Emoji ändern" StaticText`
+    t =     8.68s Tap "Abbrechen" Button
+    t =     8.68s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.69s     Find the "Abbrechen" Button
+    t =     8.73s     Check for interrupting elements affecting "Abbrechen" Button
+    t =     8.77s     Synthesize event
+    t =     9.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.50s Checking `Expect predicate `exists == 0` for object "Emoji ändern" StaticText`
+    t =    10.50s     Checking existence of `"Emoji ändern" StaticText`
+    t =    10.54s Checking existence of `"Emoji ändern" StaticText`
+    t =    10.57s Checking existence of `"Inaktiv" StaticText`
+    t =    10.61s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =    10.64s Checking existence of `Cell (Element at index 0)`
+    t =    10.68s Find the Cell (Element at index 0)
+    t =    10.71s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =    10.75s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =    10.79s Checking existence of `Cell at {{16.0, 326.0}, {370.0, 106.3}}`
+    t =    10.83s Tear Down
+    t =    10.83s     Open com.johannesemmrich.Restock
+    t =    10.83s         Launch com.johannesemmrich.Restock
+    t =    10.83s             Terminate com.johannesemmrich.Restock:60886
+2026-10-13 13:13:11.205 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:13:11.205 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    12.08s             Setting up automation session
+    t =    13.02s             Wait for com.johannesemmrich.Restock to idle
+    t =    14.46s     Terminate com.johannesemmrich.Restock:60935
+Test Case '-[RestockUITests.StoreSetupUITests testEmojiSheetOpensAndCancelsWithoutChange]' passed (15.539 seconds).
+Test Case '-[RestockUITests.StoreSetupUITests testRowSwitchDeactivatesAndActivates]' started.
+    t =     0.00s Start Test at 2026-10-13 13:13:14.881
+    t =     0.01s Set Up
+    t =     0.02s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-10-13 13:13:14.898 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:13:14.898 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     0.99s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testRowSwitchDeactivatesAndActivates] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+<unknown>:0: warning: -[RestockUITests.StoreSetupUITests testRowSwitchDeactivatesAndActivates] : Set a .modelContext in view's environment to use Query
+    t =     2.41s Checking existence of `Button (First Match)`
+    t =     2.46s Find the Button (First Match)
+    t =     2.49s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =     2.52s Checking existence of `"Verwalten" Button`
+    t =     2.54s Find the "Verwalten" Button
+    t =     2.56s Find the "Verwalten" Button
+    t =     2.59s Tap "Verwalten" Button
+    t =     2.59s     Wait for com.johannesemmrich.Restock to idle
+    t =     2.59s     Find the "Verwalten" Button
+    t =     2.61s     Check for interrupting elements affecting "Verwalten" Button
+    t =     2.63s     Synthesize event
+    t =     2.91s     Wait for com.johannesemmrich.Restock to idle
+    t =     2.94s Waiting 10.0s for "Bearbeiten" Button to exist
+    t =     3.96s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     3.96s         Checking existence of `"Bearbeiten" Button`
+    t =     4.02s Waiting 20.0s for "Bearbeiten" Button to exist
+    t =     5.04s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =     5.04s         Checking existence of `"Bearbeiten" Button`
+    t =     5.09s Checking existence of `"Inaktiv" StaticText`
+    t =     5.12s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =     5.15s Checking existence of `Cell (Element at index 0)`
+    t =     5.19s Find the Cell (Element at index 0)
+    t =     5.23s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =     5.26s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =     5.30s Waiting 20.0s for Switch (First Match) to exist
+    t =     6.33s     Checking `Expect predicate `existsNoRetry == 1` for object Switch (First Match)`
+    t =     6.33s         Checking existence of `Switch (First Match)`
+    t =     6.37s Find the Switch (First Match)
+    t =     6.42s Tap "1" Switch
+    t =     6.42s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.42s     Find the "1" Switch
+    t =     6.47s     Check for interrupting elements affecting "1" Switch
+    t =     6.50s     Synthesize event
+    t =     6.80s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.55s Waiting 20.0s for "Inaktiv" StaticText to exist
+    t =     8.57s     Checking `Expect predicate `existsNoRetry == 1` for object "Inaktiv" StaticText`
+    t =     8.57s         Checking existence of `"Inaktiv" StaticText`
+    t =     8.62s Checking existence of `"Inaktiv" StaticText`
+    t =     8.66s Find the "Inaktiv" StaticText
+    t =     8.69s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =     8.72s Checking existence of `Cell (Element at index 0)`
+    t =     8.76s Find the Cell (Element at index 0)
+    t =     8.79s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =     8.83s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =     8.86s Checking existence of `Cell at {{16.0, 379.3}, {370.0, 76.0}}`
+    t =     8.89s Checking existence of `"Inaktiv" StaticText`
+    t =     8.93s Find the "Inaktiv" StaticText
+    t =     8.96s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =     8.99s Checking existence of `Cell (Element at index 0)`
+    t =     9.02s Find the Cell (Element at index 0)
+    t =     9.06s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =     9.10s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =     9.14s Checking existence of `"keine-Zeile-Lidl" Cell`
+    t =     9.17s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.15] for 0.2 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.95] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =     9.17s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.17s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =     9.19s     Check for interrupting elements affecting "Restock" Application
+    t =     9.22s     Synthesize event
+    t =     9.23s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =     9.25s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =     9.27s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =     9.30s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =     9.32s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    11.18s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.56s Checking `Expect predicate `exists == 0` for object Button (First Match)`
+    t =    12.56s     Checking existence of `Button (First Match)`
+    t =    12.60s Checking existence of `Button (First Match)`
+    t =    12.63s Checking existence of `"Verwalten" Button`
+    t =    12.65s Find the "Verwalten" Button
+    t =    12.67s Find the "Verwalten" Button
+    t =    12.70s Tap "Verwalten" Button
+    t =    12.70s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.70s     Find the "Verwalten" Button
+    t =    12.72s     Check for interrupting elements affecting "Verwalten" Button
+    t =    12.73s     Synthesize event
+    t =    13.03s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.41s Waiting 10.0s for "Bearbeiten" Button to exist
+    t =    14.42s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =    14.42s         Checking existence of `"Bearbeiten" Button`
+    t =    14.47s Waiting 20.0s for "Bearbeiten" Button to exist
+    t =    15.49s     Checking `Expect predicate `existsNoRetry == 1` for object "Bearbeiten" Button`
+    t =    15.49s         Checking existence of `"Bearbeiten" Button`
+    t =    15.54s Checking existence of `"Inaktiv" StaticText`
+    t =    15.57s Find the "Inaktiv" StaticText
+    t =    15.60s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =    15.63s Checking existence of `Cell (Element at index 0)`
+    t =    15.67s Find the Cell (Element at index 0)
+    t =    15.70s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    15.74s Find the Cell at {{16.0, 379.3}, {370.0, 76.0}}
+    t =    15.78s Checking existence of `Cell at {{16.0, 379.3}, {370.0, 76.0}}`
+    t =    15.81s Waiting 20.0s for Switch (First Match) to exist
+    t =    16.82s     Checking `Expect predicate `existsNoRetry == 1` for object Switch (First Match)`
+    t =    16.82s         Checking existence of `Switch (First Match)`
+    t =    16.87s Find the Switch (First Match)
+    t =    16.92s Tap "0" Switch
+    t =    16.92s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.92s     Find the "0" Switch
+    t =    16.97s     Check for interrupting elements affecting "0" Switch
+    t =    17.00s     Synthesize event
+    t =    17.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.16s Checking `Expect predicate `exists == 0` for object "Inaktiv" StaticText`
+    t =    19.16s     Checking existence of `"Inaktiv" StaticText`
+    t =    19.21s Checking existence of `"Inaktiv" StaticText`
+    t =    19.24s Checking existence of `"Inaktiv" StaticText`
+    t =    19.27s Get all elements bound by index for: Elements containing elements matching type StaticText with identifier 'Lidl'
+    t =    19.30s Checking existence of `Cell (Element at index 0)`
+    t =    19.33s Find the Cell (Element at index 0)
+    t =    19.37s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =    19.40s Find the Cell at {{16.0, 326.0}, {370.0, 106.3}}
+    t =    19.44s Checking existence of `Cell at {{16.0, 326.0}, {370.0, 106.3}}`
+    t =    19.47s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.15] for 0.2 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.95] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    19.47s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.47s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    19.50s     Check for interrupting elements affecting "Restock" Application
+    t =    19.52s     Synthesize event
+    t =    19.53s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    19.55s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    19.58s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    19.60s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    19.63s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    21.48s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.83s Checking existence of `Button (First Match)`
+    t =    21.85s Find the Button (First Match)
+    t =    21.88s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    21.91s Tear Down
+    t =    21.91s     Open com.johannesemmrich.Restock
+    t =    21.91s         Launch com.johannesemmrich.Restock
+    t =    21.91s             Terminate com.johannesemmrich.Restock:60960
+2026-10-13 13:13:37.859 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-13 13:13:37.859 xcodebuild[59412:3122358] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    23.19s             Setting up automation session
+    t =    24.15s             Wait for com.johannesemmrich.Restock to idle
+    t =    25.59s     Terminate com.johannesemmrich.Restock:61109
+Test Case '-[RestockUITests.StoreSetupUITests testRowSwitchDeactivatesAndActivates]' passed (26.668 seconds).
+Test Suite 'StoreSetupUITests' passed at 2026-10-13 13:13:41.549.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 191.961 (191.966) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-13 13:13:41.549.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 191.961 (191.967) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 13:13:41.549.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 191.961 (191.968) seconds
+2026-10-13 13:14:01.974 xcodebuild[59412:3122358] [MT] IDETestOperationsObserverDebug: 235.651 elapsed -- Testing started completed.
+2026-10-13 13:14:01.974 xcodebuild[59412:3122358] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-13 13:14:01.974 xcodebuild[59412:3122358] [MT] IDETestOperationsObserverDebug: 235.651 sec, +235.651 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Logs/Test/Test-Restock-2026.10.13_13-10-05-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

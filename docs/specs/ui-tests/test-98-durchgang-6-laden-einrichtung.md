@@ -2,7 +2,7 @@
 entity_id: test-98-durchgang-6-laden-einrichtung
 type: test
 created: 2026-10-12
-updated: 2026-10-12
+updated: 2026-10-13
 status: draft
 workflow: test-98-durchgang-6-laden-einrichtung
 tags: [test, ui-test, store-setup, stores, drag-reorder, delete, destructive]
@@ -13,6 +13,34 @@ tags: [test, ui-test, store-setup, stores, drag-reorder, delete, destructive]
 ## Approval
 
 - [ ] Approved — PO (offen)
+
+## Nachtrag 2026-10-13 (PO-„override“, getippt am 2026-10-13)
+
+Die Umsetzung weicht an folgenden Stellen von der freigegebenen Fassung ab; der PO hat die Abweichungen
+mit „override“ angenommen. Wo der folgende Text noch den alten Stand nennt, gilt dieser Nachtrag:
+
+1. **Produktcode (AC-15, „Nicht geändert“, Umfang):** Zwei Produktfehler wurden gefunden und mit Wort des PO
+   mitgefixt, beide in `SmartCart/Views/Settings/StoreSetupView.swift` (+7 Zeilen): (a) PO-Wort 2026-10-12
+   „Jetzt mitfixen (Empfohlen)“: ein deaktivierter Laden stand doppelt in der Liste (neuer Modifier
+   `onChange(of: allStores.map(\.isActive))` ruft `syncOrder()` im Modus ohne Bearbeiten auf; Aktivieren/
+   Deaktivieren ändert nur das Feld, nicht das Array); (b) PO-Wort 2026-10-13 „Mitfixen (Empfohlen)“:
+   `onMove` speicherte nicht, die gezogene Reihenfolge ging beim harten Beenden verloren (`try? context.save()`
+   nach der `sortIndex`-Schleife). Beleg: Mutationsproben (b), (c), (d) rot, `s1-doppelte-zeile.png`.
+2. **Rückfrage (AC-3, S3):** Auf dem iPhone ist der `confirmationDialog` ein Einblendmenü (Popover) ohne
+   Knopf „Abbrechen“. Abbrechen heißt: außerhalb tippen (`PopoverDismissRegion`); der Löschknopf wird über
+   `app.sheets.buttons["Löschen"]` gefunden.
+3. **Zeilenschalter (AC-10):** Er ist je Zeile eindeutig findbar (`cell.switches.firstMatch`) und wird im
+   neuen Test S8 bedient. Damit entfällt die Einschränkung „nur Wischweg“; die Grenze im Ticketkommentar
+   entfällt.
+4. **Neustart (AC-7, S6):** Der Test beendet die App hart (`terminate()`, keine Home-Taste) und startet ohne
+   Seed neu; das ist erst durch den `save()` in `onMove` grün.
+5. **Umfang (AC-15):** Acht statt sieben Tests (S8); `StoreSetupUITests.swift` hat rund 300 Zeilen (Spec:
+   ≤ +190, Limit ±250). Das überschreitet das Limit und ist vom PO angenommen (2026-10-13).
+6. **Stabilität (AC-13):** Der Helfer `swipeAndTap` wartet auf einen stillstehenden Zeilenrahmen und wischt
+   höchstens einmal erneut (Messzeile `zweite Wischgeste … nötig`); Grund: in 3 von 5 Läufen ging die erste
+   Wischgeste des ersten Tests nach dem Kaltstart verloren (Läufe in `vor-runde3/runde2-rot`). Der zweite
+   Tipp auf „Verwalten“ (`openSetup`, Messzeile, #105) bleibt. Beide Fallbacks sind Messungen, keine Behebung
+   der Ursache. Bekannt und offen (LOW): eine zweite Geste auf eine schon geöffnete Zeile (nicht beobachtet).
 
 ## Purpose
 
@@ -74,23 +102,28 @@ Kein Modell beteiligt, alles deterministisch (Regel vor Modell: nichts hier brau
 
 ## Source
 
-- **Neu:** `RestockUITests/StoreSetupUITests.swift` — eine Klasse mit sieben Tests (S1–S7), tearDown mit
-  `-clearQuickAddAssignmentSeedForUITests` (~150–180 LoC, nur Tests).
+- **Neu:** `RestockUITests/StoreSetupUITests.swift` — eine Klasse mit acht Tests (S1–S8), tearDown mit
+  `-clearQuickAddAssignmentSeedForUITests` (ca. 300 LoC; Nachtrag Punkt 5).
+- **Geändert (Nachtrag Punkt 1):** `SmartCart/Views/Settings/StoreSetupView.swift` (+7 LoC, zwei Produktfehler
+  mit Wort des PO).
 - **Geändert:** `Restock.xcodeproj/project.pbxproj` — neue Testdatei in `PBXBuildFile`,
   `PBXFileReference`, `PBXGroup` (RestockUITests) und `PBXSourcesBuildPhase` des UITests-Targets
   (~10 LoC; vier Stellen laut `CLAUDE.md` „Adding new Swift files“).
 - **Neu:** diese Spec.
-- **Nicht geändert (ausdrücklich):** `StoreSetupView`, `StoreRow`, `AddCustomStoreView`,
-  `BrowseStoresView`, `HomeView`, `SmartCartApp` (die DEBUG-Seeds `-seedQuickAddAssignmentForUITests` und
+- **Nicht geändert (ausdrücklich):** `StoreRow`, `AddCustomStoreView`, `BrowseStoresView`, `HomeView`,
+  `SmartCartApp` (die DEBUG-Seeds `-seedQuickAddAssignmentForUITests` und
   `-clearQuickAddAssignmentSeedForUITests` existieren bereits und genügen), `Store`, alle Texte und
-  Layout. **Kein Produktcode**, keine neue `Info.plist`-Berechtigung, kein neuer `@AppStorage`-Schlüssel,
-  keine Scheme-Änderung, kein neues Launch-Argument.
+  Layout. Von `StoreSetupView` nur die zwei Korrekturen laut Nachtrag Punkt 1; sonst **kein Produktcode**,
+  keine neue `Info.plist`-Berechtigung, kein neuer `@AppStorage`-Schlüssel, keine Scheme-Änderung, kein
+  neues Launch-Argument.
 - **Bestehender Test bleibt:** `RestockUITests.swift` Zeilen 160–200 (Browse → Lidl hinzufügen) wird
   ergänzt, nicht ersetzt und nicht verändert.
 
-Geschätzter Umfang: 3 Dateien (Test, `project.pbxproj`, Spec), ca. +160–190 LoC, davon 0 Produktcode.
-Das liegt unter den Limits (4–5 Dateien, ±250 LoC). Wird ein **Produktfehler** gefunden (wie in
-Durchgang 5): Mitfixen nur mit Wort des PO, sonst Ticket.
+Geschätzter Umfang (ursprünglich): 3 Dateien (Test, `project.pbxproj`, Spec), ca. +160–190 LoC, davon 0
+Produktcode. **Tatsächlich (Nachtrag Punkt 5):** 4 Dateien (Test, `StoreSetupView.swift`, `project.pbxproj`,
+Spec), Test rund 300 LoC plus 7 LoC Produktcode; das Limit von ±250 LoC ist überschritten und vom PO
+angenommen. Wird ein **Produktfehler** gefunden (wie in Durchgang 5): Mitfixen nur mit Wort des PO, sonst
+Ticket.
 
 ## Verhalten
 
@@ -108,13 +141,13 @@ Durchgang 5): Mitfixen nur mit Wort des PO, sonst Ticket.
   „Inaktiv“ „Löschen“ (destruktiv, setzt nur `storeToDelete`) und „Aktivieren“ (`play.circle`, sofort
   `save()`). Löschen läuft daher immer: deaktivieren → wischen → „Löschen“ → Rückfrage.
 - **Rückfrage:** `confirmationDialog` „Markt löschen?“ mit Meldung `"<Name>" und alle zugehörigen Artikel
-  werden dauerhaft gelöscht.`, Knöpfe „Löschen“ (destruktiv) und „Abbrechen“. „Löschen“ löscht synchron und
-  speichert sofort; `leaveBeforeDeleting` läuft nur bei `shareID != nil` (offene Grenze).
+  werden dauerhaft gelöscht.`, Knöpfe „Löschen“ (destruktiv) und (im Code) „Abbrechen“. **Auf dem iPhone
+  erscheint er als Einblendmenü ohne sichtbaren „Abbrechen“-Knopf; Abbrechen = außerhalb tippen** (Nachtrag
+  Punkt 2). „Löschen“ löscht synchron und speichert sofort; `leaveBeforeDeleting` läuft nur bei
+  `shareID != nil` (offene Grenze).
 - **Zeilenschalter:** `Toggle("", isOn: $store.isActive)` mit `labelsHidden()` und `onChange` → `save()`
-  ist ein zweiter Weg zum Deaktivieren/Aktivieren. Das Label ist leer; aus dem Code lässt sich **nicht**
-  belegen, ob XCUITest ihn je Zeile eindeutig findet (erwartet: `cell.switches.firstMatch`, da jede Zeile
-  genau einen Schalter hat). **Wird in TDD-RED geprüft; findet er sich nicht eindeutig, wird nur der
-  Wischweg getestet** (Schalter als offene Grenze im Ticketkommentar).
+  ist ein zweiter Weg zum Deaktivieren/Aktivieren. Das Label ist leer; er ist je Zeile über
+  `cell.switches.firstMatch` eindeutig findbar (belegt durch S8 in allen grünen Läufen, Nachtrag Punkt 3) und wird in S8 bedient.
 - **Besuchshäufigkeit:** Nur bei aktiven Läden zeigt die Zeile einen Picker „Besuche pro Woche“ (Menü).
   Optionen aus `VisitFrequency` (acht Stufen: „1x im Monat“, „2x im Monat“, „1x pro Woche“, „2x pro
   Woche“, „3x pro Woche“, „4x pro Woche“, „5x pro Woche“, „Täglich“). Die Zeile zeigt die aktuelle Stufe
@@ -176,7 +209,8 @@ Hilfen: `openSetup(app)` (Tipp auf „Verwalten“, wartet auf Titel „Läden�
 
 1. „dm“ deaktivieren; in „Inaktiv“ wischen → „Löschen“ antippen. Die Rückfrage „Markt löschen?“ erscheint mit
    der Meldung, die „dm“ nennt.
-2. „Abbrechen“ → Rückfrage weg, „dm“ steht weiter in „Inaktiv“.
+2. Abbrechen (iPhone: außerhalb des Einblendmenüs tippen, kein „Abbrechen“-Knopf) → Rückfrage weg, „dm“
+   steht weiter in „Inaktiv“.
 3. Erneut wischen → „Löschen“ → in der Rückfrage „Löschen“ bestätigen → „dm“ steht in keinem Abschnitt mehr,
    „Inaktiv“ ist weg. Sheet schließen: Kachel `dm,` existiert nicht; `Lidl,` unberührt.
 4. Hinweis: „Löschen“ erscheint als Wischknopf und als Dialogknopf; der Dialogknopf wird im Dialog
@@ -210,7 +244,8 @@ Hilfen: `openSetup(app)` (Tipp auf „Verwalten“, wartet auf Titel „Läden�
 4. Sheet schließen: Die Kacheln auf der Startseite stehen in der umgekehrten Reihenfolge (Vergleich der
    Y-Positionen bzw. Reihenfolge der Kacheln; Kacheln liegen im Raster, gelesen über die Frames: erste
    Zeile/Spalte zuerst).
-5. App beenden und **ohne Seed-Argument** neu starten (nur `-hasCompletedOnboarding YES`; ein erneuter
+5. App **hart beenden** (`terminate()`, keine Home-Taste; Nachtrag Punkt 4) und **ohne Seed-Argument** neu
+   starten (nur `-hasCompletedOnboarding YES`; ein erneuter
    Seed würde alle Läden löschen und neu anlegen). Die Kachelreihenfolge ist weiter die Umkehrung
    (Persistenz von `sortIndex`); Setup öffnen: die Zeilenreihenfolge ebenfalls.
 6. Der Test nimmt **keine feste Startreihenfolge** an (beide Seed-Läden `sortIndex` 0).
@@ -220,6 +255,13 @@ Hilfen: `openSetup(app)` (Tipp auf „Verwalten“, wartet auf Titel „Läden�
 1. Setup öffnen, in der Zeile „Lidl“ den Emoji-Knopf (erster Knopf der Zeile) antippen. Das Sheet „Emoji
    ändern“ erscheint. „Abbrechen“ antippen → Sheet weg, die Zeile „Lidl“ steht unverändert da.
 2. **Keine Eingabe** und kein „Speichern“ (offene Grenze).
+
+**S8 `testRowSwitchDeactivatesAndActivates`** (Nachtrag Punkt 3)
+
+1. Setup öffnen. Den Schalter der Zeile „Lidl“ (`cell.switches.firstMatch`, Wert „1“) ausschalten: Wert „0“,
+   „Lidl“ steht unter „Inaktiv“ und nicht mehr in „Aktiv“.
+2. Sheet schließen: Kachel `Lidl,` ist weg, `dm,` bleibt. Setup erneut öffnen, Schalter in „Inaktiv“ wieder
+   einschalten: „Lidl“ steht in „Aktiv“, Kachel zurück (Rückweg).
 
 ## Acceptance Criteria
 
@@ -248,10 +290,9 @@ Hilfen: `openSetup(app)` (Tipp auf „Verwalten“, wartet auf Titel „Läden�
   nicht über `app.staticTexts`.
 - AC-9: Emoji-Sheet: „Emoji ändern“ öffnet und schließt mit „Abbrechen“ ohne Änderung (Test S7). Die
   Emoji-Eingabe und der Farbwähler sind ungeprüft und als offene Grenze benannt.
-- AC-10: Zeilenschalter: Der Schalter `Toggle("")` einer Zeile wird zum Deaktivieren/Aktivieren bedient, **wenn**
-  er in TDD-RED je Zeile eindeutig findbar ist (`cell.switches.firstMatch`); sonst wird nur der Wischweg
-  getestet und der Schalter im Ticketkommentar als offene Grenze genannt. Die Entscheidung steht in der
-  RED-Protokollzeile des Tests.
+- AC-10: Zeilenschalter: Der Schalter `Toggle("")` einer Zeile wird zum Deaktivieren/Aktivieren bedient
+  (`cell.switches.firstMatch`, Wert „1“/„0“, Zeile wechselt den Abschnitt, Kachel weg bzw. zurück; Test S8,
+  Nachtrag Punkt 3). Er ist je Zeile eindeutig findbar; die Rückfalloption „nur Wischweg“ entfällt.
 - AC-11: Echter Weg statt Nachbau: Alle Tests bedienen sichtbare Elemente (Beschriftungen, Wischgesten,
   Ziehgeste). Läden, Reihenfolge und Frequenzen werden vom Test nicht von Hand gesetzt; erlaubt sind nur der
   bestehende Seed `-seedQuickAddAssignmentForUITests` als Ausgangszustand und sein Aufräum-Argument.
@@ -265,11 +306,13 @@ Hilfen: `openSetup(app)` (Tipp auf „Verwalten“, wartet auf Titel „Läden�
   hintereinander grün, davon mindestens einer unter Rechenlast (Memory „Leerer UI-Test-Start nur unter
   Last“; Messung des Ziehens: 4/4 vollständig, 5/5 im Ziehschritt, auch unter Last).
 - AC-14: Der Bestandstest `RestockUITests.swift` Zeilen 160–200 bleibt unverändert und grün.
-- AC-15: Umfang und Produktcode: Kein Produktcode im Diff (`SmartCart/` unverändert); ≤ 5 Dateien (geplant 3:
-  Test, `project.pbxproj`, Spec), ca. +160–190 LoC. Überschreitung von ±250 LoC wird vor dem Weiterbau
-  gemeldet. Wird ein Produktfehler gefunden, wird er nur mit Wort des PO mitgefixt.
+- AC-15: Umfang und Produktcode (Nachtrag Punkte 1 und 5): Im Diff steht Produktcode nur in
+  `SmartCart/Views/Settings/StoreSetupView.swift` (+7 LoC: die zwei Korrekturen mit Wort des PO vom
+  2026-10-12 und 2026-10-13); ≤ 5 Dateien (tatsächlich 4: Test, `StoreSetupView.swift`, `project.pbxproj`,
+  Spec); der Test hat rund 300 LoC, das ist über ±250 LoC und vom PO angenommen. Weitere Produktfehler werden
+  nur mit Wort des PO mitgefixt.
 - AC-16: Offene Grenzen sind in Spec, Testkommentar (Kopf der Klasse) und Ticketkommentar benannt: „Teilen
-  beenden“ beim Löschen geteilter Läden (CloudKit), Emoji-Eingabe, Farbwähler, ggf. Zeilenschalter (AC-10),
+  beenden“ beim Löschen geteilter Läden (CloudKit), Emoji-Eingabe, Farbwähler,
   Punkte 5 und 6 aus #98. Keine Zusage dieses Durchgangs lautet „Laden-Einrichtung geprüft“ ohne diese
   Einschränkungen.
 
@@ -284,25 +327,26 @@ Hilfen: `openSetup(app)` (Tipp auf „Verwalten“, wartet auf Titel „Läden�
 | T5 | `testChangingVisitFrequencyUpdatesTileLabel` (S5) | `StoreSetupUITests` | UI | AC-5, 11 |
 | T6 | `testDragReorderingReversesStoresAndSurvivesRestart` (S6) | `StoreSetupUITests` | UI | AC-6, 7, 8, 11 |
 | T7 | `testEmojiSheetOpensAndCancelsWithoutChange` (S7) | `StoreSetupUITests` | UI | AC-9 |
-| T8 | Zeilenschalter-Entscheidung in TDD-RED (ggf. S1/S2 um Schalterweg ergänzt) | `StoreSetupUITests` | UI | AC-10 |
+| T8 | `testRowSwitchDeactivatesAndActivates` (S8, Zeilenschalter) | `StoreSetupUITests` | UI | AC-10 |
 | T9 | Bestandssuiten im gemeinsamen Lauf mit der neuen Klasse | alle | UI+Unit | AC-12, 14 |
 | T10 | Wiederholung mindestens 3x, einmal unter Last (Stabilität, besonders T3 und T6) | neue Klasse | UI | AC-13 |
 | T11 | Durchlauf im Simulator, Artefakt durch Werkzeug | — | durch Werkzeug | AC-1, 3, 7, 16 |
-| T12 | Diff-Nachweis: Dateizahl, LoC, `SmartCart/` unverändert (`git diff --stat` gegen `origin/main`) | — | Diff | AC-15 |
+| T12 | Diff-Nachweis: Dateizahl, LoC, in `SmartCart/` nur `StoreSetupView.swift` +7 (`git diff --stat` gegen `origin/main`) | — | Diff | AC-15 |
 
 Start- und Warteregeln: Start über `UITestLaunch.start(_:expecting:)` (zweiter Start mit Messzeile bei
 Fehlstart, #105); Warten über `UITestWait` statt `expectation(for: isHittable…)` mit 5 s. Der Tastaturfokus
 nach `tap()` wird wie in den Bestandstests per `hasKeyboardFocus` abgewartet, bevor `typeText` läuft.
 Szenario pinnt `de`/`DE`; Simulator nie parallel, eigenes Testgerät Restock-Validate.
 
-TDD: Die Klasse wird vor jeder weiteren Änderung geschrieben. Da kein Produktcode entsteht, testen alle Tests
-bestehendes Verhalten und dürften sofort grün sein; RED bedeutet hier: Locator und Ablauf werden am
-laufenden Simulator belegt (Zeilenschalter, Verschiebegriffe, Dialogknopf „Löschen“). Der Nachweis, dass die
-Tests nicht leer laufen, sind **Mutationsproben**: (a) in `StoreSetupView` kurz das `save()` nach dem
-Deaktivieren entfernen oder die Kachelfilterung aufheben → S1 muss rot werden; (b) in `onMove` kurz die
-`sortIndex`-Zuweisung auskommentieren → S6 muss rot werden (Startseite bzw. Neustart); (c) in der Rückfrage
-„Löschen“ kurz nichts löschen → S3 muss rot werden. Alle Änderungen werden vollständig zurückgenommen und
-stehen nicht im Endstand des Diffs.
+TDD: Die Klasse wird vor jeder weiteren Änderung geschrieben. Geplant war: ohne Produktcode sofort grün,
+RED = Locator und Ablauf am Simulator belegen. Tatsächlich war S1 in RED echt rot (Produktfehler „doppelte
+Zeile“, `test-red-output.txt`, `s1-doppelte-zeile.png`), und S6 mit hartem Beenden deckte den fehlenden
+`save()` in `onMove` auf (Nachtrag Punkt 1). Der Nachweis, dass die Tests nicht leer laufen, sind
+**Mutationsproben**, alle gelaufen und vollständig zurückgenommen (`mutation-b-sortindex.txt`,
+`mutation-c-loeschen.txt`, `mutation-d-ohne-save.txt`): (b) in `onMove` die `sortIndex`-Zuweisung
+auskommentieren → S6 rot; (c) in der Rückfrage „Löschen“ nichts löschen → S3 rot; (d) in `onMove` das
+`save()` entfernen → S6 rot (Neustart). Mutation (a) (Kachelfilterung) entfiel, weil S1 den Fehler schon
+in RED belegt hat.
 
 ## Risiken
 
@@ -345,20 +389,22 @@ stehen nicht im Endstand des Diffs.
 - **Ohne Modell:** nichts hier braucht ein Sprachmodell; reine Oberflächen- und Zustandsprüfung.
 - Gekippte frühere Entscheidung: keine.
 
-**Entscheidung:** Eine neue UI-Testklasse gegen den bestehenden Seed, sieben Abläufe mit Nutzen-Prüfung
+**Entscheidung:** Eine neue UI-Testklasse gegen den bestehenden Seed, acht Abläufe mit Nutzen-Prüfung
 (Startseite, Persistenz) statt Existenz, Ziehen im Durchgang (gemessen stabil), Löschen nur gesät im
-Simulator, ohne Produktcode.
+Simulator, Produktcode nur für die zwei gefundenen Fehler mit Wort des PO (Nachtrag Punkt 1).
 
 ## Offene Punkte
 
-- Keine für den PO (technische Entscheidungen).
-- Offen für die TDD-RED-Phase: Zeilenschalter `Toggle("")` je Zeile eindeutig findbar? (AC-10); genaue
-  Locator der Verschiebegriffe und des Dialogknopfs „Löschen“ am laufenden Simulator bestätigen.
+- Keine für den PO offen (Spec-Nachtrag und Umfang am 2026-10-13 mit „override“ angenommen).
+- Erledigt in RED/GREEN: Zeilenschalter je Zeile findbar (S8), Locator der Verschiebegriffe und des
+  Dialogknopfs „Löschen“ bestätigt.
+- Bekannt, LOW, nicht behoben: Die zweite Wischgeste in `swipeAndTap` könnte auf eine schon geöffnete Zeile
+  treffen (nicht beobachtet; in allen grünen Läufen kam sie nicht vor). Im Ticketkommentar nennen.
 - Offene Grenze (gilt für jede Zusage dieses Durchgangs): „Teilen beenden“ beim Löschen eines geteilten
   Ladens (`SharedStoreService.leaveBeforeDeleting`) braucht CloudKit und ist nicht automatisiert prüfbar;
   Emoji-Eingabe und Farbwähler ungeprüft; Punkte 5 (Tagesmitteilung) und 6 (Siri/Widget) aus #98 bleiben
   offen.
 - Folgetickets im Ticketkommentar von #98 festhalten (gebündelt nach Ziel), soweit sie anfallen:
-  Zeilenschalter (falls nicht findbar), Emoji-Eingabe und Farbwähler, geteilter Laden löschen (CloudKit).
+  Emoji-Eingabe und Farbwähler, geteilter Laden löschen (CloudKit).
 - Nach Abschluss: Verweis auf `StoreSetupUITests` in `CLAUDE.md` (Abschnitt Build/UI-Tests), falls das
   Limit es erlaubt, sonst im Folgedurchgang.
