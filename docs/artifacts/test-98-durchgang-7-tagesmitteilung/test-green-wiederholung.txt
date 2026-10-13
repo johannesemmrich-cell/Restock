@@ -1,0 +1,34 @@
+Wiederholung NotificationDigestChainTests (AC-10), 2026-10-13 19:48–19:50
+Basis: Commit 02d2b95 + Produktfix in SmartCart/Services/NotificationService.swift (noch nicht committet)
+Befehl: DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -project Restock.xcodeproj -scheme Restock
+        -destination 'platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7' (Restock-Validate)
+        -only-testing:RestockTests/NotificationDigestChainTests
+Ausgabe Lauf 1 vollstaendig: test-green-output.txt (ANSI entfernt)
+
+Lauf | Ergebnis
+-----|------------------------------------------------------------------
+1    | Executed 8 tests, with 0 failures (0 unexpected) — ** TEST SUCCEEDED **
+2    | Executed 8 tests, with 0 failures (0 unexpected) — ** TEST SUCCEEDED **
+3    | Executed 8 tests, with 0 failures (0 unexpected) — ** TEST SUCCEEDED **
+
+Testfaelle (in allen drei Laeufen passed):
+- testPurchaseHistoryBecomesOneDigestAtNine                              (D1)
+- testNothingIsPlannedWhenDeveloperModeIsOff                             (D2)
+- testNothingIsPlannedWhenNotificationsAreOff                            (D2)
+- testSecondRunReplacesDigestAndKeepsForeignRequests                     (D3)
+- testItemEntersLedgerOnlyAfterDeliveryTime                              (D4)
+- testNothingIsPlannedOrLoggedWithoutPermissionAndItemStaysNotifiable    (D5)
+- testProvisionalPermissionPlansLikeAuthorized                           (D5, .provisional)
+- testCancelAllClearsCenterAndLog                                        (D6)
+
+Hinweis: 8 Testmethoden decken D1–D6 ab (D2 und D5 je zwei Methoden).
+
+Mutationsprobe (mutationsprobe-output.txt): guard auf .authorized/.provisional auskommentiert
+-> Executed 8 tests, with 5 failures, ** TEST FAILED **; nur D5
+   testNothingIsPlannedOrLoggedWithoutPermissionAndItemStaysNotifiable rot (Zeilen 134, 135, 141 x2, 149),
+   alle anderen 7 gruen. Danach Prüfung wiederhergestellt (git diff kontrolliert).
+
+Kontrolllauf 4 nach Wiederherstellung (19:51): Executed 8 tests, with 0 failures, ** TEST SUCCEEDED **.
+Die Tests selbst liefen in 0,46 s; danach hing xcodebuild 600 s beim Einsammeln der Simulator-Diagnose
+("Failure collecting diagnostics from simulator: Timed out after 600.0 seconds") — bekannter
+Umgebungs-Haenger (Issue #21), kein Testfehler.

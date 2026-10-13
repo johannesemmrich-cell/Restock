@@ -78,6 +78,11 @@ class NotificationService {
         now: Date,
         center: DigestNotificationCenter
     ) async {
+        // add wirft ohne Erlaubnis keinen Fehler, die Mitteilung würde still verworfen und trotzdem
+        // protokolliert. Deshalb vorher prüfen und ohne Erlaubnis nichts planen, entfernen oder protokollieren.
+        let status = await center.authorizationStatus()
+        guard status == .authorized || status == .provisional else { return }
+
         let ledger = OverdueNotificationLedger()
         let log = ReplenishmentDigestLog()
         log.commitDelivered(now: now, to: ledger)
@@ -103,7 +108,7 @@ class NotificationService {
             let identifier = Self.replenishmentIdentifierPrefix
                 + "digest-\(components.year ?? 0)-\(components.month ?? 0)-\(components.day ?? 0)"
             let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-            // Ohne Erlaubnis scheitert das — dann gilt der Artikel später auch nicht als gemeldet.
+            // Die Erlaubnis ist oben geprüft; schlägt add trotzdem fehl, gilt der Artikel nicht als gemeldet.
             if (try? await center.add(request)) != nil {
                 scheduled.append(digest)
             }
