@@ -169,6 +169,7 @@
 		DC17A5F922E667FB184A13A3 /* ReplenishmentPackageBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E73C873F2A0F30106CAFCB /* ReplenishmentPackageBTests.swift */; };
 		A115C0DE5E1D4A2B9C3D7F01 /* ReplenishmentSeedYearTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A115C0DE5E1D4A2B9C3D7F02 /* ReplenishmentSeedYearTests.swift */; };
 		2C51F766B539D5E10BE58B73 /* ReplenishmentDigestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */; };
+		A98D7C0100000000000000A1 /* NotificationDigestChainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */; };
 		3049DDB3309CFF24C36AB2E6 /* ReplenishmentPackageCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */; };
 		3D4E5F60718293A4B5C6D7E8 /* ReceiptParserSuggestionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */; };
 		4E5F60718293A4B5C6D7E8F9 /* ReceiptScannerReResolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */; };
@@ -186,6 +187,7 @@
 		A98C0DE3A98C0DE3A98C0DE3 /* ReplenishmentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98C0DE4A98C0DE4A98C0DE4 /* ReplenishmentUITests.swift */; };
 		7D3A98C0DE5A98C0DE5A98C1 /* DataResetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3A98C0DE5A98C0DE5A98C2 /* DataResetUITests.swift */; };
 		A5D0A5D0A5D0A5D0A5D0A5D1 /* OnboardingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D0A5D0A5D0A5D0A5D0A5D2 /* OnboardingUITests.swift */; };
+		A5D0A5D0A5D0A5D0A5D0A5E1 /* StoreSetupUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D0A5D0A5D0A5D0A5D0A5E2 /* StoreSetupUITests.swift */; };
 		A5D0A5D0A5D0A5D0A5D0A5D3 /* PaywallUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D0A5D0A5D0A5D0A5D0A5D4 /* PaywallUITests.swift */; };
 		6A1C2E4B8D3F4A5B9C7E1D31 /* QuickAddAssignmentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1C2E4B8D3F4A5B9C7E1D30 /* QuickAddAssignmentUITests.swift */; };
 /* End PBXBuildFile section */
@@ -375,6 +377,7 @@
 		A115C0DE5E1D4A2B9C3D7F02 /* ReplenishmentSeedYearTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentSeedYearTests.swift; sourceTree = "<group>"; };
 		954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentPackageCTests.swift; sourceTree = "<group>"; };
 		CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentDigestTests.swift; sourceTree = "<group>"; };
+		A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDigestChainTests.swift; sourceTree = "<group>"; };
 		7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserSuggestionTests.swift; sourceTree = "<group>"; };
 		8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScannerReResolutionTests.swift; sourceTree = "<group>"; };
 		5AB84990BF53C04B19AF3452 /* DateFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFixtures.swift; sourceTree = "<group>"; };
@@ -391,6 +394,7 @@
 		A98C0DE4A98C0DE4A98C0DE4 /* ReplenishmentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentUITests.swift; sourceTree = "<group>"; };
 		7D3A98C0DE5A98C0DE5A98C2 /* DataResetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataResetUITests.swift; sourceTree = "<group>"; };
 		A5D0A5D0A5D0A5D0A5D0A5D2 /* OnboardingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingUITests.swift; sourceTree = "<group>"; };
+		A5D0A5D0A5D0A5D0A5D0A5E2 /* StoreSetupUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSetupUITests.swift; sourceTree = "<group>"; };
 		A5D0A5D0A5D0A5D0A5D0A5D4 /* PaywallUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallUITests.swift; sourceTree = "<group>"; };
 		6A1C2E4B8D3F4A5B9C7E1D30 /* QuickAddAssignmentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddAssignmentUITests.swift; sourceTree = "<group>"; };
 		E2ECD600D24B6ACC3CB50C74 /* RestockUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -707,6 +711,7 @@
 				A115C0DE5E1D4A2B9C3D7F02 /* ReplenishmentSeedYearTests.swift */,
 				954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */,
 				CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */,
+				A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */,
 				7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */,
 				8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */,
 				5AB84990BF53C04B19AF3452 /* DateFixtures.swift */,
@@ -732,6 +737,7 @@
 				6A1C2E4B8D3F4A5B9C7E1D30 /* QuickAddAssignmentUITests.swift */,
 				7D3A98C0DE5A98C0DE5A98C2 /* DataResetUITests.swift */,
 				A5D0A5D0A5D0A5D0A5D0A5D2 /* OnboardingUITests.swift */,
+				A5D0A5D0A5D0A5D0A5D0A5E2 /* StoreSetupUITests.swift */,
 				A5D0A5D0A5D0A5D0A5D0A5D4 /* PaywallUITests.swift */,
 			);
 			path = RestockUITests;
@@ -1084,6 +1090,7 @@
 				A115C0DE5E1D4A2B9C3D7F01 /* ReplenishmentSeedYearTests.swift in Sources */,
 				3049DDB3309CFF24C36AB2E6 /* ReplenishmentPackageCTests.swift in Sources */,
 				2C51F766B539D5E10BE58B73 /* ReplenishmentDigestTests.swift in Sources */,
+				A98D7C0100000000000000A1 /* NotificationDigestChainTests.swift in Sources */,
 				3D4E5F60718293A4B5C6D7E8 /* ReceiptParserSuggestionTests.swift in Sources */,
 				4E5F60718293A4B5C6D7E8F9 /* ReceiptScannerReResolutionTests.swift in Sources */,
 				399CF1332B66B0375C4CC7D2 /* DateFixtures.swift in Sources */,
@@ -1109,6 +1116,7 @@
 				6A1C2E4B8D3F4A5B9C7E1D31 /* QuickAddAssignmentUITests.swift in Sources */,
 				7D3A98C0DE5A98C0DE5A98C1 /* DataResetUITests.swift in Sources */,
 				A5D0A5D0A5D0A5D0A5D0A5D1 /* OnboardingUITests.swift in Sources */,
+				A5D0A5D0A5D0A5D0A5D0A5E1 /* StoreSetupUITests.swift in Sources */,
 				A5D0A5D0A5D0A5D0A5D0A5D3 /* PaywallUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

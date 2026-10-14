@@ -34,6 +34,9 @@ struct StoreSetupView: View {
                     for (i, s) in orderedActiveStores.enumerated() {
                         s.sortIndex = i
                     }
+                    // Flush sofort — sonst geht die Reihenfolge beim direkten Beenden verloren
+                    // (gleiches Muster wie die Swipe-Actions und der Zeilenschalter).
+                    try? context.save()
                 }
             } header: {
                 sectionLabel(String(localized: "stores.active"))
@@ -111,6 +114,10 @@ struct StoreSetupView: View {
         .onAppear { syncOrder() }
         .onChange(of: allStores) {
             // Nur außerhalb von EditMode synchronisieren — während Drag nicht unterbrechen
+            if editMode == .inactive { syncOrder() }
+        }
+        .onChange(of: allStores.map(\.isActive)) {
+            // Aktivieren/Deaktivieren ändert das Array nicht, nur das Feld
             if editMode == .inactive { syncOrder() }
         }
         .navigationTitle(String(localized: "stores.title"))
