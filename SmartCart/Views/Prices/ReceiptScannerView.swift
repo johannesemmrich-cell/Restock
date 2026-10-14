@@ -21,6 +21,18 @@ struct EditableReceiptLine: Identifiable {
     /// Siehe `ReceiptLine.weightBasis` (ReceiptParserService.swift) — reiner Durchreiche-Wert
     /// für `save()`, keine eigene UI-Darstellung.
     var weightBasis: Double? = nil
+    /// `true`, sobald der Nutzer die Menge im Prüf-Editor selbst gesetzt hat
+    /// (`ReceiptReviewCard.applyQuantityEdit`) — dann gilt seine Angabe, nie mehr eine Schätzung.
+    var quantityConfirmedByUser = false
+    /// Geschätztes Packungsgewicht (g) für abgepacktes Obst/Gemüse ohne Gewicht auf dem Bon
+    /// („Bio Trauben kernlos 3,19 A“), siehe `ReceiptParserService.producePackageGrams`. Nur, wenn
+    /// die Zeile sonst nichts über ihre Menge weiß (keine Gewichtszeile, keine Stückzahl > 1) und
+    /// der Nutzer nichts eingegeben hat. Liest den aufgelösten `name`, nicht den Bon-Rohtext — nach
+    /// einer Umbenennung („Gurke“) soll die Schätzung des alten Bontexts nicht mehr greifen.
+    var estimatedPackageGrams: Double? {
+        guard !quantityConfirmedByUser, weightBasis == nil, quantity <= 1 else { return nil }
+        return ReceiptParserService.estimatedProducePackageGrams(for: name)
+    }
     /// Antippbare Alternativen aus den gerade abgehakten Artikeln dieses Stores — z. B. wenn die
     /// automatische Auflösung danebenliegt (kryptische Bon-Kürzel wie "MDHSZ" für "Mozzarella"
     /// lassen sich durch keine Text-Ähnlichkeit zuverlässig auflösen). Tippen setzt nur `name`;
@@ -69,7 +81,7 @@ struct EditableReceiptLine: Identifiable {
     /// vervollständigte Bezeichnung könnte die gedruckte Füllmenge nicht mehr enthalten. Absoluter
     /// Fallback ist 1, dann ist der Preis bereits per-unit.
     func learningQuantity(matchQuantityAmount: Double?) -> Double {
-        weightBasis ?? (quantity > 1 ? quantity : (matchQuantityAmount ?? ReceiptParserService.weightBasisFromName(originalName) ?? 1))
+        weightBasis ?? (quantity > 1 ? quantity : (matchQuantityAmount ?? ReceiptParserService.weightBasisFromName(originalName) ?? estimatedPackageGrams ?? 1))
     }
 
     /// Bezugsgröße des Preises, den `learningQuantity` gerade herleitet (`"g"` oder `"stk"`, siehe
@@ -84,6 +96,7 @@ struct EditableReceiptLine: Identifiable {
     /// | `quantity > 1` (Mengenzeile „4 Stk x 0,39") | `"stk"` |
     /// | `matchQuantityAmount` (abgehakter Artikel) | Eimer von dessen Einheit |
     /// | `weightBasisFromName(originalName)` („… 400G") | `"g"` |
+    /// | `estimatedPackageGrams` (abgepacktes Obst/Gemüse) | `"g"` |
     /// | Fallback `1` | `"stk"` |
     ///
     /// `matchUnit` MUSS aus demselben `PurchaseRecord` stammen wie das `matchQuantityAmount`, das
@@ -94,18 +107,21 @@ struct EditableReceiptLine: Identifiable {
         if quantity > 1 { return "stk" }
         if let matchUnit { return ShoppingItem.unitBucket(matchUnit) }
         if ReceiptParserService.weightBasisFromName(originalName) != nil { return "g" }
+        if estimatedPackageGrams != nil { return "g" }
         return "stk"
     }
 
     /// Menge und Einheit für den `PurchaseRecord`, den `save()` für eine Zeile ohne Artikel-Treffer
     /// anlegt (Issue #54, `docs/specs/views/receipt-save-purchase-quantity.md`). Erste zutreffende
     /// Regel gewinnt: Gewicht der Zeile in g; sonst Stückzahl > 1 ohne Einheit; sonst gedruckte
-    /// Packungsgröße aus dem Namen (g/ml); sonst 1 ohne Einheit. Der Rohtext `unit` ("400g") wird
+    /// Packungsgröße aus dem Namen (g/ml); sonst geschätztes Packungsgewicht bei abgepacktem
+    /// Obst/Gemüse (g); sonst 1 ohne Einheit. Der Rohtext `unit` ("400g") wird
     /// bewusst nicht übernommen. Regeln 1 und 2 decken sich mit `learningQuantity`.
     func purchaseRecordQuantity() -> (amount: Double, unit: String) {
         if let weightBasis { return (weightBasis, "g") }
         if quantity > 1 { return (quantity, "") }
         if let size = ReceiptParserService.packageSizeFromName(originalName) { return size }
+        if let grams = estimatedPackageGrams { return (grams, "g") }
         return (1, "")
     }
 

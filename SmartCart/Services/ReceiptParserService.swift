@@ -931,6 +931,56 @@ enum ReceiptParserService {
         return (amount, volume ? "ml" : "g")
     }
 
+    /// Typische Packungsgewichte (Gramm) für abgepacktes Obst und Gemüse, das deutsche Discounter
+    /// zum Festpreis verkaufen, ohne Gewicht auf dem Bon (Lidl: „Bio Trauben kernlos 3,19 A“, ohne
+    /// „… kg x … EUR/kg“-Zeile darunter). Ohne Schätzung lief so eine Zeile auf „1 St. · 3,19 € je
+    /// Stück“ und lernte einen Stückpreis für eine Schale Trauben. Die Werte sind Schätzungen —
+    /// angezeigt als „ca.“, im Prüf-Editor korrigierbar. Bewusst NICHT enthalten: Ware, die als
+    /// einzelnes Stück verkauft wird (Gurke, Salat, Brokkoli, Avocado, Melone …) — dort ist „Stück“
+    /// richtig. Schlüssel sind ganze Wörter (siehe `estimatedProducePackageGrams`), daher Plural-
+    /// und Komposita-Formen einzeln.
+    static let producePackageGrams: [String: Double] = [
+        "trauben": 500, "weintrauben": 500, "tafeltrauben": 500,
+        "pflaumen": 500, "zwetschgen": 1000, "zwetschen": 1000,
+        "erdbeeren": 500, "kirschen": 500, "aprikosen": 500,
+        "heidelbeeren": 250, "blaubeeren": 250,
+        "himbeeren": 125, "brombeeren": 125, "johannisbeeren": 125,
+        "pfirsiche": 1000, "nektarinen": 1000,
+        "äpfel": 1000, "aepfel": 1000, "tafeläpfel": 1000, "birnen": 1000,
+        "mandarinen": 1000, "clementinen": 1000, "orangen": 1500, "saftorangen": 2000,
+        "zitronen": 500, "limetten": 250,
+        "tomaten": 500, "strauchtomaten": 500, "rispentomaten": 500, "romatomaten": 500,
+        "cherrytomaten": 250, "kirschtomaten": 250, "cocktailtomaten": 250,
+        "datteltomaten": 250, "snacktomaten": 250,
+        "kartoffeln": 2000, "speisekartoffeln": 2000, "drillinge": 1000,
+        "zwiebeln": 1000, "speisezwiebeln": 1000, "schalotten": 500,
+        "möhren": 1000, "moehren": 1000, "karotten": 1000,
+        "champignons": 250, "rosenkohl": 500, "feldsalat": 150, "rucola": 125,
+    ]
+
+    /// Wörter, die aus Obst/Gemüse ein verarbeitetes Produkt machen („Tomaten passiert“,
+    /// „Kirschen Konfitüre“). Steht eines davon im Namen, wird nichts geschätzt.
+    private static let processedProduceWords: Set<String> = [
+        "saft", "nektar", "mus", "marmelade", "konfitüre", "konfituere", "gelee", "sirup",
+        "chips", "püree", "pueree", "getrocknet", "passiert", "gehackt", "stückig", "stueckig",
+        "konserve", "dose", "glas", "tk", "tiefgekühlt", "tiefgefroren", "gefroren",
+        "joghurt", "kuchen", "smoothie", "sauce", "soße", "ketchup", "mark", "aufstrich",
+        "eis", "riegel", "pommes", "salat",
+    ]
+
+    /// Geschätztes Packungsgewicht in Gramm für abgepacktes Obst/Gemüse ohne Gewichtsangabe auf
+    /// dem Bon, sonst nil. Vergleicht ganze Wörter (Trennung an allem außer Buchstaben), damit
+    /// „Traubenzucker“ oder „Kartoffelsalat“ nicht als Trauben/Kartoffeln gelten. Liefert nil,
+    /// sobald der Name selbst eine Größe trägt — die gedruckte Angabe hat immer Vorrang.
+    static func estimatedProducePackageGrams(for name: String) -> Double? {
+        guard weightBasisFromName(name) == nil else { return nil }
+        let words = name.lowercased()
+            .components(separatedBy: CharacterSet.letters.inverted)
+            .filter { !$0.isEmpty }
+        guard !words.contains(where: { processedProduceWords.contains($0) }) else { return nil }
+        return words.lazy.compactMap { producePackageGrams[$0] }.first
+    }
+
     /// Rechenprobe „Menge × Rate ≈ Zeilenpreis" mit inklusiver Toleranz (Issue #25).
     ///
     /// Ein nacktes `abs(a - b) <= 0.01` entschied bei einer Differenz von exakt einem Cent je
