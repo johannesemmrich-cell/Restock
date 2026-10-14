@@ -1,0 +1,369 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination id=8F696920-4B9A-40A7-96F0-7697BE887CC7 "-only-testing:RestockTests/CheckoffQueueTests" "-only-testing:RestockTests/AddItemIntentTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/SmartCart/Assets.xcassets /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/SmartCart/Preview Content/Preview Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+Build description signature: 1022566cfc3d84fe6f79714f78ec1637
+Build description path: /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/XCBuildData/1022566cfc3d84fe6f79714f78ec1637.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftConstValuesFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.LinkFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.LinkFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList
+
+WriteAuxiliaryFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    write-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockShareExtension/Info.plist (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockShareExtension/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist
+
+SwiftDriver RestockTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockTests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung -experimental-emit-module-separately -disable-cmo
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/SmartCartWidgets/Info.plist (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/SmartCartWidgets/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+SwiftCompile normal arm64 Compiling\ CheckoffQueueTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift (in target 'RestockTests' from project 'Restock')
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:67:9: error: cannot find 'CheckoffQueue' in scope
+ 65 |         let milch = try item("Milch", in: store)
+ 66 |         let kaese = try item("Käse", in: store)
+ 67 |         CheckoffQueue.enqueue(itemID: kaese.id, storeName: store.name, defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+ 68 |         CheckoffQueue.enqueue(itemID: milch.id, storeName: store.name, defaults: defaults)
+ 69 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:68:9: error: cannot find 'CheckoffQueue' in scope
+ 66 |         let kaese = try item("Käse", in: store)
+ 67 |         CheckoffQueue.enqueue(itemID: kaese.id, storeName: store.name, defaults: defaults)
+ 68 |         CheckoffQueue.enqueue(itemID: milch.id, storeName: store.name, defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+ 69 | 
+ 70 |         let applied = CheckoffQueue.drain(for: store, defaults: defaults)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:70:23: error: cannot find 'CheckoffQueue' in scope
+ 68 |         CheckoffQueue.enqueue(itemID: milch.id, storeName: store.name, defaults: defaults)
+ 69 | 
+ 70 |         let applied = CheckoffQueue.drain(for: store, defaults: defaults)
+    |                       `- error: cannot find 'CheckoffQueue' in scope
+ 71 | 
+ 72 |         XCTAssertEqual(applied, 2)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:92:9: error: cannot find 'CheckoffQueue' in scope
+ 90 |         let brot = try item("Brot", in: store)
+ 91 |         brot.markCompleted()
+ 92 |         CheckoffQueue.enqueue(itemID: milch.id, storeName: store.name, defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+ 93 |         CheckoffQueue.enqueue(itemID: milch.id, storeName: store.name, defaults: defaults)
+ 94 |         CheckoffQueue.enqueue(itemID: brot.id, storeName: store.name, defaults: defaults)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:93:9: error: cannot find 'CheckoffQueue' in scope
+ 91 |         brot.markCompleted()
+ 92 |         CheckoffQueue.enqueue(itemID: milch.id, storeName: store.name, defaults: defaults)
+ 93 |         CheckoffQueue.enqueue(itemID: milch.id, storeName: store.name, defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+ 94 |         CheckoffQueue.enqueue(itemID: brot.id, storeName: store.name, defaults: defaults)
+ 95 |         CheckoffQueue.enqueue(itemID: UUID(), storeName: store.name, defaults: defaults)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:94:9: error: cannot find 'CheckoffQueue' in scope
+ 92 |         CheckoffQueue.enqueue(itemID: milch.id, storeName: store.name, defaults: defaults)
+ 93 |         CheckoffQueue.enqueue(itemID: milch.id, storeName: store.name, defaults: defaults)
+ 94 |         CheckoffQueue.enqueue(itemID: brot.id, storeName: store.name, defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+ 95 |         CheckoffQueue.enqueue(itemID: UUID(), storeName: store.name, defaults: defaults)
+ 96 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:95:9: error: cannot find 'CheckoffQueue' in scope
+ 93 |         CheckoffQueue.enqueue(itemID: milch.id, storeName: store.name, defaults: defaults)
+ 94 |         CheckoffQueue.enqueue(itemID: brot.id, storeName: store.name, defaults: defaults)
+ 95 |         CheckoffQueue.enqueue(itemID: UUID(), storeName: store.name, defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+ 96 | 
+ 97 |         let applied = CheckoffQueue.drain(for: store, defaults: defaults)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:97:23: error: cannot find 'CheckoffQueue' in scope
+ 95 |         CheckoffQueue.enqueue(itemID: UUID(), storeName: store.name, defaults: defaults)
+ 96 | 
+ 97 |         let applied = CheckoffQueue.drain(for: store, defaults: defaults)
+    |                       `- error: cannot find 'CheckoffQueue' in scope
+ 98 | 
+ 99 |         XCTAssertEqual(applied, 1, "nur der eine echte Haken zählt")
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:109:9: error: cannot find 'CheckoffQueue' in scope
+107 |         let store = makeStore("UT-Laden-Q3", items: ["Milch", "Brot", "Käse"])
+108 |         let brot = try item("Brot", in: store)
+109 |         CheckoffQueue.enqueue(itemID: brot.id, storeName: store.name, defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+110 | 
+111 |         let shownBefore = CheckoffQueue.effectivePending(for: store, defaults: defaults).map(\.name)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:111:27: error: cannot find 'CheckoffQueue' in scope
+109 |         CheckoffQueue.enqueue(itemID: brot.id, storeName: store.name, defaults: defaults)
+110 | 
+111 |         let shownBefore = CheckoffQueue.effectivePending(for: store, defaults: defaults).map(\.name)
+    |                           `- error: cannot find 'CheckoffQueue' in scope
+112 |         XCTAssertFalse(shownBefore.contains("Brot"), "gequeuter Artikel ist aus der Anzeige herausgerechnet")
+113 |         XCTAssertEqual(shownBefore.count, 2)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:111:94: error: cannot infer key path type from context; consider explicitly specifying a root type
+109 |         CheckoffQueue.enqueue(itemID: brot.id, storeName: store.name, defaults: defaults)
+110 | 
+111 |         let shownBefore = CheckoffQueue.effectivePending(for: store, defaults: defaults).map(\.name)
+    |                                                                                              `- error: cannot infer key path type from context; consider explicitly specifying a root type
+112 |         XCTAssertFalse(shownBefore.contains("Brot"), "gequeuter Artikel ist aus der Anzeige herausgerechnet")
+113 |         XCTAssertEqual(shownBefore.count, 2)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:115:9: error: cannot find 'CheckoffQueue' in scope
+113 |         XCTAssertEqual(shownBefore.count, 2)
+114 | 
+115 |         CheckoffQueue.drain(for: store, defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+116 | 
+117 |         XCTAssertEqual(Set(store.pendingItems.map(\.name)), Set(shownBefore))
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:118:24: error: cannot find 'CheckoffQueue' in scope
+116 | 
+117 |         XCTAssertEqual(Set(store.pendingItems.map(\.name)), Set(shownBefore))
+118 |         XCTAssertEqual(CheckoffQueue.effectivePending(for: store, defaults: defaults).map(\.name), store.pendingItems.map(\.name))
+    |                        `- error: cannot find 'CheckoffQueue' in scope
+119 |     }
+120 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:118:91: error: cannot infer key path type from context; consider explicitly specifying a root type
+116 | 
+117 |         XCTAssertEqual(Set(store.pendingItems.map(\.name)), Set(shownBefore))
+118 |         XCTAssertEqual(CheckoffQueue.effectivePending(for: store, defaults: defaults).map(\.name), store.pendingItems.map(\.name))
+    |                                                                                           `- error: cannot infer key path type from context; consider explicitly specifying a root type
+119 |     }
+120 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:128:24: error: cannot find 'CheckoffQueue' in scope
+126 |         let expectedStay = Array(store.pendingItems.dropFirst(2)).map(\.name)
+127 | 
+128 |         XCTAssertEqual(CheckoffQueue.effectivePending(for: store, defaults: defaults).map(\.name), expectedStay)
+    |                        `- error: cannot find 'CheckoffQueue' in scope
+129 |         let applied = CheckoffQueue.drain(for: store, defaults: defaults)
+130 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:128:91: error: cannot infer key path type from context; consider explicitly specifying a root type
+126 |         let expectedStay = Array(store.pendingItems.dropFirst(2)).map(\.name)
+127 | 
+128 |         XCTAssertEqual(CheckoffQueue.effectivePending(for: store, defaults: defaults).map(\.name), expectedStay)
+    |                                                                                           `- error: cannot infer key path type from context; consider explicitly specifying a root type
+129 |         let applied = CheckoffQueue.drain(for: store, defaults: defaults)
+130 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:129:23: error: cannot find 'CheckoffQueue' in scope
+127 | 
+128 |         XCTAssertEqual(CheckoffQueue.effectivePending(for: store, defaults: defaults).map(\.name), expectedStay)
+129 |         let applied = CheckoffQueue.drain(for: store, defaults: defaults)
+    |                       `- error: cannot find 'CheckoffQueue' in scope
+130 | 
+131 |         XCTAssertEqual(applied, 2)
+
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-SwiftPerFileCompile CheckoffQueueTests.swift
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:141:9: error: cannot find 'CheckoffQueue' in scope
+139 |         let a = makeStore("UT-Laden-Q5a", items: ["Milch"])
+140 |         let b = makeStore("UT-Laden-Q5b", items: ["Milch"])
+141 |         CheckoffQueue.enqueue(itemID: try item("Milch", in: a).id, storeName: a.name, defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+142 | 
+143 |         XCTAssertEqual(CheckoffQueue.drain(for: b, defaults: defaults), 0)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:143:24: error: cannot find 'CheckoffQueue' in scope
+141 |         CheckoffQueue.enqueue(itemID: try item("Milch", in: a).id, storeName: a.name, defaults: defaults)
+142 | 
+143 |         XCTAssertEqual(CheckoffQueue.drain(for: b, defaults: defaults), 0)
+    |                        `- error: cannot find 'CheckoffQueue' in scope
+144 |         XCTAssertFalse(try item("Milch", in: b).isCompleted)
+145 |         XCTAssertEqual(CheckoffQueue.drain(for: a, defaults: defaults), 1)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:145:24: error: cannot find 'CheckoffQueue' in scope
+143 |         XCTAssertEqual(CheckoffQueue.drain(for: b, defaults: defaults), 0)
+144 |         XCTAssertFalse(try item("Milch", in: b).isCompleted)
+145 |         XCTAssertEqual(CheckoffQueue.drain(for: a, defaults: defaults), 1)
+    |                        `- error: cannot find 'CheckoffQueue' in scope
+146 |         XCTAssertTrue(try item("Milch", in: a).isCompleted)
+147 |     }
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:153:9: error: cannot find 'CheckoffQueue' in scope
+151 |     func testEnqueueAppendsOnlyOwnKey() {
+152 |         let first = UUID(), second = UUID()
+153 |         CheckoffQueue.enqueue(itemID: first, storeName: "UT-Laden-Q6", defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+154 |         CheckoffQueue.enqueue(itemID: second, storeName: "UT-Laden-Q6", defaults: defaults)
+155 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift:154:9: error: cannot find 'CheckoffQueue' in scope
+152 |         let first = UUID(), second = UUID()
+153 |         CheckoffQueue.enqueue(itemID: first, storeName: "UT-Laden-Q6", defaults: defaults)
+154 |         CheckoffQueue.enqueue(itemID: second, storeName: "UT-Laden-Q6", defaults: defaults)
+    |         `- error: cannot find 'CheckoffQueue' in scope
+155 | 
+156 |         XCTAssertEqual(defaults.stringArray(forKey: "pendingCheckoffIDs_UT-Laden-Q6"), [first.uuidString, second.uuidString])
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockTests (in target 'RestockTests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    
+
+SwiftCompile normal arm64 Compiling\ AddItemIntentTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift (in target 'RestockTests' from project 'Restock')
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift:42:42: error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 40 |         for _ in 0..<3 { context.insert(PurchaseRecord(itemName: "Eier", storeName: edeka.name)) }
+ 41 | 
+ 42 |         let item = AddShoppingItemIntent.add(name: "Eier", quantity: 1, unit: nil, in: context)
+    |                                          `- error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 43 | 
+ 44 |         XCTAssertEqual(item.store?.name, "UT-Edeka")
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift:52:42: error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 50 |         let dm = makeStore("UT-dm", categories: Category.drugstore)
+ 51 | 
+ 52 |         let item = AddShoppingItemIntent.add(name: "Zahnpasta", quantity: 1, unit: nil, in: context)
+    |                                          `- error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 53 | 
+ 54 |         XCTAssertEqual(item.store?.name, dm.name)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift:62:45: error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 60 |         _ = makeStore("UT-Lidl", categories: Category.grocery)
+ 61 | 
+ 62 |         let weighed = AddShoppingItemIntent.add(name: "Kartoffeln", quantity: 3, unit: "kg", in: context)
+    |                                             `- error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 63 |         XCTAssertEqual(weighed.quantity, "3")
+ 64 |         XCTAssertEqual(weighed.quantityAmount, 3)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift:67:44: error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 65 |         XCTAssertEqual(weighed.unit, "kg")
+ 66 | 
+ 67 |         let single = AddShoppingItemIntent.add(name: "Brot", quantity: 1, unit: nil, in: context)
+    |                                            `- error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 68 |         XCTAssertEqual(single.quantity, "1")
+ 69 |         XCTAssertEqual(single.quantityAmount, 1)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift:76:42: error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 74 | 
+ 75 |     func testWithoutActiveStoresItemHasNoStore() {
+ 76 |         let item = AddShoppingItemIntent.add(name: "Milch", quantity: 1, unit: nil, in: context)
+    |                                          `- error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 77 |         XCTAssertNil(item.store)
+ 78 |         XCTAssertEqual(item.name, "Milch")
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift:85:42: error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 83 |         closed.isActive = false
+ 84 | 
+ 85 |         let item = AddShoppingItemIntent.add(name: "Milch", quantity: 1, unit: nil, in: context)
+    |                                          `- error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 86 | 
+ 87 |         XCTAssertNil(item.store)
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift:98:43: error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 96 |         context.insert(PurchaseRecord(itemName: "Milch", storeName: lidl.name, quantityAmount: 6, unit: "l"))
+ 97 | 
+ 98 |         let first = AddShoppingItemIntent.add(name: "Milch", quantity: 1, unit: nil, in: context)
+    |                                           `- error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 99 |         let second = AddShoppingItemIntent.add(name: "Milch", quantity: 1, unit: nil, in: context)
+100 | 
+
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift:99:44: error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+ 97 | 
+ 98 |         let first = AddShoppingItemIntent.add(name: "Milch", quantity: 1, unit: nil, in: context)
+ 99 |         let second = AddShoppingItemIntent.add(name: "Milch", quantity: 1, unit: nil, in: context)
+    |                                            `- error: failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+100 | 
+101 |         XCTAssertNotEqual(first.id, second.id)
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ExistingDataSurvivesCloudEnableTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/SchemaCloudKitCompatibilityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptHistoryMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptResolutionStatsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptKnownItemNamesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/SharedItemDataPhotoRegressionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/PhotoCompressorTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptParserPriceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptSavePurchaseQuantityTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/PriceProvenanceMigrationTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/LegacyLearnedPriceResetTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/LearnedPriceSyncTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptLearningTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ShoppingItemFuzzyPriceMatchTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/PriceEstimatorCategoryFallbackTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/PriceEstimatorStagesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptParserReweTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptParserLidlFullReceiptTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptNameAIResolverSanitizeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AssignmentServiceDetectStoreTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptParserStornoTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptTextRecognizerTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/LiveActivityServiceReattachTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptReviewCardTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptAbbreviationExpansionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/QuickAddParserTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ConsumptionPatternTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/StorePresetsTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ShoppingRouteManualOrderTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/StoreCategoriesTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ShoppingRouteTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AssignmentServiceTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/PurchaseRecordDeletionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReplenishmentPackageATests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/SharedStoreMergeTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/SharedStoreSchemaTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReplenishmentPackageBTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReplenishmentSeedYearTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReplenishmentPackageCTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReplenishmentDigestTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/NotificationDigestChainTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/CheckoffQueueTests.swift -primary-file /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptParserSuggestionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/ReceiptScannerReResolutionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/DateFixtures.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/SharedModelContainerExtensionDetectionTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AssignmentServiceQuantitySuggestionTests.swift -emit-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/AddItemIntentTests.d -emit-const-values-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/AddItemIntentTests.swiftconstvalues -emit-reference-dependencies-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/AddItemIntentTests.swiftdeps -serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/AddItemIntentTests.dia -target arm64-apple-ios18.0-simulator -disable-cross-import-overlay-search -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/CoreData.swiftoverlay -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import UserNotifications /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/UserNotifications.framework/Modules/UserNotifications.swiftcrossimport/AppIntents.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationModelsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationModelsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftDataMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftDataMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung -enable-anonymous-context-mangled-names -file-compilation-dir /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/RestockTests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name RestockTests -const-gather-protocols-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests_const_extract_protocols.json -disable-clang-spi -clang-target arm64-apple-ios27.0-simulator -target-sdk-version 27.0 -target-sdk-name iphonesimulator27.0 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/AddItemIntentTests.o -debug-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/RestockTests.swiftmodule -index-unit-output-path /Restock.build/Debug-iphonesimulator/RestockTests.build/Objects-normal/arm64/AddItemIntentTests.o -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-SwiftPerFileCompile AddItemIntentTests.swift
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Logs/Test/Test-Restock-2026.10.14_08-49-53-+0200.xcresult
+
+Testing failed:
+	Failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+	Failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+	Failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+	Failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+	Failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+	Failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+	Failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+	Failed to produce diagnostic for expression; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+	Testing cancelled because the build failed.
+
+** TEST FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ AddItemIntentTests.swift /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift (in target 'RestockTests' from project 'Restock')
+	SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockTests/AddItemIntentTests.swift (in target 'RestockTests' from project 'Restock')
+	Testing project Restock with scheme Restock
+(3 failures)
