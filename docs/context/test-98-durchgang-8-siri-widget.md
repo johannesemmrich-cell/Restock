@@ -95,3 +95,6 @@ Echter Siri-Ruf, Widget-Tipp auf Homescreen, Live-Activity-Tipp, Control-Center-
 ### Open Questions
 - [x] Umfang: PO 2026-10-14 — alles in einem Durchgang, Ausnahme (~9 Dateien/~490 Zeilen) freigegeben.
 - [ ] Siri-Intent legt ohne Duplikatprüfung/Mengenvorschlag an: Ist-Verhalten festhalten oder Produktänderung? (Empfehlung: festhalten, keine Änderung)
+
+## Umfang-Ausnahme 2 (PO 2026-10-14, während Phase 6)
+Stand: 11 Dateien, ca. 620 Zeilen (Tests über die Hälfte). PO hat erweiterte Ausnahme freigegeben: bis 11 Dateien / ca. 700 Zeilen. Spec-Text (AC-14: 10 Dateien/±500) bleibt unverändert, damit das PO-Briefing gültig bleibt; diese Freigabe gilt darüber hinaus.

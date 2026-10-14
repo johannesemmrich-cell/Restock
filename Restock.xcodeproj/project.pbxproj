@@ -170,6 +170,8 @@
 		A115C0DE5E1D4A2B9C3D7F01 /* ReplenishmentSeedYearTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A115C0DE5E1D4A2B9C3D7F02 /* ReplenishmentSeedYearTests.swift */; };
 		2C51F766B539D5E10BE58B73 /* ReplenishmentDigestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */; };
 		A98D7C0100000000000000A1 /* NotificationDigestChainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */; };
+		A98D8C010000000000000009 /* CheckoffQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D8C010000000000000008 /* CheckoffQueue.swift */; };
+		A98D8C01000000000000000A /* CheckoffQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D8C010000000000000008 /* CheckoffQueue.swift */; };
 		A98D8C010000000000000002 /* CheckoffQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D8C010000000000000003 /* CheckoffQueueTests.swift */; };
 		A98D8C010000000000000004 /* AddItemIntentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D8C010000000000000005 /* AddItemIntentTests.swift */; };
 		3049DDB3309CFF24C36AB2E6 /* ReplenishmentPackageCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */; };
@@ -381,6 +383,7 @@
 		954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentPackageCTests.swift; sourceTree = "<group>"; };
 		CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentDigestTests.swift; sourceTree = "<group>"; };
 		A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDigestChainTests.swift; sourceTree = "<group>"; };
+		A98D8C010000000000000008 /* CheckoffQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoffQueue.swift; sourceTree = "<group>"; };
 		A98D8C010000000000000003 /* CheckoffQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoffQueueTests.swift; sourceTree = "<group>"; };
 		A98D8C010000000000000005 /* AddItemIntentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemIntentTests.swift; sourceTree = "<group>"; };
 		7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserSuggestionTests.swift; sourceTree = "<group>"; };
@@ -526,6 +529,7 @@
 		5A8F46B5EC4BAD46F437F8A2 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				A98D8C010000000000000008 /* CheckoffQueue.swift */,
 				B041DCB417023E5CB6417592 /* FeedbackItem.swift */,
 				B49543DB9877A4EABA86E2BF /* PurchaseRecord.swift */,
 				28D34BA8493613BB54D6FE07 /* SharedModelContainer.swift */,
@@ -923,6 +927,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A98D8C01000000000000000A /* CheckoffQueue.swift in Sources */,
 				DC22CEE4B196C9605354F44E /* AssignmentService+Category.swift in Sources */,
 				215CD8EF08D0891F2BEDDE16 /* CheckOffItemIntent.swift in Sources */,
 				D728A505E8E8989ABDA4F8F2 /* Color+Hex.swift in Sources */,
@@ -948,6 +953,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A98D8C010000000000000009 /* CheckoffQueue.swift in Sources */,
 				E96A6287698D332B072D9A1E /* ActualPriceEntryView.swift in Sources */,
 				36FE8E64A9184910CE4AC786 /* AddItemIntent.swift in Sources */,
 				A3F873ABCF2F9A9BECC9ECF8 /* AddItemView.swift in Sources */,

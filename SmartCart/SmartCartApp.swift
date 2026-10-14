@@ -31,6 +31,8 @@ struct SmartCartApp: App {
             Self.clearReceiptResolutionStatsForUITestsIfNeeded()
             Self.clearMenuPlanForUITestsIfNeeded()
             Self.clearDataResetForUITestsIfNeeded()
+            Self.clearPendingQuickAddForUITestsIfNeeded()
+            Self.setPendingQuickAddForUITestsIfNeeded()
             Self.seedReceiptReviewForUITestsIfNeeded(context: container.mainContext)
             Self.seedReceiptReviewUnresolvedLineForUITestsIfNeeded(context: container.mainContext)
             Self.seedReceiptReviewWeightLineForUITestsIfNeeded(context: container.mainContext)
@@ -190,6 +192,23 @@ struct SmartCartApp: App {
     private static func clearDataResetForUITestsIfNeeded() {
         guard ProcessInfo.processInfo.arguments.contains("-clearDataResetForUITests") else { return }
         UserDefaults.standard.removeObject(forKey: "smartcart.dataResetOccurred")
+    }
+
+    /// Setzt den Merker `pendingQuickAdd` in der App-Gruppe, den sonst der Schnell-hinzufügen-Knopf
+    /// im Control Center setzt (`QuickAddControlIntent`); die Startseite liest und löscht ihn beim
+    /// Öffnen (Issue #98, Durchgang 8, `QuickAddControlUITests`).
+    /// Only runs on `-pendingQuickAddForUITests`, DEBUG-only.
+    private static func setPendingQuickAddForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-pendingQuickAddForUITests") else { return }
+        UserDefaults(suiteName: appGroupID)?.set(true, forKey: "pendingQuickAdd")
+    }
+
+    /// Entfernt den Merker `pendingQuickAdd` vorsorglich (überlebt sonst einen vor dem Lesen
+    /// abgebrochenen Test). `QuickAddControlUITests` startet damit in `tearDown()`.
+    /// Only runs on `-clearPendingQuickAddForUITests`, DEBUG-only.
+    private static func clearPendingQuickAddForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-clearPendingQuickAddForUITests") else { return }
+        UserDefaults(suiteName: appGroupID)?.removeObject(forKey: "pendingQuickAdd")
     }
 
     /// Screenshot-only seed for the "Wer bringt was mit?" marketing screenshot: a real shared

@@ -1203,47 +1203,10 @@ struct StoreDetailView: View {
         }
     }
 
-    /// Same semantics as `WidgetStoreLoader.drainPendingCheckoffs` (keep in sync): complete
-    /// exactly the item UUIDs queued by the Dynamic-Island intent; already-completed IDs
-    /// (double-drain, sync merge, double-tap duplicates) are no-ops. Micro-window: app and
-    /// widget could theoretically claim the same UUID simultaneously — accepted, no
-    /// cross-process lock (see the drain comment in ShoppingListWidget.swift).
+    /// Arbeitet die Abhak-Warteschlange von Dynamic Island, Sperrbildschirm und Widget ab —
+    /// gemeinsame Logik mit dem Widget in `CheckoffQueue.drain` (Issue #98, Durchgang 8).
     private func applyPendingCheckoffs() {
-        let defaults = UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart")
-        var applied = 0
-        // Die Warteschlange hält die echte Abhak-Reihenfolge, aber nicht den Zeitpunkt — deshalb
-        // `batched: true`: zählt für den Einkaufsweg, nicht für die Erkennung „zu Hause
-        // nachgetragen“ (Issue #79).
-
-        // UUID-Queue: exakt die gequeueten Items erledigen (nicht "die ersten N" —
-        // count-basiert würde nach Widget-Checkoff/Sync-Merge das falsche Item treffen).
-        let idKey = "pendingCheckoffIDs_\(store.name)"
-        if let queuedIDs = defaults?.stringArray(forKey: idKey), !queuedIDs.isEmpty {
-            defaults?.removeObject(forKey: idKey)
-            for idString in queuedIDs {
-                guard let id = UUID(uuidString: idString),
-                      let item = store.items?.first(where: { $0.id == id }),
-                      !item.isCompleted else { continue }
-                item.markCompleted()
-                store.recordCheckOff(item, batched: true)
-                applied += 1
-            }
-        }
-
-        // Legacy (einmaliger Übergang): Zähler-Key einer alten App-Version noch
-        // count-basiert drainen, damit ein Update mitten im Einkauf nichts verliert.
-        let legacyKey = "pendingCheckoffs_\(store.name)"
-        let legacyCount = defaults?.integer(forKey: legacyKey) ?? 0
-        if legacyCount > 0 {
-            defaults?.removeObject(forKey: legacyKey)
-            for _ in 0..<legacyCount {
-                guard let item = store.pendingItems.first else { break }
-                item.markCompleted()
-                store.recordCheckOff(item, batched: true)
-                applied += 1
-            }
-        }
-
+        let applied = CheckoffQueue.drain(for: store)
         guard applied > 0 else { return }
         try? context.save()
         LiveActivityService.shared.update(for: store)

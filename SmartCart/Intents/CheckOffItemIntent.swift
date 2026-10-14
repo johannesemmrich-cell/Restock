@@ -32,10 +32,7 @@ struct CheckOffItemIntent: LiveActivityIntent {
         //    Einkaufsweg-Lernen, Issue #79). Duplikate in der Queue sind harmlos — der Drain
         //    überspringt bereits erledigte Items (No-op-Guard).
         if let itemID = activity?.content.state.pendingItemIDs.first {
-            let idKey = "pendingCheckoffIDs_\(storeName)"
-            var queued = defaults?.stringArray(forKey: idKey) ?? []
-            queued.append(itemID.uuidString)
-            defaults?.set(queued, forKey: idKey)
+            CheckoffQueue.enqueue(itemID: itemID, storeName: storeName, defaults: defaults)
         } else if let activity, !activity.content.state.pendingItemNames.isEmpty {
             // Fallback (nur Übergang): Live Activity aus einer App-Version ohne
             // pendingItemIDs im State (Names nicht leer, IDs leer) → alter Zähler-Key,
