@@ -169,6 +169,7 @@
 		DC17A5F922E667FB184A13A3 /* ReplenishmentPackageBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E73C873F2A0F30106CAFCB /* ReplenishmentPackageBTests.swift */; };
 		A115C0DE5E1D4A2B9C3D7F01 /* ReplenishmentSeedYearTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A115C0DE5E1D4A2B9C3D7F02 /* ReplenishmentSeedYearTests.swift */; };
 		2C51F766B539D5E10BE58B73 /* ReplenishmentDigestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */; };
+		A98D7C0100000000000000A1 /* NotificationDigestChainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */; };
 		3049DDB3309CFF24C36AB2E6 /* ReplenishmentPackageCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */; };
 		3D4E5F60718293A4B5C6D7E8 /* ReceiptParserSuggestionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */; };
 		4E5F60718293A4B5C6D7E8F9 /* ReceiptScannerReResolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */; };
@@ -376,6 +377,7 @@
 		A115C0DE5E1D4A2B9C3D7F02 /* ReplenishmentSeedYearTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentSeedYearTests.swift; sourceTree = "<group>"; };
 		954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentPackageCTests.swift; sourceTree = "<group>"; };
 		CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentDigestTests.swift; sourceTree = "<group>"; };
+		A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDigestChainTests.swift; sourceTree = "<group>"; };
 		7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserSuggestionTests.swift; sourceTree = "<group>"; };
 		8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScannerReResolutionTests.swift; sourceTree = "<group>"; };
 		5AB84990BF53C04B19AF3452 /* DateFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFixtures.swift; sourceTree = "<group>"; };
@@ -709,6 +711,7 @@
 				A115C0DE5E1D4A2B9C3D7F02 /* ReplenishmentSeedYearTests.swift */,
 				954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */,
 				CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */,
+				A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */,
 				7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */,
 				8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */,
 				5AB84990BF53C04B19AF3452 /* DateFixtures.swift */,
@@ -1087,6 +1090,7 @@
 				A115C0DE5E1D4A2B9C3D7F01 /* ReplenishmentSeedYearTests.swift in Sources */,
 				3049DDB3309CFF24C36AB2E6 /* ReplenishmentPackageCTests.swift in Sources */,
 				2C51F766B539D5E10BE58B73 /* ReplenishmentDigestTests.swift in Sources */,
+				A98D7C0100000000000000A1 /* NotificationDigestChainTests.swift in Sources */,
 				3D4E5F60718293A4B5C6D7E8 /* ReceiptParserSuggestionTests.swift in Sources */,
 				4E5F60718293A4B5C6D7E8F9 /* ReceiptScannerReResolutionTests.swift in Sources */,
 				399CF1332B66B0375C4CC7D2 /* DateFixtures.swift in Sources */,
