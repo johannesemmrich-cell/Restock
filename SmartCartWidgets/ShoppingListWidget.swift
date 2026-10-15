@@ -21,72 +21,8 @@ private enum WidgetStoreLoader {
         return (try? context.fetch(descriptor)) ?? []
     }
 
-    /// Pending items minus the checkoffs already queued from the Dynamic Island / Lock Screen
-    /// (`pendingCheckoffIDs_<storeName>` — item UUIDs, drained on next store access). Without
-    /// this adjustment the widget would re-show items the user already checked off in the Live
-    /// Activity — and tapping one there AND here would double-count once the queue drains.
-    static func effectivePending(for store: Store) -> [ShoppingItem] {
-        let defaults = UserDefaults(suiteName: SharedModelContainer.appGroupID)
-        var pending = store.pendingItems
-        let queuedIDs = Set(
-            (defaults?.stringArray(forKey: "pendingCheckoffIDs_\(store.name)") ?? [])
-                .compactMap(UUID.init(uuidString:))
-        )
-        if !queuedIDs.isEmpty {
-            pending.removeAll { queuedIDs.contains($0.id) }
-        }
-        // Legacy-Zähler (Queue einer alten App-Version, s. drainPendingCheckoffs): count-basiert.
-        let legacyCount = defaults?.integer(forKey: "pendingCheckoffs_\(store.name)") ?? 0
-        if legacyCount > 0 {
-            pending = Array(pending.dropFirst(legacyCount))
-        }
-        return pending
-    }
-
-    /// Drains the Dynamic-Island checkoff queue into the store — the same semantics as
-    /// `StoreDetailView.applyPendingCheckoffs()`: complete exactly the queued item UUIDs;
-    /// already-completed IDs (double-drain, sync merge, double-tap duplicates) are no-ops.
-    /// Called by the widget's checkoff intent before completing the tapped item, so queue
-    /// and direct writes can never double-apply.
-    ///
-    /// Known micro-window (documented, deliberately no cross-process lock): if the app's
-    /// drain and this one read the SAME queue concurrently, both may claim a UUID — the
-    /// `!item.isCompleted` guard in whichever runs second turns that into a no-op after the
-    /// first save lands, but a truly simultaneous claim could double-record. Accepted.
-    ///
-    /// Jeder gedrainte Haken geht in Queue-Reihenfolge in den laufenden Einkauf des Ladens
-    /// (`Store.recordCheckOff`, Issue #79) — mit `batched: true`, weil der Zeitpunkt der Drain
-    /// ist, nicht der des Abhakens. Der danach getippte Artikel setzt denselben Einkauf fort.
-    static func drainPendingCheckoffs(for store: Store) {
-        let defaults = UserDefaults(suiteName: SharedModelContainer.appGroupID)
-
-        // UUID-Queue: exakt die gequeueten Items erledigen (nicht "die ersten N" —
-        // count-basiert würde nach Widget-Checkoff/Sync-Merge das falsche Item treffen).
-        let idKey = "pendingCheckoffIDs_\(store.name)"
-        if let queuedIDs = defaults?.stringArray(forKey: idKey), !queuedIDs.isEmpty {
-            defaults?.removeObject(forKey: idKey)
-            for idString in queuedIDs {
-                guard let id = UUID(uuidString: idString),
-                      let item = store.items?.first(where: { $0.id == id }),
-                      !item.isCompleted else { continue }
-                item.markCompleted()
-                store.recordCheckOff(item, batched: true)
-            }
-        }
-
-        // Legacy (einmaliger Übergang): Zähler-Key einer alten App-Version noch
-        // count-basiert drainen, damit ein Update mitten im Einkauf nichts verliert.
-        let legacyKey = "pendingCheckoffs_\(store.name)"
-        let legacyCount = defaults?.integer(forKey: legacyKey) ?? 0
-        if legacyCount > 0 {
-            defaults?.removeObject(forKey: legacyKey)
-            for _ in 0..<legacyCount {
-                guard let item = store.pendingItems.first else { break }
-                item.markCompleted()
-                store.recordCheckOff(item, batched: true)
-            }
-        }
-    }
+    // Abhak-Warteschlange (Anzeige-Korrektur und Drain): gemeinsam mit der App in
+    // `CheckoffQueue` (SmartCart/Models/CheckoffQueue.swift, Issue #98, Durchgang 8).
 }
 
 // MARK: - Store entity (widget configuration)
@@ -131,7 +67,7 @@ struct StoreEntityQuery: EntityQuery {
         let context = ModelContext(container)
         let stores = WidgetStoreLoader.activeStores(in: context)
         let best = stores.max { a, b in
-            WidgetStoreLoader.effectivePending(for: a).count < WidgetStoreLoader.effectivePending(for: b).count
+            CheckoffQueue.effectivePending(for: a).count < CheckoffQueue.effectivePending(for: b).count
         }
         return best.map(StoreEntity.init)
     }
@@ -185,7 +121,7 @@ struct CheckOffWidgetItemIntent: AppIntent {
         //    Store danach exakt dem, was der Nutzer beim Tippen gesehen hat. War der
         //    getippte Artikel selbst schon per Island abgehakt, ist er jetzt completed
         //    und Schritt 2 wird ein No-op statt eines Doppel-Abhakens.
-        WidgetStoreLoader.drainPendingCheckoffs(for: store)
+        CheckoffQueue.drain(for: store)
 
         // 2. Den getippten Artikel mit ALLEN Seiteneffekten der App abhaken:
         //    markCompleted() setzt completedDate/completedBy, bumpt lastModified (schützt
@@ -292,11 +228,11 @@ struct ShoppingListProvider: AppIntentTimelineProvider {
         // Konfigurierter Laden, sonst der mit den meisten offenen Artikeln
         let store = stores.first(where: { $0.id == configuration.store?.id })
             ?? stores.max { a, b in
-                WidgetStoreLoader.effectivePending(for: a).count < WidgetStoreLoader.effectivePending(for: b).count
+                CheckoffQueue.effectivePending(for: a).count < CheckoffQueue.effectivePending(for: b).count
             }
         guard let store else { return ShoppingListEntry(date: Date(), snapshot: nil) }
 
-        let pending = WidgetStoreLoader.effectivePending(for: store)
+        let pending = CheckoffQueue.effectivePending(for: store)
         let estimates = pending.compactMap { $0.estimatedLineTotal }
         let items = pending.prefix(4).map { item in
             WidgetItemInfo(

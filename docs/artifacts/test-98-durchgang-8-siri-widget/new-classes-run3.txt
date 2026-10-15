@@ -1,0 +1,186 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination id=8F696920-4B9A-40A7-96F0-7697BE887CC7 "-only-testing:RestockTests/CheckoffQueueTests" "-only-testing:RestockTests/AddItemIntentTests" "-only-testing:RestockUITests/QuickAddControlUITests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-10-14 15:06:38.877927+0200 Restock[93640:5875599] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-14 15:06:39.046360+0200 Restock[93640:5875599] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-10-14 15:06:39.055437+0200 Restock[93640:5875826] [CK] Could not validate account info cache. (This is a potential performance issue.)
+2026-10-14 15:06:39.117893+0200 Restock[93640:5875771] [General] Failed to connect to linkd to request update AppShortcut parameters, error: Kommunikation mit der Hilfs-App nicht möglich.
+2026-10-14 15:06:39.147063+0200 Restock[93640:5875773] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1082e80e0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1082a4500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/8C11AB36-B312-49A5-9E66-47F73E649591/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-14 15:06:39.147598+0200 Restock[93640:5875773] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1082e80e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-14 15:06:39.150560+0200 Restock[93640:5875773] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1082e80e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-14 15:06:39.433500+0200 Restock[93640:5875803] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+[AppDelegate] push registration succeeded, token length: 80
+Test Suite 'Selected tests' started at 2026-10-14 15:06:41.655.
+Test Suite 'RestockTests.xctest' started at 2026-10-14 15:06:41.655.
+Test Suite 'AddItemIntentTests' started at 2026-10-14 15:06:41.656.
+Test Case '-[RestockTests.AddItemIntentTests testCurrentBehaviourCreatesDuplicatesAndNoQuantitySuggestion]' started.
+Test Case '-[RestockTests.AddItemIntentTests testCurrentBehaviourCreatesDuplicatesAndNoQuantitySuggestion]' passed (0.026 seconds).
+Test Case '-[RestockTests.AddItemIntentTests testDrugstoreItemGoesToDrugstore]' started.
+Test Case '-[RestockTests.AddItemIntentTests testDrugstoreItemGoesToDrugstore]' passed (0.008 seconds).
+Test Case '-[RestockTests.AddItemIntentTests testInactiveStoreIsNotUsed]' started.
+Test Case '-[RestockTests.AddItemIntentTests testInactiveStoreIsNotUsed]' passed (0.006 seconds).
+Test Case '-[RestockTests.AddItemIntentTests testPurchaseHistoryDecidesTheStore]' started.
+Test Case '-[RestockTests.AddItemIntentTests testPurchaseHistoryDecidesTheStore]' passed (0.041 seconds).
+Test Case '-[RestockTests.AddItemIntentTests testQuantityAndUnitAreStored]' started.
+Test Case '-[RestockTests.AddItemIntentTests testQuantityAndUnitAreStored]' passed (0.007 seconds).
+Test Case '-[RestockTests.AddItemIntentTests testWithoutActiveStoresItemHasNoStore]' started.
+Test Case '-[RestockTests.AddItemIntentTests testWithoutActiveStoresItemHasNoStore]' passed (0.005 seconds).
+Test Suite 'AddItemIntentTests' passed at 2026-10-14 15:06:41.752.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.093 (0.097) seconds
+Test Suite 'CheckoffQueueTests' started at 2026-10-14 15:06:41.753.
+Test Case '-[RestockTests.CheckoffQueueTests testDrainCompletesExactlyQueuedItemsWithHistoryAndRoute]' started.
+Test Case '-[RestockTests.CheckoffQueueTests testDrainCompletesExactlyQueuedItemsWithHistoryAndRoute]' passed (0.028 seconds).
+Test Case '-[RestockTests.CheckoffQueueTests testDrainIgnoresDuplicateCompletedAndUnknownIDs]' started.
+Test Case '-[RestockTests.CheckoffQueueTests testDrainIgnoresDuplicateCompletedAndUnknownIDs]' passed (0.019 seconds).
+Test Case '-[RestockTests.CheckoffQueueTests testEffectivePendingMatchesStateAfterDrain]' started.
+Test Case '-[RestockTests.CheckoffQueueTests testEffectivePendingMatchesStateAfterDrain]' passed (0.024 seconds).
+Test Case '-[RestockTests.CheckoffQueueTests testEnqueueAppendsOnlyOwnKey]' started.
+Test Case '-[RestockTests.CheckoffQueueTests testEnqueueAppendsOnlyOwnKey]' passed (0.010 seconds).
+Test Case '-[RestockTests.CheckoffQueueTests testLegacyCounterIsRespectedAndCleared]' started.
+Test Case '-[RestockTests.CheckoffQueueTests testLegacyCounterIsRespectedAndCleared]' passed (0.024 seconds).
+Test Case '-[RestockTests.CheckoffQueueTests testQueueIsSeparatePerStore]' started.
+Test Case '-[RestockTests.CheckoffQueueTests testQueueIsSeparatePerStore]' passed (0.012 seconds).
+Test Suite 'CheckoffQueueTests' passed at 2026-10-14 15:06:42.683.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.117 (0.930) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-10-14 15:06:42.683.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.211 (1.028) seconds
+Test Suite 'Selected tests' passed at 2026-10-14 15:06:42.683.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.211 (1.029) seconds
+2026-10-14 15:06:55.455099+0200 RestockUITests-Runner[93706:5876504] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-14 15:07:07.079.
+Test Suite 'RestockUITests.xctest' started at 2026-10-14 15:07:07.081.
+Test Suite 'QuickAddControlUITests' started at 2026-10-14 15:07:07.081.
+Test Case '-[RestockUITests.QuickAddControlUITests testPendingFlagFocusesQuickAddFieldAndIsConsumed]' started.
+    t =     0.00s Start Test at 2026-10-14 15:07:07.087
+    t =     0.20s Set Up
+    t =     0.22s Open com.johannesemmrich.Restock
+    t =     0.23s     Launch com.johannesemmrich.Restock
+2026-10-14 15:07:08.898 xcodebuild[93533:5874352] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-14 15:07:08.899 xcodebuild[93533:5874352] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[93706]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x109f50310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x109fec398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     2.91s         Setting up automation session
+    t =     6.56s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.QuickAddControlUITests testPendingFlagFocusesQuickAddFieldAndIsConsumed] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    12.08s Waiting 20.0s for "Schnell hinzufügen…" TextField to exist
+    t =    13.12s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =    13.13s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =    14.62s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    14.64s     Find the "Schnell hinzufügen…" TextField
+    t =    15.21s Terminate com.johannesemmrich.Restock:93750
+    t =    16.27s Open com.johannesemmrich.Restock
+2026-10-14 15:07:23.733 xcodebuild[93533:5874352] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-14 15:07:23.743 xcodebuild[93533:5874352] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    16.27s     Launch com.johannesemmrich.Restock
+    t =    18.61s         Setting up automation session
+    t =    20.71s         Wait for com.johannesemmrich.Restock to idle
+    t =    22.83s Waiting 20.0s for "Schnell hinzufügen…" TextField to exist
+    t =    23.86s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =    23.87s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =    25.18s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    25.18s     Find the "Schnell hinzufügen…" TextField
+    t =    25.29s     Capturing element debug description
+    t =    26.06s         Requesting snapshot of accessibility hierarchy for app with pid 93844
+    t =    26.11s         Find: Descendants matching type TextField
+    t =    26.11s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    26.11s         Requesting snapshot of accessibility hierarchy for app with pid 93844
+    t =    26.28s         Find: Descendants matching type TextField
+    t =    26.36s         Requesting snapshot of accessibility hierarchy for app with pid 93844
+    t =    27.11s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    27.16s     Find the "Schnell hinzufügen…" TextField
+    t =    27.34s     Capturing element debug description
+    t =    27.50s         Requesting snapshot of accessibility hierarchy for app with pid 93844
+    t =    27.50s         Requesting snapshot of accessibility hierarchy for app with pid 93844
+    t =    27.51s         Requesting snapshot of accessibility hierarchy for app with pid 93844
+    t =    27.51s Tear Down
+    t =    27.51s     Open com.johannesemmrich.Restock
+    t =    27.52s         Launch com.johannesemmrich.Restock
+    t =    27.52s             Terminate com.johannesemmrich.Restock:93844
+2026-10-14 15:07:35.668 xcodebuild[93533:5874352] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-14 15:07:35.669 xcodebuild[93533:5874352] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    30.19s             Setting up automation session
+    t =    33.11s             Wait for com.johannesemmrich.Restock to idle
+    t =    35.63s     Terminate com.johannesemmrich.Restock:93965
+Test Case '-[RestockUITests.QuickAddControlUITests testPendingFlagFocusesQuickAddFieldAndIsConsumed]' passed (36.979 seconds).
+Test Case '-[RestockUITests.QuickAddControlUITests testWithoutPendingFlagFieldIsNotFocused]' started.
+    t =     0.00s Start Test at 2026-10-14 15:07:44.070
+    t =     0.07s Set Up
+    t =     0.07s Open com.johannesemmrich.Restock
+    t =     0.08s     Launch com.johannesemmrich.Restock
+2026-10-14 15:07:44.153 xcodebuild[93533:5874352] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-14 15:07:44.153 xcodebuild[93533:5874352] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.52s         Setting up automation session
+    t =     2.64s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.QuickAddControlUITests testWithoutPendingFlagFieldIsNotFocused] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     4.96s Waiting 20.0s for "Schnell hinzufügen…" TextField to exist
+    t =     6.13s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =     6.13s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =     8.13s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     8.13s     Find the "Schnell hinzufügen…" TextField
+    t =     8.19s     Capturing element debug description
+    t =     8.57s         Requesting snapshot of accessibility hierarchy for app with pid 94087
+    t =     8.65s         Find: Descendants matching type TextField
+    t =     8.65s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =     8.67s         Requesting snapshot of accessibility hierarchy for app with pid 94087
+    t =     8.76s         Find: Descendants matching type TextField
+    t =     8.77s         Requesting snapshot of accessibility hierarchy for app with pid 94087
+    t =    10.06s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    10.07s     Find the "Schnell hinzufügen…" TextField
+    t =    10.33s     Capturing element debug description
+    t =    10.33s Tear Down
+    t =    10.34s     Open com.johannesemmrich.Restock
+    t =    10.41s         Launch com.johannesemmrich.Restock
+    t =    10.41s             Terminate com.johannesemmrich.Restock:94087
+2026-10-14 15:07:59.824 xcodebuild[93533:5874352] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-14 15:07:59.824 xcodebuild[93533:5874352] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    18.11s             Setting up automation session
+    t =    20.18s             Wait for com.johannesemmrich.Restock to idle
+    t =    22.37s     Terminate com.johannesemmrich.Restock:94147
+Test Case '-[RestockUITests.QuickAddControlUITests testWithoutPendingFlagFieldIsNotFocused]' passed (24.346 seconds).
+Test Suite 'QuickAddControlUITests' passed at 2026-10-14 15:08:08.527.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 61.325 (61.446) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-14 15:08:08.543.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 61.325 (61.462) seconds
+Test Suite 'Selected tests' passed at 2026-10-14 15:08:08.545.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 61.325 (61.466) seconds
+** BUILD INTERRUPTED **
+ue #21 Haenger)

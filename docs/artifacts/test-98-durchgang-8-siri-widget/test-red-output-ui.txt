@@ -1,0 +1,351 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination id=8F696920-4B9A-40A7-96F0-7697BE887CC7 "-only-testing:RestockUITests/QuickAddControlUITests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks -remove-static-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns
+
+ProcessInfoPlistFile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib: replacing existing signature
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib: replacing existing signature
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.app.xcent --timestamp\=none --generate-entitlement-der /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app: replacing existing signature
+
+Validate /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    builtin-validationUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app -shallow-bundle -infoplist-subpath Info.plist
+
+ValidateEmbeddedBinary /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung
+    /Applications/Xcode.app/Contents/Developer/usr/bin/embeddedBinaryValidationUtility /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -signing-cert - -info-plist-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ahmpzmcjofcqbubakuhalicaqcuf/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-10-14 08:54:09.089118+0200 RestockUITests-Runner[59525:5571830] [Default] Running tests...
+objc[59525]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x106544310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x1065e0398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-14 08:54:10.635.
+Test Suite 'RestockUITests.xctest' started at 2026-10-14 08:54:10.636.
+Test Suite 'QuickAddControlUITests' started at 2026-10-14 08:54:10.636.
+Test Case '-[RestockUITests.QuickAddControlUITests testPendingFlagFocusesQuickAddFieldAndIsConsumed]' started.
+    t =     0.00s Start Test at 2026-10-14 08:54:10.636
+    t =     0.32s Set Up
+    t =     0.32s Open com.johannesemmrich.Restock
+    t =     0.32s     Launch com.johannesemmrich.Restock
+2026-10-14 08:54:11.194 xcodebuild[59508:5571483] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-14 08:54:11.194 xcodebuild[59508:5571483] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.17s         Setting up automation session
+    t =     1.92s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.QuickAddControlUITests testPendingFlagFocusesQuickAddFieldAndIsConsumed] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.42s Waiting 20.0s for "Schnell hinzufügen…" TextField to exist
+    t =     4.45s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =     4.45s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =     5.59s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     5.59s     Find the "Schnell hinzufügen…" TextField
+    t =     5.61s     Capturing element debug description
+    t =     5.66s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     5.68s         Find: Descendants matching type TextField
+    t =     5.68s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =     5.69s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     5.70s         Find: Descendants matching type TextField
+    t =     5.71s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     6.57s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     6.57s     Find the "Schnell hinzufügen…" TextField
+    t =     6.59s     Capturing element debug description
+    t =     6.64s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     6.66s         Find: Descendants matching type TextField
+    t =     6.66s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =     6.66s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     6.68s         Find: Descendants matching type TextField
+    t =     6.68s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     7.63s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     7.63s     Find the "Schnell hinzufügen…" TextField
+    t =     7.66s     Capturing element debug description
+    t =     7.71s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     7.73s         Find: Descendants matching type TextField
+    t =     7.73s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =     7.73s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     7.75s         Find: Descendants matching type TextField
+    t =     7.75s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     8.61s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     8.61s     Find the "Schnell hinzufügen…" TextField
+    t =     8.64s     Capturing element debug description
+    t =     8.69s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     8.71s         Find: Descendants matching type TextField
+    t =     8.71s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =     8.71s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     8.73s         Find: Descendants matching type TextField
+    t =     8.73s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     9.58s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     9.58s     Find the "Schnell hinzufügen…" TextField
+    t =     9.61s     Capturing element debug description
+    t =     9.66s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     9.68s         Find: Descendants matching type TextField
+    t =     9.68s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =     9.68s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =     9.70s         Find: Descendants matching type TextField
+    t =     9.70s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    10.64s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    10.65s     Find the "Schnell hinzufügen…" TextField
+    t =    10.68s     Capturing element debug description
+    t =    10.72s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    10.74s         Find: Descendants matching type TextField
+    t =    10.74s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    10.74s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    10.77s         Find: Descendants matching type TextField
+    t =    10.77s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    11.61s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    11.61s     Find the "Schnell hinzufügen…" TextField
+    t =    11.64s     Capturing element debug description
+    t =    11.69s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    11.71s         Find: Descendants matching type TextField
+    t =    11.71s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    11.71s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    11.73s         Find: Descendants matching type TextField
+    t =    11.73s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    12.58s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    12.58s     Find the "Schnell hinzufügen…" TextField
+    t =    12.61s     Capturing element debug description
+    t =    12.66s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    12.68s         Find: Descendants matching type TextField
+    t =    12.68s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    12.68s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    12.70s         Find: Descendants matching type TextField
+    t =    12.70s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    13.66s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    13.66s     Find the "Schnell hinzufügen…" TextField
+    t =    13.67s     Capturing element debug description
+    t =    13.72s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    13.74s         Find: Descendants matching type TextField
+    t =    13.74s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    13.74s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    13.76s         Find: Descendants matching type TextField
+    t =    13.76s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    14.61s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    14.61s     Find the "Schnell hinzufügen…" TextField
+    t =    14.64s     Capturing element debug description
+    t =    14.69s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    14.71s         Find: Descendants matching type TextField
+    t =    14.71s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    14.71s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    14.72s         Find: Descendants matching type TextField
+    t =    14.73s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    15.57s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    15.57s     Find the "Schnell hinzufügen…" TextField
+    t =    15.59s     Capturing element debug description
+    t =    15.64s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    15.65s         Find: Descendants matching type TextField
+    t =    15.65s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    15.66s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    15.67s         Find: Descendants matching type TextField
+    t =    15.67s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    16.63s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    16.63s     Find the "Schnell hinzufügen…" TextField
+    t =    16.66s     Capturing element debug description
+    t =    16.70s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    16.72s         Find: Descendants matching type TextField
+    t =    16.73s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    16.73s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    16.75s         Find: Descendants matching type TextField
+    t =    16.75s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    17.61s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    17.61s     Find the "Schnell hinzufügen…" TextField
+    t =    17.64s     Capturing element debug description
+    t =    17.69s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    17.71s         Find: Descendants matching type TextField
+    t =    17.71s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    17.71s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    17.73s         Find: Descendants matching type TextField
+    t =    17.73s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    18.58s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    18.58s     Find the "Schnell hinzufügen…" TextField
+    t =    18.61s     Capturing element debug description
+    t =    18.66s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    18.68s         Find: Descendants matching type TextField
+    t =    18.68s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    18.68s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    18.70s         Find: Descendants matching type TextField
+    t =    18.70s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    19.66s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    19.66s     Find the "Schnell hinzufügen…" TextField
+    t =    19.68s     Capturing element debug description
+    t =    19.74s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    19.76s         Find: Descendants matching type TextField
+    t =    19.76s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    19.76s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    19.78s         Find: Descendants matching type TextField
+    t =    19.78s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    20.64s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    20.64s     Find the "Schnell hinzufügen…" TextField
+    t =    20.66s     Capturing element debug description
+    t =    20.71s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    20.73s         Find: Descendants matching type TextField
+    t =    20.73s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    20.73s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    20.75s         Find: Descendants matching type TextField
+    t =    20.75s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    21.59s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    21.60s     Find the "Schnell hinzufügen…" TextField
+    t =    21.62s     Capturing element debug description
+    t =    21.66s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    21.68s         Find: Descendants matching type TextField
+    t =    21.68s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    21.69s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    21.70s         Find: Descendants matching type TextField
+    t =    21.71s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    22.66s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    22.66s     Find the "Schnell hinzufügen…" TextField
+    t =    22.69s     Capturing element debug description
+    t =    22.74s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    22.76s         Find: Descendants matching type TextField
+    t =    22.76s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    22.76s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    22.77s         Find: Descendants matching type TextField
+    t =    22.78s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    23.62s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    23.62s     Find the "Schnell hinzufügen…" TextField
+    t =    23.65s     Capturing element debug description
+    t =    23.73s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    23.75s         Find: Descendants matching type TextField
+    t =    23.75s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    23.75s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    23.77s         Find: Descendants matching type TextField
+    t =    23.78s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    24.57s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =    24.57s     Find the "Schnell hinzufügen…" TextField
+    t =    24.60s     Capturing element debug description
+    t =    24.65s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    24.67s         Find: Descendants matching type TextField
+    t =    24.67s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =    24.68s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+    t =    24.70s         Find: Descendants matching type TextField
+    t =    24.70s         Requesting snapshot of accessibility hierarchy for app with pid 59545
+/Users/hem/Developer/Restock/.claude/worktrees/durchgang-5-wiederherstellung/RestockUITests/QuickAddControlUITests.swift:46: error: -[RestockUITests.QuickAddControlUITests testPendingFlagFocusesQuickAddFieldAndIsConsumed] : XCTAssertTrue failed - Mit gesetztem Merker muss das Feld fokussiert sein
+    t =    24.99s Tear Down
+    t =    25.00s     Open com.johannesemmrich.Restock
+    t =    25.00s         Launch com.johannesemmrich.Restock
+    t =    25.00s             Terminate com.johannesemmrich.Restock:59545
+2026-10-14 08:54:36.699 xcodebuild[59508:5571483] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-14 08:54:36.699 xcodebuild[59508:5571483] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    26.49s             Setting up automation session
+    t =    28.25s             Wait for com.johannesemmrich.Restock to idle
+    t =    30.26s     Terminate com.johannesemmrich.Restock:59880
+Test Case '-[RestockUITests.QuickAddControlUITests testPendingFlagFocusesQuickAddFieldAndIsConsumed]' failed (31.429 seconds).
+Test Case '-[RestockUITests.QuickAddControlUITests testWithoutPendingFlagFieldIsNotFocused]' started.
+    t =     0.00s Start Test at 2026-10-14 08:54:42.066
+    t =     0.05s Set Up
+    t =     0.05s Open com.johannesemmrich.Restock
+    t =     0.05s     Launch com.johannesemmrich.Restock
+2026-10-14 08:54:42.119 xcodebuild[59508:5571483] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-14 08:54:42.119 xcodebuild[59508:5571483] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.27s         Setting up automation session
+    t =     1.32s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.QuickAddControlUITests testWithoutPendingFlagFieldIsNotFocused] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.16s Waiting 20.0s for "Schnell hinzufügen…" TextField to exist
+    t =     4.19s     Checking `Expect predicate `existsNoRetry == 1` for object "Schnell hinzufügen…" TextField`
+    t =     4.19s         Checking existence of `"Schnell hinzufügen…" TextField`
+    t =     5.33s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     5.33s     Find the "Schnell hinzufügen…" TextField
+    t =     5.36s     Capturing element debug description
+    t =     5.41s         Requesting snapshot of accessibility hierarchy for app with pid 59905
+    t =     5.43s         Find: Descendants matching type TextField
+    t =     5.43s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =     5.43s         Requesting snapshot of accessibility hierarchy for app with pid 59905
+    t =     5.45s         Find: Descendants matching type TextField
+    t =     5.45s         Requesting snapshot of accessibility hierarchy for app with pid 59905
+    t =     6.40s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     6.40s     Find the "Schnell hinzufügen…" TextField
+    t =     6.43s     Capturing element debug description
+    t =     6.49s         Requesting snapshot of accessibility hierarchy for app with pid 59905
+    t =     6.51s         Find: Descendants matching type TextField
+    t =     6.51s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =     6.51s         Requesting snapshot of accessibility hierarchy for app with pid 59905
+    t =     6.53s         Find: Descendants matching type TextField
+    t =     6.53s         Requesting snapshot of accessibility hierarchy for app with pid 59905
+    t =     7.31s Checking `Expect predicate `hasKeyboardFocus == 1` for object "Schnell hinzufügen…" TextField`
+    t =     7.31s     Find the "Schnell hinzufügen…" TextField
+    t =     7.34s     Capturing element debug description
+    t =     7.39s         Requesting snapshot of accessibility hierarchy for app with pid 59905
+    t =     7.41s         Find: Descendants matching type TextField
+    t =     7.41s         Find: Elements matching predicate '"Schnell hinzufügen…" IN identifiers'
+    t =     7.41s         Requesting snapshot of accessibility hierarchy for app with pid 59905
+    t =     7.43s         Find: Descendants matching type TextField
+    t =     7.43s         Requesting snapshot of accessibility hierarchy for app with pid 59905
+    t =     7.45s Tear Down
+    t =     7.45s     Open com.johannesemmrich.Restock
+    t =     7.45s         Launch com.johannesemmrich.Restock
+    t =     7.45s             Terminate com.johannesemmrich.Restock:59905
+2026-10-14 08:54:50.565 xcodebuild[59508:5571483] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-14 08:54:50.565 xcodebuild[59508:5571483] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     8.71s             Setting up automation session
+    t =     9.43s             Wait for com.johannesemmrich.Restock to idle
+    t =    10.88s     Terminate com.johannesemmrich.Restock:59962
+Test Case '-[RestockUITests.QuickAddControlUITests testWithoutPendingFlagFieldIsNotFocused]' passed (11.965 seconds).
+Test Suite 'QuickAddControlUITests' failed at 2026-10-14 08:54:54.032.
+	 Executed 2 tests, with 1 failure (0 unexpected) in 43.394 (43.396) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-10-14 08:54:54.033.
+	 Executed 2 tests, with 1 failure (0 unexpected) in 43.394 (43.397) seconds
+Test Suite 'Selected tests' failed at 2026-10-14 08:54:54.033.
+	 Executed 2 tests, with 1 failure (0 unexpected) in 43.394 (43.398) seconds
+** BUILD INTERRUPTED **

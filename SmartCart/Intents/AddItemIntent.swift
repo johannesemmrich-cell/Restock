@@ -31,17 +31,32 @@ struct AddShoppingItemIntent: AppIntent {
         }
         let context = ModelContext(container)
 
-        let stores = try context.fetch(FetchDescriptor<Store>(predicate: #Predicate { $0.isActive }))
+        let item = Self.add(name: itemName, quantity: quantity, unit: unit, in: context)
+        try context.save()
+        let store = item.store
+
+        let storeInfo = store.map { " für \($0.name)" } ?? ""
+        return .result(dialog: "'\(itemName)' wurde zur Einkaufsliste hinzugefügt\(storeInfo).")
+    }
+
+    /// Anlegelogik des Siri-Befehls ohne Speicher-Öffnen, Speichern und Dialog — aus `perform()`
+    /// ausgelagert, damit sie mit einem In-Memory-Container testbar ist (Issue #98, Durchgang 8).
+    /// Ordnet über `AssignmentService.assign` einem aktiven Laden zu (keiner → `store == nil`) und
+    /// fügt den Artikel in den Kontext ein; gespeichert wird beim Aufrufer.
+    static func add(name: String, quantity: Int, unit: String?, in context: ModelContext) -> ShoppingItem {
+        // `add` wirft nicht: scheitert der Laden-Fetch (bisher Abbruch von `perform()`), wird der
+        // Artikel ohne Laden angelegt.
+        let stores = (try? context.fetch(FetchDescriptor<Store>(predicate: #Predicate { $0.isActive }))) ?? []
         // Nice-to-have für die Store-Zuordnung — ein Fetch-Fehler hier soll das Hinzufügen des
         // Artikels selbst nicht scheitern lassen, deshalb `try?` statt `try`.
         let purchaseRecords = (try? context.fetch(FetchDescriptor<PurchaseRecord>())) ?? []
-        let category = AssignmentService.category(for: itemName)
-        let store = AssignmentService.assign(itemName: itemName, to: stores, purchaseRecords: purchaseRecords)
+        let category = AssignmentService.category(for: name)
+        let store = AssignmentService.assign(itemName: name, to: stores, purchaseRecords: purchaseRecords)
 
         let qty = Double(quantity)
         let qtyStr = quantity == 1 ? "1" : "\(quantity)"
         let item = ShoppingItem(
-            name: itemName,
+            name: name,
             category: category,
             quantity: qtyStr,
             quantityAmount: qty,
@@ -49,10 +64,7 @@ struct AddShoppingItemIntent: AppIntent {
             store: store
         )
         context.insert(item)
-        try context.save()
-
-        let storeInfo = store.map { " für \($0.name)" } ?? ""
-        return .result(dialog: "'\(itemName)' wurde zur Einkaufsliste hinzugefügt\(storeInfo).")
+        return item
     }
 }
 
