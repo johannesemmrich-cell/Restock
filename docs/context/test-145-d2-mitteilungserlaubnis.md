@@ -138,3 +138,13 @@ Alternative mit Produktfolge (nicht empfohlen, eigener PO-Entscheid): Anfrage au
 
 ### Open Questions
 - keine PO-Fragen; alle Punkte technisch (CI-Anschluss entscheidet Tech Lead, Bedingung lokaler Grün-Lauf).
+
+## RED-Befunde (Phase 5, 2026-10-15)
+- Gebaut mit `build-for-testing -derivedDataPath build/dd-145d2` auf `Restock-Validate`; bestehende Installation.
+- Beide Wege rot mit „Installation nicht frisch: kein Mitteilungsdialog“ (Z. 108). Der Schalter stand beim Öffnen
+  auf aus (erste Prüfung bestanden) → Erlaubnis auf diesem Gerät früher **abgelehnt** worden.
+- Noch nicht unterscheidbar: kam kein Dialog, weil schon entschieden, oder weil der Koordinaten-Tipp (dx 0.93)
+  den Schalter verfehlt hat. Erst der Lauf auf frischer Installation (Skript) klärt das; bei Rot dort zuerst
+  den Tipp prüfen (Screenshot), dann erst den Dialog.
+- Der deny-Lauf hing nach dem Fehlschlag ~10 min (bekannter Diagnose-Hänger, Memory „UI-Test-Nachweisläufe“);
+  Skript-Zeitgrenzen entsprechend großzügig.
