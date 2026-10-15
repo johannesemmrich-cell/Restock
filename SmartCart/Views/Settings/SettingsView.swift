@@ -31,7 +31,17 @@ struct SettingsView: View {
     @State private var devPasswordInput = ""
     @State private var devPasswordError = false
 
-    private let devPasswordHash = "fab0966f3e9fa7a071e46259d2dfeaddbda732c8bce42a87987740cab51a7c86"
+    private static let releaseDevPasswordHash = "fab0966f3e9fa7a071e46259d2dfeaddbda732c8bce42a87987740cab51a7c86"
+
+    /// DEBUG-only: `-devPasswordHashForUITests <sha256-hex>` ersetzt den Vergleichshash für
+    /// `DeveloperModeUnlockUITests` (Issue #145, Durchgang 1). Im Release gilt immer der feste Hash.
+    private var devPasswordHash: String {
+        #if DEBUG
+        if let override = UserDefaults.standard.string(forKey: "devPasswordHashForUITests"),
+           !override.isEmpty { return override }
+        #endif
+        return Self.releaseDevPasswordHash
+    }
 
     var body: some View {
         NavigationStack {

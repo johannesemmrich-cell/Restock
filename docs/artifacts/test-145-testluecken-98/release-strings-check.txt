@@ -1,0 +1,36 @@
+# AC-7 Release-strings-Nachweis (Issue #145, Durchgang 1)
+Datum: 2026-10-15 10:37:10 +0200
+Basis-Commit: c6388f2c8ff668764ff0d8b45861f7e9f9dc0b3f + Produktänderung in SettingsView.swift und SmartCartApp.swift (im selben Commit wie diese Datei)
+
+Build: DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -configuration Release -scheme Restock -project Restock.xcodeproj -destination 'generic/platform=iOS Simulator' build
+Ergebnis: ** BUILD SUCCEEDED **
+
+Hinweis: Im Debug-Build ist Restock.app/Restock nur ein Starter (ca. 40 KB); der App-Code liegt in
+Restock.app/Restock.debug.dylib (Xcode-Debug-Dylib). Die Gegenprobe prüft deshalb zusätzlich diese Datei.
+Im Release-Build gibt es kein .debug.dylib; der gesamte Code steht in Restock.app/Restock.
+
+(Release: kein .dylib in Restock.app)
+
+== /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Release-iphonesimulator/Restock.app/Restock
+-rwxr-xr-x@ 1 hem  staff  28389904 15 Okt. 10:33 /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Release-iphonesimulator/Restock.app/Restock
+$ strings "/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Release-iphonesimulator/Restock.app/Restock" | grep -c devPasswordHashForUITests
+0
+$ strings "/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Release-iphonesimulator/Restock.app/Restock" | grep -c clearDeveloperModeForUITests
+0
+
+== /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Debug-iphonesimulator/Restock.app/Restock
+-rwxr-xr-x@ 1 hem  staff  40496 15 Okt. 09:06 /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Debug-iphonesimulator/Restock.app/Restock
+$ strings "/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Debug-iphonesimulator/Restock.app/Restock" | grep -c devPasswordHashForUITests
+0
+$ strings "/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Debug-iphonesimulator/Restock.app/Restock" | grep -c clearDeveloperModeForUITests
+0
+
+== /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib
+-rwxr-xr-x@ 1 hem  staff  21660208 15 Okt. 09:06 /Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib
+$ strings "/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib" | grep -c devPasswordHashForUITests
+1
+devPasswordHashForUITests
+$ strings "/Users/hem/Library/Developer/Xcode/DerivedData/Restock-ddxpzfxmmwvrfrgnsoxlbeejrcwa/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib" | grep -c clearDeveloperModeForUITests
+1
+-clearDeveloperModeForUITests
+
