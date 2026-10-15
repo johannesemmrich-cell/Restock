@@ -1,0 +1,22 @@
+Commit: a03ecd7769cc61b21740c91972d7caecdf97dbbe  Zeit: Do. 15 Okt. 2026 13:04:47 CEST
+Gebautes Binary: Oct 15 10:40:23 2026  md5 5c4389f9afc03038555fd945ce6ec33a
+Installiertes Binary md5 5c4389f9afc03038555fd945ce6ec33a
+Argumente im Binary: 2
+== 1) Start ohne Test-Argumente (Zustand nach der Gesamtsuite)
+An error was encountered processing the command (domain=NSPOSIXErrorDomain, code=3):
+Simulator device failed to terminate com.johannesemmrich.Restock.
+Underlying error (domain=NSPOSIXErrorDomain, code=3):
+com.johannesemmrich.Restock: 65149
+Detected file type from extension: PNG
+Note: No display specified. Defaulting to display: E223C9D2-20EC-4715-AE6B-76C90A59E28A (screenID: 1, name: LCD)
+Wrote screenshot to: /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/docs/artifacts/test-145-testluecken-98/validate/durchlauf-1-ohne-argumente.png
+developerMode = 2026-10-15 13:05:00.326 defaults[65214:1238505] 
+The domain/default pair of (com.johannesemmrich.Restock, developerMode) does not exist
+== 2) Start nur mit -devPasswordHashForUITests (Überschreibung allein entsperrt nicht)
+com.johannesemmrich.Restock: 65233
+Detected file type from extension: PNG
+Note: No display specified. Defaulting to display: E223C9D2-20EC-4715-AE6B-76C90A59E28A (screenID: 1, name: LCD)
+Wrote screenshot to: /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/docs/artifacts/test-145-testluecken-98/validate/durchlauf-2-nur-hash-argument.png
+developerMode = 2026-10-15 13:05:11.546 defaults[65304:1238987] 
+The domain/default pair of (com.johannesemmrich.Restock, developerMode) does not exist
+Ende: Do. 15 Okt. 2026 13:05:11 CEST

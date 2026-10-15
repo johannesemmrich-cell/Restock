@@ -26,6 +26,7 @@ struct SmartCartApp: App {
         defer {
             SyncCoordinator.shared.modelContext = container.mainContext
             #if DEBUG
+            Self.clearDeveloperModeForUITestsIfNeeded()
             Self.seedSharedAssignmentForScreenshotsIfNeeded(context: container.mainContext)
             Self.clearReceiptReviewSeedForUITestsIfNeeded(context: container.mainContext)
             Self.clearReceiptResolutionStatsForUITestsIfNeeded()
@@ -494,6 +495,15 @@ struct SmartCartApp: App {
         UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
         UserDefaults.standard.removeObject(forKey: "selectedCountry")
         UserDefaults(suiteName: appGroupID)?.removeObject(forKey: UserIdentity.storageKey)
+    }
+
+    /// Schaltet den Dev-Modus wieder aus (Issue #145, Durchgang 1) — `DeveloperModeUnlockUITests`
+    /// startet damit und räumt damit im `tearDown()` auf, weil erfolgreiches Entsperren
+    /// `developerMode = true` dauerhaft in den App-Container schreibt.
+    /// Only runs on `-clearDeveloperModeForUITests`, DEBUG-only.
+    private static func clearDeveloperModeForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-clearDeveloperModeForUITests") else { return }
+        UserDefaults.standard.removeObject(forKey: "developerMode")
     }
 
     private static func removeReplenishmentSeed(context: ModelContext) {

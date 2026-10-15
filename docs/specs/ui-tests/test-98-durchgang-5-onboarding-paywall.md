@@ -206,6 +206,8 @@ Wiederherstellen (offene Grenze).
 
 ## Dev-Passwort: Entscheidung Richtig-Pfad
 
+> Geschlossen durch #145 Durchgang 1 (2026-10-15): DEBUG-Hash-Überschreibung (`-devPasswordHashForUITests`) statt `matches(input:hash:)`; der Richtig-Pfad läuft als UI-Test. Siehe `test-145-durchgang-1-dev-passwort.md`.
+
 Geprüft wurde, ob der Richtig-Pfad über eine reine Funktion `matches(input:hash:)` mit Unit-Test
 abgedeckt werden soll. Befund im Code: Der Produktcode wäre klein (<15 Zeilen: ein internes `enum`
 auf Dateiebene, `verify()` ruft es auf). **Trotzdem entschieden: nicht in diesem Durchgang, offene
