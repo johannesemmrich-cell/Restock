@@ -2,7 +2,7 @@
 entity_id: test-145-durchgang-2-mitteilungserlaubnis
 type: test
 created: 2026-10-15
-updated: 2026-10-15
+updated: 2026-10-16
 status: draft
 workflow: test-145-d2-mitteilungserlaubnis
 tags: [test, ui-test, notifications, system-dialog, springboard, issue-145, issue-98, ci]
@@ -20,7 +20,7 @@ Issue #145 bündelt die offenen Testlücken aus #98. Dieser Durchgang schließt 
 „„Restock“ möchte dir Mitteilungen senden“ wird in einem UI-Test bedient, und zwar **beide** Entscheidungen:
 „Erlauben“ (Schalter „Nachkauf-Erinnerungen“ bleibt an) und „Nicht erlauben“ (Schalter springt auf aus).
 Ticket-DoD: Test des echten Wegs ODER belegte Begründung, warum nicht automatisierbar. Die Recherche zeigt: Er
-ist automatisierbar, aber nur mit **einer Entscheidung je Installation**. Deshalb zwei Installationen.
+ist automatisierbar, aber nur mit **einer Entscheidung je frischem Gerät**. Deshalb je Weg ein Wegwerf-Simulator.
 
 Stand heute: `docs/specs/ui-tests/test-98-durchgang-7-tagesmitteilung.md` (Abschnitt „Offene Grenzen“) hielt
 fest, dass der Systemdialog nicht automatisiert ist und die Erlaubnis von außen nicht setzbar. Kein bestehender
@@ -51,8 +51,13 @@ geprüft.
    SDK: contacts, calendar, reminders, photos, microphone, camera, mediaLibrary, homeKit, bluetooth,
    keyboardNetwork, location (+ macOS-Ordner). Quelle: WWDC20 10220 „Handle interruptions and alerts in UI
    tests“ — https://wwdcnotes.com/notes/wwdc20/10220
-3. **Einziger Rücksetzweg: App löschen und neu installieren** (oder Simulator löschen).
-   https://www.avanderlee.com/?p=2538 und https://useyourloaf.com/blog/handling-system-alerts-in-ui-tests/
+3. **Neuinstallation setzt erst nach einem Tag zurück; verlässlich ist nur ein frisches Gerät.** Apple merkt
+   die Antwort auf den Mitteilungsdialog, bis die App mindestens einen Tag deinstalliert war oder das Gerät
+   zurückgesetzt wird (Apple TN2265). Belegt im Lauf 2026-10-15 21:47: nach `simctl uninstall` + `install` kein
+   Dialog, Schalter sofort an (`docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-deny-20261015-214715.log`).
+   Die früher zitierten Quellen (https://www.avanderlee.com/?p=2538,
+   https://useyourloaf.com/blog/handling-system-alerts-in-ui-tests/) nennen Löschen als Rücksetzweg; für
+   Mitteilungen trägt das nicht sofort.
 4. **Löschen innerhalb eines XCUITests geht nicht:** Danach scheitert `launch()` mit
    `FBSOpenApplicationServiceErrorDomain Code=4 … returned nil`; XCTest installiert nicht neu, kein
    Apple-Workaround. https://developer.apple.com/forums/thread/722021 und
@@ -61,8 +66,8 @@ geprüft.
    "com.apple.springboard").alerts` oder `addUIInterruptionMonitor`; im Repo bereits so genutzt
    (`RestockUITests/ReceiptShareExtensionTests.swift`, `dismissSystemAlerts()`, `watchForSystemDialogs()`).
 
-**Folge:** Je Installation ist genau EINE Entscheidung testbar; danach ist der Zustand für alle folgenden Tests
-festgelegt. Beide Wege brauchen zwei getrennte Installationen.
+**Folge:** Je frischem Gerät ist genau EINE Entscheidung testbar; danach ist der Zustand für alle folgenden Tests
+festgelegt. Beide Wege brauchen zwei getrennte, frisch angelegte Simulatoren.
 
 ## Source
 
@@ -107,7 +112,7 @@ Zeilennummern Stand 2026-10-15; maßgeblich sind die Namen.
 | `RestockUITests/UITestWait.swift` | test | `UITestLaunch`, `waitUntilHittable`, `waitForLabel(contains:)` |
 | `RestockUITests/ReceiptShareExtensionTests.swift` | test | Vorlage ENV-Gate und SpringBoard-Zugriff |
 | `scripts/run-share-extension-uitest.sh` | script | Vorlage Bauen/Installieren/Testlauf |
-| Simulator `Restock-Validate` | tool | lokaler Lauf; nie parallel (Memory „Eigenes Testgerät je Projekt“) |
+| Simulator `Restock-Validate` | tool | Vorlage (Gerätetyp, Runtime) der Wegwerf-Simulatoren, wird nur gelesen und bleibt unberührt; nie parallel (Memory „Eigenes Testgerät je Projekt“) |
 | `/tmp/heavy-build.lock`, `/tmp/loose-ends-testlauf.lock` | lock | Abstimmung schwerer Läufe mit anderen Sitzungen (Memory „Schwere Läufe mit anderen Sitzungen abstimmen“) |
 
 ## Scope
@@ -117,7 +122,7 @@ Zeilennummern Stand 2026-10-15; maßgeblich sind die Namen.
 | File | Change Type | Description |
 |------|-------------|-------------|
 | `RestockUITests/NotificationPermissionUITests.swift` | CREATE | `testAllow`, `testDeny`, ENV-Gate `RESTOCK_NOTIF_DECISION`, SpringBoard-Dialog, Meldung „Installation nicht frisch“ (ca. +130) |
-| `scripts/run-notification-permission-uitest.sh` | CREATE | Sperren, einmal bauen, je Weg uninstall → install → `test-without-building`, Prüfung der Testzahl, Schlusszustand deinstalliert (ca. +70) |
+| `scripts/run-notification-permission-uitest.sh` | CREATE | Sperren, einmal bauen, je Weg Wegwerf-Simulator anlegen → install → `test-without-building` → löschen, Prüfung der Testzahl, Schlusszustand: kein Wegwerf-Simulator übrig (ca. +95) |
 | `.github/workflows/ci.yml` | MODIFY | Umgebungsvariable und Klassenauswahl je Hälfte (ca. +10) |
 | `SmartCart/Views/Settings/SettingsView.swift` | MODIFY nur falls nötig | `accessibilityIdentifier` am Schalter, falls Label-Matching nicht trägt (±2) |
 | `Restock.xcodeproj/project.pbxproj` | MODIFY | Registrierung der Testdatei an den vier Stellen (ca. +4) |
@@ -131,7 +136,8 @@ Zeilennummern Stand 2026-10-15; maßgeblich sind die Namen.
   Testcode als Produktivcode“); vor Abschluss `git diff --stat` gegen den Tip-Commit prüfen. Bei Überschreitung
   STOP und Rückfall auf „Klasse + Skript“ (ci.yml als Folgeschritt).
 - Seiteneffekte: Produktcode praktisch unberührt (höchstens ein Identifier). Die Klasse läuft in der normalen
-  Suite nur als Skip. Das Skript hinterlässt am Ende **keine** Installation (siehe unten).
+  Suite nur als Skip. Das Skript hinterlässt am Ende **keinen** Wegwerf-Simulator und lässt `Restock-Validate`
+  unberührt (siehe unten).
 
 ### Nicht-Ziele
 
@@ -144,7 +150,7 @@ Zeilennummern Stand 2026-10-15; maßgeblich sind die Namen.
 ## Definition of Done
 
 - [ ] RED vor Umsetzung der Klasse: Beide Tests fallen mit belegter Meldung (AC-1, AC-2)
-- [ ] Lokaler Lauf beider Wege über das Skript auf `Restock-Validate`, Protokoll abgelegt (AC-9, AC-10, AC-11)
+- [ ] Lokaler Lauf beider Wege über das Skript auf je einem Wegwerf-Simulator (Vorlage `Restock-Validate`), Protokoll abgelegt (AC-9, AC-10, AC-11)
 - [ ] Normale Suite unberührt, Klasse ohne Gate übersprungen (AC-3)
 - [ ] Dialog-Beschriftungen de und en abgedeckt (AC-5)
 - [ ] CI-Anschluss grün in beiden Hälften ODER begründeter Rückfall (AC-12, AC-13)
@@ -158,11 +164,11 @@ Zeilennummern Stand 2026-10-15; maßgeblich sind die Namen.
 
 - **ENV-Gate** `RESTOCK_NOTIF_DECISION`, gesetzt über `TEST_RUNNER_RESTOCK_NOTIF_DECISION=allow|deny` (Präfix
   wird von `xcodebuild` abgestreift; Muster `RESTOCK_SHARE_E2E`). `setUpWithError()`: `continueAfterFailure =
-  false`; ohne Wert wirft `XCTSkip` mit Grund (Hinweis auf das Skript und darauf, dass die Erlaubnis nur durch
-  Neuinstallation zurückgesetzt werden kann). Ein Wert außer `allow`/`deny` ist ein Fehlschlag mit klarer
+  false`; ohne Wert wirft `XCTSkip` mit Grund (Hinweis auf das Skript und darauf, dass die Erlaubnis nur auf einem
+  frischen Simulator offen ist; Neuinstallation reicht erst nach einem Tag). Ein Wert außer `allow`/`deny` ist ein Fehlschlag mit klarer
   Meldung, kein Skip.
 - **Je Lauf nur der Test, der zur Entscheidung passt:** `testAllow` überspringt sich bei `deny`, `testDeny` bei
-  `allow` (`XCTSkip` mit Grund „andere Entscheidung dieses Laufs“). So wird jede Installation genau einmal
+  `allow` (`XCTSkip` mit Grund „andere Entscheidung dieses Laufs“). So wird jedes frische Gerät genau einmal
   entschieden und das Skript prüft je Weg, dass der passende Test **gelaufen** ist (nicht übersprungen).
 - **Start:** `UITestLaunch` mit `-developerMode YES -hasCompletedOnboarding YES`. **Nie**
   `-notificationsEnabled` (weder `YES` noch `NO`): Als Launch-Argument überlagert es in der Argument-Domain
@@ -176,9 +182,9 @@ Zeilennummern Stand 2026-10-15; maßgeblich sind die Namen.
 - **Dialog:** Aktiv in `XCUIApplication(bundleIdentifier: "com.apple.springboard")` auf `alerts.firstMatch`
   warten (Frist `UITestWait.defaultTimeout`), zusätzlich `addUIInterruptionMonitor` als zweites Netz (Muster
   `ReceiptShareExtensionTests`). Erscheint kein Dialog, schlägt der Test mit der Meldung „Installation nicht
-  frisch: kein Mitteilungsdialog erschienen — die Erlaubnis wurde schon früher entschieden; vor dem Lauf App
-  deinstallieren (scripts/run-notification-permission-uitest.sh)“ fehl. **Kein Skip** an dieser Stelle, damit
-  ein Lauf auf nicht frischer Installation nicht grün wirkt.
+  frisch: kein Mitteilungsdialog erschienen — die Erlaubnis wurde schon früher entschieden; Lauf auf frischem
+  Simulator nötig (scripts/run-notification-permission-uitest.sh)“ fehl. **Kein Skip** an dieser Stelle, damit
+  ein Lauf auf nicht frischem Gerät nicht grün wirkt.
 - **Beschriftungen:** Erlauben: „Erlauben“, „Allow“. Nicht erlauben: „Nicht erlauben“, „Don’t Allow“ (typografischer
   Apostroph) sowie „Don't Allow“ (gerader). Der Alert-Titel wird nicht auf Wortlaut geprüft (enthält den
   App-Namen), nur sein Vorhandensein; die Schaltflächen werden über die Liste beider Sprachen gesucht, damit
@@ -194,8 +200,10 @@ Zeilennummern Stand 2026-10-15; maßgeblich sind die Namen.
 
 ### Skript `scripts/run-notification-permission-uitest.sh`
 
-Aufruf: `scripts/run-notification-permission-uitest.sh [<simulator-udid>]`; Standard-Gerät `Restock-Validate`
-(per Name aufgelöst), nie Hennings Gerät.
+Aufruf: `scripts/run-notification-permission-uitest.sh [<simulator-udid>]`; das Argument ist die **Vorlage**,
+Standard `Restock-Validate` (per Name aufgelöst), nie Hennings Gerät. Aus `simctl list devices -j` werden nur
+`deviceTypeIdentifier` und der Runtime-Schlüssel der Vorlage gelesen; die Vorlage wird weder gebootet noch
+verändert.
 
 1. **Sperren (vereinbartes Verfahren der lokalen Sitzungen):** Beide Sperren sind **Verzeichnisse**, genommen
    in dieser Reihenfolge per atomarem `mkdir /tmp/heavy-build.lock`, dann `mkdir /tmp/loose-ends-testlauf.lock`;
@@ -204,21 +212,25 @@ Aufruf: `scripts/run-notification-permission-uitest.sh [<simulator-udid>]`; Stan
    fremden `owner`-Datei ab (Exitcode ≠ 0), ohne etwas zu verändern; eine schon genommene erste Sperre gibt es
    dabei wieder frei. Eine fremde Sperre wird **nie** gelöscht oder übernommen, auch keine scheinbar verwaiste.
    `trap` entfernt bei jedem Ende nur die Sperren, die das Skript selbst angelegt hat (`rm -rf`).
-2. **Einmal bauen:** `xcodebuild build-for-testing` (Scheme `Restock`, Ziel `Restock-Validate`, keine
-   zusätzlichen Build-Settings; Memory „CODE_SIGNING_ALLOWED=NO bricht die App-Gruppe“).
-3. **Je Weg (`allow`, dann `deny`):** `xcrun simctl uninstall <udid> com.johannesemmrich.Restock` →
-   `xcrun simctl install <udid> <gebaute .app>` → `TEST_RUNNER_RESTOCK_NOTIF_DECISION=<weg> xcodebuild
-   test-without-building … -only-testing:RestockUITests/NotificationPermissionUITests -resultBundlePath
-   <eigener Pfad je Weg>`.
+2. **Einmal bauen:** `xcodebuild build-for-testing` (Scheme `Restock`, Ziel `generic/platform=iOS Simulator`,
+   `-derivedDataPath build/dd-notif`, keine zusätzlichen Build-Settings; Memory „CODE_SIGNING_ALLOWED=NO bricht
+   die App-Gruppe“).
+3. **Je Weg (`allow`, dann `deny`):** `xcrun simctl create "Restock-Notif-<weg>-<zeitstempel>" <gerätetyp>
+   <runtime>` (udid gemerkt) → `boot` + `bootstatus -b` → `xcrun simctl install <wegwerf-udid> <gebaute .app>` →
+   `TEST_RUNNER_RESTOCK_NOTIF_DECISION=<weg> xcodebuild test-without-building -destination id=<wegwerf-udid> …
+   -only-testing:RestockUITests/NotificationPermissionUITests -resultBundlePath <eigener Pfad je Weg>
+   -collect-test-diagnostics never` → Screenshots → `simctl shutdown` + `simctl delete` des Wegwerf-Simulators.
 4. **Auswertung je Weg (Null-Test-Lauf ist kein Grün):** aus dem Protokoll bzw. `xcresulttool` die Zahl
    ausgeführter Tests lesen; Bedingung: ≥ 1 Test **gelaufen** (der zur Entscheidung passende), 0 Fehlschläge,
    kein Abbruch („Restarting after unexpected exit“, „Executed 0 tests“, „TEST EXECUTE FAILED“ gelten als Rot),
    der passende Test ist nicht übersprungen. Das Gesamturteil ist grün nur, wenn beide Wege grün sind.
-5. **Schlusszustand:** Nach beiden Wegen (auch bei Fehlschlag, per `trap`) `simctl uninstall`: Auf
-   `Restock-Validate` bleibt keine dauerhafte Erlaubnis zurück, die spätere Läufe anderer Klassen beeinflusst
-   (Downstream: erteilte Erlaubnis lässt `HomeView.refreshDueSoon` echte Mitteilungen planen).
-6. **Ausgabe:** Ergebnisblock mit Commit-Kennung, Simulator-Runtime, Zeitstempel, Ergebnis je Weg (Testzahl,
-   Fehlschläge), Pfad der Ergebnisbündel.
+5. **Schlusszustand:** Nach beiden Wegen (auch bei Fehlschlag, per `trap`) sind alle selbst angelegten
+   Wegwerf-Simulatoren gelöscht; `simctl list devices` enthält keinen Namen `Restock-Notif-…-<zeitstempel>` mehr,
+   sonst ist der Lauf rot. Auf `Restock-Validate` entsteht keine Erlaubnis, die spätere Läufe anderer Klassen
+   beeinflusst (Downstream: erteilte Erlaubnis lässt `HomeView.refreshDueSoon` echte Mitteilungen planen).
+6. **Ausgabe:** Ergebnisblock mit Commit-Kennung, Vorlage (udid/Runtime), Zeitstempel, Ergebnis je Weg (Testzahl,
+   Fehlschläge, Wegwerf-udid), Pfad der Ergebnisbündel und „Wegwerf-Simulatoren nach dem Lauf übrig: nein (muss:
+   nein)“.
 
 ### CI-Anschluss
 
@@ -241,12 +253,12 @@ Aufruf: `scripts/run-notification-permission-uitest.sh [<simulator-udid>]`; Stan
 
 ### Reihenfolge der Umsetzung
 
-Spec → Klasse (RED) → Skript → lokaler Lauf beider Wege auf `Restock-Validate` unter beiden Sperren → erst bei
+Spec → Klasse (RED) → Skript → lokaler Lauf beider Wege auf je einem Wegwerf-Simulator unter beiden Sperren → erst bei
 Grün CI-Anschluss → Push-Lauf beider Hälften.
 
 ### Durchlauf (Pflicht, „Die App wird benutzt, nicht nur gebaut“)
 
-Der Skriptlauf **ist** der Durchlauf des geänderten Ablaufs: Er installiert die App frisch, schaltet den
+Der Skriptlauf **ist** der Durchlauf des geänderten Ablaufs: Er installiert die App auf einem frischen Simulator, schaltet den
 Schalter wie ein Nutzer und bedient den echten Systemdialog. Ergänzend Screenshot (`simctl io … screenshot`)
 des Dialogs und des Schalterzustands je Weg als Beleg. Registrierung als Artefakt aus dem echten Lauf (Commit-
 Kennung und Zeitstempel passend, nie von Hand gesetzt).
@@ -265,8 +277,9 @@ Kennung und Zeitstempel passend, nie von Hand gesetzt).
   WHEN die Klasse läuft, THEN werden beide Tests mit Grund übersprungen, die Suite bleibt grün.
 - [ ] T4: Nicht frische Installation — GIVEN Erlaubnis bereits entschieden, `RESTOCK_NOTIF_DECISION=allow`,
   WHEN `testAllow` läuft, THEN schlägt er mit „Installation nicht frisch“ fehl (Gegenprobe zum Skip).
-- [ ] T5: Skript `scripts/run-notification-permission-uitest.sh` — GIVEN `Restock-Validate` und freie Sperren,
-  WHEN es läuft, THEN beide Wege grün, Testzahl je Weg ≥ 1, am Ende ist Restock deinstalliert.
+- [ ] T5: Skript `scripts/run-notification-permission-uitest.sh` — GIVEN Vorlage `Restock-Validate` und freie
+  Sperren, WHEN es läuft, THEN beide Wege grün, Testzahl je Weg ≥ 1, am Ende sind keine Wegwerf-Simulatoren
+  des Laufs übrig und `Restock-Validate` ist unberührt.
 - [ ] T6: Skript bei belegter Sperre — GIVEN ein bestehendes Verzeichnis `/tmp/heavy-build.lock` mit fremder
   `owner`-Datei, WHEN das Skript startet, THEN bricht es mit klarer Meldung (samt `owner`-Inhalt) ab, verändert
   nichts und die fremde Sperre besteht unverändert weiter.
@@ -295,17 +308,19 @@ Kennung und Zeitstempel passend, nie von Hand gesetzt).
   und `-hasCompletedOnboarding YES` (plus die von `UITestLaunch` gesetzten) gesetzt, und `-notificationsEnabled`
   kommt in der Klasse nicht vor (Argument-Domain-Falle). Test: T8 (`grep`).
 - **AC-7:** GIVEN die Klasse, WHEN sie geprüft wird, THEN erzeugt sie keinen Zustand im App-Group-Container und
-  braucht kein Aufräum-Argument; der Zustand (Erlaubnis) wird ausschließlich durch Deinstallation im Skript
-  zurückgesetzt (AC-10). Test: T8.
+  braucht kein Aufräum-Argument; der Zustand (Erlaubnis) entsteht nur auf dem Wegwerf-Simulator des Skripts
+  und verschwindet mit ihm (AC-10). Test: T8.
 - **AC-8:** GIVEN das Skript, WHEN es startet, THEN nimmt es beide Sperren `/tmp/heavy-build.lock` und
   `/tmp/loose-ends-testlauf.lock` in dieser Reihenfolge per `mkdir` samt `owner`-Datei, bricht bei belegter
   Sperre mit klarer Meldung ab, ohne die fremde Sperre anzutasten, und gibt bei jedem Ende nur die selbst
   angelegten Sperren frei. Test: T5, T6.
 - **AC-9:** GIVEN das Skript, WHEN es läuft, THEN baut es genau einmal (`build-for-testing`, keine zusätzlichen
-  Build-Settings) und führt je Weg `simctl uninstall` → `simctl install` → `xcodebuild test-without-building
-  -only-testing:RestockUITests/NotificationPermissionUITests` auf `Restock-Validate` aus. Test: T5.
-- **AC-10:** GIVEN der Skriptlauf, WHEN er endet (grün oder rot), THEN ist Restock auf dem Testgerät
-  deinstalliert. Test: T5 (`simctl get_app_container` schlägt fehl).
+  Build-Settings) und führt je Weg `simctl create` (Gerätetyp und Runtime der Vorlage `Restock-Validate`) →
+  `simctl install` → `xcodebuild test-without-building -only-testing:RestockUITests/NotificationPermissionUITests`
+  auf diesem Wegwerf-Simulator → `simctl delete` aus. Test: T5.
+- **AC-10:** GIVEN der Skriptlauf, WHEN er endet (grün oder rot), THEN ist kein Wegwerf-Simulator des Laufs mehr
+  vorhanden und die Vorlage `Restock-Validate` ist unverändert. Test: T5 (`simctl list devices` enthält keinen
+  Namen `Restock-Notif-…-<zeitstempel>`).
 - **AC-11:** GIVEN die Auswertung je Weg, WHEN sie läuft, THEN zählt ein Weg nur als grün bei ≥ 1 gelaufenem
   (nicht übersprungenem) Test, 0 Fehlschlägen und ohne Abbruch; „Executed 0 tests“ oder ein Runner-Neustart
   ist Rot. Test: T5.
@@ -315,7 +330,7 @@ Kennung und Zeitstempel passend, nie von Hand gesetzt).
   `testDeny` (B) sind nicht übersprungen; ODER (Rückfall) der CI-Anschluss ist nicht im Diff, die Gründe sind
   als Messung dokumentiert, und der Anschluss steht als Folgeschritt in #145. Test: T7.
 - **AC-14:** GIVEN der Abschluss, WHEN die Doku geprüft wird, THEN beschreibt `CLAUDE.md` Klasse, ENV
-  `RESTOCK_NOTIF_DECISION`, Skript, Sperren, Rücksetzen nur per Neuinstallation, die offenen Grenzen und den
+  `RESTOCK_NOTIF_DECISION`, Skript, Sperren, Wegwerf-Simulator je Weg (Neuinstallation setzt erst nach einem Tag zurück), die offenen Grenzen und den
   Hinweis in der D7-Spec ist gesetzt.
 - **AC-15:** GIVEN der Diff gegen den Tip-Commit, WHEN er geprüft wird, THEN umfasst er höchstens
   `NotificationPermissionUITests.swift`, `run-notification-permission-uitest.sh`, `ci.yml`, `project.pbxproj`,
@@ -331,7 +346,7 @@ Kennung und Zeitstempel passend, nie von Hand gesetzt).
 ## Architektur-Entscheidung (ADR)
 
 - **ADR-Nr.:** keine neue
-- **Rationale:** Systemfremder Zustand, der nur durch Neuinstallation zurückgesetzt wird, läuft wie beim
+- **Rationale:** Systemfremder Zustand, der nur auf einem frischen Gerät offen ist, läuft wie beim
   Teilen-Test als Skript außerhalb der normalen Suite (Muster `run-share-extension-uitest.sh`), die Klasse mit
   ENV-Gate. Gekippt wird die Aussage aus der D7-Spec „Systemdialog nicht automatisiert“; sie war Arbeitsstand.
 
@@ -341,14 +356,16 @@ Kein Modell beteiligt: deterministische Testlogik. Die Tabelle stammt aus der An
 
 | Variante | Echter Weg | Beide Entscheidungen | CI | Dateien | LoC | Risiko |
 |---|---|---|---|---|---|---|
-| A Skript | ja | ja | nein | 3–4 | ca. 200 | niedrig; hinterlässt Zustand (daher deinstallieren) |
+| A Skript | ja | ja | nein | 3–4 | ca. 200 | niedrig; Zustand bleibt auf dem Wegwerf-Simulator, der gelöscht wird |
 | B Suite + XCTSkip | nur zufällig | nein | bedingt | 1–2 | ca. 100 | hoch: stilles Skip verdeckt Fehler, hängt von der Reihenfolge ab |
 | C nur Doku | nein | nein | – | 1 | 0 | DoD-Ausweg greift nicht, weil automatisierbar |
 | D CI-Hälften | ja | ja (verteilt) | ja | 3–4 | ca. 150 | mittel, Runner-Verhalten ungemessen |
 | **A+D (gewählt)** | ja | ja, doppelt | ja | 4–5 | ca. 215 | mittel, durch lokalen Vorlauf begrenzt |
 
-- **Verworfen:** Simulator-Klon je Test (eigene Infrastruktur; ein Klon setzt die Entscheidung nicht verlässlich
-  zurück). Löschen der App innerhalb des Tests (Recherche 4: geht nicht).
+- **Verworfen:** Simulator-Klon je Test (ein Klon übernimmt den Zustand der Vorlage und setzt die Entscheidung
+  nicht verlässlich zurück); gewählt ist stattdessen ein per `simctl create` neu angelegter Wegwerf-Simulator je
+  Weg (PO-Entscheidung 2026-10-16). Deinstallieren und neu installieren (wirkt erst nach einem Tag: Lauf
+  2026-10-15 21:47, TN2265). Löschen der App innerhalb des Tests (Recherche 4: geht nicht).
 - **Produkt-Alternative (nicht empfohlen, eigener PO-Entscheid):** Die Anfrage aus der Teilen-Erweiterung
   entfernen und nur über den Schalter fragen. Das würde den ungewollten Dialog in `ReceiptShareExtensionTests`
   beseitigen, kippt aber die Entscheidung aus dem Nutzerbericht vom 20.09.2026 (Erweiterung soll bei der ersten
@@ -365,7 +382,7 @@ Kein Modell beteiligt: deterministische Testlogik. Die Tabelle stammt aus der An
   zählt nur `.authorized`, `performDigestScheduling` auch `.provisional` — Befund, nicht Teil von D2.
 - **Echte Zustellung** um 9:00 und der Widerruf in den Systemeinstellungen sind nicht geprüft.
 - **Runner-Verhalten** (iOS 26/27, englischer Simulator, Dauer der Dialoganzeige) ist erst mit dem ersten
-  CI-Lauf belegt; bis dahin gilt der lokale Nachweis auf `Restock-Validate`.
+  CI-Lauf belegt; bis dahin gilt der lokale Nachweis auf Wegwerf-Simulatoren vom Typ von `Restock-Validate`.
 - **Nichts** wird auf Hennings Geräten gestartet oder geprüft (Regel „Hennings Geräte nur auf sein Wort“).
 - Die Klasse prüft je Lauf nur eine Entscheidung; beide Wege zusammen belegt erst das Skript bzw. die beiden
   CI-Hälften.
@@ -373,11 +390,12 @@ Kein Modell beteiligt: deterministische Testlogik. Die Tabelle stammt aus der An
 ## Risiken
 
 - **Dialog erscheint nicht (Installation nicht frisch):** Schlägt laut fehl (AC-4) statt zu überspringen.
-  Gegenmaßnahme im Skript: Deinstallation vor jedem Weg.
+  Gegenmaßnahme im Skript: frisch angelegter Wegwerf-Simulator je Weg (Deinstallation reicht nicht, TN2265).
 - **Reihenfolge in CI-Hälfte B:** Ein früherer Test, der die Anfrage auslöst, würde den Dialog verbrauchen.
   Nach heutigem Code gibt es in der CI keinen anderen Auslöser; Messung im ersten Lauf, sonst Rückfall.
 - **Zustandsleck nach „Erlauben“:** Bleibt die Erlaubnis lokal bestehen, planen spätere Läufe echte
-  Mitteilungen. Gegenmaßnahme: Schlusszustand deinstalliert (AC-10).
+  Mitteilungen. Gegenmaßnahme: Die Erlaubnis entsteht nur auf dem Wegwerf-Simulator, der am Ende gelöscht ist
+  (AC-10).
 - **Argument-Domain-Falle:** `-notificationsEnabled` als Launch-Argument würde das Schreiben des Schalters
   überlagern; kommt nie vor (AC-6).
 - **`.task` stellt den Schalter beim Öffnen auf aus:** Der Test liest den Zustand und wartet darauf, statt ihn
@@ -402,3 +420,4 @@ Kein Modell beteiligt: deterministische Testlogik. Die Tabelle stammt aus der An
 
 - 2026-10-15: Initial spec created (Durchgang 2 von #145; Klasse mit ENV-Gate plus Neuinstallations-Skript,
   CI-Anschluss je Hälfte mit Rückfall)
+- 2026-10-16: Rücksetzweg korrigiert (Neuinstallation setzt die Mitteilungserlaubnis erst nach einem Tag zurück, belegt im Lauf 2026-10-15 21:47 und Apple TN2265); Skript nutzt je Weg einen Wegwerf-Simulator, PO-Entscheidung, Freigabe per override.

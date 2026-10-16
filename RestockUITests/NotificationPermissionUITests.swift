@@ -3,13 +3,13 @@ import XCTest
 /// Issue #145, Durchgang 2 — der echte Systemdialog der Mitteilungserlaubnis.
 /// Spec: `docs/specs/ui-tests/test-145-durchgang-2-mitteilungserlaubnis.md` (AC-1 bis AC-7).
 ///
-/// Die Erlaubnis lässt sich nur durch Neuinstallation zurücksetzen: `simctl privacy` und
-/// `resetAuthorizationStatus(for:)` kennen keine Mitteilungen. Je Installation ist also genau eine
+/// Die Erlaubnis gilt nur auf einem frischen Gerät als offen (Neuinstallation reicht erst nach einem Tag):
+/// `simctl privacy` und `resetAuthorizationStatus(for:)` kennen keine Mitteilungen. Je Gerät ist also genau eine
 /// Entscheidung testbar. Deshalb läuft die Klasse nur mit `RESTOCK_NOTIF_DECISION=allow|deny`
 /// (gesetzt über `TEST_RUNNER_RESTOCK_NOTIF_DECISION`, z. B. von
 /// `scripts/run-notification-permission-uitest.sh`) und sonst als Skip.
 ///
-/// Nie `-notificationsEnabled` als Launch-Argument: es überlagert, was der Schalter schreibt.
+/// Nie den Schalter-Schlüssel als Launch-Argument: überlagert in der Argument-Domain, was der Schalter schreibt.
 /// Die Klasse legt keinen Zustand im App-Group-Container an, daher gibt es kein Aufräum-Argument.
 final class NotificationPermissionUITests: XCTestCase {
 
@@ -24,7 +24,7 @@ final class NotificationPermissionUITests: XCTestCase {
         guard let value = ProcessInfo.processInfo.environment[Self.decisionKey], !value.isEmpty else {
             throw XCTSkip("""
                 Übersprungen: Braucht eine frische Installation und \(Self.decisionKey)=allow|deny. \
-                Die Mitteilungserlaubnis lässt sich nur durch Neuinstallation zurücksetzen. \
+                Die Mitteilungserlaubnis ist nur auf einem frischen Simulator offen (Neuinstallation reicht erst nach einem Tag). \
                 Zum Ausführen: bash scripts/run-notification-permission-uitest.sh
                 """)
         }
@@ -80,7 +80,7 @@ final class NotificationPermissionUITests: XCTestCase {
         let toggle = replenishToggle(in: app)
         assertToggle(toggle, is: "0", """
             Installation nicht frisch: Schalter steht beim Öffnen auf an, die Erlaubnis ist schon erteilt. \
-            Vor dem Lauf App deinstallieren (scripts/run-notification-permission-uitest.sh)
+            Lauf auf frischem Simulator nötig (scripts/run-notification-permission-uitest.sh)
             """)
 
         var answered = false
@@ -107,7 +107,7 @@ final class NotificationPermissionUITests: XCTestCase {
         }
         XCTAssertTrue(answered, """
             Installation nicht frisch: kein Mitteilungsdialog erschienen — die Erlaubnis wurde schon \
-            früher entschieden; vor dem Lauf App deinstallieren (scripts/run-notification-permission-uitest.sh)
+            früher entschieden; Lauf auf frischem Simulator nötig (scripts/run-notification-permission-uitest.sh)
             """)
         return toggle
     }

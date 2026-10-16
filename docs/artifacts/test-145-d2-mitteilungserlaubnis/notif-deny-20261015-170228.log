@@ -1,0 +1,22 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -scheme Restock -project Restock.xcodeproj -destination id=8F696920-4B9A-40A7-96F0-7697BE887CC7 -derivedDataPath build/dd-notif "-only-testing:RestockUITests/NotificationPermissionUITests" -resultBundlePath build/notif-deny-20261015-170228.xcresult
+
+Writing result bundle at path:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/notif-deny-20261015-170228.xcresult
+
+2026-10-15 17:24:30.647830+0200 RestockUITests-Runner[90006:2061068] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+2026-10-15 17:40:07.304 xcodebuild[89343:2073039]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Timed out after 600.0 seconds while waiting for a response from the invoked process
+2026-10-15 17:40:11.051 xcodebuild[89343:2052067] [MT] IDETestOperationsObserverDebug: 1232.521 elapsed -- Testing started completed.
+2026-10-15 17:40:11.053 xcodebuild[89343:2052067] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-15 17:40:11.053 xcodebuild[89343:2052067] [MT] IDETestOperationsObserverDebug: 1232.522 sec, +1232.522 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/notif-deny-20261015-170228.xcresult
+
+Testing failed:
+	RestockUITests-Runner (90006) encountered an error (Early unexpected exit, operation never finished bootstrapping - no restart will be attempted. (Underlying Error: Test crashed with signal abrt while preparing to run tests.))
+
+** TEST EXECUTE FAILED **
+
+Testing started

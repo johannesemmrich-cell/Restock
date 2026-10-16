@@ -1,0 +1,86 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild build-for-testing -scheme Restock -project Restock.xcodeproj -destination "generic/platform=iOS Simulator" -derivedDataPath build/dd-notif
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+
+Copy /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks -remove-static-executable /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns
+
+CopySwiftLibs /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+CodeSign /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib: replacing existing signature
+
+CodeSign /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib: replacing existing signature
+
+CodeSign /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.app.xcent --timestamp\=none --generate-entitlement-der /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app: replacing existing signature
+
+Validate /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-validationUtility /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app -shallow-bundle -infoplist-subpath Info.plist
+
+ValidateEmbeddedBinary /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    /Applications/Xcode.app/Contents/Developer/usr/bin/embeddedBinaryValidationUtility /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -signing-cert - -info-plist-path /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-notif/SDKExplicitPrecompiledModules
+
+** TEST BUILD SUCCEEDED **
+

@@ -51,6 +51,8 @@ Durchgang 7 = Punkt 5. Punkt 6 (Siri/Widget) bleibt offen.
   Abmelden prüfbar, nicht über eine tatsächlich angemeldete Anfrage.
 - **Systemdialog der Erlaubnis:** `simctl privacy` kennt den Dienst `notifications` nicht; die Erlaubnis lässt
   sich von außen nicht setzen. Der Weg mit echter erteilter Erlaubnis läuft nur über die Fake-Zentrale.
+  *Nachtrag 2026-10-16:* Der Dialog selbst (Erlauben/Nicht erlauben) ist seit #145 Durchgang 2 durch
+  `NotificationPermissionUITests` geprüft (`docs/specs/ui-tests/test-145-durchgang-2-mitteilungserlaubnis.md`).
 - **Hennings Geräte bleiben unberührt:** Es läuft kein Test auf einem Gerät des Users (Regel: nur auf sein Wort).
 
 ## Source

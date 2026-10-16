@@ -1,0 +1,277 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -scheme Restock -project Restock.xcodeproj -destination id=8F696920-4B9A-40A7-96F0-7697BE887CC7 -derivedDataPath build/dd-notif "-only-testing:RestockUITests/NotificationPermissionUITests" -resultBundlePath build/notif-deny-20261015-214715.xcresult -collect-test-diagnostics never
+
+Writing result bundle at path:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/notif-deny-20261015-214715.xcresult
+
+2026-10-15 21:48:03.198590+0200 RestockUITests-Runner[56838:2613587] [Default] Running tests...
+2026-10-15 21:48:03.248964+0200 RestockUITests-Runner[56838:2613659] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-10-15 21:48:03.879648+0200 RestockUITests-Runner[56838:2613653] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+objc[56838]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x109ef4310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x109f90398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-15 21:48:04.659.
+Test Suite 'RestockUITests.xctest' started at 2026-10-15 21:48:04.660.
+Test Suite 'NotificationPermissionUITests' started at 2026-10-15 21:48:04.660.
+Test Case '-[RestockUITests.NotificationPermissionUITests testAllow]' started.
+    t =     0.00s Start Test at 2026-10-15 21:48:04.660
+    t =     0.06s Set Up
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/NotificationPermissionUITests.swift:39: -[RestockUITests.NotificationPermissionUITests testAllow] : Test skipped - Übersprungen: andere Entscheidung dieses Laufs (deny)
+    t =     0.12s Tear Down
+Test Case '-[RestockUITests.NotificationPermissionUITests testAllow]' skipped (0.156 seconds).
+Test Case '-[RestockUITests.NotificationPermissionUITests testDeny]' started.
+    t =     0.00s Start Test at 2026-10-15 21:48:04.816
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.01s     Launch com.johannesemmrich.Restock
+2026-10-15 21:48:05.071 xcodebuild[56810:2613057] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-15 21:48:05.071 xcodebuild[56810:2613057] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.10s         Setting up automation session
+    t =     2.00s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.NotificationPermissionUITests testDeny] : Set a .modelContext in view's environment to use Query
+    t =     3.76s Checking existence of `"gearshape" Button`
+    t =     3.85s Find the "gearshape" Button
+    t =     3.87s Find the "gearshape" Button
+    t =     3.89s Checking existence of `"gearshape" Button`
+    t =     3.91s Find the "gearshape" Button
+    t =     3.92s Find the "gearshape" Button
+    t =     3.94s Tap "gearshape" Button
+    t =     3.94s     Wait for com.johannesemmrich.Restock to idle
+    t =     3.95s     Find the "gearshape" Button
+    t =     3.96s     Check for interrupting elements affecting "gearshape" Button
+    t =     3.99s     Synthesize event
+    t =     4.29s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.53s Checking existence of `"Benachrichtigungen" Button`
+    t =     4.63s Find the "Benachrichtigungen" Button
+    t =     4.68s Find the "Benachrichtigungen" Button
+    t =     4.73s Tap "Benachrichtigungen" Button
+    t =     4.74s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.04s     Find the "Benachrichtigungen" Button
+    t =     5.09s     Check for interrupting elements affecting "Benachrichtigungen" Button
+    t =     5.13s     Synthesize event
+    t =     5.42s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.25s Waiting 20.0s for Switch (First Match) to exist
+    t =     7.31s     Checking `Expect predicate `existsNoRetry == 1` for object Switch (First Match)`
+    t =     7.31s         Checking existence of `Switch (First Match)`
+    t =     8.49s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =     8.50s     Find the Switch (First Match)
+    t =     8.55s     Capturing element debug description
+    t =     8.67s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =     8.72s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =     8.75s         Find: Descendants matching type Switch
+    t =     8.75s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =     8.75s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =     8.78s         Find: Descendants matching type Switch
+    t =     8.79s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =     9.46s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =     9.46s     Find the "Nachkauf-Erinnerungen" Switch
+    t =     9.52s     Capturing element debug description
+    t =     9.64s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =     9.68s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =     9.72s         Find: Descendants matching type Switch
+    t =     9.72s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =     9.73s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =     9.77s         Find: Descendants matching type Switch
+    t =     9.77s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    10.47s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    10.48s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    10.57s     Capturing element debug description
+    t =    10.65s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    10.68s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    10.71s         Find: Descendants matching type Switch
+    t =    10.71s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    10.71s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    10.74s         Find: Descendants matching type Switch
+    t =    10.75s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    11.52s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    11.52s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    11.58s     Capturing element debug description
+    t =    11.70s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    11.74s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    11.78s         Find: Descendants matching type Switch
+    t =    11.78s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    11.78s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    11.81s         Find: Descendants matching type Switch
+    t =    11.82s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    12.49s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    12.49s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    12.54s     Capturing element debug description
+    t =    12.63s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    12.66s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    12.69s         Find: Descendants matching type Switch
+    t =    12.69s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    12.69s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    12.73s         Find: Descendants matching type Switch
+    t =    12.74s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    13.51s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    13.51s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    13.56s     Capturing element debug description
+    t =    13.65s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    13.68s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    13.71s         Find: Descendants matching type Switch
+    t =    13.72s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    13.72s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    13.75s         Find: Descendants matching type Switch
+    t =    13.75s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    14.51s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    14.51s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    14.55s     Capturing element debug description
+    t =    14.67s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    14.70s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    14.73s         Find: Descendants matching type Switch
+    t =    14.73s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    14.73s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    14.76s         Find: Descendants matching type Switch
+    t =    14.76s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    15.44s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    15.44s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    15.49s     Capturing element debug description
+    t =    15.59s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    15.62s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    15.66s         Find: Descendants matching type Switch
+    t =    15.66s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    15.66s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    15.69s         Find: Descendants matching type Switch
+    t =    15.69s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    16.47s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    16.47s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    16.53s     Capturing element debug description
+    t =    16.61s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    16.64s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    16.67s         Find: Descendants matching type Switch
+    t =    16.67s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    16.67s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    16.71s         Find: Descendants matching type Switch
+    t =    16.71s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    17.48s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    17.48s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    17.54s     Capturing element debug description
+    t =    17.66s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    17.70s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    17.73s         Find: Descendants matching type Switch
+    t =    17.73s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    17.73s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    17.76s         Find: Descendants matching type Switch
+    t =    17.76s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    18.45s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    18.45s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    18.49s     Capturing element debug description
+    t =    18.75s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    18.79s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    18.82s         Find: Descendants matching type Switch
+    t =    18.82s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    18.82s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    18.85s         Find: Descendants matching type Switch
+    t =    18.85s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    19.52s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    19.52s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    19.57s     Capturing element debug description
+    t =    19.65s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    19.69s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    19.72s         Find: Descendants matching type Switch
+    t =    19.72s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    19.72s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    19.75s         Find: Descendants matching type Switch
+    t =    19.75s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    20.54s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    20.54s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    20.59s     Capturing element debug description
+    t =    20.68s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    20.73s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    20.76s         Find: Descendants matching type Switch
+    t =    20.76s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    20.76s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    20.80s         Find: Descendants matching type Switch
+    t =    20.81s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    21.48s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    21.48s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    21.56s     Capturing element debug description
+    t =    21.66s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    21.70s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    21.73s         Find: Descendants matching type Switch
+    t =    21.73s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    21.73s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    21.77s         Find: Descendants matching type Switch
+    t =    21.77s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    22.47s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    22.47s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    22.53s     Capturing element debug description
+    t =    22.61s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    22.64s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    22.67s         Find: Descendants matching type Switch
+    t =    22.67s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    22.67s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    22.70s         Find: Descendants matching type Switch
+    t =    22.70s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    23.47s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    23.47s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    23.51s     Capturing element debug description
+    t =    23.59s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    23.62s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    23.65s         Find: Descendants matching type Switch
+    t =    23.65s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    23.65s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    23.68s         Find: Descendants matching type Switch
+    t =    23.69s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    24.46s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    24.46s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    24.51s     Capturing element debug description
+    t =    24.59s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    24.62s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    24.65s         Find: Descendants matching type Switch
+    t =    24.65s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    24.65s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    24.68s         Find: Descendants matching type Switch
+    t =    24.68s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    25.45s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    25.46s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    25.52s     Capturing element debug description
+    t =    25.60s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    25.63s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    25.66s         Find: Descendants matching type Switch
+    t =    25.66s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    25.66s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    25.69s         Find: Descendants matching type Switch
+    t =    25.70s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    26.47s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    26.47s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    26.54s     Capturing element debug description
+    t =    26.63s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    26.66s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    26.69s         Find: Descendants matching type Switch
+    t =    26.69s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    26.69s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    26.72s         Find: Descendants matching type Switch
+    t =    26.72s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    27.44s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    27.44s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    27.49s     Capturing element debug description
+    t =    27.58s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    27.61s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    27.64s         Find: Descendants matching type Switch
+    t =    27.64s         Find: Elements matching predicate 'label IN {"Nachkauf-Erinnerungen", "Restock reminders"}'
+    t =    27.64s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    27.67s         Find: Descendants matching type Switch
+    t =    27.68s         Requesting snapshot of accessibility hierarchy for app with pid 56871
+    t =    27.71s Find the "Nachkauf-Erinnerungen" Switch
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/NotificationPermissionUITests.swift:81: error: -[RestockUITests.NotificationPermissionUITests testDeny] : XCTAssertTrue failed - Installation nicht frisch: Schalter steht beim Öffnen auf an, die Erlaubnis ist schon erteilt. Vor dem Lauf App deinstallieren (scripts/run-notification-permission-uitest.sh) (zuletzt: Optional(1))
+    t =    27.97s Tear Down
+Test Case '-[RestockUITests.NotificationPermissionUITests testDeny]' failed (28.274 seconds).
+Test Suite 'NotificationPermissionUITests' failed at 2026-10-15 21:48:33.091.
+	 Executed 2 tests, with 1 test skipped and 1 failure (0 unexpected) in 28.430 (28.431) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-10-15 21:48:33.092.
+	 Executed 2 tests, with 1 test skipped and 1 failure (0 unexpected) in 28.430 (28.432) seconds
+Test Suite 'Selected tests' failed at 2026-10-15 21:48:33.092.
+	 Executed 2 tests, with 1 test skipped and 1 failure (0 unexpected) in 28.430 (28.433) seconds
+2026-10-15 21:48:33.426 xcodebuild[56810:2613057] [MT] IDETestOperationsObserverDebug: 31.502 elapsed -- Testing started completed.
+2026-10-15 21:48:33.426 xcodebuild[56810:2613057] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-15 21:48:33.426 xcodebuild[56810:2613057] [MT] IDETestOperationsObserverDebug: 31.502 sec, +31.502 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/notif-deny-20261015-214715.xcresult
+
+Failing tests:
+	NotificationPermissionUITests.testDeny()
+
+** TEST EXECUTE FAILED **
+
+Testing started

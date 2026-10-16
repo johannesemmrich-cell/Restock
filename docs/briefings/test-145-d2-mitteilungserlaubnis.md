@@ -1,32 +1,32 @@
 ---
 spec_file: docs/specs/ui-tests/test-145-durchgang-2-mitteilungserlaubnis.md
-spec_sha256: 40be782454ae80bf9efea86b46aef1f8cd8b6a98da8f305ba8d1cd6491bdf779
-spec_frozen_sha256: 29b7cb8f30f990747593b1f9c0e0cc77295684b15fbb9756f295681ca8a82668
+spec_sha256: 25c6c46e8c41779279f9a141ea861317a819f1845af5a742926f207a63598025
+spec_frozen_sha256: ec5aedd55285b53f8193e6197dd792be07d3b04487bff70aa29887fc16baf936
 ---
 
 # PO-Briefing: test-145-d2-mitteilungserlaubnis
 
 - **Spec:** docs/specs/ui-tests/test-145-durchgang-2-mitteilungserlaubnis.md
 - **Issue:** #145
-- **Erstellt:** 2026-10-15
+- **Erstellt:** 2026-10-16
 
 ## Was gebaut wird
 
-Ein automatischer Test bedient den echten Mitteilungsdialog und prüft, ob der Schalter Erlauben bzw. Ablehnen übernimmt.
+Automatischer Test bedient den echten Mitteilungsdialog der App und prüft, dass der Schalter nach Erlauben an, nach Ablehnen aus bleibt.
 
 ## Definition of Done
 
-Ein Skriptlauf auf dem Test-Simulator besteht für beide Entscheidungen, Protokoll und Screenshots liegen vor, die App ist danach wieder deinstalliert.
+Ein Skript spielt beide Entscheidungen auf je einem frischen Wegwerf-Simulator durch, beide Läufe grün, keine Reste; CI-Anschluss grün oder begründet vertagt.
 
 ## Wie geprüft wird
 
-Tests beweisen, dass der Schalter nach Erlauben bzw. Ablehnen richtig steht, auch nach erneutem Öffnen; nicht geprüft: Teilen-Erweiterung, echte Zustellung.
+Der Test beweist Dialog und Schalterzustand im Simulator; nicht geprüft sind Teilen-Erweiterung, echte Zustellung und Hennings Geräte.
 
 ## Kritische Anmerkungen
 
-- Zusatz: Der CI-Anschluss wurde nicht verlangt; scheitert er, färbt er Testhälften rot, Rückfall ist vorgesehen.
-- Die zweite Mitteilungsanfrage der Teilen-Erweiterung bleibt ungeprüft; Verhalten auf dem englischen CI-Runner ist erst nach dem ersten Lauf belegt.
+- CI-Anschluss darf entfallen; dann läuft der Test nur per Skript, nicht automatisch.
+- Dialog der Teilen-Erweiterung ungeprüft; englischer CI-Dialog bis zum ersten Lauf unbelegt.
 
 ## Freigabe-Frage
 
-Soll der Mitteilungsdialog automatisch geprüft werden, einschließlich CI-Anbindung mit Rückfall, obwohl die Teilen-Erweiterung ungeprüft bleibt?
+Genügt dir ein Test, der beide Wege per Skript prüft, auch wenn die CI-Anbindung entfallen kann?
