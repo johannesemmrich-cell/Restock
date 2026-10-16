@@ -1,0 +1,52 @@
+#!/bin/bash
+# Spike-Lauf AppIntentsTesting. Argument 1: Versuchsnummer.
+set -u
+SP=/private/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-velvety-bubbling-breeze/f1ce095b-5e71-4ef8-a3cf-1af11da81e7f/scratchpad
+TRY="${1:-1}"
+LOG="$SP/probe-try$TRY.log"
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+HAVE_HEAVY=0; HAVE_LOOSE=0; UDID=""
+
+cleanup() {
+  if [ -n "$UDID" ]; then
+    xcrun simctl shutdown "$UDID" >/dev/null 2>&1
+    xcrun simctl delete "$UDID" && echo "SIM DELETED $UDID" >> "$LOG"
+  fi
+  [ "$HAVE_LOOSE" = 1 ] && rmdir /tmp/loose-ends-testlauf.lock
+  [ "$HAVE_HEAVY" = 1 ] && rmdir /tmp/heavy-build.lock
+  echo "LOCKS RELEASED" >> "$LOG"
+}
+trap cleanup EXIT INT TERM
+
+: > "$LOG"
+TESTCLASS="${2:-AppIntentsProbeUITests}"
+for i in $(seq 1 40); do
+  L=$(sysctl -n vm.loadavg | awk '{print int($2)}')
+  [ "$L" -le 50 ] && break
+  echo "load $L > 50, waiting ($i)" >> "$LOG"; sleep 30
+done
+echo "LOAD AT START $(sysctl -n vm.loadavg)" >> "$LOG"
+for i in $(seq 1 30); do
+  if [ "$HAVE_HEAVY" = 0 ] && mkdir /tmp/heavy-build.lock 2>/dev/null; then HAVE_HEAVY=1; fi
+  if [ "$HAVE_HEAVY" = 1 ] && [ "$HAVE_LOOSE" = 0 ] && mkdir /tmp/loose-ends-testlauf.lock 2>/dev/null; then HAVE_LOOSE=1; fi
+  [ "$HAVE_HEAVY" = 1 ] && [ "$HAVE_LOOSE" = 1 ] && break
+  echo "waiting for locks ($i)" >> "$LOG"; sleep 60
+done
+if [ "$HAVE_HEAVY" != 1 ] || [ "$HAVE_LOOSE" != 1 ]; then echo "LOCK TIMEOUT" >> "$LOG"; exit 3; fi
+echo "LOCKS TAKEN $(date)" >> "$LOG"
+
+NAME="Restock-Probe-AIT-$(date +%Y%m%d%H%M%S)"
+UDID=$(xcrun simctl create "$NAME" com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro com.apple.CoreSimulator.SimRuntime.iOS-27-0)
+echo "SIM $NAME $UDID" >> "$LOG"
+xcodebuild -version >> "$LOG"
+
+START=$(date +%s)
+cd "$SP/probe" || exit 4
+xcodebuild test -project Restock.xcodeproj -scheme Restock \
+  -destination "platform=iOS Simulator,id=$UDID" \
+  -derivedDataPath "$SP/dd" \
+  -only-testing:RestockUITests/$TESTCLASS \
+  -resultBundlePath "$SP/probe-try$TRY.xcresult" >> "$LOG" 2>&1
+RC=$?
+echo "XCODEBUILD EXIT $RC, SECONDS $(( $(date +%s) - START ))" >> "$LOG"
+echo "LOAD AT END $(sysctl -n vm.loadavg)" >> "$LOG"

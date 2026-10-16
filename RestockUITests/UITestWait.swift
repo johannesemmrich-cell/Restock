@@ -182,6 +182,51 @@ enum UITestLaunch {
     }
 }
 
+// Wiederholung für AppIntentsTesting (Issue #145, Durchgang 3). Belegt im Probelauf: Unter Rechnerlast scheitert
+// `run()` mit AppIntentsServicesMetadataErrorDomain 400 „… is not present“, ohne Last nicht. Ursache unbekannt —
+// wiederholt wird nur genau dieser Fehler, mit Messzeile; jeder andere Fehler geht sofort durch. Ohne Import des
+// Frameworks, damit die Logik auch unter Xcode 26 gebaut und geprüft wird.
+enum AppIntentRetry {
+    static let maxDuration: TimeInterval = 10
+    static let interval: TimeInterval = 0.5
+    static let marker = "AppIntents: Wiederholung"
+
+    static func isNotPresent(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        return nsError.domain == "AppIntentsServicesMetadataErrorDomain" && nsError.code == 400
+            && nsError.localizedDescription.contains("is not present")
+    }
+
+    /// Ruft `call` auf; liefert die Anzahl der Versuche. Nach Fristablauf wird der letzte 400-Fehler geworfen.
+    @discardableResult
+    static func runIntentRetrying(_ name: String, maxDuration: TimeInterval = maxDuration,
+                                  interval: TimeInterval = interval, now: () -> Date = Date.init,
+                                  sleep: (TimeInterval) async throws -> Void = { try await Task.sleep(for: .seconds($0)) },
+                                  report: (String) -> Void = { NSLog("%@", $0) },
+                                  _ call: () async throws -> Void) async throws -> Int {
+        let start = now()
+        var attempt = 1
+        while true {
+            do {
+                try await call()
+                if attempt > 1 {
+                    // Erfolgszeile bewusst ohne `marker`, damit die Zählung der Wiederholungen stimmt.
+                    NSLog("AppIntents: Erfolg nach %d Versuchen, %.1f s, bei %@", attempt,
+                          now().timeIntervalSince(start), name)
+                }
+                return attempt
+            } catch {
+                let elapsed = now().timeIntervalSince(start)
+                guard isNotPresent(error), elapsed + interval <= maxDuration else { throw error }
+                let load = UITestLaunch.loadAverage().map { String(format: "%.2f", $0.0) } ?? "unbekannt"
+                report("\(marker) \(attempt) nach \(String(format: "%.1f", elapsed)) s wegen 400 bei \(name), Last \(load)")
+                try await sleep(interval)
+                attempt += 1
+            }
+        }
+    }
+}
+
 // MARK: - Prüfung der Hilfen ohne App (T1–T4)
 
 final class UITestWaitTests: XCTestCase {
@@ -358,5 +403,60 @@ final class UITestLaunchTests: XCTestCase {
         XCTAssertTrue(message.contains("Kachel „Quittenhof“"), message)
         XCTAssertTrue(message.contains("exists=false"), message)
         XCTAssertFalse(message.contains(marker), "Meldung darf nicht den Messdaten-Präfix tragen")
+    }
+}
+
+// MARK: - Prüfung der Intent-Wiederholung ohne App (Issue #145, Durchgang 3: T8)
+
+final class AppIntentRetryTests: XCTestCase {
+    private let notPresent = NSError(domain: "AppIntentsServicesMetadataErrorDomain", code: 400,
+                                     userInfo: [NSLocalizedDescriptionKey: "com.johannesemmrich.Restock is not present"])
+
+    /// Fährt den Helfer mit Scheinuhr: `sleep` rückt die Uhr vor, `failures` kommen der Reihe nach vor dem Erfolg.
+    private func run(failures: [Error]) async -> (attempts: Int?, calls: Int, reports: [String], error: Error?) {
+        var clock = Date(timeIntervalSince1970: 0)
+        var remaining = failures
+        var calls = 0
+        var reports: [String] = []
+        do {
+            let attempts = try await AppIntentRetry.runIntentRetrying(
+                "Probe", now: { clock }, sleep: { clock += $0 }, report: { reports.append($0) }) {
+                calls += 1
+                if !remaining.isEmpty { throw remaining.removeFirst() }
+            }
+            return (attempts, calls, reports, nil)
+        } catch {
+            return (nil, calls, reports, error)
+        }
+    }
+
+    func testOnlyMetadata400NotPresentCountsAsRetryable() {
+        XCTAssertTrue(AppIntentRetry.isNotPresent(notPresent))
+        XCTAssertFalse(AppIntentRetry.isNotPresent(NSError(domain: notPresent.domain, code: 400)), "Text fehlt")
+        XCTAssertFalse(AppIntentRetry.isNotPresent(NSError(domain: "AppIntentsServicesSecurityErrorDomain", code: 800,
+                                                           userInfo: notPresent.userInfo)), "Andere Domain")
+    }
+
+    func testRetriesNotPresentAndReportsEachRetry() async {
+        let result = await run(failures: [notPresent, notPresent])
+        XCTAssertNil(result.error)
+        XCTAssertEqual(result.attempts, 3)
+        XCTAssertEqual(result.reports.count, 2, "Je Wiederholung eine Messzeile: \(result.reports)")
+        XCTAssertTrue(result.reports.allSatisfy { $0.hasPrefix(AppIntentRetry.marker) }, "\(result.reports)")
+    }
+
+    func testOtherErrorIsThrownAtOnce() async {
+        let other = NSError(domain: "AppIntentsServicesSecurityErrorDomain", code: 800)
+        let result = await run(failures: [other, notPresent])
+        XCTAssertEqual(result.calls, 1, "Keine Wiederholung bei anderem Fehler")
+        XCTAssertEqual((result.error as NSError?)?.code, 800)
+        XCTAssertTrue(result.reports.isEmpty)
+    }
+
+    func testGivesUpAfterMaxDurationWithLast400() async {
+        let result = await run(failures: Array(repeating: notPresent, count: 1000))
+        XCTAssertEqual((result.error as NSError?)?.code, 400, "Nach Fristablauf muss der 400-Fehler kommen")
+        XCTAssertGreaterThan(result.calls, 1)
+        XCTAssertLessThanOrEqual(Double(result.calls - 1) * AppIntentRetry.interval, AppIntentRetry.maxDuration + 0.001)
     }
 }

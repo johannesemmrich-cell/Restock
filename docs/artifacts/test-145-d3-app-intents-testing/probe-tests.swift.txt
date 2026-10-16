@@ -1,0 +1,224 @@
+        let field = app.textFields[Self.placeholder]
+        XCTAssertTrue(field.waitForExistence(timeout: UITestWait.defaultTimeout))
+        XCTAssertFalse(hasFocus(field, timeout: 3))
+    }
+}
+#if canImport(AppIntentsTesting)
+import AppIntentsTesting
+#endif
+
+/// Spike: kann AppIntentsTesting die App-Intents von Restock aus einem XCUITest ausführen?
+final class AppIntentsProbeUITests: XCTestCase {
+
+    private let bundleID = "com.johannesemmrich.Restock"
+
+    override func tearDown() {
+        super.tearDown()
+        MainActor.assumeIsolated {
+            let cleaner = XCUIApplication()
+            cleaner.launchArguments = ["-hasCompletedOnboarding", "YES", "-clearQuickAddAssignmentSeedForUITests"]
+            cleaner.launch()
+            cleaner.terminate()
+        }
+    }
+
+    @MainActor
+    func testProbe() async throws {
+        print("PROBE: start \(Date())")
+        let seed = XCUIApplication()
+        seed.launchArguments = ["-hasCompletedOnboarding", "YES", "-seedQuickAddAssignmentForUITests"]
+        seed.launch()
+        _ = seed.textFields["Schnell hinzufügen…"].waitForExistence(timeout: 30)
+        // Laut Apple-Doku muss die App beim run() laufen: nicht beenden.
+        print("PROBE: seed done, app running \(Date())")
+
+        #if canImport(AppIntentsTesting)
+        guard #available(iOS 27.0, *) else {
+            print("PROBE: iOS < 27, skip")
+            throw XCTSkip("needs iOS 27")
+        }
+        try await runIntents()
+        #else
+        print("PROBE: canImport(AppIntentsTesting) == false")
+        #endif
+
+        let app = XCUIApplication()
+        app.launchArguments = ["-hasCompletedOnboarding", "YES"]
+        app.launch()
+        let tiles = app.buttons.allElementsBoundByIndex.map(\.label)
+        print("PROBE: home buttons = \(tiles)")
+        let anywhere = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Probe Zahnpasta"))
+        print("PROBE: home staticTexts containing = \(anywhere.count)")
+        for name in ["dm,", "Lidl,"] {
+            let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+            guard tile.waitForExistence(timeout: 20) else { print("PROBE: tile \(name) not found"); continue }
+            print("PROBE: tile \(name) label = \(tile.label)")
+            tile.tap()
+            let item = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Probe Zahnpasta")).firstMatch
+            let found = item.waitForExistence(timeout: 10)
+            print("PROBE: in store \(name) found Probe Zahnpasta = \(found)")
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+        }
+        app.terminate()
+        print("PROBE: end \(Date())")
+    }
+
+    #if canImport(AppIntentsTesting)
+    @available(iOS 27.0, *)
+    @MainActor
+    private func runIntents() async throws {
+        let defs = IntentDefinitions(bundleIdentifier: bundleID)
+        print("PROBE: IntentDefinitions created for \(defs.bundleIdentifier)")
+        let tStart = Date()
+        for attempt in 1...18 {
+            let intent = defs.intents["AddShoppingItemIntent"].makeIntent(itemName: "Probe Zahnpasta")
+            let t0 = Date()
+            do {
+                let result = try await intent.run()
+                print("PROBE: run OK attempt \(attempt) after \(Date().timeIntervalSince(tStart)) s total (run \(Date().timeIntervalSince(t0)) s), result = \(String(describing: result))")
+                break
+            } catch {
+                print("PROBE: run FAILED attempt \(attempt) after \(Date().timeIntervalSince(tStart)) s: \(String(reflecting: error))")
+                try await Task.sleep(nanoseconds: 10_000_000_000)
+            }
+        }
+        let check = defs.intents["CheckOffItemIntent"].makeIntent(storeName: "dm")
+        let t1 = Date()
+        do {
+            let result = try await check.run()
+            print("PROBE: CheckOff run OK in \(Date().timeIntervalSince(t1)) s, result = \(String(describing: result))")
+        } catch {
+            print("PROBE: CheckOff run FAILED in \(Date().timeIntervalSince(t1)) s: \(String(reflecting: error))")
+        }
+    }
+    #endif
+}
+
+/// Spike 2: CheckOffItemIntent mit laufender Live Activity.
+final class AppIntentsCheckOffProbeUITests: XCTestCase {
+
+    private let bundleID = "com.johannesemmrich.Restock"
+
+    override func tearDown() {
+        super.tearDown()
+        MainActor.assumeIsolated {
+            let cleaner = XCUIApplication()
+            cleaner.launchArguments = ["-hasCompletedOnboarding", "YES", "-clearQuickAddAssignmentSeedForUITests"]
+            cleaner.launch()
+            cleaner.terminate()
+        }
+    }
+
+    @MainActor
+    private func dmTile(_ app: XCUIApplication) -> XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "dm,")).firstMatch
+    }
+
+    @MainActor
+    private func dumpList(_ app: XCUIApplication, _ tag: String) {
+        let texts = app.staticTexts.allElementsBoundByIndex.map(\.label)
+        print("PROBE2[\(tag)]: list texts = \(texts)")
+        let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        shot.name = tag
+        shot.lifetime = .keepAlways
+        add(shot)
+    }
+
+    @MainActor
+    private func openDM(_ app: XCUIApplication, _ tag: String) {
+        let tile = dmTile(app)
+        guard tile.waitForExistence(timeout: 30) else { print("PROBE2[\(tag)]: dm tile missing"); return }
+        print("PROBE2[\(tag)]: dm tile before open = \(tile.label)")
+        tile.tap()
+        _ = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Probe")).firstMatch.waitForExistence(timeout: 20)
+    }
+
+    @MainActor
+    private func back(_ app: XCUIApplication, _ tag: String) {
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        let tile = dmTile(app)
+        _ = tile.waitForExistence(timeout: 20)
+        print("PROBE2[\(tag)]: dm tile after back = \(tile.label)")
+    }
+
+    @MainActor
+    func testCheckOffWithLiveActivity() async throws {
+        print("PROBE2: start \(Date())")
+        let app = XCUIApplication()
+        app.launchArguments = ["-hasCompletedOnboarding", "YES", "-seedQuickAddAssignmentForUITests"]
+        app.launch()
+        _ = dmTile(app).waitForExistence(timeout: 30)
+
+        #if canImport(AppIntentsTesting)
+        guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+        let defs = IntentDefinitions(bundleIdentifier: bundleID)
+        let tStart = Date()
+        for attempt in 1...18 {
+            do {
+                try await defs.intents["AddShoppingItemIntent"].makeIntent(itemName: "Probe Zahnpasta").run()
+                print("PROBE2: add#1 OK attempt \(attempt) after \(Date().timeIntervalSince(tStart)) s")
+                break
+            } catch {
+                print("PROBE2: add#1 FAILED attempt \(attempt) after \(Date().timeIntervalSince(tStart)) s: \(String(reflecting: error))")
+                try await Task.sleep(nanoseconds: 10_000_000_000)
+            }
+        }
+        do {
+            try await defs.intents["AddShoppingItemIntent"].makeIntent(itemName: "Probe Duschgel").run()
+            print("PROBE2: add#2 OK")
+        } catch { print("PROBE2: add#2 FAILED: \(String(reflecting: error))") }
+
+        // Neustart, damit die App den von außen geschriebenen Stand liest.
+        app.terminate()
+        let main = XCUIApplication()
+        main.launchArguments = ["-hasCompletedOnboarding", "YES"]
+        main.launch()
+
+        // A: Liste öffnen, Activity startet in onAppear.
+        openDM(main, "A-open")
+        try await Task.sleep(nanoseconds: 3_000_000_000)
+        dumpList(main, "A-before-checkoff")
+
+        // B: CheckOff bei offener Liste.
+        let t1 = Date()
+        do {
+            let r = try await defs.intents["CheckOffItemIntent"].makeIntent(storeName: "dm").run()
+            print("PROBE2: checkoff(open) OK in \(Date().timeIntervalSince(t1)) s: \(r)")
+        } catch { print("PROBE2: checkoff(open) FAILED in \(Date().timeIntervalSince(t1)) s: \(String(reflecting: error))") }
+        try await Task.sleep(nanoseconds: 3_000_000_000)
+        dumpList(main, "B-immediately")
+
+        // C: Verlassen und wieder öffnen.
+        back(main, "C")
+        openDM(main, "C-reopen")
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        dumpList(main, "C-after-reopen")
+
+        // D: Gegenprobe bei geschlossener Liste (Activity per onDisappear beendet, Gnadenfrist abwarten).
+        back(main, "D")
+        try await Task.sleep(nanoseconds: 12_000_000_000)
+        let t2 = Date()
+        do {
+            let r = try await defs.intents["CheckOffItemIntent"].makeIntent(storeName: "dm").run()
+            print("PROBE2: checkoff(closed) OK in \(Date().timeIntervalSince(t2)) s: \(r)")
+        } catch { print("PROBE2: checkoff(closed) FAILED in \(Date().timeIntervalSince(t2)) s: \(String(reflecting: error))") }
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        openDM(main, "D-reopen")
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        dumpList(main, "D-after-reopen")
+
+        // E: Activity sichtbar? Liste offen lassen, Home drücken, SpringBoard ansehen.
+        XCUIDevice.shared.press(.home)
+        try await Task.sleep(nanoseconds: 3_000_000_000)
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let hits = springboard.descendants(matching: .any)
+            .matching(NSPredicate(format: "label CONTAINS[c] %@ OR label CONTAINS[c] %@", "Probe", "dm"))
+        print("PROBE2[E]: springboard elements with Probe/dm = \(hits.count): \(hits.allElementsBoundByIndex.prefix(10).map(\.label))")
+        let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        shot.name = "E-springboard"
+        shot.lifetime = .keepAlways
+        add(shot)
+        #endif
+        print("PROBE2: end \(Date())")
+    }
+}

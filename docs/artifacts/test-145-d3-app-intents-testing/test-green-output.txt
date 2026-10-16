@@ -1,0 +1,54 @@
+#145 Durchgang 3 — Nachweis B (AC-13): drei Läufe scripts/run-appintents-uitest.sh nacheinander
+GESAMTURTEIL: GRÜN — 3 von 3 Läufen grün, je 3 Tests, 0 Fehlschläge, 0 übersprungen, 0 Abbruchmarker,
+0 Wiederholungen wegen 400; Lauf 2 unter künstlicher CPU-Last; kein Restock-AppIntents-* Simulator übrig,
+Restock-Validate unberührt (Shutdown).
+
+Stand: Commit 5613d9f + uncommittete Änderungen (Kompilierbedingung APPINTENTS_UITESTS, Skript setzt
+SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) APPINTENTS_UITESTS'). Xcode 27.1 (27A9275), Runtime iOS 27.0,
+Wegwerf-Simulator iPhone 17 Pro je Lauf. Dass die drei Tests überhaupt laufen, belegt die Bedingung; dass die
+DEBUG-Seeds greifen, belegt, dass `$(inherited)` DEBUG erhält.
+Abbruchmarker je Protokoll („Restarting after unexpected exit“, „Executed 0 tests“, „TEST EXECUTE FAILED“,
+„HÄNGER-SCHUTZ“): 0 / 0 / 0.
+
+=== Lauf 1 (ohne künstliche Last) ===
+Zeit:      2026-10-16 20:40:57 – 20:43:44 +0200, Testdauer 97 s
+Last:      Beginn { 32,44 20,96 10,19 }, Ende { 224,77 100,91 44,04 }
+Tests:     ausgeführt 3 (muss: 3), bestanden 3, Fehlschläge 0, übersprungen 0
+Wiederholungen („AppIntents: Wiederholung“): 0
+Protokoll: docs/artifacts/test-145-d3-app-intents-testing/appintents-20261016-204057.log
+Simulator: Restock-AppIntents-20261016-204057 — gelöscht
+Test Case '-[RestockUITests.AppIntentsUITests testAddIntentPutsItemIntoDm]' passed (33.711 seconds).
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffIntentChecksFirstItem]' passed (25.462 seconds).
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffWithClosedListChangesNothing]' passed (22.983 seconds).
+	 Executed 3 tests, with 0 failures (0 unexpected) in 82.155 (82.165) seconds
+
+=== Lauf 2 (unter CPU-Last: 8 × `yes > /dev/null` auf 10 Kernen, 20 s Vorlauf, per trap beendet) ===
+Zeit:      2026-10-16 20:44:37 – 20:47:37 +0200, Testdauer 119 s
+Last:      Beginn { 94,97 85,28 41,78 }, Ende { 445,35 262,92 123,71 }
+Tests:     ausgeführt 3 (muss: 3), bestanden 3, Fehlschläge 0, übersprungen 0
+Wiederholungen („AppIntents: Wiederholung“): 0
+Protokoll: docs/artifacts/test-145-d3-app-intents-testing/appintents-20261016-204437.log
+Simulator: Restock-AppIntents-20261016-204437 — gelöscht; yes-Prozesse danach übrig: 0
+Test Case '-[RestockUITests.AppIntentsUITests testAddIntentPutsItemIntoDm]' passed (42.631 seconds).
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffIntentChecksFirstItem]' passed (25.191 seconds).
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffWithClosedListChangesNothing]' passed (20.025 seconds).
+	 Executed 3 tests, with 0 failures (0 unexpected) in 86.331 (86.354) seconds
+
+=== Lauf 3 (ohne künstliche Last) ===
+Zeit:      2026-10-16 20:47:44 – 20:50:17 +0200, Testdauer 102 s
+Last:      Beginn { 410,73 258,77 123,06 } (Nachlauf von Lauf 2), Ende { 224,09 252,18 143,54 }
+Tests:     ausgeführt 3 (muss: 3), bestanden 3, Fehlschläge 0, übersprungen 0
+Wiederholungen („AppIntents: Wiederholung“): 0
+Protokoll: docs/artifacts/test-145-d3-app-intents-testing/appintents-20261016-204744.log
+Simulator: Restock-AppIntents-20261016-204744 — gelöscht
+Test Case '-[RestockUITests.AppIntentsUITests testAddIntentPutsItemIntoDm]' passed (34.300 seconds).
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffIntentChecksFirstItem]' passed (28.615 seconds).
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffWithClosedListChangesNothing]' passed (23.417 seconds).
+	 Executed 3 tests, with 0 failures (0 unexpected) in 87.847 (87.911) seconds
+
+Schlussprüfung nach Lauf 3: `xcrun simctl list devices | grep -c Restock-AppIntents` = 0;
+Restock-Validate (8F696920-4B9A-40A7-96F0-7697BE887CC7) Shutdown, in Nachweis B nicht benutzt.
+
+Hinweis zur Last: Die Ladezahlen (vm.loadavg) sind schon ohne künstliche Last sehr hoch (Bau und Simulatorstart
+treiben sie auf über 200); Lauf 2 lag zu Beginn und am Ende klar höher als Lauf 1. Unter Last kam kein Fehler 400 vor,
+der Wiederholungsweg wurde in diesen drei Läufen also nicht durchlaufen (nur durch AppIntentRetryTests belegt).
