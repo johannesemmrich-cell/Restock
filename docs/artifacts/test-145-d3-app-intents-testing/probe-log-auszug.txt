@@ -1,0 +1,58 @@
+Test Case '-[RestockUITests.AppIntentsCheckOffProbeUITests testCheckOffWithLiveActivity]' started.
+PROBE2: start 2026-10-16 12:03:53 +0000
+PROBE2: add#1 OK attempt 1 after 2.871238946914673 s
+PROBE2: add#2 OK
+PROBE2[A-open]: dm tile before open = dm, · 2, 1x pro Woche, Probe Zahnpasta, Probe Duschgel
+PROBE2[A-before-checkoff]: list texts = ["dm", "dm", "· 2", "1x pro Woche", "0 von 2 erledigt", "Geschätzter Betrag", "5,50 €", "Einkaufshäufigkeit", "Einkaufsliste", "Probe Zahnpasta", "2,50 €", "·", "Körperpflege", "Probe Duschgel", "3,00 €", "·", "Körperpflege", "1x pro Woche"]
+PROBE2: checkoff(open) OK in 0.6554369926452637 s: ResolvedIntentResult(valueContainer: nil)
+PROBE2[B-immediately]: list texts = ["dm", "dm", "· 2", "1x pro Woche", "0 von 2 erledigt", "Geschätzter Betrag", "5,50 €", "Einkaufshäufigkeit", "Einkaufsliste", "Probe Zahnpasta", "2,50 €", "·", "Körperpflege", "Probe Duschgel", "3,00 €", "·", "Körperpflege", "1x pro Woche"]
+PROBE2[C]: dm tile after back = dm, · 2, 1x pro Woche, Probe Zahnpasta, Probe Duschgel
+PROBE2[C-reopen]: dm tile before open = dm, · 2, 1x pro Woche, Probe Zahnpasta, Probe Duschgel
+PROBE2[C-after-reopen]: list texts = ["dm", "dm", "· 1", "1x pro Woche", "1 von 2 erledigt", "Geschätzter Betrag", "3,00 €", "Einkaufshäufigkeit", "Einkaufsliste", "Probe Duschgel", "3,00 €", "·", "Körperpflege", "Erledigt", "Probe Zahnpasta", "·", "Körperpflege", "1x pro Woche"]
+PROBE2[D]: dm tile after back = dm, · 1, 1x pro Woche, Probe Duschgel
+PROBE2: checkoff(closed) OK in 0.04259693622589111 s: ResolvedIntentResult(valueContainer: nil)
+PROBE2[D-reopen]: dm tile before open = dm, · 1, 1x pro Woche, Probe Duschgel
+PROBE2[D-after-reopen]: list texts = ["dm", "dm", "· 1", "1x pro Woche", "1 von 2 erledigt", "Geschätzter Betrag", "3,00 €", "Einkaufshäufigkeit", "Einkaufsliste", "Probe Duschgel", "3,00 €", "·", "Körperpflege", "Erledigt", "Probe Zahnpasta", "·", "Körperpflege", "1x pro Woche"]
+PROBE2[E]: springboard elements with Probe/dm = 0: []
+PROBE2: end 2026-10-16 12:05:20 +0000
+Test Case '-[RestockUITests.AppIntentsCheckOffProbeUITests testCheckOffWithLiveActivity]' passed (98.165 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 98.165 (98.173) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 98.165 (98.175) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 98.165 (98.178) seconds
+Test Case '-[RestockUITests.AppIntentsProbeUITests testProbe]' started.
+PROBE: start 2026-10-16 11:33:38 +0000
+PROBE: seed done, app running 2026-10-16 11:33:52 +0000
+PROBE: IntentDefinitions created for com.johannesemmrich.Restock
+PROBE: def[AddShoppingItemIntent] = id AddShoppingItemIntent bundle com.johannesemmrich.Restock
+PROBE: intent = AnyAppIntent(app: com.johannesemmrich.Restock action: AddShoppingItemIntent parameters: ["itemName"])
+PROBE: run FAILED in 5.214329957962036 s for AddShoppingItemIntent: Error Domain=AppIntentsServicesMetadataErrorDomain Code=400 "com.johannesemmrich.Restock is not present" UserInfo={NSLocalizedDescription=com.johannesemmrich.Restock is not present}
+PROBE: def[Restock.AddShoppingItemIntent] = id Restock.AddShoppingItemIntent bundle com.johannesemmrich.Restock
+PROBE: intent = AnyAppIntent(app: com.johannesemmrich.Restock action: Restock.AddShoppingItemIntent parameters: ["itemName"])
+PROBE: run FAILED in 0.013656973838806152 s for Restock.AddShoppingItemIntent: Error Domain=AppIntentsServicesMetadataErrorDomain Code=400 "com.johannesemmrich.Restock is not present" UserInfo={NSLocalizedDescription=com.johannesemmrich.Restock is not present}
+PROBE: CheckOff run FAILED in 0.02922511100769043 s: Error Domain=AppIntentsServicesMetadataErrorDomain Code=400 "com.johannesemmrich.Restock is not present" UserInfo={NSLocalizedDescription=com.johannesemmrich.Restock is not present}
+PROBE: home buttons = ["Zahnradform", "Essen", "Diagrammspalte", "Bewegen", "Hinzufügen", "Scan", "Alle hinzufügen", "Verwalten", "dm, 1x pro Woche, Liste ist leer", "Lidl, 2x pro Woche, Liste ist leer", "Laden hinzufügen", "Geteilter Liste beitreten", "Kürbis, Herbstsaison", "Champignons, Pilzsaison", "Äpfel, Erntezeit", "Birnen, Saisonal", "Rotkohl, Herbstgemüse", "Kastanien, Herbst"]
+PROBE: home staticTexts containing = 0
+PROBE: tile dm, label = dm, 1x pro Woche, Liste ist leer
+PROBE: in store dm, found Probe Zahnpasta = false
+/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-velvety-bubbling-breeze/f1ce095b-5e71-4ef8-a3cf-1af11da81e7f/scratchpad/probe/RestockUITests/QuickAddControlUITests.swift:119: error: -[RestockUITests.AppIntentsProbeUITests testProbe] : Failed to get list of active applications: Accessibility error kAXErrorIPCTimeout from AXUIElementCopyMultipleAttributeValues for 1102
+Test Case '-[RestockUITests.AppIntentsProbeUITests testProbe]' failed (231.011 seconds).
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.006) seconds
+Test Case '-[RestockUITests.AppIntentsProbeUITests testProbe]' started.
+PROBE: start 2026-10-16 11:48:48 +0000
+PROBE: seed done, app running 2026-10-16 11:48:57 +0000
+PROBE: IntentDefinitions created for com.johannesemmrich.Restock
+PROBE: run OK attempt 1 after 5.516713976860046 s total (run 5.50908100605011 s), result = ResolvedIntentResult(valueContainer: nil)
+PROBE: CheckOff run OK in 0.24914002418518066 s, result = ResolvedIntentResult(valueContainer: nil)
+PROBE: home buttons = ["Zahnradform", "Essen", "Diagrammspalte", "Bewegen", "Hinzufügen", "Scan", "Alle hinzufügen", "Verwalten", "Lidl, 2x pro Woche, Liste ist leer", "dm, · 1, 1x pro Woche, Probe Zahnpasta", "Laden hinzufügen", "Geteilter Liste beitreten", "Kürbis, Herbstsaison", "Champignons, Pilzsaison", "Äpfel, Erntezeit", "Birnen, Saisonal", "Rotkohl, Herbstgemüse", "Kastanien, Herbst"]
+PROBE: home staticTexts containing = 1
+PROBE: tile dm, label = dm, · 1, 1x pro Woche, Probe Zahnpasta
+PROBE: in store dm, found Probe Zahnpasta = true
+PROBE: tile Lidl, label = Lidl, 2x pro Woche, Liste ist leer
+PROBE: in store Lidl, found Probe Zahnpasta = false
+PROBE: end 2026-10-16 11:49:31 +0000
+Test Case '-[RestockUITests.AppIntentsProbeUITests testProbe]' passed (52.139 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 52.139 (52.151) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 52.139 (52.154) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 52.139 (52.156) seconds

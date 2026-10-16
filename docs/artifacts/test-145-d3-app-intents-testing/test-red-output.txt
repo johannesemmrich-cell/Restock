@@ -1,0 +1,30 @@
+LOCKS TAKEN Fr. 16 Okt. 2026 17:00:39 CEST LOAD { 3,91 3,71 3,82 }
+COMMIT 8421646 (+ uncommittete RED-Dateien)
+SIM 21359D2E-A8AF-43DC-9064-28B05836F95D
+Xcode 27.1
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:438: error: -[RestockUITests.AppIntentRetryTests testGivesUpAfterMaxDurationWithLast400] : XCTAssertEqual failed: ("Optional(-1)") is not equal to ("Optional(400)") - Nach Fristablauf muss der 400-Fehler kommen
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:439: error: -[RestockUITests.AppIntentRetryTests testGivesUpAfterMaxDurationWithLast400] : XCTAssertGreaterThan failed: ("0") is not greater than ("1")
+Test Case '-[RestockUITests.AppIntentRetryTests testGivesUpAfterMaxDurationWithLast400]' failed (7.325 seconds).
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:414: error: -[RestockUITests.AppIntentRetryTests testOnlyMetadata400NotPresentCountsAsRetryable] : XCTAssertTrue failed
+Test Case '-[RestockUITests.AppIntentRetryTests testOnlyMetadata400NotPresentCountsAsRetryable]' failed (0.075 seconds).
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:431: error: -[RestockUITests.AppIntentRetryTests testOtherErrorIsThrownAtOnce] : XCTAssertEqual failed: ("0") is not equal to ("1") - Keine Wiederholung bei anderem Fehler
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:432: error: -[RestockUITests.AppIntentRetryTests testOtherErrorIsThrownAtOnce] : XCTAssertEqual failed: ("Optional(-1)") is not equal to ("Optional(800)")
+Test Case '-[RestockUITests.AppIntentRetryTests testOtherErrorIsThrownAtOnce]' failed (0.066 seconds).
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:422: error: -[RestockUITests.AppIntentRetryTests testRetriesNotPresentAndReportsEachRetry] : XCTAssertNil failed: "Error Domain=AppIntentRetry Code=-1 "runIntentRetrying noch nicht umgesetzt (RED)" UserInfo={NSLocalizedDescription=runIntentRetrying noch nicht umgesetzt (RED)}"
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:423: error: -[RestockUITests.AppIntentRetryTests testRetriesNotPresentAndReportsEachRetry] : XCTAssertEqual failed: ("nil") is not equal to ("Optional(3)")
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:424: error: -[RestockUITests.AppIntentRetryTests testRetriesNotPresentAndReportsEachRetry] : XCTAssertEqual failed: ("0") is not equal to ("2") - Je Wiederholung eine Messzeile: []
+Test Case '-[RestockUITests.AppIntentRetryTests testRetriesNotPresentAndReportsEachRetry]' failed (0.050 seconds).
+	 Executed 4 tests, with 8 failures (0 unexpected) in 7.515 (7.533) seconds
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:205: error: -[RestockUITests.AppIntentsUITests testAddIntentPutsItemIntoDm] : failed: caught error: "Error Domain=AppIntentRetry Code=-1 "runIntentRetrying noch nicht umgesetzt (RED)" UserInfo={NSLocalizedDescription=runIntentRetrying noch nicht umgesetzt (RED)}"
+Test Case '-[RestockUITests.AppIntentsUITests testAddIntentPutsItemIntoDm]' failed (23.137 seconds).
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:205: error: -[RestockUITests.AppIntentsUITests testCheckOffIntentChecksFirstItem] : failed: caught error: "Error Domain=AppIntentRetry Code=-1 "runIntentRetrying noch nicht umgesetzt (RED)" UserInfo={NSLocalizedDescription=runIntentRetrying noch nicht umgesetzt (RED)}"
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffIntentChecksFirstItem]' failed (18.771 seconds).
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/UITestWait.swift:205: error: -[RestockUITests.AppIntentsUITests testCheckOffWithClosedListChangesNothing] : failed: caught error: "Error Domain=AppIntentRetry Code=-1 "runIntentRetrying noch nicht umgesetzt (RED)" UserInfo={NSLocalizedDescription=runIntentRetrying noch nicht umgesetzt (RED)}"
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffWithClosedListChangesNothing]' failed (20.133 seconds).
+	 Executed 3 tests, with 3 failures (3 unexpected) in 62.041 (62.046) seconds
+	 Executed 7 tests, with 11 failures (3 unexpected) in 69.557 (69.585) seconds
+	 Executed 7 tests, with 11 failures (3 unexpected) in 69.557 (69.600) seconds
+** TEST FAILED **
+XCODEBUILD EXIT 65, SECONDS 149
+SIM DELETED 21359D2E-A8AF-43DC-9064-28B05836F95D
+LOCKS RELEASED
