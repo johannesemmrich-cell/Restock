@@ -1,7 +1,7 @@
 ---
 spec_file: docs/specs/ui-tests/test-145-durchgang-3-app-intents.md
-spec_sha256: 797ab2751ace7695d9908a159bd537a2c7fb32024593872831a134e05e580e46
-spec_frozen_sha256: 7152a7f090ac6fb344c1f3dcc9e7cd15b1606651de6b1d4065e7c467ce336a40
+spec_sha256: 41945131ab157c23a977724e115301d9c567d598d5f5b773aee09f31ba4ee599
+spec_frozen_sha256: 84e67297409c349aa9f9ab82c5de507c251123dc264c3995cc12016245c6b465
 ---
 
 # PO-Briefing: test-145-d3-app-intents-testing
@@ -12,22 +12,22 @@ spec_frozen_sha256: 7152a7f090ac6fb344c1f3dcc9e7cd15b1606651de6b1d4065e7c467ce33
 
 ## Was gebaut wird
 
-Automatische Tests prüfen im Simulator, dass Siri-Hinzufügen und Abhaken über den echten Systemweg wirken.
+Siri-Befehle zum Hinzufügen und Abhaken werden auf einem Test-Simulator über den echten Systemweg automatisch geprüft.
 
 ## Definition of Done
 
-Drei Tests laufen in drei Läufen hintereinander grün, einer unter Rechnerlast; die App selbst bleibt unverändert.
+Drei Tests laufen dreimal hintereinander grün, einmal unter Rechnerlast; bestehende Tests bleiben grün, die App bleibt unverändert.
 
 ## Wie geprüft wird
 
-Geprüft wird die sichtbare Wirkung in der App, nicht Siri-Stimme, Widget-Tipp, Dialogtext oder dein Gerät.
+Die Tests lösen die Befehle über das System aus und prüfen das Ergebnis in der App, nicht Siri-Stimme oder Widget.
 
 ## Kritische Anmerkungen
 
-- Läuft nur lokal; die CI überspringt die Tests, künftige Änderungen werden nicht automatisch geprüft.
-- Abhaken ohne laufende Live Activity meldet Erfolg, bewirkt aber nichts; nur dokumentiert, nicht behoben.
-- Fehler 400 unter Last wird nur wiederholt abgefangen, Ursache ungeklärt; Tests könnten sporadisch rot werden.
+- Läuft nur lokal, nicht in der CI; spätere Rückschritte fallen nicht automatisch auf.
+- Abhaken meldet Erfolg ohne Wirkung, wenn die Liste geschlossen ist; bewusst nicht behoben.
+- Sprechtext der Antwort ist nicht prüfbar.
 
 ## Freigabe-Frage
 
-Reicht dir ein lokaler Nachweis ohne CI und ohne Siri-Stimme, bei dokumentiertem stillem Erfolg beim Abhaken?
+Reicht dir ein lokaler Nachweis ohne Siri-Stimme und CI, bei offen bleibendem Abhak-Verhalten?

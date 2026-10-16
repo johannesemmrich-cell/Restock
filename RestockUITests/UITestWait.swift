@@ -192,7 +192,9 @@ enum AppIntentRetry {
     static let marker = "AppIntents: Wiederholung"
 
     static func isNotPresent(_ error: Error) -> Bool {
-        false // RED: noch nicht umgesetzt
+        let nsError = error as NSError
+        return nsError.domain == "AppIntentsServicesMetadataErrorDomain" && nsError.code == 400
+            && nsError.localizedDescription.contains("is not present")
     }
 
     /// Ruft `call` auf; liefert die Anzahl der Versuche. Nach Fristablauf wird der letzte 400-Fehler geworfen.
@@ -202,8 +204,26 @@ enum AppIntentRetry {
                                   sleep: (TimeInterval) async throws -> Void = { try await Task.sleep(for: .seconds($0)) },
                                   report: (String) -> Void = { NSLog("%@", $0) },
                                   _ call: () async throws -> Void) async throws -> Int {
-        throw NSError(domain: "AppIntentRetry", code: -1,
-                      userInfo: [NSLocalizedDescriptionKey: "runIntentRetrying noch nicht umgesetzt (RED)"])
+        let start = now()
+        var attempt = 1
+        while true {
+            do {
+                try await call()
+                if attempt > 1 {
+                    // Erfolgszeile bewusst ohne `marker`, damit die Zählung der Wiederholungen stimmt.
+                    NSLog("AppIntents: Erfolg nach %d Versuchen, %.1f s, bei %@", attempt,
+                          now().timeIntervalSince(start), name)
+                }
+                return attempt
+            } catch {
+                let elapsed = now().timeIntervalSince(start)
+                guard isNotPresent(error), elapsed + interval <= maxDuration else { throw error }
+                let load = UITestLaunch.loadAverage().map { String(format: "%.2f", $0.0) } ?? "unbekannt"
+                report("\(marker) \(attempt) nach \(String(format: "%.1f", elapsed)) s wegen 400 bei \(name), Last \(load)")
+                try await sleep(interval)
+                attempt += 1
+            }
+        }
     }
 }
 

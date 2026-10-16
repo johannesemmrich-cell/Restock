@@ -55,6 +55,11 @@ Gemäß Regel „Recherche zuerst“. Belege: `docs/artifacts/test-145-d3-app-in
    geprüft, nie über das `run()`-Ergebnis.
 3. **Kompiliert ohne Projektänderung.** `#if canImport(AppIntentsTesting)` plus `#available(iOS 27.0, *)`,
    Deployment Target bleibt 18.0, kein Linken nötig (Framework liegt neben XCTest).
+   **Nachtrag Umsetzung (2026-10-16, belegt):** Mit Xcode 27.1 gebaut lädt das ganze Paket `RestockUITests` auf
+   einem iOS-26.5-Simulator nicht mehr (`Library not loaded: …/AppIntentsTypeSupport.framework`, harte Abhängigkeit
+   von `AppIntentsTesting`), `XCTSkip` greift nie. Bekannt aus Fremdberichten
+   (https://github.com/coryparrry/Intents/pull/60). Daher steht die Klasse zusätzlich hinter der eigenen
+   Kompilierbedingung `APPINTENTS_UITESTS`, die nur das Skript setzt (PO-Wahl 2026-10-16).
 4. **Add (belegt).** „Probe Zahnpasta“ landet über die Drogerie-Zuordnung in **dm**, nicht in Lidl; sichtbar in
    Kachel und Liste. `run()` dauert 3 bis 5,5 s.
 5. **Fehler 400 unter Last (belegt, Ursache offen).** Versuch 2 bei Rechnerlast ca. 600: jedes `run()` scheitert mit
@@ -119,19 +124,21 @@ Produktcode wird nicht geändert; gelesen werden:
 
 | File | Change Type | Description |
 |------|-------------|-------------|
-| `RestockUITests/AppIntentsUITests.swift` | CREATE | Klasse `AppIntentsUITests`, ganz in `#if canImport(AppIntentsTesting)`, T1 bis T3, `tearDown()` räumt Seed auf (ca. +130) |
-| `RestockUITests/UITestWait.swift` | MODIFY | Helfer `runIntentRetrying`, wiederholt nur bei Code 400 „is not present“, mit Messzeile (ca. +20) |
-| `scripts/run-appintents-uitest.sh` | CREATE | Sperren, Wegwerf-Simulator iOS 27, Build einmal, `test-without-building`, Auswertung (ca. +70) |
+| `RestockUITests/AppIntentsUITests.swift` | CREATE | Klasse `AppIntentsUITests`, ganz in `#if canImport(AppIntentsTesting) && APPINTENTS_UITESTS`, T1 bis T3, `tearDown()` räumt Seed auf (ca. +130) |
+| `RestockUITests/UITestWait.swift` | MODIFY | Helfer `AppIntentRetry.runIntentRetrying`, wiederholt nur bei Code 400 „is not present“, mit Messzeile, dazu `AppIntentRetryTests` (ca. +100) |
+| `scripts/run-appintents-uitest.sh` | CREATE | Sperren, Wegwerf-Simulator iOS 27, Build einmal mit `APPINTENTS_UITESTS`, `test-without-building`, Auswertung (ca. +70) |
 | `Restock.xcodeproj/project.pbxproj` | MODIFY | Testdatei im UI-Testziel registrieren, vier Stellen (ca. +4) |
 | `CLAUDE.md` | MODIFY | Absatz „Durchgang 3“ (Doku) |
 
 ### Estimated Changes
 
 - Code-Dateien: 4 (Testklasse, Helfer, Skript, pbxproj; Limit 4–5), dazu Doku (`CLAUDE.md`, diese Spec).
-- LoC: ca. +225 / −0 (Limit ±250). Das LoC-Gate zählt Testcode als Produktivcode (Memory „LoC-Gate zählt Testcode
+- LoC: ca. +330 / −0 (Limit ±250; Überschreitung vom PO am 2026-10-16 freigegeben, Grund: Helfer-Prüfungen und
+  Kompilierbedingung). Das LoC-Gate zählt Testcode als Produktivcode (Memory „LoC-Gate zählt Testcode
   als Produktivcode“); vor Abschluss `git diff --stat` gegen den Tip-Commit prüfen, bei Überschreitung STOP.
 - Produktcode: unverändert. Keine neuen Strings, Dependencies, `Info.plist`-, `@AppStorage`- oder Scheme-Änderung.
-- Seiteneffekte: Die Klasse läuft in der normalen Suite (Xcode 26.6, iOS 26) nur als leere Datei bzw. als Skip.
+- Seiteneffekte: Die Klasse ist in jedem Bau ohne `APPINTENTS_UITESTS` (CI, Xcode, Restock-Validate) eine leere
+  Datei; `AppIntentRetryTests` laufen überall mit.
   Das Skript hinterlässt keinen Wegwerf-Simulator und lässt `Restock-Validate` unberührt.
 
 ### Nicht-Ziele
@@ -145,7 +152,7 @@ Produktcode wird nicht geändert; gelesen werden:
 
 - [ ] T1 bis T3 laufen im Skript auf einem iOS-27-Wegwerf-Simulator grün, Protokoll abgelegt (AC-1 bis AC-3, AC-9 bis AC-12)
 - [ ] Drei Läufe in Folge grün, mindestens einer unter Rechnerlast (AC-13)
-- [ ] CI-Build (Xcode 26.6) bleibt grün, Klasse kompiliert leer bzw. überspringt sich; Bestandssuite auf `Restock-Validate` grün (AC-6, AC-14)
+- [ ] CI-Build (Xcode 26.6) bleibt grün, Klasse kompiliert ohne `APPINTENTS_UITESTS` leer; Bestandssuite auf `Restock-Validate` lädt und ist grün (AC-6, AC-14)
 - [ ] `CLAUDE.md`-Absatz vorhanden, offene Grenzen in Ticket und Bericht benannt (AC-15, AC-16)
 - [ ] Diff innerhalb der Limits, Produktcode unverändert (AC-17)
 
@@ -153,10 +160,10 @@ Produktcode wird nicht geändert; gelesen werden:
 
 ### Testklasse `AppIntentsUITests`
 
-- **Kopf:** Die ganze Datei steht in `#if canImport(AppIntentsTesting)` (`import AppIntentsTesting` darin). Unter
-  Xcode 26.6 ist die Datei damit leer und kompiliert. Jeder Test beginnt mit `guard #available(iOS 27.0, *) else {
-  throw XCTSkip("AppIntentsTesting braucht iOS 27.0 …") }`, damit ein iOS-26-Simulator mit Xcode 27 ebenfalls
-  sauber überspringt. Der Kopfkommentar nennt die offenen Grenzen (AC-16).
+- **Kopf:** Die ganze Datei steht in `#if canImport(AppIntentsTesting) && APPINTENTS_UITESTS` (`import
+  AppIntentsTesting` darin). Ohne die Bedingung (CI, normaler Xcode-Lauf, Restock-Validate) ist die Datei leer, das
+  Paket lädt auch auf iOS 26. Jeder Test beginnt mit `guard #available(iOS 27.0, *) else { throw XCTSkip(…) }`. Der
+  Kopfkommentar nennt die offenen Grenzen (AC-16).
 - **Start:** `UITestLaunch` bzw. `XCUIApplication` mit `-hasCompletedOnboarding YES
   -seedQuickAddAssignmentForUITests`. **Nie** `-developerMode`, `-notificationsEnabled` oder andere Argumente, die in
   der Argument-Domain Schreibzugriffe überlagern. Die App läuft beim `run()` (Voraussetzung von
@@ -175,8 +182,8 @@ Produktcode wird nicht geändert; gelesen werden:
   `storeName: "dm"` ausführen → App wieder aktivieren, Liste öffnen → der **erste** Artikel steht unter „Erledigt“,
   der zweite bleibt offen („1 von 2 erledigt“).
 - **T3 `testCheckOffWithClosedListChangesNothing` (Gegenprobe):** gleiche Ausgangslage, Liste ist **geschlossen**
-  (Startseite, Activity beendet; Gnadenfrist abwarten, im Probelauf ca. 12 s, gelesen wird der Zustand, nicht
-  geraten) → `CheckOffItemIntent` ausführen → Liste öffnen → nichts erledigt („0 von 2 erledigt“), obwohl `run()`
+  (Startseite; die Liste wird in diesem Test vor dem Intent nie geöffnet, also läuft für diese Artikel keine
+  Activity, keine Gnadenfrist nötig) → `CheckOffItemIntent` ausführen → Liste öffnen → nichts erledigt („0 von 2 erledigt“), obwohl `run()`
   Erfolg gemeldet hat. Der Test belegt damit, dass T2 nicht leer läuft.
 - **`tearDown()`:** Startet die App mit `-hasCompletedOnboarding YES -clearQuickAddAssignmentSeedForUITests` und
   beendet sie (Pflicht laut `CLAUDE.md`: App-Gruppe überlebt den Test). Das Muster ist im Probelauf belegt.
@@ -191,8 +198,8 @@ Produktcode wird nicht geändert; gelesen werden:
 - **Messzeile:** Bei jeder Wiederholung und beim Erfolg nach Wiederholung schreibt der Helfer eine Zeile ins
   Testprotokoll (`AppIntents: Wiederholung n nach x s wegen 400 …`, Rechnerlast soweit ermittelbar, sonst
   `unbekannt`). Es ist eine Messung, keine Erklärung der Ursache.
-- Der Helfer steht in `UITestWait.swift` hinter `#if canImport(AppIntentsTesting)`, damit die Datei unter Xcode 26.6
-  weiter baut.
+- Der Helfer steht in `UITestWait.swift` ohne Import des Frameworks (nur `Error`/`NSError`), baut und läuft daher
+  überall; `AppIntentRetryTests` prüfen ihn mit Scheinuhr (T8).
 
 ### Skript `scripts/run-appintents-uitest.sh`
 
@@ -205,8 +212,9 @@ Xcode 27.1 (`/Applications/Xcode.app`).
    Exitcode ≠ 0, schon genommene erste Sperre wird freigegeben, fremde Sperren werden nie gelöscht. `trap`
    entfernt nur selbst angelegte Sperren.
 2. **Einmal bauen:** `xcodebuild build-for-testing` (Scheme `Restock`, Ziel `generic/platform=iOS Simulator`,
-   eigener `-derivedDataPath`, keine zusätzlichen Build-Settings; Memory „CODE_SIGNING_ALLOWED=NO bricht die
-   App-Gruppe“).
+   eigener `-derivedDataPath`, als einzige zusätzliche Einstellung
+   `SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) APPINTENTS_UITESTS'` (`DEBUG` bleibt erhalten, belegt durch die
+   DEBUG-Seeds der Tests); nichts an der Signierung, Memory „CODE_SIGNING_ALLOWED=NO bricht die App-Gruppe“).
 3. **Wegwerf-Simulator:** `simctl create "Restock-AppIntents-<zeit>" … iOS-27-0` → `boot` + `bootstatus -b` →
    `simctl install` → `xcodebuild test-without-building -destination id=<udid>
    -only-testing:RestockUITests/AppIntentsUITests -resultBundlePath … -collect-test-diagnostics never` → `shutdown`
@@ -250,7 +258,8 @@ nie von Hand gesetzt).
 - [ ] T3 (RED): `testCheckOffWithClosedListChangesNothing` — GIVEN dieselbe Ausgangslage, aber Liste geschlossen,
   WHEN der Intent läuft (`run()` meldet Erfolg), THEN ist nach dem Öffnen der Liste nichts erledigt.
 - [ ] T4: Bestandssuite — GIVEN Xcode 26.6 bzw. iOS-26-Simulator `Restock-Validate`, WHEN die Suite läuft, THEN
-  baut das Ziel (Klasse kompiliert leer) und alle Bestandstests sind grün; Testzahl geprüft.
+  baut das Ziel (Klasse ohne `APPINTENTS_UITESTS` leer), das Paket lädt und alle Bestandstests sowie
+  `AppIntentRetryTests` sind grün; Testzahl geprüft.
 - [ ] T5: Skript `scripts/run-appintents-uitest.sh` — GIVEN freie Sperren und Xcode 27.1, WHEN es läuft, THEN genau
   3 Tests gelaufen, 0 Fehlschläge, 0 Übersprungene, am Ende kein Wegwerf-Simulator übrig, `Restock-Validate`
   unberührt.
@@ -262,7 +271,7 @@ nie von Hand gesetzt).
 - [ ] T8: Retry-Helfer — GIVEN ein Fehler `AppIntentsServicesMetadataErrorDomain` Code 400 „is not present“,
   WHEN er auftritt, THEN wiederholt der Helfer mit Messzeile; GIVEN ein anderer Fehler, THEN wirft er sofort ohne
   Wiederholung (Code-Prüfung am Helfer, belegt durch Review und Messzeile im Lauf).
-- [ ] T9: Diff gegen den Tip-Commit — nur die genannten Dateien, ca. +225 LoC, Produktcode unverändert.
+- [ ] T9: Diff gegen den Tip-Commit — nur die genannten Dateien, ca. +330 LoC, Produktcode unverändert.
 
 ## Acceptance Criteria
 
@@ -282,10 +291,11 @@ nie von Hand gesetzt).
   „is not present“ scheitert, THEN wird innerhalb einer festen Frist wiederholt und je Wiederholung eine Messzeile
   ins Testprotokoll geschrieben; WHEN ein anderer Fehler auftritt, THEN wird er sofort ohne Wiederholung
   weitergereicht; nach Fristablauf wird der letzte 400-Fehler geworfen. Test: T8, T7.
-- **AC-6:** GIVEN Xcode 26.6 (CI) oder ein iOS-26-Simulator, WHEN das UI-Testziel gebaut und die Suite gefahren wird,
-  THEN steht die gesamte Datei `AppIntentsUITests.swift` (und der Helfer) hinter `#if canImport(AppIntentsTesting)`,
-  jeder Test beginnt mit `#available(iOS 27.0, *)` und springt sonst per `XCTSkip` mit Grund, und der Build bleibt
-  grün. Test: T4.
+- **AC-6:** GIVEN Xcode 26.6 (CI) oder Xcode 27.1 mit einem iOS-26-Simulator, WHEN das UI-Testziel ohne
+  `APPINTENTS_UITESTS` gebaut und die Suite gefahren wird, THEN steht die gesamte Datei `AppIntentsUITests.swift`
+  hinter `#if canImport(AppIntentsTesting) && APPINTENTS_UITESTS`, der Helfer importiert das Framework nicht, jeder
+  Test beginnt mit `#available(iOS 27.0, *)` und springt sonst per `XCTSkip` mit Grund, das Paket lädt und der Build
+  bleibt grün. Test: T4.
 - **AC-7:** GIVEN die Launch-Argumente der Klasse, WHEN sie geprüft werden, THEN sind es nur
   `-hasCompletedOnboarding YES` und der Seed `-seedQuickAddAssignmentForUITests` (plus die von `UITestLaunch`
   gesetzten); `-developerMode` und `-notificationsEnabled` kommen nicht vor (Argument-Domain-Falle). Test: T9
@@ -297,8 +307,8 @@ nie von Hand gesetzt).
   `/tmp/loose-ends-testlauf.lock` in dieser Reihenfolge per `mkdir` samt `owner`-Datei, bricht bei belegter Sperre
   mit Meldung ab, ohne die fremde Sperre anzutasten, und gibt bei jedem Ende nur selbst angelegte Sperren frei.
   Test: T5, T6.
-- **AC-10:** GIVEN das Skript, WHEN es läuft, THEN baut es genau einmal (`build-for-testing`, keine zusätzlichen
-  Build-Settings) und führt auf einem Wegwerf-Simulator mit Runtime iOS 27.0 `simctl install` und
+- **AC-10:** GIVEN das Skript, WHEN es läuft, THEN baut es genau einmal (`build-for-testing`, einzige zusätzliche
+  Einstellung `SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) APPINTENTS_UITESTS'`) und führt auf einem Wegwerf-Simulator mit Runtime iOS 27.0 `simctl install` und
   `xcodebuild test-without-building -only-testing:RestockUITests/AppIntentsUITests` aus. Test: T5.
 - **AC-11:** GIVEN die Auswertung, WHEN sie läuft, THEN zählt der Lauf nur bei genau 3 gelaufenen Tests, 0
   Fehlschlägen, 0 Übersprungenen und ohne Abbruch als grün; „Executed 0 tests“, Runner-Neustart oder Übersprünge
@@ -309,11 +319,12 @@ nie von Hand gesetzt).
 - **AC-13:** GIVEN der Nachweis, WHEN drei Skriptläufe hintereinander erfolgt sind, THEN sind alle drei grün, davon
   mindestens einer unter Rechnerlast; die Protokolle samt Messzeilen und Ergebnisblock (Commit-Kennung, Zeitstempel,
   Testzahl, Last) liegen unter `docs/artifacts/test-145-d3-app-intents-testing/`. Test: T7.
-- **AC-14:** GIVEN die Bestandssuite auf `Restock-Validate` (iOS 26.5), WHEN sie nach der Änderung läuft, THEN bleibt
-  sie grün mit unveränderter Testzahl (außer den Skips der neuen Klasse, falls Xcode 27 gebaut hat); kein Abbruch.
-  Test: T4.
+- **AC-14:** GIVEN die Bestandssuite auf `Restock-Validate` (iOS 26.5), WHEN sie nach der Änderung läuft, THEN lädt
+  das Paket, sie bleibt grün mit der bisherigen Testzahl plus den 4 `AppIntentRetryTests` (die Klasse
+  `AppIntentsUITests` ist dort leer); kein Abbruch, kein „Failed to load the test bundle“. Test: T4.
 - **AC-15:** GIVEN der Abschluss, WHEN die Doku geprüft wird, THEN beschreibt `CLAUDE.md` Klasse, Skript, Sperren,
-  Wegwerf-Simulator iOS 27, Retry-Helfer, Skip in der CI und die offenen Grenzen. Test: T9.
+  Wegwerf-Simulator iOS 27, Retry-Helfer, die Kompilierbedingung `APPINTENTS_UITESTS` samt Grund (Ladefehler auf
+  iOS 26), die leere Klasse in CI und Bestandssuite und die offenen Grenzen. Test: T9.
 - **AC-16:** GIVEN Spec, Kopfkommentar der Klasse, `CLAUDE.md`, Ticketkommentar und Bericht, WHEN sie formuliert
   werden, THEN sind ausdrücklich als offen genannt: echter Siri-Ruf per Stimme, nicht prüfbarer Dialogtext, Tipp auf
   Widget/Live Activity/Control, CI-Anschluss (xcode-27-Runner Preview, Signierungsfehler 800 unbelegt), Fehler 400
@@ -322,7 +333,7 @@ nie von Hand gesetzt).
   „Siri geprüft“ ohne diese Einschränkungen.
 - **AC-17:** GIVEN der Diff gegen den Tip-Commit, WHEN er geprüft wird, THEN umfasst er höchstens
   `AppIntentsUITests.swift`, `UITestWait.swift`, `run-appintents-uitest.sh`, `project.pbxproj` sowie die Doku
-  (`CLAUDE.md`, Spec, Artefakte), ca. +225 LoC; Produktcode (`SmartCart/`, `RestockShareExtension/`,
+  (`CLAUDE.md`, Spec, Artefakte), ca. +330 LoC (vom PO freigegeben); Produktcode (`SmartCart/`, `RestockShareExtension/`,
   `SmartCartWidgets/`), `ci.yml` und Scheme sind unverändert. Test: T9.
 - **AC-18:** GIVEN der gesamte Durchgang, WHEN Schritte ausgeführt werden, THEN startet, installiert oder liest
   keiner ein Gerät des Users; alle Läufe nur auf Wegwerf-Simulatoren bzw. `Restock-Validate`. Test: Review des
@@ -333,7 +344,7 @@ nie von Hand gesetzt).
 - **ADR-Nr.:** keine neue
 - **Rationale:** Reine Testergänzung ohne Produktänderung. Wie bei Durchgang 2 läuft Zustand, der eine andere
   Werkzeug-/OS-Version braucht (hier Xcode 27/iOS 27), als Skript außerhalb der normalen Suite auf einem
-  Wegwerf-Simulator; die Klasse überspringt sich oder kompiliert leer, wo das Framework fehlt.
+  Wegwerf-Simulator; die Klasse kompiliert leer, wo das Skript die Bedingung `APPINTENTS_UITESTS` nicht setzt.
 
 ## Alternativen
 
@@ -345,6 +356,7 @@ Kein Modell beteiligt: deterministische Testlogik. Die Tabelle stammt aus der An
 | CI jetzt auf `xcode-27`-Preview-Runner | automatisch | Preview, Signierung 800 unbelegt, CI-Umbau sprengt Scope; Regel „CI-Beleg nie als Pre-Push-AC“ |
 | `Restock-Validate` auf iOS 27 hochziehen | dauerhaft lokal in der Suite | betrifft alle Tests, Bestandssuite wäre auf iOS 27 neu zu belegen |
 | Teil 4 als „nicht automatisierbar“ schließen | kein Aufwand | durch Probelauf widerlegt, verfehlt die DoD |
+| Eigenes UI-Testziel nur für AppIntents (Nachtrag Umsetzung) | Ladefehler sauber getrennt, wie im Fremdbericht | pbxproj- und Scheme-Änderung, gesch. 400+ Zeilen; vom PO am 2026-10-16 zugunsten der Kompilierbedingung verworfen |
 
 - **Gekippte frühere Entscheidung:** die Arbeitsaussage der D8-Spec (`test-98-durchgang-8-siri-widget.md`),
   `AppIntentsTesting` sei „spätere Ergänzung, prüft nicht den Systemweg davor“ und der Annahme aus Berichten, es gebe
@@ -353,7 +365,7 @@ Kein Modell beteiligt: deterministische Testlogik. Die Tabelle stammt aus der An
 - **Verworfen:** Teil der Logik erneut als Unit-Test (existiert seit #98 D8); `XCUIDevice.siriService` (im
   Simulator unzuverlässig, Apple-Forum, prüft die Stimme, nicht den Intent).
 
-**Entscheidung:** Lokales Skript mit Klasse hinter `canImport`, weil es den echten Systemweg belegt, im Scope bleibt
+**Entscheidung:** Lokales Skript mit Klasse hinter `canImport` und `APPINTENTS_UITESTS`, weil es den echten Systemweg belegt, im Scope bleibt
 und die CI nicht gefährdet. CI-Anschluss ist Folgeschritt in #145.
 
 ## Offene Grenzen
@@ -365,8 +377,10 @@ und die CI nicht gefährdet. CI-Anschluss ist Folgeschritt in #145.
   Insel-Darstellung selbst ist nicht geprüft (SpringBoard-Abfrage im Probelauf ohne Treffer).
 - **CI-Anschluss:** Der `xcode-27`-Runner ist Public Preview ohne GA-Termin; ob dort die Signierung trägt
   (`AppIntentsServicesSecurityErrorDomain 800`, für den iOS-Simulator unbelegt) und ob die Läufe stabil sind, ist
-  ungeprüft. Folgeschritt in #145. Bis dahin gilt nur der lokale Nachweis; in der CI (Xcode 26.6) kompiliert die
-  Klasse leer.
+  ungeprüft. Folgeschritt in #145. Bis dahin gilt nur der lokale Nachweis; in der CI und in jedem Bau ohne
+  `APPINTENTS_UITESTS` kompiliert die Klasse leer. Ein Anschluss bräuchte dort dieselbe Kompilierbedingung.
+- **Ladefehler auf iOS 26:** Mit `APPINTENTS_UITESTS` gebaut lädt das Paket auf iOS-26-Simulatoren nicht (siehe
+  Nachtrag Recherche); das Skript fährt deshalb nur iOS 27.
 - **Fehler 400 „is not present“ unter Last** wird nur abgefangen (Wiederholung mit Messzeile), nicht erklärt. Die
   Ursache (Last, Zeitpunkt der Registrierung der App-Metadaten) ist nicht bewiesen.
 - **„Stiller Erfolg ohne Wirkung“:** `CheckOffItemIntent.run()` meldet Erfolg, auch wenn keine Live Activity läuft und
@@ -384,6 +398,8 @@ und die CI nicht gefährdet. CI-Anschluss ist Folgeschritt in #145.
 - **Schwere parallele Läufe:** beide Sperren (Memory „Schwere Läufe mit anderen Sitzungen abstimmen“); nie parallel
   zu anderen Simulator-Läufen.
 - **CI bricht:** Ohne `canImport`-Klammer scheitert der Build unter Xcode 26.6; AC-6 und T4 sichern das ab.
+- **Bestandssuite lädt nicht:** Ohne `APPINTENTS_UITESTS`-Klammer lädt das Paket unter Xcode 27 auf iOS 26 nicht
+  (belegt 2026-10-16); AC-6, AC-14 und T4 sichern das ab.
 - **Zustandsleck:** Seed bleibt im App-Gruppen-Container; `tearDown()` räumt auf (AC-8). Der Wegwerf-Simulator wird
   gelöscht (AC-12).
 - **Null-Test-Lauf:** „Executed 0 tests … TEST SUCCEEDED“ ist kein Grün (Memory „Null-Test-Lauf ist kein Grün“);
@@ -391,9 +407,10 @@ und die CI nicht gefährdet. CI-Anschluss ist Folgeschritt in #145.
 - **Test prüft Backdoor statt Weg:** Seed per Launch-Argument stellt nur Läden her; Artikel entstehen per Intent,
   Abhaken per Intent. Die App-Oberfläche liest den Stand; nichts wird von Hand in `UserDefaults` oder Speicher
   geschrieben.
-- **LoC-Gate:** ca. +225 nah am Limit; bei Überschreitung STOP und Schätzung vorlegen.
-- **Zeitbedarf Gnadenfrist (T3):** Die Activity endet erst nach einer Frist (Probelauf ca. 12 s); der Test liest den
-  Zustand statt eine feste Zeit anzunehmen.
+- **LoC-Gate:** ca. +330, Überschreitung vom PO freigegeben (2026-10-16).
+- **Gnadenfrist (T3):** Die Activity endet erst nach einer Frist (Probelauf ca. 12 s). T3 öffnet die Liste deshalb gar
+  nicht; eine übrig gebliebene Activity aus T2 trägt nur die Kennungen gelöschter Artikel, die die Abarbeitung
+  überspringt.
 
 ## Folge-Durchgänge im selben Ticket
 
@@ -406,3 +423,6 @@ und die CI nicht gefährdet. CI-Anschluss ist Folgeschritt in #145.
 
 - 2026-10-16: Initial spec created (Durchgang 3 von #145; AppIntentsTesting auf iOS-27-Wegwerf-Simulator,
   Klasse hinter `canImport`, Skript, Retry-Helfer; CI-Anschluss als Folgeschritt)
+- 2026-10-16 (Umsetzung, PO-`override`): Kompilierbedingung `APPINTENTS_UITESTS` nur im Skript, weil das Paket mit
+  `AppIntentsTesting` auf iOS 26 nicht lädt; AC-6, AC-10, AC-14, AC-15, AC-17 und Umfang (+330) angepasst; T3 öffnet
+  die Liste nicht (keine Gnadenfrist)

@@ -1,0 +1,39 @@
+Adversary-Nachweis 145 D3 (AC-14, AC-9, AC-12), 2026-10-16. Ziel Restock-Validate iOS 26.5, Xcode 27.1, normaler xcodebuild test ohne Zusatz-Settings, alle Tests. Beide Sperren 20:59:45 genommen, danach freigegeben.
+ERGEBNIS AC-14: Unit 498 Tests 0 Fehlschlaege; UI 108 Tests (3 uebersprungen, 0 Fehlschlaege); gesamt 606 ausgefuehrt, 603 bestanden, 0 fehlgeschlagen, 3 uebersprungen (2x NotificationPermissionUITests ohne Gate-Variable, 1x ReceiptShareExtensionTests ohne Skript). AppIntentRetryTests 4 bestanden, AppIntentsUITests 0 Tests (wegkompiliert). Dauer 1907 s.
+LOCKS TAKEN Fr. 16 Okt. 2026 20:59:45 CEST LOAD { 4,66 57,14 90,11 }
+Test Suite 'RestockTests.xctest' passed at 2026-10-16 21:01:14.787.
+	 Executed 498 tests, with 0 failures (0 unexpected) in 26.162 (26.338) seconds
+Test Suite 'All tests' passed at 2026-10-16 21:01:14.788.
+	 Executed 498 tests, with 0 failures (0 unexpected) in 26.162 (26.339) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-16 21:31:27.927.
+	 Executed 108 tests, with 3 tests skipped and 0 failures (0 unexpected) in 1809.519 (1809.631) seconds
+Test Suite 'All tests' passed at 2026-10-16 21:31:27.930.
+	 Executed 108 tests, with 3 tests skipped and 0 failures (0 unexpected) in 1809.519 (1809.634) seconds
+** TEST SUCCEEDED **
+XCODEBUILD EXIT 0, SECONDS 1907
+LOCKS RELEASED
+Test Case '-[RestockUITests.AppIntentRetryTests testGivesUpAfterMaxDurationWithLast400]' passed (0.089 seconds).
+Test Case '-[RestockUITests.AppIntentRetryTests testOnlyMetadata400NotPresentCountsAsRetryable]' passed (0.045 seconds).
+Test Case '-[RestockUITests.AppIntentRetryTests testOtherErrorIsThrownAtOnce]' passed (0.037 seconds).
+Test Case '-[RestockUITests.AppIntentRetryTests testRetriesNotPresentAndReportsEachRetry]' passed (0.044 seconds).
+Test Case '-[RestockUITests.NotificationPermissionUITests testAllow]' skipped (0.058 seconds).
+Test Case '-[RestockUITests.NotificationPermissionUITests testDeny]' skipped (0.043 seconds).
+Test Case '-[RestockUITests.ReceiptShareExtensionTests testSharingAReceiptPhotoReachesTheSuccessScreen]' skipped (0.077 seconds).
+--- AC-9 Sperren-Abbruch ---
+##### Fall: /tmp/heavy-build.lock fremd belegt
+ABBRUCH — Sperre /tmp/heavy-build.lock belegt, Inhaber: fremder-inhaber adversary-probe
+EXIT=2
+owner danach: fremder-inhaber adversary-probe
+andere Sperre /tmp/loose-ends-testlauf.lock frei (ok)
+AppIntents-Simulatoren vorher/nachher: 0 / 0
+##### Fall: /tmp/loose-ends-testlauf.lock fremd belegt
+ABBRUCH — Sperre /tmp/loose-ends-testlauf.lock belegt, Inhaber: fremder-inhaber adversary-probe
+EXIT=2
+owner danach: fremder-inhaber adversary-probe
+andere Sperre /tmp/heavy-build.lock frei (ok)
+AppIntents-Simulatoren vorher/nachher: 0 / 0
+ls: /tmp/heavy-build.lock: No such file or directory
+ls: /tmp/loose-ends-testlauf.lock: No such file or directory
+--- AC-12 SIGTERM in der Testphase ---
+→ Sperren genommen: /tmp/heavy-build.lock /tmp/loose-ends-testlauf.lock — build-for-testing …
+→ Test auf E482933B-EEB8-41CF-9ADE-5F1D8E0A9890 (Restock-AppIntents-20261016-213321), Protokoll docs/artifacts/test-145-d3-app-intents-testing/appintents-20261016-213321.log …

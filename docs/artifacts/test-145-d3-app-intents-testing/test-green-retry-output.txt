@@ -1,0 +1,40 @@
+Retry-Lauf #145 D3 (AppIntentRetryTests + AppIntentsUITests), Xcode 27.1 (27A9275), 2026-10-16
+
+=== Lauf A: Restock-Validate (iOS 26.5, id 8F696920-4B9A-40A7-96F0-7697BE887CC7) — ROT, Testbuendel laedt nicht ===
+(Vorlauf mit name=Restock-Validate scheiterte an der Zielauswahl: OS:latest = 27.0 passt nicht zu iOS 26.5; daher per id)
+	RestockUITests-Runner (21938) encountered an error (Failed to load the test bundle. (Underlying Error: Das Paket „RestockUITests“ konnte nicht geladen werden. Das Paket konnte nicht geladen werden. Versuche, das Paket erneut zu installieren. dlopen(/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Bundle/Application/C74654C5-A258-4C44-AD3F-A37
+** TEST FAILED **
+2026-10-16 17:13:57.198414+0200 RestockUITests-Runner[21938:4791281] [loading] Error loading /Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Bundle/Application/C74654C5-A258-4C44-AD3F-A370D7C224C1/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests (230):  dlopen(/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4
+2026-10-16 17:13:57.200725+0200 RestockUITests-Runner[21938:4791281] [general] NSBundle file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Bundle/Application/C74654C5-A258-4C44-AD3F-A370D7C224C1/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/ loading failed because of an error Error Domain=NSCocoaErrorDomain Code=3588 "dlopen(/Us
+2026-10-16 17:13:57.201615+0200 RestockUITests-Runner[21938:4791281] [Default] (dlopen(/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Bundle/Application/C74654C5-A258-4C44-AD3F-A370D7C224C1/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests, 0x0109): Library not loaded: /System/Library/Frameworks/AppIntentsTypeSupport.fra
+COMMIT 5613d9f (uncommittet: ja)
+LOCKS RELEASED
+LOCKS TAKEN Fr. 16 Okt. 2026 17:13:17 CEST LOAD { 29,78 133,32 94,65 }
+Testing failed:
+XCODEBUILD EXIT 65, SECONDS 43
+
+=== Lauf B: Wegwerf-Simulator iPhone 17 Pro, iOS 27.0 (24A434) — GRUEN ===
+LOCKS TAKEN Fr. 16 Okt. 2026 17:15:21 CEST LOAD { 19,42 97,51 85,87 }
+COMMIT 5613d9f (+ uncommittete GREEN-Dateien)
+SIM C69BC66E-2859-4204-945A-2B96A143E3D6
+Test Case '-[RestockUITests.AppIntentRetryTests testGivesUpAfterMaxDurationWithLast400]' passed (0.676 seconds).
+Test Case '-[RestockUITests.AppIntentRetryTests testOnlyMetadata400NotPresentCountsAsRetryable]' passed (0.088 seconds).
+Test Case '-[RestockUITests.AppIntentRetryTests testOtherErrorIsThrownAtOnce]' passed (0.061 seconds).
+2026-10-16 17:16:17.750517+0200 RestockUITests-Runner[22756:4800248] AppIntents: Erfolg nach 3 Versuchen, 1.0 s, bei Probe
+Test Case '-[RestockUITests.AppIntentRetryTests testRetriesNotPresentAndReportsEachRetry]' passed (0.117 seconds).
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.942 (0.951) seconds
+Test Case '-[RestockUITests.AppIntentsUITests testAddIntentPutsItemIntoDm]' passed (31.727 seconds).
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffIntentChecksFirstItem]' passed (25.561 seconds).
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffWithClosedListChangesNothing]' passed (23.263 seconds).
+	 Executed 3 tests, with 0 failures (0 unexpected) in 80.551 (80.556) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 81.493 (81.508) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 81.493 (81.513) seconds
+** TEST SUCCEEDED **
+XCODEBUILD EXIT 0, SECONDS 140
+SIM DELETED C69BC66E-2859-4204-945A-2B96A143E3D6
+LOCKS RELEASED
+
+Kern von Lauf A: Library not loaded: /System/Library/Frameworks/AppIntentsTypeSupport.framework/AppIntentsTypeSupport
+  Referenced from: .../iPhoneSimulator.platform/Developer/Library/Frameworks/AppIntentsTesting.framework/AppIntentsTesting
+  (RestockUITests.xctest linkt AppIntentsTesting per LC_LOAD_WEAK_DYLIB, die Datei existiert im Xcode-Pfad und wird geladen;
+   ihre harte Abhaengigkeit AppIntentsTypeSupport fehlt in der iOS-26.5-Runtime -> ganzes UI-Testbuendel laedt nicht, 0 Tests).

@@ -1,12 +1,12 @@
-#if canImport(AppIntentsTesting)
+#if canImport(AppIntentsTesting) && APPINTENTS_UITESTS
 import AppIntentsTesting
 import XCTest
 
 /// Issue #145, Durchgang 3: Siri-/Kurzbefehl-Intents über den Systemweg. `AppIntentsTesting` (Xcode 27, iOS 27)
 /// löst die Intents über die App-Metadaten auf und führt sie im eigenen Prozess aus, wie Siri und Kurzbefehle.
 /// Geprüft wird immer der Zustand der App-Oberfläche, nie das `run()`-Ergebnis: das meldet auch Erfolg, wenn nichts
-/// passiert (Gegenprobe T3). Unter Xcode 26 ist diese Datei leer; gefahren wird sie mit
-/// `scripts/run-appintents-uitest.sh` auf einem iOS-27-Wegwerf-Simulator.
+/// passiert (Gegenprobe T3). Ohne `APPINTENTS_UITESTS` ist diese Datei leer, weil das Bündel mit dem Framework auf
+/// iOS 26 gar nicht lädt; nur `scripts/run-appintents-uitest.sh` setzt die Bedingung (iOS-27-Wegwerf-Simulator).
 /// Spec: `docs/specs/ui-tests/test-145-durchgang-3-app-intents.md`.
 ///
 /// **Offene Grenzen:** kein Siri-Ruf per Stimme, Dialogtext nicht lesbar, kein Tipp auf Widget, Live Activity oder

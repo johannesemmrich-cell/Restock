@@ -1,0 +1,31 @@
+#145 Durchgang 3 — Nachweis A (T4, AC-6, AC-14): Bündel lädt auf iOS 26 ohne APPINTENTS_UITESTS
+URTEIL: GRÜN — Bündel geladen, 6 Tests ausgeführt, 0 Fehlschläge, AppIntentsUITests trägt 0 Tests bei (wegkompiliert).
+
+Ziel:        Restock-Validate (8F696920-4B9A-40A7-96F0-7697BE887CC7), iOS 26.5
+Xcode:       27.1 (27A9275), DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+Commit:      5613d9f + uncommittete Änderungen (Kompilierbedingung APPINTENTS_UITESTS in AppIntentsUITests.swift)
+Bau:         normaler `xcodebuild test`, keine zusätzlichen Build-Settings, -collect-test-diagnostics never
+Auswahl:     -only-testing:RestockUITests/AppIntentRetryTests
+             -only-testing:RestockUITests/QuickAddControlUITests
+             -only-testing:RestockUITests/AppIntentsUITests
+Sperren:     /tmp/heavy-build.lock + /tmp/loose-ends-testlauf.lock genommen 2026-10-16 20:38:25, danach freigegeben
+Last:        { 2,94 2,45 2,29 } zu Beginn
+Gegenprobe:  `otool -L` auf RestockUITests.xctest/RestockUITests: 0 Einträge mit „AppIntents“ (Framework nicht gelinkt)
+Abbruchmarker: kein „Failed to load the test bundle“, kein „Executed 0 tests“, kein „Restarting after unexpected exit“
+
+Auszug aus dem Protokoll:
+Test Suite 'RestockUITests.xctest' started at 2026-10-16 20:39:26.643.
+Test Case '-[RestockUITests.AppIntentRetryTests testGivesUpAfterMaxDurationWithLast400]' passed (0.633 seconds).
+Test Case '-[RestockUITests.AppIntentRetryTests testOnlyMetadata400NotPresentCountsAsRetryable]' passed (0.073 seconds).
+Test Case '-[RestockUITests.AppIntentRetryTests testOtherErrorIsThrownAtOnce]' passed (0.036 seconds).
+Test Case '-[RestockUITests.AppIntentRetryTests testRetriesNotPresentAndReportsEachRetry]' passed (0.038 seconds).
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.780 (0.781) seconds
+Test Case '-[RestockUITests.QuickAddControlUITests testPendingFlagFocusesQuickAddFieldAndIsConsumed]' passed (21.977 seconds).
+Test Case '-[RestockUITests.QuickAddControlUITests testWithoutPendingFlagFieldIsNotFocused]' passed (13.901 seconds).
+	 Executed 2 tests, with 0 failures (0 unexpected) in 35.878 (35.882) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-16 20:40:03.307.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 36.658 (36.665) seconds
+** TEST SUCCEEDED **
+xcodebuild Exit 0, 101 s
+
+Offene Grenze: geprüft wurden nur diese drei Klassen, nicht die ganze Bestandssuite auf Restock-Validate.
