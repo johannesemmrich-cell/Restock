@@ -1,0 +1,159 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -scheme Restock -project Restock.xcodeproj -destination id=8F696920-4B9A-40A7-96F0-7697BE887CC7 -derivedDataPath build/dd-145d2 "-only-testing:RestockUITests/NotificationPermissionUITests" -resultBundlePath build/red-deny.xcresult
+
+Writing result bundle at path:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/red-deny.xcresult
+
+2026-10-15 16:42:55.435829+0200 RestockUITests-Runner[69555:1922524] [Default] Running tests...
+2026-10-15 16:42:55.702759+0200 RestockUITests-Runner[69555:1922777] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+    t =      nans Interface orientation changed to Portrait
+2026-10-15 16:42:58.698314+0200 RestockUITests-Runner[69555:1922978] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+Test Suite 'Selected tests' started at 2026-10-15 16:42:58.879.
+Test Suite 'RestockUITests.xctest' started at 2026-10-15 16:42:58.886.
+Test Suite 'NotificationPermissionUITests' started at 2026-10-15 16:42:58.887.
+Test Case '-[RestockUITests.NotificationPermissionUITests testAllow]' started.
+    t =     0.00s Start Test at 2026-10-15 16:42:58.890
+    t =     0.22s Set Up
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/NotificationPermissionUITests.swift:39: -[RestockUITests.NotificationPermissionUITests testAllow] : Test skipped - Übersprungen: andere Entscheidung dieses Laufs (deny)
+    t =     0.32s Tear Down
+Test Case '-[RestockUITests.NotificationPermissionUITests testAllow]' skipped (0.582 seconds).
+Test Case '-[RestockUITests.NotificationPermissionUITests testDeny]' started.
+    t =     0.01s Start Test at 2026-10-15 16:42:59.483
+    t =     0.06s Set Up
+    t =     0.09s Open com.johannesemmrich.Restock
+    t =     0.10s     Launch com.johannesemmrich.Restock
+2026-10-15 16:43:01.912 xcodebuild[69457:1920930] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-15 16:43:01.915 xcodebuild[69457:1920930] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[69555]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x108428310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10847c398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     6.67s         Setting up automation session
+    t =    12.65s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.NotificationPermissionUITests testDeny] : Set a .modelContext in view's environment to use Query
+    t =    16.62s Checking existence of `"gearshape" Button`
+    t =    16.93s Find the "gearshape" Button
+    t =    17.00s Find the "gearshape" Button
+    t =    17.09s Checking existence of `"gearshape" Button`
+    t =    17.13s Find the "gearshape" Button
+    t =    17.18s Find the "gearshape" Button
+    t =    17.28s Tap "gearshape" Button
+    t =    17.28s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.29s     Find the "gearshape" Button
+    t =    17.33s     Check for interrupting elements affecting "gearshape" Button
+    t =    17.43s     Synthesize event
+    t =    17.75s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.68s Checking existence of `"Benachrichtigungen" Button`
+    t =    18.94s Find the "Benachrichtigungen" Button
+    t =    19.40s Find the "Benachrichtigungen" Button
+    t =    20.38s Tap "Benachrichtigungen" Button
+    t =    20.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.40s     Find the "Benachrichtigungen" Button
+    t =    21.15s     Check for interrupting elements affecting "Benachrichtigungen" Button
+    t =    21.28s     Synthesize event
+    t =    21.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.96s Waiting 20.0s for Switch (First Match) to exist
+    t =    24.00s     Checking `Expect predicate `existsNoRetry == 1` for object Switch (First Match)`
+    t =    24.01s         Checking existence of `Switch (First Match)`
+    t =    26.67s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    26.67s     Find the Switch (First Match)
+    t =    28.94s Find the "Nachkauf-Erinnerungen" Switch
+    t =    29.22s Tap "Nachkauf-Erinnerungen" Switch[0.93, 0.50]
+    t =    29.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.23s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    29.37s     Check for interrupting elements affecting "Nachkauf-Erinnerungen" Switch
+    t =    29.51s     Synthesize event
+    t =    29.51s         Find the "Nachkauf-Erinnerungen" Switch
+    t =    29.67s         Find the "Nachkauf-Erinnerungen" Switch
+    t =    29.80s         Find the "Nachkauf-Erinnerungen" Switch
+    t =    30.30s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.33s Waiting 20.0s for Alert (First Match) to exist
+    t =    31.37s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    31.37s         Checking existence of `Alert (First Match)`
+    t =    31.50s         Capturing element debug description
+    t =    32.43s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    32.44s         Checking existence of `Alert (First Match)`
+    t =    32.49s         Capturing element debug description
+    t =    33.42s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    33.42s         Checking existence of `Alert (First Match)`
+    t =    33.46s         Capturing element debug description
+    t =    34.39s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    34.39s         Checking existence of `Alert (First Match)`
+    t =    34.43s         Capturing element debug description
+    t =    35.36s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    35.36s         Checking existence of `Alert (First Match)`
+    t =    35.40s         Capturing element debug description
+    t =    36.43s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    36.43s         Checking existence of `Alert (First Match)`
+    t =    36.48s         Capturing element debug description
+    t =    37.41s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    37.41s         Checking existence of `Alert (First Match)`
+    t =    37.45s         Capturing element debug description
+    t =    38.38s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    38.38s         Checking existence of `Alert (First Match)`
+    t =    38.40s         Capturing element debug description
+    t =    39.34s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    39.34s         Checking existence of `Alert (First Match)`
+    t =    39.37s         Capturing element debug description
+    t =    40.40s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    40.40s         Checking existence of `Alert (First Match)`
+    t =    40.46s         Capturing element debug description
+    t =    41.39s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    41.40s         Checking existence of `Alert (First Match)`
+    t =    41.44s         Capturing element debug description
+    t =    42.36s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    42.36s         Checking existence of `Alert (First Match)`
+    t =    42.40s         Capturing element debug description
+    t =    43.37s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    43.37s         Checking existence of `Alert (First Match)`
+    t =    43.42s         Capturing element debug description
+    t =    44.34s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    44.34s         Checking existence of `Alert (First Match)`
+    t =    44.38s         Capturing element debug description
+    t =    45.42s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    45.42s         Checking existence of `Alert (First Match)`
+    t =    45.45s         Capturing element debug description
+    t =    46.38s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    46.38s         Checking existence of `Alert (First Match)`
+    t =    46.42s         Capturing element debug description
+    t =    47.34s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    47.35s         Checking existence of `Alert (First Match)`
+    t =    47.38s         Capturing element debug description
+    t =    48.40s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    48.40s         Checking existence of `Alert (First Match)`
+    t =    48.46s         Capturing element debug description
+    t =    49.38s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    49.39s         Checking existence of `Alert (First Match)`
+    t =    49.41s         Capturing element debug description
+    t =    50.34s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    50.34s         Checking existence of `Alert (First Match)`
+    t =    50.38s         Capturing element debug description
+    t =    50.38s     Checking existence of `Alert (First Match)`
+    t =    50.40s Collecting debug information to assist test failure triage
+    t =    50.41s     Requesting snapshot of accessibility hierarchy for app with pid 67332
+    t =    50.75s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    50.75s     Wait for com.johannesemmrich.Restock to idle
+    t =    50.76s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    51.46s     Check for interrupting elements affecting "Restock" Application
+    t =    51.73s     Synthesize event
+    t =    52.26s     Wait for com.johannesemmrich.Restock to idle
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/NotificationPermissionUITests.swift:108: error: -[RestockUITests.NotificationPermissionUITests testDeny] : XCTAssertTrue failed - Installation nicht frisch: kein Mitteilungsdialog erschienen — die Erlaubnis wurde schon früher entschieden; vor dem Lauf App deinstallieren (scripts/run-notification-permission-uitest.sh)
+    t =    52.46s Tear Down
+Test Case '-[RestockUITests.NotificationPermissionUITests testDeny]' failed (53.189 seconds).
+Test Suite 'NotificationPermissionUITests' failed at 2026-10-15 16:43:52.669.
+	 Executed 2 tests, with 1 test skipped and 1 failure (0 unexpected) in 53.771 (53.782) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-10-15 16:43:52.671.
+	 Executed 2 tests, with 1 test skipped and 1 failure (0 unexpected) in 53.771 (53.785) seconds
+Test Suite 'Selected tests' failed at 2026-10-15 16:43:52.671.
+	 Executed 2 tests, with 1 test skipped and 1 failure (0 unexpected) in 53.771 (53.791) seconds
+2026-10-15 16:53:53.242 xcodebuild[69457:1922532]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Timed out after 600.0 seconds while waiting for a response from the invoked process
+2026-10-15 16:53:53.383 xcodebuild[69457:1920930] [MT] IDETestOperationsObserverDebug: 675.422 elapsed -- Testing started completed.
+2026-10-15 16:53:53.383 xcodebuild[69457:1920930] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-15 16:53:53.383 xcodebuild[69457:1920930] [MT] IDETestOperationsObserverDebug: 675.424 sec, +675.424 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/red-deny.xcresult
+
+Failing tests:
+	NotificationPermissionUITests.testDeny()
+
+** TEST EXECUTE FAILED **
+
+Testing started

@@ -1,0 +1,21 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 88e574b..77dabe5 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -158,11 +158,16 @@ jobs:
+         run: |
+           set -o pipefail
+           SELECTION=()
++          # Issue #145 D2: Mitteilungsdialog genau einmal je frischem Simulator entscheiden,
++          # A erlaubt (Klasse zusätzlich gewählt), B lehnt ab (Klasse ist Teil von RestockUITests).
+           if [ "${{ matrix.half }}" = "A" ]; then
++            export TEST_RUNNER_RESTOCK_NOTIF_DECISION=allow
++            SELECTION+=("-only-testing:RestockUITests/NotificationPermissionUITests")
+             for CLASS in $HEAVY_CLASSES; do
+               SELECTION+=("-only-testing:RestockUITests/$CLASS")
+             done
+           else
++            export TEST_RUNNER_RESTOCK_NOTIF_DECISION=deny
+             SELECTION+=("-only-testing:RestockUITests")
+             for CLASS in $HEAVY_CLASSES; do
+               SELECTION+=("-skip-testing:RestockUITests/$CLASS")

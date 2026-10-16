@@ -1,0 +1,24 @@
+→ Sperren genommen: /tmp/heavy-build.lock /tmp/loose-ends-testlauf.lock
+→ Simulator: 8F696920-4B9A-40A7-96F0-7697BE887CC7 (iOS-26-5)
+→ build-for-testing …
+→ Weg allow: Test läuft (Protokoll docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-allow-20261015-170228.log) …
+→ Weg deny: Test läuft (Protokoll docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-deny-20261015-170228.log) …
+
+=================== ERGEBNIS ===================
+Commit:     79dc29f   (uncommittete Änderungen: ja)
+Simulator:  8F696920-4B9A-40A7-96F0-7697BE887CC7 / iOS-26-5
+Zeit:       2026-10-15 17:40:17 +0200
+
+Weg allow (testAllow): GRÜN
+  ausgeführt: 2, Fehlschläge: 0, Status: 0
+  Protokoll: docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-allow-20261015-170228.log
+  Ergebnisbündel: build/notif-allow-20261015-170228.xcresult
+  Screenshots: docs/artifacts/test-145-d2-mitteilungserlaubnis/screens-allow-20261015-170228/ und docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-allow-20261015-170228-nach-test.png
+Weg deny (testDeny): ROT — xcodebuild-Status 65; testDeny nicht bestanden (gelaufen?); Fehlschläge: unbekannt; TEST EXECUTE FAILED;
+  ausgeführt: ?, Fehlschläge: ?, Status: 65
+  Protokoll: docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-deny-20261015-170228.log
+  Ergebnisbündel: build/notif-deny-20261015-170228.xcresult
+  Screenshots: docs/artifacts/test-145-d2-mitteilungserlaubnis/screens-deny-20261015-170228/ und docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-deny-20261015-170228-nach-test.png
+Restock nach dem Lauf noch installiert: nein   (muss: nein)
+================================================
+ROT — siehe Ergebnisblock.

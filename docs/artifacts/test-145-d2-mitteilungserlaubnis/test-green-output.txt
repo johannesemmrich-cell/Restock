@@ -1,0 +1,22 @@
+→ Sperren genommen: /tmp/heavy-build.lock /tmp/loose-ends-testlauf.lock
+→ Vorlage: 8F696920-4B9A-40A7-96F0-7697BE887CC7 (com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro, com.apple.CoreSimulator.SimRuntime.iOS-26-5)
+→ build-for-testing …
+→ Weg allow auf 590245AF-C4FC-4ECE-9602-3B298A0DA4A2: Test läuft (Protokoll docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-allow-20261016-081127.log) …
+→ Weg deny auf A8279FE6-F0E3-4DF1-B26E-D671091D696A: Test läuft (Protokoll docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-deny-20261016-081127.log) …
+
+=================== ERGEBNIS ===================
+Commit:     79dc29f   (uncommittete Änderungen: ja)
+Vorlage:    8F696920-4B9A-40A7-96F0-7697BE887CC7 / com.apple.CoreSimulator.SimRuntime.iOS-26-5 (unberührt)
+Zeit:       2026-10-16 08:14:53 +0200
+
+Weg allow (testAllow): GRÜN   Wegwerf-Simulator: 590245AF-C4FC-4ECE-9602-3B298A0DA4A2
+  ausgeführt: 2, Fehlschläge: 0, Status: 0
+  Protokoll: docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-allow-20261016-081127.log   Ergebnisbündel: build/notif-allow-20261016-081127.xcresult
+  Screenshots: docs/artifacts/test-145-d2-mitteilungserlaubnis/screens-allow-20261016-081127/ (alle 4 s während des Tests, zuletzt nach-test.jpg)
+Weg deny (testDeny): GRÜN   Wegwerf-Simulator: A8279FE6-F0E3-4DF1-B26E-D671091D696A
+  ausgeführt: 2, Fehlschläge: 0, Status: 0
+  Protokoll: docs/artifacts/test-145-d2-mitteilungserlaubnis/notif-deny-20261016-081127.log   Ergebnisbündel: build/notif-deny-20261016-081127.xcresult
+  Screenshots: docs/artifacts/test-145-d2-mitteilungserlaubnis/screens-deny-20261016-081127/ (alle 4 s während des Tests, zuletzt nach-test.jpg)
+Wegwerf-Simulatoren nach dem Lauf übrig: nein   (muss: nein)
+================================================
+GRÜN — beide Wege bestanden.

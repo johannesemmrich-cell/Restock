@@ -1,0 +1,143 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -scheme Restock -project Restock.xcodeproj -destination id=BD1E09EC-FF05-4A03-BF13-697C2224DB73 -derivedDataPath build/dd-notif "-only-testing:RestockUITests/NotificationPermissionUITests" -resultBundlePath build/notif-allow-20261016-062054.xcresult -collect-test-diagnostics never
+
+Writing result bundle at path:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/notif-allow-20261016-062054.xcresult
+
+2026-10-16 06:22:52.346 xcodebuild[93637:3622715] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-16 06:22:57.473973+0200 RestockUITests-Runner[93689:3623323] [Default] Running tests...
+objc[93689]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105c78310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x105cf4398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-16 06:23:01.559.
+Test Suite 'RestockUITests.xctest' started at 2026-10-16 06:23:01.559.
+Test Suite 'NotificationPermissionUITests' started at 2026-10-16 06:23:01.560.
+Test Case '-[RestockUITests.NotificationPermissionUITests testAllow]' started.
+    t =     0.00s Start Test at 2026-10-16 06:23:01.562
+    t =     0.52s Set Up
+    t =     0.54s Open com.johannesemmrich.Restock
+    t =     0.54s     Launch com.johannesemmrich.Restock
+2026-10-16 06:23:02.637 xcodebuild[93637:3622715] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-16 06:23:02.638 xcodebuild[93637:3622715] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-16 06:23:02.817 xcodebuild[93637:3622715] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     3.60s         Setting up automation session
+    t =     4.73s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.NotificationPermissionUITests testAllow] : Set a .modelContext in view's environment to use Query
+    t =     6.66s Checking existence of `"gearshape" Button`
+    t =     6.75s Find the "gearshape" Button
+    t =     6.80s Find the "gearshape" Button
+    t =     6.86s Checking existence of `"gearshape" Button`
+    t =     6.91s Find the "gearshape" Button
+    t =     6.96s Find the "gearshape" Button
+    t =     7.04s Tap "gearshape" Button
+    t =     7.04s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.05s     Find the "gearshape" Button
+    t =     7.08s     Check for interrupting elements affecting "gearshape" Button
+    t =     7.13s     Synthesize event
+    t =     7.55s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.02s Checking existence of `"Benachrichtigungen" Button`
+    t =     8.14s Find the "Benachrichtigungen" Button
+    t =     8.41s Find the "Benachrichtigungen" Button
+    t =     8.48s Tap "Benachrichtigungen" Button
+    t =     8.49s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.53s     Find the "Benachrichtigungen" Button
+    t =     8.59s     Check for interrupting elements affecting "Benachrichtigungen" Button
+    t =     8.64s     Synthesize event
+    t =     8.94s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.80s Waiting 20.0s for Switch (First Match) to exist
+    t =    10.83s     Checking `Expect predicate `existsNoRetry == 1` for object Switch (First Match)`
+    t =    10.83s         Checking existence of `Switch (First Match)`
+    t =    11.94s Checking `Expect predicate `value == "0"` for object Switch (First Match)`
+    t =    11.94s     Find the Switch (First Match)
+    t =    14.00s Find the "Nachkauf-Erinnerungen" Switch
+    t =    14.04s Tap "Nachkauf-Erinnerungen" Switch[0.93, 0.50]
+    t =    14.04s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.05s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    14.10s     Check for interrupting elements affecting "Nachkauf-Erinnerungen" Switch
+    t =    14.13s     Synthesize event
+    t =    14.13s         Find the "Nachkauf-Erinnerungen" Switch
+    t =    14.22s         Find the "Nachkauf-Erinnerungen" Switch
+    t =    14.31s         Find the "Nachkauf-Erinnerungen" Switch
+    t =    14.70s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.02s Waiting 20.0s for Alert (First Match) to exist
+    t =    17.08s     Checking `Expect predicate `existsNoRetry == 1` for object Alert (First Match)`
+    t =    17.08s         Checking existence of `Alert (First Match)`
+    t =    17.23s Checking existence of `"Erlauben" Button`
+    t =    17.27s Tap "Erlauben" Button
+    t =    17.28s     Wait for com.apple.springboard to idle
+    t =    17.28s     Find the "Erlauben" Button
+    t =    17.31s     Check for interrupting elements affecting "Erlauben" Button
+    t =    17.39s     Synthesize event
+    t =    17.70s     Wait for com.apple.springboard to idle
+    t =    19.05s Checking `Expect predicate `value == "1"` for object "Nachkauf-Erinnerungen" Switch`
+    t =    19.05s     Find the "Nachkauf-Erinnerungen" Switch
+    t =    21.12s Find the "Nachkauf-Erinnerungen" Switch
+    t =    21.19s Checking existence of `Button (Element at index 0)`
+    t =    21.22s Find the Button (Element at index 0)
+    t =    21.26s Find the "BackButton" Button
+    t =    21.31s Tap "BackButton" Button
+    t =    21.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.31s     Find the "BackButton" Button
+    t =    21.34s     Check for interrupting elements affecting "BackButton" Button
+    t =    21.39s     Synthesize event
+    t =    21.68s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.32s Checking existence of `"Fertig" Button`
+    t =    22.40s Find the "Fertig" Button
+    t =    22.46s Find the "Fertig" Button
+    t =    22.54s Tap "Fertig" Button
+    t =    22.54s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.54s     Find the "Fertig" Button
+    t =    22.60s     Check for interrupting elements affecting "Fertig" Button
+    t =    22.69s     Synthesize event
+    t =    23.00s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.38s Checking existence of `"gearshape" Button`
+    t =    23.41s Find the "gearshape" Button
+    t =    23.45s Find the "gearshape" Button
+    t =    23.49s Tap "gearshape" Button
+    t =    23.49s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.50s     Find the "gearshape" Button
+    t =    23.53s     Check for interrupting elements affecting "gearshape" Button
+    t =    23.55s     Synthesize event
+    t =    23.85s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.35s Checking existence of `"Benachrichtigungen" Button`
+    t =    24.44s Find the "Benachrichtigungen" Button
+    t =    24.51s Find the "Benachrichtigungen" Button
+    t =    24.62s Tap "Benachrichtigungen" Button
+    t =    24.62s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.63s     Find the "Benachrichtigungen" Button
+    t =    24.72s     Check for interrupting elements affecting "Benachrichtigungen" Button
+    t =    24.77s     Synthesize event
+    t =    25.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.92s Waiting 20.0s for Switch (First Match) to exist
+    t =    26.95s     Checking `Expect predicate `existsNoRetry == 1` for object Switch (First Match)`
+    t =    26.96s         Checking existence of `Switch (First Match)`
+    t =    28.05s Checking `Expect predicate `value == "1"` for object Switch (First Match)`
+    t =    28.05s     Find the Switch (First Match)
+    t =    30.13s Find the "Nachkauf-Erinnerungen" Switch
+    t =    30.22s Tear Down
+Test Case '-[RestockUITests.NotificationPermissionUITests testAllow]' passed (30.664 seconds).
+Test Case '-[RestockUITests.NotificationPermissionUITests testDeny]' started.
+    t =     0.00s Start Test at 2026-10-16 06:23:32.228
+    t =     0.04s Set Up
+/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockUITests/NotificationPermissionUITests.swift:50: -[RestockUITests.NotificationPermissionUITests testDeny] : Test skipped - Übersprungen: andere Entscheidung dieses Laufs (allow)
+    t =     0.08s Tear Down
+Test Case '-[RestockUITests.NotificationPermissionUITests testDeny]' skipped (0.092 seconds).
+Test Suite 'NotificationPermissionUITests' passed at 2026-10-16 06:23:32.319.
+	 Executed 2 tests, with 1 test skipped and 0 failures (0 unexpected) in 30.756 (30.760) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-16 06:23:32.321.
+	 Executed 2 tests, with 1 test skipped and 0 failures (0 unexpected) in 30.756 (30.761) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 06:23:32.321.
+	 Executed 2 tests, with 1 test skipped and 0 failures (0 unexpected) in 30.756 (30.763) seconds
+2026-10-16 06:23:32.387 xcodebuild[93637:3622715] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-16 06:23:32.391 xcodebuild[93637:3622715] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-16 06:23:32.418 xcodebuild[93637:3622715] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-16 06:23:32.419 xcodebuild[93637:3622715] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-16 06:23:32.710 xcodebuild[93637:3622715] [MT] IDETestOperationsObserverDebug: 41.913 elapsed -- Testing started completed.
+2026-10-16 06:23:32.710 xcodebuild[93637:3622715] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-16 06:23:32.710 xcodebuild[93637:3622715] [MT] IDETestOperationsObserverDebug: 41.913 sec, +41.913 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/notif-allow-20261016-062054.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

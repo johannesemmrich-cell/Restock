@@ -193,6 +193,7 @@
 		A5D0A5D0A5D0A5D0A5D0A5D1 /* OnboardingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D0A5D0A5D0A5D0A5D0A5D2 /* OnboardingUITests.swift */; };
 		A5D0A5D0A5D0A5D0A5D0A5E1 /* StoreSetupUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D0A5D0A5D0A5D0A5D0A5E2 /* StoreSetupUITests.swift */; };
 		A145D1A145D1A145D1A145D1 /* DeveloperModeUnlockUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A145D1A145D1A145D1A145D2 /* DeveloperModeUnlockUITests.swift */; };
+		A145D2A145D2A145D2A145D1 /* NotificationPermissionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A145D2A145D2A145D2A145D2 /* NotificationPermissionUITests.swift */; };
 		A5D0A5D0A5D0A5D0A5D0A5D3 /* PaywallUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D0A5D0A5D0A5D0A5D0A5D4 /* PaywallUITests.swift */; };
 		6A1C2E4B8D3F4A5B9C7E1D31 /* QuickAddAssignmentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1C2E4B8D3F4A5B9C7E1D30 /* QuickAddAssignmentUITests.swift */; };
 		A98D8C010000000000000006 /* QuickAddControlUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D8C010000000000000007 /* QuickAddControlUITests.swift */; };
@@ -405,6 +406,7 @@
 		A5D0A5D0A5D0A5D0A5D0A5D2 /* OnboardingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingUITests.swift; sourceTree = "<group>"; };
 		A5D0A5D0A5D0A5D0A5D0A5E2 /* StoreSetupUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSetupUITests.swift; sourceTree = "<group>"; };
 		A145D1A145D1A145D1A145D2 /* DeveloperModeUnlockUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperModeUnlockUITests.swift; sourceTree = "<group>"; };
+		A145D2A145D2A145D2A145D2 /* NotificationPermissionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPermissionUITests.swift; sourceTree = "<group>"; };
 		A5D0A5D0A5D0A5D0A5D0A5D4 /* PaywallUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallUITests.swift; sourceTree = "<group>"; };
 		6A1C2E4B8D3F4A5B9C7E1D30 /* QuickAddAssignmentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddAssignmentUITests.swift; sourceTree = "<group>"; };
 		A98D8C010000000000000007 /* QuickAddControlUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddControlUITests.swift; sourceTree = "<group>"; };
@@ -754,6 +756,7 @@
 				A5D0A5D0A5D0A5D0A5D0A5D2 /* OnboardingUITests.swift */,
 				A5D0A5D0A5D0A5D0A5D0A5E2 /* StoreSetupUITests.swift */,
 				A145D1A145D1A145D1A145D2 /* DeveloperModeUnlockUITests.swift */,
+				A145D2A145D2A145D2A145D2 /* NotificationPermissionUITests.swift */,
 				A5D0A5D0A5D0A5D0A5D0A5D4 /* PaywallUITests.swift */,
 			);
 			path = RestockUITests;
@@ -1139,6 +1142,7 @@
 				A5D0A5D0A5D0A5D0A5D0A5D1 /* OnboardingUITests.swift in Sources */,
 				A5D0A5D0A5D0A5D0A5D0A5E1 /* StoreSetupUITests.swift in Sources */,
 				A145D1A145D1A145D1A145D1 /* DeveloperModeUnlockUITests.swift in Sources */,
+				A145D2A145D2A145D2A145D1 /* NotificationPermissionUITests.swift in Sources */,
 				A5D0A5D0A5D0A5D0A5D0A5D3 /* PaywallUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
