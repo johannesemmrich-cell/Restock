@@ -12,7 +12,9 @@ import XCTest
 /// **Offene Grenzen:** kein Siri-Ruf per Stimme, Dialogtext nicht lesbar, kein Tipp auf Widget, Live Activity oder
 /// Control; nicht in der CI (xcode-27-Runner nur Vorschau, Signierungsfehler 800 dort unbelegt); Fehler 400
 /// „is not present“ unter Last wird nur wiederholt, nicht erklärt; `CheckOffItemIntent` meldet ohne Live Activity
-/// Erfolg ohne Wirkung (Beobachtung, kein Fix); nichts auf Hennings Geräten geprüft.
+/// Erfolg ohne Wirkung; seit #150 ist er für Siri, Spotlight und Kurzbefehle verborgen (`isDiscoverable = false`),
+/// T3 bleibt Gegenprobe der Ausführbarkeit; Kurzbefehle-App-Oberfläche und Knopftipp nicht automatisiert geprüft;
+/// nichts auf Hennings Geräten geprüft.
 final class AppIntentsUITests: XCTestCase {
 
     private static let bundleID = "com.johannesemmrich.Restock"

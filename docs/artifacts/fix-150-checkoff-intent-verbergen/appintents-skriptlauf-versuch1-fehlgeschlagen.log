@@ -1,0 +1,28 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -scheme Restock -project Restock.xcodeproj -destination id=44E210FF-0B17-4122-AAE2-0D8E82C6ABEB -derivedDataPath build/dd-appintents "-only-testing:RestockUITests/AppIntentsUITests" -resultBundlePath build/appintents-20261017-084832.xcresult -collect-test-diagnostics never
+
+Writing result bundle at path:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/appintents-20261017-084832.xcresult
+
+2026-10-17 08:50:58.947 xcodebuild[81601:6856966] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 09:03:33.381015+0200 RestockUITests-Runner[82010:6860441] [Default] Running tests...
+2026-10-17 09:04:13.446 xcodebuild[81601:6856966] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 09:04:13.603 xcodebuild[81601:6856966] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 09:04:14.213 xcodebuild[81601:6856966] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+
+
+*** If you believe this error represents a bug, please attach the result bundle at /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/appintents-20261017-084832.xcresult
+
+2026-10-17 09:24:53.851 xcodebuild[81601:6856966] [MT] IDETestOperationsObserverDebug: 2052.672 elapsed -- Testing started completed.
+2026-10-17 09:24:53.851 xcodebuild[81601:6856966] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-17 09:24:53.851 xcodebuild[81601:6856966] [MT] IDETestOperationsObserverDebug: 2052.673 sec, +2052.673 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/appintents-20261017-084832.xcresult
+
+Testing failed:
+	RestockUITests-Runner (82010) encountered an error (The test runner hung before establishing connection.)
+
+** TEST EXECUTE FAILED **
+
+Testing started

@@ -172,6 +172,7 @@
 		A98D7C0100000000000000A1 /* NotificationDigestChainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */; };
 		A98D8C010000000000000009 /* CheckoffQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D8C010000000000000008 /* CheckoffQueue.swift */; };
 		A98D8C01000000000000000A /* CheckoffQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D8C010000000000000008 /* CheckoffQueue.swift */; };
+		A150C0010000000000000002 /* CheckOffIntentVisibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A150C0010000000000000003 /* CheckOffIntentVisibilityTests.swift */; };
 		A98D8C010000000000000002 /* CheckoffQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D8C010000000000000003 /* CheckoffQueueTests.swift */; };
 		A98D8C010000000000000004 /* AddItemIntentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D8C010000000000000005 /* AddItemIntentTests.swift */; };
 		3049DDB3309CFF24C36AB2E6 /* ReplenishmentPackageCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954078BBE01A8739799EE4CC /* ReplenishmentPackageCTests.swift */; };
@@ -387,6 +388,7 @@
 		CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentDigestTests.swift; sourceTree = "<group>"; };
 		A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDigestChainTests.swift; sourceTree = "<group>"; };
 		A98D8C010000000000000008 /* CheckoffQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoffQueue.swift; sourceTree = "<group>"; };
+		A150C0010000000000000003 /* CheckOffIntentVisibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckOffIntentVisibilityTests.swift; sourceTree = "<group>"; };
 		A98D8C010000000000000003 /* CheckoffQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoffQueueTests.swift; sourceTree = "<group>"; };
 		A98D8C010000000000000005 /* AddItemIntentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemIntentTests.swift; sourceTree = "<group>"; };
 		7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserSuggestionTests.swift; sourceTree = "<group>"; };
@@ -729,6 +731,7 @@
 				CB283A4E3DFFF2D53203A622 /* ReplenishmentDigestTests.swift */,
 				A98D7C0100000000000000A2 /* NotificationDigestChainTests.swift */,
 				A98D8C010000000000000003 /* CheckoffQueueTests.swift */,
+				A150C0010000000000000003 /* CheckOffIntentVisibilityTests.swift */,
 				A98D8C010000000000000005 /* AddItemIntentTests.swift */,
 				7D6C5B4A39281706F5E4D3C2 /* ReceiptParserSuggestionTests.swift */,
 				8E7D6C5B4A39281706F5E4D0 /* ReceiptScannerReResolutionTests.swift */,
@@ -1116,6 +1119,7 @@
 				2C51F766B539D5E10BE58B73 /* ReplenishmentDigestTests.swift in Sources */,
 				A98D7C0100000000000000A1 /* NotificationDigestChainTests.swift in Sources */,
 				A98D8C010000000000000002 /* CheckoffQueueTests.swift in Sources */,
+				A150C0010000000000000002 /* CheckOffIntentVisibilityTests.swift in Sources */,
 				A98D8C010000000000000004 /* AddItemIntentTests.swift in Sources */,
 				3D4E5F60718293A4B5C6D7E8 /* ReceiptParserSuggestionTests.swift in Sources */,
 				4E5F60718293A4B5C6D7E8F9 /* ReceiptScannerReResolutionTests.swift in Sources */,

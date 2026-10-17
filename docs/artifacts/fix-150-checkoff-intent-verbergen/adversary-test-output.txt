@@ -1,0 +1,362 @@
+Commit: 2251d90a6b8a0cf688288cf011b97eff9990728c (Umsetzung im Index)  Zeit: 2026-10-17 20:36:32
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" -derivedDataPath build/dd-red150 "-only-testing:RestockTests/CheckOffIntentVisibilityTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/SmartCart/Assets.xcassets /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/SmartCart/Preview Content/Preview Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+Build description signature: 4fa7d7b2133af1ae2f229ee0da5cad34
+Build description path: /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/XCBuildData/4fa7d7b2133af1ae2f229ee0da5cad34.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockShareExtension/Info.plist (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/RestockShareExtension/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/SmartCartWidgets/Info.plist (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/SmartCartWidgets/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist
+
+CopySwiftLibs /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/PlugIns --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/SystemExtensions --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/ProductTypeInfoPlistAdditions.plist -o /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist
+
+CopySwiftLibs /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/PlugIns --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/SystemExtensions --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/SDKExplicitPrecompiledModules
+
+2026-10-17 20:37:09.336 xcodebuild[38262:8826069] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 20:37:13.753414+0200 Restock[38656:8828772] [General] Failed to connect to linkd to request update AppShortcut parameters, error: Kommunikation mit der Hilfs-App nicht möglich.
+2026-10-17 20:37:13.873348+0200 Restock[38656:8828511] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-17 20:37:15.848665+0200 Restock[38656:8828511] [error] CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (134100)
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (134100)
+2026-10-17 20:37:15.849011+0200 Restock[38656:8828511] [error] CoreData: error: userInfo:
+CoreData: error: userInfo:
+2026-10-17 20:37:15.849227+0200 Restock[38656:8828511] [error] CoreData: error: 	metadata : {
+    NSPersistenceFrameworkVersion = 1526;
+    NSPersistenceMaximumFrameworkVersion = 1526;
+    NSStoreModelVersionChecksumKey = "Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=";
+    NSStoreModelVersionHashes =     {
+        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };
+        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };
+        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };
+        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };
+        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };
+    };
+    NSStoreModelVersionHashesDigest = "csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==";
+    NSStoreModelVersionHashesVersion = 3;
+    NSStoreModelVersionIdentifiers =     (
+        "1.0.0"
+    );
+    NSStoreType = SQLite;
+    NSStoreUUID = "2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD";
+    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {
+    };
+    "_NSAutoVacuumLevel" = 2;
+}
+CoreData: error: 	metadata : {
+    NSPersistenceFrameworkVersion = 1526;
+    NSPersistenceMaximumFrameworkVersion = 1526;
+    NSStoreModelVersionChecksumKey = "Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=";
+    NSStoreModelVersionHashes =     {
+        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };
+        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };
+        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };
+        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };
+        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };
+    };
+    NSStoreModelVersionHashesDigest = "csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==";
+    NSStoreModelVersionHashesVersion = 3;
+    NSStoreModelVersionIdentifiers =     (
+        "1.0.0"
+    );
+    NSStoreType = SQLite;
+    NSStoreUUID = "2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD";
+    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {
+    };
+    "_NSAutoVacuumLevel" = 2;
+}
+2026-10-17 20:37:15.851969+0200 Restock[38656:8828511] [error] CoreData: error: 	source checksum : Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=
+CoreData: error: 	source checksum : Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=
+2026-10-17 20:37:15.852106+0200 Restock[38656:8828511] [error] CoreData: error: 	reason : Incompatible metadata after migration because the store version hashes didn't migrate.
+CoreData: error: 	reason : Incompatible metadata after migration because the store version hashes didn't migrate.
+2026-10-17 20:37:15.870556+0200 Restock[38656:8828511] [error] CoreData: error: 	destination checksum : g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=
+CoreData: error: 	destination checksum : g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=
+2026-10-17 20:37:15.870652+0200 Restock[38656:8828511] [error] CoreData: error: storeType: SQLite
+CoreData: error: storeType: SQLite
+2026-10-17 20:37:15.870703+0200 Restock[38656:8828511] [error] CoreData: error: configuration: (null)
+CoreData: error: configuration: (null)
+2026-10-17 20:37:15.870766+0200 Restock[38656:8828511] [error] CoreData: error: URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store
+CoreData: error: URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store
+CoreData: annotation: options:
+CoreData: annotation: 	NSSQLitePragmasOption : {
+    "journal_mode" = "<null>";
+}
+CoreData: annotation: 	NSPersistentStoreCoordinatorIsMigratingStoreWithStagedMigrationOptionKey : 1
+CoreData: annotation: 	NSPersistentStoreRemoteChangeNotificationOptionKey : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+2026-10-17 20:37:15.880917+0200 Restock[38656:8828511] [error] CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (134110)
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (134110)
+2026-10-17 20:37:15.880998+0200 Restock[38656:8828511] [error] CoreData: error: userInfo:
+CoreData: error: userInfo:
+2026-10-17 20:37:15.882429+0200 Restock[38656:8828511] [error] CoreData: error: 	NSUnderlyingError : Error Domain=NSCocoaErrorDomain Code=134100 "Die Version des Managed Object Model für das Öffnen des dauerhaften Speichers ist nicht mit der Version kompatibel, die zum Erstellen des dauerhaften Speichers verwendet wurde." UserInfo={metadata={
+    NSPersistenceFrameworkVersion = 1526;
+    NSPersistenceMaximumFrameworkVersion = 1526;
+    NSStoreModelVersionChecksumKey = "Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=";
+    NSStoreModelVersionHashes =     {
+        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };
+        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };
+        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };
+        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };
+        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };
+    };
+    NSStoreModelVersionHashesDigest = "csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==";
+    NSStoreModelVersionHashesVersion = 3;
+    NSStoreModelVersionIdentifiers =     (
+        "1.0.0"
+    );
+    NSStoreType = SQLite;
+    NSStoreUUID = "2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD";
+    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {
+    };
+    "_NSAutoVacuumLevel" = 2;
+}, source checksum=Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=, reason=Incompatible metadata after migration because the store version hashes didn't migrate., destination checksum=g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=}
+CoreData: error: 	NSUnderlyingError : Error Domain=NSCocoaErrorDomain Code=134100 "Die Version des Managed Object Model für das Öffnen des dauerhaften Speichers ist nicht mit der Version kompatibel, die zum Erstellen des dauerhaften Speichers verwendet wurde." UserInfo={metadata={
+    NSPersistenceFrameworkVersion = 1526;
+    NSPersistenceMaximumFrameworkVersion = 1526;
+    NSStoreModelVersionChecksumKey = "Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=";
+    NSStoreModelVersionHashes =     {
+        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };
+        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };
+        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };
+        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };
+        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };
+    };
+    NSStoreModelVersionHashesDigest = "csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==";
+    NSStoreModelVersionHashesVersion = 3;
+    NSStoreModelVersionIdentifiers =     (
+        "1.0.0"
+    );
+    NSStoreType = SQLite;
+    NSStoreUUID = "2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD";
+    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {
+    };
+    "_NSAutoVacuumLevel" = 2;
+}, source checksum=Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=, reason=Incompatible metadata after migration because the store version hashes didn't migrate., destination checksum=g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=}
+2026-10-17 20:37:15.886931+0200 Restock[38656:8828511] [error] CoreData: error: 	reason : Failed to open the store
+CoreData: error: 	reason : Failed to open the store
+2026-10-17 20:37:15.886997+0200 Restock[38656:8828511] [error] CoreData: error: storeType: SQLite
+CoreData: error: storeType: SQLite
+2026-10-17 20:37:15.887049+0200 Restock[38656:8828511] [error] CoreData: error: configuration: default
+CoreData: error: configuration: default
+2026-10-17 20:37:15.887123+0200 Restock[38656:8828511] [error] CoreData: error: URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store
+CoreData: error: URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store
+CoreData: annotation: options:
+CoreData: annotation: 	NSMigratePersistentStoresAutomaticallyOption : 1
+CoreData: annotation: 	NSPersistentStoreMirroringOptionsKey : {
+    NSPersistentStoreMirroringDelegateOptionKey = "<NSCloudKitMirroringDelegate: 0x105f140e0>";
+}
+CoreData: annotation: 	NSInferMappingModelAutomaticallyOption : 1
+CoreData: annotation: 	NSPersistentCloudKitContainerOptionsKey : <NSPersistentCloudKitContainerOptions: 0x105ca9440>
+CoreData: annotation: 	NSPersistentStoreRemoteChangeNotificationOptionKey : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+2026-10-17 20:37:15.889420+0200 Restock[38656:8828511] [error] CoreData: error: <NSPersistentStoreCoordinator: 0x105f30100>: Attempting recovery from error encountered during addPersistentStore: 0x105c6d590 Error Domain=NSCocoaErrorDomain Code=134110 "Bei der Migration des dauerhaften Speichers ist ein Fehler aufgetreten." UserInfo={NSUnderlyingError=0x10a4a5620 {Error Domain=NSCocoaErrorDomain Code=134100 "Die Version des Managed Object Model für das Öffnen des dauerhaften Speichers ist nicht mit der Version kompatibel, die zum Erstellen des dauerhaften Speichers verwendet wurde." UserInfo={metadata={
+    NSPersistenceFrameworkVersion = 1526;
+    NSPersistenceMaximumFrameworkVersion = 1526;
+    NSStoreModelVersionChecksumKey = "Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=";
+    NSStoreModelVersionHashes =     {
+        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };
+        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };
+        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };
+        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };
+        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };
+    };
+    NSStoreModelVersionHashesDigest = "csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==";
+    NSStoreModelVersionHashesVersion = 3;
+    NSStoreModelVersionIdentifiers =     (
+        "1.0.0"
+    );
+    NSStoreType = SQLite;
+    NSStoreUUID = "2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD";
+    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {
+    };
+    "_NSAutoVacuumLevel" = 2;
+}, source checksum=Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=, reason=Incompatible metadata after migration because the store version hashes didn't migrate., destination checksum=g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=}}, reason=Failed to open the store}
+CoreData: error: <NSPersistentStoreCoordinator: 0x105f30100>: Attempting recovery from error encountered during addPersistentStore: 0x105c6d590 Error Domain=NSCocoaErrorDomain Code=134110 "Bei der Migration des dauerhaften Speichers ist ein Fehler aufgetreten." UserInfo={NSUnderlyingError=0x10a4a5620 {Error Domain=NSCocoaErrorDomain Code=134100 "Die Version des Managed Object Model für das Öffnen des dauerhaften Speichers ist nicht mit der Version kompatibel, die zum Erstellen des dauerhaften Speichers verwendet wurde." UserInfo={metadata={
+    NSPersistenceFrameworkVersion = 1526;
+    NSPersistenceMaximumFrameworkVersion = 1526;
+    NSStoreModelVersionChecksumKey = "Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=";
+    NSStoreModelVersionHashes =     {
+        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };
+        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };
+        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };
+        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };
+        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };
+    };
+    NSStoreModelVersionHashesDigest = "csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==";
+    NSStoreModelVersionHashesVersion = 3;
+    NSStoreModelVersionIdentifiers =     (
+        "1.0.0"
+    );
+    NSStoreType = SQLite;
+    NSStoreUUID = "2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD";
+    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {
+    };
+    "_NSAutoVacuumLevel" = 2;
+}, source checksum=Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=, reason=Incompatible metadata after migration because the store version hashes didn't migrate., destination checksum=g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=}}, reason=Failed to open the store}
+2026-10-17 20:37:15.900709+0200 Restock[38656:8828511] [error] CoreData: error: Store failed to load.  <NSPersistentStoreDescription: 0x105c6cfc0> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store) with error = Error Domain=NSCocoaErrorDomain Code=134110 "Bei der Migration des dauerhaften Speichers ist ein Fehler aufgetreten." UserInfo={NSUnderlyingError=0x10a4a5620 {Error Domain=NSCocoaErrorDomain Code=134100 "Die Version des Managed Object Model für das Öffnen des dauerhaften Speichers ist nicht mit der Version kompatibel, die zum Erstellen des dauerhaften Speichers verwendet wurde." UserInfo={metadata={
+    NSPersistenceFrameworkVersion = 1526;
+    NSPersistenceMaximumFrameworkVersion = 1526;
+    NSStoreModelVersionChecksumKey = "Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=";
+    NSStoreModelVersionHashes =     {
+        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };
+        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };
+        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };
+        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };
+        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };
+    };
+    NSStoreModelVersionHashesDigest = "csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==";
+    NSStoreModelVersionHashesVersion = 3;
+    NSStoreModelVersionIdentifiers =     (
+        "1.0.0"
+    );
+    NSStoreType = SQLite;
+    NSStoreUUID = "2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD";
+    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {
+    };
+    "_NSAutoVacuumLevel" = 2;
+}, source checksum=Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=, reason=Incompatible metadata after migration because the store version hashes didn't migrate., destination checksum=g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=}}, reason=Failed to open the store} with userInfo {
+    NSUnderlyingError = "Error Domain=NSCocoaErrorDomain Code=134100 \"Die Version des Managed Object Model f\U00fcr das \U00d6ffnen des dauerhaften Speichers ist nicht mit der Version kompatibel, die zum Erstellen des dauerhaften Speichers verwendet wurde.\" UserInfo={metadata={\n    NSPersistenceFrameworkVersion = 1526;\n    NSPersistenceMaximumFrameworkVersion = 1526;\n    NSStoreModelVersionChecksumKey = \"Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=\";\n    NSStoreModelVersionHashes =     {\n        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };\n        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };\n        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };\n        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };\n        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };\n    };\n    NSStoreModelVersionHashesDigest = \"csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==\";\n    NSStoreModelVersionHashesVersion = 3;\n    NSStoreModelVersionIdentifiers =     (\n        \"1.0.0\"\n    );\n    NSStoreType = SQLite;\n    NSStoreUUID = \"2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD\";\n    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {\n    };\n    \"_NSAutoVacuumLevel\" = 2;\n}, source checksum=Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=, reason=Incompatible metadata after migration because the store version hashes didn't migrate., destination checksum=g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=}";
+    reason = "Failed to open the store";
+}
+CoreData: error: Store failed to load.  <NSPersistentStoreDescription: 0x105c6cfc0> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store) with error = Error Domain=NSCocoaErrorDomain Code=134110 "Bei der Migration des dauerhaften Speichers ist ein Fehler aufgetreten." UserInfo={NSUnderlyingError=0x10a4a5620 {Error Domain=NSCocoaErrorDomain Code=134100 "Die Version des Managed Object Model für das Öffnen des dauerhaften Speichers ist nicht mit der Version kompatibel, die zum Erstellen des dauerhaften Speichers verwendet wurde." UserInfo={metadata={
+    NSPersistenceFrameworkVersion = 1526;
+    NSPersistenceMaximumFrameworkVersion = 1526;
+    NSStoreModelVersionChecksumKey = "Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=";
+    NSStoreModelVersionHashes =     {
+        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };
+        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };
+        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };
+        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };
+        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };
+    };
+    NSStoreModelVersionHashesDigest = "csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==";
+    NSStoreModelVersionHashesVersion = 3;
+    NSStoreModelVersionIdentifiers =     (
+        "1.0.0"
+    );
+    NSStoreType = SQLite;
+    NSStoreUUID = "2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD";
+    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {
+    };
+    "_NSAutoVacuumLevel" = 2;
+}, source checksum=Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=, reason=Incompatible metadata after migration because the store version hashes didn't migrate., destination checksum=g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=}}, reason=Failed to open the store} with userInfo {
+    NSUnderlyingError = "Error Domain=NSCocoaErrorDomain Code=134100 \"Die Version des Managed Object Model f\U00fcr das \U00d6ffnen des dauerhaften Speichers ist nicht mit der Version kompatibel, die zum Erstellen des dauerhaften Speichers verwendet wurde.\" UserInfo={metadata={\n    NSPersistenceFrameworkVersion = 1526;\n    NSPersistenceMaximumFrameworkVersion = 1526;\n    NSStoreModelVersionChecksumKey = \"Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=\";\n    NSStoreModelVersionHashes =     {\n        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };\n        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };\n        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };\n        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };\n        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };\n    };\n    NSStoreModelVersionHashesDigest = \"csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==\";\n    NSStoreModelVersionHashesVersion = 3;\n    NSStoreModelVersionIdentifiers =     (\n        \"1.0.0\"\n    );\n    NSStoreType = SQLite;\n    NSStoreUUID = \"2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD\";\n    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {\n    };\n    \"_NSAutoVacuumLevel\" = 2;\n}, source checksum=Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=, reason=Incompatible metadata after migration because the store version hashes didn't migrate., destination checksum=g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=}";
+    reason = "Failed to open the store";
+}
+2026-10-17 20:37:15.909146+0200 Restock[38656:8828511] [DataStore] Repair of Optional(file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store) was not required
+2026-10-17 20:37:15.910120+0200 Restock[38656:8828511] [DataStore] Unresolved error loading container Error Domain=NSCocoaErrorDomain Code=134110 "Bei der Migration des dauerhaften Speichers ist ein Fehler aufgetreten." UserInfo={NSUnderlyingError=0x10a4a5620 {Error Domain=NSCocoaErrorDomain Code=134100 "Die Version des Managed Object Model für das Öffnen des dauerhaften Speichers ist nicht mit der Version kompatibel, die zum Erstellen des dauerhaften Speichers verwendet wurde." UserInfo={metadata={
+    NSPersistenceFrameworkVersion = 1526;
+    NSPersistenceMaximumFrameworkVersion = 1526;
+    NSStoreModelVersionChecksumKey = "Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=";
+    NSStoreModelVersionHashes =     {
+        FeedbackItem = {length = 32, bytes = 0xbaf12b78 61018d55 82ba929c 1ddc7dd0 ... b468fa22 e29825db };
+        PurchaseRecord = {length = 32, bytes = 0xe7b29c49 efeb1d46 b491f8f1 de36dd1b ... aa611e2a ef65320a };
+        ShoppingItem = {length = 32, bytes = 0xedeb7872 9d33d058 fd8855a5 46d31ccf ... f3fc1c21 0b3a385d };
+        Store = {length = 32, bytes = 0xcbe67b14 9aa4121f d64609f1 0701d86f ... cb0d6f96 cf23f131 };
+        TodoItem = {length = 32, bytes = 0x03bcfe30 d8f2ed92 e4dcd5a7 221d994d ... c8c5da60 3ae3a8da };
+    };
+    NSStoreModelVersionHashesDigest = "csdeCxRnPF1zTJgWpAmBHmAG8mAQ7+Z4MKJXjMNlu88U6/+zsKH8vJi6SvGY5I+7BYgUqfhDSMa3boTL//T0eQ==";
+    NSStoreModelVersionHashesVersion = 3;
+    NSStoreModelVersionIdentifiers =     (
+        "1.0.0"
+    );
+    NSStoreType = SQLite;
+    NSStoreUUID = "2ADBF8A8-9DFC-44DF-B561-3E4D21AD4FCD";
+    PFCloudKitMetadataNeedsZoneFetchAfterClientMigrationKey =     {
+    };
+    "_NSAutoVacuumLevel" = 2;
+}, source checksum=Kcv1Qw4Rg3y9w+z6VRBMCtQCq4Ffxss0VBDPzWXMkQE=, reason=Incompatible metadata after migration because the store version hashes didn't migrate., destination checksum=g+EEEzdLK9QwcDKa6ENZqhl/xdZMsoDNiMEkSwZeRIc=}}, reason=Failed to open the store}
+⚠️ SharedModelContainer[cloud] failed: [cloud] SwiftDataError(_error: SwiftData.SwiftDataError._Error.loadIssueModelContainer, _explanation: nil) | domain=SwiftData.SwiftDataError code=1 userInfo=[:]
+2026-10-17 20:37:16.035748+0200 Restock[38656:8828511] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-10-17 20:37:16.348801+0200 Restock[38656:8828893] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+[AppDelegate] push registration succeeded, token length: 80
+Test Suite 'Selected tests' started at 2026-10-17 20:37:17.128.
+Test Suite 'RestockTests.xctest' started at 2026-10-17 20:37:17.129.
+Test Suite 'CheckOffIntentVisibilityTests' started at 2026-10-17 20:37:17.129.
+Test Case '-[RestockTests.CheckOffIntentVisibilityTests testAddIntentStaysDiscoverable]' started.
+Test Case '-[RestockTests.CheckOffIntentVisibilityTests testAddIntentStaysDiscoverable]' passed (0.006 seconds).
+Test Case '-[RestockTests.CheckOffIntentVisibilityTests testCheckOffIntentIsHiddenInAppAndWidgetMetadata]' started.
+Test Case '-[RestockTests.CheckOffIntentVisibilityTests testCheckOffIntentIsHiddenInAppAndWidgetMetadata]' passed (0.001 seconds).
+Test Suite 'CheckOffIntentVisibilityTests' passed at 2026-10-17 20:37:17.139.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-10-17 20:37:17.139.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.008 (0.010) seconds
+Test Suite 'Selected tests' passed at 2026-10-17 20:37:17.144.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.008 (0.016) seconds
+2026-10-17 20:37:17.224 xcodebuild[38262:8826069] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 20:37:17.229 xcodebuild[38262:8826069] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 20:37:17.570 xcodebuild[38262:8826069] [MT] IDETestOperationsObserverDebug: 10.660 elapsed -- Testing started completed.
+2026-10-17 20:37:17.570 xcodebuild[38262:8826069] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-17 20:37:17.570 xcodebuild[38262:8826069] [MT] IDETestOperationsObserverDebug: 10.660 sec, +10.660 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/velvety-bubbling-breeze/build/dd-red150/Logs/Test/Test-Restock-2026.10.17_20-36-47-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

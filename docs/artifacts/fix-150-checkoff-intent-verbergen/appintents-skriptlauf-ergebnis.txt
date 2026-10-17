@@ -1,0 +1,17 @@
+→ Sperren genommen: /tmp/heavy-build.lock /tmp/loose-ends-testlauf.lock — build-for-testing …
+→ Test auf CBFC485F-1B3D-4780-AC48-24D0E086C7B7 (Restock-AppIntents-20261017-092554), Protokoll docs/artifacts/test-145-d3-app-intents-testing/appintents-20261017-092554.log …
+
+=================== ERGEBNIS ===================
+Commit:       2251d90   (uncommittete Änderungen: ja)
+Xcode:        Xcode 27.1 Build version 27A9275   Runtime: com.apple.CoreSimulator.SimRuntime.iOS-27-0
+Zeit:         2026-10-17 09:35:55 +0200   Testdauer: 476 s   Last zu Beginn: { 63,92 60,20 77,55 }
+Tests:        ausgeführt 3 (muss: 3), bestanden 3, Fehlschläge 0, übersprungen 0
+400-Wiederholungen (Messzeilen „AppIntents: Wiederholung“): 0
+Protokoll:    docs/artifacts/test-145-d3-app-intents-testing/appintents-20261017-092554.log   Ergebnisbündel: build/appintents-20261017-092554.xcresult
+Wegwerf-Simulatoren nach dem Lauf übrig: nein (muss: nein)
+================================================
+Test Case '-[RestockUITests.AppIntentsUITests testAddIntentPutsItemIntoDm]' passed (68.984 seconds).
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffIntentChecksFirstItem]' passed (46.725 seconds).
+Test Case '-[RestockUITests.AppIntentsUITests testCheckOffWithClosedListChangesNothing]' passed (27.739 seconds).
+GRÜN — 3 Tests bestanden.
+done

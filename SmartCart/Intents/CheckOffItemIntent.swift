@@ -12,6 +12,9 @@ import WidgetKit
 struct CheckOffItemIntent: LiveActivityIntent {
     static var title: LocalizedStringResource = "Nächsten Artikel abhaken"
     static var openAppWhenRun: Bool = false
+    // Nur Knopf der Live Activity (Dynamic Island, Sperrbildschirm), nicht für Siri/Kurzbefehle/Spotlight:
+    // ohne laufende Activity tut er bewusst nichts (Issue #150). Vorbild: CheckOffWidgetItemIntent.
+    static var isDiscoverable: Bool = false
 
     @Parameter(title: "Laden")
     var storeName: String
