@@ -1,0 +1,187 @@
+<title>Preisquelle in der Liste</title>
+<style>
+/* Layout: Seite = Erklärspalte; je Variante eine Reihe Telefon-Ausschnitte (hell + dunkel) in den echten App-Farben. */
+:root {
+  --page: #EEEAE0; --page-ink: #201D16; --page-muted: #6F6A5B; --page-line: rgba(32,29,22,.14);
+  --mark: #666F38;
+  --font-body: "Source Sans 3", -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+  /* App-Farben (Asset-Katalog), hell */
+  --l-canvas: #F5F2E9; --l-surface: #FDFBF4; --l-ink: #201D16; --l-sec: #6F6A5B; --l-ter: rgba(32,29,22,.42);
+  --l-quat: rgba(32,29,22,.22); --l-line: rgba(32,29,22,.13); --l-accent: #666F38; --l-amber: #A97F2E;
+  /* App-Farben, dunkel */
+  --d-canvas: #141310; --d-surface: #1D1C16; --d-ink: #EBE7DA; --d-sec: #A29B8A; --d-ter: rgba(235,231,218,.42);
+  --d-quat: rgba(235,231,218,.22); --d-line: rgba(235,231,218,.13); --d-accent: #A7AE6B; --d-amber: #C89A4A;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --page: #0F0E0B; --page-ink: #EBE7DA; --page-muted: #A29B8A; --page-line: rgba(235,231,218,.14); --mark: #A7AE6B; color-scheme: dark } }
+:root[data-theme="dark"] { --page: #0F0E0B; --page-ink: #EBE7DA; --page-muted: #A29B8A; --page-line: rgba(235,231,218,.14); --mark: #A7AE6B; color-scheme: dark }
+
+body { background: var(--page); color: var(--page-ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 32px 64px; display: flex; flex-direction: column; gap: 48px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 24px; margin: 0; text-wrap: balance; }
+p { margin: 0; max-width: 65ch; }
+.lead { color: var(--page-muted); font-size: 18px; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--page-muted); font-weight: 600; }
+section { display: flex; flex-direction: column; gap: 16px; border-top: 1px solid var(--page-line); padding-top: 28px; }
+.tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .04em; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--mark); color: var(--mark); margin-left: 8px; vertical-align: middle; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+.cap { font-size: 13px; color: var(--page-muted); margin-top: 8px; }
+ul.points { margin: 0; padding-left: 20px; max-width: 70ch; display: flex; flex-direction: column; gap: 4px; }
+
+/* Telefon-Ausschnitt */
+.phone { border-radius: 28px; padding: 18px 14px; font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif; min-width: 0; }
+.phone.light { --c: var(--l-canvas); --s: var(--l-surface); --i: var(--l-ink); --sec: var(--l-sec); --ter: var(--l-ter); --q: var(--l-quat); --ln: var(--l-line); --acc: var(--l-accent); --amb: var(--l-amber); }
+.phone.dark  { --c: var(--d-canvas); --s: var(--d-surface); --i: var(--d-ink); --sec: var(--d-sec); --ter: var(--d-ter); --q: var(--d-quat); --ln: var(--d-line); --acc: var(--d-accent); --amb: var(--d-amber); }
+.phone { background: var(--c); color: var(--i); border: 1px solid var(--page-line); }
+.phone .title { font-size: 20px; font-weight: 600; color: var(--sec); margin: 0 6px 10px; }
+.list { background: var(--s); border-radius: 14px; padding: 4px 14px; }
+.item { display: grid; grid-template-columns: 22px 1fr auto; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--ln); }
+.item:last-child { border-bottom: 0; }
+.box { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--q); box-sizing: border-box; }
+.name { font-size: 16px; min-width: 0; }
+.meta { font-size: 12px; color: var(--ter); display: flex; gap: 6px; flex-wrap: wrap; }
+.meta .amb { color: var(--amb); }
+.price { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; font-variant-numeric: tabular-nums; }
+.amt { font-size: 13px; font-weight: 500; color: var(--sec); white-space: nowrap; }
+.amt.est { color: var(--amb); }
+.src { font-size: 11px; color: var(--ter); white-space: nowrap; }
+.src.est { color: var(--amb); }
+.ico { display: inline-flex; align-items: center; gap: 4px; }
+.ico svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+.shot { border-radius: 28px; overflow: hidden; border: 1px solid var(--page-line); max-width: 300px; }
+.shot img { display: block; width: 100%; }
+
+/* Diagnose-Formular */
+.form { background: var(--s); border-radius: 12px; padding: 4px 14px; }
+.frow { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--ln); font-size: 15px; }
+.frow:last-child { border-bottom: 0; }
+.frow .v { color: var(--sec); text-align: right; }
+.frow .v.ok { color: var(--acc); }
+.frow .v.no { color: var(--amb); }
+.fhead { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--sec); margin: 14px 6px 6px; }
+.ffoot { font-size: 12px; color: var(--sec); margin: 6px 6px 0; line-height: 1.4; }
+table.legend { border-collapse: collapse; font-size: 15px; }
+table.legend td { padding: 6px 16px 6px 0; border-bottom: 1px solid var(--page-line); vertical-align: top; }
+.tw { overflow-x: auto; }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Sans+3:wght@400;600;700&display=swap">
+
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:12px">
+    <div class="eyebrow">Restock · Issue #151 · Entwurf vor der Spec</div>
+    <h1>Woher kommt dieser Preis?</h1>
+    <p class="lead">Heute steht eine reine Kategorie-Schätzung genauso da wie ein Preis vom Kassenbon. Der Entwurf schreibt unter jeden Betrag, woher er stammt. Eine Schätzung bekommt zusätzlich „ca.“.</p>
+  </header>
+
+  <section>
+    <h2>Heute</h2>
+    <p>Im Simulator nachgestellt. In der Liste „Altbon“ stehen zwei Artikel mit je 2,50 €. „Laugenbrötchen groß“ ist eine reine Schätzung, „Kontrollbrot“ hat einen selbst eingetragenen Preis. In der Zeile sieht man keinen Unterschied. Dasselbe passiert bei Seitan bei dm: 2,90 € ist die Pauschale für „Lebensmittel“.</p>
+    <div class="row">
+      <div><div class="shot"><img src="heute.jpg" alt="Bildschirmfoto heute: zwei Artikel mit je 2,50 €, kein Hinweis auf die Herkunft"></div>
+      <div class="cap">Simulator, iOS, aktueller Stand, 17.10.2026</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Entwurf A: Quelle unter dem Preis <span class="tag">Empfehlung</span></h2>
+    <p>Unter jedem Betrag steht eine kleine zweite Zeile mit der Quelle. Eine Schätzung ist in derselben Warnfarbe wie eine angenommene Menge („ca. 400 g“), echte Preise bleiben ruhig grau. So genügt ein Blick, um zu sehen, welchen Preisen man trauen kann.</p>
+    <div class="row">
+      <div class="phone light" id="a-light"></div>
+      <div class="phone dark" id="a-dark"></div>
+    </div>
+    <div class="tw"><table class="legend">
+      <tr><td><b>Bon · 12.10.</b></td><td>vom Kassenbon gelernt, mit Datum des Scans</td></tr>
+      <tr><td><b>bezahlt</b></td><td>nach dem Einkauf als bezahlten Betrag eingetragen</td></tr>
+      <tr><td><b>gelernt</b></td><td>gelernter Preis ohne gesicherte Herkunft: ältere Daten oder von einem Mitglied eines geteilten Ladens</td></tr>
+      <tr><td><b>eigener Preis</b></td><td>im Artikel selbst eingetippt</td></tr>
+      <tr><td><b>Schätzung</b></td><td>keine echte Angabe, Pauschale nach Produkt oder Kategorie, mit „ca.“</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Alternative B: nur Schätzungen kennzeichnen</h2>
+    <p>Echte Preise bleiben wie heute. Nur die Schätzung bekommt „ca.“ und die Warnfarbe. Das ist ruhiger und kleiner im Umfang (keine neuen Datenfelder für Bon, bezahlt oder eigener Preis), beantwortet aber nicht, ob ein Preis vom Bon stammt und wie alt er ist.</p>
+    <div class="row">
+      <div class="phone light" id="b-light"></div>
+      <div class="phone dark" id="b-dark"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Alternative C: Symbol statt Wort</h2>
+    <p>Ein kleines Symbol vor dem Betrag statt einer zweiten Zeile. Die Zeilen bleiben einzeilig, aber man muss die Symbole lernen, und das Bon-Datum hat keinen Platz.</p>
+    <div class="row">
+      <div class="phone light" id="c-light"></div>
+      <div class="phone dark" id="c-dark"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Nur im Entwicklermodus: Diagnose im Artikel</h2>
+    <p>Im Bearbeiten-Dialog eines Artikels erscheint ein Abschnitt, der zeigt, warum ein gelernter Bonpreis greift oder verworfen wird. Er nutzt dieselbe Entscheidung wie die App selbst, damit Anzeige und Wirklichkeit nicht auseinanderlaufen.</p>
+    <div class="row">
+      <div class="phone light" id="d-light"></div>
+      <div class="phone dark" id="d-dark"></div>
+    </div>
+    <ul class="points">
+      <li>Mögliche Ergebnisse: angewendet · nur als Rate je 100 g · kein Eintrag in diesem Laden · Altdaten ohne Bezugsgröße · Einheit passt nicht · Obergrenze überschritten.</li>
+      <li>Bei einem ähnlichen statt gleichen Namen nennt die Diagnose den gefundenen Eintrag („laugenbrötchen“ für „Laugenbrötchen groß“).</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const ICONS = {
+  receipt: '<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>',
+  card: '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>',
+  spark: '<svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg>',
+  pencil: '<svg viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/></svg>',
+  wave: '<svg viewBox="0 0 24 24"><path d="M3 12c3-4 6 4 9 0s6 4 9 0"/></svg>'
+};
+const ITEMS = [
+  { n: "Seitan", meta: ["Lebensmittel"], amt: "2,90 €", src: "Schätzung", kind: "est", icon: "wave" },
+  { n: "Zahnpasta", meta: ["Körperpflege"], amt: "1,95 €", src: "Bon · 12.10.", kind: "receipt", icon: "receipt" },
+  { n: "Duschgel", meta: ["Körperpflege"], amt: "2,45 €", src: "bezahlt", kind: "paid", icon: "card" },
+  { n: "Haferdrink", meta: ["Getränke"], amt: "1,29 €", src: "gelernt", kind: "learned", icon: "spark" },
+  { n: "Kaffeebohnen", meta: ["Kaffee & Tee"], amt: "8,99 €", src: "eigener Preis", kind: "manual", icon: "pencil" },
+  { n: "Hackfleisch", meta: [["ca. 400 g", "amb"], "Fleisch"], amt: "3,60 €", src: "Schätzung", kind: "est", icon: "wave" }
+];
+function metaHtml(m) {
+  return m.map(x => Array.isArray(x) ? `<span class="${x[1]}">${x[0]}</span>` : `<span>${x}</span>`).join('<span>·</span>');
+}
+function priceHtml(it, mode) {
+  const est = it.kind === "est";
+  const amt = (est ? "ca. " : "") + it.amt;
+  if (mode === "A") return `<div class="amt${est ? " est" : ""}">${amt}</div><div class="src${est ? " est" : ""}">${it.src}</div>`;
+  if (mode === "B") return `<div class="amt${est ? " est" : ""}">${amt}</div>`;
+  return `<div class="amt${est ? " est" : ""} ico">${ICONS[it.icon]}${amt}</div>`;
+}
+function list(mode) {
+  return `<div class="title">dm</div><div class="list">` + ITEMS.map(it =>
+    `<div class="item"><div class="box"></div><div style="min-width:0"><div class="name">${it.n}</div><div class="meta">${metaHtml(it.meta)}</div></div><div class="price">${priceHtml(it, mode)}</div></div>`
+  ).join("") + `</div>`;
+}
+function diag() {
+  return `<div class="title">Laugenbrötchen groß</div>
+  <div class="fhead">Preis</div>
+  <div class="form"><div class="frow"><span>Preis je Stück</span><span class="v">ca. 2,50 €</span></div>
+  <div class="frow"><span>Quelle</span><span class="v no">Schätzung</span></div></div>
+  <div class="fhead">Diagnose gelernter Preis (Dev)</div>
+  <div class="form">
+    <div class="frow"><span>Eintrag im Laden</span><span class="v">„laugenbrötchen“ · 1,56 €</span></div>
+    <div class="frow"><span>Bezugsgröße</span><span class="v">fehlt</span></div>
+    <div class="frow"><span>Obergrenze 200 €</span><span class="v ok">eingehalten</span></div>
+    <div class="frow"><span>Ergebnis</span><span class="v no">verworfen: Altdaten ohne Bezugsgröße</span></div>
+  </div>
+  <div class="ffoot">Wird erst wieder angewendet, wenn ein neuer Bon diesen Artikel mit Stück- oder Grammpreis enthält.</div>`;
+}
+for (const t of ["light", "dark"]) {
+  document.getElementById("a-" + t).innerHTML = list("A");
+  document.getElementById("b-" + t).innerHTML = list("B");
+  document.getElementById("c-" + t).innerHTML = list("C");
+  document.getElementById("d-" + t).innerHTML = diag();
+}
+</script>
