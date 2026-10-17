@@ -742,4 +742,101 @@ final class PriceSourceTests: XCTestCase {
                           "Grundtext \(reason) gehört zu den neuen, lokalisierten Schlüsseln")
         }
     }
+
+    // MARK: - Adversary F001: Parität gegen feste Werte der ALTEN init-Kette
+
+    /// Unabhängig vom Resolver: Die Erwartungen sind von Hand aus der alten Kette in
+    /// `git show HEAD:SmartCart/Models/ShoppingItem.swift` (Stand 9e9536a, vor #151) nachgerechnet —
+    /// Schlüssel per Teilstring/Fuzzy, Obergrenze `Preis × max(Menge, 1) <= 200`, dann
+    /// `learnedRateUsage`; sonst `PriceEstimator.estimate` (Stichwort „hackfleisch“ 4,00,
+    /// „brötchen“ 2,50, „käse“ 3,50, Kategorie „Lebensmittel“ 2,90, „steak“ trifft das Stichwort „tea“ → 3,00).
+    func testInitMatchesHandWrittenExpectationsFromPreviousChain() {
+        struct Case {
+            let label: String
+            let key: String?, entry: Double, entryUnit: String?
+            let name: String, category: String, quantity: Double, unit: String, source: String
+            let price: Double?, expectedUnit: String, autoDerived: Bool
+        }
+        let cases: [Case] = [
+            Case(label: "Stückpreis an Stück-Artikel", key: "butter", entry: 1.99, entryUnit: "stk",
+                 name: "Butter", category: "", quantity: 2, unit: "", source: "user",
+                 price: 1.99, expectedUnit: "", autoDerived: false),
+            Case(label: "Grammrate an g-Artikel, Menge user", key: "hackfleisch", entry: 0.0125, entryUnit: "g",
+                 name: "Hackfleisch", category: "", quantity: 400, unit: "g", source: "user",
+                 price: 0.0125, expectedUnit: "g", autoDerived: false),
+            Case(label: "Grammrate an g-Artikel, Menge history", key: "hackfleisch", entry: 0.0125, entryUnit: "g",
+                 name: "Hackfleisch", category: "", quantity: 400, unit: "g", source: "history",
+                 price: 0.0125, expectedUnit: "g", autoDerived: false),
+            Case(label: "Grammrate an g-Artikel, Menge package", key: "hackfleisch", entry: 0.0125, entryUnit: "g",
+                 name: "Hackfleisch", category: "", quantity: 400, unit: "g", source: "package",
+                 price: 0.0125, expectedUnit: "g", autoDerived: false),
+            Case(label: "Grammrate ohne Menge → nur Rate, Einheit g", key: "hackfleisch", entry: 0.0125, entryUnit: "g",
+                 name: "Hackfleisch", category: "", quantity: 1, unit: "", source: "none",
+                 price: 0.0125, expectedUnit: "g", autoDerived: false),
+            Case(label: "Grammrate an Stück-Artikel (user) → verworfen", key: "hackfleisch", entry: 0.0125, entryUnit: "g",
+                 name: "Hackfleisch", category: "", quantity: 1, unit: "", source: "user",
+                 price: 4.00, expectedUnit: "", autoDerived: true),
+            Case(label: "Altbestand ohne Bezugsgröße → verworfen", key: "laugenbrötchen", entry: 1.56, entryUnit: nil,
+                 name: "Laugenbrötchen", category: "", quantity: 1, unit: "", source: "user",
+                 price: 2.50, expectedUnit: "", autoDerived: true),
+            Case(label: "Obergrenze knapp darunter (199,98 €)", key: "steak", entry: 99.99, entryUnit: "stk",
+                 name: "Steak", category: "", quantity: 2, unit: "", source: "user",
+                 price: 99.99, expectedUnit: "", autoDerived: false),
+            Case(label: "Obergrenze genau (200,00 €)", key: "steak", entry: 100, entryUnit: "stk",
+                 name: "Steak", category: "", quantity: 2, unit: "", source: "user",
+                 price: 100, expectedUnit: "", autoDerived: false),
+            Case(label: "Obergrenze knapp darüber (200,01 €)", key: "steak", entry: 100.005, entryUnit: "stk",
+                 name: "Steak", category: "", quantity: 2, unit: "", source: "user",
+                 price: 3.00, expectedUnit: "", autoDerived: true),
+            Case(label: "Menge 0 zählt als 1 (200,00 €)", key: "steak", entry: 200, entryUnit: "stk",
+                 name: "Steak", category: "", quantity: 0, unit: "", source: "user",
+                 price: 200, expectedUnit: "", autoDerived: false),
+            Case(label: "Menge 0 zählt als 1 (200,01 €)", key: "steak", entry: 200.01, entryUnit: "stk",
+                 name: "Steak", category: "", quantity: 0, unit: "", source: "user",
+                 price: 3.00, expectedUnit: "", autoDerived: true),
+            Case(label: "Teilstring-Treffer", key: "hackfleisch gemischt 500g", entry: 3.49, entryUnit: "stk",
+                 name: "Hackfleisch", category: "", quantity: 1, unit: "", source: "user",
+                 price: 3.49, expectedUnit: "", autoDerived: false),
+            Case(label: "Fuzzy-Treffer (Saitan ↔ seitan)", key: "seitan", entry: 2.99, entryUnit: "stk",
+                 name: "Saitan", category: "", quantity: 1, unit: "", source: "user",
+                 price: 2.99, expectedUnit: "", autoDerived: false),
+            Case(label: "kein Treffer → Stichwort-Schätzung", key: "butter", entry: 1.99, entryUnit: "stk",
+                 name: "Käse", category: "", quantity: 1, unit: "", source: "user",
+                 price: 3.50, expectedUnit: "", autoDerived: true),
+            Case(label: "kein Eintrag → Kategorie-Schätzung", key: nil, entry: 0, entryUnit: nil,
+                 name: "Seitan", category: "Lebensmittel", quantity: 1, unit: "", source: "user",
+                 price: 2.90, expectedUnit: "", autoDerived: true)
+        ]
+        for c in cases {
+            let store = makeStore()
+            if let key = c.key {
+                store.learnedPrices[key] = c.entry
+                if let entryUnit = c.entryUnit { store.learnedPriceUnits[key] = entryUnit }
+            }
+            let item = ShoppingItem(name: c.name, category: c.category, quantityAmount: c.quantity, unit: c.unit,
+                                    store: store, quantitySource: c.source)
+            XCTAssertEqual(item.estimatedPrice, c.price, "estimatedPrice, \(c.label)")
+            XCTAssertEqual(item.unit, c.expectedUnit, "unit, \(c.label)")
+            XCTAssertEqual(item.estimatedPriceIsAutoDerived, c.autoDerived, "estimatedPriceIsAutoDerived, \(c.label)")
+        }
+    }
+
+    // MARK: - Adversary F002 (Unit-Teil): Bon lernen → neuer Artikel zeigt „Bon“ mit Datum
+
+    func testReceiptLearnThenNewItemShowsReceiptWithDate() {
+        let store = makeStore()
+        let learnedAt = october12
+        ReceiptLearning.learn(ReceiptLearning.Plan(key: "haferdrink", perUnitPrice: 1.49, unit: "stk"),
+                              into: store, at: learnedAt)
+
+        let item = ShoppingItem(name: "Haferdrink", store: store)
+
+        XCTAssertEqual(item.estimatedPrice, 1.49)
+        XCTAssertFalse(item.estimatedPriceIsAutoDerived)
+        XCTAssertEqual(item.priceSource, "receipt")
+        XCTAssertEqual(item.priceSourceDate, store.learnedPriceDates["haferdrink"])
+        XCTAssertEqual(item.priceSourceDate, learnedAt)
+        XCTAssertEqual(PriceSourceDisplay.text(origin: item.priceOrigin, date: item.priceSourceDate, locale: german),
+                       "Bon · 12.10.")
+    }
 }

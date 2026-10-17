@@ -50,6 +50,10 @@ class Store {
     /// Reist bei geteilten Listen gemeinsam mit Betrag und Zeitstempel (`LearnedPriceSync` in
     /// `SharedStoreService.swift`, Issue #53).
     var learnedPriceUnits: [String: String] = [:]
+    /// Herkunft je `learnedPrices`-Eintrag (Issue #151): `"receipt"` oder `"paid"`, gleiche
+    /// Schlüssel wie `learnedPriceUnits`. Bewusst NUR lokal — reist nicht mit `LearnedPriceSync`;
+    /// ein fremder Preis aus einem geteilten Laden löscht den Eintrag (Anzeige „gelernt“).
+    var learnedPriceOrigins: [String: String] = [:]
     /// Eigene Kategorien dieses Ladens (Issue #85): Name → Emoji. Nur lebende Kategorien.
     /// Additiv wie `learnedPriceDates` — kein Schema-Versionsbump, CloudKit-tauglich.
     var customCategoryEmojis: [String: String] = [:]
@@ -137,6 +141,7 @@ class Store {
         self.learnedPrices = [:]
         self.learnedPriceDates = [:]
         self.learnedPriceUnits = [:]
+        self.learnedPriceOrigins = [:]
         self.customCategoryEmojis = [:]
         self.customCategoryDates = [:]
         self.categoryAssignments = [:]

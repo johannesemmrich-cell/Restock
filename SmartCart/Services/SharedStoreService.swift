@@ -598,6 +598,9 @@ enum LearnedPriceSync {
             guard remoteDate >= localDate else { continue }
             let samePrice = remoteDate == localDate && store.learnedPrices[key] == remotePrice
             if remote.units[key] == nil, samePrice { continue }
+            // Herkunft bleibt lokal (Issue #151): ein fremder, abweichender Preis ist nicht mehr
+            // „unser“ Bon/bezahlter Betrag → Eintrag weg, Anzeige „gelernt“.
+            if !samePrice { store.learnedPriceOrigins.removeValue(forKey: key) }
             store.learnedPrices[key] = remotePrice
             store.learnedPriceDates[key] = remoteDate
             store.learnedPriceUnits[key] = remote.units[key]

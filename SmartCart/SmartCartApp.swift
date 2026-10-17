@@ -394,8 +394,19 @@ struct SmartCartApp: App {
             item.estimatedPrice = seed.price
             item.estimatedPriceIsAutoDerived = false
             item.isCompleted = seed.completed
+            // Issue #151: Kontrollbrot trägt die Quelle „eigener Preis“.
+            if seed.name == "Kontrollbrot" { item.priceSource = "manual" }
             context.insert(item)
         }
+        // Issue #151: Altdaten-Preis ohne Quelle (Anzeige über die Ableitung „gelernt“). Eintrag
+        // mit Bezugsgröße, damit Migration und Altlast-Reset ihn nicht anfassen.
+        store.learnedPrices["altdatenbrot"] = 3.20
+        store.learnedPriceUnits["altdatenbrot"] = "stk"
+        let legacy = ShoppingItem(name: "Altdatenbrot", quantityAmount: 1, store: store)
+        legacy.estimatedPrice = 3.20
+        legacy.estimatedPriceIsAutoDerived = false
+        legacy.priceSource = ""
+        context.insert(legacy)
         try? context.save()
     }
 

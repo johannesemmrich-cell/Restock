@@ -740,6 +740,40 @@ final class ReceiptReviewUITests: XCTestCase {
                       "Der gespeicherte Preis \(Seed.matchedItemPriceText) steht nicht am Artikel — save() schreibt ihn nicht mehr.")
     }
 
+    /// Issue #151 (Adversary F002): Durchstich der Quellen-Verdrahtung über den echten Weg —
+    /// Bon speichern (`save()` → `ReceiptLearning.learn`/`apply`), Lidl öffnen, und in der ZEILE
+    /// des zugeordneten Artikels steht der Preis samt Quelle „Bon · <Datum>“. Die Preiszelle ist
+    /// ein einziges Bedienhilfen-Element mit dem Label „<Betrag>, <Quelle>“, z. B. „0,99 €, Bon · 17.10.“.
+    func testSavedReceiptShowsReceiptAsPriceSource() {
+        let app = openedReviewSheet()
+
+        let saveButton = app.buttons["receiptReview.saveButton"]
+        XCTAssertTrue(saveButton.waitForExistence(timeout: UITestWait.defaultTimeout), "Speichern-Knopf fehlt.")
+        saveButton.tap()
+
+        let lidlTile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Lidl,")).firstMatch
+        XCTAssertTrue(lidlTile.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Nach dem Speichern ist der Home-Screen nicht sichtbar.")
+        let tileReady = lidlTile.waitUntilHittable()
+        XCTAssertTrue(tileReady.matched, "Lidl-Kachel nicht antippbar — zuletzt: \(tileReady.last)")
+        lidlTile.tap()
+
+        // Auf die Zelle des Artikels beschränkt, nicht irgendwo auf dem Bildschirm.
+        let row = app.cells.containing(.staticText, identifier: Seed.matchedItemName).firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Zeile \(Seed.matchedItemName) nicht in der Lidl-Liste gefunden.")
+        let result = UITestWait.poll(
+            timeout: UITestWait.defaultTimeout,
+            read: { row.exists ? row.staticTexts.allElementsBoundByIndex.map { self.normalized($0.label) } : [] },
+            done: { texts in texts.contains { $0.contains("0,99 €, Bon") } })
+        XCTAssertTrue(result.matched,
+                      "In der Zeile \(Seed.matchedItemName) fehlt „0,99 €, Bon …“ — zuletzt gelesen: \(result.last)")
+        XCTAssertTrue(result.last.contains { $0.contains("Bon · ") },
+                      "Die Quelle „Bon“ trägt nach dem Speichern ein Datum („Bon · <Datum>“): \(result.last)")
+        XCTAssertFalse(result.last.contains { $0.contains("Schätzung") || $0.hasPrefix("ca. ") },
+                       "Ein Bonpreis ist keine Schätzung: \(result.last)")
+    }
+
     // MARK: - Issue #10: Kein Cent-Betrag durch eine Pro-Gramm-Rate
 
     /// Der am 26.09.2026 im Simulator reproduzierte Fall, als Durchstich durch den echten Weg.
