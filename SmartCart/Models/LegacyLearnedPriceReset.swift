@@ -41,6 +41,8 @@ enum LegacyLearnedPriceReset {
             item.estimatedPrice = PriceEstimator.estimate(
                 for: item.name, category: item.category, unit: item.unit, quantityAmount: item.quantityAmount)
             item.estimatedPriceIsAutoDerived = true
+            item.priceSource = "estimate"
+            item.priceSourceDate = nil
         }
         try? context.save()
         UserDefaults.standard.set(true, forKey: flagKey)

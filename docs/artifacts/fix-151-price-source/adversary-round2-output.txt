@@ -1,0 +1,37 @@
+Adversary-Runde 2, Issue #151, Restock-Validate 8F696920-4B9A-40A7-96F0-7697BE887CC7, 2026-10-17
+(Zeilen wörtlich aus den Einzelprotokollen übernommen)
+
+Lauf 1: -only-testing:RestockTests/PriceSourceTests  (adversary-round2-unit-pricesource.txt)
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.079 (0.085) seconds
+** TEST SUCCEEDED **
+
+Lauf 2: -only-testing:RestockUITests/ReceiptReviewUITests  (adversary-round2-ui-receiptreview.txt)
+	 Executed 23 tests, with 1 failure (0 unexpected) in 803.960 (804.139) seconds
+Test Suite 'Selected tests' failed
+  Fehlschlag: testChangeEditorWorksInDarkMode, ReceiptReviewUITests.swift:898 „Dunkelmodus: Preisfeld erscheint nicht.“
+  Neu und grün: testSavedReceiptShowsReceiptAsPriceSource passed (30.393 seconds)
+  Hinweis: xcodebuild beendete sich nach dem letzten Test nicht (19:50:32 bis 19:57); von Hand beendet,
+  deshalb steht am Ende „** BUILD INTERRUPTED **“ statt TEST FAILED. Ergebnis des Testlaufs: FAILED (1 Fehlschlag).
+
+Lauf 3: -only-testing:RestockUITests/LegacyLearnedPriceResetUITests -only-testing:RestockUITests/AddItemQuantitySuggestionUITests  (adversary-round2-ui-legacy-quantity.txt)
+	 Executed 6 tests, with 0 failures (0 unexpected)   [AddItemQuantitySuggestionUITests]
+	 Executed 3 tests, with 0 failures (0 unexpected)   [LegacyLearnedPriceResetUITests]
+	 Executed 9 tests, with 0 failures (0 unexpected) in 419.445 (420.309) seconds
+  Hinweis: xcodebuild beendete sich nach dem letzten Test nicht (20:08:40 bis ~20:10); von Hand beendet,
+  daher keine Zeile „** TEST SUCCEEDED **“. Alle 9 Tests passed.
+
+Lauf 4: -only-testing:RestockTests  (adversary-round2-unit-suite-haenger.txt)
+	 Executed 0 tests – Runner startete nicht (letzte Ausgabe 20:11:25, über 11 min ohne Ausgabe),
+	 um 20:23 abgebrochen („** BUILD INTERRUPTED **“). Kein Ergebnis, kein Grün. Muster #63.
+
+Wiederholung nach Ende des fremden LooseEnds-Laufs, Restock-Validate frisch gebootet (war bereits heruntergefahren):
+
+Lauf 2a: -only-testing:RestockUITests/ReceiptReviewUITests/testChangeEditorWorksInDarkMode  (adversary-round2-ui-darkmode-rerun.txt)
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' passed (52.281 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 52.281 (52.337) seconds
+  Hinweis: xcodebuild beendete sich danach wieder nicht; von Hand beendet („BUILD INTERRUPTED“). Test grün.
+
+Lauf 4a: -only-testing:RestockTests  (adversary-round2-unit-suite-rerun.txt)
+	 Executed 516 tests, with 0 failures (0 unexpected) in 61.650 (66.052) seconds
+  Hinweis: xcodebuild beendete sich danach wieder nicht; von Hand beendet („BUILD INTERRUPTED“). Alle 516 Tests grün
+  (514 vom Mittag + 2 neue aus F001/F002).

@@ -399,3 +399,24 @@
 "store.route.reset" = "Gelernte Reihenfolge zurücksetzen";
 "store.route.reset.confirm" = "Gelernte Reihenfolge zurücksetzen?";
 "store.route.reset.message" = "Bis neu gelernt ist, sortiert die Liste nach Kategorie.";
+
+/* Preisquelle (Issue #151) */
+"price.source.receipt" = "Bon";
+"price.source.receipt.dated" = "Bon · %@";
+"price.source.paid" = "bezahlt";
+"price.source.learned" = "gelernt";
+"price.source.manual" = "eigener Preis";
+"price.source.estimate" = "Schätzung";
+"price.diagnosis.section" = "Preisdiagnose";
+"price.diagnosis.entry" = "Eintrag: %@ · %@ · Bezugsgröße %@ · Datum %@ · Herkunft %@";
+"price.diagnosis.entry.none" = "Eintrag: keiner";
+"price.diagnosis.item" = "Artikel: Bezugsgröße %@ · Menge %@ · Mengenquelle %@";
+"price.diagnosis.cap" = "Obergrenze: %@ gegen %@";
+"price.diagnosis.result" = "Ergebnis: %@";
+"price.diagnosis.reason.noStore" = "kein Laden gewählt";
+"price.diagnosis.reason.noEntry" = "kein gelernter Eintrag gefunden";
+"price.diagnosis.reason.exceedsCap" = "verworfen, über der Obergrenze";
+"price.diagnosis.reason.legacyNoUnit" = "verworfen, Altdatum ohne Bezugsgröße";
+"price.diagnosis.reason.unitMismatch" = "verworfen, Bezugsgröße passt nicht";
+"price.diagnosis.reason.applied" = "gelernter Preis angewendet";
+"price.diagnosis.reason.appliedRateOnly" = "gelernte Rate ohne Gesamtpreis angewendet";

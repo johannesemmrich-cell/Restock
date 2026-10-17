@@ -133,7 +133,7 @@ struct ActualPriceEntryView: View {
             for item in withEstimate {
                 guard let lineTotal = item.estimatedLineTotal else { continue }
                 let itemActualTotal = lineTotal * ratio
-                apply(itemActualTotal: itemActualTotal, to: item)
+                Self.apply(itemActualTotal: itemActualTotal, to: item, in: store)
             }
         } else {
             // Nothing selected has a usable estimate (or every estimate is zero) — there's no
@@ -141,7 +141,7 @@ struct ActualPriceEntryView: View {
             // across every selected item rather than doing nothing.
             let share = paidTotal / Double(selected.count)
             for item in selected {
-                apply(itemActualTotal: share, to: item)
+                Self.apply(itemActualTotal: share, to: item, in: store)
             }
         }
 
@@ -152,7 +152,9 @@ struct ActualPriceEntryView: View {
     /// Writes one item's proportional share of the entered total into `store.learnedPrices`
     /// (per-unit, matching `ReceiptScannerView.save()`'s convention) and backfills the
     /// `PurchaseRecord` created by this item's own most recent still-unpriced `markCompleted()` call.
-    private func apply(itemActualTotal: Double, to item: ShoppingItem) {
+    /// Statisch mit dem Laden als Parameter, damit testbar (Issue #151); Quelle „bezahlt“ am
+    /// Artikel und als Herkunft des gelernten Eintrags.
+    static func apply(itemActualTotal: Double, to item: ShoppingItem, in store: Store) {
         // A zero-or-negative share (possible if an item's own estimate was exactly 0, or from
         // floating-point noise) must not be taught back as "this item costs €0" — skip it entirely
         // rather than silently poisoning future estimates for that product.
@@ -165,6 +167,7 @@ struct ActualPriceEntryView: View {
         // exakt auf `item.quantityAmount` skaliert wurde — die Rate gilt also pro `item.unit`.
         store.learnedPriceUnits[key] = ShoppingItem.unitBucket(item.unit)
         store.learnedPriceDates[key] = Date()
+        store.learnedPriceOrigins[key] = "paid"
 
         // Direkt auf den Artikel selbst zurückschreiben (wie ReceiptScannerView.save()) — item ist
         // hier bereits die exakte, eindeutige ShoppingItem-Referenz (kein Fuzzy-Matching nötig wie
@@ -173,6 +176,8 @@ struct ActualPriceEntryView: View {
         // nicht auf der Liste selbst — dieselbe Inkonsistenz wie beim Bon-Scan.
         item.estimatedPrice = perUnitPrice
         item.estimatedPriceIsAutoDerived = false
+        item.priceSource = "paid"
+        item.priceSourceDate = nil
 
         // `purchaseRecords` only ever grows (a new record is appended on every markCompleted(), and
         // nothing prunes old ones) — an item toggled complete/pending/complete again, or simply left

@@ -269,13 +269,30 @@ enum ReceiptLearning {
         case .apply:
             item.estimatedPrice = plan.perUnitPrice
             item.estimatedPriceIsAutoDerived = false
+            markReceiptSource(item)
         case .rateOnly:
             item.estimatedPrice = plan.perUnitPrice
             item.unit = "g"
             item.estimatedPriceIsAutoDerived = false
+            markReceiptSource(item)
         case .reject:
             break // Der bisherige (geschätzte) Preis bleibt stehen — kein falscher Betrag.
         }
+    }
+
+    /// Quelle „Bon“ samt Datum, im selben Zug wie der Preis (Issue #151).
+    private static func markReceiptSource(_ item: ShoppingItem) {
+        item.priceSource = "receipt"
+        item.priceSourceDate = Date()
+    }
+
+    /// Lernt den Bon-Preis für den Laden: Preis, Bezugsgröße, Datum und Herkunft in EINEM Zug
+    /// (Issue #10, #151). `save()` ruft das mit `Date()`.
+    static func learn(_ plan: Plan, into store: Store, at date: Date) {
+        store.learnedPrices[plan.key] = plan.perUnitPrice
+        store.learnedPriceUnits[plan.key] = plan.unit
+        store.learnedPriceDates[plan.key] = date
+        store.learnedPriceOrigins[plan.key] = "receipt"
     }
 }
 
@@ -749,11 +766,10 @@ struct ReceiptScannerView: View {
             )
 
             // Learn price for this store — overwrites previous learned price for this item.
-            // Preis, Bezugsgröße und Datum in EINEM Zug (Issue #10), siehe `ReceiptLearning.plan`.
+            // Preis, Bezugsgröße, Datum und Herkunft in EINEM Zug (Issue #10, #151), siehe
+            // `ReceiptLearning.plan` und `ReceiptLearning.learn`.
             let plan = ReceiptLearning.plan(line: line, match: match)
-            store.learnedPrices[plan.key] = plan.perUnitPrice
-            store.learnedPriceUnits[plan.key] = plan.unit
-            store.learnedPriceDates[plan.key] = Date()
+            ReceiptLearning.learn(plan, into: store, at: Date())
 
             // Direkt auf den bereits gelisteten Artikel zurückschreiben — sonst lernt ein Scan nur
             // für KÜNFTIG neu erstellte Artikel (über `learnedPrices`), während der schon

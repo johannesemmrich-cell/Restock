@@ -399,3 +399,24 @@
 "store.route.reset" = "Reset learned order";
 "store.route.reset.confirm" = "Reset learned order?";
 "store.route.reset.message" = "Until it has learned again, the list is sorted by category.";
+
+/* Price source (Issue #151) */
+"price.source.receipt" = "Receipt";
+"price.source.receipt.dated" = "Receipt · %@";
+"price.source.paid" = "paid";
+"price.source.learned" = "learned";
+"price.source.manual" = "own price";
+"price.source.estimate" = "estimate";
+"price.diagnosis.section" = "Price diagnosis";
+"price.diagnosis.entry" = "Entry: %@ · %@ · basis %@ · date %@ · origin %@";
+"price.diagnosis.entry.none" = "Entry: none";
+"price.diagnosis.item" = "Item: basis %@ · quantity %@ · quantity source %@";
+"price.diagnosis.cap" = "Cap: %@ against %@";
+"price.diagnosis.result" = "Result: %@";
+"price.diagnosis.reason.noStore" = "no store selected";
+"price.diagnosis.reason.noEntry" = "no learned entry found";
+"price.diagnosis.reason.exceedsCap" = "rejected, above the cap";
+"price.diagnosis.reason.legacyNoUnit" = "rejected, legacy entry without basis";
+"price.diagnosis.reason.unitMismatch" = "rejected, basis does not match";
+"price.diagnosis.reason.applied" = "learned price applied";
+"price.diagnosis.reason.appliedRateOnly" = "learned rate applied without total";

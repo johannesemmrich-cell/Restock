@@ -1,0 +1,1440 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/ReceiptReviewUITests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fmakzskadyenmrbpoqvuwvgzgyxi/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fmakzskadyenmrbpoqvuwvgzgyxi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-10-17 19:36:06.433 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:37:04.061783+0200 RestockUITests-Runner[20690:8661360] [Default] Running tests...
+objc[20690]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10932c310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x1093c8398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-17 19:37:08.578.
+Test Suite 'RestockUITests.xctest' started at 2026-10-17 19:37:08.580.
+Test Suite 'ReceiptReviewUITests' started at 2026-10-17 19:37:08.581.
+Test Case '-[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine]' started.
+    t =     0.00s Start Test at 2026-10-17 19:37:08.585
+    t =     0.49s Set Up
+    t =     0.50s Open com.johannesemmrich.Restock
+    t =     0.50s     Launch com.johannesemmrich.Restock
+2026-10-17 19:37:09.654 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:37:09.655 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:37:09.721 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     9.46s         Setting up automation session
+    t =     9.56s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    13.36s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =    13.36s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =    14.41s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    14.41s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    14.69s Waiting 5.0s for "receiptReview.line.0.aiMark" Any to exist
+    t =    15.72s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.aiMark" Any`
+    t =    15.73s         Checking existence of `"receiptReview.line.0.aiMark" Any`
+    t =    16.25s Find the "receiptReview.line.0.aiMark" Any
+    t =    16.68s Find the "receiptReview.line.0.aiMark" Other
+    t =    18.14s Find the "receiptReview.line.0.aiMark" Other
+    t =    19.06s Tear Down
+    t =    19.06s     Setting appearance mode to Light
+    t =    19.22s         Wait for com.johannesemmrich.Restock to idle
+    t =    19.23s     Open com.johannesemmrich.Restock
+    t =    19.23s         Launch com.johannesemmrich.Restock
+    t =    19.23s             Terminate com.johannesemmrich.Restock:20817
+2026-10-17 19:37:27.867 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:37:27.869 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:37:28.841 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:37:28.842 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:37:28.859 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    22.73s             Setting up automation session
+    t =    23.11s             Wait for com.johannesemmrich.Restock to idle
+    t =    25.09s     Terminate com.johannesemmrich.Restock:20923
+2026-10-17 19:37:33.693 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:37:33.694 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine]' passed (26.517 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCardShowsAtMostFourSelectionOptions]' started.
+    t =     0.00s Start Test at 2026-10-17 19:37:35.102
+    t =     0.04s Set Up
+    t =     0.04s Open com.johannesemmrich.Restock
+    t =     0.04s     Launch com.johannesemmrich.Restock
+2026-10-17 19:37:35.146 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:37:35.146 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:37:35.154 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    10.20s         Setting up automation session
+    t =    13.38s         Wait for com.johannesemmrich.Restock to idle
+    t =    15.70s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =    15.71s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =    16.77s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    16.77s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    17.08s Waiting 5.0s for "receiptReview.line.2.option.0" Any to exist
+    t =    18.11s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.option.0" Any`
+    t =    18.11s         Checking existence of `"receiptReview.line.2.option.0" Any`
+    t =    18.30s Waiting 5.0s for "receiptReview.line.2.option.1" Any to exist
+    t =    19.35s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.option.1" Any`
+    t =    19.36s         Checking existence of `"receiptReview.line.2.option.1" Any`
+    t =    19.56s Waiting 5.0s for "receiptReview.line.2.option.2" Any to exist
+    t =    20.61s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.option.2" Any`
+    t =    20.61s         Checking existence of `"receiptReview.line.2.option.2" Any`
+    t =    20.80s Waiting 5.0s for "receiptReview.line.2.option.3" Any to exist
+    t =    21.85s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.option.3" Any`
+    t =    21.85s         Checking existence of `"receiptReview.line.2.option.3" Any`
+    t =    22.04s Checking existence of `"receiptReview.line.2.option.4" Any`
+    t =    22.27s Tear Down
+    t =    22.27s     Setting appearance mode to Light
+    t =    22.38s         Wait for com.johannesemmrich.Restock to idle
+    t =    22.39s     Open com.johannesemmrich.Restock
+    t =    22.39s         Launch com.johannesemmrich.Restock
+    t =    22.39s             Terminate com.johannesemmrich.Restock:20967
+2026-10-17 19:37:57.507 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:37:57.509 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:37:58.569 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:37:58.571 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:37:58.608 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    24.11s             Setting up automation session
+    t =    27.51s             Wait for com.johannesemmrich.Restock to idle
+    t =    29.67s     Terminate com.johannesemmrich.Restock:21166
+2026-10-17 19:38:04.793 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:38:04.794 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCardShowsAtMostFourSelectionOptions]' passed (30.829 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' started.
+    t =     0.00s Start Test at 2026-10-17 19:38:05.932
+    t =     0.05s Set Up
+    t =     0.05s Setting appearance mode to Dark
+    t =     0.24s     Wait for com.apple.springboard to idle
+    t =     0.35s Open com.johannesemmrich.Restock
+    t =     0.35s     Launch com.johannesemmrich.Restock
+2026-10-17 19:38:06.288 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:38:06.288 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:38:06.302 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.70s         Setting up automation session
+    t =     2.43s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.33s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     6.35s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     7.39s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     7.39s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     7.69s Waiting 5.0s for "receiptReview.line.2.changeButton" Any to exist
+    t =     8.69s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.changeButton" Any`
+    t =     8.70s         Checking existence of `"receiptReview.line.2.changeButton" Any`
+    t =     8.91s Tap "receiptReview.line.2.changeButton" Any
+    t =     8.91s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.92s     Find the "receiptReview.line.2.changeButton" Any
+    t =     9.11s     Check for interrupting elements affecting "receiptReview.line.2.changeButton" Button
+    t =     9.25s     Synthesize event
+    t =     9.27s         Scroll element to visible
+    t =     9.29s         Find the "receiptReview.line.2.changeButton" Button
+    t =     9.54s         Computed hit point {329.66666666666674, 711} after scrolling to visible
+    t =     9.96s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.96s Waiting 5.0s for "receiptReview.line.2.priceField" TextField to exist
+    t =    11.01s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =    11.01s         Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =    11.09s         Capturing element debug description
+    t =    12.05s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =    12.05s         Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =    12.11s         Capturing element debug description
+    t =    13.04s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =    13.04s         Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =    13.10s         Capturing element debug description
+    t =    14.02s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =    14.02s         Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =    14.09s         Capturing element debug description
+    t =    14.97s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =    14.97s         Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =    15.04s         Capturing element debug description
+    t =    15.04s     Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =    15.10s Collecting debug information to assist test failure triage
+    t =    15.10s     Requesting snapshot of accessibility hierarchy for app with pid 21206
+/Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/RestockUITests/ReceiptReviewUITests.swift:898: error: -[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode] : XCTAssertTrue failed - Dunkelmodus: Preisfeld erscheint nicht.
+    t =    15.62s Tear Down
+    t =    15.62s     Setting appearance mode to Light
+    t =    15.74s         Wait for com.johannesemmrich.Restock to idle
+    t =    16.14s     Open com.johannesemmrich.Restock
+    t =    16.15s         Launch com.johannesemmrich.Restock
+    t =    16.15s             Terminate com.johannesemmrich.Restock:21206
+2026-10-17 19:38:22.135 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:38:22.140 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:38:23.093 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:38:23.093 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:38:23.127 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    17.58s             Setting up automation session
+    t =    19.01s             Wait for com.johannesemmrich.Restock to idle
+    t =    20.92s     Terminate com.johannesemmrich.Restock:21303
+2026-10-17 19:38:26.867 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:38:26.868 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' failed (22.146 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeOpensPriceAndQuantityEditorAndUpdatesSummary]' started.
+    t =     0.00s Start Test at 2026-10-17 19:38:28.081
+    t =     0.05s Set Up
+    t =     0.05s Open com.johannesemmrich.Restock
+    t =     0.05s     Launch com.johannesemmrich.Restock
+2026-10-17 19:38:28.137 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:38:28.137 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:38:28.150 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     0.27s         Setting up automation session
+    t =     1.23s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testChangeOpensPriceAndQuantityEditorAndUpdatesSummary] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     4.28s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     4.34s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     5.46s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     5.50s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     6.45s Waiting 5.0s for "receiptReview.line.2.changeButton" Any to exist
+    t =     7.49s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.changeButton" Any`
+    t =     7.49s         Checking existence of `"receiptReview.line.2.changeButton" Any`
+    t =     7.67s Tap "receiptReview.line.2.changeButton" Any
+    t =     7.67s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.67s     Find the "receiptReview.line.2.changeButton" Any
+    t =     7.78s     Check for interrupting elements affecting "receiptReview.line.2.changeButton" Button
+    t =     7.94s     Synthesize event
+    t =     7.96s         Scroll element to visible
+    t =     7.96s         Find the "receiptReview.line.2.changeButton" Button
+    t =     8.16s         Computed hit point {329.66666666666674, 711} after scrolling to visible
+    t =     8.60s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.94s Waiting 5.0s for "receiptReview.line.2.priceField" TextField to exist
+    t =    10.06s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =    10.06s         Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =    10.12s Checking existence of `"receiptReview.line.2.quantityField" TextField`
+    t =    10.17s Checking existence of `"receiptReview.line.2.quantityMode" Any`
+    t =    10.44s Tap "receiptReview.line.2.priceField" TextField
+    t =    10.45s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.45s     Find the "receiptReview.line.2.priceField" TextField
+    t =    10.53s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =    10.60s     Synthesize event
+    t =    10.93s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.41s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =    13.41s     Find the "receiptReview.line.2.priceField" TextField
+    t =    13.51s Find the "receiptReview.line.2.priceField" TextField
+    t =    13.61s Type '' into "receiptReview.line.2.priceField" TextField
+    t =    13.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.62s     Find the "receiptReview.line.2.priceField" TextField
+    t =    13.71s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =    13.81s     Synthesize event
+    t =    14.09s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.10s Type '2,00' into "receiptReview.line.2.priceField" TextField
+    t =    14.10s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.11s     Find the "receiptReview.line.2.priceField" TextField
+    t =    14.22s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =    14.33s     Synthesize event
+    t =    14.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.62s Find the "receiptReview.line.2.price" Any
+    t =    15.75s Tap "Stück" Button
+    t =    15.75s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.77s     Find the "Stück" Button
+    t =    18.87s     Check for interrupting elements affecting "Stück" Button
+    t =    19.03s     Synthesize event
+    t =    19.06s         Scroll element to visible
+    t =    19.06s         Find the "Stück" Button
+    t =    20.76s         Computed hit point {229.5, 311.99999999999989} after scrolling to visible
+    t =    21.06s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.90s Tap "receiptReview.line.2.quantityField" TextField
+    t =    21.90s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.91s     Find the "receiptReview.line.2.quantityField" TextField
+    t =    22.00s     Check for interrupting elements affecting "receiptReview.line.2.quantityField" TextField
+    t =    22.11s     Synthesize event
+    t =    22.46s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.51s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.2.quantityField" TextField`
+    t =    23.51s     Find the "receiptReview.line.2.quantityField" TextField
+    t =    23.61s Find the "receiptReview.line.2.quantityField" TextField
+    t =    23.70s Type '' into "receiptReview.line.2.quantityField" TextField
+    t =    23.70s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.71s     Find the "receiptReview.line.2.quantityField" TextField
+    t =    23.85s     Check for interrupting elements affecting "receiptReview.line.2.quantityField" TextField
+    t =    23.96s     Synthesize event
+    t =    24.19s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.19s Type '4' into "receiptReview.line.2.quantityField" TextField
+    t =    24.19s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.20s     Find the "receiptReview.line.2.quantityField" TextField
+    t =    24.33s     Check for interrupting elements affecting "receiptReview.line.2.quantityField" TextField
+    t =    24.42s     Synthesize event
+    t =    24.65s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.66s Find the "receiptReview.line.2.price" StaticText
+    t =    25.97s Tear Down
+    t =    25.97s     Setting appearance mode to Light
+    t =    25.99s         Wait for com.johannesemmrich.Restock to idle
+    t =    26.00s     Open com.johannesemmrich.Restock
+    t =    26.00s         Launch com.johannesemmrich.Restock
+    t =    26.00s             Terminate com.johannesemmrich.Restock:21324
+2026-10-17 19:38:54.165 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:38:54.181 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:38:55.159 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:38:55.159 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:38:55.277 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    61.31s             Setting up automation session
+    t =    63.55s             Wait for com.johannesemmrich.Restock to idle
+    t =    65.38s     Terminate com.johannesemmrich.Restock:21439
+2026-10-17 19:39:33.818 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:39:33.833 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeOpensPriceAndQuantityEditorAndUpdatesSummary]' passed (66.551 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testClearingCustomNameFieldKeepsPreviousItemName]' started.
+    t =     0.00s Start Test at 2026-10-17 19:39:34.633
+    t =     0.06s Set Up
+    t =     0.06s Open com.johannesemmrich.Restock
+    t =     0.07s     Launch com.johannesemmrich.Restock
+2026-10-17 19:39:34.714 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:39:34.714 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:39:34.740 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     2.51s         Setting up automation session
+    t =     5.35s         Wait for com.johannesemmrich.Restock to idle
+    t =     9.04s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     9.06s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =    10.07s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    10.07s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    10.12s         Capturing element debug description
+    t =    11.10s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    11.10s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    11.26s         Capturing element debug description
+    t =    12.09s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    12.10s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testClearingCustomNameFieldKeepsPreviousItemName] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    15.11s Waiting 5.0s for "receiptReview.line.0.checkbox" Any to exist
+    t =    16.16s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.checkbox" Any`
+    t =    16.17s         Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =    19.54s Find the "receiptReview.line.0.checkbox" Any
+    t =    21.45s Waiting 5.0s for "receiptReview.line.0.option.1" Any to exist
+    t =    22.45s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.option.1" Any`
+    t =    22.45s         Checking existence of `"receiptReview.line.0.option.1" Any`
+    t =    23.43s Tap "receiptReview.line.0.option.1" Any
+    t =    23.46s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.50s     Find the "receiptReview.line.0.option.1" Any
+    t =    24.38s     Check for interrupting elements affecting "receiptReview.line.0.option.1" Button
+    t =    25.74s     Synthesize event
+    t =    26.34s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.54s Waiting 5.0s for "receiptReview.line.0.customNameField" TextField to exist
+    t =    28.59s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =    28.59s         Checking existence of `"receiptReview.line.0.customNameField" TextField`
+    t =    30.14s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =    30.15s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    30.53s Find the "receiptReview.line.0.customNameField" TextField
+    t =    30.92s Find the "receiptReview.line.0.customNameField" TextField
+    t =    31.22s Type '' into "receiptReview.line.0.customNameField" TextField
+    t =    31.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.23s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    31.90s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    32.58s     Synthesize event
+    t =    33.41s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.47s Find the "receiptReview.line.0.customNameField" TextField
+    t =    35.10s Checking `Expect predicate `BLOCKPREDICATE(0x114c42e50)` for object "receiptReview.line.0.customNameField" TextField`
+    t =    35.10s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    36.03s Find the "receiptReview.line.0.customNameField" TextField
+    t =    36.98s Find the "receiptReview.line.0.checkbox" Button
+    t =    38.57s Tear Down
+    t =    38.66s     Setting appearance mode to Light
+    t =    38.76s         Wait for com.johannesemmrich.Restock to idle
+    t =    38.78s     Open com.johannesemmrich.Restock
+    t =    38.78s         Launch com.johannesemmrich.Restock
+    t =    38.79s             Terminate com.johannesemmrich.Restock:21557
+2026-10-17 19:40:13.545 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:40:13.549 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:40:14.575 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:40:14.575 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:40:14.692 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    41.75s             Setting up automation session
+    t =    43.33s             Wait for com.johannesemmrich.Restock to idle
+    t =    46.93s     Terminate com.johannesemmrich.Restock:21706
+2026-10-17 19:40:21.644 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:40:21.647 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testClearingCustomNameFieldKeepsPreviousItemName]' passed (48.476 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard]' started.
+    t =     0.00s Start Test at 2026-10-17 19:40:23.113
+    t =     0.41s Set Up
+    t =     0.42s Open com.johannesemmrich.Restock
+    t =     0.43s     Launch com.johannesemmrich.Restock
+2026-10-17 19:40:23.635 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:40:23.635 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:40:23.644 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.00s         Setting up automation session
+    t =     2.36s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.67s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     6.68s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     7.74s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     7.75s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     8.14s Waiting 5.0s for "receiptReview.line.0.originalName" Any to exist
+    t =     9.25s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.originalName" Any`
+    t =     9.27s         Checking existence of `"receiptReview.line.0.originalName" Any`
+    t =    10.54s Press "receiptReview.line.0.originalName" Any for 1.0 seconds
+    t =    10.54s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.66s     Find the "receiptReview.line.0.originalName" Any
+    t =    12.03s     Check for interrupting elements affecting "receiptReview.line.0.originalName" StaticText
+    t =    14.07s     Synthesize event
+    t =    15.80s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.61s Waiting 5.0s for "Kopieren" Button to exist
+    t =    17.69s     Checking `Expect predicate `existsNoRetry == 1` for object "Kopieren" Button`
+    t =    17.70s         Checking existence of `"Kopieren" Button`
+    t =    18.30s Tap "Kopieren" Button
+    t =    18.30s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.34s     Find the "Kopieren" Button
+    t =    18.94s     Check for interrupting elements affecting "Kopieren" Button
+    t =    19.38s     Synthesize event
+    t =    19.90s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.87s Tear Down
+    t =    20.88s     Setting appearance mode to Light
+    t =    22.28s         Wait for com.johannesemmrich.Restock to idle
+    t =    22.30s     Open com.johannesemmrich.Restock
+    t =    22.31s         Launch com.johannesemmrich.Restock
+    t =    22.31s             Terminate com.johannesemmrich.Restock:21737
+2026-10-17 19:40:45.448 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:40:45.452 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:40:46.532 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:40:46.533 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:40:46.656 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    24.08s             Setting up automation session
+    t =    26.07s             Wait for com.johannesemmrich.Restock to idle
+    t =    28.99s     Terminate com.johannesemmrich.Restock:21832
+2026-10-17 19:40:52.237 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:40:52.238 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard]' passed (30.406 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCustomFieldIsPrefilledWithCapitalizedBonText]' started.
+    t =     0.12s Start Test at 2026-10-17 19:40:53.668
+    t =     0.70s Set Up
+    t =     0.70s Open com.johannesemmrich.Restock
+    t =     0.70s     Launch com.johannesemmrich.Restock
+2026-10-17 19:40:54.257 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:40:54.257 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:40:54.270 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.08s         Setting up automation session
+    t =     2.05s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testCustomFieldIsPrefilledWithCapitalizedBonText] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.45s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     6.46s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     7.55s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     7.58s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     8.50s Waiting 5.0s for "receiptReview.line.0.customNameField" TextField to exist
+    t =     9.54s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =     9.54s         Checking existence of `"receiptReview.line.0.customNameField" TextField`
+    t =     9.85s Find the "receiptReview.line.0.customNameField" TextField
+    t =    10.13s Tap "receiptReview.line.0.customNameField" TextField
+    t =    10.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.21s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    10.50s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    11.03s     Synthesize event
+    t =    11.73s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.37s Find the "receiptReview.line.0.checkbox" Any
+    t =    14.85s Tear Down
+    t =    14.85s     Setting appearance mode to Light
+    t =    14.87s         Wait for com.johannesemmrich.Restock to idle
+    t =    15.09s     Open com.johannesemmrich.Restock
+    t =    15.11s         Launch com.johannesemmrich.Restock
+    t =    15.11s             Terminate com.johannesemmrich.Restock:21856
+2026-10-17 19:41:08.691 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:41:08.693 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:41:09.800 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:41:09.801 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:41:09.891 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    16.80s             Setting up automation session
+    t =    18.07s             Wait for com.johannesemmrich.Restock to idle
+    t =    19.86s     Terminate com.johannesemmrich.Restock:21924
+2026-10-17 19:41:13.467 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:41:13.469 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCustomFieldIsPrefilledWithCapitalizedBonText]' passed (20.878 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCustomNameOptionOpensFocusedTextField]' started.
+    t =     0.00s Start Test at 2026-10-17 19:41:14.520
+    t =     0.68s Set Up
+    t =     0.69s Open com.johannesemmrich.Restock
+    t =     0.78s     Launch com.johannesemmrich.Restock
+2026-10-17 19:41:15.379 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:41:15.379 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:41:15.419 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     2.76s         Setting up automation session
+    t =     3.82s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testCustomNameOptionOpensFocusedTextField] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     7.08s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     7.08s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     8.11s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     8.12s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     8.65s Waiting 5.0s for "receiptReview.line.0.option.1" Any to exist
+    t =     9.65s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.option.1" Any`
+    t =     9.65s         Checking existence of `"receiptReview.line.0.option.1" Any`
+    t =    10.55s Tap "receiptReview.line.0.option.1" Any
+    t =    10.55s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.56s     Find the "receiptReview.line.0.option.1" Any
+    t =    11.51s     Check for interrupting elements affecting "receiptReview.line.0.option.1" Button
+    t =    11.87s     Synthesize event
+    t =    12.62s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.97s Waiting 5.0s for "receiptReview.line.0.customNameField" TextField to exist
+    t =    14.13s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =    14.13s         Checking existence of `"receiptReview.line.0.customNameField" TextField`
+    t =    15.74s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =    15.74s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    16.37s Tear Down
+    t =    16.37s     Setting appearance mode to Light
+    t =    16.37s         Wait for com.johannesemmrich.Restock to idle
+    t =    16.37s     Open com.johannesemmrich.Restock
+    t =    16.38s         Launch com.johannesemmrich.Restock
+    t =    16.38s             Terminate com.johannesemmrich.Restock:21950
+2026-10-17 19:41:30.908 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:41:30.909 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:41:31.962 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:41:31.962 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:41:31.985 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    17.89s             Setting up automation session
+    t =    19.31s             Wait for com.johannesemmrich.Restock to idle
+    t =    20.72s     Terminate com.johannesemmrich.Restock:22008
+2026-10-17 19:41:35.316 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:41:35.317 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCustomNameOptionOpensFocusedTextField]' passed (21.840 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' started.
+    t =     0.01s Start Test at 2026-10-17 19:41:36.365
+    t =     0.07s Set Up
+    t =     0.07s Open com.johannesemmrich.Restock
+    t =     0.07s     Launch com.johannesemmrich.Restock
+2026-10-17 19:41:36.439 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:41:36.439 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:41:36.456 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     0.54s         Setting up automation session
+    t =     1.80s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     4.87s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     4.89s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     5.93s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     5.93s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     6.90s Waiting 5.0s for "receiptReview.line.0.originalName" Any to exist
+    t =     7.99s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.originalName" Any`
+    t =     7.99s         Checking existence of `"receiptReview.line.0.originalName" Any`
+    t =     8.90s Find the "receiptReview.line.0.originalName" Any
+    t =    10.79s Find the "receiptReview.line.0.originalName" StaticText
+    t =    12.99s Waiting 5.0s for "receiptReview.line.1.originalName" Any to exist
+    t =    14.01s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.1.originalName" Any`
+    t =    14.02s         Checking existence of `"receiptReview.line.1.originalName" Any`
+    t =    14.36s Find the "receiptReview.line.1.originalName" Any
+    t =    14.98s Find the "receiptReview.line.1.originalName" StaticText
+    t =    17.21s Waiting 5.0s for "receiptReview.line.2.originalName" Any to exist
+    t =    18.28s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.originalName" Any`
+    t =    18.28s         Checking existence of `"receiptReview.line.2.originalName" Any`
+    t =    19.23s Find the "receiptReview.line.2.originalName" Any
+    t =    19.95s Find the "receiptReview.line.2.originalName" StaticText
+    t =    20.56s Waiting 5.0s for "receiptReview.line.3.originalName" Any to exist
+    t =    21.61s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.3.originalName" Any`
+    t =    21.61s         Checking existence of `"receiptReview.line.3.originalName" Any`
+    t =    22.24s Find the "receiptReview.line.3.originalName" Any
+    t =    23.14s Find the "receiptReview.line.3.originalName" StaticText
+    t =    23.94s Tear Down
+    t =    23.94s     Setting appearance mode to Light
+    t =    25.43s         Wait for com.johannesemmrich.Restock to idle
+    t =    25.47s     Open com.johannesemmrich.Restock
+    t =    25.47s         Launch com.johannesemmrich.Restock
+    t =    25.47s             Terminate com.johannesemmrich.Restock:22023
+2026-10-17 19:42:02.154 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:42:02.166 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:42:02.976 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:42:02.976 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:42:03.032 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    27.62s             Setting up automation session
+    t =    28.97s             Wait for com.johannesemmrich.Restock to idle
+    t =    31.32s     Terminate com.johannesemmrich.Restock:22153
+2026-10-17 19:42:07.689 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:42:07.689 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' passed (32.571 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalTextAndAiMarkAreReadableInDarkMode]' started.
+    t =     0.00s Start Test at 2026-10-17 19:42:08.939
+    t =     0.45s Set Up
+    t =     0.47s Setting appearance mode to Dark
+    t =     0.81s     Wait for com.apple.springboard to idle
+    t =     0.83s Open com.johannesemmrich.Restock
+    t =     0.83s     Launch com.johannesemmrich.Restock
+2026-10-17 19:42:09.776 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:42:09.776 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:42:09.872 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.58s         Setting up automation session
+    t =     2.88s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testOriginalTextAndAiMarkAreReadableInDarkMode] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.69s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     6.70s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     7.77s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     7.78s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     8.44s Waiting 5.0s for "receiptReview.line.1.originalName" Any to exist
+    t =     9.51s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.1.originalName" Any`
+    t =     9.51s         Checking existence of `"receiptReview.line.1.originalName" Any`
+    t =    10.25s Find the "receiptReview.line.1.originalName" Any
+    t =    10.48s Checking existence of `"receiptReview.line.0.aiMark" Any`
+    t =    11.21s Find the "receiptReview.line.0.aiMark" Any
+    t =    12.75s Tear Down
+    t =    12.75s     Setting appearance mode to Light
+    t =    13.05s         Wait for com.johannesemmrich.Restock to idle
+    t =    13.96s     Open com.johannesemmrich.Restock
+    t =    13.97s         Launch com.johannesemmrich.Restock
+    t =    13.97s             Terminate com.johannesemmrich.Restock:22165
+2026-10-17 19:42:22.942 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:42:22.943 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:42:23.996 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:42:23.996 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:42:24.015 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    15.56s             Setting up automation session
+    t =    16.94s             Wait for com.johannesemmrich.Restock to idle
+    t =    18.61s     Terminate com.johannesemmrich.Restock:22216
+2026-10-17 19:42:27.573 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:42:27.578 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalTextAndAiMarkAreReadableInDarkMode]' passed (19.776 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' started.
+    t =     0.00s Start Test at 2026-10-17 19:42:28.719
+    t =     0.68s Set Up
+    t =     0.81s Open com.johannesemmrich.Restock
+    t =     0.81s     Launch com.johannesemmrich.Restock
+2026-10-17 19:42:29.531 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:42:29.531 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:42:29.538 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.74s         Setting up automation session
+    t =     2.74s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     5.93s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     5.96s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     7.04s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     7.04s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     7.45s Waiting 5.0s for "receiptReview.line.0.card" Any to exist
+    t =     8.51s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.card" Any`
+    t =     8.52s         Checking existence of `"receiptReview.line.0.card" Any`
+    t =     9.03s Checking existence of `"receiptReview.line.0.price" Any`
+    t =     9.75s Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =    10.41s Waiting 5.0s for "receiptReview.line.1.card" Any to exist
+    t =    11.47s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.1.card" Any`
+    t =    11.47s         Checking existence of `"receiptReview.line.1.card" Any`
+    t =    12.03s Checking existence of `"receiptReview.line.1.price" Any`
+    t =    13.93s Checking existence of `"receiptReview.line.1.checkbox" Any`
+    t =    14.82s Waiting 5.0s for "receiptReview.line.2.card" Any to exist
+    t =    15.87s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.card" Any`
+    t =    15.87s         Checking existence of `"receiptReview.line.2.card" Any`
+    t =    16.40s Checking existence of `"receiptReview.line.2.price" Any`
+    t =    17.26s Checking existence of `"receiptReview.line.2.checkbox" Any`
+    t =    18.00s Waiting 5.0s for "receiptReview.line.3.card" Any to exist
+    t =    19.04s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.3.card" Any`
+    t =    19.04s         Checking existence of `"receiptReview.line.3.card" Any`
+    t =    19.76s Checking existence of `"receiptReview.line.3.price" Any`
+    t =    20.17s Checking existence of `"receiptReview.line.3.checkbox" Any`
+    t =    21.73s Checking existence of `"receiptReview.line.0.aiMark" Any`
+    t =    23.31s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =    24.35s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =    24.35s         Checking existence of `"receiptReview.saveButton" Button`
+    t =    24.79s Find the "receiptReview.saveButton" Button
+    t =    25.13s Tear Down
+    t =    25.13s     Setting appearance mode to Light
+    t =    25.14s         Wait for com.johannesemmrich.Restock to idle
+    t =    25.14s     Open com.johannesemmrich.Restock
+    t =    25.14s         Launch com.johannesemmrich.Restock
+    t =    25.14s             Terminate com.johannesemmrich.Restock:22228
+2026-10-17 19:42:53.985 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:42:54.002 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:42:55.103 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:42:55.103 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:42:55.137 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    28.23s             Setting up automation session
+    t =    30.25s             Wait for com.johannesemmrich.Restock to idle
+    t =    32.25s     Terminate com.johannesemmrich.Restock:22352
+2026-10-17 19:43:01.023 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:43:01.024 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' passed (33.511 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptDoesNotProduceOneCentItemPrice]' started.
+    t =     0.00s Start Test at 2026-10-17 19:43:02.235
+    t =     0.78s Set Up
+    t =     0.78s Open com.johannesemmrich.Restock
+    t =     0.79s     Launch com.johannesemmrich.Restock
+2026-10-17 19:43:03.031 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:43:03.031 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:43:03.042 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.29s         Setting up automation session
+    t =     2.54s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testSavedReceiptDoesNotProduceOneCentItemPrice] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     7.26s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     7.26s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     8.27s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     8.27s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     8.57s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =     9.61s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =     9.61s         Checking existence of `"receiptReview.saveButton" Button`
+    t =     9.77s Tap "receiptReview.saveButton" Button
+    t =     9.77s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.78s     Find the "receiptReview.saveButton" Button
+    t =    10.22s     Check for interrupting elements affecting "receiptReview.saveButton" Button
+    t =    10.68s     Synthesize event
+    t =    11.42s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.88s Waiting 10.0s for Button (First Match) to exist
+    t =    12.95s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    12.95s         Checking existence of `Button (First Match)`
+    t =    14.15s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    14.15s     Find the Button (First Match)
+    t =    15.07s Tap "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =    15.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.09s     Find the "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =    15.42s     Check for interrupting elements affecting "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =    15.68s     Synthesize event
+    t =    16.45s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.57s Waiting 10.0s for "Hackfleisch" StaticText to exist
+    t =    18.57s     Checking `Expect predicate `existsNoRetry == 1` for object "Hackfleisch" StaticText`
+    t =    18.57s         Checking existence of `"Hackfleisch" StaticText`
+    t =    19.00s Waiting 3.0s for StaticText (First Match) to exist
+    t =    20.02s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    20.02s         Checking existence of `StaticText (First Match)`
+    t =    21.65s         Capturing element debug description
+    t =    22.01s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    22.06s         Checking existence of `StaticText (First Match)`
+    t =    22.31s         Capturing element debug description
+    t =    22.33s     Checking existence of `StaticText (First Match)`
+    t =    23.24s Collecting debug information to assist test failure triage
+    t =    23.26s     Requesting snapshot of accessibility hierarchy for app with pid 22369
+    t =    23.98s Tear Down
+    t =    23.98s     Setting appearance mode to Light
+    t =    23.98s         Wait for com.johannesemmrich.Restock to idle
+    t =    23.98s     Open com.johannesemmrich.Restock
+    t =    23.98s         Launch com.johannesemmrich.Restock
+    t =    23.98s             Terminate com.johannesemmrich.Restock:22369
+2026-10-17 19:43:26.239 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:43:26.241 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:43:27.335 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:43:27.335 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:43:27.368 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    25.65s             Setting up automation session
+    t =    26.67s             Wait for com.johannesemmrich.Restock to idle
+    t =    28.50s     Terminate com.johannesemmrich.Restock:22450
+2026-10-17 19:43:30.754 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:43:30.755 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptDoesNotProduceOneCentItemPrice]' passed (29.658 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptShowsReceiptAsPriceSource]' started.
+    t =     0.00s Start Test at 2026-10-17 19:43:31.892
+    t =     0.34s Set Up
+    t =     0.37s Open com.johannesemmrich.Restock
+    t =     0.38s     Launch com.johannesemmrich.Restock
+2026-10-17 19:43:32.268 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:43:32.268 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:43:32.286 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     0.86s         Setting up automation session
+    t =     1.83s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testSavedReceiptShowsReceiptAsPriceSource] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     4.76s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     4.77s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     5.82s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     5.83s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     6.15s Waiting 20.0s for "receiptReview.saveButton" Button to exist
+    t =     7.18s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =     7.18s         Checking existence of `"receiptReview.saveButton" Button`
+    t =     7.61s Tap "receiptReview.saveButton" Button
+    t =     7.61s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.64s     Find the "receiptReview.saveButton" Button
+    t =     7.90s     Check for interrupting elements affecting "receiptReview.saveButton" Button
+    t =     8.45s     Synthesize event
+    t =     8.97s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.34s Waiting 20.0s for Button (First Match) to exist
+    t =    10.40s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    10.52s         Checking existence of `Button (First Match)`
+    t =    10.65s Checking existence of `Button (First Match)`
+    t =    10.86s Find the Button (First Match)
+    t =    11.56s Find the "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =    12.10s Tap "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =    12.10s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.12s     Find the "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =    12.40s     Check for interrupting elements affecting "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =    12.47s     Synthesize event
+    t =    13.03s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.08s Waiting 20.0s for Cell (First Match) to exist
+    t =    16.15s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    16.15s         Checking existence of `Cell (First Match)`
+    t =    16.71s Checking existence of `Cell (First Match)`
+    t =    17.28s Get all elements bound by index for: Descendants matching type StaticText
+    t =    17.77s Find the StaticText (Element at index 0)
+    t =    18.08s Find the StaticText (Element at index 1)
+    t =    18.83s Find the StaticText (Element at index 2)
+    t =    19.49s Find the StaticText (Element at index 3)
+    t =    20.05s Find the StaticText (Element at index 4)
+    t =    20.77s Find the StaticText (Element at index 5)
+    t =    21.57s Tear Down
+    t =    21.57s     Setting appearance mode to Light
+    t =    21.72s         Wait for com.johannesemmrich.Restock to idle
+    t =    21.83s     Open com.johannesemmrich.Restock
+    t =    21.84s         Launch com.johannesemmrich.Restock
+    t =    21.84s             Terminate com.johannesemmrich.Restock:22465
+2026-10-17 19:43:53.772 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:43:53.778 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:43:54.891 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:43:54.892 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:43:55.110 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    25.16s             Setting up automation session
+    t =    26.76s             Wait for com.johannesemmrich.Restock to idle
+    t =    29.13s     Terminate com.johannesemmrich.Restock:22568
+2026-10-17 19:44:01.087 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:44:01.089 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptShowsReceiptAsPriceSource]' passed (30.393 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedWeightLineShowsGramsInExpenses]' started.
+    t =     0.00s Start Test at 2026-10-17 19:44:02.288
+    t =     0.78s Set Up
+    t =     0.78s Open com.johannesemmrich.Restock
+    t =     0.78s     Launch com.johannesemmrich.Restock
+2026-10-17 19:44:03.072 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:44:03.072 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:44:03.083 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.08s         Setting up automation session
+    t =     2.49s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testSavedWeightLineShowsGramsInExpenses] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     5.51s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     5.52s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     6.56s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     6.56s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     7.18s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =     8.24s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =     8.24s         Checking existence of `"receiptReview.saveButton" Button`
+    t =     8.49s Tap "receiptReview.saveButton" Button
+    t =     8.50s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.50s     Find the "receiptReview.saveButton" Button
+    t =     8.75s     Check for interrupting elements affecting "receiptReview.saveButton" Button
+    t =     9.15s     Synthesize event
+    t =     9.99s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.34s Waiting 10.0s for Button (First Match) to exist
+    t =    11.36s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    11.36s         Checking existence of `Button (First Match)`
+    t =    11.75s Waiting 10.0s for "chart.bar" Button to exist
+    t =    12.77s     Checking `Expect predicate `existsNoRetry == 1` for object "chart.bar" Button`
+    t =    12.78s         Checking existence of `"chart.bar" Button`
+    t =    13.06s Tap "chart.bar" Button
+    t =    13.06s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.10s     Find the "chart.bar" Button
+    t =    13.90s     Check for interrupting elements affecting "chart.bar" Button
+    t =    14.16s     Synthesize event
+    t =    14.89s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.24s Waiting 10.0s for Button (First Match) to exist
+    t =    16.35s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    16.39s         Checking existence of `Button (First Match)`
+    t =    17.10s Tap Button (First Match)
+    t =    17.10s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.14s     Find the Button (First Match)
+    t =    17.69s     Check for interrupting elements affecting "Lidl, 17. Okt., 1,76 €" Button
+    t =    17.91s     Synthesize event
+    t =    18.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.91s Waiting 10.0s for "BANANE CHIQUITA" StaticText to exist
+    t =    20.00s     Checking `Expect predicate `existsNoRetry == 1` for object "BANANE CHIQUITA" StaticText`
+    t =    20.00s         Checking existence of `"BANANE CHIQUITA" StaticText`
+    t =    20.56s Waiting 5.0s for "706 g" StaticText to exist
+    t =    21.60s     Checking `Expect predicate `existsNoRetry == 1` for object "706 g" StaticText`
+    t =    21.61s         Checking existence of `"706 g" StaticText`
+    t =    21.85s Tear Down
+    t =    21.86s     Setting appearance mode to Light
+    t =    22.11s         Wait for com.johannesemmrich.Restock to idle
+    t =    22.29s     Open com.johannesemmrich.Restock
+    t =    22.29s         Launch com.johannesemmrich.Restock
+    t =    22.29s             Terminate com.johannesemmrich.Restock:22594
+2026-10-17 19:44:24.675 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:44:24.676 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:44:25.670 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:44:25.670 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:44:25.907 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    24.62s             Setting up automation session
+    t =    25.67s             Wait for com.johannesemmrich.Restock to idle
+    t =    27.25s     Terminate com.johannesemmrich.Restock:22659
+2026-10-17 19:44:29.562 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:44:29.563 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedWeightLineShowsGramsInExpenses]' passed (28.450 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSaveIsNotTriggerableWithoutAnySelectedPosition]' started.
+    t =     0.00s Start Test at 2026-10-17 19:44:30.738
+    t =     0.20s Set Up
+    t =     0.20s Open com.johannesemmrich.Restock
+    t =     0.21s     Launch com.johannesemmrich.Restock
+2026-10-17 19:44:30.944 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:44:30.944 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:44:30.949 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     0.74s         Setting up automation session
+    t =     1.80s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testSaveIsNotTriggerableWithoutAnySelectedPosition] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     5.19s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     5.20s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     6.25s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     6.25s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     6.72s Waiting 5.0s for "receiptReview.sectionHeader" Any to exist
+    t =     7.82s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.sectionHeader" Any`
+    t =     7.82s         Checking existence of `"receiptReview.sectionHeader" Any`
+    t =     8.75s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =     9.79s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =     9.79s         Checking existence of `"receiptReview.saveButton" Button`
+    t =    10.02s Find the "receiptReview.saveButton" Button
+    t =    10.26s Waiting 5.0s for "receiptReview.line.0.checkbox" Any to exist
+    t =    11.32s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.checkbox" Any`
+    t =    11.32s         Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =    12.91s Find the "receiptReview.line.0.checkbox" Any
+    t =    13.65s Find the "receiptReview.line.0.checkbox" Button
+    t =    15.33s Tap "receiptReview.line.0.checkbox" Button
+    t =    15.33s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.35s     Find the "receiptReview.line.0.checkbox" Button
+    t =    17.57s     Check for interrupting elements affecting "receiptReview.line.0.checkbox" Button
+    t =    18.36s     Synthesize event
+    t =    19.05s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.06s Waiting 5.0s for "receiptReview.line.1.checkbox" Any to exist
+    t =    20.10s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.1.checkbox" Any`
+    t =    20.10s         Checking existence of `"receiptReview.line.1.checkbox" Any`
+    t =    20.69s Find the "receiptReview.line.1.checkbox" Any
+    t =    22.41s Find the "receiptReview.line.1.checkbox" Button
+    t =    23.58s Tap "receiptReview.line.1.checkbox" Button
+    t =    23.59s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.60s     Find the "receiptReview.line.1.checkbox" Button
+    t =    24.60s     Check for interrupting elements affecting "receiptReview.line.1.checkbox" Button
+    t =    25.78s     Synthesize event
+    t =    26.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.39s Waiting 5.0s for "receiptReview.line.2.checkbox" Any to exist
+    t =    27.44s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.checkbox" Any`
+    t =    27.44s         Checking existence of `"receiptReview.line.2.checkbox" Any`
+    t =    31.40s     Checking existence of `"receiptReview.line.2.checkbox" Any`
+    t =    33.26s Find the "receiptReview.line.2.checkbox" Any
+    t =    34.53s Find the "receiptReview.line.2.checkbox" Button
+    t =    36.67s Tap "receiptReview.line.2.checkbox" Button
+    t =    36.67s     Wait for com.johannesemmrich.Restock to idle
+    t =    36.68s     Find the "receiptReview.line.2.checkbox" Button
+    t =    39.33s     Check for interrupting elements affecting "receiptReview.line.2.checkbox" Button
+    t =    40.75s     Synthesize event
+    t =    41.60s     Wait for com.johannesemmrich.Restock to idle
+    t =    41.82s Checking existence of `"receiptReview.sectionHeader" Any`
+    t =    43.45s Checking existence of `"receiptReview.sectionHeader" Any`
+    t =    44.39s Find the "receiptReview.sectionHeader" Any
+    t =    45.07s Find the "receiptReview.sectionHeader" StaticText
+    t =    47.12s Find the "receiptReview.saveButton" Button
+    t =    47.36s Waiting 5.0s for "receiptReview.line.3.checkbox" Any to exist
+    t =    48.39s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.3.checkbox" Any`
+    t =    48.39s         Checking existence of `"receiptReview.line.3.checkbox" Any`
+    t =    50.33s Find the "receiptReview.line.3.checkbox" Any
+    t =    51.70s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =    51.71s     Wait for com.johannesemmrich.Restock to idle
+    t =    51.78s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    52.09s     Check for interrupting elements affecting "Restock" Application
+    t =    52.48s     Synthesize event
+    t =    53.41s     Wait for com.johannesemmrich.Restock to idle
+    t =    53.91s Find the "receiptReview.line.3.checkbox" Button
+    t =    56.10s Find the "receiptReview.line.3.checkbox" Button
+    t =    59.21s Tap "receiptReview.line.3.checkbox" Button
+    t =    59.21s     Wait for com.johannesemmrich.Restock to idle
+    t =    59.30s     Find the "receiptReview.line.3.checkbox" Button
+    t =    61.80s     Check for interrupting elements affecting "receiptReview.line.3.checkbox" Button
+    t =    62.42s     Synthesize event
+    t =    63.01s     Wait for com.johannesemmrich.Restock to idle
+    t =    63.13s Checking existence of `"receiptReview.sectionHeader" StaticText`
+    t =    64.48s Swipe down Target Application 'com.johannesemmrich.Restock'
+    t =    64.48s     Wait for com.johannesemmrich.Restock to idle
+    t =    64.49s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    64.61s     Check for interrupting elements affecting "Restock" Application
+    t =    64.94s     Synthesize event
+    t =    65.75s     Wait for com.johannesemmrich.Restock to idle
+    t =    66.43s Checking existence of `"receiptReview.sectionHeader" StaticText`
+    t =    68.17s Checking existence of `"receiptReview.sectionHeader" StaticText`
+    t =    69.78s Find the "receiptReview.sectionHeader" StaticText
+    t =    70.75s Find the "receiptReview.sectionHeader" StaticText
+    t =    72.50s Find the "receiptReview.saveButton" Button
+    t =    72.56s Tap "receiptReview.saveButton" Button
+    t =    72.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    72.57s     Find the "receiptReview.saveButton" Button
+    t =    72.98s     Check for interrupting elements affecting "receiptReview.saveButton" Button
+    t =    73.98s     Synthesize event
+    t =    74.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    74.74s Waiting 3.0s for "Bon scannen — Lidl" NavigationBar to not exist
+    t =    75.80s     Checking `Expect predicate `existsNoRetry == 0` for object "Bon scannen — Lidl" NavigationBar`
+    t =    75.80s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    75.91s         Capturing element debug description
+    t =    76.79s     Checking `Expect predicate `existsNoRetry == 0` for object "Bon scannen — Lidl" NavigationBar`
+    t =    76.79s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    77.68s         Capturing element debug description
+    t =    77.75s     Checking `Expect predicate `existsNoRetry == 0` for object "Bon scannen — Lidl" NavigationBar`
+    t =    77.75s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    78.06s     Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    78.45s Collecting debug information to assist test failure triage
+    t =    78.49s     Requesting snapshot of accessibility hierarchy for app with pid 22674
+    t =    78.86s Find the "receiptReview.sectionHeader" StaticText
+    t =    81.32s Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =    82.86s Tap "receiptReview.line.0.checkbox" Any[0.50, 0.50]
+    t =    82.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    82.87s     Find the "receiptReview.line.0.checkbox" Any
+    t =    83.45s     Check for interrupting elements affecting "receiptReview.line.0.checkbox" Button
+    t =    83.96s     Synthesize event
+    t =    84.10s         Find the "receiptReview.line.0.checkbox" Button
+    t =    86.21s         Find the "receiptReview.line.0.checkbox" Button
+    t =    90.81s         Find the "receiptReview.line.0.checkbox" Button
+    t =    95.54s     Wait for com.johannesemmrich.Restock to idle
+    t =    95.75s Find the "receiptReview.sectionHeader" StaticText
+    t =    97.72s Find the "receiptReview.saveButton" Button
+    t =    98.44s Tear Down
+    t =    98.44s     Setting appearance mode to Light
+    t =    98.55s         Wait for com.johannesemmrich.Restock to idle
+    t =    98.65s     Open com.johannesemmrich.Restock
+    t =    98.65s         Launch com.johannesemmrich.Restock
+    t =    98.65s             Terminate com.johannesemmrich.Restock:22674
+2026-10-17 19:46:10.117 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:46:10.172 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:46:10.683 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:46:10.684 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:46:10.999 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =   109.23s             Setting up automation session
+    t =   112.04s             Wait for com.johannesemmrich.Restock to idle
+    t =   115.53s     Terminate com.johannesemmrich.Restock:23085
+2026-10-17 19:46:26.304 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:46:26.304 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSaveIsNotTriggerableWithoutAnySelectedPosition]' passed (116.941 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' started.
+    t =     0.00s Start Test at 2026-10-17 19:46:27.681
+    t =     0.46s Set Up
+    t =     0.47s Open com.johannesemmrich.Restock
+    t =     0.47s     Launch com.johannesemmrich.Restock
+2026-10-17 19:46:28.157 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:46:28.157 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:46:28.172 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.43s         Wait for accessibility to load
+    t =     2.08s         Setting up automation session
+    t =     2.58s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.06s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     6.07s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     7.18s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     7.18s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     7.70s Waiting 5.0s for "receiptReview.saveButton" Button to exist
+    t =     8.75s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =     8.75s         Checking existence of `"receiptReview.saveButton" Button`
+    t =     8.93s Tap "receiptReview.saveButton" Button
+    t =     8.94s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.95s     Find the "receiptReview.saveButton" Button
+    t =     9.26s     Check for interrupting elements affecting "receiptReview.saveButton" Button
+    t =     9.48s     Synthesize event
+    t =    10.67s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.09s Waiting 10.0s for Button (First Match) to exist
+    t =    12.10s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    12.10s         Checking existence of `Button (First Match)`
+    t =    13.35s Checking `Expect predicate `isHittable == 1` for object Button (First Match)`
+    t =    13.35s     Find the Button (First Match)
+    t =    14.09s Tap "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =    14.09s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.14s     Find the "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =    14.27s     Check for interrupting elements affecting "Lidl, · 6, 1x pro Woche, Brötchen, Hackfleisch…" Button
+    t =    14.45s     Synthesize event
+    t =    14.92s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.72s Waiting 10.0s for "Milch" StaticText to exist
+    t =    18.79s     Checking `Expect predicate `existsNoRetry == 1` for object "Milch" StaticText`
+    t =    18.81s         Checking existence of `"Milch" StaticText`
+    t =    19.30s Waiting 5.0s for StaticText (First Match) to exist
+    t =    20.30s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    20.30s         Checking existence of `StaticText (First Match)`
+    t =    22.05s Tear Down
+    t =    22.05s     Setting appearance mode to Light
+    t =    22.12s         Wait for com.johannesemmrich.Restock to idle
+    t =    22.17s     Open com.johannesemmrich.Restock
+    t =    22.18s         Launch com.johannesemmrich.Restock
+    t =    22.18s             Terminate com.johannesemmrich.Restock:23123
+2026-10-17 19:46:49.913 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:46:49.915 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:46:50.915 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:46:50.915 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:46:50.939 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    23.81s             Setting up automation session
+    t =    25.10s             Wait for com.johannesemmrich.Restock to idle
+    t =    26.71s     Terminate com.johannesemmrich.Restock:23246
+2026-10-17 19:46:54.521 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:46:54.522 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' passed (28.008 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSectionHeaderShowsPositionsSelectedAndSum]' started.
+    t =     0.00s Start Test at 2026-10-17 19:46:55.695
+    t =     0.26s Set Up
+    t =     0.26s Open com.johannesemmrich.Restock
+    t =     0.26s     Launch com.johannesemmrich.Restock
+2026-10-17 19:46:55.957 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:46:55.957 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:46:55.966 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     0.71s         Setting up automation session
+    t =     2.52s         Wait for com.johannesemmrich.Restock to idle
+    t =     5.19s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     5.20s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     6.57s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     6.58s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     9.97s Waiting 5.0s for "receiptReview.sectionHeader" Any to exist
+    t =    11.07s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.sectionHeader" Any`
+    t =    11.17s         Checking existence of `"receiptReview.sectionHeader" Any`
+    t =    15.57s         Capturing element debug description
+    t =    15.59s     Checking existence of `"receiptReview.sectionHeader" Any`
+    t =    23.94s Find the "receiptReview.sectionHeader" Any
+    t =    24.10s Tear Down
+    t =    24.11s     Setting appearance mode to Light
+    t =    24.18s         Wait for com.johannesemmrich.Restock to idle
+    t =    24.21s     Open com.johannesemmrich.Restock
+    t =    24.22s         Launch com.johannesemmrich.Restock
+    t =    24.22s             Terminate com.johannesemmrich.Restock:23263
+2026-10-17 19:47:19.931 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:47:19.932 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:47:21.068 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:47:21.070 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:47:21.191 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    26.18s             Setting up automation session
+    t =    27.83s             Wait for com.johannesemmrich.Restock to idle
+    t =    30.03s     Terminate com.johannesemmrich.Restock:23330
+2026-10-17 19:47:25.814 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:47:25.818 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSectionHeaderShowsPositionsSelectedAndSum]' passed (31.213 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testTappingListMatchSelectsThatOption]' started.
+    t =     0.00s Start Test at 2026-10-17 19:47:26.914
+    t =     0.09s Set Up
+    t =     0.09s Open com.johannesemmrich.Restock
+    t =     0.09s     Launch com.johannesemmrich.Restock
+2026-10-17 19:47:27.011 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:47:27.011 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:47:27.029 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     0.56s         Setting up automation session
+    t =     1.35s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testTappingListMatchSelectsThatOption] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     4.48s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     4.49s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     5.56s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     5.56s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     6.13s Waiting 5.0s for "receiptReview.line.2.option.2" Any to exist
+    t =     7.18s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.option.2" Any`
+    t =     7.18s         Checking existence of `"receiptReview.line.2.option.2" Any`
+    t =     8.33s Find the "receiptReview.line.2.option.2" Any
+    t =     8.58s Tap "receiptReview.line.2.option.2" Button
+    t =     8.58s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.62s     Find the "receiptReview.line.2.option.2" Button
+    t =     8.89s     Check for interrupting elements affecting "receiptReview.line.2.option.2" Button
+    t =     9.02s     Synthesize event
+    t =     9.63s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.64s Find the "receiptReview.line.2.option.2" Button
+    t =    11.09s Find the "receiptReview.line.2.option.0" Any
+    t =    12.09s Tear Down
+    t =    12.09s     Setting appearance mode to Light
+    t =    12.14s         Wait for com.johannesemmrich.Restock to idle
+    t =    12.21s     Open com.johannesemmrich.Restock
+    t =    12.22s         Launch com.johannesemmrich.Restock
+    t =    12.22s             Terminate com.johannesemmrich.Restock:23350
+2026-10-17 19:47:39.363 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:47:39.364 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:47:40.466 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:47:40.487 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:47:40.597 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    17.70s             Setting up automation session
+    t =    18.62s             Wait for com.johannesemmrich.Restock to idle
+    t =    19.70s     Terminate com.johannesemmrich.Restock:23421
+2026-10-17 19:47:46.709 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:47:46.710 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testTappingListMatchSelectsThatOption]' passed (20.982 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testTypingCustomNameIsAppliedWithEveryKeystroke]' started.
+    t =     0.05s Start Test at 2026-10-17 19:47:47.946
+    t =     0.93s Set Up
+    t =     0.94s Open com.johannesemmrich.Restock
+    t =     0.94s     Launch com.johannesemmrich.Restock
+2026-10-17 19:47:48.841 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:47:48.841 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:47:48.857 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.72s         Setting up automation session
+    t =     2.81s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testTypingCustomNameIsAppliedWithEveryKeystroke] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     7.23s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     7.23s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     8.26s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     8.26s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     8.71s Waiting 5.0s for "receiptReview.line.0.checkbox" Any to exist
+    t =     9.76s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.checkbox" Any`
+    t =     9.78s         Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =    10.30s Find the "receiptReview.line.0.checkbox" Any
+    t =    11.13s Waiting 5.0s for "receiptReview.line.0.option.1" Any to exist
+    t =    12.17s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.option.1" Any`
+    t =    12.32s         Checking existence of `"receiptReview.line.0.option.1" Any`
+    t =    13.61s Tap "receiptReview.line.0.option.1" Any
+    t =    13.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.62s     Find the "receiptReview.line.0.option.1" Any
+    t =    15.13s     Check for interrupting elements affecting "receiptReview.line.0.option.1" Button
+    t =    15.65s     Synthesize event
+    t =    16.04s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.60s Waiting 5.0s for "receiptReview.line.0.customNameField" TextField to exist
+    t =    18.64s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =    18.65s         Checking existence of `"receiptReview.line.0.customNameField" TextField`
+    t =    20.48s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =    20.48s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    21.56s Find the "receiptReview.line.0.customNameField" TextField
+    t =    23.01s Type '' into "receiptReview.line.0.customNameField" TextField
+    t =    23.01s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.07s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    23.53s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    24.39s     Synthesize event
+    t =    25.35s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.38s Type 'Ziegen' into "receiptReview.line.0.customNameField" TextField
+    t =    25.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.42s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    25.74s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    25.94s     Synthesize event
+    t =    26.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.57s Checking `Expect predicate `label CONTAINS "Ziegen"` for object "receiptReview.line.0.checkbox" Button`
+    t =    27.57s     Find the "receiptReview.line.0.checkbox" Button
+    t =    28.79s Find the "receiptReview.line.0.checkbox" Button
+    t =    30.10s Type 'milch' into "receiptReview.line.0.customNameField" TextField
+    t =    30.11s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.14s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    30.58s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    31.17s     Synthesize event
+    t =    31.67s     Wait for com.johannesemmrich.Restock to idle
+    t =    32.80s Checking `Expect predicate `label CONTAINS "Ziegenmilch"` for object "receiptReview.line.0.checkbox" Button`
+    t =    32.81s     Find the "receiptReview.line.0.checkbox" Button
+    t =    35.72s Checking existence of `Keyboard (First Match)`
+    t =    35.91s Tear Down
+    t =    35.91s     Setting appearance mode to Light
+    t =    35.99s         Wait for com.johannesemmrich.Restock to idle
+    t =    36.08s     Open com.johannesemmrich.Restock
+    t =    36.08s         Launch com.johannesemmrich.Restock
+    t =    36.08s             Terminate com.johannesemmrich.Restock:23474
+2026-10-17 19:48:24.504 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:48:24.515 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:48:25.453 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:48:25.454 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:48:25.586 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    43.58s             Setting up automation session
+    t =    45.64s             Wait for com.johannesemmrich.Restock to idle
+    t =    49.72s     Terminate com.johannesemmrich.Restock:23621
+2026-10-17 19:48:37.788 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:48:37.789 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testTypingCustomNameIsAppliedWithEveryKeystroke]' passed (51.276 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardDimsItVisibly]' started.
+    t =     0.00s Start Test at 2026-10-17 19:48:39.179
+    t =     0.78s Set Up
+    t =     0.78s Setting appearance mode to Light
+    t =     0.78s     Wait for com.apple.springboard to idle
+    t =     0.87s Open com.johannesemmrich.Restock
+    t =     0.87s     Launch com.johannesemmrich.Restock
+2026-10-17 19:48:40.056 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:48:40.056 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:48:40.085 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.33s         Setting up automation session
+    t =     2.43s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testUncheckingCardDimsItVisibly] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     7.38s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     7.38s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     8.39s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     8.39s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     9.01s Waiting 5.0s for "receiptReview.line.0.price" Any to exist
+    t =    10.06s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.price" Any`
+    t =    10.07s         Checking existence of `"receiptReview.line.0.price" Any`
+    t =    10.65s Checking existence of `"receiptReview.line.0.price" Any`
+    t =    12.36s Find the "receiptReview.line.0.price" Any
+    t =    15.86s Checking existence of `"receiptReview.sectionHeader" Any`
+    t =    16.89s Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =    18.51s Tap "receiptReview.line.0.checkbox" Any[0.50, 0.50]
+    t =    18.51s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.79s     Find the "receiptReview.line.0.checkbox" Any
+    t =    19.46s     Check for interrupting elements affecting "receiptReview.line.0.checkbox" Button
+    t =    20.27s     Synthesize event
+    t =    20.27s         Find the "receiptReview.line.0.checkbox" Button
+    t =    21.92s         Find the "receiptReview.line.0.checkbox" Button
+    t =    22.28s         Find the "receiptReview.line.0.checkbox" Button
+    t =    22.68s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.68s Find the "receiptReview.sectionHeader" Any
+    t =    22.80s Checking existence of `"receiptReview.line.0.price" StaticText`
+    t =    22.92s Find the "receiptReview.line.0.price" StaticText
+    t =    23.05s Tap "receiptReview.line.0.checkbox" Button[0.50, 0.50]
+    t =    23.05s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.06s     Find the "receiptReview.line.0.checkbox" Button
+    t =    23.16s     Check for interrupting elements affecting "receiptReview.line.0.checkbox" Button
+    t =    23.23s     Synthesize event
+    t =    23.23s         Find the "receiptReview.line.0.checkbox" Button
+    t =    23.34s         Find the "receiptReview.line.0.checkbox" Button
+    t =    23.50s         Find the "receiptReview.line.0.checkbox" Button
+    t =    24.00s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.02s Find the "receiptReview.sectionHeader" StaticText
+    t =    24.70s Checking existence of `"receiptReview.line.0.price" StaticText`
+    t =    26.52s Find the "receiptReview.line.0.price" StaticText
+    t =    28.73s Tear Down
+    t =    28.73s     Setting appearance mode to Light
+    t =    28.74s         Wait for com.johannesemmrich.Restock to idle
+    t =    28.74s     Open com.johannesemmrich.Restock
+    t =    28.75s         Launch com.johannesemmrich.Restock
+    t =    28.75s             Terminate com.johannesemmrich.Restock:23656
+2026-10-17 19:49:08.077 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:49:08.086 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:49:08.988 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:49:08.989 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:49:09.105 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    37.22s             Setting up automation session
+    t =    39.04s             Wait for com.johannesemmrich.Restock to idle
+    t =    40.96s     Terminate com.johannesemmrich.Restock:23796
+2026-10-17 19:49:20.148 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:49:20.149 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardDimsItVisibly]' passed (42.345 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardLowersSelectedCountAndSum]' started.
+    t =     0.00s Start Test at 2026-10-17 19:49:21.526
+    t =     1.41s Set Up
+    t =     1.43s Open com.johannesemmrich.Restock
+    t =     1.43s     Launch com.johannesemmrich.Restock
+2026-10-17 19:49:22.963 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:49:22.963 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:49:22.983 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     2.04s         Setting up automation session
+    t =     3.69s         Wait for com.johannesemmrich.Restock to idle
+    t =     6.95s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     6.96s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     8.14s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     8.15s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     9.06s Waiting 5.0s for "receiptReview.sectionHeader" Any to exist
+    t =    10.12s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.sectionHeader" Any`
+    t =    10.12s         Checking existence of `"receiptReview.sectionHeader" Any`
+    t =    11.62s Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =    14.96s Tap "receiptReview.line.0.checkbox" Any
+    t =    14.98s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.12s     Find the "receiptReview.line.0.checkbox" Any
+    t =    16.55s     Check for interrupting elements affecting "receiptReview.line.0.checkbox" Button
+    t =    18.48s     Synthesize event
+    t =    19.26s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.27s Checking `Expect predicate `label CONTAINS[c] "3 ausgewählt"` for object "receiptReview.sectionHeader" Any`
+    t =    20.27s     Find the "receiptReview.sectionHeader" Any
+    t =    20.43s Find the "receiptReview.sectionHeader" StaticText
+    t =    20.55s Tear Down
+    t =    20.55s     Setting appearance mode to Light
+    t =    20.56s         Wait for com.johannesemmrich.Restock to idle
+    t =    20.56s     Open com.johannesemmrich.Restock
+    t =    20.57s         Launch com.johannesemmrich.Restock
+    t =    20.57s             Terminate com.johannesemmrich.Restock:23822
+2026-10-17 19:49:42.111 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:49:42.113 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:49:43.230 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:49:43.230 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:49:43.267 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    22.12s             Setting up automation session
+    t =    23.85s             Wait for com.johannesemmrich.Restock to idle
+    t =    26.31s     Terminate com.johannesemmrich.Restock:23914
+2026-10-17 19:49:47.855 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:49:47.856 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardLowersSelectedCountAndSum]' passed (27.559 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' started.
+    t =     0.00s Start Test at 2026-10-17 19:49:49.083
+    t =     0.05s Set Up
+    t =     0.05s Open com.johannesemmrich.Restock
+    t =     0.05s     Launch com.johannesemmrich.Restock
+2026-10-17 19:49:49.177 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:49:49.178 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:49:49.212 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     0.70s         Setting up automation session
+    t =     2.44s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.19s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     6.19s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     7.24s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     7.24s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     7.46s Waiting 10.0s for "receiptReview.line.4.originalName" Any to exist
+    t =     8.51s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.4.originalName" Any`
+    t =     8.51s         Checking existence of `"receiptReview.line.4.originalName" Any`
+    t =     8.71s Find the "receiptReview.line.4.originalName" Any
+    t =     8.89s Waiting 10.0s for "receiptReview.line.4.checkbox" Any to exist
+    t =     9.92s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.4.checkbox" Any`
+    t =     9.93s         Checking existence of `"receiptReview.line.4.checkbox" Any`
+    t =    11.16s Checking `Expect predicate `label CONTAINS "Butter"` for object "receiptReview.line.4.checkbox" Any`
+    t =    11.16s     Find the "receiptReview.line.4.checkbox" Any
+    t =    11.33s Waiting 5.0s for "receiptReview.line.4.option.0" Any to exist
+    t =    12.37s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.4.option.0" Any`
+    t =    12.38s         Checking existence of `"receiptReview.line.4.option.0" Any`
+    t =    12.56s Find the "receiptReview.line.4.option.0" Any
+    t =    12.76s Find the "receiptReview.line.4.option.0" Button
+    t =    12.97s Checking existence of `"receiptReview.line.4.option.0" Any`
+    t =    13.19s Find the "receiptReview.line.4.option.0" Any
+    t =    13.50s Checking existence of `"receiptReview.line.4.option.1" Any`
+    t =    13.90s Find the "receiptReview.line.4.option.1" Any
+    t =    14.17s Checking existence of `"receiptReview.line.4.option.2" Any`
+    t =    14.52s Checking existence of `"receiptReview.line.4.option.3" Any`
+    t =    14.81s Tear Down
+    t =    14.81s     Setting appearance mode to Light
+    t =    14.87s         Wait for com.johannesemmrich.Restock to idle
+    t =    14.88s     Open com.johannesemmrich.Restock
+    t =    14.88s         Launch com.johannesemmrich.Restock
+    t =    14.88s             Terminate com.johannesemmrich.Restock:23938
+2026-10-17 19:50:04.020 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:50:04.027 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:50:05.003 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:50:05.004 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:50:05.079 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    16.59s             Setting up automation session
+    t =    18.71s             Wait for com.johannesemmrich.Restock to idle
+    t =    20.96s     Terminate com.johannesemmrich.Restock:24059
+2026-10-17 19:50:10.048 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:50:10.048 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' passed (22.113 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testWhitespaceOnlyCustomNameKeepsPreviousItemName]' started.
+    t =     0.00s Start Test at 2026-10-17 19:50:11.198
+    t =     0.04s Set Up
+    t =     0.04s Open com.johannesemmrich.Restock
+    t =     0.04s     Launch com.johannesemmrich.Restock
+2026-10-17 19:50:11.242 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:50:11.242 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:50:11.251 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     0.25s         Setting up automation session
+    t =     1.20s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testWhitespaceOnlyCustomNameKeepsPreviousItemName] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     4.43s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =     4.44s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =     5.47s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =     5.47s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =     5.69s Waiting 5.0s for "receiptReview.line.0.checkbox" Any to exist
+    t =     6.73s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.checkbox" Any`
+    t =     6.73s         Checking existence of `"receiptReview.line.0.checkbox" Any`
+    t =     6.91s Find the "receiptReview.line.0.checkbox" Any
+    t =     7.05s Waiting 5.0s for "receiptReview.line.0.option.1" Any to exist
+    t =     8.09s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.option.1" Any`
+    t =     8.09s         Checking existence of `"receiptReview.line.0.option.1" Any`
+    t =     8.80s Tap "receiptReview.line.0.option.1" Any
+    t =     8.80s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.80s     Find the "receiptReview.line.0.option.1" Any
+    t =     9.23s     Check for interrupting elements affecting "receiptReview.line.0.option.1" Button
+    t =     9.52s     Synthesize event
+    t =     9.91s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.05s Waiting 5.0s for "receiptReview.line.0.customNameField" TextField to exist
+    t =    12.09s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =    12.10s         Checking existence of `"receiptReview.line.0.customNameField" TextField`
+    t =    13.24s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.0.customNameField" TextField`
+    t =    13.24s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    13.43s Find the "receiptReview.line.0.customNameField" TextField
+    t =    13.49s Type '' into "receiptReview.line.0.customNameField" TextField
+    t =    13.49s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.49s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    13.55s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    13.61s     Synthesize event
+    t =    14.09s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.13s Type ' ' into "receiptReview.line.0.customNameField" TextField
+    t =    14.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.14s     Find the "receiptReview.line.0.customNameField" TextField
+    t =    14.21s     Check for interrupting elements affecting "receiptReview.line.0.customNameField" TextField
+    t =    14.27s     Synthesize event
+    t =    14.48s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.49s Find the "receiptReview.line.0.checkbox" Button
+    t =    14.72s Find the "receiptReview.line.0.checkbox" Button
+    t =    14.97s Tear Down
+    t =    14.97s     Setting appearance mode to Light
+    t =    14.98s         Wait for com.johannesemmrich.Restock to idle
+    t =    14.99s     Open com.johannesemmrich.Restock
+    t =    14.99s         Launch com.johannesemmrich.Restock
+    t =    14.99s             Terminate com.johannesemmrich.Restock:24086
+2026-10-17 19:50:26.268 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:50:26.276 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:50:27.283 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 19:50:27.283 xcodebuild[20096:8655216] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 19:50:27.306 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    16.31s             Setting up automation session
+    t =    18.53s             Wait for com.johannesemmrich.Restock to idle
+    t =    20.32s     Terminate com.johannesemmrich.Restock:24165
+2026-10-17 19:50:31.536 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:50:31.536 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testWhitespaceOnlyCustomNameKeepsPreviousItemName]' passed (21.520 seconds).
+Test Suite 'ReceiptReviewUITests' failed at 2026-10-17 19:50:32.719.
+	 Executed 23 tests, with 1 failure (0 unexpected) in 803.960 (804.138) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-10-17 19:50:32.720.
+	 Executed 23 tests, with 1 failure (0 unexpected) in 803.960 (804.139) seconds
+Test Suite 'Selected tests' failed at 2026-10-17 19:50:32.720.
+	 Executed 23 tests, with 1 failure (0 unexpected) in 803.960 (804.142) seconds
+2026-10-17 19:50:32.824 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 19:50:32.825 xcodebuild[20096:8655216] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+** BUILD INTERRUPTED **

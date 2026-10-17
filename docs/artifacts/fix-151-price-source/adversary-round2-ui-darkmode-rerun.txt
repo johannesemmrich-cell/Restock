@@ -1,0 +1,128 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" "-only-testing:RestockUITests/ReceiptReviewUITests/testChangeEditorWorksInDarkMode"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fmakzskadyenmrbpoqvuwvgzgyxi/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fmakzskadyenmrbpoqvuwvgzgyxi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-10-17 20:25:50.570 xcodebuild[34848:8795364] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 20:26:41.804011+0200 RestockUITests-Runner[35148:8799045] [Default] Running tests...
+objc[35148]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10a118310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a9c4398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-17 20:27:10.521.
+Test Suite 'RestockUITests.xctest' started at 2026-10-17 20:27:10.522.
+Test Suite 'ReceiptReviewUITests' started at 2026-10-17 20:27:10.522.
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' started.
+    t =     0.00s Start Test at 2026-10-17 20:27:10.524
+    t =     0.59s Set Up
+    t =     0.60s Setting appearance mode to Dark
+    t =     0.79s     Wait for com.apple.springboard to idle
+    t =     0.89s Open com.johannesemmrich.Restock
+    t =     0.90s     Launch com.johannesemmrich.Restock
+2026-10-17 20:27:12.429 xcodebuild[34848:8795364] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 20:27:12.429 xcodebuild[34848:8795364] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 20:27:12.519 xcodebuild[34848:8795364] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    14.36s         Setting up automation session
+    t =    15.44s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    20.48s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =    20.50s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =    21.52s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =    21.52s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =    23.18s Waiting 5.0s for "receiptReview.line.2.changeButton" Any to exist
+    t =    24.37s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.changeButton" Any`
+    t =    24.37s         Checking existence of `"receiptReview.line.2.changeButton" Any`
+    t =    26.31s Tap "receiptReview.line.2.changeButton" Any
+    t =    26.32s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.52s     Find the "receiptReview.line.2.changeButton" Any
+    t =    27.59s     Check for interrupting elements affecting "receiptReview.line.2.changeButton" Button
+    t =    27.78s     Synthesize event
+    t =    27.80s         Scroll element to visible
+    t =    27.81s         Find the "receiptReview.line.2.changeButton" Button
+    t =    28.42s         Computed hit point {329.66666666666674, 711} after scrolling to visible
+    t =    29.28s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.56s Waiting 5.0s for "receiptReview.line.2.priceField" TextField to exist
+    t =    30.67s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =    30.72s         Checking existence of `"receiptReview.line.2.priceField" TextField`
+    t =    30.99s Checking existence of `"receiptReview.line.2.quantityField" TextField`
+    t =    31.07s Tap "receiptReview.line.2.priceField" TextField
+    t =    31.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.12s     Find the "receiptReview.line.2.priceField" TextField
+    t =    32.39s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =    33.88s     Synthesize event
+    t =    35.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    38.05s Checking `Expect predicate `hasKeyboardFocus == 1` for object "receiptReview.line.2.priceField" TextField`
+    t =    38.13s     Find the "receiptReview.line.2.priceField" TextField
+    t =    38.24s Find the "receiptReview.line.2.priceField" TextField
+    t =    39.54s Type '' into "receiptReview.line.2.priceField" TextField
+    t =    39.55s     Wait for com.johannesemmrich.Restock to idle
+    t =    39.95s     Find the "receiptReview.line.2.priceField" TextField
+    t =    40.17s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =    40.23s     Synthesize event
+    t =    40.51s     Wait for com.johannesemmrich.Restock to idle
+    t =    40.99s Type '3,50' into "receiptReview.line.2.priceField" TextField
+    t =    41.00s     Wait for com.johannesemmrich.Restock to idle
+    t =    41.10s     Find the "receiptReview.line.2.priceField" TextField
+    t =    41.49s     Check for interrupting elements affecting "receiptReview.line.2.priceField" TextField
+    t =    41.63s     Synthesize event
+    t =    41.98s     Wait for com.johannesemmrich.Restock to idle
+    t =    42.02s Find the "receiptReview.line.2.price" Any
+    t =    43.12s Tear Down
+    t =    43.15s     Setting appearance mode to Light
+    t =    43.68s         Wait for com.johannesemmrich.Restock to idle
+    t =    43.70s     Open com.johannesemmrich.Restock
+    t =    43.71s         Launch com.johannesemmrich.Restock
+    t =    43.71s             Terminate com.johannesemmrich.Restock:35317
+2026-10-17 20:27:54.346 xcodebuild[34848:8795364] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 20:27:54.366 xcodebuild[34848:8795364] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 20:27:55.411 xcodebuild[34848:8795364] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-17 20:27:55.412 xcodebuild[34848:8795364] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-17 20:27:55.510 xcodebuild[34848:8795364] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    45.86s             Setting up automation session
+    t =    47.19s             Wait for com.johannesemmrich.Restock to idle
+    t =    49.67s     Terminate com.johannesemmrich.Restock:35438
+2026-10-17 20:28:00.241 xcodebuild[34848:8795364] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 20:28:00.245 xcodebuild[34848:8795364] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' passed (52.281 seconds).
+Test Suite 'ReceiptReviewUITests' passed at 2026-10-17 20:28:02.858.
+	 Executed 1 test, with 0 failures (0 unexpected) in 52.281 (52.337) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-17 20:28:02.969.
+	 Executed 1 test, with 0 failures (0 unexpected) in 52.281 (52.448) seconds
+Test Suite 'Selected tests' passed at 2026-10-17 20:28:02.990.
+	 Executed 1 test, with 0 failures (0 unexpected) in 52.281 (52.469) seconds
+2026-10-17 20:28:05.859 xcodebuild[34848:8795364] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-17 20:28:05.860 xcodebuild[34848:8795364] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+** BUILD INTERRUPTED **

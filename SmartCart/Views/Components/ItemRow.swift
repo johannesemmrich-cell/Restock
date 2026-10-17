@@ -150,20 +150,46 @@ struct ItemRow: View {
             // ist für einen schon gekauften Artikel nicht hilfreich, aber ein per Bon bestätigter
             // Preis soll sichtbar sein (sonst gibt es für das Kassenbon-Rückschreiben aus
             // ReceiptScannerView.save() keinerlei sichtbare Bestätigung).
-            if let price = item.estimatedLineTotal, !item.isCompleted || !item.estimatedPriceIsAutoDerived {
-                Text(price, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.secondary)
-            } else if let rate = ratePer100g, !item.isCompleted || !item.estimatedPriceIsAutoDerived {
-                // Ohne belegte Menge gibt es keinen Gesamtpreis (`estimatedLineTotal == nil`),
-                // aber die gelernte Gramm-Rate bleibt nützlich: „1,25 €/100 g" (Issue #57, AC-15).
-                Text("\(rate.formatted(.currency(code: Locale.current.currency?.identifier ?? "EUR")))/100 g")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.secondary)
+            if Self.showsPrice(isCompleted: item.isCompleted, estimatedPriceIsAutoDerived: item.estimatedPriceIsAutoDerived) {
+                if let price = item.estimatedLineTotal {
+                    priceCell(amount: price.formatted(.currency(code: currencyCode)))
+                } else if let rate = ratePer100g {
+                    // Ohne belegte Menge gibt es keinen Gesamtpreis (`estimatedLineTotal == nil`),
+                    // aber die gelernte Gramm-Rate bleibt nützlich: „1,25 €/100 g" (Issue #57, AC-15).
+                    priceCell(amount: "\(rate.formatted(.currency(code: currencyCode)))/100 g")
+                }
             }
         }
         .padding(.vertical, 5)
         .contentShape(Rectangle())
         .animation(.easeInOut(duration: 0.25), value: item.isCompleted)
+    }
+
+    private var currencyCode: String { Locale.current.currency?.identifier ?? "EUR" }
+
+    /// Betrag mit Quellzeile darunter (Issue #151, Entwurf A). „ca. " steht im selben Text wie der
+    /// Betrag (eigener Text, getrennt von der Mengenangabe); eine Schätzung trägt die Warnfarbe der
+    /// angenommenen Menge. Für VoiceOver und UI-Tests ein einziges Element „<Betrag>, <Quelle>".
+    private func priceCell(amount: String) -> some View {
+        let origin = item.priceOrigin
+        let color: Color = origin == "estimate" ? .amber : .secondary
+        return VStack(alignment: .trailing, spacing: 1) {
+            Text(PriceSourceDisplay.amountPrefix(origin: origin) + amount)
+                .font(.system(size: 13, weight: .medium))
+            Text(PriceSourceDisplay.text(origin: origin, date: item.priceSourceDate))
+                .font(.system(size: 11))
+        }
+        .foregroundStyle(color)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(PriceSourceDisplay.accessibilityLabel(amount: amount, origin: origin, date: item.priceSourceDate))
+        .accessibilityAddTraits(.isStaticText)
+    }
+}
+
+extension ItemRow {
+    /// Unveränderte Regel: offene Artikel zeigen immer den Preis (Budget), abgehakte nur einen
+    /// echten (nicht geschätzten). Gilt für Betrag UND Quelle.
+    static func showsPrice(isCompleted: Bool, estimatedPriceIsAutoDerived: Bool) -> Bool {
+        !isCompleted || !estimatedPriceIsAutoDerived
     }
 }

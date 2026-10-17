@@ -28,6 +28,7 @@ struct EditItemView: View {
     /// if any" a single source of truth.
     @State private var activePickerSource: ItemPhotoPickerSource?
     @State private var showFullScreenPhoto = false
+    @AppStorage("developerMode") private var developerMode = false
 
     /// The exact string `priceText` was seeded with in `init`, so `save()` can tell whether the
     /// user actually edited the price field (vs. just changing quantity elsewhere in the sheet,
@@ -194,6 +195,10 @@ struct EditItemView: View {
                     }
                 }
 
+                if developerMode {
+                    priceDiagnosisSection
+                }
+
                 Section {
                     Button {
                         withAnimation {
@@ -285,6 +290,18 @@ struct EditItemView: View {
         }
     }
 
+    /// Dev-Diagnose (Issue #151): warum ein gelernter Preis greift oder verworfen wird — aus
+    /// derselben Kette wie `ShoppingItem.init`, mit dem aktuellen Zustand und dem gewählten Laden.
+    private var priceDiagnosisSection: some View {
+        Section(String(localized: "price.diagnosis.section")) {
+            ForEach(PriceDiagnosis.lines(for: item, in: selectedStore), id: \.self) { line in
+                Text(line)
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
     @ViewBuilder
     private var photoSection: some View {
         Section(String(localized: "item.photo.section")) {
@@ -350,6 +367,38 @@ struct EditItemView: View {
         }
     }
 
+    /// Preisblock aus `save()`, statisch und testbar (Issue #151); setzt die Quelle im selben Zug
+    /// wie den Preis. `item.unit` trägt hier schon die neue Einheit, `oldUnit` die alte.
+    static func applyPriceEdit(priceText: String, initialPriceText: String, oldUnit: String,
+                               priceCategory: String, to item: ShoppingItem) {
+        if priceText != initialPriceText {
+            let rawPrice = priceText.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)
+            if let p = Double(rawPrice), p > 0 {
+                // The field holds the TOTAL for this line (see init/UI hint above); `estimatedPrice`
+                // is stored canonically per-unit, so divide the quantity back out before saving.
+                item.estimatedPrice = item.quantityAmount > 0 ? p / item.quantityAmount : p
+                // A manual entry gives the price a real-world origin — never auto-recompute it again.
+                item.estimatedPriceIsAutoDerived = false
+                item.priceSource = "manual"
+                item.priceSourceDate = nil
+            } else if rawPrice.isEmpty {
+                item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: priceCategory, unit: item.unit, quantityAmount: item.quantityAmount)
+                item.estimatedPriceIsAutoDerived = true
+                item.priceSource = "estimate"
+                item.priceSourceDate = nil
+            }
+        } else if oldUnit != item.unit, item.estimatedPriceIsAutoDerived {
+            // The price field itself wasn't touched, but the unit was — and this price is still
+            // just the catalog/category estimate, so it's safe to recompute for the new unit
+            // (e.g. "" → "g" needs the per-gram rate, not the per-package rate). A learned or
+            // manually-entered price (estimatedPriceIsAutoDerived == false) is left untouched here,
+            // even if it would numerically collide with the old-unit formula.
+            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: priceCategory, unit: item.unit, quantityAmount: item.quantityAmount)
+            item.priceSource = "estimate"
+            item.priceSourceDate = nil
+        }
+    }
+
     private func save() {
         item.name = name.trimmingCharacters(in: .whitespaces)
         item.quantity = quantity.isEmpty ? "1" : quantity
@@ -398,26 +447,8 @@ struct EditItemView: View {
         // Re-deriving from it here would silently corrupt the still-correct per-unit
         // `estimatedPrice` (see bug: quantity 2→3 with an untouched "7,00" total must NOT turn
         // 3.50/unit into 2.33/unit). Only recompute when the displayed text actually changed.
-        if priceText != initialPriceText {
-            let rawPrice = priceText.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)
-            if let p = Double(rawPrice), p > 0 {
-                // The field holds the TOTAL for this line (see init/UI hint above); `estimatedPrice`
-                // is stored canonically per-unit, so divide the quantity back out before saving.
-                item.estimatedPrice = item.quantityAmount > 0 ? p / item.quantityAmount : p
-                // A manual entry gives the price a real-world origin — never auto-recompute it again.
-                item.estimatedPriceIsAutoDerived = false
-            } else if rawPrice.isEmpty {
-                item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: priceCategory, unit: item.unit, quantityAmount: item.quantityAmount)
-                item.estimatedPriceIsAutoDerived = true
-            }
-        } else if oldUnit != unit, item.estimatedPriceIsAutoDerived {
-            // The price field itself wasn't touched, but the unit was — and this price is still
-            // just the catalog/category estimate, so it's safe to recompute for the new unit
-            // (e.g. "" → "g" needs the per-gram rate, not the per-package rate). A learned or
-            // manually-entered price (estimatedPriceIsAutoDerived == false) is left untouched here,
-            // even if it would numerically collide with the old-unit formula.
-            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: priceCategory, unit: item.unit, quantityAmount: item.quantityAmount)
-        }
+        Self.applyPriceEdit(priceText: priceText, initialPriceText: initialPriceText, oldUnit: oldUnit,
+                            priceCategory: priceCategory, to: item)
 
         Haptics.success()
         dismiss()

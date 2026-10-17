@@ -60,6 +60,13 @@ class ShoppingItem {
     /// StoreDetailView, SyncCoordinator) unverändert; CloudKit verlangt den Standardwert ohnehin
     /// (siehe Kopfkommentar oben). Issue #10.
     var quantitySource: String = "user"
+    /// Woher `estimatedPrice` stammt (Issue #151): `"receipt"` (Bon), `"paid"` (bezahlter Betrag),
+    /// `"learned"` (gelernter Preis ohne bekannte Herkunft), `"manual"` (eigener Preis) oder
+    /// `"estimate"` (Katalog-/Kategorieschätzung). Leer bei Altdaten — angezeigt wird immer
+    /// `priceOrigin`. Additiv mit Standardwert wie `quantitySource`, kein Schema-Bump.
+    var priceSource: String = ""
+    /// Datum des Bons, nur bei `priceSource == "receipt"` belegt.
+    var priceSourceDate: Date?
     var assignedTo: String = ""
     var addedBy: String = ""
     /// Display name of whoever checked the item off (empty while pending). Additive field with a
@@ -119,68 +126,16 @@ class ShoppingItem {
         self.store = store
         self.addedBy = UserIdentity.displayName
         self.lastModified = Date()
-        // Use store-specific learned price first (fuzzy: "Hackfleisch" matches "Hackfleisch Gemischt 500g"),
-        // then fall back to generic estimator
-        let itemLower = name.lowercased()
-        // Bei mehreren fuzzy passenden gelernten Preisen (z.B. "Hackfleisch Gemischt 500g" UND
-        // "Rinderhackfleisch" für getipptes "Hackfleisch") entschied bisher `.first` — Swifts
-        // Dictionary-Iterationsreihenfolge ist pro Prozess zufällig gehasht, der angezeigte
-        // Preis konnte also zwischen App-Starts flippen (gefunden 19.08.2026). Datum allein als
-        // Tie-Breaker reicht NICHT: haben beide Treffer kein learnedPriceDates (Normalfall bei
-        // älteren, vor Einführung des Feldes gelernten Preisen — keine Backfill-Migration dafür,
-        // auch PriceProvenanceMigration Phase C schreibt nur den Preis, nie das Datum), sind
-        // beide `.distantPast`, der Vergleich bleibt unentschieden und max(by:) fällt zurück auf
-        // dieselbe zufällige Iterationsreihenfolge — von einer unabhängigen Review-Runde per
-        // mehrfachem Prozess-Neustart nachgewiesen, dass der Bug so bestehen bliebe, nur
-        // seltener. Deshalb zusätzlich der Key selbst (garantiert eindeutig, alphabetisch) als
-        // letzte, immer entscheidende Instanz.
-        let rawLearnedMatch: (price: Double, unit: String?)? = {
-            guard let store,
-                  let bestKey = Self.matchingLearnedPriceKey(forLowercasedName: itemLower, in: store),
-                  let price = store.learnedPrices[bestKey] else { return nil }
-            // Die Bezugsgröße wird unter DEMSELBEN Schlüssel geführt (siehe
-            // `Store.learnedPriceUnits`). Fehlt sie, ist der Preis ein Altdatum — die
-            // Entscheidungstabelle unten verwirft ihn dann.
-            return (price, store.learnedPriceUnits[bestKey])
-        }()
-        // `learnedPrices` is supposed to hold a PER-UNIT rate (see `estimatedLineTotal` below), but
-        // a corrupted/stale entry (e.g. a full line total saved under the wrong key before an
-        // earlier fix) can turn this into an absurd total once multiplied by quantityAmount (the
-        // reported "Skyr 500g → 1145€" bug). Reject it here rather than ever displaying it.
-        // Deliberately a MUCH higher bound than the generic estimator's `maxPlausibleLineTotal`
-        // (30€) below: that one guards a hardcoded catalog guess, which should never claim a
-        // pricey item — but a *learned* price came from a real receipt and can legitimately be
-        // expensive (a nice steak, a bottle of wine, a whole ham). Independent review caught an
-        // earlier version of this fix using the 30€ bound here too, which would have silently
-        // discarded/corrupted correctly-learned prices for anything over 30€ — this only needs to
-        // catch the reported bug's "off by the quantity factor" order-of-magnitude corruption,
-        // not draw a tight realistic-price boundary.
-        let plausibleQuantity = quantityAmount > 0 ? quantityAmount : 1
-        let plausibleMatch = rawLearnedMatch.flatMap {
-            $0.price * plausibleQuantity <= PriceEstimator.maxPlausibleLearnedLineTotal ? $0 : nil
-        }
-        // Zweite, unabhängige Prüfung NEBEN der Obergrenze oben (Issue #10): passt die
-        // Bezugsgröße des gelernten Preises nicht zur Einheit dieses Artikels, ist der Wert nicht
-        // verwendbar — eine pro Gramm gelernte Rate als Stückpreis ergibt die gemeldeten 0,01 €.
-        // Die Obergrenze allein fängt das nie ab, sie kennt nur zu HOHE Werte.
-        var learnedPrice: Double?
-        switch Self.learnedRateUsage(
-            learnedUnit: plausibleMatch?.unit, itemUnit: unit, quantitySource: quantitySource
-        ) {
-        case .apply:
-            learnedPrice = plausibleMatch?.price
-        case .rateOnly:
-            // Die Rate vom Bon ist echt und bleibt nützlich, auch wenn keine Menge belegbar ist —
-            // nur ein GESAMTpreis darf daraus nicht entstehen (`estimatedLineTotal` liefert bei
-            // `quantitySource == "none"` nil). `unit` wird auf die Bezugsgröße gesetzt, damit die
-            // Anzeige weiß, worauf sich die Rate bezieht ("… €/100 g" in `ItemRow`).
-            learnedPrice = plausibleMatch?.price
-            self.unit = "g"
-        case .reject:
-            learnedPrice = nil
-        }
-        self.estimatedPrice = learnedPrice ?? PriceEstimator.estimate(for: name, category: category, unit: self.unit, quantityAmount: quantityAmount)
-        self.estimatedPriceIsAutoDerived = (learnedPrice == nil)
+        // Gelernter Preis des Ladens (Teilstring/Fuzzy, Obergrenze, Entscheidungstabelle) über
+        // dieselbe reine Kette, die auch die Dev-Diagnose nutzt (Issue #151), sonst Schätzung.
+        let resolution = Self.resolveLearnedPrice(
+            forLowercasedName: name.lowercased(), itemUnit: unit, quantityAmount: quantityAmount,
+            quantitySource: quantitySource, in: store)
+        // `.rateOnly`: Die Anzeige muss wissen, worauf sich die Rate bezieht („… €/100 g").
+        if let unitOverride = resolution.unitOverride { self.unit = unitOverride }
+        self.estimatedPrice = resolution.price ?? PriceEstimator.estimate(for: name, category: category, unit: self.unit, quantityAmount: quantityAmount)
+        self.estimatedPriceIsAutoDerived = (resolution.price == nil)
+        applyPriceSource(from: resolution, in: store)
         // Issue #85: Hat der Nutzer diesen Artikel in diesem Laden schon einmal einer eigenen
         // Kategorie zugeordnet, landet er wieder dort. Erst nach der Preisschätzung, denn die
         // braucht die feste Kategorie — eine eigene hat keinen Katalogpreis.
@@ -188,6 +143,74 @@ class ShoppingItem {
             self.category = remembered
             self.categoryManuallySet = true
         }
+    }
+
+    /// Quelle zum Ergebnis von `resolveLearnedPrice`: Herkunft des gefundenen Eintrags
+    /// (`learnedPriceOrigins`, lokal), ohne Herkunft `learned`, ohne angewendeten Preis `estimate`.
+    private func applyPriceSource(from resolution: LearnedPriceResolution, in store: Store?) {
+        guard resolution.price != nil, let key = resolution.matchedKey else {
+            priceSource = "estimate"
+            priceSourceDate = nil
+            return
+        }
+        switch store?.learnedPriceOrigins[key] {
+        case "receipt":
+            priceSource = "receipt"
+            priceSourceDate = store?.learnedPriceDates[key]
+        case "paid":
+            priceSource = "paid"
+            priceSourceDate = nil
+        default:
+            priceSource = "learned"
+            priceSourceDate = nil
+        }
+    }
+
+    /// Kennungen, die `priceSource` tragen darf.
+    static let knownPriceSources: Set<String> = ["receipt", "paid", "learned", "manual", "estimate"]
+
+    /// Angezeigte Quelle: eine bekannte Kennung gilt; leer oder unbekannt (Altdaten) wird aus dem
+    /// Bool abgeleitet. Aus Altdaten entsteht nie `receipt`, `paid` oder `manual`, weil `false`
+    /// jede dieser Herkünfte und „gelernt" gleichermaßen bedeuten kann (Issue #151).
+    var priceOrigin: String {
+        if Self.knownPriceSources.contains(priceSource) { return priceSource }
+        return estimatedPriceIsAutoDerived ? "estimate" : "learned"
+    }
+
+    /// Reine Preiswahl aus `init` (Issue #151): Schlüssel per `matchingLearnedPriceKey`, dann die
+    /// Obergrenze, dann die Entscheidungstabelle `learnedRateUsage`. Liefert neben dem Preis den
+    /// Grund, damit die Dev-Diagnose dieselbe Kette zeigt, statt sie nachzubauen.
+    ///
+    /// Obergrenze: `learnedPrices` soll eine Rate JE EINHEIT halten; ein verdorbener Eintrag (eine
+    /// Zeilensumme unter dem Stückschlüssel) ergäbe mit der Menge multipliziert absurde Beträge
+    /// („Skyr 500g → 1145€"). Bewusst viel höher als `PriceEstimator.maxPlausibleLineTotal`
+    /// (30 €): ein gelernter Preis kam von einem echten Bon und darf teuer sein.
+    /// Entscheidungstabelle: passt die Bezugsgröße nicht zur Einheit des Artikels, ist der Wert
+    /// nicht verwendbar — eine Gramm-Rate als Stückpreis ergibt die gemeldeten 0,01 € (Issue #10).
+    static func resolveLearnedPrice(
+        forLowercasedName itemLower: String, itemUnit: String, quantityAmount: Double,
+        quantitySource: String, in store: Store?
+    ) -> LearnedPriceResolution {
+        guard let store else { return .unmatched(.noStore) }
+        guard let key = matchingLearnedPriceKey(forLowercasedName: itemLower, in: store),
+              let entryPrice = store.learnedPrices[key] else { return .unmatched(.noEntry) }
+        let entryUnit = store.learnedPriceUnits[key]
+        let plausibleQuantity = quantityAmount > 0 ? quantityAmount : 1
+        let exceedsCap = entryPrice * plausibleQuantity > PriceEstimator.maxPlausibleLearnedLineTotal
+        let usage: LearnedRateUsage = exceedsCap ? .reject
+            : learnedRateUsage(learnedUnit: entryUnit, itemUnit: itemUnit, quantitySource: quantitySource)
+        let reason: LearnedPriceResolution.Reason
+        switch usage {
+        case .apply: reason = .applied
+        case .rateOnly: reason = .appliedRateOnly
+        case .reject:
+            let hasUnit = !(entryUnit ?? "").trimmingCharacters(in: .whitespaces).isEmpty
+            reason = exceedsCap ? .exceedsCap : (hasUnit ? .unitMismatch : .legacyNoUnit)
+        }
+        return LearnedPriceResolution(
+            matchedKey: key, entryPrice: entryPrice, entryUnit: entryUnit, exceedsCap: exceedsCap,
+            usage: usage, price: usage == .reject ? nil : entryPrice,
+            unitOverride: usage == .rateOnly ? "g" : nil, reason: reason)
     }
 
     /// Schlüssel in `store.learnedPrices`, den `init` für einen (kleingeschriebenen) Artikelnamen
@@ -352,6 +375,110 @@ class ShoppingItem {
         completedBy = ""
         lastModified = Date()
         WidgetCenter.shared.reloadAllTimelines()
+    }
+}
+
+// MARK: - Price source (Issue #151)
+
+/// Ergebnis von `ShoppingItem.resolveLearnedPrice`: gefundener Eintrag, Prüfungen und Grund.
+struct LearnedPriceResolution: Equatable {
+    enum Reason: Equatable, CaseIterable {
+        case noStore, noEntry, exceedsCap, legacyNoUnit, unitMismatch, applied, appliedRateOnly
+    }
+    let matchedKey: String?
+    let entryPrice: Double?
+    /// Roh aus `learnedPriceUnits` (nil oder "" möglich).
+    let entryUnit: String?
+    let exceedsCap: Bool
+    let usage: ShoppingItem.LearnedRateUsage
+    let price: Double?
+    let unitOverride: String?
+    let reason: Reason
+
+    static func unmatched(_ reason: Reason) -> LearnedPriceResolution {
+        LearnedPriceResolution(matchedKey: nil, entryPrice: nil, entryUnit: nil, exceedsCap: false,
+                               usage: .reject, price: nil, unitOverride: nil, reason: reason)
+    }
+}
+
+/// Anzeigetexte der Preisquelle in der Artikelzeile (Issue #151, Entwurf A).
+enum PriceSourceDisplay {
+    static func text(origin: String, date: Date?, locale: Locale = .current) -> String {
+        switch origin {
+        case "receipt":
+            guard let date else { return String(localized: "price.source.receipt") }
+            let formatter = DateFormatter()
+            formatter.locale = locale
+            formatter.timeZone = .current
+            formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "dM", options: 0, locale: locale)
+            return String(format: String(localized: "price.source.receipt.dated"), formatter.string(from: date))
+        case "paid": return String(localized: "price.source.paid")
+        case "manual": return String(localized: "price.source.manual")
+        case "estimate": return String(localized: "price.source.estimate")
+        default: return String(localized: "price.source.learned")
+        }
+    }
+
+    /// „ca. " nur bei einer Schätzung — wie die angenommene Menge in `ItemRow`.
+    static func amountPrefix(origin: String) -> String {
+        origin == "estimate" ? "ca. " : ""
+    }
+
+    static func accessibilityLabel(amount: String, origin: String, date: Date?, locale: Locale = .current) -> String {
+        "\(amountPrefix(origin: origin))\(amount), \(text(origin: origin, date: date, locale: locale))"
+    }
+
+    static var allLocalizationKeys: [String] {
+        ["price.source.receipt", "price.source.receipt.dated", "price.source.paid", "price.source.learned",
+         "price.source.manual", "price.source.estimate", "price.diagnosis.section", "price.diagnosis.entry",
+         "price.diagnosis.entry.none", "price.diagnosis.item", "price.diagnosis.cap", "price.diagnosis.result"]
+            + LearnedPriceResolution.Reason.allCases.map(PriceDiagnosis.reasonKey)
+    }
+}
+
+/// Dev-Diagnose im Bearbeiten-Dialog (Issue #151): dieselbe Kette wie `ShoppingItem.init`.
+enum PriceDiagnosis {
+    static func resolution(for item: ShoppingItem, in store: Store?) -> LearnedPriceResolution {
+        ShoppingItem.resolveLearnedPrice(
+            forLowercasedName: item.name.lowercased(), itemUnit: item.unit,
+            quantityAmount: item.quantityAmount, quantitySource: item.quantitySource, in: store)
+    }
+
+    /// Eintrag (Schlüssel, Preis, Bezugsgröße, Datum, Herkunft), Bezugsgröße des Artikels,
+    /// Obergrenze und Ergebnis mit Grund.
+    static func lines(for item: ShoppingItem, in store: Store?) -> [String] {
+        let result = resolution(for: item, in: store)
+        let none = "–"
+        var lines: [String] = []
+        if let key = result.matchedKey, let price = result.entryPrice {
+            let date = store?.learnedPriceDates[key].map { $0.formatted(date: .numeric, time: .omitted) }
+            let rawUnit = result.entryUnit ?? ""
+            lines.append(String(format: String(localized: "price.diagnosis.entry"),
+                                key, euro(price), rawUnit.isEmpty ? none : rawUnit, date ?? none,
+                                store?.learnedPriceOrigins[key] ?? none))
+        } else {
+            lines.append(String(localized: "price.diagnosis.entry.none"))
+        }
+        lines.append(String(format: String(localized: "price.diagnosis.item"),
+                            ShoppingItem.unitBucket(item.unit), item.quantityAmount.formatted(), item.quantitySource))
+        let quantity = item.quantityAmount > 0 ? item.quantityAmount : 1
+        let total = result.entryPrice.map { euro($0 * quantity) } ?? none
+        lines.append(String(format: String(localized: "price.diagnosis.cap"),
+                            total, euro(PriceEstimator.maxPlausibleLearnedLineTotal)))
+        lines.append(String(format: String(localized: "price.diagnosis.result"), reasonText(result.reason)))
+        return lines
+    }
+
+    static func reasonText(_ reason: LearnedPriceResolution.Reason) -> String {
+        String(localized: String.LocalizationValue(reasonKey(reason)))
+    }
+
+    static func reasonKey(_ reason: LearnedPriceResolution.Reason) -> String {
+        "price.diagnosis.reason.\(reason)"
+    }
+
+    private static func euro(_ value: Double) -> String {
+        value.formatted(.number.precision(.fractionLength(2...4))) + " €"
     }
 }
 
