@@ -1,0 +1,14 @@
+→ Sperren genommen: /tmp/heavy-build.lock /tmp/loose-ends-testlauf.lock — build-for-testing …
+→ Test auf 44E210FF-0B17-4122-AAE2-0D8E82C6ABEB (Restock-AppIntents-20261017-084832), Protokoll docs/artifacts/test-145-d3-app-intents-testing/appintents-20261017-084832.log …
+
+=================== ERGEBNIS ===================
+Commit:       2251d90   (uncommittete Änderungen: ja)
+Xcode:        Xcode 27.1 Build version 27A9275   Runtime: com.apple.CoreSimulator.SimRuntime.iOS-27-0
+Zeit:         2026-10-17 09:24:59 +0200   Testdauer: 2062 s   Last zu Beginn: { 20,59 10,79 7,92 }
+Tests:        ausgeführt 0 (muss: 3), bestanden 0, Fehlschläge 0, übersprungen 0
+400-Wiederholungen (Messzeilen „AppIntents: Wiederholung“): 0
+Protokoll:    docs/artifacts/test-145-d3-app-intents-testing/appintents-20261017-084832.log   Ergebnisbündel: build/appintents-20261017-084832.xcresult
+Wegwerf-Simulatoren nach dem Lauf übrig: nein (muss: nein)
+================================================
+ROT — xcodebuild-Status 65; 0 statt 3 Tests; TEST EXECUTE FAILED;
+done
