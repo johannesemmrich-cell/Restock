@@ -785,15 +785,17 @@ final class PriceSourceTests: XCTestCase {
             Case(label: "Obergrenze genau (200,00 €)", key: "steak", entry: 100, entryUnit: "stk",
                  name: "Steak", category: "", quantity: 2, unit: "", source: "user",
                  price: 100, expectedUnit: "", autoDerived: false),
+            // Seit #160/#162: Katalogtreffer „steak" (5,99 €) statt des früheren Teilstring-Fehltreffers
+            // „tea" in „Steak" (3,00 €).
             Case(label: "Obergrenze knapp darüber (200,01 €)", key: "steak", entry: 100.005, entryUnit: "stk",
                  name: "Steak", category: "", quantity: 2, unit: "", source: "user",
-                 price: 3.00, expectedUnit: "", autoDerived: true),
+                 price: 5.99, expectedUnit: "", autoDerived: true),
             Case(label: "Menge 0 zählt als 1 (200,00 €)", key: "steak", entry: 200, entryUnit: "stk",
                  name: "Steak", category: "", quantity: 0, unit: "", source: "user",
                  price: 200, expectedUnit: "", autoDerived: false),
             Case(label: "Menge 0 zählt als 1 (200,01 €)", key: "steak", entry: 200.01, entryUnit: "stk",
                  name: "Steak", category: "", quantity: 0, unit: "", source: "user",
-                 price: 3.00, expectedUnit: "", autoDerived: true),
+                 price: 5.99, expectedUnit: "", autoDerived: true),
             Case(label: "Teilstring-Treffer", key: "hackfleisch gemischt 500g", entry: 3.49, entryUnit: "stk",
                  name: "Hackfleisch", category: "", quantity: 1, unit: "", source: "user",
                  price: 3.49, expectedUnit: "", autoDerived: false),
@@ -803,8 +805,13 @@ final class PriceSourceTests: XCTestCase {
             Case(label: "kein Treffer → Stichwort-Schätzung", key: "butter", entry: 1.99, entryUnit: "stk",
                  name: "Käse", category: "", quantity: 1, unit: "", source: "user",
                  price: 3.50, expectedUnit: "", autoDerived: true),
-            Case(label: "kein Eintrag → Kategorie-Schätzung", key: nil, entry: 0, entryUnit: nil,
+            // Seit #162 hat „Seitan" einen Katalogpreis (2,49 €); die Kategorie-Pauschale greift nur
+            // noch für Namen ohne Katalogtreffer.
+            Case(label: "Katalogtreffer ohne gelernten Eintrag", key: nil, entry: 0, entryUnit: nil,
                  name: "Seitan", category: "Lebensmittel", quantity: 1, unit: "", source: "user",
+                 price: 2.49, expectedUnit: "", autoDerived: true),
+            Case(label: "kein Eintrag → Kategorie-Schätzung", key: nil, entry: 0, entryUnit: nil,
+                 name: "artikel ohne keyword-treffer", category: "Lebensmittel", quantity: 1, unit: "", source: "user",
                  price: 2.90, expectedUnit: "", autoDerived: true)
         ]
         for c in cases {
