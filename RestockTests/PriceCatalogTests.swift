@@ -5,8 +5,8 @@ import SwiftData
 /// Issues #160 (Pauschale ist kein Artikelpreis, Wortgrenzen), #161 (eigener Preis aus anderem
 /// Laden) und #162 (Katalog mit Packung und Spanne). Vorher: 32 Stichwörter per Teilstring, sonst
 /// Kategorie-Pauschale; von 100 Alltagsartikeln (siehe `commonGroceries`) trafen 39 einen
-/// Produktpreis, „Tomatenmark" bekam den Tomatenpreis und fünf Milchprodukte standen mit
-/// „ca. 2,00 €" untereinander. Nachher: siehe die einzelnen Tests.
+/// Produktpreis, „Tomatenmark“ bekam den Tomatenpreis und fünf Milchprodukte standen mit
+/// „ca. 2,00 €“ untereinander. Nachher: siehe die einzelnen Tests.
 @MainActor
 final class PriceCatalogTests: XCTestCase {
 
@@ -28,7 +28,7 @@ final class PriceCatalogTests: XCTestCase {
         PriceEstimator.estimate(for: name, category: category, unit: unit, quantityAmount: quantity)
     }
 
-    // MARK: - #160 Screenshot: fünfmal „ca. 2,00 €"
+    // MARK: - #160 Screenshot: fünfmal „ca. 2,00 €“
 
     func testScreenshotItemsGetDistinctCatalogPricesInsteadOfFlatRate() throws {
         let names = ["Mozzarella", "Schlagsahne", "Parmesan", "Marmelade", "Tomatenmark", "Gauda"]
@@ -51,8 +51,8 @@ final class PriceCatalogTests: XCTestCase {
     // MARK: - #160 Wortgrenzen statt Teilstring
 
     func testWordBoundaryPreventsFalseSubstringMatches() {
-        // Vorher: „tee" in Teelicht (3,00 €), „wasser" in Wassermelone (0,90 €), „eier" in Eierlikör,
-        // „zucker" in Zuckererbsen, „brot" in Brotmesser, „tomaten" in Tomatenmark (2,00 €).
+        // Vorher: „tee“ in Teelicht (3,00 €), „wasser“ in Wassermelone (0,90 €), „eier“ in Eierlikör,
+        // „zucker“ in Zuckererbsen, „brot“ in Brotmesser, „tomaten“ in Tomatenmark (2,00 €).
         XCTAssertFalse(PriceCatalog.match("Teelicht")?.names.contains("tee") ?? false, "Teelicht ist kein Tee")
         XCTAssertNotEqual(price("Wassermelone") ?? 0, 0.90, accuracy: 0.001, "Wassermelone ist kein Wasser")
         XCTAssertFalse(PriceCatalog.match("Eierlikör")?.names.contains("eier") ?? false, "Eierlikör sind keine Eier")
@@ -65,7 +65,7 @@ final class PriceCatalogTests: XCTestCase {
 
     func testCompoundHeadNounStillMatches() {
         // Grundwort eines Kompositums bleibt ein Treffer — die bestehende UI-Erwartung
-        // „Laugenbrötchen groß" → „ca. 2,50 €" (LegacyLearnedPriceResetUITests) gilt weiter.
+        // „Laugenbrötchen groß“ → „ca. 2,50 €“ (LegacyLearnedPriceResetUITests) gilt weiter.
         XCTAssertEqual(price("Laugenbrötchen groß"), 2.50)
         XCTAssertEqual(price("Kartoffelchips"), 1.80)
         XCTAssertEqual(PriceCatalog.match("Käsekuchen")?.names.first, "kuchen")
@@ -105,7 +105,7 @@ final class PriceCatalogTests: XCTestCase {
         XCTAssertEqual(try XCTUnwrap(price("Mozzarella", unit: "kg")), 8.72, accuracy: 0.001)
         // Volumen: Hafermilch 1 l ≈ 1,69 €; 500 ml die Hälfte.
         XCTAssertEqual(try XCTUnwrap(price("Hafermilch", unit: "ml", quantity: 500)) * 500, 0.845, accuracy: 0.001)
-        // Unplausible Summe bleibt verworfen (Issue „Müllbeutel 50l").
+        // Unplausible Summe bleibt verworfen (Issue „Müllbeutel 50l“).
         XCTAssertNil(price("Mozzarella", unit: "kg", quantity: 50))
     }
 
@@ -165,15 +165,15 @@ final class PriceCatalogTests: XCTestCase {
         XCTAssertEqual(PriceSourceDisplay.amountPrefix(origin: "category"), "ca. ")
         XCTAssertTrue(PriceSourceDisplay.showsPrompt(origin: flat.priceOrigin, hasPrice: flat.estimatedPrice != nil,
                                                      isAutoDerived: flat.estimatedPriceIsAutoDerived),
-                      "Zeile zeigt „Preis?" statt eines Pauschalbetrags")
+                      "Zeile zeigt „Preis?“ statt eines Pauschalbetrags")
 
         let catalog = ShoppingItem(name: "Mozzarella", category: "Milchprodukte")
         XCTAssertFalse(PriceSourceDisplay.showsPrompt(origin: catalog.priceOrigin, hasPrice: true,
                                                       isAutoDerived: catalog.estimatedPriceIsAutoDerived),
-                       "Katalogtreffer bleibt als „ca. …" sichtbar")
+                       "Katalogtreffer bleibt als „ca. …“ sichtbar")
 
         XCTAssertTrue(PriceSourceDisplay.showsPrompt(origin: "estimate", hasPrice: false, isAutoDerived: true),
-                      "ohne jede Schätzung ebenfalls „Preis?"")
+                      "ohne jede Schätzung ebenfalls „Preis?“")
         XCTAssertFalse(PriceSourceDisplay.showsPrompt(origin: "manual", hasPrice: true, isAutoDerived: false))
         XCTAssertFalse(PriceSourceDisplay.showsPrompt(origin: "category", hasPrice: true, isAutoDerived: false),
                        "ein echter Preis zeigt nie die Aufforderung, egal was die Kennung sagt")
@@ -281,7 +281,7 @@ final class PriceCatalogTests: XCTestCase {
         let mozzarella = ShoppingItem(name: "Mozzarella", category: "Milchprodukte", store: store)
         mozzarella.estimatedPrice = 2.00
         mozzarella.priceSource = ""
-        // Unbekannter Artikel mit alter Kennung „estimate" → wird zur Pauschale „category".
+        // Unbekannter Artikel mit alter Kennung „estimate“ → wird zur Pauschale „category“.
         let unknown = ShoppingItem(name: "Unbekanntes Zeug", category: "Lebensmittel", store: store)
         unknown.estimatedPrice = 2.50
         unknown.priceSource = "estimate"
@@ -298,7 +298,7 @@ final class PriceCatalogTests: XCTestCase {
         XCTAssertEqual(try XCTUnwrap(mozzarella.estimatedPrice), 1.09, accuracy: 0.0001)
         XCTAssertEqual(mozzarella.priceSource, "estimate")
         XCTAssertTrue(mozzarella.estimatedPriceIsAutoDerived)
-        XCTAssertEqual(try XCTUnwrap(unknown.estimatedPrice), 2.90, accuracy: 0.0001, "Pauschale „Lebensmittel\"")
+        XCTAssertEqual(try XCTUnwrap(unknown.estimatedPrice), 2.90, accuracy: 0.0001, "Pauschale „Lebensmittel“")
         XCTAssertEqual(unknown.priceSource, "category")
         XCTAssertEqual(manual.estimatedPrice, 4.44)
         XCTAssertEqual(manual.priceSource, "manual")
