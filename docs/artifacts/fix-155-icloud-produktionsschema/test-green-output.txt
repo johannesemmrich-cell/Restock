@@ -1,0 +1,211 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" -derivedDataPath build/dd-155 "-only-testing:RestockTests/MirroredSchemaSnapshotTests" "-only-testing:RestockTests/SchemaCloudKitCompatibilityTests" "-only-testing:RestockTests/ExistingDataSurvivesCloudEnableTests" "-only-testing:RestockTests/SharedModelContainerExtensionDetectionTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+
+Copy /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks -remove-static-executable /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns
+
+Copy /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks -remove-static-executable /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+CopySwiftLibs /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib
+/Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib: replacing existing signature
+
+CodeSign /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib
+/Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/__preview.dylib: replacing existing signature
+
+CodeSign /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/Restock.app.xcent --timestamp\=none --generate-entitlement-der /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app
+/Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app: replacing existing signature
+
+Validate /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf
+    builtin-validationUtility /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app -shallow-bundle -infoplist-subpath Info.plist
+
+ValidateEmbeddedBinary /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf
+    /Applications/Xcode.app/Contents/Developer/usr/bin/embeddedBinaryValidationUtility /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -signing-cert - -info-plist-path /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+ValidateEmbeddedBinary /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf
+    /Applications/Xcode.app/Contents/Developer/usr/bin/embeddedBinaryValidationUtility /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -signing-cert - -info-plist-path /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-10-18 12:26:30.194 xcodebuild[93541:11482481] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-18 12:26:32.957011+0200 Restock[93582:11483215] [General] Failed to connect to linkd to request update AppShortcut parameters, error: Kommunikation mit der Hilfs-App nicht möglich.
+2026-10-18 12:26:33.009173+0200 Restock[93582:11483072] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-18 12:26:33.030906+0200 Restock[93582:11483215] [CK] Could not validate account info cache. (This is a potential performance issue.)
+2026-10-18 12:26:33.047904+0200 Restock[93582:11483217] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1087040e0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x108644500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-18 12:26:33.047961+0200 Restock[93582:11483217] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1087040e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-18 12:26:33.048011+0200 Restock[93582:11483217] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1087040e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-18 12:26:33.074319+0200 Restock[93582:11483072] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-10-18 12:26:33.243038+0200 Restock[93582:11483218] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+[AppDelegate] push registration succeeded, token length: 80
+Test Suite 'Selected tests' started at 2026-10-18 12:26:33.704.
+Test Suite 'RestockTests.xctest' started at 2026-10-18 12:26:33.704.
+Test Suite 'ExistingDataSurvivesCloudEnableTests' started at 2026-10-18 12:26:33.704.
+Test Case '-[RestockTests.ExistingDataSurvivesCloudEnableTests testExistingLocalStoreSurvivesFirstCloudKitOpen]' started.
+2026-10-18 12:26:33.733812+0200 Restock[93582:11483072] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-18 12:26:33.754652+0200 Restock[93582:11483221] [CloudKit] CoreData+CloudKit: -[PFCloudKitSetupAssistant _checkAndInitializeMetadata:]_block_invoke(174): Failed to initialize CloudKit metadata: Error Domain=NSCocoaErrorDomain Code=134407 "Request 'A7926383-9233-40EA-9D0C-3BC3DF4D8F08' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request 'A7926383-9233-40EA-9D0C-3BC3DF4D8F08' was cancelled because the store was removed from the coordinator.}
+2026-10-18 12:26:33.754733+0200 Restock[93582:11483221] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x10cd3f2c0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x10d3e57c0> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/EB15FD3B-4583-4AF3-AEB7-16B00A00D13F/tmp/migration-cktest-BD9B2106-EA1B-48CF-85F0-F735C04A988C.store)
+Error Domain=NSCocoaErrorDomain Code=134407 "Request 'A7926383-9233-40EA-9D0C-3BC3DF4D8F08' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request 'A7926383-9233-40EA-9D0C-3BC3DF4D8F08' was cancelled because the store was removed from the coordinator.}
+2026-10-18 12:26:33.754774+0200 Restock[93582:11483221] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x10cd3f2c0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134407 "Request 'A7926383-9233-40EA-9D0C-3BC3DF4D8F08' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request 'A7926383-9233-40EA-9D0C-3BC3DF4D8F08' was cancelled because the store was removed from the coordinator.}
+2026-10-18 12:26:33.755134+0200 Restock[93582:11483221] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+Error Domain=NSCocoaErrorDomain Code=134407 "Request 'A7926383-9233-40EA-9D0C-3BC3DF4D8F08' was cancelled because the store was removed from the coordinator." UserInfo={NSLocalizedFailureReason=Request 'A7926383-9233-40EA-9D0C-3BC3DF4D8F08' was cancelled because the store was removed from the coordinator.}
+2026-10-18 12:26:33.755297+0200 Restock[93582:11483221] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x10cd3f2c0>: Told to tear down with reason: Store Removed
+2026-10-18 12:26:33.755360+0200 Restock[93582:11483221] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x10cd3f2c0>: Told to tear down with reason: Stores Changed
+2026-10-18 12:26:33.755402+0200 Restock[93582:11483218] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.export.70AB4011-72EB-4E49-8548-F7E54DDF7E86
+2026-10-18 12:26:33.755478+0200 Restock[93582:11483218] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.export.70AB4011-72EB-4E49-8548-F7E54DDF7E86: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+Test Case '-[RestockTests.ExistingDataSurvivesCloudEnableTests testExistingLocalStoreSurvivesFirstCloudKitOpen]' passed (0.051 seconds).
+Test Suite 'ExistingDataSurvivesCloudEnableTests' passed at 2026-10-18 12:26:33.756.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.051 (0.052) seconds
+2026-10-18 12:26:33.755911+0200 Restock[93582:11483218] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.import.70AB4011-72EB-4E49-8548-F7E54DDF7E86
+2026-10-18 12:26:33.755963+0200 Restock[93582:11483218] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.import.70AB4011-72EB-4E49-8548-F7E54DDF7E86: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+Test Suite 'MirroredSchemaSnapshotTests' started at 2026-10-18 12:26:33.756.
+2026-10-18 12:26:33.756147+0200 Restock[93582:11483218] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.setup.70AB4011-72EB-4E49-8548-F7E54DDF7E86
+2026-10-18 12:26:33.756189+0200 Restock[93582:11483218] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.setup.70AB4011-72EB-4E49-8548-F7E54DDF7E86: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT1_mirroredModelsMatchFixedList]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT1_mirroredModelsMatchFixedList]' passed (0.001 seconds).
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT2_developmentExportContainsAllMirroredTypesAndFields]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT2_developmentExportContainsAllMirroredTypesAndFields]' passed (0.007 seconds).
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT3_optionalTodoNotesFieldIsInExport]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT3_optionalTodoNotesFieldIsInExport]' passed (0.001 seconds).
+Test Suite 'MirroredSchemaSnapshotTests' passed at 2026-10-18 12:26:33.765.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
+Test Suite 'SchemaCloudKitCompatibilityTests' started at 2026-10-18 12:26:33.765.
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testCloudKitMirroredContainerInitializesForRealSchema]' started.
+2026-10-18 12:26:33.765859+0200 Restock[93582:11483072] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-18 12:26:33.769767+0200 Restock[93582:11483217] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x10cd3f2c0>: Told to tear down with reason: Store Removed
+2026-10-18 12:26:33.769813+0200 Restock[93582:11483221] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.export.BE407690-02F8-4011-8A9C-3CFA73F50BB9
+2026-10-18 12:26:33.769815+0200 Restock[93582:11483217] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate tearDown:]_block_invoke(797): <NSCloudKitMirroringDelegate: 0x10cd3f2c0>: Told to tear down with reason: Stores Changed
+2026-10-18 12:26:33.769860+0200 Restock[93582:11483221] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.export.BE407690-02F8-4011-8A9C-3CFA73F50BB9: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+2026-10-18 12:26:33.769917+0200 Restock[93582:11483217] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x10cd3f2c0>: Failed to set up CloudKit integration for store: (null)
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-10-18 12:26:33.769967+0200 Restock[93582:11483217] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x10cd3f2c0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testCloudKitMirroredContainerInitializesForRealSchema]' passed (0.005 seconds).
+2026-10-18 12:26:33.770008+0200 Restock[93582:11483217] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:]_block_invoke(2323): The store was removed before the mirroring delegate could recover from an error:
+Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=The mirroring delegate could not initialize because it's store was removed from the coordinator.}
+2026-10-18 12:26:33.770004+0200 Restock[93582:11483221] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.import.BE407690-02F8-4011-8A9C-3CFA73F50BB9
+2026-10-18 12:26:33.770075+0200 Restock[93582:11483221] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.import.BE407690-02F8-4011-8A9C-3CFA73F50BB9: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+2026-10-18 12:26:33.770215+0200 Restock[93582:11483221] [BGSTFramework] cancelTaskRequestWithIdentifier No task request found for com.apple.coredata.cloudkit.activity.setup.BE407690-02F8-4011-8A9C-3CFA73F50BB9
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testDemonstratesRedWithoutFix]' started.
+2026-10-18 12:26:33.770267+0200 Restock[93582:11483221] [Scheduler] Error cancelling task com.apple.coredata.cloudkit.activity.setup.BE407690-02F8-4011-8A9C-3CFA73F50BB9: Error Domain=BGSystemTaskSchedulerErrorDomain Code=6 "(null)"
+2026-10-18 12:26:33.773830+0200 Restock[93582:11483072] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-18 12:26:33.773973+0200 Restock[93582:11483072] [error] CoreData: error: Store failed to load.  <NSPersistentStoreDescription: 0x118110c90> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/EB15FD3B-4583-4AF3-AEB7-16B00A00D13F/tmp/broken-cktest-AACBBF7A-31BE-4502-AB68-3313DD793238.store) with error = Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+BrokenCloudKitModel: name} with userInfo {
+    NSLocalizedFailureReason = "CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:\nBrokenCloudKitModel: name";
+}
+CoreData: error: Store failed to load.  <NSPersistentStoreDescription: 0x118110c90> (type: SQLite, url: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/EB15FD3B-4583-4AF3-AEB7-16B00A00D13F/tmp/broken-cktest-AACBBF7A-31BE-4502-AB68-3313DD793238.store) with error = Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+BrokenCloudKitModel: name} with userInfo {
+    NSLocalizedFailureReason = "CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:\nBrokenCloudKitModel: name";
+}
+2026-10-18 12:26:33.774075+0200 Restock[93582:11483072] [DataStore] Repair of Optional(file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/EB15FD3B-4583-4AF3-AEB7-16B00A00D13F/tmp/broken-cktest-AACBBF7A-31BE-4502-AB68-3313DD793238.store) was not required
+2026-10-18 12:26:33.774580+0200 Restock[93582:11483072] [DataStore] Unresolved error loading container Error Domain=NSCocoaErrorDomain Code=134060 "Ein Core Data-Fehler ist aufgetreten." UserInfo={NSLocalizedFailureReason=CloudKit integration requires that all attributes be optional, or have a default value set. The following attributes are marked non-optional but do not have a default value:
+BrokenCloudKitModel: name}
+Test Case '-[RestockTests.SchemaCloudKitCompatibilityTests testDemonstratesRedWithoutFix]' passed (0.005 seconds).
+Test Suite 'SchemaCloudKitCompatibilityTests' passed at 2026-10-18 12:26:33.775.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.009 (0.010) seconds
+Test Suite 'SharedModelContainerExtensionDetectionTests' started at 2026-10-18 12:26:33.775.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testAppExtensionNeverBuildsACloudKitConfiguration]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testAppExtensionNeverBuildsACloudKitConfiguration]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresAppexInAnIntermediatePathComponent]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresAppexInAnIntermediatePathComponent]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresTrailingSlash]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIgnoresTrailingSlash]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsCaseInsensitive]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsCaseInsensitive]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForAnAppBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForAnAppBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForTheMainAppProcess]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsFalseForTheMainAppProcess]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheShareExtensionBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheShareExtensionBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheWidgetBundlePath]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testDetectionIsTrueForTheWidgetBundlePath]' passed (0.000 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testExtensionAndAppOpenTheSameStoreLocation]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testExtensionAndAppOpenTheSameStoreLocation]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testMainAppStillPrefersTheCloudKitMirroredConfiguration]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testMainAppStillPrefersTheCloudKitMirroredConfiguration]' passed (0.001 seconds).
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testPreCloudBackupRunsOnlyInTheMainApp]' started.
+Test Case '-[RestockTests.SharedModelContainerExtensionDetectionTests testPreCloudBackupRunsOnlyInTheMainApp]' passed (0.000 seconds).
+Test Suite 'SharedModelContainerExtensionDetectionTests' passed at 2026-10-18 12:26:33.782.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.005 (0.007) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-10-18 12:26:33.782.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 0.074 (0.078) seconds
+Test Suite 'Selected tests' passed at 2026-10-18 12:26:33.782.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 0.074 (0.078) seconds
+[AppDelegate] push registration succeeded, token length: 80
+2026-10-18 12:26:33.804 xcodebuild[93541:11482481] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-18 12:26:33.804 xcodebuild[93541:11482481] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-18 12:26:34.082 xcodebuild[93541:11482481] [MT] IDETestOperationsObserverDebug: 4.083 elapsed -- Testing started completed.
+2026-10-18 12:26:34.082 xcodebuild[93541:11482481] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-18 12:26:34.082 xcodebuild[93541:11482481] [MT] IDETestOperationsObserverDebug: 4.083 sec, +4.083 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/build/dd-155/Logs/Test/Test-Restock-2026.10.18_12-26-27-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started
+exit=0
