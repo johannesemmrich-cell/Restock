@@ -70,6 +70,26 @@ struct StoreDetailView: View {
         items.compactMap { $0.estimatedLineTotal }.reduce(0, +)
     }
 
+    /// Issue #160: Die Summe sagt, wie viel davon geschätzt ist — „ca." davor und
+    /// „3 von 6 geschätzt" statt „Geschätzter Betrag", sobald Katalog oder Pauschale mitzählen.
+    static func totalCaption(estimated: Int, priced: Int) -> String {
+        estimated > 0
+            ? String(format: String(localized: "price.total.estimated.count"), estimated, priced)
+            : String(localized: "list.estimated.total")
+    }
+
+    static func totalText(_ total: Double, estimated: Int, currencyCode: String) -> String {
+        (estimated > 0 ? "ca. " : "") + total.formatted(.currency(code: currencyCode))
+    }
+
+    private func estimatedPriceCount(in items: [ShoppingItem]) -> Int {
+        items.filter { $0.estimatedLineTotal != nil && $0.estimatedPriceIsAutoDerived }.count
+    }
+
+    private func pricedCount(in items: [ShoppingItem]) -> Int {
+        items.filter { $0.estimatedLineTotal != nil }.count
+    }
+
     /// "x von y" progress (count and bar below) counts only recently-completed items (see
     /// `Store.recentlyCompletedItems`) so it reflects the current shopping trip rather than
     /// growing forever — items stay listed in "Erledigt" regardless, this only affects the count.
@@ -958,10 +978,11 @@ struct StoreDetailView: View {
 
             if total(for: pending) > 0 {
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text(String(localized: "list.estimated.total"))
+                    Text(Self.totalCaption(estimated: estimatedPriceCount(in: pending), priced: pricedCount(in: pending)))
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
-                    Text(total(for: pending), format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                    Text(Self.totalText(total(for: pending), estimated: estimatedPriceCount(in: pending),
+                                        currencyCode: Locale.current.currency?.identifier ?? "EUR"))
                         .font(.system(size: 16, weight: .semibold))
                 }
             }
@@ -1067,7 +1088,8 @@ struct StoreDetailView: View {
             quantity: finalQty,
             quantityAmount: finalAmount,
             unit: finalUnit,
-            store: store
+            store: store,
+            otherStores: activeStores
         ))
         quickAddText = ""
         DispatchQueue.main.async { isQuickAddFocused = true }

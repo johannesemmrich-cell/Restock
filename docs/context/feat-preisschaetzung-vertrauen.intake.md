@@ -93,6 +93,13 @@ Community → Katalog → KI → Pauschale (nur noch Rechengröße für Summen).
 | Tomatenmark 200 g | 2,00 € | 0,90–1,30 € |
 | Gouda 400 g | 2,50 € | 3,50–4,50 € |
 
+## Stand der Umsetzung (2026-10-18, PR #165)
+
+Schritte 1–3 (#160, #161, #162 erste Tranche: 308 handgepflegte Einträge) umgesetzt, Spec
+`docs/specs/models/price-catalog-honest-estimate.md`, Tests `RestockTests/PriceCatalogTests.swift`.
+Messung vorher → nachher: 100 Alltagsartikel mit Produktpreis 39 → 100; 565 Lebensmittel-
+Stichwörter 20 % → 70 %; Teilstring-Fehltreffer 5 → 0. Offen: Open-Prices-Median (#162), #163, #164.
+
 ## Betroffener Code (erste Sichtung, nicht abschließend)
 
 - `SmartCart/Models/ShoppingItem.swift` — `PriceEstimator`, `resolveLearnedPrice`, `priceSource`

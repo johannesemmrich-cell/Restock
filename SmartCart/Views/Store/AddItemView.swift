@@ -273,7 +273,8 @@ struct AddItemView: View {
             unit: unit,
             note: note,
             store: selectedStore,
-            quantitySource: quantitySource
+            quantitySource: quantitySource,
+            otherStores: activeStores
         )
         if let chosen = chosenCategory {
             item.category = chosen
