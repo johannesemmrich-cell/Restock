@@ -15,12 +15,11 @@ private final class FakeModel: ReceiptNameLanguageModel, @unchecked Sendable {
     }
 
     var prompts: [String] {
-        lock.lock(); defer { lock.unlock() }
-        return _prompts
+        lock.withLock { _prompts }
     }
 
     func respond(to prompt: String) async -> String? {
-        lock.lock(); _prompts.append(prompt); lock.unlock()
+        lock.withLock { _prompts.append(prompt) }
         return answer(prompt)
     }
 }
