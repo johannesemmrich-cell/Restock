@@ -187,11 +187,14 @@ enum ReceiptResolutionService {
                         (index, await ReceiptNameAIResolver.shared.expand(raw, knownNames: knownNames))
                     }
                 }
+                var answers: [Int: String] = [:]
                 for await (index, suggestion) in group {
-                    if let suggestion {
-                        resolvedNames[index] = suggestion
-                        aiResolvedIndices.insert(index)
-                    }
+                    if let suggestion { answers[index] = suggestion }
+                }
+                let rawNames = Dictionary(uniqueKeysWithValues: needsAI.map { ($0, parsed[$0].name) })
+                for (index, suggestion) in ReceiptNameAIResolver.discardingRepeatedUnrelatedAnswers(answers, rawNames: rawNames) {
+                    resolvedNames[index] = suggestion
+                    aiResolvedIndices.insert(index)
                 }
             }
         }
@@ -230,6 +233,9 @@ enum ReceiptResolutionService {
             if result.count == limit { break }
             let trimmed = name.trimmingCharacters(in: .whitespaces)
             guard !trimmed.isEmpty else { continue }
+            // Ein als Name gespeichertes Bon-Kürzel ("Bröt.") gehört nicht in den Prompt — das
+            // Modell übernahm es sonst für fremde Zeilen.
+            guard !ReceiptNameAIResolver.endsWithAbbreviation(trimmed) else { continue }
             let lower = trimmed.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
             guard !seenLower.contains(lower) else { continue }
             seenLower.insert(lower)

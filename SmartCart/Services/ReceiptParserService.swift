@@ -1301,11 +1301,13 @@ actor ReceiptNameAIResolver {
         #if canImport(FoundationModels)
         let model = SystemLanguageModel.default
         guard case .available = model.availability else { return nil }
-        // Empfehlend, nicht bindend ("bevorzuge... falls plausibel") — bei einem echten neuen
-        // Produkt, das nicht in `knownNames` vorkommt, soll das Modell weiterhin frei raten dürfen.
+        // Nur bei eindeutigem Bezug verwenden, sonst ignorieren. Die frühere Formulierung
+        // ("bevorzuge eine Übereinstimmung/Ähnlichkeit hiermit") ließ das kleine On-Device-Modell
+        // den ersten Listeneintrag für JEDE Zeile übernehmen — gemeldet 18.10.2026: alle Zeilen
+        // eines dm-Bons wurden zu "Bröt." (siehe `discardingRepeatedUnrelatedAnswers`).
         let knownHint = knownNames.isEmpty ? "" : """
 
-        Der Nutzer verwendet u. a. diese eigenen Artikelnamen (bevorzuge eine Übereinstimmung/Ähnlichkeit hiermit, falls plausibel): \(knownNames.joined(separator: ", "))
+        Eigene Artikelnamen des Nutzers (nur verwenden, wenn die Bonzeile eindeutig genau diesen Artikel meint, sonst ignorieren): \(knownNames.joined(separator: ", "))
         """
         let prompt = """
         Dies ist eine abgekürzte Positionszeile von einem Kassenbon (Deutsch oder Französisch): "\(raw)"
@@ -1344,6 +1346,66 @@ actor ReceiptNameAIResolver {
             .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, trimmed.count <= 60, !trimmed.contains("\n") else { return nil }
         guard trimmed.caseInsensitiveCompare(Self.nonProductSentinel) != .orderedSame else { return nil }
+        // Ein Kürzel wie "Bröt." ist kein ausgeschriebener Produktname — genau das soll Stufe 5
+        // liefern. Lieber den Roh-Bontext stehen lassen.
+        guard !Self.endsWithAbbreviation(trimmed) else { return nil }
         return trimmed
+    }
+
+    /// `true`, wenn der Text auf ein Kürzel mit Punkt endet ("Bröt.", "Schokol.") — nicht bei
+    /// Zahlen ("3.5") oder Kürzeln mitten im Namen ("Dr. Oetker Pizza").
+    static func endsWithAbbreviation(_ text: String) -> Bool {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.hasSuffix("."), let beforeDot = trimmed.dropLast().last else { return false }
+        return beforeDot.isLetter
+    }
+
+    /// Ab so vielen verschiedenen Bonzeilen mit derselben KI-Antwort gilt die Antwort als verdächtig.
+    static let repeatedAnswerThreshold = 3
+
+    /// Verwirft KI-Antworten, die das Modell für mehrere verschiedene Bonzeilen gleich geliefert
+    /// hat, ohne dass sie im Text der jeweiligen Zeile vorkommen. Gemeldet 18.10.2026: Auf einem
+    /// dm-Bon wurde aus jeder Zeile "Bröt." ("Ricola Bonbon Salbei", "Mentos Gum 3 Fruity
+    /// Fresh", …) — das Modell hatte einen Eintrag aus den eigenen Artikelnamen (Prompt-Kontext)
+    /// für alle Zeilen übernommen. Ab `repeatedAnswerThreshold` verschiedenen Rohtexten pro
+    /// Antwort bleibt sie nur für Zeilen stehen, die mit der Antwort ein Wort teilen (gleicher
+    /// Anfang aus mindestens drei Buchstaben, z. B. "Schoko Lolli" → "Schokolade"); die übrigen
+    /// fallen auf den Roh-Bontext zurück. Seltener als dreimal dieselbe Antwort bleibt unberührt
+    /// (zwei Tuchmasken dürfen beide "Tuchmaske" heißen).
+    /// - Parameters:
+    ///   - answers: KI-Antwort je Zeilenindex.
+    ///   - rawNames: Roh-Bontext je Zeilenindex.
+    static func discardingRepeatedUnrelatedAnswers(
+        _ answers: [Int: String],
+        rawNames: [Int: String]
+    ) -> [Int: String] {
+        let groups = Dictionary(grouping: answers.keys) { foldedForComparison(answers[$0] ?? "") }
+        var result = answers
+        for indices in groups.values {
+            let distinctRaw = Set(indices.map { foldedForComparison(rawNames[$0] ?? "") })
+            guard distinctRaw.count >= repeatedAnswerThreshold else { continue }
+            for index in indices {
+                guard let answer = answers[index], let raw = rawNames[index] else { continue }
+                if !sharesWordStart(answer, raw) { result[index] = nil }
+            }
+        }
+        return result
+    }
+
+    private static func foldedForComparison(_ text: String) -> String {
+        text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func words(_ text: String) -> [String] {
+        foldedForComparison(text)
+            .components(separatedBy: CharacterSet.letters.inverted)
+            .filter { $0.count >= 3 }
+    }
+
+    /// Ein Wort der Antwort und ein Wort des Rohtextes beginnen mit denselben drei Buchstaben.
+    private static func sharesWordStart(_ answer: String, _ raw: String) -> Bool {
+        let rawStarts = Set(words(raw).map { String($0.prefix(3)) })
+        return words(answer).contains { rawStarts.contains(String($0.prefix(3))) }
     }
 }

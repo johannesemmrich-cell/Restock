@@ -63,4 +63,47 @@ final class ReceiptNameAIResolverSanitizeTests: XCTestCase {
     func testSentinelAsSubstringOfLongerTextIsNotRejected() {
         XCTAssertEqual(resolver.sanitize("\(ReceiptNameAIResolver.nonProductSentinel) Zusatz"), "\(ReceiptNameAIResolver.nonProductSentinel) Zusatz")
     }
+
+    // MARK: - "Bröt." auf allen Zeilen (gemeldet 18.10.2026)
+
+    func testAbbreviationAnswerIsRejected() {
+        XCTAssertNil(resolver.sanitize("Bröt."))
+        XCTAssertNil(resolver.sanitize("\"Schokol.\""))
+    }
+
+    func testDotInsideNameOrAfterNumberIsKept() {
+        XCTAssertEqual(resolver.sanitize("Dr. Oetker Pizza"), "Dr. Oetker Pizza")
+        XCTAssertEqual(resolver.sanitize("Milch 3.5"), "Milch 3.5")
+    }
+
+    /// Der gemeldete dm-Bon: dieselbe Antwort für vier fremde Zeilen wird überall verworfen.
+    func testSameUnrelatedAnswerForManyLinesIsDiscarded() {
+        let raw = [0: "Ricola Bonbon Salbei", 1: "Mentos Gum 3 Fruity Fresh",
+                   2: "Soft&Sicher Pocket 6x8St", 3: "Elmex Zahncr. Sens. Prof. 75ml"]
+        let answers = [0: "Bröt.", 1: "Bröt.", 2: "bröt.", 3: "Bröt."]
+        XCTAssertTrue(ReceiptNameAIResolver.discardingRepeatedUnrelatedAnswers(answers, rawNames: raw).isEmpty)
+    }
+
+    /// Gleiche Antwort mit Textbezug bleibt stehen, nur die Zeile ohne Bezug fällt zurück.
+    func testRepeatedAnswerIsKeptWhereRawTextSharesAWord() {
+        let raw = [0: "dmBio Noisette Schokol", 1: "Schoko Lolli Vollmilch",
+                   2: "dmBio Schokolierte Brezeln ZB", 3: "Balea Fuß-Maske Socken"]
+        let answers = [0: "Schokolade", 1: "Schokolade", 2: "Schokolade", 3: "Schokolade"]
+        let result = ReceiptNameAIResolver.discardingRepeatedUnrelatedAnswers(answers, rawNames: raw)
+        XCTAssertEqual(result, [0: "Schokolade", 1: "Schokolade", 2: "Schokolade"])
+    }
+
+    /// Unterhalb der Schwelle (zwei Zeilen) bleibt alles unverändert, auch ohne Textbezug.
+    func testAnswerRepeatedForTwoLinesIsUntouched() {
+        let raw = [0: "Balea Tuchmaske Ultra Sensitiv", 1: "SEINZ. Tuchmaske Hydro Effect", 2: "Elmex Zahncr."]
+        let answers = [0: "Gesichtsmaske", 1: "Gesichtsmaske", 2: "Zahnpasta"]
+        XCTAssertEqual(ReceiptNameAIResolver.discardingRepeatedUnrelatedAnswers(answers, rawNames: raw), answers)
+    }
+
+    /// Dieselbe Bonzeile mehrfach (gleicher Rohtext) zählt als eine — kein Verwerfen.
+    func testIdenticalRawLinesCountOnce() {
+        let raw = [0: "Rote Bete", 1: "Rote Bete", 2: "Rote Bete"]
+        let answers = [0: "Gemüse", 1: "Gemüse", 2: "Gemüse"]
+        XCTAssertEqual(ReceiptNameAIResolver.discardingRepeatedUnrelatedAnswers(answers, rawNames: raw), answers)
+    }
 }

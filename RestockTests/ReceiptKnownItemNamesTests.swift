@@ -54,4 +54,17 @@ final class ReceiptKnownItemNamesTests: XCTestCase {
 
         XCTAssertTrue(names.contains("Burger Brötchen"))
     }
+
+    /// Ein als Name gespeichertes Bon-Kürzel ("Bröt.") darf nicht in den Prompt-Kontext — das
+    /// Modell übernahm es sonst für jede Zeile (gemeldet 18.10.2026).
+    func testExcludesAbbreviatedNames() throws {
+        let context = try makeInMemoryContext()
+        let store = Store(name: "dm", emoji: "🛒", colorHex: "#123456")
+        context.insert(store)
+
+        let records = [record("Bröt.", store: "Lidl", daysAgo: 1), record("Salbeibonbons", store: "dm", daysAgo: 2)]
+        let names = ReceiptResolutionService.knownItemNames(allRecords: records, store: store)
+
+        XCTAssertEqual(names, ["Salbeibonbons"])
+    }
 }
