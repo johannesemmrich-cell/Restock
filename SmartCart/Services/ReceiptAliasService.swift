@@ -37,9 +37,28 @@ final class ReceiptAliasService {
             if aliases.removeValue(forKey: key) != nil { persist() }
             return
         }
+        // Ein Kürzel ("Bröt.") als Zielname würde als Stufe 1 jeden künftigen Scan dieser Zeile
+        // vor allen anderen Stufen auf das Kürzel festnageln (gemeldet 18.10.2026, dm-Bon).
+        guard Self.isLearnableTarget(name) else { return }
         guard aliases[key] != name else { return }
         aliases[key] = name
         persist()
+    }
+
+    /// `false` für Zielnamen, die selbst ein Bon-Kürzel sind ("Bröt.", "Schokol.").
+    static func isLearnableTarget(_ itemName: String) -> Bool {
+        !ReceiptNameAIResolver.endsWithAbbreviation(itemName)
+    }
+
+    /// Entfernt alle Zuordnungen auf Kürzel-Ziele (einmalige Aufräumung, `AbbreviatedNameCleanup`).
+    /// Liefert die Zahl der entfernten Einträge.
+    @discardableResult
+    func removeAbbreviatedTargets() -> Int {
+        let doomed = aliases.filter { !Self.isLearnableTarget($0.value) }.map(\.key)
+        guard !doomed.isEmpty else { return 0 }
+        for key in doomed { aliases.removeValue(forKey: key) }
+        persist()
+        return doomed.count
     }
 
     private func normalize(_ s: String) -> String {

@@ -775,6 +775,7 @@ struct SmartCartApp: App {
                 .task {
                     PriceProvenanceMigration.runIfNeeded(context: container.mainContext)
                     LegacyLearnedPriceReset.runIfNeeded(context: container.mainContext)
+                    AbbreviatedNameCleanup.runIfNeeded(context: container.mainContext)
                     await SyncCoordinator.shared.resubscribeAll()
                 }
                 // App-wide pull for ALL shared stores: immediately on every (re)activation and

@@ -19,6 +19,14 @@ Der Prompt bekam die eigenen Artikelnamen des Nutzers mit der Bitte „bevorzuge
 
 `RestockTests/ReceiptAIResolutionChainTests.swift` (K1–K7) prüft die ganze Kette mit Schein-Modell, Daten: dm-Bon vom 05.10.2026 und Lidl-Bon aus `ReceiptParserLidlFullReceiptTests`. K2 stellt den vermuteten Ablauf nach (Modell übernimmt den ersten eigenen Namen aus dem Prompt). Was das echte Modell antwortet, misst die lokale Auswertung (eigenes Issue).
 
+## Folgeschaden beim Speichern (Nachtrag 2)
+
+Wird ein Bon mit „Bröt.“ an fremden Zeilen gespeichert, entstehen drei Schäden: Aliase Bontext → „Bröt.“ (Stufe 1, gewinnen bei jedem künftigen Scan, auch gegen die KI-Prüfung), gelernter Preis unter „bröt.“ (letzte Zeile gewinnt, jedes neue „Brötchen“ bekommt ihn) und Kaufdatensätze „Bröt.“ mit fremden Preisen.
+
+- `ReceiptAliasService.learn` lehnt Kürzel-Ziele ab (`isLearnableTarget`); `ReceiptLearning.aliasLearnableIndices` sperrt das Lernen für Namen, die an ≥ 3 fremden Zeilen hängen (dieselbe Regel wie `discardingRepeatedUnrelatedAnswers`); `save()` nutzt beides.
+- `AbbreviatedNameCleanup.runIfNeeded` (einmalig, `abbreviatedNameCleanupV1Applied`, nach `LegacyLearnedPriceReset`): entfernt Aliase mit Kürzel-Ziel (`ReceiptAliasService.removeAbbreviatedTargets`) und gelernte Preise/Einheiten/Daten/Herkunft unter Kürzel-Schlüsseln. Kaufdatensätze bleiben (darunter können echte Käufe sein).
+- Tests: `AbbreviatedNameCleanupTests`.
+
 ## Tests
 
 `ReceiptNameAIResolverSanitizeTests` (Kürzel, gemeldeter Bon, Schokolade-Gruppe, Schwelle, gleiche Rohtexte), `ReceiptKnownItemNamesTests.testExcludesAbbreviatedNames`.
@@ -27,4 +35,4 @@ Der Prompt bekam die eigenen Artikelnamen des Nutzers mit der Bitte „bevorzuge
 
 - Der eigentliche Modellaufruf ist im Simulator/CI nicht testbar; ob die neue Prompt-Formulierung allein reicht, ist erst am Gerät belegbar. Die Prüfungen 3 und 4 greifen unabhängig davon.
 - Eine falsche Antwort, die nur ein- oder zweimal vorkommt und kein Kürzel ist, wird weiter angezeigt (der Nutzer sieht jede Zeile vor dem Speichern).
-- Bereits gespeicherte „Bröt.“-Einträge in Kaufhistorie oder Aliasen werden nicht bereinigt.
+- Kaufdatensätze „Bröt.“ werden nicht bereinigt; die Aufräumung des Alias-Speichers ist nur über die reine Entscheidung geprüft, nicht gegen die App-Gruppe.
