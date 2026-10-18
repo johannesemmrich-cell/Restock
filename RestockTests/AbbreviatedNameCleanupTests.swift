@@ -34,13 +34,14 @@ final class AbbreviatedNameCleanupTests: XCTestCase {
         XCTAssertTrue(ReceiptAliasService.isLearnableTarget("Dr. Oetker Pizza"))
     }
 
-    /// Der gemeldete Bon: derselbe Name an vier fremden Zeilen → für keine davon ein Alias.
+    /// Der gemeldete Bon: derselbe Name an vier fremden Zeilen ohne Wortbezug → für keine davon
+    /// ein Alias. („Salbeibonbons“ wäre an „Ricola Bonbon Salbei“ bezogen und bliebe lernbar.)
     func testSameNameOnUnrelatedLinesBlocksAliasLearning() {
         let lines = [
-            (name: "Salbeibonbons", originalName: "Ricola Bonbon Salbei"),
-            (name: "Salbeibonbons", originalName: "Mentos Gum 3 Fruity Fresh"),
-            (name: "Salbeibonbons", originalName: "Elmex Zahncr. Sens. Prof. 75ml"),
-            (name: "Salbeibonbons", originalName: "Balea Tuchmaske Ultra Sensitiv"),
+            (name: "Lutschpastille", originalName: "Ricola Bonbon Salbei"),
+            (name: "Lutschpastille", originalName: "Mentos Gum 3 Fruity Fresh"),
+            (name: "Lutschpastille", originalName: "Elmex Zahncr. Sens. Prof. 75ml"),
+            (name: "Lutschpastille", originalName: "Balea Tuchmaske Ultra Sensitiv"),
             (name: "Kaffee", originalName: "dmBio Espresso gemahlen 250g"),
         ]
         XCTAssertEqual(ReceiptLearning.aliasLearnableIndices(lines), [4])
