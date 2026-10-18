@@ -59,6 +59,7 @@ DEFINE SCHEMA
         CD_name                        STRING QUERYABLE SEARCHABLE SORTABLE,
         CD_note                        STRING QUERYABLE SEARCHABLE SORTABLE,
         CD_photoData                   BYTES QUERYABLE SORTABLE,
+        CD_photoData_ckAsset           ASSET,
         CD_photoLastModified           TIMESTAMP QUERYABLE SORTABLE,
         CD_priceSource                 STRING,
         CD_priceSourceDate             TIMESTAMP,

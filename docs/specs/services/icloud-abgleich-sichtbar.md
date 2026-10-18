@@ -323,3 +323,4 @@ Belegart: **[Unit]**, **[UI]**, **[Beleg]** (Werkzeug-Artefakt), **[Gerät]** (o
 ## Changelog
 
 - 2026-10-18: Initial spec created
+- 2026-10-18: Abweichung von AC-19 auf Anweisung des PO: Der Management-Token wird **nicht** entfernt, er bleibt dauerhaft im Schlüsselbund (kein `remove-token`), damit künftige Schema-Arbeit ohne neuen Dashboard-Schritt läuft. Der AC-Text ist durch den Spec-Freeze gesperrt; diese Zeile hat Vorrang.

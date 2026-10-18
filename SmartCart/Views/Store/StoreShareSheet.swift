@@ -382,30 +382,26 @@ struct JoinStoreSheet: View {
 
         // Joining the same code twice would create a second local store with the same shareID;
         // both would then poll and push the same CKRecord and show up as confusing duplicates.
-        let alreadyJoinedName: String? = await MainActor.run {
-            let stores = (try? context.fetch(FetchDescriptor<Store>())) ?? []
-            return stores.first(where: { $0.shareID == preview.shareID })?.name
-        }
-        if let name = alreadyJoinedName {
-            await MainActor.run {
-                self.error = String(format: String(localized: "share.join.alreadyjoined.format"), name)
-                isJoining = false
-            }
-            return
-        }
+        // Issue #156, B2: the existing store is updated and reused instead.
+        let existing = StoreShareJoin.existingStore(shareID: preview.shareID, in: context)
 
         do {
             let result = try await SharedStoreService.shared.pull(shareID: preview.shareID)
 
-            let store = Store(
+            let store = existing ?? Store(
                 name: preview.storeName,
                 emoji: preview.storeEmoji,
                 colorHex: preview.storeColorHex
             )
-            store.shareID = preview.shareID
-            store.isSharedByMe = false
-
-            await MainActor.run { context.insert(store) }
+            if existing == nil {
+                store.shareID = preview.shareID
+                store.isSharedByMe = false
+                await MainActor.run { context.insert(store) }
+            } else {
+                store.name = preview.storeName
+                store.emoji = preview.storeEmoji
+                store.colorHex = preview.storeColorHex
+            }
             // Reuses the same merge logic as the periodic sync, so joining is exactly
             // equivalent to a first pull — no separate item-copying path to maintain.
             if let result {
