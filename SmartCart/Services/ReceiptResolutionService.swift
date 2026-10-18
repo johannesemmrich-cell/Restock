@@ -83,7 +83,13 @@ enum ReceiptResolutionService {
     /// die Extension übergibt ohnehin unaufgelöste Rohnamen an die Haupt-App weiter, die beim
     /// nächsten manuellen Öffnen (`HomeView.checkPendingReceiptScan`) ganz normal in
     /// `ReceiptScannerView` landen — dort läuft Stufe 5 mit vollem App-Speicherbudget.
-    static func resolve(parsed: [ReceiptLine], store: Store, allRecords: [PurchaseRecord], allowAIResolution: Bool = true) async -> [ResolvedReceiptLine] {
+    static func resolve(
+        parsed: [ReceiptLine],
+        store: Store,
+        allRecords: [PurchaseRecord],
+        allowAIResolution: Bool = true,
+        aiResolver: ReceiptNameAIResolver = .shared
+    ) async -> [ResolvedReceiptLine] {
         var (resolvedNames, needsAI, suggestionsByIndex, matchedItemIDs, stages) = await MainActor.run { () -> ([Int: String], [Int], [Int: [ReceiptSuggestion]], [Int: UUID], [Int: ReceiptResolutionStage]) in
             var resolvedNames: [Int: String] = [:]
             var needsAI: [Int] = []
@@ -176,7 +182,7 @@ enum ReceiptResolutionService {
         // `expand` liefert bei Nichtverfügbarkeit/Timeout/leerer Antwort `nil`, dann bleibt der
         // Roh-Text stehen und es ist kein KI-Vorschlag). Steuert die Art.-50-Kennzeichnung unten.
         var aiResolvedIndices: Set<Int> = []
-        if allowAIResolution, !needsAI.isEmpty, ReceiptNameAIResolver.isAIAvailable() {
+        if allowAIResolution, !needsAI.isEmpty, aiResolver.isAvailable {
             // Nur einmal pro Scan aufgebaut (nicht pro Zeile) — reiner Empfehlungs-Kontext für den
             // Prompt, siehe `knownItemNames` unten.
             let knownNames = await MainActor.run { knownItemNames(allRecords: allRecords, store: store) }
@@ -184,7 +190,7 @@ enum ReceiptResolutionService {
                 for index in needsAI {
                     let raw = parsed[index].name
                     group.addTask {
-                        (index, await ReceiptNameAIResolver.shared.expand(raw, knownNames: knownNames))
+                        (index, await aiResolver.expand(raw, knownNames: knownNames))
                     }
                 }
                 var answers: [Int: String] = [:]

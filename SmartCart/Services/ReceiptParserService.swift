@@ -1263,8 +1263,22 @@ enum ReceiptParserService {
 /// Intelligence aktiv; auf jedem anderen Gerät liefert `expand` einfach nil und die bisherige
 /// Stufe (unveränderter Roh-Text) bleibt stehen. Der User sieht/bearbeitet jede Zeile ohnehin vor
 /// dem Speichern, ein gelegentlich falscher Vorschlag ist daher kein Datenrisiko.
+///
+/// Naht für Tests: Das eigentliche Modell steckt hinter `ReceiptNameLanguageModel`. Unit-Tests
+/// geben über `init(model:)` eine Scheinantwort vor und prüfen damit Prompt, `sanitize` und die
+/// Nachprüfung in `ReceiptResolutionService.resolve` ohne Apple Intelligence (im Simulator/CI
+/// nicht verfügbar). Siehe `ReceiptAIResolutionChainTests`.
 actor ReceiptNameAIResolver {
     static let shared = ReceiptNameAIResolver()
+
+    let model: any ReceiptNameLanguageModel
+
+    init(model: any ReceiptNameLanguageModel = SystemReceiptNameLanguageModel()) {
+        self.model = model
+    }
+
+    /// Ob Stufe 5 mit diesem Modell überhaupt laufen kann.
+    nonisolated var isAvailable: Bool { model.isAvailable }
 
     /// Antwort-Marker für "das ist gar kein Produkt" — siehe Prompt in `aiExpand` und `sanitize`
     /// unten. Ohne diesen Ausweg musste das Modell für JEDEN Text, der Stufe 5 erreicht
@@ -1279,28 +1293,34 @@ actor ReceiptNameAIResolver {
     static let nonProductSentinel = "KEIN_PRODUKT"
 
     static func isAIAvailable() -> Bool {
-        #if canImport(FoundationModels)
-        guard #available(iOS 26, *) else { return false }
-        if case .available = SystemLanguageModel.default.availability { return true }
-        #endif
-        return false
+        shared.isAvailable
     }
 
-    /// Öffentlicher Einstiegspunkt — kapselt Verfügbarkeits-Check, iOS-Version-Guard und
-    /// Fehlerbehandlung, damit der Aufrufer nur ein einfaches optionales String bekommt.
+    /// Öffentlicher Einstiegspunkt — kapselt Verfügbarkeits-Check, Timeout und Nachbearbeitung,
+    /// damit der Aufrufer nur ein einfaches optionales String bekommt.
     /// `knownNames` sind die eigenen, bereits bekannten Artikelnamen des Nutzers (siehe
     /// `ReceiptResolutionService.knownItemNames`) — rein empfehlender Kontext für den Prompt,
     /// keine harte Vorgabe.
     func expand(_ raw: String, knownNames: [String] = []) async -> String? {
-        guard #available(iOS 26, *) else { return nil }
-        return (try? await aiExpand(raw, knownNames: knownNames)) ?? nil
+        guard model.isAvailable else { return nil }
+        let prompt = Self.prompt(for: raw, knownNames: knownNames)
+        let model = self.model
+        // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen. Nutzt `withRealTimeout`
+        // (CGImagePropertyOrientation+UIImage.swift) statt eines TaskGroup-Rennens, das einen wirklich
+        // hängenden Aufruf nicht begrenzt hätte (siehe dessen Dokumentation).
+        return await withRealTimeout(
+            seconds: 25,
+            operation: {
+                guard let text = await model.respond(to: prompt) else { return nil }
+                return self.sanitize(text)
+            },
+            onTimeout: { nil }
+        )
     }
 
-    @available(iOS 26, *)
-    private func aiExpand(_ raw: String, knownNames: [String]) async throws -> String? {
-        #if canImport(FoundationModels)
-        let model = SystemLanguageModel.default
-        guard case .available = model.availability else { return nil }
+    /// Der Prompt für eine Bonzeile. Nicht `private`: die Tests prüfen, dass Rohtext und eigene
+    /// Namen ankommen.
+    static func prompt(for raw: String, knownNames: [String]) -> String {
         // Nur bei eindeutigem Bezug verwenden, sonst ignorieren. Die frühere Formulierung
         // ("bevorzuge eine Übereinstimmung/Ähnlichkeit hiermit") ließ das kleine On-Device-Modell
         // den ersten Listeneintrag für JEDE Zeile übernehmen — gemeldet 18.10.2026: alle Zeilen
@@ -1309,7 +1329,7 @@ actor ReceiptNameAIResolver {
 
         Eigene Artikelnamen des Nutzers (nur verwenden, wenn die Bonzeile eindeutig genau diesen Artikel meint, sonst ignorieren): \(knownNames.joined(separator: ", "))
         """
-        let prompt = """
+        return """
         Dies ist eine abgekürzte Positionszeile von einem Kassenbon (Deutsch oder Französisch): "\(raw)"
 
         Antworte NUR mit einem KURZEN, generischen Produktnamen, wie er normalerweise auf einer
@@ -1319,22 +1339,8 @@ actor ReceiptNameAIResolver {
 
         Falls der Text KEIN Produkt ist (z. B. ein Zahlungs-/Steuer-/Transaktionscode, eine reine
         Zahlenfolge, ein Tabellen-Fragment oder sonstiger Kassenbon-Verwaltungstext ohne
-        erkennbaren Produktbezug), antworte NUR mit \(Self.nonProductSentinel), sonst nichts.\(knownHint)
+        erkennbaren Produktbezug), antworte NUR mit \(nonProductSentinel), sonst nichts.\(knownHint)
         """
-        // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen. Nutzt `withRealTimeout`
-        // (RecipeRecognitionService.swift) statt eines TaskGroup-Rennens, das einen wirklich
-        // hängenden Aufruf nicht begrenzt hätte (siehe dessen Dokumentation).
-        return await withRealTimeout(
-            seconds: 25,
-            operation: {
-                guard let response = try? await LanguageModelSession().respond(to: prompt) else { return nil }
-                return self.sanitize(response.content)
-            },
-            onTimeout: { nil }
-        )
-        #else
-        return nil
-        #endif
     }
 
     nonisolated func sanitize(_ text: String) -> String? {
@@ -1407,5 +1413,33 @@ actor ReceiptNameAIResolver {
     private static func sharesWordStart(_ answer: String, _ raw: String) -> Bool {
         let rawStarts = Set(words(raw).map { String($0.prefix(3)) })
         return words(answer).contains { rawStarts.contains(String($0.prefix(3))) }
+    }
+}
+
+/// Das Sprachmodell hinter Stufe 5. Liefert die rohe Modellantwort (vor `sanitize`) oder `nil`
+/// bei Fehler. Produktiv `SystemReceiptNameLanguageModel`, in Tests eine Scheinantwort.
+protocol ReceiptNameLanguageModel: Sendable {
+    var isAvailable: Bool { get }
+    func respond(to prompt: String) async -> String?
+}
+
+/// Apples On-Device-Modell (FoundationModels, iOS 26+ mit eingeschalteter Apple Intelligence).
+struct SystemReceiptNameLanguageModel: ReceiptNameLanguageModel {
+    var isAvailable: Bool {
+        #if canImport(FoundationModels)
+        guard #available(iOS 26, *) else { return false }
+        if case .available = SystemLanguageModel.default.availability { return true }
+        #endif
+        return false
+    }
+
+    func respond(to prompt: String) async -> String? {
+        #if canImport(FoundationModels)
+        guard #available(iOS 26, *) else { return nil }
+        guard case .available = SystemLanguageModel.default.availability else { return nil }
+        return try? await LanguageModelSession().respond(to: prompt).content
+        #else
+        return nil
+        #endif
     }
 }
