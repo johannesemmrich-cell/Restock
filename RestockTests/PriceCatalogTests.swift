@@ -154,6 +154,41 @@ final class PriceCatalogTests: XCTestCase {
         }
     }
 
+    // MARK: - Messung vorher → nachher, nachrechenbar (Issue #160; docs/artifacts/feat-160-preiskatalog/)
+
+    /// „Vorher“ = das Verhalten von `specificPrices` vor #160: die 32 Altstichwörter (`PriceCatalog.legacy`,
+    /// Werte unverändert) trafen als Teilstring irgendwo im Namen (`nameLower.contains(key)`).
+    static func legacySubstringHit(_ name: String) -> Bool {
+        let lower = name.lowercased()
+        return PriceCatalog.legacy.contains { entry in entry.names.contains { lower.contains($0) } }
+    }
+
+    func testCategoryKeywordCoverageBeforeAndAfter() {
+        let keywords = Array(Set(AssignmentService.categoryMap.flatMap(\.keywords)))
+        let before = keywords.filter(Self.legacySubstringHit).count
+        let after = keywords.filter { PriceCatalog.match($0) != nil }.count
+        let share = Double(after) / Double(keywords.count)
+        XCTAssertEqual(keywords.count, 556, "Zahl der eindeutigen Lebensmittel-Stichwörter (bewusst anpassen, wenn die Liste wächst)")
+        XCTAssertEqual(before, 114, "vorher: Stichwörter mit Teilstring-Treffer der 32 Altstichwörter")
+        XCTAssertGreaterThanOrEqual(share, 0.69, "Abdeckung der Stichwörter durch den Katalog gesunken: \(after)/\(keywords.count)")
+        XCTAssertEqual(after, 394, "nachher: Stichwörter mit Katalogtreffer (Messwert; bei Katalogänderung bewusst anpassen)")
+        XCTAssertGreaterThan(after, before * 3, "Katalog muss die Abdeckung mindestens verdreifachen: \(before) → \(after)")
+    }
+
+    func testCommonGroceriesCoverageBeforeAndAfter() {
+        let before = Self.commonGroceries.filter(Self.legacySubstringHit).count
+        let after = Self.commonGroceries.filter { PriceCatalog.match($0) != nil }.count
+        XCTAssertEqual(before, 39, "vorher: Alltagsartikel mit Altstichwort als Teilstring")
+        XCTAssertEqual(after, 100, "nachher: alle Alltagsartikel mit Katalogpreis")
+    }
+
+    func testSubstringFalsePositivesExistedBefore() {
+        // Nachher: siehe testWordBoundaryPreventsFalseSubstringMatches (0 Fehltreffer).
+        for name in ["Tomatenmark", "Teelicht", "Wassermelone", "Eierlikör", "Brotmesser"] {
+            XCTAssertTrue(Self.legacySubstringHit(name), "\(name) traf vorher ein Altstichwort als Teilstring")
+        }
+    }
+
     // MARK: - #160 Pauschale ist kein Artikelpreis
 
     func testCategoryFlatRateIsMarkedAsCategoryAndShowsPrompt() {
