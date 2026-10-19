@@ -65,7 +65,7 @@ Einrichtung:
 3. Keine Environment-Freigabe: Environments mit Reviewer brauchen Admin-Rechte am Repo, die Henning nicht hat (Repo gehört seinem Sohn). Schranke für den Import ist stattdessen das Pflichtfeld `confirm`, in das beim Start genau `development` eingetippt wird; sonst bricht der Job vor dem Checkout ab.
 4. Rotation wie beim App-Store-Connect-Schlüssel: alle 6–12 Monate neu erzeugen und das Secret ersetzen, alten Token im Dashboard löschen; bei Verdacht auf Missbrauch sofort.
 
-Der Token liegt auf dem Runner nur für die Dauer des Jobs als Datei (`cktool save-token --method file --token …`) und wird in einem `always()`-Schritt entfernt (`remove-token --force`); kein Schritt gibt ihn aus, GitHub maskiert ihn im Log. Strukturtest: `python3 scripts/test_cloudkit_schema_workflow.py`. Lauf 1 am 2026-10-19 zeigte: Ohne Terminal liest `cktool` nichts von stdin („No token or token type was provided in command arguments“) und `remove-token` fragt ohne `--force` nach; beides seitdem als Argument.
+Der Token liegt auf dem Runner nur für die Dauer des Jobs als Datei (`cktool save-token <token> --type management --method file --force`) und wird in einem `always()`-Schritt entfernt (`remove-token --force`); kein Schritt gibt ihn aus, GitHub maskiert ihn im Log. Strukturtest: `python3 scripts/test_cloudkit_schema_workflow.py`. Läufe 1 und 2 am 2026-10-19 zeigten: Ohne Terminal liest `cktool` nichts von stdin („No token or token type was provided in command arguments“), `--token` kennt es nicht (Usage `save-token [<token>] [--type] [--method] [--force]`), und `remove-token` fragt ohne `--force` nach.
 
 ## Privater iCloud-Abgleich: Typen vor jedem Upload in Production
 

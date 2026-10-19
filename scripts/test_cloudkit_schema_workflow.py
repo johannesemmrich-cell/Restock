@@ -72,7 +72,9 @@ class Workflow(unittest.TestCase):
             self.assertEqual(len(save), 1)
             self.assertEqual(save[0]["env"], {"CLOUDKIT_MANAGEMENT_TOKEN": "${{ secrets.CLOUDKIT_MANAGEMENT_TOKEN }}"})
             self.assertIn("--type management", save[0]["run"])
-            self.assertIn('--token "$CLOUDKIT_MANAGEMENT_TOKEN"', save[0]["run"], "ohne Terminal liest cktool nichts von stdin (Lauf 1)")
+            self.assertIn('save-token "$CLOUDKIT_MANAGEMENT_TOKEN" --type management', save[0]["run"],
+                          "Token als Positionsargument: ohne Terminal liest cktool nichts von stdin (Lauf 1), --token kennt es nicht (Lauf 2)")
+            self.assertIn("--force", save[0]["run"])
             self.assertFalse([s for s in steps(job) if "secrets." in s.get("run", "")])
             self.assertFalse([l for l in runs(job).splitlines() if "echo" in l and "CLOUDKIT_MANAGEMENT_TOKEN" in l and "fehlt" not in l])
             remove = [s for s in steps(job) if "remove-token" in s.get("run", "")]
