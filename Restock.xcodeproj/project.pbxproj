@@ -152,6 +152,7 @@
 		E54A0001B2C34D5E8F6071A2 /* ReceiptSavePurchaseQuantityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */; };
 		406A9602E2603784E461BA88 /* PriceProvenanceMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */; };
 		A1C0DE110000000000000001 /* LegacyLearnedPriceResetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE110000000000000002 /* LegacyLearnedPriceResetTests.swift */; };
+		15819148959FAEFBF0E665D9 /* ReceiptNameAIEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C707FE5DDA8FF027EAAE3D /* ReceiptNameAIEvaluationTests.swift */; };
 		79172E3DCB3C0D53769ED8E9 /* AbbreviatedNameCleanupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4635426E628FAA18A5E4D08 /* AbbreviatedNameCleanupTests.swift */; };
 		A1C0DE530000000000000001 /* LearnedPriceSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE530000000000000002 /* LearnedPriceSyncTests.swift */; };
 		A1C0DE590000000000000001 /* ReceiptLearningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE590000000000000002 /* ReceiptLearningTests.swift */; };
@@ -383,6 +384,7 @@
 		A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptSavePurchaseQuantityTests.swift; sourceTree = "<group>"; };
 		16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceProvenanceMigrationTests.swift; sourceTree = "<group>"; };
 		A1C0DE110000000000000002 /* LegacyLearnedPriceResetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceResetTests.swift; sourceTree = "<group>"; };
+		45C707FE5DDA8FF027EAAE3D /* ReceiptNameAIEvaluationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptNameAIEvaluationTests.swift; sourceTree = "<group>"; };
 		E4635426E628FAA18A5E4D08 /* AbbreviatedNameCleanupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbbreviatedNameCleanupTests.swift; sourceTree = "<group>"; };
 		A1C0DE530000000000000002 /* LearnedPriceSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnedPriceSyncTests.swift; sourceTree = "<group>"; };
 		A1C0DE590000000000000002 /* ReceiptLearningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptLearningTests.swift; sourceTree = "<group>"; };
@@ -740,6 +742,7 @@
 				A54B0002C3D44E5F9A7182B3 /* ReceiptSavePurchaseQuantityTests.swift */,
 				16BC31DB88089BB38BCCEDFA /* PriceProvenanceMigrationTests.swift */,
 				A1C0DE110000000000000002 /* LegacyLearnedPriceResetTests.swift */,
+				45C707FE5DDA8FF027EAAE3D /* ReceiptNameAIEvaluationTests.swift */,
 				E4635426E628FAA18A5E4D08 /* AbbreviatedNameCleanupTests.swift */,
 				A1C0DE530000000000000002 /* LearnedPriceSyncTests.swift */,
 				A1C0DE590000000000000002 /* ReceiptLearningTests.swift */,
@@ -1145,6 +1148,7 @@
 				E54A0001B2C34D5E8F6071A2 /* ReceiptSavePurchaseQuantityTests.swift in Sources */,
 				406A9602E2603784E461BA88 /* PriceProvenanceMigrationTests.swift in Sources */,
 				A1C0DE110000000000000001 /* LegacyLearnedPriceResetTests.swift in Sources */,
+				15819148959FAEFBF0E665D9 /* ReceiptNameAIEvaluationTests.swift in Sources */,
 				79172E3DCB3C0D53769ED8E9 /* AbbreviatedNameCleanupTests.swift in Sources */,
 				A1C0DE530000000000000001 /* LearnedPriceSyncTests.swift in Sources */,
 				A1C0DE590000000000000001 /* ReceiptLearningTests.swift in Sources */,
