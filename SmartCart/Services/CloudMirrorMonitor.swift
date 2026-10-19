@@ -7,7 +7,8 @@ import os
 /// `NSPersistentCloudKitContainer`) im Entwicklermodus sichtbar. Der Beobachter liest nur die
 /// Ereignisse der Spiegelung und schreibt eine Zusammenfassung in `UserDefaults`; an Läden,
 /// Artikeln oder der Spiegelung selbst ändert er nichts.
-/// Spec: `docs/specs/services/icloud-abgleich-sichtbar.md`.
+/// Spec: `docs/specs/services/icloud-abgleich-sichtbar.md`; Einrichtungsläufe (Issue #166):
+/// `docs/specs/services/icloud-einrichtung-sichtbar.md`.
 final class CloudMirrorMonitor: @unchecked Sendable {
     static let shared = CloudMirrorMonitor(statusStore: CloudMirrorStatusStore())
 
@@ -49,13 +50,14 @@ final class CloudMirrorMonitor: @unchecked Sendable {
         return run.date >= startedAt
     }
 
-    /// Verarbeitet ein Ereignis; laufende Ereignisse (`endDate == nil`) und Einrichtungsläufe
-    /// werden ignoriert.
+    /// Verarbeitet ein beendetes Export-, Import- oder Einrichtungsereignis (Issue #166); laufende
+    /// Ereignisse (`endDate == nil`) werden ignoriert.
     func handle(type: NSPersistentCloudKitContainer.EventType, succeeded: Bool, error: Error?, endDate: Date?) {
-        guard let endDate, type == .export || type == .import else { return }
+        guard let endDate, type == .export || type == .import || type == .setup else { return }
         let summary = error.map { Self.summarize(error: $0) }
         if let summary {
-            Self.logger.error("mirror \(type == .export ? "export" : "import", privacy: .public) failed (\(summary.domain, privacy: .public) \(summary.code, privacy: .public)): \(summary.detail, privacy: .private)")
+            let name = type == .export ? "export" : (type == .import ? "import" : "setup")
+            Self.logger.error("mirror \(name, privacy: .public) failed (\(summary.domain, privacy: .public) \(summary.code, privacy: .public)): \(summary.detail, privacy: .private)")
         }
         statusStore.record(CloudMirrorRun(date: endDate, succeeded: succeeded, summary: summary), for: type)
     }
@@ -113,13 +115,24 @@ final class CloudMirrorMonitor: @unchecked Sendable {
         return formatter
     }()
 
-    /// Untertitel der Dev-Zeile „iCloud-Abgleich“ in den Einstellungen.
-    static func devRowSubtitle(lastExport: CloudMirrorRun?) -> (text: String, isFailure: Bool) {
+    /// Untertitel der Dev-Zeile „iCloud-Abgleich“ in den Einstellungen. Eine gescheiterte
+    /// Einrichtung hat Vorrang vor dem Export (Issue #166).
+    static func devRowSubtitle(lastSetup: CloudMirrorRun?, lastExport: CloudMirrorRun?) -> (text: String, isFailure: Bool) {
+        if let setup = lastSetup, !setup.succeeded {
+            let time = timeFormatter.string(from: setup.date)
+            return (String(localized: "Einrichtung fehlgeschlagen · \(time)"), true)
+        }
         guard let run = lastExport else { return (String(localized: "noch kein Lauf"), false) }
         let time = timeFormatter.string(from: run.date)
         return run.succeeded
             ? (String(localized: "Export erfolgreich · \(time)"), false)
             : (String(localized: "Export fehlgeschlagen · \(time)"), true)
+    }
+
+    /// Klartext der Ursache einer gescheiterten Einrichtung; nur für bekannte Codes, sonst `nil`.
+    static func setupCauseText(for summary: CloudMirrorSummary) -> String? {
+        guard summary.domain == NSCocoaErrorDomain, summary.code == 134_400 else { return nil }
+        return String(localized: "kein iCloud-Konto")
     }
 }
 
@@ -144,7 +157,7 @@ struct CloudMirrorSummary: Codable, Equatable {
     }
 }
 
-/// Ein beendeter Export- oder Importlauf.
+/// Ein beendeter Export-, Import- oder Einrichtungslauf.
 struct CloudMirrorRun: Codable, Equatable {
     var date: Date
     var succeeded: Bool
@@ -162,7 +175,11 @@ final class CloudMirrorStatusStore: @unchecked Sendable {
     }
 
     private func runKey(_ type: NSPersistentCloudKitContainer.EventType) -> String {
-        Self.keyPrefix + (type == .export ? "lastExport" : "lastImport")
+        switch type {
+        case .export: return Self.keyPrefix + "lastExport"
+        case .setup: return Self.keyPrefix + "lastSetup"
+        default: return Self.keyPrefix + "lastImport"
+        }
     }
 
     private var successKey: String { Self.keyPrefix + "exportSuccessCount" }

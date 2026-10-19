@@ -1,0 +1,44 @@
+# Prüf-Auszug aus suite-output.txt (Adversary, #166)
+452:Test Case '-[RestockTests.CloudMirrorMonitorTests testDevRowSubtitleForFailedSucceededAndNoRun]' passed (0.002 seconds).
+454:Test Case '-[RestockTests.CloudMirrorMonitorTests testFallbackAndUnderlyingError]' passed (0.002 seconds).
+457:Test Case '-[RestockTests.CloudMirrorMonitorTests testHandlePersistsOnlyFinishedEvents]' passed (0.005 seconds).
+459:Test Case '-[RestockTests.CloudMirrorMonitorTests testObserveOnlyInAppProcess]' passed (0.001 seconds).
+461:Test Case '-[RestockTests.CloudMirrorMonitorTests testObserverStartsBeforeContainerCreation]' passed (0.002 seconds).
+463:Test Case '-[RestockTests.CloudMirrorMonitorTests testOnboardingGateDecisions]' passed (0.001 seconds).
+465:Test Case '-[RestockTests.CloudMirrorMonitorTests testPartialFailureReportsNonBatchError]' passed (0.001 seconds).
+467:Test Case '-[RestockTests.CloudMirrorMonitorTests testPlainTextOnlyForKnownSetupCode]' passed (0.001 seconds).
+469:Test Case '-[RestockTests.CloudMirrorMonitorTests testProductionSchemaTextIsClassified]' passed (0.001 seconds).
+472:Test Case '-[RestockTests.CloudMirrorMonitorTests testSetupFailureIsStored]' passed (0.002 seconds).
+476:Test Case '-[RestockTests.CloudMirrorMonitorTests testSetupLeavesCountersAndImportUntouched]' passed (0.004 seconds).
+479:Test Case '-[RestockTests.CloudMirrorMonitorTests testSetupSuccessReplacesFailure]' passed (0.002 seconds).
+481:Test Case '-[RestockTests.CloudMirrorMonitorTests testSubtitlePrefersFailedSetupOverExport]' passed (0.001 seconds).
+589:	 Executed 4 tests, with 0 failures (0 unexpected) in 0.011 (0.011) seconds
+1072:	 Executed 4 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+1085:	 Executed 5 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+1100:	 Executed 4 tests, with 0 failures (0 unexpected) in 0.013 (0.014) seconds
+1282:	 Executed 4 tests, with 0 failures (0 unexpected) in 0.011 (0.011) seconds
+1323:	 Executed 5 tests, with 0 failures (0 unexpected) in 0.025 (0.026) seconds
+1819:	 Executed 4 tests, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+2078:	 Executed 578 tests, with 0 failures (0 unexpected) in 14.687 (14.840) seconds
+2080:	 Executed 578 tests, with 0 failures (0 unexpected) in 14.687 (14.841) seconds
+2191:Test Case '-[RestockUITests.ICloudDiagnosticsUITests testDuplicatesShownAndNothingChanged]' passed (21.864 seconds).
+2259:Test Case '-[RestockUITests.ICloudDiagnosticsUITests testFailedExportIsShownWithCause]' passed (15.245 seconds).
+2332:Test Case '-[RestockUITests.ICloudDiagnosticsUITests testFailedSetupIsShownWithCause]' passed (18.092 seconds).
+2441:Test Case '-[RestockUITests.ICloudDiagnosticsUITests testRowsHiddenOutsideDeveloperMode]' passed (18.453 seconds).
+2443:	 Executed 4 tests, with 0 failures (0 unexpected) in 73.654 (73.658) seconds
+2615:Test Case '-[RestockUITests.OnboardingUITests testOnboardingWalkthroughCreatesChosenStoresAndName]' passed (26.500 seconds).
+2619:	 Executed 5 tests, with 0 failures (0 unexpected) in 100.154 (100.161) seconds
+2621:	 Executed 5 tests, with 0 failures (0 unexpected) in 100.154 (100.162) seconds
+2631:** TEST SUCCEEDED **
+# Echter Durchlauf (durchlauf-echte-app.txt)
+1:Durchlauf #166 (AC-9), Mo. 19 Okt. 2026 09:55:13 CEST, Commit d807fe1d48c256b994160e6ec4d8d4dddc9f93c9 + ungesicherte GREEN-Änderungen (Patch-Hash 76b6e6ad923f)
+13:DURCHLAUF-TEXT Der Vorgang konnte nicht abgeschlossen werden. (Cocoa-Fehler 134400.)
+15:DURCHLAUF-TEXT Einrichtung (beim App-Start)
+20:DURCHLAUF-TEXT Fehler, NSCocoaErrorDomain 134400
+39:DURCHLAUF-TEXT Ursache: kein iCloud-Konto
+44:DURCHLAUF-ZEILE iCloud-Abgleich, Einrichtung fehlgeschlagen · 09:54
+45:Test Case '-[RestockUITests.ICloudDiagnosticsUITests testZZDurchlaufEchteEinrichtung]' passed (31.720 seconds).
+46:Test Case '-[RestockUITests.ICloudDiagnosticsUITests testZZDurchlaufEchteEinrichtung]' started.
+47:--- Systemprotokoll: Einrichtung der Spiegelung
+48:DURCHLAUF-TEXT Fehler, NSCocoaErrorDomain 134400
+49:DURCHLAUF-TEXT Der Vorgang konnte nicht abgeschlossen werden. (Cocoa-Fehler 134400.)

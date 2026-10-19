@@ -122,11 +122,13 @@ Teil dieses Durchgangs (PO-Entscheidung: nur Foto); `PhotoCompressor` begrenzt F
 
 **A, Beobachter.** `CloudMirrorMonitor.start()` registriert genau einen Beobachter auf
 `NSPersistentCloudKitContainer.eventChangedNotification` mit `object: nil`; wiederholter Aufruf ist wirkungslos.
-Start im `defer`-Block von `SmartCartApp.init()`. Nur im App-Prozess: `shouldObserve(bundleURL:)` ist eine reine
+Start ursprünglich im `defer`-Block von `SmartCartApp.init()`, seit #166 vor der Container-Erzeugung. Nur im App-Prozess: `shouldObserve(bundleURL:)` ist eine reine
 Funktion auf Basis von `SharedModelContainer.isAppExtension`. Der Handler liest `type`, `succeeded`, `error`,
 `endDate` aus dem Event und ruft die testbare Funktion `handle(type:succeeded:error:endDate:)`; Ereignisse mit
 `endDate == nil` (laufend) werden ignoriert. Die Ereignisse treffen auf beliebiger Queue ein, geschrieben wird
 nur in `UserDefaults` (thread-sicher), UI-Zustand wird auf dem Main-Actor gelesen.
+Einrichtungsläufe (`.setup`) wurden hier ursprünglich ignoriert; seit Issue #166 werden sie als `lastSetup`
+gespeichert, siehe `docs/specs/services/icloud-einrichtung-sichtbar.md`.
 Die reine Funktion `summarize(error:) -> CloudMirrorSummary` liefert Domain, Code, Fehlerart und Detail:
 bei `CKError.partialFailure` wird `partialErrorsByItemID` durchsucht und der Eintrag gemeldet, der **nicht**
 `batchRequestFailed` ist (Fundort in `NSUnderlyingError` mitgeprüft), plus die Zahl der betroffenen Einträge;
@@ -324,3 +326,4 @@ Belegart: **[Unit]**, **[UI]**, **[Beleg]** (Werkzeug-Artefakt), **[Gerät]** (o
 
 - 2026-10-18: Initial spec created
 - 2026-10-18: Abweichung von AC-19 auf Anweisung des PO: Der Management-Token wird **nicht** entfernt, er bleibt dauerhaft im Schlüsselbund (kein `remove-token`), damit künftige Schema-Arbeit ohne neuen Dashboard-Schritt läuft. Der AC-Text ist durch den Spec-Freeze gesperrt; diese Zeile hat Vorrang.
+- 2026-10-19: Issue #166: Einrichtungsläufe werden nicht mehr ignoriert, sondern als `lastSetup` gespeichert und angezeigt; der Beobachter startet vor der Container-Erzeugung. Siehe `docs/specs/services/icloud-einrichtung-sichtbar.md`.

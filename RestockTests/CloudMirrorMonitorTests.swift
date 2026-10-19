@@ -223,9 +223,7 @@ final class CloudMirrorMonitorTests: XCTestCase {
     // MARK: - #166 Hilfen
 
     private func noAccountError() -> NSError {
-        NSError(domain: NSCocoaErrorDomain, code: 134_400, userInfo: [
-            NSLocalizedDescriptionKey: "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)."
-        ])
+        NSError(domain: NSCocoaErrorDomain, code: 134_400)
     }
 
     // MARK: - #166 T1 (AC-1)
@@ -250,6 +248,7 @@ final class CloudMirrorMonitorTests: XCTestCase {
         XCTAssertFalse(setup.succeeded)
         XCTAssertEqual(setup.summary?.domain, NSCocoaErrorDomain)
         XCTAssertEqual(setup.summary?.code, 134_400)
+        XCTAssertTrue(setup.summary?.detail.contains("134400") == true, "Detail: \(setup.summary?.detail ?? "nil")")
         // clear() erfasst auch den neuen Schlüssel (Grundlage von -clearCloudMirrorStatusForUITests)
         store.clear()
         XCTAssertEqual(mirrorKeys(), [])

@@ -1,0 +1,51 @@
+Durchlauf #166 (AC-9), Mo. 19 Okt. 2026 09:50:40 CEST, Commit d807fe1d48c256b994160e6ec4d8d4dddc9f93c9 + ungesicherte GREEN-Änderungen (Patch-Hash 34f743089dd0)
+Gerät Restock-Validate (8F696920-4B9A-40A7-96F0-7697BE887CC7), ohne iCloud-Konto; Start nur mit -developerMode YES -hasCompletedOnboarding YES, kein Seed
+--- Navigation (Wegwerf-Test, nur tippt und liest)
+	 Executed 1 test, with 0 failures (0 unexpected) in 44.287 (44.291) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 44.287 (44.293) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 44.287 (44.301) seconds
+DURCHLAUF-BEREIT
+DURCHLAUF-START 2026-10-19 07:39:54 +0000
+DURCHLAUF-TEXT Alle Listen sind leer
+DURCHLAUF-TEXT Äpfel
+DURCHLAUF-TEXT Birnen
+DURCHLAUF-TEXT Champignons
+DURCHLAUF-TEXT Der Vorgang konnte nicht abgeschlossen werden. (Cocoa-Fehler 134400.)
+DURCHLAUF-TEXT DEV
+DURCHLAUF-TEXT Einrichtung (beim App-Start)
+DURCHLAUF-TEXT Erntezeit
+DURCHLAUF-TEXT Exporte ok / fehlgeschlagen
+DURCHLAUF-TEXT Exporte ok / fehlgeschlagen, 0 / 0
+DURCHLAUF-TEXT Fehler
+DURCHLAUF-TEXT Fehler, NSCocoaErrorDomain 134400
+DURCHLAUF-TEXT Geteilter Liste beitreten
+DURCHLAUF-TEXT Herbst
+DURCHLAUF-TEXT Herbstgemüse
+DURCHLAUF-TEXT Herbstsaison
+DURCHLAUF-TEXT Herbststipps
+DURCHLAUF-TEXT iCloud-Abgleich
+DURCHLAUF-TEXT Kastanien
+DURCHLAUF-TEXT Kürbis
+DURCHLAUF-TEXT Letzter Export (hochladen)
+DURCHLAUF-TEXT Letzter Import (herunterladen)
+DURCHLAUF-TEXT Meine Läden
+DURCHLAUF-TEXT noch kein Lauf
+DURCHLAUF-TEXT Noch keine Läden
+DURCHLAUF-TEXT Pilzsaison
+DURCHLAUF-TEXT Restock
+DURCHLAUF-TEXT Rotkohl
+DURCHLAUF-TEXT Saisonal
+DURCHLAUF-TEXT Seit Installation
+DURCHLAUF-TEXT Ursache: kein iCloud-Konto
+DURCHLAUF-TEXT Zeit
+DURCHLAUF-TEXT Zeit, 19.10.2026, 9:40
+DURCHLAUF-TEXT Zustand
+DURCHLAUF-TEXT Zustand, fehlgeschlagen
+DURCHLAUF-ZEILE iCloud-Abgleich, Einrichtung fehlgeschlagen · 09:40
+Test Case '-[RestockUITests.ICloudDiagnosticsUITests testZZDurchlaufEchteEinrichtung]' passed (44.287 seconds).
+Test Case '-[RestockUITests.ICloudDiagnosticsUITests testZZDurchlaufEchteEinrichtung]' started.
+--- Systemprotokoll: Einrichtung der Spiegelung
+DURCHLAUF-TEXT Fehler, NSCocoaErrorDomain 134400
+DURCHLAUF-TEXT Der Vorgang konnte nicht abgeschlossen werden. (Cocoa-Fehler 134400.)
+--- Hinweis: Die Voreinstellungen werden nach dem Lauf nicht gelesen; das tearDown() der Klasse räumt
+    smartcart.cloudMirror.* mit -clearCloudMirrorStatusForUITests ab. Beleg ist die Anzeige oben + Bildschirmfoto.

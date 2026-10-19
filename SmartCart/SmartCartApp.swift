@@ -26,11 +26,10 @@ struct SmartCartApp: App {
         // ever presenting the WindowGroup, so this can't wait for a view's `.task` to run.
         defer {
             SyncCoordinator.shared.modelContext = container.mainContext
-            // Issue #156, Teil A: Export-/Import-Ereignisse der Spiegelung beobachten (nur App-Prozess).
-            CloudMirrorMonitor.shared.start()
             #if DEBUG
             Self.clearCloudMirrorStatusForUITestsIfNeeded()
             Self.seedCloudMirrorStatusForUITestsIfNeeded()
+            Self.seedCloudMirrorSetupFailureForUITestsIfNeeded()
             Self.clearDuplicateStoresForUITestsIfNeeded(context: container.mainContext)
             Self.seedDuplicateStoresForUITestsIfNeeded(context: container.mainContext)
             Self.clearDeveloperModeForUITestsIfNeeded()
@@ -57,6 +56,19 @@ struct SmartCartApp: App {
             Self.clearOnboardingForUITestsIfNeeded(context: container.mainContext)
             Self.scheduleSimulatedCloudStoresForUITestsIfNeeded(context: container.mainContext)
             #endif
+        }
+
+        // Issue #156/#166: Ereignisse der Spiegelung (Einrichtung, Export, Import) beobachten, nur im
+        // App-Prozess. Vor jeder Container-Erzeugung, sonst kann das Einrichtungsereignis verloren gehen.
+        // DEBUG: mit Diagnose-Seed nicht starten, damit das echte Ereignis den Seed nicht überschreibt.
+        #if DEBUG
+        let mirrorSeedArguments: Set = ["-seedCloudMirrorStatusForUITests", "-seedCloudMirrorSetupFailureForUITests"]
+        let startMirrorMonitor = mirrorSeedArguments.isDisjoint(with: ProcessInfo.processInfo.arguments)
+        #else
+        let startMirrorMonitor = true
+        #endif
+        if startMirrorMonitor {
+            CloudMirrorMonitor.shared.start()
         }
 
         SmartCartShortcuts.updateAppShortcutParameters()
@@ -527,9 +539,13 @@ struct SmartCartApp: App {
 
     /// Schreibt über `CloudMirrorMonitor.handle` einen fehlgeschlagenen Export (Ursache
     /// `CD_ShoppingItem`, 1 von 2 Einträgen) und einen erfolgreichen Import (Issue #156,
-    /// `ICloudDiagnosticsUITests`). Only runs on `-seedCloudMirrorStatusForUITests`, DEBUG-only.
+    /// `ICloudDiagnosticsUITests`). Legt den ganzen Zustand fest und leert dafür vorher die Ablage
+    /// (Issue #166). Only runs on `-seedCloudMirrorStatusForUITests`, DEBUG-only.
     private static func seedCloudMirrorStatusForUITestsIfNeeded() {
         guard ProcessInfo.processInfo.arguments.contains("-seedCloudMirrorStatusForUITests") else { return }
+        // Der Seed legt den ganzen Zustand fest, damit ein von einem früheren Start echt gespeichertes
+        // lastSetup (Simulator ohne Konto) nicht stehen bleibt (Issue #166).
+        CloudMirrorMonitor.shared.statusStore.clear()
         let text = "Cannot create or modify field 'CD_photoData_ckAsset' in record type 'CD_ShoppingItem' in production schema"
         let single = CKError(.serverRejectedRequest, userInfo: [NSLocalizedDescriptionKey: text]) as NSError
         let partial = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: [
@@ -539,6 +555,17 @@ struct SmartCartApp: App {
         let monitor = CloudMirrorMonitor.shared
         monitor.handle(type: .import, succeeded: true, error: nil, endDate: Date().addingTimeInterval(-60))
         monitor.handle(type: .export, succeeded: false, error: partial, endDate: Date())
+    }
+
+    /// Schreibt über `CloudMirrorMonitor.handle` eine gescheiterte Einrichtung ohne iCloud-Konto
+    /// (`NSCocoaErrorDomain` 134400, Issue #166, `ICloudDiagnosticsUITests`).
+    /// Only runs on `-seedCloudMirrorSetupFailureForUITests`, DEBUG-only.
+    private static func seedCloudMirrorSetupFailureForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-seedCloudMirrorSetupFailureForUITests") else { return }
+        // Wie das echte Einrichtungsereignis ohne Konto: kein Beschreibungs- oder Grundtext, nur Domain
+        // und Code (Durchlauf #166).
+        let error = NSError(domain: NSCocoaErrorDomain, code: 134_400)
+        CloudMirrorMonitor.shared.handle(type: .setup, succeeded: false, error: error, endDate: Date())
     }
 
     /// Entfernt alle `smartcart.cloudMirror.*`-Schlüssel (Aufräumer von `ICloudDiagnosticsUITests`).
