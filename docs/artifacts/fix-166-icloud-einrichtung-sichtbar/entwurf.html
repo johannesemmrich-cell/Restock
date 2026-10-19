@@ -1,0 +1,173 @@
+<title>iCloud-Einrichtung Entwurf</title>
+<style>
+/* Layout: je Abschnitt drei iPhone-Karten nebeneinander (Heute / Entwurf / Alternative), auf Handybreite untereinander. Farben = Tokens der App (DesignSystem), Onboarding auf Systemweiß/-schwarz wie heute. */
+:root{--bg:#F5F2E9;--surface:#FDFBF4;--ink:#201D16;--sub:#6F6A5B;--line:rgba(32,29,22,.13);--accent:#666F38;--amber:#A97F2E;--red:#B5462F;--ok:#4E7A3A;--frame:#D9D4C4;--sys:#FFFFFF;--btn:#201D16;--btnfg:#FFFFFF;
+--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141310;--surface:#1D1C16;--ink:#EBE7DA;--sub:#A29B8A;--line:rgba(235,231,218,.13);--accent:#A7AE6B;--amber:#C89A4A;--red:#D9765E;--ok:#8DB872;--frame:#2B2A22;--sys:#000000;--btn:#EBE7DA;--btnfg:#141310;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141310;--surface:#1D1C16;--ink:#EBE7DA;--sub:#A29B8A;--line:rgba(235,231,218,.13);--accent:#A7AE6B;--amber:#C89A4A;--red:#D9765E;--ok:#8DB872;--frame:#2B2A22;--sys:#000000;--btn:#EBE7DA;--btnfg:#141310;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);padding-inline:16px;padding-block:28px;line-height:1.45}
+main{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:36px}
+h1{font-size:1.55rem;margin:0;text-wrap:balance}
+h2{font-size:1.15rem;margin:0 0 4px;text-wrap:balance}
+.lead{color:var(--sub);max-width:68ch;margin:6px 0 0}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.bar button{font:inherit;font-size:.85rem;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.bar button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.bar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:24px;align-items:start;margin-top:14px}
+.col{min-width:0;display:flex;flex-direction:column;gap:8px}
+.tag{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin:0}
+.tag b{color:var(--accent)}
+.shot{border:8px solid var(--frame);border-radius:34px;overflow:hidden;max-width:300px;width:100%;margin:0 auto;display:block;background:var(--sys)}
+.phone{background:var(--bg);border:8px solid var(--frame);border-radius:34px;padding:14px 12px 18px;max-width:300px;width:100%;margin:0 auto;min-height:520px;box-sizing:border-box;display:flex;flex-direction:column}
+.phone.sys{background:var(--sys)}
+.nav{font-weight:600;text-align:center;font-size:.95rem;margin-bottom:10px}
+.back{color:var(--accent);font-weight:400;font-size:.85rem;float:left}
+.sec{font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--sub);margin:12px 6px 6px}
+.list{background:var(--surface);border-radius:14px;overflow:hidden}
+.li{display:flex;justify-content:space-between;gap:8px;padding:10px 14px;font-size:.84rem;border-top:1px solid var(--line);align-items:center}
+.li:first-child{border-top:0}
+.li .r{color:var(--sub);font-variant-numeric:tabular-nums;text-align:right}
+.li .stack{display:flex;flex-direction:column;min-width:0}
+.li small{color:var(--sub);font-size:.72rem}
+.ic{width:22px;color:var(--accent);flex:none;text-align:center}
+.lead-i{display:flex;gap:10px;align-items:center;min-width:0}
+.ok{color:var(--ok)!important}.bad{color:var(--red)!important}.warn{color:var(--amber)!important}
+.new{outline:2px dashed var(--accent);outline-offset:-2px}
+.code{font-family:var(--mono);font-size:.68rem;color:var(--sub);word-break:break-word}
+.foot{font-size:.7rem;color:var(--sub);margin:6px 6px 0}
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:var(--ink)}
+.welcome svg{width:64px;height:64px}
+.welcome h3{font-size:1.6rem;margin:4px 0 0}
+.welcome p{color:var(--sub);font-size:.85rem;margin:0;max-width:24ch}
+.cta{background:var(--btn);color:var(--btnfg);border-radius:12px;text-align:center;padding:12px;font-weight:600;font-size:.9rem}
+.cta.dim{opacity:.45}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.hint{display:flex;gap:8px;align-items:center;justify-content:center;font-size:.78rem;color:var(--sub);margin-bottom:10px}
+.hint .spin{width:14px;height:14px;border-width:2px}
+.skip{color:var(--accent);font-size:.82rem;text-align:center;margin-top:10px}
+.note{font-size:.84rem;color:var(--sub);margin:0}
+.legend{border-top:1px solid var(--line);padding-top:16px;max-width:72ch;font-size:.9rem}
+.legend ul{margin:6px 0 0;padding-left:18px}.legend li{margin-bottom:6px}
+.sub{color:var(--sub)}
+.grp{border-radius:14px;padding:0 4px 6px}
+</style>
+<main>
+<header>
+<h1>iCloud-Abgleich: Einrichtung sichtbar (#166)</h1>
+<p class="lead">Nur im Entwicklermodus. Heute bleibt die Diagnose leer („noch kein Lauf“), wenn die iCloud-Spiegelung gar nicht erst startet, etwa ohne iCloud-Konto. Der Entwurf zeigt dann die gescheiterte Einrichtung samt Ursache. „Heute“ ist aus dem Code nachgebaut, kein Screenshot: Die Ansicht ist nur über mehrere Tipps im Entwicklermodus erreichbar. Zeit und Fehlertext stammen aus dem echten Simulatorlauf vom 18.10.</p>
+<div class="bar" role="group" aria-label="Darstellung">
+ <span class="note">Ansicht:</span>
+ <button type="button" id="t-sys" aria-pressed="true">wie System</button>
+ <button type="button" id="t-light" aria-pressed="false">Hell</button>
+ <button type="button" id="t-dark" aria-pressed="false">Dunkel</button>
+</div>
+</header>
+
+<section>
+<h2>Einstellungen → Entwickler, Zeile „iCloud-Abgleich“</h2>
+<div class="row">
+ <div class="col"><p class="tag">Heute · nachgebaut</p>
+  <div class="phone">
+   <div class="nav">Einstellungen</div>
+   <div class="sec">● Entwickler</div>
+   <div class="list">
+    <div class="li"><span class="lead-i"><span class="ic">🧾</span>Bon-Auflösung</span><span class="r">›</span></div>
+    <div class="li"><span class="lead-i"><span class="ic">☁︎</span><span class="stack">iCloud-Abgleich<small>noch kein Lauf</small></span></span><span class="r">›</span></div>
+    <div class="li"><span class="lead-i"><span class="ic">⧉</span><span class="stack">Doppelte Läden<small>keine</small></span></span><span class="r">›</span></div>
+   </div>
+   <div class="foot">Ohne iCloud-Konto sieht das aus wie „noch nichts passiert“. Dass der Abgleich gar nicht laufen kann, ist nicht zu erkennen.</div>
+  </div>
+ </div>
+ <div class="col"><p class="tag"><b>Entwurf</b> · Einrichtung gescheitert</p>
+  <div class="phone">
+   <div class="nav">Einstellungen</div>
+   <div class="sec">● Entwickler</div>
+   <div class="list">
+    <div class="li"><span class="lead-i"><span class="ic">🧾</span>Bon-Auflösung</span><span class="r">›</span></div>
+    <div class="li new"><span class="lead-i"><span class="ic">☁︎</span><span class="stack">iCloud-Abgleich<small class="bad">Einrichtung fehlgeschlagen · 22:54</small></span></span><span class="r">›</span></div>
+    <div class="li"><span class="lead-i"><span class="ic">⧉</span><span class="stack">Doppelte Läden<small>keine</small></span></span><span class="r">›</span></div>
+   </div>
+   <div class="foot">Gestrichelt = geändert. Die gescheiterte Einrichtung hat Vorrang vor dem Export, denn ohne Einrichtung gibt es keinen Export. Klappt die Einrichtung beim nächsten Start (Konto angemeldet), zeigt die Zeile wieder den Export wie heute.</div>
+  </div>
+ </div>
+</div>
+</section>
+
+<section>
+<h2>Detailansicht „iCloud-Abgleich“</h2>
+<div class="row">
+ <div class="col"><p class="tag">Heute · nachgebaut</p>
+  <div class="phone">
+   <div class="nav"><span class="back">‹ Zurück</span>iCloud-Abgleich</div>
+   <div class="sec">Letzter Export (hochladen)</div>
+   <div class="list"><div class="li"><span class="sub">noch kein Lauf</span></div></div>
+   <div class="sec">Letzter Import (herunterladen)</div>
+   <div class="list"><div class="li"><span class="sub">noch kein Lauf</span></div></div>
+   <div class="sec">Seit Installation</div>
+   <div class="list"><div class="li"><span>Exporte ok / fehlgeschlagen</span><span class="r">0 / 0</span></div></div>
+  </div>
+ </div>
+ <div class="col"><p class="tag"><b>Entwurf A (empfohlen)</b> · Abschnitt „Einrichtung“</p>
+  <div class="phone">
+   <div class="nav"><span class="back">‹ Zurück</span>iCloud-Abgleich</div>
+   <div class="grp new">
+    <div class="sec">Einrichtung (beim App-Start)</div>
+    <div class="list">
+     <div class="li"><span>Zustand</span><span class="r bad">fehlgeschlagen</span></div>
+     <div class="li"><span>Zeit</span><span class="r">18.10. 22:54</span></div>
+     <div class="li"><span>Fehler</span><span class="r">NSCocoaErrorDomain 134400</span></div>
+    </div>
+    <div class="sec">Ursache: kein iCloud-Konto</div>
+    <div class="list"><div class="li"><span class="code">Unable to initialize without an iCloud account (CKAccountStatusNoAccount).</span></div></div>
+   </div>
+   <div class="sec">Letzter Export (hochladen)</div>
+   <div class="list"><div class="li"><span class="sub">noch kein Lauf</span></div></div>
+   <div class="sec">Letzter Import (herunterladen)</div>
+   <div class="list"><div class="li"><span class="sub">noch kein Lauf</span></div></div>
+   <div class="sec">Seit Installation</div>
+   <div class="list"><div class="li"><span>Exporte ok / fehlgeschlagen</span><span class="r">0 / 0</span></div></div>
+  </div>
+  <p class="note">Quelle ist das Einrichtungsereignis, das die Spiegelung bei jedem App-Start selbst meldet. Erfasst jeden Einrichtungsfehler (kein Konto, eingeschränktes Konto, Schemafehler). Für bekannte Codes steht ein deutscher Klartext in der Überschrift, sonst nur „Ursache“ mit dem Systemtext.</p>
+ </div>
+ <div class="col"><p class="tag">Alternative B · nur Kontostatus abfragen</p>
+  <div class="phone">
+   <div class="nav"><span class="back">‹ Zurück</span>iCloud-Abgleich</div>
+   <div class="grp new">
+    <div class="sec">iCloud-Konto</div>
+    <div class="list"><div class="li"><span>Status</span><span class="r bad">nicht angemeldet</span></div></div>
+   </div>
+   <div class="sec">Letzter Export (hochladen)</div>
+   <div class="list"><div class="li"><span class="sub">noch kein Lauf</span></div></div>
+   <div class="sec">Letzter Import (herunterladen)</div>
+   <div class="list"><div class="li"><span class="sub">noch kein Lauf</span></div></div>
+   <div class="sec">Seit Installation</div>
+   <div class="list"><div class="li"><span>Exporte ok / fehlgeschlagen</span><span class="r">0 / 0</span></div></div>
+  </div>
+  <p class="note">Fragt beim Öffnen das iCloud-Konto ab, wie es die Ersteinrichtung schon tut. Einfacher, sagt aber nur „Konto ja oder nein“. Scheitert die Einrichtung aus einem anderen Grund (Schema, Rechte), bleibt die Ansicht leer wie heute.</p>
+ </div>
+</div>
+</section>
+
+<section class="legend">
+<h2>Empfehlung</h2>
+<ul>
+ <li><b>Entwurf A.</b> Er zeigt, was die Spiegelung wirklich gemeldet hat, statt aus dem Konto auf sie zu schließen, und erfasst damit auch Fehler, die B nie sieht.</li>
+ <li><b>Erfolg löst den Fehler ab:</b> Klappt die Einrichtung beim nächsten Start, steht dort „erfolgreich“, und die Einstellungszeile zeigt wieder den Export.</li>
+ <li><b>Gleich mit erledigt:</b> Der Beobachter wird heute erst kurz nach dem Öffnen des Datenspeichers angemeldet. Ein schnelles Einrichtungsereignis könnte so verloren gehen. Er wird deshalb vorher angemeldet.</li>
+ <li>Nutzer ohne Entwicklermodus sehen nichts davon.</li>
+</ul>
+</section>
+</main>
+<script>
+(function(){
+ var b={sys:document.getElementById('t-sys'),light:document.getElementById('t-light'),dark:document.getElementById('t-dark')};
+ function set(m){
+  if(m==='sys'){document.documentElement.removeAttribute('data-theme');}else{document.documentElement.setAttribute('data-theme',m);}
+  Object.keys(b).forEach(function(k){b[k].setAttribute('aria-pressed',String(k===m));});
+ }
+ Object.keys(b).forEach(function(k){b[k].addEventListener('click',function(){set(k);});});
+})();
+</script>

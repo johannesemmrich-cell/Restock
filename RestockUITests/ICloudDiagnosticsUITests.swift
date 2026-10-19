@@ -10,6 +10,10 @@ import XCTest
 /// Argument-Domain-Falle: `-developerMode` wird nur als Startargument gelesen, nie geschrieben.
 ///
 /// Offene Grenze: Der Live-Weg eines echten Export-Ereignisses ist nicht geprüft (gesäter Status).
+///
+/// Issue #166 (`docs/specs/services/icloud-einrichtung-sichtbar.md`, T7; AC-6): `-seedCloudMirrorSetupFailureForUITests`
+/// schreibt über `CloudMirrorMonitor.handle` eine gescheiterte Einrichtung (`NSCocoaErrorDomain` 134400);
+/// aufgeräumt wird mit demselben `-clearCloudMirrorStatusForUITests` (Präfixlöschung).
 final class ICloudDiagnosticsUITests: XCTestCase {
 
     override func setUpWithError() throws {
@@ -93,6 +97,36 @@ final class ICloudDiagnosticsUITests: XCTestCase {
         let cause = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "CD_ShoppingItem")).firstMatch
         XCTAssertTrue(cause.waitForExistence(timeout: UITestWait.defaultTimeout),
                       "Ursache „CD_ShoppingItem“ fehlt in der Detailansicht")
+    }
+
+    // MARK: - #166 T7 (AC-6)
+
+    func testFailedSetupIsShownWithCause() {
+        // GIVEN gesäte gescheiterte Einrichtung (134400), Entwicklermodus
+        let app = XCUIApplication()
+        app.launchArguments += ["-developerMode", "YES", "-seedCloudMirrorSetupFailureForUITests",
+                                "-hasCompletedOnboarding", "YES"]
+        UITestLaunch.start(app, expecting: app.buttons["gearshape"], description: "Zahnrad auf der Startseite")
+
+        // WHEN Einstellungen geöffnet
+        openSettings(app)
+        let mirrorRow = row("iCloud-Abgleich", in: app)
+        scrollTo(mirrorRow, in: app)
+
+        // THEN Zeile „iCloud-Abgleich“ zeigt „Einrichtung fehlgeschlagen“
+        XCTAssertTrue(mirrorRow.exists, "Zeile „iCloud-Abgleich“ fehlt im Entwicklermodus")
+        let label = mirrorRow.waitForLabel(contains: "Einrichtung fehlgeschlagen")
+        XCTAssertTrue(label.matched, "Untertitel ohne „Einrichtung fehlgeschlagen“, zuletzt: \(label.lastLabel)")
+
+        // THEN Tipp öffnet die Ansicht mit Abschnitt „Einrichtung“, Klartext und Code
+        tapWhenHittable(mirrorRow, "Zeile „iCloud-Abgleich“")
+        XCTAssertTrue(app.navigationBars["iCloud-Abgleich"].waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Ansicht „iCloud-Abgleich“ öffnet sich nicht")
+        for text in ["Einrichtung (beim App-Start)", "kein iCloud-Konto", "134400"] {
+            let element = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", text)).firstMatch
+            XCTAssertTrue(element.waitForExistence(timeout: UITestWait.defaultTimeout),
+                          "„\(text)“ fehlt in der Detailansicht")
+        }
     }
 
     // MARK: - T21 (AC-11)
