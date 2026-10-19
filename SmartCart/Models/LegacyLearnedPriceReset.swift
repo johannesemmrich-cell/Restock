@@ -38,10 +38,51 @@ enum LegacyLearnedPriceReset {
                 matchedLearnedPrice: key.flatMap { item.store?.learnedPrices[$0] },
                 matchedLearnedUnit: key.flatMap { item.store?.learnedPriceUnits[$0] }
             ) else { continue }
-            item.estimatedPrice = PriceEstimator.estimate(
+            let fallback = PriceEstimator.resolve(
                 for: item.name, category: item.category, unit: item.unit, quantityAmount: item.quantityAmount)
+            item.estimatedPrice = fallback?.price
             item.estimatedPriceIsAutoDerived = true
-            item.priceSource = "estimate"
+            item.priceSource = fallback?.source ?? "estimate"
+            item.priceSourceDate = nil
+        }
+        try? context.save()
+        UserDefaults.standard.set(true, forKey: flagKey)
+    }
+}
+
+/// Einmalige Auffrischung (Issues #160/#162): Automatisch hergeleitete Preise werden mit dem
+/// `PriceCatalog` neu berechnet und tragen danach `"estimate"` (Katalogtreffer) oder `"category"`
+/// (Pauschale) als Quelle — sonst zeigten bestehende Artikel weiter fünfmal „ca. 2,00 €". Echte
+/// Preise (`estimatedPriceIsAutoDerived == false`) bleiben unangetastet; die Spalte selbst gilt
+/// laut Feldkommentar als jederzeit neu berechenbar. Läuft nach `LegacyLearnedPriceReset`.
+enum CatalogEstimateRefresh {
+    static let flagKey = "priceCatalogRefreshV1Applied"
+
+    /// Kategorie für die Schätzung: eine feste Kategorie wie gespeichert, eine eigene oder leere
+    /// aus dem Namen (eine eigene Kategorie hat keine Pauschale, siehe `EditItemView.save()`).
+    static func priceCategory(for item: ShoppingItem) -> String {
+        AssignmentService.categoryOrder.contains(item.category) ? item.category : AssignmentService.category(for: item.name)
+    }
+
+    /// Reine Entscheidung je Artikel: neuer Preis und neue Quelle, oder nil, wenn nichts zu tun ist.
+    static func refreshed(isAutoDerived: Bool, name: String, priceCategory: String, unit: String,
+                          quantityAmount: Double) -> (price: Double?, source: String)? {
+        guard isAutoDerived else { return nil }
+        let fallback = PriceEstimator.resolve(for: name, category: priceCategory, unit: unit, quantityAmount: quantityAmount)
+        return (fallback?.price, fallback?.source ?? "estimate")
+    }
+
+    @MainActor
+    static func runIfNeeded(context: ModelContext) {
+        guard !UserDefaults.standard.bool(forKey: flagKey) else { return }
+        guard let items = try? context.fetch(FetchDescriptor<ShoppingItem>()) else { return }
+        for item in items {
+            guard let result = refreshed(
+                isAutoDerived: item.estimatedPriceIsAutoDerived, name: item.name,
+                priceCategory: priceCategory(for: item), unit: item.unit, quantityAmount: item.quantityAmount
+            ) else { continue }
+            item.estimatedPrice = result.price
+            item.priceSource = result.source
             item.priceSourceDate = nil
         }
         try? context.save()

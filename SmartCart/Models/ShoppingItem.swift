@@ -110,7 +110,8 @@ class ShoppingItem {
         unit: String = "",
         note: String = "",
         store: Store? = nil,
-        quantitySource: String = "user"
+        quantitySource: String = "user",
+        otherStores: [Store] = []
     ) {
         self.id = UUID()
         self.name = name
@@ -133,9 +134,29 @@ class ShoppingItem {
             quantitySource: quantitySource, in: store)
         // `.rateOnly`: Die Anzeige muss wissen, worauf sich die Rate bezieht („… €/100 g").
         if let unitOverride = resolution.unitOverride { self.unit = unitOverride }
-        self.estimatedPrice = resolution.price ?? PriceEstimator.estimate(for: name, category: category, unit: self.unit, quantityAmount: quantityAmount)
-        self.estimatedPriceIsAutoDerived = (resolution.price == nil)
-        applyPriceSource(from: resolution, in: store)
+        if resolution.price != nil {
+            self.estimatedPrice = resolution.price
+            self.estimatedPriceIsAutoDerived = false
+            applyPriceSource(from: resolution, in: store)
+        } else if let other = Self.resolveOtherStorePrice(
+            forLowercasedName: name.lowercased(), itemUnit: unit, quantityAmount: quantityAmount,
+            quantitySource: quantitySource, excluding: store, among: otherStores) {
+            // Stufe „eigener Preis aus anderem Laden" (Issue #161): ein selbst belegter Preis
+            // desselben Artikels bei Lidl ist für Rewe eine bessere Schätzung als jede Pauschale.
+            if let unitOverride = other.resolution.unitOverride { self.unit = unitOverride }
+            self.estimatedPrice = other.resolution.price
+            self.estimatedPriceIsAutoDerived = false
+            self.priceSource = Self.otherStoreSourcePrefix + other.store.name
+            self.priceSourceDate = nil
+        } else {
+            // Katalogtreffer („estimate") oder Kategorie-Pauschale („category", Issue #160) —
+            // nur Ersterer erscheint in der Zeile als Betrag, die Pauschale zählt nur für Summen.
+            let fallback = PriceEstimator.resolve(for: name, category: category, unit: self.unit, quantityAmount: quantityAmount)
+            self.estimatedPrice = fallback?.price
+            self.estimatedPriceIsAutoDerived = true
+            self.priceSource = fallback?.source ?? "estimate"
+            self.priceSourceDate = nil
+        }
         // Issue #85: Hat der Nutzer diesen Artikel in diesem Laden schon einmal einer eigenen
         // Kategorie zugeordnet, landet er wieder dort. Erst nach der Preisschätzung, denn die
         // braucht die feste Kategorie — eine eigene hat keinen Katalogpreis.
@@ -166,15 +187,58 @@ class ShoppingItem {
         }
     }
 
-    /// Kennungen, die `priceSource` tragen darf.
-    static let knownPriceSources: Set<String> = ["receipt", "paid", "learned", "manual", "estimate"]
+    /// Kennungen, die `priceSource` tragen darf. `"category"` (Issue #160) ist die reine
+    /// Kategorie-Pauschale, `"estimate"` ein Treffer im `PriceCatalog`. Dazu kommt die Form
+    /// `"otherStore:<Ladenname>"` (Issue #161), siehe `otherStoreSourcePrefix`.
+    static let knownPriceSources: Set<String> = ["receipt", "paid", "learned", "manual", "estimate", "category"]
+
+    /// Präfix der Quelle „eigener Preis aus anderem Laden"; dahinter steht der Ladenname, damit die
+    /// Zeile „zuletzt bei Lidl" zeigen kann, ohne ein weiteres gespiegeltes Feld anzulegen.
+    static let otherStoreSourcePrefix = "otherStore:"
+
+    /// Ladenname aus einer `otherStore:`-Quelle, sonst leer.
+    var priceSourceDetail: String {
+        guard priceSource.hasPrefix(Self.otherStoreSourcePrefix) else { return "" }
+        return String(priceSource.dropFirst(Self.otherStoreSourcePrefix.count))
+    }
 
     /// Angezeigte Quelle: eine bekannte Kennung gilt; leer oder unbekannt (Altdaten) wird aus dem
     /// Bool abgeleitet. Aus Altdaten entsteht nie `receipt`, `paid` oder `manual`, weil `false`
     /// jede dieser Herkünfte und „gelernt" gleichermaßen bedeuten kann (Issue #151).
     var priceOrigin: String {
+        if priceSource.hasPrefix(Self.otherStoreSourcePrefix) { return "otherStore" }
         if Self.knownPriceSources.contains(priceSource) { return priceSource }
         return estimatedPriceIsAutoDerived ? "estimate" : "learned"
+    }
+
+    /// Ergebnis der Stufe „eigener Preis aus anderem Laden" (Issue #161).
+    struct OtherStorePrice {
+        let store: Store
+        let resolution: LearnedPriceResolution
+    }
+
+    /// Dieselbe Kette wie `resolveLearnedPrice`, aber über die anderen Läden des Nutzers: Es
+    /// zählen nur Einträge, die dort angewendet würden (Bezugsgröße passt, Obergrenze hält).
+    /// Bei mehreren Läden gewinnt der jüngste Eintrag (`learnedPriceDates`), bei Gleichstand der
+    /// alphabetisch kleinere Ladenname — deterministisch, kein Zufall der Dictionary-Reihenfolge.
+    static func resolveOtherStorePrice(
+        forLowercasedName itemLower: String, itemUnit: String, quantityAmount: Double,
+        quantitySource: String, excluding own: Store?, among stores: [Store]
+    ) -> OtherStorePrice? {
+        var best: (candidate: OtherStorePrice, date: Date)?
+        for candidate in stores where candidate.id != own?.id {
+            let resolution = resolveLearnedPrice(
+                forLowercasedName: itemLower, itemUnit: itemUnit, quantityAmount: quantityAmount,
+                quantitySource: quantitySource, in: candidate)
+            guard resolution.price != nil, let key = resolution.matchedKey else { continue }
+            let date = candidate.learnedPriceDates[key] ?? .distantPast
+            if let current = best,
+               date < current.date || (date == current.date && candidate.name >= current.candidate.store.name) {
+                continue
+            }
+            best = (OtherStorePrice(store: candidate, resolution: resolution), date)
+        }
+        return best?.candidate
     }
 
     /// Reine Preiswahl aus `init` (Issue #151): Schlüssel per `matchingLearnedPriceKey`, dann die
@@ -403,7 +467,8 @@ struct LearnedPriceResolution: Equatable {
 
 /// Anzeigetexte der Preisquelle in der Artikelzeile (Issue #151, Entwurf A).
 enum PriceSourceDisplay {
-    static func text(origin: String, date: Date?, locale: Locale = .current) -> String {
+    /// `detail` ist der Ladenname bei `"otherStore"` (`ShoppingItem.priceSourceDetail`).
+    static func text(origin: String, date: Date?, detail: String = "", locale: Locale = .current) -> String {
         switch origin {
         case "receipt":
             guard let date else { return String(localized: "price.source.receipt") }
@@ -415,22 +480,34 @@ enum PriceSourceDisplay {
         case "paid": return String(localized: "price.source.paid")
         case "manual": return String(localized: "price.source.manual")
         case "estimate": return String(localized: "price.source.estimate")
+        case "category": return String(localized: "price.source.category")
+        case "otherStore": return String(format: String(localized: "price.source.otherstore"), detail)
         default: return String(localized: "price.source.learned")
         }
     }
 
-    /// „ca. " nur bei einer Schätzung — wie die angenommene Menge in `ItemRow`.
+    /// „ca. " nur bei einer Schätzung (Katalog oder Pauschale) — wie die angenommene Menge in `ItemRow`.
     static func amountPrefix(origin: String) -> String {
-        origin == "estimate" ? "ca. " : ""
+        origin == "estimate" || origin == "category" ? "ca. " : ""
     }
 
-    static func accessibilityLabel(amount: String, origin: String, date: Date?, locale: Locale = .current) -> String {
-        "\(amountPrefix(origin: origin))\(amount), \(text(origin: origin, date: date, locale: locale))"
+    /// Issue #160: Eine Kategorie-Pauschale ist kein Artikelpreis. Die Zeile zeigt statt eines
+    /// Betrags die Aufforderung „Preis?" — ebenso, wenn gar keine Schätzung vorliegt. Ein echter
+    /// Preis (nicht automatisch hergeleitet) zeigt nie die Aufforderung.
+    static func showsPrompt(origin: String, hasPrice: Bool, isAutoDerived: Bool) -> Bool {
+        guard isAutoDerived else { return false }
+        return origin == "category" || !hasPrice
+    }
+
+    static func accessibilityLabel(amount: String, origin: String, date: Date?, detail: String = "", locale: Locale = .current) -> String {
+        "\(amountPrefix(origin: origin))\(amount), \(text(origin: origin, date: date, detail: detail, locale: locale))"
     }
 
     static var allLocalizationKeys: [String] {
         ["price.source.receipt", "price.source.receipt.dated", "price.source.paid", "price.source.learned",
-         "price.source.manual", "price.source.estimate", "price.diagnosis.section", "price.diagnosis.entry",
+         "price.source.manual", "price.source.estimate", "price.source.category", "price.source.otherstore",
+         "price.prompt", "price.prompt.accessibility", "price.total.estimated.count",
+         "price.diagnosis.section", "price.diagnosis.entry",
          "price.diagnosis.entry.none", "price.diagnosis.item", "price.diagnosis.cap", "price.diagnosis.result"]
             + LearnedPriceResolution.Reason.allCases.map(PriceDiagnosis.reasonKey)
     }
@@ -485,7 +562,9 @@ enum PriceDiagnosis {
 // MARK: - Price estimation
 
 enum PriceEstimator {
-    /// The flat prices below (`specificPrices` and the `category` fallback) represent a
+    /// Stufen seit Issues #160/#162: `PriceCatalog` (Wortgrenzen-Treffer, Packungsgröße, Quelle
+    /// `"estimate"`) vor der Kategorie-Pauschale (`categoryFlatRate`, Quelle `"category"`).
+    /// The flat category prices represent a
     /// "typical package"/kilo/liter price — NOT a per-raw-unit price. For weight/volume units
     /// where `quantityAmount` is a raw small-unit figure (e.g. "750g" → quantityAmount=750,
     /// unit="g"), multiplying the flat price directly by `quantityAmount` in
@@ -527,96 +606,69 @@ enum PriceEstimator {
     /// Preisgrenze ziehen.
     static let maxPlausibleLearnedLineTotal = 200.0
 
-    static func estimate(for name: String, category: String, unit: String, quantityAmount: Double = 1) -> Double? {
-        let nameLower = name.lowercased()
+    /// Ergebnis der automatischen Schätzung: Rate je Einheit und Quelle — `"estimate"` für einen
+    /// Treffer im `PriceCatalog`, `"category"` für die Kategorie-Pauschale (Issue #160).
+    struct Resolution: Equatable {
+        let price: Double
+        let source: String
+    }
 
-        // Specific product matches
-        let specificPrices: [(keywords: [String], price: Double)] = [
-            (["brot", "brötchen", "bread"], 2.50),
-            (["milch", "milk"], 1.20),
-            (["butter"], 2.20),
-            (["eier", "eggs"], 3.00),
-            (["käse", "cheese"], 3.50),
-            (["joghurt", "yogurt"], 1.50),
-            (["shampoo"], 4.50),
-            (["duschgel", "shower gel"], 3.00),
-            (["zahnbürste", "toothbrush"], 5.00),
-            (["zahnpasta", "toothpaste"], 2.50),
-            (["waschmittel", "detergent"], 8.00),
-            (["spülmittel", "dish soap"], 1.80),
-            (["toilettenpapier", "toilet paper"], 4.00),
-            (["kaffee", "coffee"], 5.50),
-            (["tee", "tea"], 3.00),
-            (["wasser", "water"], 0.90),
-            (["saft", "juice"], 2.00),
-            (["cola", "pepsi", "fanta"], 1.50),
-            (["chips", "crisps"], 1.80),
-            (["schokolade", "chocolate"], 1.50),
-            (["äpfel", "apfel", "apple", "apples"], 2.50),
-            (["bananen", "banane", "banana"], 1.80),
-            (["tomaten", "tomato"], 2.00),
-            (["kartoffeln", "potato"], 2.00),
-            (["hähnchen", "chicken"], 4.50),
-            (["rinderhack", "hackfleisch", "ground beef"], 4.00),
-            (["nudeln", "pasta"], 1.50),
-            (["reis", "rice"], 2.00),
-            (["haferflocken", "porridge", "oats"], 1.80),
-            (["müsli", "cornflakes", "granola", "cereal"], 2.50),
-            (["mehl", "flour"], 1.20),
-            (["zucker", "sugar"], 1.50),
-        ]
-
-        let divisor = unitDivisor(for: unit)
-        var perUnit: Double?
-
-        for entry in specificPrices {
-            if entry.keywords.contains(where: { nameLower.contains($0) }) {
-                perUnit = entry.price / divisor
-                break
-            }
+    /// Pauschale je Kategorie (Preis je Stück/kg/l), unverändert aus Issue #12: deckt alle 26
+    /// Kategorien aus `AssignmentService.categoryOrder` ab, paarweise verschieden.
+    static func categoryFlatRate(_ category: String) -> Double? {
+        switch category {
+        case "Obst & Gemüse": return 2.50
+        case "Fleisch & Wurst": return 4.50
+        case "Milchprodukte": return 2.00
+        case "Backwaren": return 2.20
+        case "Getränke": return 1.50
+        case "Tiefkühlkost": return 3.50
+        case "Snacks": return 1.80
+        case "Gewürze & Backen": return 3.20
+        case "Konserven": return 1.70
+        case "Lebensmittel": return 2.90
+        case "Körperpflege": return 4.00
+        case "Reinigung": return 3.90
+        case "Medikamente": return 6.00
+        case "Babybedarf": return 8.00
+        case "Haushaltswaren": return 5.00
+        case "Küchenausstattung": return 9.50
+        case "Elektronik": return 14.00
+        case "Textilien": return 7.00
+        case "Schreibwaren": return 3.00
+        case "Spielzeug": return 10.00
+        case "Dekoration": return 6.50
+        case "Werkzeug": return 12.00
+        case "Garten": return 7.50
+        case "Farbe & Lack": return 15.00
+        case "Sanitär": return 11.50
+        case "Baumaterial": return 13.50
+        default: return nil
         }
+    }
 
-        if perUnit == nil {
-            // Category fallback
-            // Deckt alle 26 Kategorien aus AssignmentService.categoryOrder ab (vorher nur 9 von
-            // 26 — u.a. "Konserven" fehlte, weshalb z.B. "Haferflocken" ohne Preis blieb). Die
-            // frühere "Haushalt"-Kategorie hieß nie so in categoryOrder (echt: "Haushaltswaren")
-            // und "Kosmetik" existierte dort nie — beide waren toter Code, hier korrigiert/entfernt.
-            switch category {
-            case "Obst & Gemüse": perUnit = 2.50 / divisor
-            case "Fleisch & Wurst": perUnit = 4.50 / divisor
-            case "Milchprodukte": perUnit = 2.00 / divisor
-            case "Backwaren": perUnit = 2.20 / divisor
-            case "Getränke": perUnit = 1.50 / divisor
-            case "Tiefkühlkost": perUnit = 3.50 / divisor
-            case "Snacks": perUnit = 1.80 / divisor
-            case "Gewürze & Backen": perUnit = 3.20 / divisor
-            case "Konserven": perUnit = 1.70 / divisor
-            case "Lebensmittel": perUnit = 2.90 / divisor
-            case "Körperpflege": perUnit = 4.00 / divisor
-            case "Reinigung": perUnit = 3.90 / divisor
-            case "Medikamente": perUnit = 6.00 / divisor
-            case "Babybedarf": perUnit = 8.00 / divisor
-            case "Haushaltswaren": perUnit = 5.00 / divisor
-            case "Küchenausstattung": perUnit = 9.50 / divisor
-            case "Elektronik": perUnit = 14.00 / divisor
-            case "Textilien": perUnit = 7.00 / divisor
-            case "Schreibwaren": perUnit = 3.00 / divisor
-            case "Spielzeug": perUnit = 10.00 / divisor
-            case "Dekoration": perUnit = 6.50 / divisor
-            case "Werkzeug": perUnit = 12.00 / divisor
-            case "Garten": perUnit = 7.50 / divisor
-            case "Farbe & Lack": perUnit = 15.00 / divisor
-            case "Sanitär": perUnit = 11.50 / divisor
-            case "Baumaterial": perUnit = 13.50 / divisor
-            default: perUnit = nil
-            }
+    /// Stufe 2 (Katalog, Wortgrenzen-Treffer, längster Name gewinnt) vor Stufe 3 (Pauschale).
+    /// Über `maxPlausibleLineTotal` wird die Schätzung verworfen (nil), siehe dort.
+    static func resolve(for name: String, category: String, unit: String, quantityAmount: Double = 1) -> Resolution? {
+        let perUnit: Double
+        let source: String
+        if let entry = PriceCatalog.match(name) {
+            perUnit = PriceCatalog.perUnitPrice(for: entry, itemUnit: unit)
+            source = "estimate"
+        } else if let flat = categoryFlatRate(category) {
+            perUnit = flat / unitDivisor(for: unit)
+            source = "category"
+        } else {
+            return nil
         }
-
-        guard let perUnit else { return nil }
         let plausibleQuantity = quantityAmount > 0 ? quantityAmount : 1
         guard perUnit * plausibleQuantity <= maxPlausibleLineTotal else { return nil }
-        return perUnit
+        return Resolution(price: perUnit, source: source)
+    }
+
+    /// Nur der Preis aus `resolve` — Signatur unverändert für alle bestehenden Aufrufer und Tests.
+    static func estimate(for name: String, category: String, unit: String, quantityAmount: Double = 1) -> Double? {
+        resolve(for: name, category: category, unit: unit, quantityAmount: quantityAmount)?.price
     }
 }
 

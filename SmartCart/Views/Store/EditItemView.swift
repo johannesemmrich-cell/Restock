@@ -382,9 +382,10 @@ struct EditItemView: View {
                 item.priceSource = "manual"
                 item.priceSourceDate = nil
             } else if rawPrice.isEmpty {
-                item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: priceCategory, unit: item.unit, quantityAmount: item.quantityAmount)
+                let fallback = PriceEstimator.resolve(for: item.name, category: priceCategory, unit: item.unit, quantityAmount: item.quantityAmount)
+                item.estimatedPrice = fallback?.price
                 item.estimatedPriceIsAutoDerived = true
-                item.priceSource = "estimate"
+                item.priceSource = fallback?.source ?? "estimate"
                 item.priceSourceDate = nil
             }
         } else if oldUnit != item.unit, item.estimatedPriceIsAutoDerived {
@@ -393,8 +394,9 @@ struct EditItemView: View {
             // (e.g. "" → "g" needs the per-gram rate, not the per-package rate). A learned or
             // manually-entered price (estimatedPriceIsAutoDerived == false) is left untouched here,
             // even if it would numerically collide with the old-unit formula.
-            item.estimatedPrice = PriceEstimator.estimate(for: item.name, category: priceCategory, unit: item.unit, quantityAmount: item.quantityAmount)
-            item.priceSource = "estimate"
+            let fallback = PriceEstimator.resolve(for: item.name, category: priceCategory, unit: item.unit, quantityAmount: item.quantityAmount)
+            item.estimatedPrice = fallback?.price
+            item.priceSource = fallback?.source ?? "estimate"
             item.priceSourceDate = nil
         }
     }
