@@ -282,6 +282,22 @@ struct SettingsView: View {
                         }
 
                         NavigationLink {
+                            CloudMirrorStatusView()
+                        } label: {
+                            let subtitle = CloudMirrorMonitor.devRowSubtitle(
+                                lastExport: CloudMirrorStatusStore().lastRun(.export))
+                            devRow(String(localized: "iCloud-Abgleich"), subtitle: subtitle.text,
+                                   isFailure: subtitle.isFailure, systemImage: "icloud")
+                        }
+
+                        NavigationLink {
+                            StoreDuplicatesView()
+                        } label: {
+                            devRow(String(localized: "Doppelte Läden"), subtitle: duplicatesSubtitle,
+                                   isFailure: false, systemImage: "square.on.square")
+                        }
+
+                        NavigationLink {
                             HiddenReplenishmentsView()
                         } label: {
                             Label("Ausgeblendete Vorschläge", systemImage: "eye.slash")
@@ -405,8 +421,31 @@ struct SettingsView: View {
 
     private func seedStores(for countryCode: String) {
         guard allStores.filter({ $0.countryCode == countryCode }).isEmpty else { return }
-        for store in Store.presets(for: countryCode) {
-            context.insert(store)
+        // Issue #156, B2: nur fehlende Presets, damit kein zweiter gleichnamiger Laden entsteht.
+        try? StoreSeeding.insertMissingPresets(Store.presets(for: countryCode), into: context)
+    }
+
+    /// Untertitel der Dev-Zeile „Doppelte Läden“ (Issue #156).
+    private var duplicatesSubtitle: String {
+        let count = StoreDuplicateFinder.groups(allStores.map { StoreSnapshot($0) }).count
+        switch count {
+        case 0: return String(localized: "keine")
+        case 1: return String(localized: "1 Gruppe")
+        default: return String(localized: "\(count) Gruppen")
+        }
+    }
+
+    /// Dev-Zeile mit Untertitel; das Label beginnt mit dem Titel (Issue #156).
+    private func devRow(_ title: String, subtitle: String, isFailure: Bool, systemImage: String) -> some View {
+        Label {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundStyle(isFailure ? Color.destructive : Color.textSecondary)
+            }
+        } icon: {
+            Image(systemName: systemImage)
         }
     }
 }

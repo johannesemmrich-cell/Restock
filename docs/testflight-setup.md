@@ -40,7 +40,7 @@ Neue Felder lassen sich ohne Klicken im Dashboard in Development anlegen. Contai
 2. `cktool export-schema` (Environment `development`) → die Schemadatei um die neuen Felder ergänzen (gleicher Typ wie die vorhandenen JSON-Felder: `STRING`).
 3. `cktool validate-schema`, danach `cktool import-schema` (nur Development).
 4. Gegenprobe: Schema erneut exportieren und mit der ergänzten Datei per `diff` vergleichen.
-5. Token wieder entfernen: `cktool remove-token --type management`.
+5. Token **nicht** entfernen: Er bleibt dauerhaft im Schlüsselbund (Henning, 2026-10-18). Apple zeigt den Wert nur einmal; ohne Schlüsselbund-Eintrag ist der Token im Dashboard wertlos. Vorher prüfen: `xcrun cktool get-teams` muss das Team zeigen; nur wenn nicht, einmalig neu anlegen (Dashboard-Schritt per Claude-Desktop-Prompt).
 
 **Grenze:** Nach Production hochstufen kann `cktool` nicht. Das geht nur im Dashboard: „Deploy Schema Changes…“ → Diff prüfen (es dürfen nur die erwarteten Felder und deren Indizes auftauchen) → Deploy. Danach Production und Development jeweils exportieren und vergleichen.
 
@@ -64,13 +64,13 @@ Container `iCloud.com.johannesemmrich.SmartCart`, Team `XK87E2B3VR`. Alle `cktoo
 6. Erneut exportieren nach `docs/cloudkit/private-schema-aktuell.ckdb` (nach **jedem** Import, sonst prüft T2 einen alten Stand) und mit `diff` gegen `vorher.ckdb` vergleichen: Es dürfen nur die erwarteten Typen und Felder auftauchen.
 7. Dashboard → Container-ID prüfen (es öffnet sich zuerst oft ein fremder Container) → „Deploy Schema Changes…“ → Diff prüfen (nur die erwarteten Typen/Felder) → Deploy. Production erlaubt keine Löschungen; ein falsch deployter Typ bleibt für immer.
 8. Gegenprobe: `xcrun cktool export-schema … --environment production` und mit dem Development-Export vergleichen; bei den `CD_`-Typen darf es keinen Unterschied geben.
-9. Token entfernen: `xcrun cktool remove-token --type management`.
+9. Token im Schlüsselbund lassen (siehe oben), nie `remove-token`.
 
 ### Fallen
 
 - **Production legt nie Typen oder Felder an.** Development erzeugt sie just-in-time beim ersten Speichern, Production lehnt den Record ab („Cannot create new type … in production schema“, `CKError` 12). Im Simulator lässt sich das nicht nachstellen.
 - **Ein abgelehnter Record lässt den ganzen Export scheitern.** Ein einziges Feedback oder Todo ohne Typ in Production blockiert damit auch den Abgleich der Läden und Artikel für die Sitzung. Der Entwicklermodus ist auch in TestFlight freischaltbar.
 - **`nil`-Felder erscheinen im Just-in-time-Schema nicht.** Ein optionales Attribut (z. B. `TodoItem.notes`) entsteht in Development nur, wenn es beim Speichern gefüllt war. Deshalb wird die `.ckdb` von Hand ergänzt statt per Debug-Lauf.
-- **Große Werte als `_ckAsset`.** Für große `Data`-/Blob-Werte legt die Spiegelung ein Zusatzfeld `CD_<Attribut>_ckAsset` an; ob und welche davon in Production fehlen, ist offen in Issue #156.
+- **Große Werte als `_ckAsset`.** Für große `Data`-/Blob-Werte legt die Spiegelung ein Zusatzfeld `CD_<Attribut>_ckAsset` an; `CD_photoData_ckAsset` (ASSET) ist seit Issue #156 im Schema; alle übrigen `_ckAsset`-Felder fehlen bewusst (PO-Entscheidung, praktisch nur das Foto erreichbar).
 
-Stand 2026-10-18: Alle fünf `CD_`-Typen (`CD_Store`, `CD_ShoppingItem`, `CD_PurchaseRecord`, `CD_FeedbackItem`, `CD_TodoItem`) liegen in Development und Production mit denselben Feldern (`docs/cloudkit/private-schema-aktuell.ckdb`; Production-Export ohne Unterschied, `docs/artifacts/fix-155-icloud-produktionsschema/`). Offen: `_ckAsset`-Zusatzfeld für Artikelfotos (#156).
+Stand 2026-10-18: Alle fünf `CD_`-Typen (`CD_Store`, `CD_ShoppingItem`, `CD_PurchaseRecord`, `CD_FeedbackItem`, `CD_TodoItem`) liegen in Development und Production mit denselben Feldern (`docs/cloudkit/private-schema-aktuell.ckdb`; Production-Export ohne Unterschied, `docs/artifacts/fix-155-icloud-produktionsschema/`). Seit #156 zusätzlich `CD_ShoppingItem.CD_photoData_ckAsset` (ASSET).

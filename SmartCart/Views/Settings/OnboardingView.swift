@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import CloudKit
 
 struct OnboardingView: View {
     @Environment(\.modelContext) private var context
@@ -13,6 +14,9 @@ struct OnboardingView: View {
     @State private var step = 0
     @State private var nameInput = ""
     @FocusState private var isNameFocused: Bool
+    /// Issue #156, B2.1 (Entwurf A): Warten auf Läden aus iCloud vor dem Start.
+    @State private var cloudDecision: OnboardingCloudGate.Decision = .proceed
+    @State private var accountAvailable = false
 
     var body: some View {
         NavigationStack {
@@ -113,6 +117,15 @@ struct OnboardingView: View {
                     .padding(.horizontal, 32)
             }
             Spacer()
+            if cloudDecision == .wait {
+                HStack(spacing: 8) {
+                    ProgressView()
+                    Text(String(localized: "onboarding.welcome.cloudWait"))
+                        .font(.footnote)
+                        .foregroundStyle(Color.textSecondary)
+                }
+                .padding(.horizontal, 32)
+            }
             Button {
                 step = 1
             } label: {
@@ -121,9 +134,52 @@ struct OnboardingView: View {
             }
             .buttonStyle(.restockPrimary)
             .controlSize(.large)
+            .disabled(cloudDecision == .wait)
             .padding(.horizontal, 32)
             .padding(.bottom, 48)
         }
+        .task { await checkCloudAccount() }
+        .task { await runCloudGate() }
+    }
+
+    // MARK: - Warten auf iCloud (Issue #156, B2.1)
+
+    /// Kontoabfrage; ein Fehler gilt als „kein Konto“ (dann wird nicht gewartet).
+    private func checkCloudAccount() async {
+        if OnboardingCloudSimulation.current != nil {
+            accountAvailable = true
+            return
+        }
+        let container = CKContainer(identifier: SharedModelContainer.cloudKitContainerID)
+        let status = try? await container.accountStatus()
+        accountAvailable = status == .available
+    }
+
+    /// Prüft bis zur Frist von 10 s, ob gewartet, gestartet oder die Einrichtung übersprungen wird.
+    private func runCloudGate() async {
+        let start = Date()
+        while !Task.isCancelled, step == 0, !hasCompletedOnboarding {
+            let elapsed = Date().timeIntervalSince(start)
+            let decision = OnboardingCloudGate.decision(
+                accountAvailable: accountAvailable,
+                firstImportFinished: firstImportFinished(elapsed: elapsed),
+                storeCount: (try? context.fetchCount(FetchDescriptor<Store>())) ?? 0,
+                elapsed: elapsed)
+            if decision != cloudDecision { cloudDecision = decision }
+            if decision == .skipOnboarding {
+                hasCompletedOnboarding = true
+                return
+            }
+            if elapsed >= OnboardingCloudGate.maxWait { return }
+            try? await Task.sleep(for: .milliseconds(250))
+        }
+    }
+
+    private func firstImportFinished(elapsed: TimeInterval) -> Bool {
+        if let simulation = OnboardingCloudSimulation.current {
+            return simulation.importSeconds.map { elapsed >= $0 } ?? false
+        }
+        return CloudMirrorMonitor.shared.firstImportFinished
     }
 
     // MARK: - Country
@@ -305,12 +361,32 @@ struct OnboardingView: View {
     private func finishOnboarding() {
         for store in presetStores {
             store.isActive = selectedStores.contains(store.name)
-            context.insert(store)
         }
-        // Flush sofort, bevor HomeView direkt im Anschluss frisch gemountet wird — sonst könnte
+        // Issue #156, B2: nur fehlende Presets einfügen, vorhandene Läden bleiben unverändert.
+        // Speichert sofort, bevor HomeView direkt im Anschluss frisch gemountet wird — sonst könnte
         // dessen erster @Query-Fetch je nach Autosave-Timing noch den alten Stand sehen.
-        try? context.save()
+        try? StoreSeeding.insertMissingPresets(presetStores, into: context)
         hasCompletedOnboarding = true
+    }
+}
+
+/// DEBUG-only Simulation des iCloud-Imports für `OnboardingCloudWaitUITests` (Issue #156):
+/// `-simulateCloudImportForUITests <s>` (Konto vorhanden, erster Import nach s Sekunden fertig) und
+/// `-simulateCloudStoresArriveForUITests <s>` (Konto vorhanden; die Läden fügt `SmartCartApp` ein).
+/// Im Release-Build immer nil.
+struct OnboardingCloudSimulation {
+    let importSeconds: TimeInterval?
+
+    static var current: OnboardingCloudSimulation? {
+        #if DEBUG
+        let defaults = UserDefaults.standard
+        let importSeconds = defaults.double(forKey: "simulateCloudImportForUITests")
+        if importSeconds > 0 { return OnboardingCloudSimulation(importSeconds: importSeconds) }
+        if defaults.double(forKey: "simulateCloudStoresArriveForUITests") > 0 {
+            return OnboardingCloudSimulation(importSeconds: nil)
+        }
+        #endif
+        return nil
     }
 }
 

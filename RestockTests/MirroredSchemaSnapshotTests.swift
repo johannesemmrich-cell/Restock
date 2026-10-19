@@ -77,6 +77,22 @@ final class MirroredSchemaSnapshotTests: XCTestCase {
         XCTAssertTrue(Self.block(block, containsField: "CD_notes"), "\(Self.deployHint). CD_TodoItem.CD_notes fehlt")
     }
 
+    // MARK: - T4 (Issue #156, T19, AC-19): Überlauffeld des Fotos steht als ASSET im Schema
+
+    /// Ab 1 MB Record-Größe lagert die Spiegelung `photoData` in `CD_photoData_ckAsset` aus. Fehlt das Feld
+    /// in Production, scheitert der ganze Export. Streng: der Feldname muss allein stehen (optional in
+    /// Anführungszeichen) und direkt vom Typ `ASSET` gefolgt sein; der lockere Regex oben bleibt unverändert.
+    func testPhotoDataAssetFieldIsListed() throws {
+        // GIVEN der Development-Export im Repo
+        let block = try XCTUnwrap(Self.recordTypeBlock("CD_ShoppingItem", in: try Self.loadExport()),
+                                  "CD_ShoppingItem fehlt in private-schema-aktuell.ckdb")
+        // WHEN streng nach dem Asset-Feld gesucht wird
+        let pattern = "(?<![A-Za-z0-9_])\"?CD_photoData_ckAsset\"?\\s+ASSET(?![A-Za-z0-9_])"
+        // THEN ist es vorhanden
+        XCTAssertNotNil(block.range(of: pattern, options: .regularExpression),
+                        "\(Self.deployHint). CD_ShoppingItem.CD_photoData_ckAsset (ASSET) fehlt")
+    }
+
     // MARK: - Hilfen
 
     private static func loadExport() throws -> String {

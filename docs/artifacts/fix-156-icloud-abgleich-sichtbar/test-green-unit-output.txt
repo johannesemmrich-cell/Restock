@@ -1,0 +1,120 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=8F696920-4B9A-40A7-96F0-7697BE887CC7" -parallel-testing-enabled NO "-only-testing:RestockTests/CloudMirrorMonitorTests" "-only-testing:RestockTests/StoreDuplicateFinderTests" "-only-testing:RestockTests/MirroredSchemaSnapshotTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fmakzskadyenmrbpoqvuwvgzgyxi/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-fmakzskadyenmrbpoqvuwvgzgyxi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+2026-10-18 20:06:03.567 xcodebuild[7475:12793573] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-18 20:06:04.974298+0200 Restock[7481:12793973] [General] Failed to connect to linkd to request update AppShortcut parameters, error: Kommunikation mit der Hilfs-App nicht möglich.
+2026-10-18 20:06:05.015380+0200 Restock[7481:12793890] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-18 20:06:05.039044+0200 Restock[7481:12793974] [CK] Could not validate account info cache. (This is a potential performance issue.)
+2026-10-18 20:06:05.052868+0200 Restock[7481:12793890] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-10-18 20:06:05.054574+0200 Restock[7481:12793973] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1047180e0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x104658500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-18 20:06:05.054637+0200 Restock[7481:12793973] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1047180e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-18 20:06:05.054762+0200 Restock[7481:12793973] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1047180e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-18 20:06:05.110656+0200 Restock[7481:12793973] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+[AppDelegate] push registration succeeded, token length: 80
+Test Suite 'Selected tests' started at 2026-10-18 20:06:05.340.
+Test Suite 'RestockTests.xctest' started at 2026-10-18 20:06:05.340.
+Test Suite 'CloudMirrorMonitorTests' started at 2026-10-18 20:06:05.341.
+Test Case '-[RestockTests.CloudMirrorMonitorTests testDevRowSubtitleForFailedSucceededAndNoRun]' started.
+Test Case '-[RestockTests.CloudMirrorMonitorTests testDevRowSubtitleForFailedSucceededAndNoRun]' passed (0.003 seconds).
+Test Case '-[RestockTests.CloudMirrorMonitorTests testFallbackAndUnderlyingError]' started.
+Test Case '-[RestockTests.CloudMirrorMonitorTests testFallbackAndUnderlyingError]' passed (0.009 seconds).
+Test Case '-[RestockTests.CloudMirrorMonitorTests testHandlePersistsOnlyFinishedEvents]' started.
+2026-10-18 20:06:05.355036+0200 Restock[7481:12793890] [sync] mirror export failed (CKErrorDomain 15): Cannot create or modify field 'CD_photoData_ckAsset' in record 'CD_ShoppingItem' in production schema
+Test Case '-[RestockTests.CloudMirrorMonitorTests testHandlePersistsOnlyFinishedEvents]' passed (0.009 seconds).
+Test Case '-[RestockTests.CloudMirrorMonitorTests testObserveOnlyInAppProcess]' started.
+Test Case '-[RestockTests.CloudMirrorMonitorTests testObserveOnlyInAppProcess]' passed (0.001 seconds).
+Test Case '-[RestockTests.CloudMirrorMonitorTests testOnboardingGateDecisions]' started.
+Test Case '-[RestockTests.CloudMirrorMonitorTests testOnboardingGateDecisions]' passed (0.001 seconds).
+Test Case '-[RestockTests.CloudMirrorMonitorTests testPartialFailureReportsNonBatchError]' started.
+Test Case '-[RestockTests.CloudMirrorMonitorTests testPartialFailureReportsNonBatchError]' passed (0.001 seconds).
+Test Case '-[RestockTests.CloudMirrorMonitorTests testProductionSchemaTextIsClassified]' started.
+Test Case '-[RestockTests.CloudMirrorMonitorTests testProductionSchemaTextIsClassified]' passed (0.001 seconds).
+Test Suite 'CloudMirrorMonitorTests' passed at 2026-10-18 20:06:05.366.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.024 (0.026) seconds
+Test Suite 'MirroredSchemaSnapshotTests' started at 2026-10-18 20:06:05.366.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testPhotoDataAssetFieldIsListed]' started.
+/Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/RestockTests/MirroredSchemaSnapshotTests.swift:92: error: -[RestockTests.MirroredSchemaSnapshotTests testPhotoDataAssetFieldIsListed] : XCTAssertNotNil failed - Gespiegelte Modelle geändert: CloudKit-Schema (Development und Production) vor dem TestFlight-Upload ergänzen und deployen (docs/testflight-setup.md). CD_ShoppingItem.CD_photoData_ckAsset (ASSET) fehlt
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testPhotoDataAssetFieldIsListed]' failed (0.035 seconds).
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT1_mirroredModelsMatchFixedList]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT1_mirroredModelsMatchFixedList]' passed (0.003 seconds).
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT2_developmentExportContainsAllMirroredTypesAndFields]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT2_developmentExportContainsAllMirroredTypesAndFields]' passed (0.006 seconds).
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT3_optionalTodoNotesFieldIsInExport]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT3_optionalTodoNotesFieldIsInExport]' passed (0.001 seconds).
+Test Suite 'MirroredSchemaSnapshotTests' failed at 2026-10-18 20:06:05.412.
+	 Executed 4 tests, with 1 failure (0 unexpected) in 0.045 (0.046) seconds
+Test Suite 'StoreDuplicateFinderTests' started at 2026-10-18 20:06:05.412.
+Test Case '-[RestockTests.StoreDuplicateFinderTests testClassesOneToThree]' started.
+Test Case '-[RestockTests.StoreDuplicateFinderTests testClassesOneToThree]' passed (0.004 seconds).
+Test Case '-[RestockTests.StoreDuplicateFinderTests testJoinReusesStoreWithSameShareID]' started.
+Test Case '-[RestockTests.StoreDuplicateFinderTests testJoinReusesStoreWithSameShareID]' passed (0.021 seconds).
+Test Case '-[RestockTests.StoreDuplicateFinderTests testNewFilesNeverDelete]' started.
+Test Case '-[RestockTests.StoreDuplicateFinderTests testNewFilesNeverDelete]' passed (0.005 seconds).
+Test Case '-[RestockTests.StoreDuplicateFinderTests testNoFalsePositives]' started.
+Test Case '-[RestockTests.StoreDuplicateFinderTests testNoFalsePositives]' passed (0.003 seconds).
+Test Case '-[RestockTests.StoreDuplicateFinderTests testOnboardingInsertsOnlyMissingPresets]' started.
+Test Case '-[RestockTests.StoreDuplicateFinderTests testOnboardingInsertsOnlyMissingPresets]' passed (0.008 seconds).
+Test Case '-[RestockTests.StoreDuplicateFinderTests testSeedStoresInsertsOnlyMissingPresets]' started.
+Test Case '-[RestockTests.StoreDuplicateFinderTests testSeedStoresInsertsOnlyMissingPresets]' passed (0.008 seconds).
+Test Case '-[RestockTests.StoreDuplicateFinderTests testWinnerIsSmallestUUIDRegardlessOfOrder]' started.
+Test Case '-[RestockTests.StoreDuplicateFinderTests testWinnerIsSmallestUUIDRegardlessOfOrder]' passed (0.002 seconds).
+Test Suite 'StoreDuplicateFinderTests' passed at 2026-10-18 20:06:05.463.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.050 (0.051) seconds
+Test Suite 'RestockTests.xctest' failed at 2026-10-18 20:06:05.463.
+	 Executed 18 tests, with 1 failure (0 unexpected) in 0.118 (0.123) seconds
+Test Suite 'Selected tests' failed at 2026-10-18 20:06:05.463.
+	 Executed 18 tests, with 1 failure (0 unexpected) in 0.118 (0.123) seconds
+2026-10-18 20:06:05.496 xcodebuild[7475:12793573] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-18 20:06:05.496 xcodebuild[7475:12793573] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-18 20:06:24.200 xcodebuild[7475:12793573] [MT] IDETestOperationsObserverDebug: 20.800 elapsed -- Testing started completed.
+2026-10-18 20:06:24.200 xcodebuild[7475:12793573] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-18 20:06:24.200 xcodebuild[7475:12793573] [MT] IDETestOperationsObserverDebug: 20.800 sec, +20.800 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-fmakzskadyenmrbpoqvuwvgzgyxi/Logs/Test/Test-Restock-2026.10.18_20-06-02-+0200.xcresult
+
+Failing tests:
+	MirroredSchemaSnapshotTests.testPhotoDataAssetFieldIsListed()
+
+** TEST FAILED **
+
+Testing started
