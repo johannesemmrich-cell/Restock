@@ -134,6 +134,7 @@ struct ActualPriceEntryView: View {
                 guard let lineTotal = item.estimatedLineTotal else { continue }
                 let itemActualTotal = lineTotal * ratio
                 Self.apply(itemActualTotal: itemActualTotal, to: item, in: store)
+                Self.share(item, in: store)
             }
         } else {
             // Nothing selected has a usable estimate (or every estimate is zero) — there's no
@@ -142,6 +143,7 @@ struct ActualPriceEntryView: View {
             let share = paidTotal / Double(selected.count)
             for item in selected {
                 Self.apply(itemActualTotal: share, to: item, in: store)
+                Self.share(item, in: store)
             }
         }
 
@@ -154,6 +156,13 @@ struct ActualPriceEntryView: View {
     /// `PurchaseRecord` created by this item's own most recent still-unpriced `markCompleted()` call.
     /// Statisch mit dem Laden als Parameter, damit testbar (Issue #151); Quelle „bezahlt“ am
     /// Artikel und als Herkunft des gelernten Eintrags.
+    /// Issue #163: den eben eingetragenen Preis anonym teilen (nur mit Schalter, prüft der Dienst).
+    static func share(_ item: ShoppingItem, in store: Store) {
+        guard let price = item.estimatedPrice, price > 0 else { return }
+        CommunityPriceService.shared.contributeInBackground(.init(
+            itemName: item.name, storeName: store.name, perUnitPrice: price, unit: ShoppingItem.unitBucket(item.unit)))
+    }
+
     static func apply(itemActualTotal: Double, to item: ShoppingItem, in store: Store) {
         // A zero-or-negative share (possible if an item's own estimate was exactly 0, or from
         // floating-point noise) must not be taught back as "this item costs €0" — skip it entirely

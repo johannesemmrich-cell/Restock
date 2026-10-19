@@ -100,6 +100,11 @@ Schritte 1–3 (#160, #161, #162 erste Tranche: 308 handgepflegte Einträge) umg
 Messung vorher → nachher: 100 Alltagsartikel mit Produktpreis 39 → 100; 565 Lebensmittel-
 Stichwörter 20 % → 70 %; Teilstring-Fehltreffer 5 → 0. Offen: Open-Prices-Median (#162), #163, #164.
 
+2026-10-19: #165 gemergt (Squash `1ebde91`), #160/#161 geschlossen. Schritt 4 (#163) Weg A umgesetzt:
+Spec `docs/specs/services/community-prices.md`, Tests `RestockTests/CommunityPriceTests.swift`;
+Entscheidungen des Tech Leads in #163 und #164 festgehalten (Opt-in aus, keine Region, Median ab 3,
+Gerätemodell zuerst für #164).
+
 ## Betroffener Code (erste Sichtung, nicht abschließend)
 
 - `SmartCart/Models/ShoppingItem.swift` — `PriceEstimator`, `resolveLearnedPrice`, `priceSource`

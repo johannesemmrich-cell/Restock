@@ -65,9 +65,11 @@ enum CatalogEstimateRefresh {
     }
 
     /// Reine Entscheidung je Artikel: neuer Preis und neue Quelle, oder nil, wenn nichts zu tun ist.
-    static func refreshed(isAutoDerived: Bool, name: String, priceCategory: String, unit: String,
+    /// Community-Preise (Issue #163) sind zwar automatisch hergeleitet, aber beobachtet, nicht
+    /// geschätzt — sie bleiben stehen.
+    static func refreshed(isAutoDerived: Bool, priceSource: String, name: String, priceCategory: String, unit: String,
                           quantityAmount: Double) -> (price: Double?, source: String)? {
-        guard isAutoDerived else { return nil }
+        guard isAutoDerived, !priceSource.hasPrefix(CommunityPrice.sourcePrefix) else { return nil }
         let fallback = PriceEstimator.resolve(for: name, category: priceCategory, unit: unit, quantityAmount: quantityAmount)
         return (fallback?.price, fallback?.source ?? "estimate")
     }
@@ -78,7 +80,7 @@ enum CatalogEstimateRefresh {
         guard let items = try? context.fetch(FetchDescriptor<ShoppingItem>()) else { return }
         for item in items {
             guard let result = refreshed(
-                isAutoDerived: item.estimatedPriceIsAutoDerived, name: item.name,
+                isAutoDerived: item.estimatedPriceIsAutoDerived, priceSource: item.priceSource, name: item.name,
                 priceCategory: priceCategory(for: item), unit: item.unit, quantityAmount: item.quantityAmount
             ) else { continue }
             item.estimatedPrice = result.price
