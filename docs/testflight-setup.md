@@ -27,6 +27,8 @@ Lokaler Weg und CI teilen den Zähler in App Store Connect. Vor jedem Upload die
 
 **Auch für `CommunityPrice` (Issue #163):** Der Record-Typ für den Community-Preispool (Felder `itemKey`, `chain`, `price`, `unit`, `observedAt`, `clientID`; Vorlage in `docs/cloudkit/private-schema-aktuell.ckdb`) muss vor dem ersten Upload mit #163 in Development angelegt (cktool-Weg unten oder erster Xcode-Lauf mit eingeschaltetem Schalter „Preise anonym mit anderen teilen“) und nach Production deployt werden. Fehlt er in Production, scheitert nur das Teilen still (Protokoll `community`), Lesen liefert nichts, die App läuft weiter. Drift-Test: `CommunityPriceTests.testSchemaFieldsMatchPublishedExport`.
 
+Stand 2026-10-19: `CommunityPrice` liegt in Development und Production (Deploy im Dashboard durch Henning, Vorher-/Nachher-Diff Dev→Prod leer; Bericht in `docs/artifacts/feat-163-community-preise/production-deploy-2026-10-19.md`). Kein `cktool`-Export, der folgt mit dem ersten Lauf von `cloudkit-schema.yml` (#169).
+
 TestFlight und App Store nutzen die CloudKit-**Produktion**, Xcode-Läufe die **Entwicklung**. Die Produktion legt unbekannte Felder nicht an und lehnt das Speichern ab („… in production schema“, Issue #121). Deshalb vor jedem Upload, der neue Felder von `SharedStore` mitbringt:
 
 1. CloudKit-Dashboard → Container `iCloud.com.johannesemmrich.SmartCart` → Development → Record-Typ `SharedStore`: prüfen, dass alle Felder (insbesondere neue) dort stehen. Ein Feld entsteht in Development erst, wenn ein Xcode-Lauf einen geteilten Laden damit gespeichert hat.
@@ -47,6 +49,23 @@ Neue Felder lassen sich ohne Klicken im Dashboard in Development anlegen. Contai
 **Grenze:** Nach Production hochstufen kann `cktool` nicht. Das geht nur im Dashboard: „Deploy Schema Changes…“ → Diff prüfen (es dürfen nur die erwarteten Felder und deren Indizes auftauchen) → Deploy. Danach Production und Development jeweils exportieren und vergleichen.
 
 Stand 2026-10-08: `categoriesJSON` und `assignmentsJSON` (`STRING`) liegen in Development und Production.
+
+### Werkzeugweg über GitHub Actions (Issue #169)
+
+Derselbe cktool-Weg ohne Mac: manueller Ablauf `.github/workflows/cloudkit-schema.yml` (Actions → CloudKit Schema → Run workflow) auf dem macOS-Runner, Token aus dem Repo-Secret `CLOUDKIT_MANAGEMENT_TOKEN`.
+
+- `mode=export` (Standard): exportiert Development und Production, legt beide als Artefakt `cloudkit-schema-export` ab (14 Tage) und schreibt zwei Diffs in die Zusammenfassung: Repo-Datei `docs/cloudkit/private-schema-aktuell.ckdb` → Development und Development → Production. Schreibt nichts. Ein Unterschied Development → Production heißt: Deploy im Dashboard steht aus.
+- `mode=import-development`: erst der Export wie oben, dann (nur von `main` und nur mit dem Pflichtfeld `confirm` = `development`) `validate-schema` und `import-schema` der Repo-Datei nach Development, danach erneuter Export und Diff vorher → nachher in der Zusammenfassung. **`import-schema` ersetzt das ganze Development-Schema durch die Repo-Datei**, deshalb muss die Datei vollständig sein (alle Typen, auch `SharedStore`, `SharedItemPhoto`, `Users`).
+- Nach Production schreibt der Ablauf nie. Hochstufen bleibt im Dashboard („Deploy Schema Changes…“, Diff prüfen, Deploy), danach `mode=export`: Development → Production muss „Kein Unterschied“ zeigen.
+
+Einrichtung:
+
+1. CloudKit-Dashboard → Konto-Menü → Settings → Tokens → Create Management Token. Den Wert nie anzeigen, nie ins Repo, nie in einen Chat.
+2. `gh secret set CLOUDKIT_MANAGEMENT_TOKEN --repo johannesemmrich-cell/Restock` (Wert einfügen) oder GitHub → Settings → Secrets and variables → Actions → New repository secret.
+3. Keine Environment-Freigabe: Environments mit Reviewer brauchen Admin-Rechte am Repo, die Henning nicht hat (Repo gehört seinem Sohn). Schranke für den Import ist stattdessen das Pflichtfeld `confirm`, in das beim Start genau `development` eingetippt wird; sonst bricht der Job vor dem Checkout ab.
+4. Rotation wie beim App-Store-Connect-Schlüssel: alle 6–12 Monate neu erzeugen und das Secret ersetzen, alten Token im Dashboard löschen; bei Verdacht auf Missbrauch sofort.
+
+Der Token liegt auf dem Runner nur für die Dauer des Jobs als Datei (`cktool save-token --method file`) und wird in einem `always()`-Schritt entfernt; kein Schritt gibt ihn aus. Strukturtest: `python3 scripts/test_cloudkit_schema_workflow.py`. Offene Grenze: Ob `save-token` den Wert auf dem Runner aus der Pipe liest, belegt erst der erste Lauf mit gesetztem Secret.
 
 ## Privater iCloud-Abgleich: Typen vor jedem Upload in Production
 

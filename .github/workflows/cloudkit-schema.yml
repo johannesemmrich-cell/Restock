@@ -1,0 +1,174 @@
+name: CloudKit Schema  # Issue #169, Einrichtung und Grenzen: docs/testflight-setup.md
+
+# Liest das CloudKit-Schema (Development und Production) mit cktool und vergleicht es mit
+# docs/cloudkit/private-schema-aktuell.ckdb. Auf Wunsch importiert es diese Datei als
+# Development-Schema. Nach Production schreibt dieser Ablauf NIE: Hochstufen geht nur im
+# Dashboard („Deploy Schema Changes…“), cktool kann es nicht.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "export: nur lesen und vergleichen. import-development: docs/cloudkit/private-schema-aktuell.ckdb als Development-Schema importieren (nur von main, nur mit confirm=development)"
+        type: choice
+        options: [export, import-development]
+        default: export
+      confirm:
+        description: "Nur für import-development: genau „development“ eintippen. Der Import ersetzt das ganze Development-Schema durch die Repo-Datei."
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudkit-schema
+  cancel-in-progress: false
+
+env:
+  TEAM_ID: XK87E2B3VR
+  CONTAINER_ID: iCloud.com.johannesemmrich.SmartCart
+  SCHEMA_FILE: docs/cloudkit/private-schema-aktuell.ckdb
+
+jobs:
+  export:
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select latest available Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$LATEST" ]; then LATEST="/Applications/Xcode.app"; fi
+          echo "Using $LATEST"
+          echo "DEVELOPER_DIR=$LATEST/Contents/Developer" >> "$GITHUB_ENV"
+
+      - name: Save management token
+        env:
+          CLOUDKIT_MANAGEMENT_TOKEN: ${{ secrets.CLOUDKIT_MANAGEMENT_TOKEN }}
+        run: |
+          # Der Token kommt nur aus dem Secret; kein Schritt gibt ihn aus. Ablage als Datei im
+          # Runner-Home (kein Schlüsselbund, der auf dem Runner gesperrt sein kann).
+          if [ -z "$CLOUDKIT_MANAGEMENT_TOKEN" ]; then
+            echo "::error::Secret CLOUDKIT_MANAGEMENT_TOKEN fehlt. Einrichtung: docs/testflight-setup.md"; exit 1
+          fi
+          printf '%s\n' "$CLOUDKIT_MANAGEMENT_TOKEN" | xcrun cktool save-token --type management --method file
+
+      - name: Export development and production
+        run: |
+          mkdir -p "$RUNNER_TEMP/schema"
+          for ENVIRONMENT in development production; do
+            xcrun cktool export-schema --team-id "$TEAM_ID" --container-id "$CONTAINER_ID" \
+              --environment "$ENVIRONMENT" --output-file "$RUNNER_TEMP/schema/$ENVIRONMENT.ckdb"
+            echo "$ENVIRONMENT: $(grep -c 'RECORD TYPE' "$RUNNER_TEMP/schema/$ENVIRONMENT.ckdb") Record-Typen"
+          done
+
+      - name: Compare with repository file and between environments
+        run: |
+          report() {  # $1 Überschrift, $2 Datei A, $3 Datei B
+            {
+              echo "### $1"
+              if diff -q "$2" "$3" >/dev/null; then
+                echo "Kein Unterschied."
+              else
+                echo '```diff'; diff -u "$2" "$3" || true; echo '```'
+              fi
+            } >> "$GITHUB_STEP_SUMMARY"
+          }
+          report "Repo-Datei ($SCHEMA_FILE) → Development" "$SCHEMA_FILE" "$RUNNER_TEMP/schema/development.ckdb"
+          report "Development → Production" "$RUNNER_TEMP/schema/development.ckdb" "$RUNNER_TEMP/schema/production.ckdb"
+          if ! diff -q "$SCHEMA_FILE" "$RUNNER_TEMP/schema/development.ckdb" >/dev/null; then
+            echo "::notice::Repo-Datei und Development unterscheiden sich (Zusammenfassung)."
+          fi
+          if ! diff -q "$RUNNER_TEMP/schema/development.ckdb" "$RUNNER_TEMP/schema/production.ckdb" >/dev/null; then
+            echo "::notice::Development und Production unterscheiden sich: Deploy im Dashboard steht aus (Zusammenfassung)."
+          fi
+
+      - name: Upload exports
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudkit-schema-export
+          path: ${{ runner.temp }}/schema
+          retention-days: 14
+
+      - name: Remove management token
+        if: always()
+        run: xcrun cktool remove-token --type management --method file || true
+
+  import-development:
+    if: inputs.mode == 'import-development'
+    needs: export
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - name: Only from main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::import-development ersetzt das ganze Development-Schema und läuft nur von main (hier: $GITHUB_REF)."; exit 1
+
+      - name: Require typed confirmation
+        if: inputs.confirm != 'development'
+        run: |
+          # Ersatz für eine Environment-Freigabe (dafür fehlen die Repo-Rechte): wer importiert,
+          # muss „development“ eintippen und bestätigt damit, was ersetzt wird.
+          echo "::error::import-development braucht confirm=development (Eingabe war leer oder anders)."; exit 1
+
+      - uses: actions/checkout@v4
+      - name: Select latest available Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$LATEST" ]; then LATEST="/Applications/Xcode.app"; fi
+          echo "Using $LATEST"
+          echo "DEVELOPER_DIR=$LATEST/Contents/Developer" >> "$GITHUB_ENV"
+
+      - name: Download export (vorher)
+        uses: actions/download-artifact@v4
+        with:
+          name: cloudkit-schema-export
+          path: ${{ runner.temp }}/vorher
+
+      - name: Save management token
+        env:
+          CLOUDKIT_MANAGEMENT_TOKEN: ${{ secrets.CLOUDKIT_MANAGEMENT_TOKEN }}
+        run: |
+          if [ -z "$CLOUDKIT_MANAGEMENT_TOKEN" ]; then
+            echo "::error::Secret CLOUDKIT_MANAGEMENT_TOKEN fehlt. Einrichtung: docs/testflight-setup.md"; exit 1
+          fi
+          printf '%s\n' "$CLOUDKIT_MANAGEMENT_TOKEN" | xcrun cktool save-token --type management --method file
+
+      - name: Validate and import into development
+        run: |
+          # import-schema ersetzt das GANZE Development-Schema durch die Datei; deshalb vorher
+          # validieren und nachher per Export belegen, was sich geändert hat.
+          xcrun cktool validate-schema --team-id "$TEAM_ID" --container-id "$CONTAINER_ID" \
+            --environment development --file "$SCHEMA_FILE"
+          xcrun cktool import-schema --team-id "$TEAM_ID" --container-id "$CONTAINER_ID" \
+            --environment development --file "$SCHEMA_FILE"
+
+      - name: Export development again and compare
+        run: |
+          mkdir -p "$RUNNER_TEMP/nachher"
+          xcrun cktool export-schema --team-id "$TEAM_ID" --container-id "$CONTAINER_ID" \
+            --environment development --output-file "$RUNNER_TEMP/nachher/development.ckdb"
+          {
+            echo "### Development vorher → nachher (import-development)"
+            if diff -q "$RUNNER_TEMP/vorher/development.ckdb" "$RUNNER_TEMP/nachher/development.ckdb" >/dev/null; then
+              echo "Kein Unterschied."
+            else
+              echo '```diff'; diff -u "$RUNNER_TEMP/vorher/development.ckdb" "$RUNNER_TEMP/nachher/development.ckdb" || true; echo '```'
+            fi
+            echo
+            echo "Nächster Schritt von Hand: Dashboard → Container-ID prüfen → „Deploy Schema Changes…“ → Diff prüfen → Deploy. Danach diesen Ablauf mit mode=export laufen lassen: Development → Production muss „Kein Unterschied“ zeigen."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload export (nachher)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudkit-schema-development-after-import
+          path: ${{ runner.temp }}/nachher
+          retention-days: 14
+
+      - name: Remove management token
+        if: always()
+        run: xcrun cktool remove-token --type management --method file || true

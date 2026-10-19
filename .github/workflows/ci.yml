@@ -169,11 +169,17 @@ jobs:
             done
           fi
           echo "Hälfte ${{ matrix.half }}: ${SELECTION[*]}"
+          # Issue #173: Ein fehlgeschlagener UI-Test läuft im selben Lauf genau einmal erneut
+          # (App wird dazu neu gestartet); grün bei grüner Wiederholung. Kein Test wird
+          # übersprungen. Die Zusammenfassung unten macht Wiederholungen sichtbar.
           xcodebuild test \
             -project Restock.xcodeproj \
             -scheme Restock \
             -destination 'platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}' \
             "${SELECTION[@]}" \
+            -retry-tests-on-failure \
+            -test-iterations 2 \
+            -test-repetition-relaunch-enabled YES \
             -resultBundlePath UITestResults.xcresult \
             -skipMacroValidation \
             CODE_SIGN_IDENTITY="-" \
@@ -181,6 +187,19 @@ jobs:
             CODE_SIGNING_ALLOWED=YES \
             AD_HOC_CODE_SIGNING_ALLOWED=YES \
             | xcpretty
+
+      - name: Test summary (incl. retries)
+        if: always()
+        run: |
+          # Issue #173: xcresulttool-Zusammenfassung in die Lauf-Zusammenfassung, damit Tests, die
+          # erst in der Wiederholung grün wurden, nicht unbemerkt bleiben. Nie fehlschlagen lassen.
+          {
+            echo "### UI-Tests Hälfte ${{ matrix.half }}: xcresult-Zusammenfassung"
+            echo '```json'
+            xcrun xcresulttool get test-results summary --path UITestResults.xcresult --compact 2>/dev/null \
+              || echo '{"error": "xcresulttool summary nicht lesbar"}'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload xcresult on failure
         if: failure()
