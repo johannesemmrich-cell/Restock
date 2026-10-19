@@ -28,16 +28,25 @@ class Workflow(unittest.TestCase):
         self.assertIs(self.wf["concurrency"]["cancel-in-progress"], False)
         for j in self.wf["jobs"].values():
             self.assertEqual((j["runs-on"], j["timeout-minutes"]), ("macos-26", 15))
-        self.assertEqual(self.imp["environment"], "cloudkit")
         self.assertIn("import-development", self.imp["if"])
         self.assertEqual(self.imp["needs"], "export")
-        self.assertNotIn("environment", self.export)
+        for j in self.wf["jobs"].values():
+            self.assertNotIn("environment", j, "keine Environment-Freigabe: dafür fehlen die Repo-Rechte, Schranke ist confirm")
+        confirm = self.on["workflow_dispatch"]["inputs"]["confirm"]
+        self.assertEqual((confirm["type"], confirm.get("required", False)), ("string", False))
 
-    def test_import_only_from_main(self):  # AC-3
+    def test_import_only_from_main_and_confirmed(self):  # AC-3
         guard = [s for s in steps(self.imp) if "refs/heads/main" in s.get("if", "")]
         self.assertEqual(len(guard), 1)
         self.assertEqual(steps(self.imp).index(guard[0]), 0, "Hauptzweig-Prüfung muss der erste Schritt sein")
         self.assertIn("exit 1", guard[0]["run"])
+        confirm = [s for s in steps(self.imp) if "inputs.confirm" in s.get("if", "")]
+        self.assertEqual(len(confirm), 1)
+        self.assertEqual(steps(self.imp).index(confirm[0]), 1, "Bestätigungs-Prüfung muss der zweite Schritt sein, vor dem Checkout")
+        self.assertIn("!= 'development'", confirm[0]["if"])
+        self.assertIn("exit 1", confirm[0]["run"])
+        first_write = next(i for i, s in enumerate(steps(self.imp)) if "import-schema" in s.get("run", ""))
+        self.assertGreater(first_write, steps(self.imp).index(confirm[0]))
 
     def test_never_writes_production(self):  # AC-4
         text = WF.read_text()
@@ -89,7 +98,7 @@ class Workflow(unittest.TestCase):
 
     def test_documented(self):  # AC-8
         doc = DOC.read_text()
-        for needle in ("cloudkit-schema.yml", "CLOUDKIT_MANAGEMENT_TOKEN", "import-development", "Environment `cloudkit`"):
+        for needle in ("cloudkit-schema.yml", "CLOUDKIT_MANAGEMENT_TOKEN", "import-development", "`confirm`"):
             self.assertIn(needle, doc)
         self.assertIn("cloudkit-schema.yml", (R / "CLAUDE.md").read_text())
 

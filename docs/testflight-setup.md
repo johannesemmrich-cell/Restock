@@ -55,14 +55,14 @@ Stand 2026-10-08: `categoriesJSON` und `assignmentsJSON` (`STRING`) liegen in De
 Derselbe cktool-Weg ohne Mac: manueller Ablauf `.github/workflows/cloudkit-schema.yml` (Actions → CloudKit Schema → Run workflow) auf dem macOS-Runner, Token aus dem Repo-Secret `CLOUDKIT_MANAGEMENT_TOKEN`.
 
 - `mode=export` (Standard): exportiert Development und Production, legt beide als Artefakt `cloudkit-schema-export` ab (14 Tage) und schreibt zwei Diffs in die Zusammenfassung: Repo-Datei `docs/cloudkit/private-schema-aktuell.ckdb` → Development und Development → Production. Schreibt nichts. Ein Unterschied Development → Production heißt: Deploy im Dashboard steht aus.
-- `mode=import-development`: erst der Export wie oben, dann (nur von `main`, nach Freigabe im Environment `cloudkit`) `validate-schema` und `import-schema` der Repo-Datei nach Development, danach erneuter Export und Diff vorher → nachher in der Zusammenfassung. **`import-schema` ersetzt das ganze Development-Schema durch die Repo-Datei**, deshalb muss die Datei vollständig sein (alle Typen, auch `SharedStore`, `SharedItemPhoto`, `Users`).
+- `mode=import-development`: erst der Export wie oben, dann (nur von `main` und nur mit dem Pflichtfeld `confirm` = `development`) `validate-schema` und `import-schema` der Repo-Datei nach Development, danach erneuter Export und Diff vorher → nachher in der Zusammenfassung. **`import-schema` ersetzt das ganze Development-Schema durch die Repo-Datei**, deshalb muss die Datei vollständig sein (alle Typen, auch `SharedStore`, `SharedItemPhoto`, `Users`).
 - Nach Production schreibt der Ablauf nie. Hochstufen bleibt im Dashboard („Deploy Schema Changes…“, Diff prüfen, Deploy), danach `mode=export`: Development → Production muss „Kein Unterschied“ zeigen.
 
 Einrichtung:
 
 1. CloudKit-Dashboard → Konto-Menü → Settings → Tokens → Create Management Token. Den Wert nie anzeigen, nie ins Repo, nie in einen Chat.
 2. `gh secret set CLOUDKIT_MANAGEMENT_TOKEN --repo johannesemmrich-cell/Restock` (Wert einfügen) oder GitHub → Settings → Secrets and variables → Actions → New repository secret.
-3. GitHub → Settings → Environments → Environment `cloudkit` anlegen: Reviewer = Henning. Nur `import-development` wartet auf diese Freigabe; `export` läuft ohne.
+3. Keine Environment-Freigabe: Environments mit Reviewer brauchen Admin-Rechte am Repo, die Henning nicht hat (Repo gehört seinem Sohn). Schranke für den Import ist stattdessen das Pflichtfeld `confirm`, in das beim Start genau `development` eingetippt wird; sonst bricht der Job vor dem Checkout ab.
 4. Rotation wie beim App-Store-Connect-Schlüssel: alle 6–12 Monate neu erzeugen und das Secret ersetzen, alten Token im Dashboard löschen; bei Verdacht auf Missbrauch sofort.
 
 Der Token liegt auf dem Runner nur für die Dauer des Jobs als Datei (`cktool save-token --method file`) und wird in einem `always()`-Schritt entfernt; kein Schritt gibt ihn aus. Strukturtest: `python3 scripts/test_cloudkit_schema_workflow.py`. Offene Grenze: Ob `save-token` den Wert auf dem Runner aus der Pipe liest, belegt erst der erste Lauf mit gesetztem Secret.

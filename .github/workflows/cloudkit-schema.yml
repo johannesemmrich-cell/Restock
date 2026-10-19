@@ -9,10 +9,15 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "export: nur lesen und vergleichen. import-development: docs/cloudkit/private-schema-aktuell.ckdb als Development-Schema importieren (nur von main, mit Freigabe im Environment cloudkit)"
+        description: "export: nur lesen und vergleichen. import-development: docs/cloudkit/private-schema-aktuell.ckdb als Development-Schema importieren (nur von main, nur mit confirm=development)"
         type: choice
         options: [export, import-development]
         default: export
+      confirm:
+        description: "Nur für import-development: genau „development“ eintippen. Der Import ersetzt das ganze Development-Schema durch die Repo-Datei."
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -96,12 +101,18 @@ jobs:
     needs: export
     runs-on: macos-26
     timeout-minutes: 15
-    environment: cloudkit
     steps:
       - name: Only from main
         if: github.ref != 'refs/heads/main'
         run: |
           echo "::error::import-development ersetzt das ganze Development-Schema und läuft nur von main (hier: $GITHUB_REF)."; exit 1
+
+      - name: Require typed confirmation
+        if: inputs.confirm != 'development'
+        run: |
+          # Ersatz für eine Environment-Freigabe (dafür fehlen die Repo-Rechte): wer importiert,
+          # muss „development“ eintippen und bestätigt damit, was ersetzt wird.
+          echo "::error::import-development braucht confirm=development (Eingabe war leer oder anders)."; exit 1
 
       - uses: actions/checkout@v4
       - name: Select latest available Xcode

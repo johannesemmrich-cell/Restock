@@ -42,16 +42,18 @@ machen. Der Ablauf schreibt deshalb nie nach Production.
 
 ### Auslöser und Eingaben (AC-1)
 
-Nur `workflow_dispatch`. Eine Eingabe `mode` (`choice`): `export` (Standard) oder
-`import-development`.
+Nur `workflow_dispatch`. Eingabe `mode` (`choice`): `export` (Standard) oder
+`import-development`; Eingabe `confirm` (`string`, leer), die für den Import genau `development`
+lauten muss.
 
 ### Schutz (AC-2, AC-3)
 
 `permissions: contents: read`, `concurrency: cloudkit-schema` ohne Abbruch laufender Läufe,
 `macos-26`, 15 min je Job. Der Job `import-development` läuft nur bei `mode=import-development`,
-nach dem Job `export`, im Environment `cloudkit` (Reviewer Henning) und bricht als ersten Schritt
-ab, wenn der Lauf nicht von `main` kommt. Der Job `export` hat kein Environment, damit er ohne
-Freigabe als reiner Lesezugriff läuft.
+nach dem Job `export`, und bricht vor dem Checkout ab, wenn der Lauf nicht von `main` kommt
+(Schritt 1) oder `confirm` nicht `development` lautet (Schritt 2). Kein Job nutzt ein GitHub-
+Environment: eine Freigabe-Regel mit Reviewer braucht Admin-Rechte am Repo, die Henning nicht hat
+(Repo gehört seinem Sohn; festgestellt am 2026-10-19). Die getippte Bestätigung ersetzt sie.
 
 ### Nie nach Production (AC-4)
 
@@ -89,7 +91,7 @@ Der Schritt „Select latest available Xcode“ ist wortgleich mit `ci.yml` (in 
 ## Einrichtung (Henning)
 
 Siehe `docs/testflight-setup.md`, „Werkzeugweg über GitHub Actions“: Token im Dashboard erzeugen,
-`gh secret set CLOUDKIT_MANAGEMENT_TOKEN`, Environment `cloudkit` mit Reviewer anlegen.
+Secret `CLOUDKIT_MANAGEMENT_TOKEN` setzen (erledigt am 2026-10-19 über die GitHub-Oberfläche).
 
 ## Offene Grenzen
 
@@ -99,6 +101,6 @@ Siehe `docs/testflight-setup.md`, „Werkzeugweg über GitHub Actions“: Token 
   Production), nicht automatisch vor einem TestFlight-Upload. Ein Anschluss an `testflight.yml`
   (Export-Job als Vorbedingung) ist ein möglicher Folgeschritt, kein Teil von #169.
 - Ein Management-Token hat Vollzugriff auf das Schema beider Umgebungen. Das Secret liegt auf
-  Repo-Ebene, damit `export` ohne Freigabe läuft; wer das Repo pushen kann, kann einen Ablauf
-  schreiben, der es liest. Mitigation: nur Henning hat Push-Rechte; Rotation wie beim
+  Repo-Ebene; wer das Repo pushen kann, kann einen Ablauf schreiben, der es liest. Die getippte
+  Bestätigung schützt vor Versehen, nicht vor Absicht. Mitigation: nur Henning hat Push-Rechte; Rotation wie beim
   App-Store-Connect-Schlüssel; Production bleibt ohnehin unerreichbar für `cktool`.
