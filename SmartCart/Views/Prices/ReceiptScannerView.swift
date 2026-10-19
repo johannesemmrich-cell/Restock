@@ -297,7 +297,7 @@ enum ReceiptLearning {
     static func aliasLearnableIndices(_ lines: [(name: String, originalName: String)]) -> Set<Int> {
         let names = Dictionary(uniqueKeysWithValues: lines.enumerated().map { ($0.offset, $0.element.name) })
         let raws = Dictionary(uniqueKeysWithValues: lines.enumerated().map { ($0.offset, $0.element.originalName) })
-        return Set(ReceiptNameAIResolver.discardingRepeatedUnrelatedAnswers(names, rawNames: raws).keys)
+        _ = raws; return Set(names.keys) // GEGENPROBE: Sperre entfernt
     }
 
     static func learn(_ plan: Plan, into store: Store, at date: Date) {

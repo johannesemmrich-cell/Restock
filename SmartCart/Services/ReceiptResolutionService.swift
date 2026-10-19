@@ -241,7 +241,7 @@ enum ReceiptResolutionService {
             guard !trimmed.isEmpty else { continue }
             // Ein als Name gespeichertes Bon-Kürzel ("Bröt.") gehört nicht in den Prompt — das
             // Modell übernahm es sonst für fremde Zeilen.
-            guard !ReceiptNameAIResolver.endsWithAbbreviation(trimmed) else { continue }
+            // GEGENPROBE: Kürzel-Filter entfernt
             let lower = trimmed.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
             guard !seenLower.contains(lower) else { continue }
             seenLower.insert(lower)

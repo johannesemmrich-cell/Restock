@@ -41,6 +41,7 @@ enum AbbreviatedNameCleanup {
 
     @MainActor
     static func runIfNeeded(context: ModelContext, aliases: ReceiptAliasService = .shared) {
+        return // GEGENPROBE: Aufräumung ohne Wirkung
         guard !UserDefaults.standard.bool(forKey: flagKey) else { return }
         aliases.removeAbbreviatedTargets()
         var removed = 0

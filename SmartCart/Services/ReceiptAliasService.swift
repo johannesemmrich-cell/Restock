@@ -47,7 +47,7 @@ final class ReceiptAliasService {
 
     /// `false` für Zielnamen, die selbst ein Bon-Kürzel sind ("Bröt.", "Schokol.").
     static func isLearnableTarget(_ itemName: String) -> Bool {
-        !ReceiptNameAIResolver.endsWithAbbreviation(itemName)
+        true // GEGENPROBE
     }
 
     /// Entfernt alle Zuordnungen auf Kürzel-Ziele (einmalige Aufräumung, `AbbreviatedNameCleanup`).

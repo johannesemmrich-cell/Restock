@@ -1327,7 +1327,7 @@ actor ReceiptNameAIResolver {
         // eines dm-Bons wurden zu "Bröt." (siehe `discardingRepeatedUnrelatedAnswers`).
         let knownHint = knownNames.isEmpty ? "" : """
 
-        Eigene Artikelnamen des Nutzers (nur verwenden, wenn die Bonzeile eindeutig genau diesen Artikel meint, sonst ignorieren): \(knownNames.joined(separator: ", "))
+        Der Nutzer verwendet u. a. diese eigenen Artikelnamen (bevorzuge eine Übereinstimmung/Ähnlichkeit hiermit, falls plausibel): \(knownNames.joined(separator: ", "))
         """
         return """
         Dies ist eine abgekürzte Positionszeile von einem Kassenbon (Deutsch oder Französisch): "\(raw)"
@@ -1354,8 +1354,7 @@ actor ReceiptNameAIResolver {
         guard trimmed.caseInsensitiveCompare(Self.nonProductSentinel) != .orderedSame else { return nil }
         // Ein Kürzel wie "Bröt." ist kein ausgeschriebener Produktname — genau das soll Stufe 5
         // liefern. Lieber den Roh-Bontext stehen lassen.
-        guard !Self.endsWithAbbreviation(trimmed) else { return nil }
-        return trimmed
+        return trimmed // GEGENPROBE: Kürzel-Prüfung entfernt
     }
 
     /// `true`, wenn der Text auf ein Kürzel mit Punkt endet ("Bröt.", "Schokol.") — nicht bei
@@ -1385,6 +1384,7 @@ actor ReceiptNameAIResolver {
         _ answers: [Int: String],
         rawNames: [Int: String]
     ) -> [Int: String] {
+        return answers // GEGENPROBE: Wiederholungs-Regel entfernt
         let groups = Dictionary(grouping: answers.keys) { foldedForComparison(answers[$0] ?? "") }
         var result = answers
         for indices in groups.values {
