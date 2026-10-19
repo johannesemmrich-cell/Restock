@@ -171,6 +171,7 @@
 // MARK: - Onboarding
 "onboarding.welcome.subtitle" = "The smart shopping list that learns where you buy what.";
 "onboarding.welcome.cta" = "Get started";
+"onboarding.welcome.cloudWait" = "Loading your stores from iCloud …";
 "onboarding.name.title" = "What's your name?";
 "onboarding.name.subtitle" = "So others can see who added what in shared lists.";
 "onboarding.name.placeholder" = "E.g. Johannes";
@@ -407,6 +408,11 @@
 "price.source.learned" = "learned";
 "price.source.manual" = "own price";
 "price.source.estimate" = "estimate";
+"price.source.category" = "flat rate";
+"price.source.otherstore" = "last at %@";
+"price.prompt" = "Price?";
+"price.prompt.accessibility" = "Price unknown, tap to enter";
+"price.total.estimated.count" = "%1$ld of %2$ld estimated";
 "price.diagnosis.section" = "Price diagnosis";
 "price.diagnosis.entry" = "Entry: %@ · %@ · basis %@ · date %@ · origin %@";
 "price.diagnosis.entry.none" = "Entry: none";

@@ -171,6 +171,7 @@
 // MARK: - Onboarding
 "onboarding.welcome.subtitle" = "Die smarte Einkaufsliste, die lernt wo du was kaufst.";
 "onboarding.welcome.cta" = "Loslegen";
+"onboarding.welcome.cloudWait" = "Deine Läden werden aus iCloud geladen …";
 "onboarding.name.title" = "Wie heißt du?";
 "onboarding.name.subtitle" = "Damit andere sehen, wer in geteilten Listen was hinzugefügt hat.";
 "onboarding.name.placeholder" = "Z.B. Johannes";
@@ -407,6 +408,11 @@
 "price.source.learned" = "gelernt";
 "price.source.manual" = "eigener Preis";
 "price.source.estimate" = "Schätzung";
+"price.source.category" = "Pauschale";
+"price.source.otherstore" = "zuletzt bei %@";
+"price.prompt" = "Preis?";
+"price.prompt.accessibility" = "Preis unbekannt, antippen zum Eintragen";
+"price.total.estimated.count" = "%1$ld von %2$ld geschätzt";
 "price.diagnosis.section" = "Preisdiagnose";
 "price.diagnosis.entry" = "Eintrag: %@ · %@ · Bezugsgröße %@ · Datum %@ · Herkunft %@";
 "price.diagnosis.entry.none" = "Eintrag: keiner";

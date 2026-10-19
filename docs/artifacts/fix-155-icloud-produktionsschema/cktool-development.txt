@@ -1,0 +1,23 @@
+cktool-Protokoll Development, Issue #155, 2026-10-18
+Container iCloud.com.johannesemmrich.SmartCart, Team XK87E2B3VR, Umgebung development.
+Management-Token aus dem Schlüsselbund (Wert nicht ausgegeben, nicht gespeichert).
+Arbeitsdatei: private-schema-vorher.ckdb + RECORD TYPE CD_FeedbackItem und CD_TodoItem (Muster CD_Store).
+
+$ xcrun cktool validate-schema --team-id XK87E2B3VR --container-id iCloud.com.johannesemmrich.SmartCart --environment development --file import.ckdb
+✅ Schema is valid.
+exit=0
+
+$ xcrun cktool import-schema --team-id XK87E2B3VR --container-id iCloud.com.johannesemmrich.SmartCart --environment development --file import.ckdb
+(keine Ausgabe)
+exit=0
+
+$ xcrun cktool export-schema --team-id XK87E2B3VR --container-id iCloud.com.johannesemmrich.SmartCart --environment development --output-file docs/cloudkit/private-schema-aktuell.ckdb
+(keine Ausgabe)
+exit=0
+
+$ diff import.ckdb docs/cloudkit/private-schema-aktuell.ckdb
+(kein Unterschied: der Export entspricht der importierten Datei Zeichen für Zeichen)
+exit=0
+
+$ diff docs/cloudkit/private-schema-vorher.ckdb docs/cloudkit/private-schema-aktuell.ckdb > development-diff.txt
+exit=1 (Unterschied vorhanden: nur die Blöcke CD_FeedbackItem und CD_TodoItem, siehe development-diff.txt)

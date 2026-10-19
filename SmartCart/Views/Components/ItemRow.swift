@@ -151,7 +151,13 @@ struct ItemRow: View {
             // Preis soll sichtbar sein (sonst gibt es für das Kassenbon-Rückschreiben aus
             // ReceiptScannerView.save() keinerlei sichtbare Bestätigung).
             if Self.showsPrice(isCompleted: item.isCompleted, estimatedPriceIsAutoDerived: item.estimatedPriceIsAutoDerived) {
-                if let price = item.estimatedLineTotal {
+                if PriceSourceDisplay.showsPrompt(origin: item.priceOrigin, hasPrice: item.estimatedPrice != nil,
+                                                  isAutoDerived: item.estimatedPriceIsAutoDerived) {
+                    // Issue #160: Eine Kategorie-Pauschale ist kein Artikelpreis — statt „ca. 2,00 €"
+                    // fünfmal untereinander steht hier die Einladung, den Preis einzutragen (Tipp auf
+                    // die Zeile öffnet den Bearbeiten-Dialog mit dem Preisfeld).
+                    pricePrompt
+                } else if let price = item.estimatedLineTotal {
                     priceCell(amount: price.formatted(.currency(code: currencyCode)))
                 } else if let rate = ratePer100g {
                     // Ohne belegte Menge gibt es keinen Gesamtpreis (`estimatedLineTotal == nil`),
@@ -172,17 +178,29 @@ struct ItemRow: View {
     /// angenommenen Menge. Für VoiceOver und UI-Tests ein einziges Element „<Betrag>, <Quelle>".
     private func priceCell(amount: String) -> some View {
         let origin = item.priceOrigin
+        let detail = item.priceSourceDetail
         let color: Color = origin == "estimate" ? .amber : .secondary
         return VStack(alignment: .trailing, spacing: 1) {
             Text(PriceSourceDisplay.amountPrefix(origin: origin) + amount)
                 .font(.system(size: 13, weight: .medium))
-            Text(PriceSourceDisplay.text(origin: origin, date: item.priceSourceDate))
+            Text(PriceSourceDisplay.text(origin: origin, date: item.priceSourceDate, detail: detail))
                 .font(.system(size: 11))
         }
         .foregroundStyle(color)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(PriceSourceDisplay.accessibilityLabel(amount: amount, origin: origin, date: item.priceSourceDate))
+        .accessibilityLabel(PriceSourceDisplay.accessibilityLabel(amount: amount, origin: origin, date: item.priceSourceDate, detail: detail))
         .accessibilityAddTraits(.isStaticText)
+    }
+
+    /// „Preis?" in der Warnfarbe statt eines Pauschalbetrags (Issue #160).
+    private var pricePrompt: some View {
+        Text(String(localized: "price.prompt"))
+            .font(.system(size: 12, weight: .medium))
+            .foregroundStyle(Color.amber)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(Color.amber.opacity(0.12), in: Capsule())
+            .accessibilityLabel(String(localized: "price.prompt.accessibility"))
     }
 }
 

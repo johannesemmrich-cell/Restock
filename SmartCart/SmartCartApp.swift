@@ -3,6 +3,7 @@ import SwiftData
 import UIKit
 import AppIntents
 import WidgetKit
+import CloudKit
 
 @main
 struct SmartCartApp: App {
@@ -25,7 +26,13 @@ struct SmartCartApp: App {
         // ever presenting the WindowGroup, so this can't wait for a view's `.task` to run.
         defer {
             SyncCoordinator.shared.modelContext = container.mainContext
+            // Issue #156, Teil A: Export-/Import-Ereignisse der Spiegelung beobachten (nur App-Prozess).
+            CloudMirrorMonitor.shared.start()
             #if DEBUG
+            Self.clearCloudMirrorStatusForUITestsIfNeeded()
+            Self.seedCloudMirrorStatusForUITestsIfNeeded()
+            Self.clearDuplicateStoresForUITestsIfNeeded(context: container.mainContext)
+            Self.seedDuplicateStoresForUITestsIfNeeded(context: container.mainContext)
             Self.clearDeveloperModeForUITestsIfNeeded()
             Self.seedSharedAssignmentForScreenshotsIfNeeded(context: container.mainContext)
             Self.clearReceiptReviewSeedForUITestsIfNeeded(context: container.mainContext)
@@ -48,6 +55,7 @@ struct SmartCartApp: App {
             Self.clearReplenishmentForUITestsIfNeeded(context: container.mainContext)
             Self.seedReplenishmentForUITestsIfNeeded(context: container.mainContext)
             Self.clearOnboardingForUITestsIfNeeded(context: container.mainContext)
+            Self.scheduleSimulatedCloudStoresForUITestsIfNeeded(context: container.mainContext)
             #endif
         }
 
@@ -517,6 +525,76 @@ struct SmartCartApp: App {
         UserDefaults.standard.removeObject(forKey: "developerMode")
     }
 
+    /// Schreibt über `CloudMirrorMonitor.handle` einen fehlgeschlagenen Export (Ursache
+    /// `CD_ShoppingItem`, 1 von 2 Einträgen) und einen erfolgreichen Import (Issue #156,
+    /// `ICloudDiagnosticsUITests`). Only runs on `-seedCloudMirrorStatusForUITests`, DEBUG-only.
+    private static func seedCloudMirrorStatusForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-seedCloudMirrorStatusForUITests") else { return }
+        let text = "Cannot create or modify field 'CD_photoData_ckAsset' in record type 'CD_ShoppingItem' in production schema"
+        let single = CKError(.serverRejectedRequest, userInfo: [NSLocalizedDescriptionKey: text]) as NSError
+        let partial = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: [
+            CKRecord.ID(recordName: "uitest-record-1"): single,
+            CKRecord.ID(recordName: "uitest-record-2"): CKError(.batchRequestFailed) as NSError
+        ]])
+        let monitor = CloudMirrorMonitor.shared
+        monitor.handle(type: .import, succeeded: true, error: nil, endDate: Date().addingTimeInterval(-60))
+        monitor.handle(type: .export, succeeded: false, error: partial, endDate: Date())
+    }
+
+    /// Entfernt alle `smartcart.cloudMirror.*`-Schlüssel (Aufräumer von `ICloudDiagnosticsUITests`).
+    /// Only runs on `-clearCloudMirrorStatusForUITests`, DEBUG-only.
+    private static func clearCloudMirrorStatusForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-clearCloudMirrorStatusForUITests") else { return }
+        CloudMirrorMonitor.shared.statusStore.clear()
+    }
+
+    /// Feste Kennungen des Doppel-Seeds unten.
+    private static let duplicateSeedIDs = [
+        UUID(uuidString: "00000156-0000-4000-8000-000000000001")!,
+        UUID(uuidString: "00000156-0000-4000-8000-000000000002")!
+    ]
+
+    /// Legt zweimal das Preset „Lidl“ (DE, aktiv) mit fester Kennung an (Issue #156,
+    /// `ICloudDiagnosticsUITests`). Only runs on `-seedDuplicateStoresForUITests`, DEBUG-only.
+    private static func seedDuplicateStoresForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedDuplicateStoresForUITests") else { return }
+        removeDuplicateSeed(context: context)
+        for id in duplicateSeedIDs {
+            guard let lidl = Store.presets(for: "DE").first(where: { $0.name == "Lidl" }) else { continue }
+            lidl.id = id
+            context.insert(lidl)
+        }
+        try? context.save()
+    }
+
+    /// Entfernt genau die Läden des Doppel-Seeds. Only runs on `-clearDuplicateStoresForUITests`, DEBUG-only.
+    private static func clearDuplicateStoresForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-clearDuplicateStoresForUITests") else { return }
+        removeDuplicateSeed(context: context)
+        try? context.save()
+    }
+
+    private static func removeDuplicateSeed(context: ModelContext) {
+        let stores = (try? context.fetch(FetchDescriptor<Store>())) ?? []
+        for store in stores where duplicateSeedIDs.contains(store.id) {
+            context.delete(store)
+        }
+    }
+
+    /// Fügt nach `-simulateCloudStoresArriveForUITests <s>` Sekunden „Lidl“ und „Rewe“ (DE) über den
+    /// echten Datenweg ein, als kämen sie aus iCloud (Issue #156, `OnboardingCloudWaitUITests`).
+    /// Aufräumen übernimmt `-clearOnboardingForUITests`. DEBUG-only.
+    private static func scheduleSimulatedCloudStoresForUITestsIfNeeded(context: ModelContext) {
+        let seconds = UserDefaults.standard.double(forKey: "simulateCloudStoresArriveForUITests")
+        guard seconds > 0 else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+            for store in Store.presets(for: "DE") where ["Lidl", "Rewe"].contains(store.name) {
+                context.insert(store)
+            }
+            try? context.save()
+        }
+    }
+
     private static func removeReplenishmentSeed(context: ModelContext) {
         deleteAllStoresAndItems(context: context)
         let names = replenishmentSeedStores
@@ -776,6 +854,7 @@ struct SmartCartApp: App {
                     PriceProvenanceMigration.runIfNeeded(context: container.mainContext)
                     LegacyLearnedPriceReset.runIfNeeded(context: container.mainContext)
                     AbbreviatedNameCleanup.runIfNeeded(context: container.mainContext)
+                    CatalogEstimateRefresh.runIfNeeded(context: container.mainContext)
                     await SyncCoordinator.shared.resubscribeAll()
                 }
                 // App-wide pull for ALL shared stores: immediately on every (re)activation and

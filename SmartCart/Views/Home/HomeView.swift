@@ -1473,7 +1473,8 @@ struct HomeView: View {
             quantity: parsed.quantity,
             quantityAmount: parsed.quantityAmount,
             unit: parsed.unit,
-            store: store
+            store: store,
+            otherStores: activeStores
         )
         context.insert(item)
         SyncCoordinator.shared.pushInBackground(store)

@@ -162,6 +162,22 @@ struct PriceOverviewView: View {
         pendingItems.filter { $0.estimatedPrice != nil }.count
     }
 
+    /// Issue #160: Anteil der Schätzungen (Katalog oder Pauschale) an der Budgetsumme.
+    private var budgetEstimatedCount: Int {
+        pendingItems.filter { $0.estimatedLineTotal != nil && $0.estimatedPriceIsAutoDerived }.count
+    }
+
+    private var budgetCaption: String {
+        budgetEstimatedCount > 0
+            ? String(format: String(localized: "price.total.estimated.count"), budgetEstimatedCount, budgetItemCount)
+            : "\(budgetItemCount) Artikel mit bekannten Preisen"
+    }
+
+    private var budgetText: String {
+        (budgetEstimatedCount > 0 ? "ca. " : "")
+            + budgetEstimate.formatted(.currency(code: Locale.current.currency?.identifier ?? "EUR"))
+    }
+
     // MARK: - Trend chart data (last 6 months)
 
     private var trendData: [MonthData] {
@@ -206,12 +222,12 @@ struct PriceOverviewView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Aktueller Einkauf")
                             .font(.system(size: 14, weight: .medium))
-                        Text("\(budgetItemCount) Artikel mit bekannten Preisen")
+                        Text(budgetCaption)
                             .font(.system(size: 12))
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Text(budgetEstimate, format: .currency(code: Locale.current.currency?.identifier ?? "EUR"))
+                    Text(budgetText)
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(Color.accent)
                 }
