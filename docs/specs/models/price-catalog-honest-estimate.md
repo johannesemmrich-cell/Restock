@@ -71,10 +71,12 @@ bereits „≈“ und bleibt unverändert.
 | Maß | vorher | nachher |
 |---|---|---|
 | 100 Alltagsartikel (`PriceCatalogTests.commonGroceries`) mit Produktpreis | 39 | 100 |
-| 565 Lebensmittel-Stichwörter aus `AssignmentService.category(for:)` mit Produktpreis | 111 (20 %) | 394 (70 %) |
+| 556 eindeutige Lebensmittel-Stichwörter aus `AssignmentService.categoryMap` mit Produktpreis | 114 (20,5 %) | 385 (69,2 %) |
 | Screenshot-Artikel mit „2,00 €“ | 5 von 6 | 0 |
 | Teilstring-Fehltreffer (Tomatenmark, Teelicht, Wassermelone, Eierlikör, Brotmesser) | 5 | 0 |
 | Katalogeinträge / Namen | 32 / 85 | 308 / 805 |
+
+Die ersten drei Zeilen rechnet `PriceCatalogTests` seit 2026-10-19 bei jedem Lauf nach (vorher = Altstichwörter als Teilstring, nachher = `PriceCatalog.match`); die ursprünglich notierten Werte 565/111/394 stammten aus einem nicht abgelegten Skript und sind korrigiert. Details: `docs/artifacts/feat-160-preiskatalog/messung-vorher-nachher.md`.
 
 Die Katalogwerte sind handgepflegte Regalpreise (Quelle `hand-2026-10` je Eintrag); der Median aus
 dem Open-Prices-Datensatz Deutschland (ODbL) ist als zweite Quelle in #162 beschrieben, aber noch

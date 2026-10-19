@@ -27,7 +27,7 @@ ein Mindestwert (≥ 69 % der Stichwörter) die Abdeckung, falls jemand nur die 
 
 | Maß | vorher | nachher | Quelle |
 |---|---|---|---|
-| Lebensmittel-Stichwörter mit Produktpreis (556 eindeutige) | 114 (20,5 %) | 394 (70,9 %) | Test (a) |
+| Lebensmittel-Stichwörter mit Produktpreis (556 eindeutige) | 114 (20,5 %) | 385 (69,2 %) | Test (a) |
 | 100 Alltagsartikel mit Produktpreis | 39 | 100 | Test (b) |
 | Teilstring-Fehltreffer (5 Namen) | 5 | 0 | Tests (c) |
 
@@ -37,10 +37,11 @@ ein Mindestwert (≥ 69 % der Stichwörter) die Abdeckung, falls jemand nur die 
   (z. B. „salat“ steht zweimal), eindeutig sind es 556; mit Teilstring-Treffer der 32 Altstichwörter
   sind es 114, nicht 111. Der Unterschied liegt im verlorenen Skript (vermutlich Zählung ohne die
   englischen Altnamen). Maßgeblich ist ab jetzt der Test.
-- Der Nachher-Wert 394 wurde am 2026-10-18 mit einer Python-Nachbildung der Swift-Logik gemessen;
-  der Swift-Test bestätigt oder korrigiert ihn mit dem ersten CI-Lauf dieses Nachtrags (Eintrag
-  unten).
+- Der Nachher-Wert „394 (70 %)“ stammte aus einer Python-Nachbildung der Swift-Logik vom
+  2026-10-18. Der Swift-Test misst **385 (69,2 %)**: Die Nachbildung war beim Treffer an Wortgrenzen
+  bzw. Komposita um neun Stichwörter großzügiger als `PriceCatalog.match`. Maßgeblich ist der Test;
+  die Spec-Aussage „70 %“ wird zu „69 %“.
 
 ## Läufe
 
-- 2026-10-19, PR #172: erster Lauf der drei Tests – Ergebnis wird hier nachgetragen.
+- 2026-10-19, PR #172, CI-Lauf 244 (`0c468f6`): 556 eindeutige Stichwörter, vorher 114, nachher **385** (Pin 394 aus der Nachbildung war falsch, korrigiert); Alltagsartikel 39 → 100 bestätigt; fünf Fehltreffer vorher bestätigt. Übrige 588 Unit-Tests grün.
