@@ -136,6 +136,7 @@ final class DeveloperModeUnlockUITests: XCTestCase {
         XCTAssertTrue(restarted.staticTexts["DEV"].waitForExistence(timeout: UITestWait.defaultTimeout),
                       "DEV-Pill fehlt nach dem Neustart")
         tapWhenHittable(restarted.buttons["gearshape"], "Zahnrad nach Neustart")
+        scrollTo(proActive(restarted), in: restarted)  // Pro-Abschnitt liegt beim Öffnen unter dem Rand (siehe oben)
         XCTAssertTrue(proActive(restarted).waitForExistence(timeout: UITestWait.defaultTimeout),
                       "„Pro aktiv“ fehlt nach dem Neustart")
         let deactivateAfterRestart = deactivateRow(restarted)
