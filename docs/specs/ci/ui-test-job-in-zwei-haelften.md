@@ -213,6 +213,26 @@ Für CI-Konfiguration gibt es **keine** Unit- oder UI-Tests im Repo und es werde
   den Absatz zur Teilung, der Diff umfasst genau `.github/workflows/ci.yml` und `CLAUDE.md` (ca. +30/−8 LoC),
   ohne Produktcode, `RestockUITests/*`, `project.pbxproj` oder `testflight.yml`.
 
+## Nachtrag 2026-10-19: Wiederholung fehlgeschlagener UI-Tests im selben Lauf (Issue #173)
+
+Befund: `ui-test (B)` war in drei von fünf Läufen am 2026-10-19 rot, jedes Mal nur durch bekannte
+Sporadik ohne Code-Bezug (`StoreSetupUITests` Ziehgeste/Zeilenschalter, Toast-Dauertest aus #118);
+die Ziehgeste fiel auch auf `main` (Lauf 230, Attempt 3). Jeder manuelle Rerun kostet 45 min und
+blockiert Merges und TestFlight.
+
+Maßnahme: `xcodebuild test` erhält in beiden Hälften `-retry-tests-on-failure -test-iterations 2
+-test-repetition-relaunch-enabled YES`. Ein fehlgeschlagener Test läuft genau einmal erneut, die App
+wird dafür neu gestartet (die Seed-/Aufräum-Startargumente der Klassen greifen also wie beim ersten
+Lauf); der Lauf ist grün, wenn die Wiederholung grün ist. Kein Test wird übersprungen oder
+deaktiviert, die Unit-Tests (`test`) wiederholen nichts. Ein `always()`-Schritt schreibt die
+`xcresulttool`-Zusammenfassung in die Lauf-Zusammenfassung, damit Wiederholungen sichtbar bleiben;
+er darf den Job nie rot machen. Strukturtest: `scripts/test_ci_ui_retry.py`.
+
+Offene Grenzen: Die Ursachen der Sporadik sind damit nicht behoben, nur maskiert und gezählt; ein
+echter, reproduzierbarer Fehler fällt weiterhin zweimal und bleibt rot. Ob die Zusammenfassung die
+Wiederholungen ausweist, zeigt erst der nächste Lauf mit Sporadik (Xcode 26.6 auf dem Runner).
+Laufzeit: je Wiederholung ca. 30–60 s zusätzlich, weit unter dem Limit von 60 min je Hälfte.
+
 ## Alternativen
 
 | | Weg | Urteil |
