@@ -293,6 +293,7 @@ struct SettingsView: View {
                             CloudMirrorStatusView()
                         } label: {
                             let subtitle = CloudMirrorMonitor.devRowSubtitle(
+                                lastSetup: CloudMirrorStatusStore().lastRun(.setup),
                                 lastExport: CloudMirrorStatusStore().lastRun(.export))
                             devRow(String(localized: "iCloud-Abgleich"), subtitle: subtitle.text,
                                    isFailure: subtitle.isFailure, systemImage: "icloud")

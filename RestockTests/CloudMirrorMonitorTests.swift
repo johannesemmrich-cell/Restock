@@ -6,6 +6,8 @@ import CoreData
 /// Issue #156, Teil A und B2.1: Zusammenfassung von Spiegelungsfehlern, Statusablage, Prozessprüfung,
 /// Warte-Entscheidung des Onboardings und Untertitel der Dev-Zeile „iCloud-Abgleich“.
 /// Spec: `docs/specs/services/icloud-abgleich-sichtbar.md` (T1–T8; AC-1 bis AC-5, AC-13).
+/// Issue #166: Einrichtungsläufe (`.setup`), Untertitel-Vorrang, Klartext 134400, Startreihenfolge.
+/// Spec: `docs/specs/services/icloud-einrichtung-sichtbar.md` (T1–T6; AC-1 bis AC-5, AC-7).
 ///
 /// Offene Grenze (Spec): Der Live-Weg eines echten Export-Ereignisses aus Production ist hier nicht
 /// geprüft; die Fehler sind nachgebaut. Jeder Test der Statusablage nutzt eine eigene
@@ -205,9 +207,9 @@ final class CloudMirrorMonitorTests: XCTestCase {
         let succeeded = CloudMirrorRun(date: at, succeeded: true, summary: nil)
 
         // WHEN die Untertitelfunktion läuft
-        let failedRow = CloudMirrorMonitor.devRowSubtitle(lastExport: failed)
-        let succeededRow = CloudMirrorMonitor.devRowSubtitle(lastExport: succeeded)
-        let noRunRow = CloudMirrorMonitor.devRowSubtitle(lastExport: nil)
+        let failedRow = CloudMirrorMonitor.devRowSubtitle(lastSetup: nil, lastExport: failed)
+        let succeededRow = CloudMirrorMonitor.devRowSubtitle(lastSetup: nil, lastExport: succeeded)
+        let noRunRow = CloudMirrorMonitor.devRowSubtitle(lastSetup: nil, lastExport: nil)
 
         // THEN passen Text und Fehlerkennzeichen
         XCTAssertEqual(failedRow.text, "Export fehlgeschlagen · 19:02")
@@ -216,5 +218,182 @@ final class CloudMirrorMonitorTests: XCTestCase {
         XCTAssertFalse(succeededRow.isFailure)
         XCTAssertEqual(noRunRow.text, "noch kein Lauf")
         XCTAssertFalse(noRunRow.isFailure)
+    }
+
+    // MARK: - #166 Hilfen
+
+    private func noAccountError() -> NSError {
+        NSError(domain: NSCocoaErrorDomain, code: 134_400)
+    }
+
+    // MARK: - #166 T1 (AC-1)
+
+    func testSetupFailureIsStored() throws {
+        // GIVEN eine leere Statusablage
+        let store = CloudMirrorStatusStore(defaults: defaults)
+        let monitor = CloudMirrorMonitor(statusStore: store)
+        let failedAt = Date(timeIntervalSince1970: 1_800_000_000)
+
+        // WHEN eine laufende Einrichtung (endDate == nil) eintrifft THEN ändert sich nichts
+        monitor.handle(type: .setup, succeeded: false, error: noAccountError(), endDate: nil)
+        XCTAssertEqual(mirrorKeys(), [], "Laufende Einrichtung hat geschrieben")
+
+        // WHEN eine beendete Einrichtung mit 134400 scheitert
+        monitor.handle(type: .setup, succeeded: false, error: noAccountError(), endDate: failedAt)
+
+        // THEN steht sie als lastSetup in der Ablage, mit Domain und Code
+        XCTAssertEqual(mirrorKeys(), ["smartcart.cloudMirror.lastSetup"])
+        let setup = try XCTUnwrap(store.lastRun(.setup), "Einrichtung nicht gespeichert")
+        XCTAssertEqual(setup.date, failedAt)
+        XCTAssertFalse(setup.succeeded)
+        XCTAssertEqual(setup.summary?.domain, NSCocoaErrorDomain)
+        XCTAssertEqual(setup.summary?.code, 134_400)
+        XCTAssertTrue(setup.summary?.detail.contains("134400") == true, "Detail: \(setup.summary?.detail ?? "nil")")
+        // clear() erfasst auch den neuen Schlüssel (Grundlage von -clearCloudMirrorStatusForUITests)
+        store.clear()
+        XCTAssertEqual(mirrorKeys(), [])
+    }
+
+    // MARK: - #166 T2 (AC-2)
+
+    /// `firstImportFinished` liest nur `lastRun(.import)`; bleibt der Import-Eintrag unverändert,
+    /// reagiert das Onboarding nicht. `start()` wird hier bewusst nicht aufgerufen, weil der
+    /// Beobachter sonst echte Ereignisse des Testprozesses in die Suite schreiben könnte.
+    func testSetupLeavesCountersAndImportUntouched() throws {
+        // GIVEN ein fehlgeschlagener Export und ein erfolgreicher Import
+        let store = CloudMirrorStatusStore(defaults: defaults)
+        let monitor = CloudMirrorMonitor(statusStore: store)
+        let at = Date(timeIntervalSince1970: 1_800_000_000)
+        monitor.handle(type: .export, succeeded: false, error: itemError(.serverRejectedRequest, "x"), endDate: at)
+        monitor.handle(type: .import, succeeded: true, error: nil, endDate: at)
+        let exportBefore = store.lastRun(.export)
+        let importBefore = store.lastRun(.import)
+
+        // WHEN Einrichtungen scheitern und gelingen
+        let later = at.addingTimeInterval(120)
+        monitor.handle(type: .setup, succeeded: false, error: noAccountError(), endDate: later)
+        monitor.handle(type: .setup, succeeded: true, error: nil, endDate: later.addingTimeInterval(1))
+
+        // THEN Zähler, Export und Import unverändert, Einrichtung getrennt gespeichert
+        XCTAssertEqual(store.exportFailureCount, 1)
+        XCTAssertEqual(store.exportSuccessCount, 0)
+        XCTAssertEqual(store.lastRun(.export), exportBefore)
+        XCTAssertEqual(store.lastRun(.import), importBefore)
+        XCTAssertEqual(store.lastRun(.setup)?.date, later.addingTimeInterval(1), "Einrichtung nicht gespeichert")
+        XCTAssertFalse(monitor.firstImportFinished)
+    }
+
+    // MARK: - #166 T3 (AC-3)
+
+    func testSetupSuccessReplacesFailure() throws {
+        // GIVEN eine gescheiterte Einrichtung
+        let store = CloudMirrorStatusStore(defaults: defaults)
+        let monitor = CloudMirrorMonitor(statusStore: store)
+        let failedAt = Date(timeIntervalSince1970: 1_800_000_000)
+        monitor.handle(type: .setup, succeeded: false, error: noAccountError(), endDate: failedAt)
+        XCTAssertEqual(store.lastRun(.setup)?.succeeded, false, "Fehler nicht gespeichert")
+
+        // WHEN beim nächsten Start die Einrichtung gelingt
+        let succeededAt = failedAt.addingTimeInterval(3600)
+        monitor.handle(type: .setup, succeeded: true, error: nil, endDate: succeededAt)
+
+        // THEN ist lastSetup erfolgreich und ohne Zusammenfassung
+        let setup = try XCTUnwrap(store.lastRun(.setup))
+        XCTAssertTrue(setup.succeeded)
+        XCTAssertEqual(setup.date, succeededAt)
+        XCTAssertNil(setup.summary)
+    }
+
+    // MARK: - #166 T4 (AC-4)
+
+    func testSubtitlePrefersFailedSetupOverExport() throws {
+        // GIVEN Einrichtung 22:54 gescheitert bzw. gelungen, Export 19:02 gescheitert bzw. gelungen
+        let setupAt = try time(hour: 22, minute: 54)
+        let exportAt = try time(hour: 19, minute: 2)
+        let setupFailed = CloudMirrorRun(date: setupAt, succeeded: false,
+                                         summary: CloudMirrorMonitor.summarize(error: noAccountError()))
+        let setupOK = CloudMirrorRun(date: setupAt, succeeded: true, summary: nil)
+        let exportOK = CloudMirrorRun(date: exportAt, succeeded: true, summary: nil)
+        let exportFailed = CloudMirrorRun(date: exportAt, succeeded: false,
+                                          summary: CloudMirrorMonitor.summarize(error: itemError(.serverRejectedRequest, "x")))
+
+        // WHEN / THEN gescheiterte Einrichtung hat Vorrang, auch vor einem Export
+        for export in [exportOK, exportFailed, nil] as [CloudMirrorRun?] {
+            let row = CloudMirrorMonitor.devRowSubtitle(lastSetup: setupFailed, lastExport: export)
+            XCTAssertEqual(row.text, "Einrichtung fehlgeschlagen · 22:54")
+            XCTAssertTrue(row.isFailure)
+        }
+        // Erfolgreiche Einrichtung: bisherige Export-Logik
+        let okFailed = CloudMirrorMonitor.devRowSubtitle(lastSetup: setupOK, lastExport: exportFailed)
+        XCTAssertEqual(okFailed.text, "Export fehlgeschlagen · 19:02")
+        XCTAssertTrue(okFailed.isFailure)
+        let okOK = CloudMirrorMonitor.devRowSubtitle(lastSetup: setupOK, lastExport: exportOK)
+        XCTAssertEqual(okOK.text, "Export erfolgreich · 19:02")
+        XCTAssertFalse(okOK.isFailure)
+        let okNone = CloudMirrorMonitor.devRowSubtitle(lastSetup: setupOK, lastExport: nil)
+        XCTAssertEqual(okNone.text, "noch kein Lauf")
+        XCTAssertFalse(okNone.isFailure)
+    }
+
+    // MARK: - #166 T5 (AC-5)
+
+    func testPlainTextOnlyForKnownSetupCode() {
+        // GIVEN Zusammenfassungen: 134400 aus NSCocoaErrorDomain, anderer Code, andere Domain mit 134400
+        let noAccount = CloudMirrorMonitor.summarize(error: noAccountError())
+        let otherCode = CloudMirrorMonitor.summarize(error: NSError(domain: NSCocoaErrorDomain, code: 134_419))
+        let otherDomain = CloudMirrorMonitor.summarize(error: NSError(domain: CKError.errorDomain, code: 134_400))
+
+        // WHEN / THEN nur der bekannte Code bekommt Klartext
+        XCTAssertEqual(CloudMirrorMonitor.setupCauseText(for: noAccount), "kein iCloud-Konto")
+        XCTAssertNil(CloudMirrorMonitor.setupCauseText(for: otherCode))
+        XCTAssertNil(CloudMirrorMonitor.setupCauseText(for: otherDomain))
+    }
+
+    // MARK: - #166 T6 (AC-7)
+
+    /// Der Beobachter muss in Ausführungsreihenfolge vor der Container-Erzeugung registriert sein
+    /// (Apple Forum 701564). Ein Aufruf im `defer`-Block läuft erst nach `make()`, auch wenn er
+    /// im Quelltext davor steht; deshalb zählt nur ein Aufruf außerhalb des `defer`-Blocks.
+    func testObserverStartsBeforeContainerCreation() throws {
+        // GIVEN der Quelltext von SmartCartApp.init()
+        let appFile = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("SmartCart/SmartCartApp.swift")
+        let source = try String(contentsOf: appFile, encoding: .utf8)
+        let initStart = try XCTUnwrap(source.range(of: "    init() {"), "init() nicht gefunden")
+        let initBody = try XCTUnwrap(Self.braceBlock(in: source, openingAt: initStart.upperBound))
+        let body = String(source[initBody])
+
+        // WHEN Positionen bestimmt werden
+        let make = try XCTUnwrap(body.range(of: "SharedModelContainer.make()"), "make() nicht in init()")
+        let deferRange = body.range(of: "defer {").flatMap { Self.braceBlock(in: body, openingAt: $0.upperBound) }
+        var starts: [Range<String.Index>] = []
+        var cursor = body.startIndex
+        while let found = body.range(of: "CloudMirrorMonitor.shared.start(", range: cursor..<body.endIndex) {
+            starts.append(found)
+            cursor = found.upperBound
+        }
+        let outsideDefer = starts.filter { start in deferRange.map { !$0.contains(start.lowerBound) } ?? true }
+
+        // THEN steht ein Aufruf außerhalb des defer-Blocks vor make()
+        XCTAssertFalse(outsideDefer.isEmpty, "start() wird nur im defer-Block aufgerufen, also nach make()")
+        XCTAssertTrue(outsideDefer.contains { $0.lowerBound < make.lowerBound }, "start() steht nach make()")
+    }
+
+    /// Bereich ab `start` (direkt hinter einer `{`) bis vor die passende `}`.
+    private static func braceBlock(in text: String, openingAt start: String.Index) -> Range<String.Index>? {
+        var depth = 1
+        var index = start
+        while index < text.endIndex {
+            switch text[index] {
+            case "{": depth += 1
+            case "}":
+                depth -= 1
+                if depth == 0 { return start..<index }
+            default: break
+            }
+            index = text.index(after: index)
+        }
+        return nil
     }
 }
