@@ -45,5 +45,8 @@ SharedStore 16, Users 7). In Prod nur gelesen, dort nichts verändert.
 - Der Block ist zeichengleich mit `docs/cloudkit/private-schema-aktuell.ckdb` (Vorlage aus PR #168).
 - 16 Indizes passen zu den Markierungen: `chain`, `clientID`, `itemKey`, `unit` je 3
   (QUERYABLE, SEARCHABLE, SORTABLE), `observedAt`, `price` je 2 (QUERYABLE, SORTABLE).
-- Offene Grenze: kein maschineller Export. Der erste Lauf von `.github/workflows/cloudkit-schema.yml`
-  mit `mode=export` (Issue #169) liefert den `cktool`-Export beider Umgebungen und den Datei-Diff nach.
+- Maschineller Export nachgeholt am 2026-10-19, 11:49 UTC: `.github/workflows/cloudkit-schema.yml`
+  `mode=export` (Issue #169, Lauf 3, run 39247424086) exportierte Development und Production mit
+  `cktool`: je 9 Record-Typen, `diff development.ckdb production.ckdb` leer. `CommunityPrice` steht in
+  beiden Exporten mit den sechs Feldern und Indizes wie oben. Der Development-Export ist seitdem
+  byteidentisch `docs/cloudkit/private-schema-aktuell.ckdb`.

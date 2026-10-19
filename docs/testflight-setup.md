@@ -27,7 +27,7 @@ Lokaler Weg und CI teilen den Zähler in App Store Connect. Vor jedem Upload die
 
 **Auch für `CommunityPrice` (Issue #163):** Der Record-Typ für den Community-Preispool (Felder `itemKey`, `chain`, `price`, `unit`, `observedAt`, `clientID`; Vorlage in `docs/cloudkit/private-schema-aktuell.ckdb`) muss vor dem ersten Upload mit #163 in Development angelegt (cktool-Weg unten oder erster Xcode-Lauf mit eingeschaltetem Schalter „Preise anonym mit anderen teilen“) und nach Production deployt werden. Fehlt er in Production, scheitert nur das Teilen still (Protokoll `community`), Lesen liefert nichts, die App läuft weiter. Drift-Test: `CommunityPriceTests.testSchemaFieldsMatchPublishedExport`.
 
-Stand 2026-10-19: `CommunityPrice` liegt in Development und Production (Deploy im Dashboard durch Henning, Vorher-/Nachher-Diff Dev→Prod leer; Bericht in `docs/artifacts/feat-163-community-preise/production-deploy-2026-10-19.md`). Kein `cktool`-Export, der folgt mit dem ersten Lauf von `cloudkit-schema.yml` (#169).
+Stand 2026-10-19: `CommunityPrice` liegt in Development und Production (Deploy im Dashboard durch Henning; Bericht in `docs/artifacts/feat-163-community-preise/production-deploy-2026-10-19.md`), per `cktool`-Export belegt durch `cloudkit-schema.yml` Lauf 3 (run 39247424086): je 9 Record-Typen, Development → Production ohne Unterschied.
 
 TestFlight und App Store nutzen die CloudKit-**Produktion**, Xcode-Läufe die **Entwicklung**. Die Produktion legt unbekannte Felder nicht an und lehnt das Speichern ab („… in production schema“, Issue #121). Deshalb vor jedem Upload, der neue Felder von `SharedStore` mitbringt:
 

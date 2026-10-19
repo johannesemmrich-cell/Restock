@@ -130,20 +130,6 @@ DEFINE SCHEMA
         GRANT READ TO "_world"
     );
 
-    RECORD TYPE SharedItemPhoto (
-        "___createTime" TIMESTAMP,
-        "___createdBy"  REFERENCE,
-        "___etag"       STRING,
-        "___modTime"    TIMESTAMP,
-        "___modifiedBy" REFERENCE,
-        "___recordID"   REFERENCE,
-        photoAsset      ASSET,
-        shareID         STRING,
-        GRANT WRITE TO "_creator",
-        GRANT CREATE, WRITE TO "_icloud",
-        GRANT READ TO "_world"
-    );
-
     RECORD TYPE CommunityPrice (
         "___createTime" TIMESTAMP,
         "___createdBy"  REFERENCE,
@@ -159,6 +145,20 @@ DEFINE SCHEMA
         unit            STRING QUERYABLE SEARCHABLE SORTABLE,
         GRANT WRITE TO "_creator",
         GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );
+
+    RECORD TYPE SharedItemPhoto (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE,
+        photoAsset      ASSET,
+        shareID         STRING,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE, WRITE TO "_icloud",
         GRANT READ TO "_world"
     );
 
