@@ -853,6 +853,7 @@ struct SmartCartApp: App {
                 .task {
                     PriceProvenanceMigration.runIfNeeded(context: container.mainContext)
                     LegacyLearnedPriceReset.runIfNeeded(context: container.mainContext)
+                    AbbreviatedNameCleanup.runIfNeeded(context: container.mainContext)
                     CatalogEstimateRefresh.runIfNeeded(context: container.mainContext)
                     await SyncCoordinator.shared.resubscribeAll()
                 }

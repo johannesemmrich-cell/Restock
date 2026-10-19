@@ -1263,8 +1263,22 @@ enum ReceiptParserService {
 /// Intelligence aktiv; auf jedem anderen Gerät liefert `expand` einfach nil und die bisherige
 /// Stufe (unveränderter Roh-Text) bleibt stehen. Der User sieht/bearbeitet jede Zeile ohnehin vor
 /// dem Speichern, ein gelegentlich falscher Vorschlag ist daher kein Datenrisiko.
+///
+/// Naht für Tests: Das eigentliche Modell steckt hinter `ReceiptNameLanguageModel`. Unit-Tests
+/// geben über `init(model:)` eine Scheinantwort vor und prüfen damit Prompt, `sanitize` und die
+/// Nachprüfung in `ReceiptResolutionService.resolve` ohne Apple Intelligence (im Simulator/CI
+/// nicht verfügbar). Siehe `ReceiptAIResolutionChainTests`.
 actor ReceiptNameAIResolver {
     static let shared = ReceiptNameAIResolver()
+
+    let model: any ReceiptNameLanguageModel
+
+    init(model: any ReceiptNameLanguageModel = SystemReceiptNameLanguageModel()) {
+        self.model = model
+    }
+
+    /// Ob Stufe 5 mit diesem Modell überhaupt laufen kann.
+    nonisolated var isAvailable: Bool { model.isAvailable }
 
     /// Antwort-Marker für "das ist gar kein Produkt" — siehe Prompt in `aiExpand` und `sanitize`
     /// unten. Ohne diesen Ausweg musste das Modell für JEDEN Text, der Stufe 5 erreicht
@@ -1279,35 +1293,43 @@ actor ReceiptNameAIResolver {
     static let nonProductSentinel = "KEIN_PRODUKT"
 
     static func isAIAvailable() -> Bool {
-        #if canImport(FoundationModels)
-        guard #available(iOS 26, *) else { return false }
-        if case .available = SystemLanguageModel.default.availability { return true }
-        #endif
-        return false
+        shared.isAvailable
     }
 
-    /// Öffentlicher Einstiegspunkt — kapselt Verfügbarkeits-Check, iOS-Version-Guard und
-    /// Fehlerbehandlung, damit der Aufrufer nur ein einfaches optionales String bekommt.
+    /// Öffentlicher Einstiegspunkt — kapselt Verfügbarkeits-Check, Timeout und Nachbearbeitung,
+    /// damit der Aufrufer nur ein einfaches optionales String bekommt.
     /// `knownNames` sind die eigenen, bereits bekannten Artikelnamen des Nutzers (siehe
     /// `ReceiptResolutionService.knownItemNames`) — rein empfehlender Kontext für den Prompt,
     /// keine harte Vorgabe.
     func expand(_ raw: String, knownNames: [String] = []) async -> String? {
-        guard #available(iOS 26, *) else { return nil }
-        return (try? await aiExpand(raw, knownNames: knownNames)) ?? nil
+        guard model.isAvailable else { return nil }
+        let prompt = Self.prompt(for: raw, knownNames: knownNames)
+        let model = self.model
+        // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen. Nutzt `withRealTimeout`
+        // (CGImagePropertyOrientation+UIImage.swift) statt eines TaskGroup-Rennens, das einen wirklich
+        // hängenden Aufruf nicht begrenzt hätte (siehe dessen Dokumentation).
+        return await withRealTimeout(
+            seconds: 25,
+            operation: {
+                guard let text = await model.respond(to: prompt) else { return nil }
+                return self.sanitize(text)
+            },
+            onTimeout: { nil }
+        )
     }
 
-    @available(iOS 26, *)
-    private func aiExpand(_ raw: String, knownNames: [String]) async throws -> String? {
-        #if canImport(FoundationModels)
-        let model = SystemLanguageModel.default
-        guard case .available = model.availability else { return nil }
-        // Empfehlend, nicht bindend ("bevorzuge... falls plausibel") — bei einem echten neuen
-        // Produkt, das nicht in `knownNames` vorkommt, soll das Modell weiterhin frei raten dürfen.
+    /// Der Prompt für eine Bonzeile. Nicht `private`: die Tests prüfen, dass Rohtext und eigene
+    /// Namen ankommen.
+    static func prompt(for raw: String, knownNames: [String]) -> String {
+        // Nur bei eindeutigem Bezug verwenden, sonst ignorieren. Die frühere Formulierung
+        // ("bevorzuge eine Übereinstimmung/Ähnlichkeit hiermit") ließ das kleine On-Device-Modell
+        // den ersten Listeneintrag für JEDE Zeile übernehmen — gemeldet 18.10.2026: alle Zeilen
+        // eines dm-Bons wurden zu "Bröt." (siehe `discardingRepeatedUnrelatedAnswers`).
         let knownHint = knownNames.isEmpty ? "" : """
 
-        Der Nutzer verwendet u. a. diese eigenen Artikelnamen (bevorzuge eine Übereinstimmung/Ähnlichkeit hiermit, falls plausibel): \(knownNames.joined(separator: ", "))
+        Eigene Artikelnamen des Nutzers (nur verwenden, wenn die Bonzeile eindeutig genau diesen Artikel meint, sonst ignorieren): \(knownNames.joined(separator: ", "))
         """
-        let prompt = """
+        return """
         Dies ist eine abgekürzte Positionszeile von einem Kassenbon (Deutsch oder Französisch): "\(raw)"
 
         Antworte NUR mit einem KURZEN, generischen Produktnamen, wie er normalerweise auf einer
@@ -1317,22 +1339,8 @@ actor ReceiptNameAIResolver {
 
         Falls der Text KEIN Produkt ist (z. B. ein Zahlungs-/Steuer-/Transaktionscode, eine reine
         Zahlenfolge, ein Tabellen-Fragment oder sonstiger Kassenbon-Verwaltungstext ohne
-        erkennbaren Produktbezug), antworte NUR mit \(Self.nonProductSentinel), sonst nichts.\(knownHint)
+        erkennbaren Produktbezug), antworte NUR mit \(nonProductSentinel), sonst nichts.\(knownHint)
         """
-        // FoundationModels kann in iOS 26 Beta hängen — nach 25 s abbrechen. Nutzt `withRealTimeout`
-        // (RecipeRecognitionService.swift) statt eines TaskGroup-Rennens, das einen wirklich
-        // hängenden Aufruf nicht begrenzt hätte (siehe dessen Dokumentation).
-        return await withRealTimeout(
-            seconds: 25,
-            operation: {
-                guard let response = try? await LanguageModelSession().respond(to: prompt) else { return nil }
-                return self.sanitize(response.content)
-            },
-            onTimeout: { nil }
-        )
-        #else
-        return nil
-        #endif
     }
 
     nonisolated func sanitize(_ text: String) -> String? {
@@ -1344,6 +1352,94 @@ actor ReceiptNameAIResolver {
             .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, trimmed.count <= 60, !trimmed.contains("\n") else { return nil }
         guard trimmed.caseInsensitiveCompare(Self.nonProductSentinel) != .orderedSame else { return nil }
+        // Ein Kürzel wie "Bröt." ist kein ausgeschriebener Produktname — genau das soll Stufe 5
+        // liefern. Lieber den Roh-Bontext stehen lassen.
+        guard !Self.endsWithAbbreviation(trimmed) else { return nil }
         return trimmed
+    }
+
+    /// `true`, wenn der Text auf ein Kürzel mit Punkt endet ("Bröt.", "Schokol.") — nicht bei
+    /// Zahlen ("3.5") oder Kürzeln mitten im Namen ("Dr. Oetker Pizza").
+    static func endsWithAbbreviation(_ text: String) -> Bool {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.hasSuffix("."), let beforeDot = trimmed.dropLast().last else { return false }
+        return beforeDot.isLetter
+    }
+
+    /// Ab so vielen verschiedenen Bonzeilen mit derselben KI-Antwort gilt die Antwort als verdächtig.
+    static let repeatedAnswerThreshold = 3
+
+    /// Verwirft KI-Antworten, die das Modell für mehrere verschiedene Bonzeilen gleich geliefert
+    /// hat, ohne dass sie im Text der jeweiligen Zeile vorkommen. Gemeldet 18.10.2026: Auf einem
+    /// dm-Bon wurde aus jeder Zeile "Bröt." ("Ricola Bonbon Salbei", "Mentos Gum 3 Fruity
+    /// Fresh", …) — das Modell hatte einen Eintrag aus den eigenen Artikelnamen (Prompt-Kontext)
+    /// für alle Zeilen übernommen. Ab `repeatedAnswerThreshold` verschiedenen Rohtexten pro
+    /// Antwort bleibt sie nur für Zeilen stehen, die mit der Antwort ein Wort teilen (gleicher
+    /// Anfang aus mindestens drei Buchstaben, z. B. "Schoko Lolli" → "Schokolade"); die übrigen
+    /// fallen auf den Roh-Bontext zurück. Seltener als dreimal dieselbe Antwort bleibt unberührt
+    /// (zwei Tuchmasken dürfen beide "Tuchmaske" heißen).
+    /// - Parameters:
+    ///   - answers: KI-Antwort je Zeilenindex.
+    ///   - rawNames: Roh-Bontext je Zeilenindex.
+    static func discardingRepeatedUnrelatedAnswers(
+        _ answers: [Int: String],
+        rawNames: [Int: String]
+    ) -> [Int: String] {
+        let groups = Dictionary(grouping: answers.keys) { foldedForComparison(answers[$0] ?? "") }
+        var result = answers
+        for indices in groups.values {
+            let distinctRaw = Set(indices.map { foldedForComparison(rawNames[$0] ?? "") })
+            guard distinctRaw.count >= repeatedAnswerThreshold else { continue }
+            for index in indices {
+                guard let answer = answers[index], let raw = rawNames[index] else { continue }
+                if !sharesWordStart(answer, raw) { result[index] = nil }
+            }
+        }
+        return result
+    }
+
+    private static func foldedForComparison(_ text: String) -> String {
+        text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func words(_ text: String) -> [String] {
+        foldedForComparison(text)
+            .components(separatedBy: CharacterSet.letters.inverted)
+            .filter { $0.count >= 3 }
+    }
+
+    /// Ein Wort der Antwort und ein Wort des Rohtextes beginnen mit denselben drei Buchstaben.
+    private static func sharesWordStart(_ answer: String, _ raw: String) -> Bool {
+        let rawStarts = Set(words(raw).map { String($0.prefix(3)) })
+        return words(answer).contains { rawStarts.contains(String($0.prefix(3))) }
+    }
+}
+
+/// Das Sprachmodell hinter Stufe 5. Liefert die rohe Modellantwort (vor `sanitize`) oder `nil`
+/// bei Fehler. Produktiv `SystemReceiptNameLanguageModel`, in Tests eine Scheinantwort.
+protocol ReceiptNameLanguageModel: Sendable {
+    var isAvailable: Bool { get }
+    func respond(to prompt: String) async -> String?
+}
+
+/// Apples On-Device-Modell (FoundationModels, iOS 26+ mit eingeschalteter Apple Intelligence).
+struct SystemReceiptNameLanguageModel: ReceiptNameLanguageModel {
+    var isAvailable: Bool {
+        #if canImport(FoundationModels)
+        guard #available(iOS 26, *) else { return false }
+        if case .available = SystemLanguageModel.default.availability { return true }
+        #endif
+        return false
+    }
+
+    func respond(to prompt: String) async -> String? {
+        #if canImport(FoundationModels)
+        guard #available(iOS 26, *) else { return nil }
+        guard case .available = SystemLanguageModel.default.availability else { return nil }
+        return try? await LanguageModelSession().respond(to: prompt).content
+        #else
+        return nil
+        #endif
     }
 }

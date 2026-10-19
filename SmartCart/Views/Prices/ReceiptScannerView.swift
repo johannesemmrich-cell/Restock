@@ -288,6 +288,18 @@ enum ReceiptLearning {
 
     /// Lernt den Bon-Preis für den Laden: Preis, Bezugsgröße, Datum und Herkunft in EINEM Zug
     /// (Issue #10, #151). `save()` ruft das mit `Date()`.
+    /// Indizes der Zeilen, für die `save()` einen Alias lernen darf. Trägt derselbe Name an drei
+    /// oder mehr Zeilen mit verschiedenem Bontext und ohne Wortbezug ("Bröt." an "Ricola Bonbon
+    /// Salbei", "Mentos Gum …", …), ist er für diese Zeilen kein Artikelname, sondern ein
+    /// Durchrutscher — ein gelernter Alias würde den Fehler als Stufe 1 bei jedem künftigen Scan
+    /// wiederholen (gemeldet 18.10.2026). Dieselbe Regel wie für KI-Antworten
+    /// (`ReceiptNameAIResolver.discardingRepeatedUnrelatedAnswers`).
+    static func aliasLearnableIndices(_ lines: [(name: String, originalName: String)]) -> Set<Int> {
+        let names = Dictionary(uniqueKeysWithValues: lines.enumerated().map { ($0.offset, $0.element.name) })
+        let raws = Dictionary(uniqueKeysWithValues: lines.enumerated().map { ($0.offset, $0.element.originalName) })
+        return Set(ReceiptNameAIResolver.discardingRepeatedUnrelatedAnswers(names, rawNames: raws).keys)
+    }
+
     static func learn(_ plan: Plan, into store: Store, at date: Date) {
         store.learnedPrices[plan.key] = plan.perUnitPrice
         store.learnedPriceUnits[plan.key] = plan.unit
@@ -745,12 +757,15 @@ struct ReceiptScannerView: View {
         ReceiptResolutionStats().record(parsedLines)
         let included = parsedLines.filter { EditableReceiptLine.isSavable($0) }
         let cutoff = Date().addingTimeInterval(-7 * 24 * 3600)
+        let aliasLearnable = ReceiptLearning.aliasLearnableIndices(
+            included.map { (name: $0.name, originalName: $0.originalName) })
 
-        for line in included {
+        for (index, line) in included.enumerated() {
             // Kürzel-Lernen: weicht der finale Name vom rohen Bon-Text ab (User hat die Position
             // umbenannt oder eine früher gelernte Zuordnung bestätigt), Mapping für künftige
             // Scans merken — beim nächsten Bon erscheint das Kürzel direkt als richtiger Artikel.
-            if !line.originalName.isEmpty {
+            // Nicht, wenn derselbe Name an mehreren fremden Zeilen hängt (`aliasLearnableIndices`).
+            if !line.originalName.isEmpty, aliasLearnable.contains(index) {
                 ReceiptAliasService.shared.learn(receiptText: line.originalName, itemName: line.name)
             }
 
