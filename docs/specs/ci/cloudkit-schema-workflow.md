@@ -3,7 +3,7 @@ entity_id: cloudkit-schema-workflow
 type: ci
 created: 2026-10-19
 updated: 2026-10-19
-status: draft
+status: validated
 workflow: feat-169-cloudkit-schema-ci
 tags: [ci, github-actions, cloudkit, cktool, schema, infrastruktur]
 ---
@@ -13,7 +13,7 @@ tags: [ci, github-actions, cloudkit, cktool, schema, infrastruktur]
 ## Approval
 
 - [x] Beauftragt — PO am 2026-10-19 („Ja, mach das Token als GitHub-Secret auch“)
-- [ ] Erster Lauf mit echtem Token (Stufe B) — offen
+- [x] Erster erfolgreicher Lauf mit echtem Token (Stufe B) — 2026-10-19, Lauf 3 (run 39247424086), `mode=export`
 
 ## Purpose
 
@@ -100,7 +100,11 @@ Secret `CLOUDKIT_MANAGEMENT_TOKEN` setzen (erledigt am 2026-10-19 über die GitH
   was required while running in non-interactive mode … No token or token type was provided in
   command arguments“), `remove-token` fragte nach Bestätigung. Lauf 2 (`main` `e31057a`): „Unknown
   option '--token'“, Usage `cktool save-token [<token>] [--type <type>] [--method <method>]
-  [--force]`. Seitdem Token als Positionsargument plus `--force`; Lauf 3 steht aus.
+  [--force]`. Lauf 3 (`main` `b0963a8`, run 39247424086, 23 s): grün. Token angenommen, Export
+  Development und Production je 9 Record-Typen, Development → Production „Kein Unterschied“,
+  Repo-Datei → Development nur Reihenfolge (`CommunityPrice` alphabetisch vor `SharedItemPhoto`);
+  die Repo-Datei ist seitdem der byteidentische Development-Export. `remove-token --force` lief
+  durch. Artefakt `cloudkit-schema-export` (14 Tage) an Lauf 3.
 - Der Ablauf erkennt einen vergessenen Production-Deploy nur beim Ausführen (Diff Development →
   Production), nicht automatisch vor einem TestFlight-Upload. Ein Anschluss an `testflight.yml`
   (Export-Job als Vorbedingung) ist ein möglicher Folgeschritt, kein Teil von #169.
