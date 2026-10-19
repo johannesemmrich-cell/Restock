@@ -49,11 +49,13 @@ jobs:
           CLOUDKIT_MANAGEMENT_TOKEN: ${{ secrets.CLOUDKIT_MANAGEMENT_TOKEN }}
         run: |
           # Der Token kommt nur aus dem Secret; kein Schritt gibt ihn aus. Ablage als Datei im
-          # Runner-Home (kein Schlüsselbund, der auf dem Runner gesperrt sein kann).
+          # Runner-Home (kein Schlüsselbund, der auf dem Runner gesperrt sein kann). Ohne Terminal
+          # liest cktool nichts von stdin (Lauf 1 am 2026-10-19: „No token or token type was
+          # provided in command arguments“), deshalb als Argument; GitHub maskiert den Wert im Log.
           if [ -z "$CLOUDKIT_MANAGEMENT_TOKEN" ]; then
             echo "::error::Secret CLOUDKIT_MANAGEMENT_TOKEN fehlt. Einrichtung: docs/testflight-setup.md"; exit 1
           fi
-          printf '%s\n' "$CLOUDKIT_MANAGEMENT_TOKEN" | xcrun cktool save-token --type management --method file
+          xcrun cktool save-token --type management --method file --token "$CLOUDKIT_MANAGEMENT_TOKEN"
 
       - name: Export development and production
         run: |
@@ -94,7 +96,7 @@ jobs:
 
       - name: Remove management token
         if: always()
-        run: xcrun cktool remove-token --type management --method file || true
+        run: xcrun cktool remove-token --type management --method file --force || true
 
   import-development:
     if: inputs.mode == 'import-development'
@@ -135,7 +137,7 @@ jobs:
           if [ -z "$CLOUDKIT_MANAGEMENT_TOKEN" ]; then
             echo "::error::Secret CLOUDKIT_MANAGEMENT_TOKEN fehlt. Einrichtung: docs/testflight-setup.md"; exit 1
           fi
-          printf '%s\n' "$CLOUDKIT_MANAGEMENT_TOKEN" | xcrun cktool save-token --type management --method file
+          xcrun cktool save-token --type management --method file --token "$CLOUDKIT_MANAGEMENT_TOKEN"
 
       - name: Validate and import into development
         run: |
@@ -171,4 +173,4 @@ jobs:
 
       - name: Remove management token
         if: always()
-        run: xcrun cktool remove-token --type management --method file || true
+        run: xcrun cktool remove-token --type management --method file --force || true

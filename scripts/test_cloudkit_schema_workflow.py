@@ -72,11 +72,13 @@ class Workflow(unittest.TestCase):
             self.assertEqual(len(save), 1)
             self.assertEqual(save[0]["env"], {"CLOUDKIT_MANAGEMENT_TOKEN": "${{ secrets.CLOUDKIT_MANAGEMENT_TOKEN }}"})
             self.assertIn("--type management", save[0]["run"])
+            self.assertIn('--token "$CLOUDKIT_MANAGEMENT_TOKEN"', save[0]["run"], "ohne Terminal liest cktool nichts von stdin (Lauf 1)")
             self.assertFalse([s for s in steps(job) if "secrets." in s.get("run", "")])
             self.assertFalse([l for l in runs(job).splitlines() if "echo" in l and "CLOUDKIT_MANAGEMENT_TOKEN" in l and "fehlt" not in l])
             remove = [s for s in steps(job) if "remove-token" in s.get("run", "")]
             self.assertEqual(len(remove), 1)
             self.assertIn("always()", remove[0].get("if", ""))
+            self.assertIn("--force", remove[0]["run"], "remove-token fragt ohne --force nach (Lauf 1)")
             self.assertIs(steps(job)[-1], remove[0], "Token-Entfernung muss der letzte Schritt sein")
 
     def test_export_compares_and_uploads(self):  # AC-6
