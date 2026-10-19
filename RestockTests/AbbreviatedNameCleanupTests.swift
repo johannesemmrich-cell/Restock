@@ -95,17 +95,46 @@ final class AbbreviatedNameCleanupTests: XCTestCase {
         XCTAssertEqual(store.learnedPrices["bröt."], 1.75, "Zweiter Aufruf darf nichts mehr ändern")
     }
 
-    func testPurchaseRecordsAreUntouched() throws {
+    // MARK: - Kaufdatensätze
+
+    private func record(_ name: String, store: String = "dm", price: Double? = 1.0, daysAgo: Double = 0) -> PurchaseRecord {
+        let r = PurchaseRecord(itemName: name, storeName: store, actualPrice: price)
+        r.date = Date().addingTimeInterval(-daysAgo * 86_400)
+        return r
+    }
+
+    /// Der gemeldete Bon: 16 „Bröt.“-Datensätze mit Bon-Preis am selben Tag im selben Laden → weg.
+    func testRemovesBugPatternRecords() throws {
         let context = try makeContext()
-        let store = Store(name: "dm", emoji: "🧴", colorHex: "#123456")
-        store.learnedPrices["bröt."] = 1.75
-        context.insert(store)
-        let record = PurchaseRecord(itemName: "Bröt.", storeName: "dm")
-        context.insert(record)
+        let prices = [0.85, 4.25, 1.95, 1.25, 1.10, 1.70, 0.95, 0.65, 2.45, 6.45, 1.45, 1.95, 5.95, 1.95, 2.25, 1.75]
+        for price in prices { context.insert(record("Bröt.", price: price)) }
+        context.insert(record("Brötchen", price: 0.39))
 
         AbbreviatedNameCleanup.runIfNeeded(context: context)
 
-        let records = try context.fetch(FetchDescriptor<PurchaseRecord>())
-        XCTAssertEqual(records.map(\.itemName), ["Bröt."])
+        let names = try context.fetch(FetchDescriptor<PurchaseRecord>()).map(\.itemName)
+        XCTAssertEqual(names, ["Brötchen"])
+    }
+
+    /// Einzelne oder zwei Kürzel-Datensätze, Datensätze ohne Bon-Preis, an anderen Tagen oder in
+    /// anderen Läden gehören nicht zum Muster und bleiben.
+    func testKeepsRecordsOutsideThePattern() throws {
+        let context = try makeContext()
+        context.insert(record("Bröt.", price: 1.0))
+        context.insert(record("Bröt.", price: 2.0))
+        context.insert(record("Bröt.", store: "Lidl", price: 3.0))
+        context.insert(record("Bröt.", price: nil))
+        context.insert(record("Bröt.", price: 4.0, daysAgo: 1))
+
+        AbbreviatedNameCleanup.runIfNeeded(context: context)
+
+        XCTAssertEqual(try context.fetch(FetchDescriptor<PurchaseRecord>()).count, 5)
+    }
+
+    func testBugPatternDecisionGroupsByNameStoreAndDay() {
+        let same = (0..<3).map { record("Bröt.", price: Double($0)) }
+        let otherDay = record("Bröt.", price: 9, daysAgo: 2)
+        let doomed = AbbreviatedNameCleanup.bugPatternRecords(in: same + [otherDay])
+        XCTAssertEqual(Set(doomed.map(\.id)), Set(same.map(\.id)))
     }
 }

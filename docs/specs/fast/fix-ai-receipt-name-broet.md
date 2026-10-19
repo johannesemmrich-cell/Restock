@@ -24,7 +24,7 @@ Der Prompt bekam die eigenen Artikelnamen des Nutzers mit der Bitte „bevorzuge
 Wird ein Bon mit „Bröt.“ an fremden Zeilen gespeichert, entstehen drei Schäden: Aliase Bontext → „Bröt.“ (Stufe 1, gewinnen bei jedem künftigen Scan, auch gegen die KI-Prüfung), gelernter Preis unter „bröt.“ (letzte Zeile gewinnt, jedes neue „Brötchen“ bekommt ihn) und Kaufdatensätze „Bröt.“ mit fremden Preisen.
 
 - `ReceiptAliasService.learn` lehnt Kürzel-Ziele ab (`isLearnableTarget`); `ReceiptLearning.aliasLearnableIndices` sperrt das Lernen für Namen, die an ≥ 3 fremden Zeilen hängen (dieselbe Regel wie `discardingRepeatedUnrelatedAnswers`); `save()` nutzt beides.
-- `AbbreviatedNameCleanup.runIfNeeded` (einmalig, `abbreviatedNameCleanupV1Applied`, nach `LegacyLearnedPriceReset`): entfernt Aliase mit Kürzel-Ziel (`ReceiptAliasService.removeAbbreviatedTargets`) und gelernte Preise/Einheiten/Daten/Herkunft unter Kürzel-Schlüsseln. Kaufdatensätze bleiben (darunter können echte Käufe sein).
+- `AbbreviatedNameCleanup.runIfNeeded` (einmalig, `abbreviatedNameCleanupV1Applied`, nach `LegacyLearnedPriceReset`): entfernt Aliase mit Kürzel-Ziel (`ReceiptAliasService.removeAbbreviatedTargets`) und gelernte Preise/Einheiten/Daten/Herkunft unter Kürzel-Schlüsseln. Von den Kaufdatensätzen nur das Fehlermuster (`bugPatternRecords`: Kürzel-Name, Bon-Preis, derselbe Laden, derselbe Tag, ≥ 3 Datensätze); einzelne Kürzel-Datensätze bleiben (können echte Käufe sein).
 - Tests: `AbbreviatedNameCleanupTests`.
 
 ## Tests
@@ -35,4 +35,4 @@ Wird ein Bon mit „Bröt.“ an fremden Zeilen gespeichert, entstehen drei Sch�
 
 - Der eigentliche Modellaufruf ist im Simulator/CI nicht testbar; ob die neue Prompt-Formulierung allein reicht, ist erst am Gerät belegbar. Die Prüfungen 3 und 4 greifen unabhängig davon.
 - Eine falsche Antwort, die nur ein- oder zweimal vorkommt und kein Kürzel ist, wird weiter angezeigt (der Nutzer sieht jede Zeile vor dem Speichern).
-- Kaufdatensätze „Bröt.“ werden nicht bereinigt; die Aufräumung des Alias-Speichers ist nur über die reine Entscheidung geprüft, nicht gegen die App-Gruppe.
+- Einzelne Kürzel-Kaufdatensätze (unter drei pro Tag und Laden) werden nicht bereinigt; die Aufräumung des Alias-Speichers ist nur über die reine Entscheidung geprüft, nicht gegen die App-Gruppe.
