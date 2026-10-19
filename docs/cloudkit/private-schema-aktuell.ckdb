@@ -144,6 +144,24 @@ DEFINE SCHEMA
         GRANT READ TO "_world"
     );
 
+    RECORD TYPE CommunityPrice (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE,
+        chain           STRING QUERYABLE SEARCHABLE SORTABLE,
+        clientID        STRING QUERYABLE SEARCHABLE SORTABLE,
+        itemKey         STRING QUERYABLE SEARCHABLE SORTABLE,
+        observedAt      TIMESTAMP QUERYABLE SORTABLE,
+        price           DOUBLE QUERYABLE SORTABLE,
+        unit            STRING QUERYABLE SEARCHABLE SORTABLE,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );
+
     RECORD TYPE SharedStore (
         "___createTime" TIMESTAMP,
         "___createdBy"  REFERENCE,

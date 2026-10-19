@@ -148,6 +148,17 @@ class ShoppingItem {
             self.estimatedPriceIsAutoDerived = false
             self.priceSource = Self.otherStoreSourcePrefix + other.store.name
             self.priceSourceDate = nil
+        } else if let community = CommunityPrice.resolve(
+            forLowercasedName: name.lowercased(), storeName: store?.name, itemUnit: unit,
+            quantityAmount: quantityAmount, quantitySource: quantitySource) {
+            // Stufe „Community" (Issue #163): Median fremder Beobachtungen derselben Kette aus dem
+            // Zwischenspeicher — eine Beobachtung, kein eigener Preis, deshalb weiter automatisch
+            // hergeleitet (wird bei der nächsten Auffrischung neu gesetzt).
+            if let unitOverride = community.unitOverride { self.unit = unitOverride }
+            self.estimatedPrice = community.price
+            self.estimatedPriceIsAutoDerived = true
+            self.priceSource = CommunityPrice.sourcePrefix + community.chainDisplayName
+            self.priceSourceDate = community.latest
         } else {
             // Katalogtreffer („estimate") oder Kategorie-Pauschale („category", Issue #160) —
             // nur Ersterer erscheint in der Zeile als Betrag, die Pauschale zählt nur für Summen.
@@ -196,10 +207,15 @@ class ShoppingItem {
     /// Zeile „zuletzt bei Lidl" zeigen kann, ohne ein weiteres gespiegeltes Feld anzulegen.
     static let otherStoreSourcePrefix = "otherStore:"
 
-    /// Ladenname aus einer `otherStore:`-Quelle, sonst leer.
+    /// Ladenname aus einer `otherStore:`-Quelle bzw. Kette aus einer `community:`-Quelle, sonst leer.
     var priceSourceDetail: String {
-        guard priceSource.hasPrefix(Self.otherStoreSourcePrefix) else { return "" }
-        return String(priceSource.dropFirst(Self.otherStoreSourcePrefix.count))
+        if priceSource.hasPrefix(Self.otherStoreSourcePrefix) {
+            return String(priceSource.dropFirst(Self.otherStoreSourcePrefix.count))
+        }
+        if priceSource.hasPrefix(CommunityPrice.sourcePrefix) {
+            return String(priceSource.dropFirst(CommunityPrice.sourcePrefix.count))
+        }
+        return ""
     }
 
     /// Angezeigte Quelle: eine bekannte Kennung gilt; leer oder unbekannt (Altdaten) wird aus dem
@@ -207,6 +223,7 @@ class ShoppingItem {
     /// jede dieser Herkünfte und „gelernt" gleichermaßen bedeuten kann (Issue #151).
     var priceOrigin: String {
         if priceSource.hasPrefix(Self.otherStoreSourcePrefix) { return "otherStore" }
+        if priceSource.hasPrefix(CommunityPrice.sourcePrefix) { return "community" }
         if Self.knownPriceSources.contains(priceSource) { return priceSource }
         return estimatedPriceIsAutoDerived ? "estimate" : "learned"
     }
@@ -482,6 +499,13 @@ enum PriceSourceDisplay {
         case "estimate": return String(localized: "price.source.estimate")
         case "category": return String(localized: "price.source.category")
         case "otherStore": return String(format: String(localized: "price.source.otherstore"), detail)
+        case "community":
+            guard let date else { return String(format: String(localized: "price.source.community.undated"), detail) }
+            let formatter = DateFormatter()
+            formatter.locale = locale
+            formatter.timeZone = .current
+            formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "dM", options: 0, locale: locale)
+            return String(format: String(localized: "price.source.community"), detail, formatter.string(from: date))
         default: return String(localized: "price.source.learned")
         }
     }
@@ -507,6 +531,7 @@ enum PriceSourceDisplay {
         ["price.source.receipt", "price.source.receipt.dated", "price.source.paid", "price.source.learned",
          "price.source.manual", "price.source.estimate", "price.source.category", "price.source.otherstore",
          "price.prompt", "price.prompt.accessibility", "price.total.estimated.count",
+         "price.source.community", "price.source.community.undated", "settings.community.share", "settings.community.footer",
          "price.diagnosis.section", "price.diagnosis.entry",
          "price.diagnosis.entry.none", "price.diagnosis.item", "price.diagnosis.cap", "price.diagnosis.result"]
             + LearnedPriceResolution.Reason.allCases.map(PriceDiagnosis.reasonKey)

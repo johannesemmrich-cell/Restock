@@ -111,6 +111,10 @@ struct StoreDetailView: View {
         let _ = reorderTick
         let pending = store.pendingItems
         withAlsoDueObservers(decoratedList(pending: pending))
+        .task(id: store.id) {
+            // Issue #163: Community-Preise der Kette holen und auf geschätzte Artikel anwenden.
+            await CommunityPriceService.shared.refreshAndApply(store: store)
+        }
         .onAppear {
             // Erst die aus der Dynamic Island gequeueten Haken persistieren, DANN die Activity
             // starten — sonst startet start(for:) für eine per Island komplett abgehakte Liste

@@ -309,8 +309,8 @@ final class PriceCatalogTests: XCTestCase {
         CatalogEstimateRefresh.runIfNeeded(context: context)
         XCTAssertEqual(mozzarella.estimatedPrice, 2.00)
 
-        XCTAssertNil(CatalogEstimateRefresh.refreshed(isAutoDerived: false, name: "Parmesan", priceCategory: "Milchprodukte",
-                                                      unit: "", quantityAmount: 1))
+        XCTAssertNil(CatalogEstimateRefresh.refreshed(isAutoDerived: false, priceSource: "manual", name: "Parmesan",
+                                                      priceCategory: "Milchprodukte", unit: "", quantityAmount: 1))
         XCTAssertEqual(CatalogEstimateRefresh.priceCategory(for: unknown), "Lebensmittel")
         let custom = ShoppingItem(name: "Mozzarella", category: "Meine Käsetheke")
         XCTAssertEqual(CatalogEstimateRefresh.priceCategory(for: custom), AssignmentService.category(for: "Mozzarella"),

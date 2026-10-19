@@ -785,6 +785,12 @@ struct ReceiptScannerView: View {
             // `ReceiptLearning.plan` und `ReceiptLearning.learn`.
             let plan = ReceiptLearning.plan(line: line, match: match)
             ReceiptLearning.learn(plan, into: store, at: Date())
+            // Issue #163: anonym teilen (nur mit Schalter; der Dienst prüft ihn selbst). Unter dem
+            // Namen des gemeinten Artikels, damit andere Nutzer den Preis über „Mozzarella" finden
+            // und nicht nur über den Bontext.
+            CommunityPriceService.shared.contributeInBackground(.init(
+                itemName: (matchedItem ?? match?.item)?.name ?? line.name, storeName: store.name,
+                perUnitPrice: plan.perUnitPrice, unit: plan.unit))
 
             // Direkt auf den bereits gelisteten Artikel zurückschreiben — sonst lernt ein Scan nur
             // für KÜNFTIG neu erstellte Artikel (über `learnedPrices`), während der schon

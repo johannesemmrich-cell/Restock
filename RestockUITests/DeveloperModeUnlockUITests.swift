@@ -108,6 +108,10 @@ final class DeveloperModeUnlockUITests: XCTestCase {
         XCTAssertFalse(app.staticTexts["DEV"].exists, "DEV-Pill steht schon vor dem Entsperren (Altzustand)")
         tapWhenHittable(app.buttons["gearshape"], "Zahnrad")
         let lockedRow = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Restock Pro freischalten")).firstMatch
+        // Die Einstellungen sind eine Form, die nur sichtbare Zeilen in den Baum stellt; seit dem
+        // Community-Schalter mit Hinweistext (#163) liegt der Pro-Abschnitt beim Öffnen unter dem Rand,
+        // deshalb erst hinscrollen (wie PaywallUITests.testSettingsProRowOpensPaywall).
+        scrollTo(lockedRow, in: app)
         XCTAssertTrue(lockedRow.waitForExistence(timeout: UITestWait.defaultTimeout),
                       "Zeile „Restock Pro freischalten“ fehlt vor dem Entsperren (Altzustand?)")
         XCTAssertFalse(proActive(app).exists, "„Pro aktiv“ steht schon vor dem Entsperren (Altzustand)")
@@ -132,6 +136,7 @@ final class DeveloperModeUnlockUITests: XCTestCase {
         XCTAssertTrue(restarted.staticTexts["DEV"].waitForExistence(timeout: UITestWait.defaultTimeout),
                       "DEV-Pill fehlt nach dem Neustart")
         tapWhenHittable(restarted.buttons["gearshape"], "Zahnrad nach Neustart")
+        scrollTo(proActive(restarted), in: restarted)  // Pro-Abschnitt liegt beim Öffnen unter dem Rand (siehe oben)
         XCTAssertTrue(proActive(restarted).waitForExistence(timeout: UITestWait.defaultTimeout),
                       "„Pro aktiv“ fehlt nach dem Neustart")
         let deactivateAfterRestart = deactivateRow(restarted)

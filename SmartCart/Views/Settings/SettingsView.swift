@@ -15,6 +15,8 @@ struct SettingsView: View {
     @AppStorage("currencyCode") private var currencyCode = Locale.current.currency?.identifier ?? "EUR"
     @AppStorage("developerMode") private var developerMode = false
     @AppStorage("seasonalSuggestionsEnabled") private var seasonalSuggestionsEnabled = true
+    /// Issue #163: Opt-in, Standard aus; gelesen von `CommunityPriceService` (gleicher Schlüssel).
+    @AppStorage(CommunityPriceService.sharingEnabledKey) private var communitySharingEnabled = false
     // Gleicher Key wie HomeView.storeViewModeRaw, damit eine Änderung hier sofort dort
     // (und umgekehrt) wirkt.
     @AppStorage("storeViewMode") private var storeViewModeRaw = StoreViewMode.cards.rawValue
@@ -104,6 +106,12 @@ struct SettingsView: View {
 
                 Section {
                     Toggle("Saisonale Vorschläge", isOn: $seasonalSuggestionsEnabled)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle(String(localized: "settings.community.share"), isOn: $communitySharingEnabled)
+                        Text(String(localized: "settings.community.footer"))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                     NavigationLink {
                         SiriSettingsView()
                     } label: {
