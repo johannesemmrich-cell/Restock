@@ -50,12 +50,13 @@ jobs:
         run: |
           # Der Token kommt nur aus dem Secret; kein Schritt gibt ihn aus. Ablage als Datei im
           # Runner-Home (kein Schlüsselbund, der auf dem Runner gesperrt sein kann). Ohne Terminal
-          # liest cktool nichts von stdin (Lauf 1 am 2026-10-19: „No token or token type was
-          # provided in command arguments“), deshalb als Argument; GitHub maskiert den Wert im Log.
+          # liest cktool nichts von stdin (Lauf 1 am 2026-10-19), und „--token“ kennt es nicht
+          # (Lauf 2): Usage „cktool save-token [<token>] [--type] [--method] [--force]“, der Token
+          # ist das Positionsargument; GitHub maskiert den Wert im Log.
           if [ -z "$CLOUDKIT_MANAGEMENT_TOKEN" ]; then
             echo "::error::Secret CLOUDKIT_MANAGEMENT_TOKEN fehlt. Einrichtung: docs/testflight-setup.md"; exit 1
           fi
-          xcrun cktool save-token --type management --method file --token "$CLOUDKIT_MANAGEMENT_TOKEN"
+          xcrun cktool save-token "$CLOUDKIT_MANAGEMENT_TOKEN" --type management --method file --force
 
       - name: Export development and production
         run: |
@@ -137,7 +138,7 @@ jobs:
           if [ -z "$CLOUDKIT_MANAGEMENT_TOKEN" ]; then
             echo "::error::Secret CLOUDKIT_MANAGEMENT_TOKEN fehlt. Einrichtung: docs/testflight-setup.md"; exit 1
           fi
-          xcrun cktool save-token --type management --method file --token "$CLOUDKIT_MANAGEMENT_TOKEN"
+          xcrun cktool save-token "$CLOUDKIT_MANAGEMENT_TOKEN" --type management --method file --force
 
       - name: Validate and import into development
         run: |

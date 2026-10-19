@@ -63,8 +63,8 @@ Environment: eine Freigabe-Regel mit Reviewer braucht Admin-Rechte am Repo, die 
 ### Token (AC-5)
 
 Der Token steht ausschließlich in `secrets.CLOUDKIT_MANAGEMENT_TOKEN`, wird je Job genau einmal
-als `env` an den Schritt „Save management token“ gereicht, als Argument an
-`xcrun cktool save-token --type management --method file --token …` übergeben (Datei statt
+als `env` an den Schritt „Save management token“ gereicht, als Positionsargument an
+`xcrun cktool save-token <token> --type management --method file --force` übergeben (Datei statt
 Schlüsselbund, der auf dem Runner gesperrt sein kann; GitHub maskiert den Wert im Log) und im
 letzten Schritt des Jobs mit `always()` entfernt (`remove-token … --force`).
 Kein `run`-Schritt enthält `secrets.`, keiner gibt den Wert aus. Fehlt das Secret, bricht der
@@ -98,8 +98,9 @@ Secret `CLOUDKIT_MANAGEMENT_TOKEN` setzen (erledigt am 2026-10-19 über die GitH
 
 - Stufe B, Lauf 1 (2026-10-19, `main` `4465166`): `save-token` las nichts von stdin („Interaction
   was required while running in non-interactive mode … No token or token type was provided in
-  command arguments“), `remove-token` fragte nach Bestätigung. Beides als Argument behoben
-  (`--token`, `--force`); Lauf 2 steht aus.
+  command arguments“), `remove-token` fragte nach Bestätigung. Lauf 2 (`main` `e31057a`): „Unknown
+  option '--token'“, Usage `cktool save-token [<token>] [--type <type>] [--method <method>]
+  [--force]`. Seitdem Token als Positionsargument plus `--force`; Lauf 3 steht aus.
 - Der Ablauf erkennt einen vergessenen Production-Deploy nur beim Ausführen (Diff Development →
   Production), nicht automatisch vor einem TestFlight-Upload. Ein Anschluss an `testflight.yml`
   (Export-Job als Vorbedingung) ist ein möglicher Folgeschritt, kein Teil von #169.
