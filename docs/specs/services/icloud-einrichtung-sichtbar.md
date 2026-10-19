@@ -240,6 +240,12 @@ Belegart: **[Unit]**, **[UI]**, **[Beleg]** (Werkzeug-Artefakt aus echtem Lauf),
 - Die Anzeige sagt „Einrichtung beim App-Start gescheitert“, nicht, dass der Abgleich später nicht doch läuft;
   sie behauptet auch nach erfolgreicher Einrichtung nicht „alles in Ordnung“ (FB13773922, wie in #156).
 - Die Diagnosetexte stehen nicht in `Localizable.strings` (Dev-only, wie in #156).
+- Systemtext: Das echte Einrichtungsereignis trägt keinen Beschreibungs- und keinen FailureReason-Text; unter der
+  Ursache steht deshalb der allgemeine Systemtext „Der Vorgang konnte nicht abgeschlossen werden. (Cocoa-Fehler
+  134400.)“ statt des englischen Textes aus dem Protokoll (belegt im Durchlauf 2026-10-19). Der Setup-Seed bildet das
+  nach (nur Domain und Code).
+- Lokaler Rückfall: Läuft die App mit dem lokalen Rückfall-Container, meldet die Spiegelung keine Einrichtung; ein
+  älteres `lastSetup` kann dann stehen bleiben (nicht reproduziert).
 
 ## Definition of Done
 
@@ -267,3 +273,6 @@ Belegart: **[Unit]**, **[UI]**, **[Beleg]** (Werkzeug-Artefakt aus echtem Lauf),
 ## Changelog
 
 - 2026-10-19: Initial spec created
+- 2026-10-19: Implementiert (`.setup` als `lastSetup`, Untertitel-Vorrang, Abschnitt „Einrichtung (beim App-Start)“,
+  Klartext 134400, Beobachter vor der Container-Erzeugung, Setup-Seed ohne Text, Export-Seed leert die Ablage zuerst).
+  Belege: `docs/artifacts/fix-166-icloud-einrichtung-sichtbar/`.
