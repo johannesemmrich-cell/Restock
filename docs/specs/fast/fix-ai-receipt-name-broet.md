@@ -31,6 +31,10 @@ Wird ein Bon mit „Bröt.“ an fremden Zeilen gespeichert, entstehen drei Sch�
 
 `ReceiptNameAIResolverSanitizeTests` (Kürzel, gemeldeter Bon, Schokolade-Gruppe, Schwelle, gleiche Rohtexte), `ReceiptKnownItemNamesTests.testExcludesAbbreviatedNames`.
 
+## Gegenprobe (rot ohne die Regeln)
+
+Belegt am 19.10.2026: Mit zurückgedrehten Schutzregeln sind genau die zehn Tests rot, die den Fehler fangen sollen; K3–K7 bleiben grün. Details: `docs/artifacts/fix-157-gegenprobe/ergebnis.md`.
+
 ## Offene Grenzen
 
 - Der eigentliche Modellaufruf ist im Simulator/CI nicht testbar; ob die neue Prompt-Formulierung allein reicht, ist erst am Gerät belegbar. Die Prüfungen 3 und 4 greifen unabhängig davon.

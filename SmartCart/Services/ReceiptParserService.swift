@@ -1437,7 +1437,11 @@ struct SystemReceiptNameLanguageModel: ReceiptNameLanguageModel {
         #if canImport(FoundationModels)
         guard #available(iOS 26, *) else { return nil }
         guard case .available = SystemLanguageModel.default.availability else { return nil }
-        return try? await LanguageModelSession().respond(to: prompt).content
+        // Greedy: immer das wahrscheinlichste Token. Apples Standard bei `nil` hängt an der
+        // Modellversion und kann sich mit OS-Updates ändern; eine Namensauflösung braucht keine
+        // Streuung, und nur so sind zwei Messläufe (#159) vergleichbar.
+        let options = GenerationOptions(sampling: .greedy)
+        return try? await LanguageModelSession().respond(to: prompt, options: options).content
         #else
         return nil
         #endif

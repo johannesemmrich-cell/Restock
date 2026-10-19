@@ -14,7 +14,8 @@ final class ReceiptParserReweTests: XCTestCase {
 
     /// Rohzeilen des Bons in Original-Reihenfolge, inkl. Kopf-/Fußzeilen — der Parser muss diese
     /// selbst über die Admin-Wortliste herausfiltern, wie bei jedem anderen Bon auch.
-    private static let reweLines: [String] = [
+    /// Nicht `private`: `ReceiptNameAIEvaluationTests` (#159) nutzt dieselben Zeilen als Messdaten.
+    static let reweLines: [String] = [
         "REWE MARKT",
         "Eckenheimer Landstr. 183",
         "60322 Frankfurt",
