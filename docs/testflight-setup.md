@@ -48,6 +48,23 @@ Neue Felder lassen sich ohne Klicken im Dashboard in Development anlegen. Contai
 
 Stand 2026-10-08: `categoriesJSON` und `assignmentsJSON` (`STRING`) liegen in Development und Production.
 
+### Werkzeugweg über GitHub Actions (Issue #169)
+
+Derselbe cktool-Weg ohne Mac: manueller Ablauf `.github/workflows/cloudkit-schema.yml` (Actions → CloudKit Schema → Run workflow) auf dem macOS-Runner, Token aus dem Repo-Secret `CLOUDKIT_MANAGEMENT_TOKEN`.
+
+- `mode=export` (Standard): exportiert Development und Production, legt beide als Artefakt `cloudkit-schema-export` ab (14 Tage) und schreibt zwei Diffs in die Zusammenfassung: Repo-Datei `docs/cloudkit/private-schema-aktuell.ckdb` → Development und Development → Production. Schreibt nichts. Ein Unterschied Development → Production heißt: Deploy im Dashboard steht aus.
+- `mode=import-development`: erst der Export wie oben, dann (nur von `main`, nach Freigabe im Environment `cloudkit`) `validate-schema` und `import-schema` der Repo-Datei nach Development, danach erneuter Export und Diff vorher → nachher in der Zusammenfassung. **`import-schema` ersetzt das ganze Development-Schema durch die Repo-Datei**, deshalb muss die Datei vollständig sein (alle Typen, auch `SharedStore`, `SharedItemPhoto`, `Users`).
+- Nach Production schreibt der Ablauf nie. Hochstufen bleibt im Dashboard („Deploy Schema Changes…“, Diff prüfen, Deploy), danach `mode=export`: Development → Production muss „Kein Unterschied“ zeigen.
+
+Einrichtung:
+
+1. CloudKit-Dashboard → Konto-Menü → Settings → Tokens → Create Management Token. Den Wert nie anzeigen, nie ins Repo, nie in einen Chat.
+2. `gh secret set CLOUDKIT_MANAGEMENT_TOKEN --repo johannesemmrich-cell/Restock` (Wert einfügen) oder GitHub → Settings → Secrets and variables → Actions → New repository secret.
+3. GitHub → Settings → Environments → Environment `cloudkit` anlegen: Reviewer = Henning. Nur `import-development` wartet auf diese Freigabe; `export` läuft ohne.
+4. Rotation wie beim App-Store-Connect-Schlüssel: alle 6–12 Monate neu erzeugen und das Secret ersetzen, alten Token im Dashboard löschen; bei Verdacht auf Missbrauch sofort.
+
+Der Token liegt auf dem Runner nur für die Dauer des Jobs als Datei (`cktool save-token --method file`) und wird in einem `always()`-Schritt entfernt; kein Schritt gibt ihn aus. Strukturtest: `python3 scripts/test_cloudkit_schema_workflow.py`. Offene Grenze: Ob `save-token` den Wert auf dem Runner aus der Pipe liest, belegt erst der erste Lauf mit gesetztem Secret.
+
 ## Privater iCloud-Abgleich: Typen vor jedem Upload in Production
 
 Der eigene Abgleich der Läden und Listen (nicht der geteilten Läden) läuft über die **private** Datenbank: SwiftData spiegelt jede Entität aus `SchemaV1` (`SmartCart/Services/SchemaVersions.swift`) in die Zone `com.apple.coredata.cloudkit.zone`, als Record-Typ `CD_<Entität>` mit Feldern `CD_<Attribut>`. Gespiegelt werden alle fünf Modelle: `CD_Store`, `CD_ShoppingItem`, `CD_PurchaseRecord`, `CD_FeedbackItem`, `CD_TodoItem` (Issue #155).
