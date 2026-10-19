@@ -1,0 +1,52 @@
+Durchlauf #156, So. 18 Okt. 2026 22:55:30 CEST, Commit 00ce7baa7f32856a7afb5bcc1698775d14f9f6db
+Gerät Restock-Validate (8F696920-4B9A-40A7-96F0-7697BE887CC7); App ohne Launch-Argumente gestartet
+An error was encountered processing the command (domain=NSPOSIXErrorDomain, code=3):
+Simulator device failed to terminate com.johannesemmrich.Restock.
+found nothing to terminate
+Underlying error (domain=NSPOSIXErrorDomain, code=3):
+	The request to terminate "com.johannesemmrich.Restock" failed. found nothing to terminate
+	found nothing to terminate
+--- Vorher: smartcart.cloudMirror.*-Schlüssel
+(keine)
+--- Start 22:55:31
+com.johannesemmrich.Restock: 67064
+Detected file type from extension: PNG
+Note: No display specified. Defaulting to display: A837E882-E0BD-4713-ADC9-2E307118C512 (screenID: 1, name: LCD)
+Wrote screenshot to: /Users/hem/Developer/Restock/.claude/worktrees/staged-snacking-wolf/docs/artifacts/fix-156-icloud-abgleich-sichtbar/durchlauf-start.png
+--- Nachher: smartcart.cloudMirror.*-Schlüssel
+(keine)
+--- smartcart.cloudMirror.lastExport
+/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/1ACE5378-2257-401C-AE5F-C44C1CF44227/Library/Preferences/com.johannesemmrich.Restock.plist: Could not extract value, error: No value at that key path or invalid key path: smartcart.cloudMirror.lastExport
+<stdin>: (Unable to read file from standard input)
+(nicht vorhanden)
+--- smartcart.cloudMirror.lastImport
+/Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Data/Application/1ACE5378-2257-401C-AE5F-C44C1CF44227/Library/Preferences/com.johannesemmrich.Restock.plist: Could not extract value, error: No value at that key path or invalid key path: smartcart.cloudMirror.lastImport
+<stdin>: (Unable to read file from standard input)
+(nicht vorhanden)
+--- Systemprotokoll der App (CloudKit-Spiegelung, letzte 2 min)
+getpwuid_r did not find a match for uid 501
+2026-10-18 22:54:10.778 A  Restock[66410:c946bc] (CloudKit) client/scheduler-register
+2026-10-18 22:54:10.778 A  Restock[66410:c946bc] (CloudKit) client/scheduler-register
+2026-10-18 22:54:10.788 A  Restock[66410:c946bc] (CloudKit) client/account-info
+2026-10-18 22:54:10.789 Df Restock[66410:c946bc] [com.apple.coredata:CloudKit] CoreData+CloudKit: -[PFCloudKitSetupAssistant _checkAccountStatus:](439): Waiting on accountInfoWithCompletionHandler for store 650ECAF8-58E8-4A42-A40F-3F531142723A and setup request 9BB77491-6044-4836-BFB4-F9B31BD2F9D1
+2026-10-18 22:54:10.789 F  Restock[66410:c946bd] [com.apple.cloudkit.sim:CK] Could not validate account info cache. (This is a potential performance issue.)
+2026-10-18 22:54:10.796 Df Restock[66410:c946bd] [com.apple.coredata:CloudKit] CoreData+CloudKit: -[PFCloudKitSetupAssistant _checkAccountStatus:]_block_invoke(346): Fetched account info for store 650ECAF8-58E8-4A42-A40F-3F531142723A: <CKAccountInfo: 0x101e259f0; identifier=(null), accountStatus=No account, accountPartition=Prod, deviceToDeviceEncryptionAvailability=(none), hasValidCredentials=false, walrus=Disabled, needsToVerifyTerms=false, accountAccessAuthorization=Yes, validationCounter=205>
+2026-10-18 22:54:10.800 E  Restock[66410:c946bc] [com.apple.coredata:CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x101ee80e0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x101e5c280> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-18 22:54:10.800 E  Restock[66410:c946bc] [com.apple.coredata:CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x101ee80e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-18 22:54:10.800 E  Restock[66410:c946bc] [com.apple.coredata:CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x101ee80e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+2026-10-18 22:54:10.965 E  Restock[66410:c946bd] [com.apple.kvs:Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+2026-10-18 22:55:32.382 F  Restock[67064:c957ac] [com.apple.cloudkit.sim:NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-18 22:55:32.391 A  Restock[67064:c957c1] (CloudKit) client/scheduler-register
+2026-10-18 22:55:32.397 A  Restock[67064:c957c1] (CloudKit) client/scheduler-register
+2026-10-18 22:55:32.397 A  Restock[67064:c957c1] (CloudKit) client/scheduler-register
+2026-10-18 22:55:32.422 A  Restock[67064:c957c1] (CloudKit) client/account-info
+2026-10-18 22:55:32.422 Df Restock[67064:c957c1] [com.apple.coredata:CloudKit] CoreData+CloudKit: -[PFCloudKitSetupAssistant _checkAccountStatus:](439): Waiting on accountInfoWithCompletionHandler for store 650ECAF8-58E8-4A42-A40F-3F531142723A and setup request 9E116632-B9C2-47C2-82D1-F10A94EF5F13
+2026-10-18 22:55:32.423 F  Restock[67064:c957ce] [com.apple.cloudkit.sim:CK] Could not validate account info cache. (This is a potential performance issue.)
+2026-10-18 22:55:32.460 Df Restock[67064:c957cd] [com.apple.coredata:CloudKit] CoreData+CloudKit: -[PFCloudKitSetupAssistant _checkAccountStatus:]_block_invoke(346): Fetched account info for store 650ECAF8-58E8-4A42-A40F-3F531142723A: <CKAccountInfo: 0x106854550; identifier=(null), accountStatus=No account, accountPartition=Prod, deviceToDeviceEncryptionAvailability=(none), hasValidCredentials=false, walrus=Disabled, needsToVerifyTerms=false, accountAccessAuthorization=Yes, validationCounter=205>
+2026-10-18 22:55:32.465 E  Restock[67064:c957c1] [com.apple.coredata:CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1230): <NSCloudKitMirroringDelegate: 0x1016600e0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1015a4280> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/8F696920-4B9A-40A7-96F0-7697BE887CC7/data/Containers/Shared/AppGroup/AFC1F306-870B-46AD-9C08-6EFF5D07AFF6/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-18 22:55:32.465 E  Restock[67064:c957c1] [com.apple.coredata:CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2304): <NSCloudKitMirroringDelegate: 0x1016600e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-18 22:55:32.465 E  Restock[67064:c957c1] [com.apple.coredata:CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2617): <NSCloudKitMirroringDelegate: 0x1016600e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+2026-10-18 22:55:32.546 E  Restock[67064:c957ce] [com.apple.kvs:Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+2026-10-18 22:55:37.509 E  Restock[67064:c957d3] [com.apple.kvs:Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
