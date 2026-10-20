@@ -5,11 +5,11 @@ Ablauf: `.github/workflows/testflight.yml`, nur manuell (Actions → TestFlight 
 ## Einrichtung
 
 1. App Store Connect → Benutzer und Zugriff → Integrationen → Team-Schlüssel: API-Schlüssel mit Rolle **Admin** anlegen, `.p8` einmalig laden.
-2. GitHub → Settings → Environments → Environment `testflight` anlegen: Reviewer = Henning, Deployment nur von `main`.
-3. Secrets im Environment `testflight` setzen: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (Inhalt der `.p8`: Datei im Texteditor öffnen, alles kopieren und einfügen; Base64 geht auch).
+2. GitHub → Settings → Environments → Environment `testflight` (nur der Besitzer kann das): Reviewer = Henning, Deployment nur von `main`. Die Umgebung ist nur für die Freigabepflicht nötig; ohne „Required reviewers“ startet der Upload ohne Klick.
+3. Secrets als **Repository-Secrets** setzen (Settings → Secrets and variables → Actions → New repository secret; geht ohne Admin-Rechte, belegt 2026-10-20): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (Inhalt der `.p8`: Datei im Texteditor öffnen, alles kopieren und einfügen; Base64 geht auch). Secrets im Environment wären nur ein Vorrang, kein Muss.
 4. Im Developer-Portal die Zahl der Distribution-Zertifikate prüfen (Limit).
 
-Stufe B braucht Hennings Schlüssel: erst Probelauf mit `dry_run` an, dann echter Lauf mit `dry_run` aus.
+Stufe B braucht Hennings Schlüssel: erst Probelauf mit `dry_run` an, dann echter Lauf mit `dry_run` aus. **Belegt am 2026-10-20:** Lauf 8 (run 39453132619) hat Build 33 von `main` hochgeladen (`Upload succeeded`); der Trockenlauf wurde übersprungen. Fehlende Secrets zeigen sich als `xcodebuild: error: The flag -authenticationKeyID is required` beim Archivieren (Lauf 7).
 
 ## Rotation
 
