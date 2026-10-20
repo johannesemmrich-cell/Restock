@@ -235,8 +235,8 @@ verändert.
 ### CI-Anschluss
 
 **Stand 2026-10-20: angeschlossen** (Entwurf `docs/artifacts/test-145-d2-mitteilungserlaubnis/ci-anschluss-vertagt.diff`
-unverändert übernommen; Strukturtest `scripts/test_ci_notification_permission.py`). Erster CI-Lauf: siehe Nachtrag am
-Ende dieses Abschnitts.
+unverändert übernommen; Strukturtest `scripts/test_ci_notification_permission.py`). Erster CI-Lauf grün in beiden
+Hälften, siehe Nachtrag am Ende dieses Abschnitts.
 
 - Hälfte A bekommt `TEST_RUNNER_RESTOCK_NOTIF_DECISION=allow` und zusätzlich
   `-only-testing:RestockUITests/NotificationPermissionUITests`; Hälfte B bekommt `deny`. Die Klasse steht
@@ -255,8 +255,11 @@ Ende dieses Abschnitts.
   Folgeschritt in #145 geführt, ohne die Hälften rot zu lassen. Vorbedingung für den Anschluss: lokaler
   Grün-Lauf beider Wege.
 
-**Nachtrag erster CI-Lauf:** wird nach dem Lauf des Anschluss-PRs ergänzt (Hälfte A `testAllow`, Hälfte B
-`testDeny`, Runner-Dialog englisch). Wechselwirkung mit #173: Scheitert `testAllow`/`testDeny` im ersten Durchlauf,
+**Nachtrag erster CI-Lauf (2026-10-20, PR #190, run 39501695658, macos-26, Xcode 26.6, englischer Runner):**
+Hälfte A `✓ testAllow (29,2 s)`, 41 Tests, 1 übersprungen (`testDeny`), 0 Fehler; Hälfte B `✓ testDeny (28,9 s)`,
+91 Tests, 2 übersprungen (`testAllow` und das AppIntents-Gate), 0 Fehler. Der SpringBoard-Dialog erschien in beiden
+Hälften genau einmal und wurde bedient; keine Wiederholung nötig. Damit ist die offene Grenze „Runner-Verhalten
+(englischer Dialog) erst mit dem ersten CI-Lauf belegt“ geschlossen. Wechselwirkung mit #173: Scheitert `testAllow`/`testDeny` im ersten Durchlauf,
 startet die Wiederholung die App neu, die Entscheidung ist dann aber schon gespeichert; die Wiederholung endet mit
 „Installation nicht frisch“, der Job bleibt rot. Das ist beabsichtigt (AC-4), kein Fall für den Rückfall.
 
