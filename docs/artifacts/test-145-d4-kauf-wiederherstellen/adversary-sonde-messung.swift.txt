@@ -1,0 +1,96 @@
+import XCTest
+
+/// Wegwerf-Durchlauf des Adversary, nur in der Scratchpad-Kopie.
+final class AdversaryDurchlaufUITests: XCTestCase {
+    static let shotDir = "/private/tmp/claude-501/-Users-hem-Developer-Restock/39e2d6a0-c975-47d9-88ea-72833cb4ccf0/scratchpad/shots"
+
+    override func setUpWithError() throws { continueAfterFailure = true }
+
+    private func log(_ line: String) {
+        let url = URL(fileURLWithPath: Self.shotDir + "/durchlauf-log.txt")
+        let text = "\(Date()) \(name): \(line)\n"
+        if let handle = try? FileHandle(forWritingTo: url) {
+            handle.seekToEndOfFile(); handle.write(text.data(using: .utf8)!); handle.closeFile()
+        } else {
+            try? text.data(using: .utf8)!.write(to: url)
+        }
+        print("ADV-LOG \(line)")
+    }
+
+    private func shot(_ file: String) {
+        let png = XCUIScreen.main.screenshot().pngRepresentation
+        do { try png.write(to: URL(fileURLWithPath: Self.shotDir + "/durchlauf-\(file).png")); log("Screenshot durchlauf-\(file).png") }
+        catch { log("Screenshot \(file) FEHLER \(error)") }
+    }
+
+    private func launch(_ scenario: String?, extra: [String] = []) -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-developerMode", "NO"]
+        if let scenario { app.launchArguments += ["-purchaseScenarioForUITests", scenario] }
+        app.launchArguments += extra
+        UITestLaunch.start(app, expecting: app.buttons["fork.knife"], description: "fork.knife")
+        return app
+    }
+
+    private func tap(_ e: XCUIElement, _ what: String) {
+        let r = e.waitUntilHittable()
+        XCTAssertTrue(r.matched, "\(what) nicht antippbar: \(r.last)")
+        e.tap()
+    }
+
+    private func scroll(_ e: XCUIElement, _ app: XCUIApplication) {
+        var n = 0
+        while !(e.exists && e.isHittable) && n < 6 { app.swipeUp(); n += 1 }
+    }
+
+    private func buy(_ app: XCUIApplication) -> XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Jetzt freischalten")).firstMatch
+    }
+
+    private let notices = ["Der Kauf wartet auf Zustimmung", "Kein Kauf gefunden", "Wiederherstellen hat nicht geklappt",
+                           "Der Kauf konnte nicht geladen werden", "Kauf fehlgeschlagen"]
+
+    private func visibleNotices(_ app: XCUIApplication) -> [String] {
+        notices.compactMap { t in
+            let e = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", t)).firstMatch
+            return e.exists ? e.label : nil
+        }
+    }
+
+    private func paywallOpen(_ app: XCUIApplication) -> Bool { app.staticTexts["Restock Pro"].exists }
+
+    private func waitGone(_ e: XCUIElement) -> Bool {
+        let exp = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: e)
+        return XCTWaiter().wait(for: [exp], timeout: 20) == .completed
+    }
+
+    private func openViaForkKnife(_ app: XCUIApplication) {
+        tap(app.buttons["fork.knife"], "fork.knife")
+        XCTAssertTrue(app.staticTexts["Restock Pro"].waitForExistence(timeout: 20), "Paywall öffnet nicht")
+    }
+
+    private func measure(_ s: String, action: String, text: String) {
+        let app = launch(s)
+        openViaForkKnife(app)
+        let target = action == "buy" ? buy(app) : app.buttons["Käufe wiederherstellen"]
+        scroll(target, app)
+        let swipesBefore = "Knopf-Rahmen vor Tipp=\(target.frame)"
+        tap(target, action)
+        let hint = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
+        XCTAssertTrue(hint.waitForExistence(timeout: 20))
+        Thread.sleep(forTimeInterval: 1)
+        let win = app.windows.firstMatch.frame
+        let f = hint.frame
+        let visible = f.intersection(win)
+        let share = f.height > 0 ? visible.height / f.height : 0
+        log("MESSUNG \(s): Fenster=\(win) Hinweis=\(f) sichtbarer Anteil=\(String(format: "%.2f", share)) isHittable=\(hint.isHittable) \(swipesBefore)")
+        shot("messung-\(s)")
+        app.terminate()
+    }
+
+    func testM1Pending() { measure("pending", action: "buy", text: "Der Kauf wartet") }
+    func testM2Fail() { measure("fail", action: "buy", text: "Kauf fehlgeschlagen") }
+    func testM3Missing() { measure("productMissing", action: "buy", text: "Der Kauf konnte nicht") }
+    func testM4RestoreNone() { measure("restoreNone", action: "restore", text: "Kein Kauf gefunden") }
+    func testM5RestoreFail() { measure("restoreFail", action: "restore", text: "Wiederherstellen hat nicht") }
+}

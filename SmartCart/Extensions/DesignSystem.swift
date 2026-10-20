@@ -175,6 +175,10 @@ struct ToolbarChipModifier: ViewModifier {
             .minimumScaleFactor(0.75)
             .padding(.horizontal, 14)
             .frame(minWidth: 40, minHeight: 38)
+            // iOS 26 schlägt Items am linken Rand (z. B. .cancellationAction) die Breite 0 vor und
+            // übernimmt die Antwort; ohne festgelegte Breite blieb der Chip bei minWidth 40 und
+            // zeigte „…“ (#145 D4, belegt in docs/artifacts/test-145-d4-kauf-wiederherstellen/chip-ursache.md).
+            .fixedSize(horizontal: true, vertical: false)
             .background(
                 prominent ? Color.buttonPrimary : Color.surface,
                 in: RoundedRectangle(cornerRadius: 11)

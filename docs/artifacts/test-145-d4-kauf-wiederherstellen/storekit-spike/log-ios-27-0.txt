@@ -1,0 +1,30 @@
+Test Case '-[SKSpikeTests.SKSpikeTests testA_LoadProducts]' started.
+2026-10-19 13:29:36.037187+0200 xctest[17104:15358502] [SKTestSession] Error saving configuration file: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308ecd0 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:36.051732+0200 xctest[17104:15358502] [SKTestSession] Error clearing overrides: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308ed00 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:36.097403+0200 xctest[17104:15358502] [SKTestSession] Error deleting all transactions: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308ed90 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:36.112673+0200 xctest[17104:15358502] [SKTestSession] Error setting value to 1 for identifier 2 for com.apple.dt.xctest.tool: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308ed30 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+SPIKE A: 0 Produkte: 
+Test Case '-[SKSpikeTests.SKSpikeTests testA_LoadProducts]' failed (9.422 seconds).
+Test Case '-[SKSpikeTests.SKSpikeTests testB_PurchaseLifetime]' started.
+2026-10-19 13:29:40.901973+0200 xctest[17104:15360197] [SKTestSession] Error saving configuration file: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308eca0 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:40.905105+0200 xctest[17104:15360197] [SKTestSession] Error clearing overrides: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308ed60 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:40.906918+0200 xctest[17104:15360197] [SKTestSession] Error deleting all transactions: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308e5e0 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:40.907713+0200 xctest[17104:15360197] [SKTestSession] Error setting value to 1 for identifier 2 for com.apple.dt.xctest.tool: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308e580 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+Test Case '-[SKSpikeTests.SKSpikeTests testB_PurchaseLifetime]' failed (0.059 seconds).
+Test Case '-[SKSpikeTests.SKSpikeTests testC_FailedPurchase]' started.
+2026-10-19 13:29:40.958054+0200 xctest[17104:15360197] [SKTestSession] Error saving configuration file: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308ef40 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:40.959293+0200 xctest[17104:15360197] [SKTestSession] Error clearing overrides: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308eee0 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:40.960135+0200 xctest[17104:15360197] [SKTestSession] Error deleting all transactions: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308f180 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:40.960496+0200 xctest[17104:15360197] [SKTestSession] Error setting value to 1 for identifier 2 for com.apple.dt.xctest.tool: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308ee50 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+Test Case '-[SKSpikeTests.SKSpikeTests testC_FailedPurchase]' failed (0.046 seconds).
+Test Case '-[SKSpikeTests.SKSpikeTests testD_AskToBuyPending]' started.
+2026-10-19 13:29:41.019699+0200 xctest[17104:15358502] [SKTestSession] Error saving configuration file: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308e6d0 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:41.020244+0200 xctest[17104:15358502] [SKTestSession] Error clearing overrides: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308e5b0 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:41.020709+0200 xctest[17104:15358502] [SKTestSession] Error deleting all transactions: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308f450 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:41.021210+0200 xctest[17104:15358502] [SKTestSession] Error setting value to 1 for identifier 2 for com.apple.dt.xctest.tool: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308e730 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+2026-10-19 13:29:41.021921+0200 xctest[17104:15358502] [SKTestSession] Error setting value to 1 for identifier 0 for com.apple.dt.xctest.tool: Error Domain=SKServiceErrorDomain Code=2 "(null)" UserInfo={NSUnderlyingError=0x10308efd0 {Error Domain=SKInternalErrorDomain Code=4 "(null)"}}
+Test Case '-[SKSpikeTests.SKSpikeTests testD_AskToBuyPending]' failed (0.040 seconds).
+	 Executed 4 tests, with 4 failures (0 unexpected) in 9.567 (9.572) seconds
+	 Executed 4 tests, with 4 failures (0 unexpected) in 9.567 (9.573) seconds
+	 Executed 4 tests, with 4 failures (0 unexpected) in 9.567 (9.575) seconds
+** TEST FAILED **
