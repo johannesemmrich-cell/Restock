@@ -133,7 +133,7 @@ Activated by tapping the version number 5× in Settings → password sheet (SHA2
 ### Design conventions
 
 - **Haptics**: always use `Haptics.impact(.light/.medium/.heavy)` or `Haptics.success()` — never `UIImpactFeedbackGenerator` directly.
-- **Colors**: use semantic tokens from `DesignSystem.swift` (`Color.brand`, `.success`, `.warning`, `.destructive`) and `LinearGradient.brand`.
+- **Colors**: use semantic tokens from `DesignSystem.swift` (`Color.brand`, `.success`, `.warning`, `.destructive`) and `LinearGradient.brand`. `Color.amber` (`RCAmber`, Nachkauf-Dringlichkeit und „ca.“-Schätzungen) muss in beiden Modi WCAG 2.1 AA für Fließtext erreichen (≥ 4,5:1 gegen `RCSurface` und die weiße Karte); die Werte stehen in `AssignmentServiceQuantitySuggestionTests` (`testAmberDarkModeContrastMeetsWCAGAA`, `testAmberLightModeContrastMeetsWCAGAA`, Issue #75: Hellmodus 0,544/0,408/0,148 seit 2026-10-20, vorher 3,52:1). Sichtbare Farbänderungen brauchen vorher eine Entwurfsvorschau hell/dunkel mit Alternative (Regel vom 2026-09-22; Beispiel `docs/artifacts/fix-75-amber-kontrast/entwurfsvorschau.html`).
 - **Card styling**: `.cardStyle()` view modifier gives white background + rounded corners + shadow.
 - **Localization**: all user-facing strings via `String(localized: "key")`. Keys are defined in `Resources/`.
 - **Dev feedback on every screen**: apply `.devFeedback(context: "Screen Name")` to the outermost view of every full-screen view. For `StoreDetailView`, include the store name: `.devFeedback(context: "Liste: \(store.name)")`.
