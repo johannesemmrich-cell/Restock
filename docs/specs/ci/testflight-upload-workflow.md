@@ -2,8 +2,8 @@
 entity_id: testflight-upload-workflow
 type: ci
 created: 2026-10-05
-updated: 2026-10-05
-status: draft
+updated: 2026-10-20
+status: validated
 workflow: feat-109-testflight-ci-upload
 tags: [ci, github-actions, testflight, signing, app-store-connect, infrastruktur]
 ---
@@ -12,7 +12,7 @@ tags: [ci, github-actions, testflight, signing, app-store-connect, infrastruktur
 
 ## Approval
 
-- [ ] Approved — PO (offen)
+- [x] Approved — PO (Stufe B am 2026-10-20 durch Henning freigegeben und gelaufen, Build 33)
 
 ## Purpose
 
@@ -159,6 +159,18 @@ Aufbewahrt wird das nur als Bestätigung; es ändert sich nichts.
 Braucht Hennings Admin-Schlüssel in den Secrets; nicht automatisierbar und von Claude nicht
 auslösbar. Erst wenn beide Punkte erfüllt sind, wird #109 geschlossen.
 
+**Ergebnis (2026-10-20):** Lauf 8 (run 39453132619, `main` 3ad3c40, `dry_run=false`,
+`build_number=33`) endete grün: Archive 3:22 min, Export und Upload 1:49 min, Protokoll
+`Upload succeeded.` / `** EXPORT SUCCEEDED **` (Beleg `docs/artifacts/feat-109-testflight-ci-upload/lauf-8-build-33-upload.md`).
+Die Secrets kamen als **Repository-Secrets** (von Henning selbst angelegt, kein Admin nötig); die
+Umgebung `testflight` liefert nur noch die Freigabepflicht. Vorher: Lauf 6 (Build 33, 2026-10-19)
+unfreigegeben abgebrochen, Lauf 7 (2026-10-19) nach Freigabe mit leeren `ASC_*`-Werten gescheitert
+(`-authenticationKeyID is required`), weil die Secrets nie gesetzt waren. AC-B1 (Trockenlauf mit
+Signatur-Summary) ist **nicht** gelaufen: Der PO wollte direkt hochladen; die Entitlements-Prüfung
+der Summary bleibt damit unbelegt, der echte Export hat sie aber durchlaufen (Upload angenommen).
+AC-B2: Build-Nummer 33 > 9 angehoben; „Verarbeitung abgeschlossen, ohne Compliance-Hinweis“ steht
+erst mit Hennings Installation aus TestFlight fest.
+
 - AC-B1: Lauf von `testflight.yml` auf `main` mit `dry_run=true` endet grün; die Step-Summary zeigt
   für App, Widget und Teilen-Erweiterung je Team `XK87E2B3VR`, die jeweilige Bundle-ID,
   `aps-environment = production` und die App-Gruppe `group.com.johannesemmrich.SmartCart`.
@@ -200,8 +212,10 @@ er liest die echten Dateien aus dem Repo.
 
 1. In App Store Connect (Benutzer und Zugriff → Integrationen → Team-Schlüssel) einen API-Schlüssel
    mit Rolle **Admin** anlegen, die `.p8` einmalig laden.
-2. Im GitHub-Environment `testflight` (Reviewer: Henning, Deployment nur von `main`) die Secrets
-   `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (Base64 der `.p8`) setzen.
+2. Die Secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (Inhalt der `.p8` oder Base64) als
+   **Repository-Secrets** setzen (Settings → Secrets and variables → Actions; geht ohne Admin, belegt
+   2026-10-20). Die Umgebung `testflight` (Reviewer: Henning, Deployment nur von `main`) legt der
+   Besitzer an; sie ist nur für die Freigabepflicht nötig, nicht für die Secrets.
 3. Im Developer-Portal die Zahl der Distribution-Zertifikate ansehen (Limit).
 4. Den Probelauf freigeben (Stufe B), erst `dry_run=true`, dann `dry_run=false`.
 
@@ -250,6 +264,8 @@ Cloud-Signierung scheitert.
   nicht für Spec und Strukturtest. Sonst Alternative 1.
 - Nachrüsten eines Tag-Auslösers erst nach erfolgreichem Probelauf und nur auf Wunsch des PO.
 - Memory und Ticket pflegen: nach Probelauf Memory `app-store-upload-process` (neuer Weg, Rückfall)
-  und Issue #109 aktualisieren; #109 bleibt bis zum erfolgreichen B2 offen.
+  und Issue #109 aktualisieren; #109 bleibt bis zum erfolgreichen B2 offen. → Erledigt 2026-10-20
+  (Lauf 8); #109 geschlossen. Offen: AC-B1 (Trockenlauf-Summary) nie gelaufen; Freigabepflicht der
+  Umgebung entfällt nur, wenn der Besitzer „Required reviewers“ entfernt (Anfrage 2026-10-20).
 - Export-Compliance: geprüft (App-Target hat `ITSAppUsesNonExemptEncryption = NO`), kein Eingriff;
   wird in B2 gegengeprüft.
