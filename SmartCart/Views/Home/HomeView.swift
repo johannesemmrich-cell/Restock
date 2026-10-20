@@ -338,6 +338,14 @@ struct HomeView: View {
                 // @Query-Re-Sort die laufende Drag-Animation im Grid unterbrechen/flackern lassen.
                 if draggingStoreID == nil { syncStoreOrder() }
             }
+            .onChange(of: activeStores.isEmpty) { _, isEmpty in
+                // Issue #35: Beim ersten Start nach Neuinstallation ist `activeStores` in
+                // `onAppear` unter Last noch leer; `checkPendingReceiptScan()` bricht dann
+                // bewusst VOR `takePending()` ab (Nutzlast bleibt erhalten), aber nichts stieß
+                // den Versuch erneut an — der Prüf-Screen kam erst beim nächsten Öffnen. Sobald
+                // die Läden geladen sind, genau ein Nachversuch; ohne Nutzlast ist er ein No-op.
+                if !isEmpty { checkPendingReceiptScan() }
+            }
             .devFeedback(context: "Startseite")
             .confirmationDialog(
                 "Laden löschen?",
