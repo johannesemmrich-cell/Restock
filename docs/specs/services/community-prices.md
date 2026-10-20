@@ -2,7 +2,7 @@
 entity_id: community-prices
 type: module
 created: 2026-10-19
-updated: 2026-10-19
+updated: 2026-10-20
 status: draft
 version: "1.0"
 tags: [pricing, services, cloudkit, issue-163]
@@ -33,7 +33,9 @@ bekommen. Entscheidungen (Tech Lead) in Issue #163.
   `priceSourceDetail`, `PriceSourceDisplay.text`.
 - Schreibstellen: `ReceiptScannerView.save()`, `ActualPriceEntryView.share(_:in:)`.
 - Lesestelle: `StoreDetailView.task(id: store.id)` → `refreshAndApply`.
-- Schalter: `SettingsView` (`communityPricesSharingEnabled`, `UserDefaults.standard`, Standard aus);
+- Schalter: `SettingsView` (`communityPricesSharingEnabled`, `UserDefaults.standard`, Standard **an**
+  seit 2026-10-20 auf Wort des PO, vorher aus; `CommunityPriceService.sharingEnabledDefault`, fehlender
+  Schlüssel = Standard, nur gespeichertes `false` schaltet ab);
   Datenschutz: `LegalView`, Abschnitt „Community-Preise (optional)“.
 
 ## Datenmodell
@@ -54,7 +56,7 @@ aktueller Eintrag (Upsert über `serverRecordChanged` → Server-Record aktualis
 
 ## Regeln
 
-- Beitrag nur mit Schalter an, Preis > 0, Kette und Schlüssel nicht leer, Bezugsgröße nicht leer.
+- Beitrag nur mit Schalter an (Standard an; ausdrückliches Aus gilt), Preis > 0, Kette und Schlüssel nicht leer, Bezugsgröße nicht leer.
 - Aggregat: Beobachtungen der letzten 180 Tage, häufigste Bezugsgröße (Gleichstand: alphabetisch
   kleinere), jüngste 20, mindestens 3 → Median; sonst kein Eintrag.
 - Stufe in `ShoppingItem.init`: nach eigenem Preis (dieser Laden, anderer Laden), vor Katalog;
@@ -71,7 +73,7 @@ aktueller Eintrag (Upsert über `serverRecordChanged` → Server-Record aktualis
 
 `RestockTests/CommunityPriceTests.swift`: Kette/Schlüssel, Aggregat (Mindestzahl, Frist, Median
 gerade/ungerade, jüngste 20, Bezugsgrößen-Mehrheit), Zwischenspeicher, Schreiben (Schalter aus →
-nichts, Felder, deterministischer Name, Upsert, `serverRecordChanged`, Netzfehler), Lesen (Aggregat,
+nichts, Schlüssel fehlt → Standard an → Beitrag, Felder, deterministischer Name, Upsert, `serverRecordChanged`, Netzfehler), Lesen (Aggregat,
 Entfernen, Fehler lässt Zwischenspeicher stehen), Stufe in `init` (Rangfolge, Einheit, Obergrenze),
 `apply`, Schema-Drift gegen `docs/cloudkit/private-schema-aktuell.ckdb`, Texte.
 

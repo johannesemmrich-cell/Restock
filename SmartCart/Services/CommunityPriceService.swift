@@ -66,8 +66,10 @@ enum CommunityPriceSchema {
 /// Produktion scheitert das Speichern still, die App bleibt benutzbar.
 actor CommunityPriceService {
     static let containerID = "iCloud.com.johannesemmrich.SmartCart"
-    /// `UserDefaults.standard`, wie `@AppStorage` in `SettingsView`. Standard: aus (Opt-in).
+    /// `UserDefaults.standard`, wie `@AppStorage` in `SettingsView`. Standard: an (Opt-out, PO
+    /// 2026-10-20); nur ein ausdrücklich gespeichertes `false` schaltet das Teilen ab.
     static let sharingEnabledKey = "communityPricesSharingEnabled"
+    static let sharingEnabledDefault = true
     /// Pseudonyme Kennung je Installation in der App-Gruppe; keine Verbindung zur Apple-ID.
     static let clientIDKey = "communityPriceClientID"
     static let fetchLimit = 400
@@ -90,7 +92,12 @@ actor CommunityPriceService {
         self.now = now
     }
 
-    var isSharingEnabled: Bool { defaults.bool(forKey: Self.sharingEnabledKey) }
+    var isSharingEnabled: Bool { Self.isSharingEnabled(in: defaults) }
+
+    /// Fehlt der Schlüssel (frische Installation oder nie angefasst), gilt der Standard.
+    static func isSharingEnabled(in defaults: UserDefaults) -> Bool {
+        (defaults.object(forKey: sharingEnabledKey) as? Bool) ?? sharingEnabledDefault
+    }
 
     func clientID() -> String {
         if let existing = cache.defaults.string(forKey: Self.clientIDKey), !existing.isEmpty { return existing }

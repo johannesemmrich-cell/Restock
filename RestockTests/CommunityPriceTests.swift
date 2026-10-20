@@ -112,6 +112,21 @@ final class CommunityPriceTests: XCTestCase {
 
     // MARK: - Schreiben (Opt-in, Upsert)
 
+    func testSharingIsOnByDefaultWhenKeyIsAbsent() async throws {
+        // PO 2026-10-20: Standard an (Opt-out). Frische Installation = Schlüssel fehlt.
+        XCTAssertNil(defaults.object(forKey: CommunityPriceService.sharingEnabledKey))
+        XCTAssertTrue(CommunityPriceService.sharingEnabledDefault)
+        XCTAssertTrue(CommunityPriceService.isSharingEnabled(in: defaults))
+        let fake = FakeCommunityPriceDatabase()
+        let service = CommunityPriceService(database: fake, defaults: defaults, cache: cache, now: { self.fixedNow })
+        let ok = await service.contribute(.init(itemName: "Mozzarella", storeName: "Rewe City", perUnitPrice: 1.09, unit: "stk"))
+        XCTAssertTrue(ok)
+        XCTAssertEqual(fake.saved.count, 1, "ohne gespeicherte Entscheidung gilt der Standard: teilen")
+        // Ein nicht-boolescher Fremdwert am Schlüssel fällt auf den Standard zurück.
+        defaults.set("nein", forKey: CommunityPriceService.sharingEnabledKey)
+        XCTAssertTrue(CommunityPriceService.isSharingEnabled(in: defaults))
+    }
+
     func testContributeDoesNothingWhileSharingIsOff() async {
         let fake = FakeCommunityPriceDatabase()
         let service = makeService(fake, sharing: false)
