@@ -76,7 +76,7 @@ Stufe jetzt auf.
 | 1 | #160 | Pauschale nicht als Artikelpreis zeigen („Preis?“), Summen mit „x von y geschätzt“, Wortgrenzen-Treffer, `priceSource` trennt Produktliste/Pauschale | — |
 | 2 | #161 | Eigene Preise aus anderen Läden („zuletzt bei Lidl“) | #160 |
 | 3 | #162 | Katalog als JSON-Ressource, 500–800 Einträge, Packung + Spanne + Datum + Quelle (Open Prices DE + Handpflege) | #160 |
-| 4 | #163 | Preise teilen: eigener Community-Pool (CloudKit public) und Beitrag an Open Prices, Opt-in | #160; Schema vor TestFlight |
+| 4 | #163 | Preise teilen: eigener Community-Pool (CloudKit public) und Beitrag an Open Prices, Opt-in (seit 2026-10-20: Standard an, Opt-out) | #160; Schema vor TestFlight |
 | 5 | #164 | KI-Schätzung (Gerätemodell zuerst) nur für den Rest, mit Nachweis gegen Prüfsatz | #160, sinnvoll nach #162 |
 
 Zielreihenfolge im `PriceEstimator`: eigener Preis dieser Laden → eigener Preis anderer Laden →
@@ -102,7 +102,7 @@ Stichwörter 20,5 % → 69,2 % (114 → 385 von 556, nachgerechnet durch PriceCa
 
 2026-10-19: #165 gemergt (Squash `1ebde91`), #160/#161 geschlossen. Schritt 4 (#163) Weg A umgesetzt:
 Spec `docs/specs/services/community-prices.md`, Tests `RestockTests/CommunityPriceTests.swift`;
-Entscheidungen des Tech Leads in #163 und #164 festgehalten (Opt-in aus, keine Region, Median ab 3,
+Entscheidungen des Tech Leads in #163 und #164 festgehalten (Opt-in aus → seit 2026-10-20 Standard an auf Wort des PO, keine Region, Median ab 3,
 Gerätemodell zuerst für #164).
 
 ## Betroffener Code (erste Sichtung, nicht abschließend)

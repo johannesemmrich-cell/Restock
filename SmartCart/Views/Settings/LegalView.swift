@@ -76,8 +76,8 @@ Beim Scannen eines Produktbarcodes wird ausschließlich die EAN-Nummer an den Op
 **Geteilte Listen (Premium)**
 Wenn du eine Einkaufsliste mit anderen teilst, werden die Listendaten (Artikelnamen, Status, Zuweisung, Preise) sowie die von dir vergebenen Anzeigenamen der Mitglieder in Apples CloudKit Public Database gespeichert. Der Zugriff erfolgt über einen Einladungscode, der ausschließlich über den Teilen-Dialog der App weitergegeben werden sollte. Es werden keine Kontodaten (z. B. Apple-ID, E-Mail) gespeichert.
 
-**Community-Preise (optional)**
-Nur wenn du in den Einstellungen „Preise anonym mit anderen teilen" einschaltest, werden beim Bon-Scan und bei „Preis eintragen" Artikelname, Ladenkette (z. B. „Rewe"), Preis je Einheit und Datum in Apples CloudKit Public Database gespeichert — ohne deinen Namen, ohne Bonfoto, ohne Filiale oder Standort. Eine zufällige Kennung je Installation sorgt dafür, dass du je Artikel und Kette nur einen aktuellen Eintrag hältst; sie ist nicht mit deiner Apple-ID verknüpft. Preise anderer Nutzer werden nur gelesen und als „Community" angezeigt; das Lesen überträgt keine Daten über dich.
+**Community-Preise (jederzeit abschaltbar)**
+Solange in den Einstellungen „Preise anonym mit anderen teilen" eingeschaltet ist (voreingestellt an), werden beim Bon-Scan und bei „Preis eintragen" Artikelname, Ladenkette (z. B. „Rewe"), Preis je Einheit und Datum in Apples CloudKit Public Database gespeichert — ohne deinen Namen, ohne Bonfoto, ohne Filiale oder Standort. Eine zufällige Kennung je Installation sorgt dafür, dass du je Artikel und Kette nur einen aktuellen Eintrag hältst; sie ist nicht mit deiner Apple-ID verknüpft. Preise anderer Nutzer werden nur gelesen und als „Community" angezeigt; das Lesen überträgt keine Daten über dich.
 
 **In-App-Käufe**
 Käufe werden ausschließlich über Apples StoreKit-Dienst abgewickelt. Restock erhält dabei keine Zahlungsinformationen oder Kontodaten.
