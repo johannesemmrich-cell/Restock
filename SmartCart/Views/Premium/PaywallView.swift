@@ -15,38 +15,51 @@ struct PaywallView: View {
     @State private var selectedPlanID: String = PremiumService.yearlyID
 
     @State private var isRestoring = false
-    @State private var errorMessage: String?
+    /// Ein einziger Hinweis unter „Käufe wiederherstellen“ (Entwurf A, #145 D4); wird beim nächsten
+    /// Tipp auf Kaufen oder Wiederherstellen zuerst geleert.
+    @State private var notice: PaywallNotice?
+    /// Wechselt bei jedem gesetzten Hinweis, auch bei gleichem Text (F004): daran hängt das Hinrollen.
+    @State private var noticeEvent = 0
+    private static let noticeScrollID = "paywallNotice"
+
+    private enum PaywallNotice: Equatable {
+        case info(String)
+        case error(String)
+    }
 
     var body: some View {
         NavigationStack {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    headerSection
-                        .padding(.top, 24)
-                        .padding(.bottom, 28)
+            ScrollViewReader { proxy in
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        headerSection
+                            .padding(.top, 24)
+                            .padding(.bottom, 28)
 
-                    fullPremiumOptions
+                        fullPremiumOptions
 
-                    ctaSection
-                        .padding(.top, 28)
+                        ctaSection
+                            .padding(.top, 28)
 
-                    restoreButton
-                        .padding(.top, 16)
+                        restoreButton
+                            .padding(.top, 16)
 
-                    if let error = errorMessage {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 32)
-                            .padding(.top, 8)
+                        if let notice {
+                            noticeView(notice)
+                                .padding(.top, 8)
+                                .id(Self.noticeScrollID)
+                        }
+
+                        legalText
+                            .padding(.top, 20)
+                            .padding(.bottom, 32)
                     }
-
-                    legalText
-                        .padding(.top, 20)
-                        .padding(.bottom, 32)
+                    .padding(.horizontal, 24)
                 }
-                .padding(.horizontal, 24)
+                // Der Hinweis liegt auf kleineren iPhones unter dem Rand (F001, #145 D4): hinrollen, Platz bleibt.
+                .onChange(of: noticeEvent) {
+                    withAnimation(.smooth) { proxy.scrollTo(Self.noticeScrollID, anchor: .bottom) }
+                }
             }
             .background(Color.canvas)
             .navigationBarTitleDisplayMode(.inline)
@@ -54,7 +67,7 @@ struct PaywallView: View {
                 ChipToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Schließen").toolbarChip(prominent: false) }
                         .buttonStyle(.pressable)
-}
+                }
             }
         }
     }
@@ -87,7 +100,7 @@ struct PaywallView: View {
     // MARK: - Price helpers
 
     private func productPrice(for id: String) -> String {
-        premium.product(for: id)?.displayPrice ?? fallbackPrice(for: id)
+        premium.offer(for: id)?.displayPrice ?? fallbackPrice(for: id)
     }
 
     private func fallbackPrice(for id: String) -> String {
@@ -102,7 +115,7 @@ struct PaywallView: View {
     /// Rohwert (ohne Formatierung) hinter den obigen Anzeige-Preisen, für Rabatt-/Vergleichsrechnungen.
     /// Fällt auf denselben Wert zurück wie `fallbackPrice`, wenn StoreKit noch nicht geladen hat.
     private func rawPrice(for id: String) -> Double {
-        if let value = premium.product(for: id)?.price {
+        if let value = premium.offer(for: id)?.price {
             return NSDecimalNumber(decimal: value).doubleValue
         }
         switch id {
@@ -317,14 +330,7 @@ struct PaywallView: View {
 
     private var restoreButton: some View {
         Button {
-            Task {
-                isRestoring = true
-                await premium.restorePurchases()
-                isRestoring = false
-                if premium.hasPremiumAccess {
-                    dismiss()
-                }
-            }
+            Task { await restore() }
         } label: {
             Text(isRestoring ? "Wird wiederhergestellt…" : "Käufe wiederherstellen")
                 .font(.system(size: 14))
@@ -341,27 +347,73 @@ struct PaywallView: View {
             .multilineTextAlignment(.center)
     }
 
+    // MARK: - Hinweis
+
+    @ViewBuilder
+    private func noticeView(_ notice: PaywallNotice) -> some View {
+        switch notice {
+        case .info(let text):
+            Text(text)
+                .font(.footnote)
+                .foregroundStyle(Color.ink)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(12)
+                .frame(maxWidth: .infinity)
+                .background(Color.accentContainer, in: RoundedRectangle(cornerRadius: RCRadius.control))
+        case .error(let text):
+            Text(text)
+                .font(.caption)
+                .foregroundStyle(.red)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+        }
+    }
+
+    private func show(_ newNotice: PaywallNotice) {
+        notice = newNotice
+        noticeEvent += 1
+    }
+
     // MARK: - Purchase
 
     private func purchase() async {
-        errorMessage = nil
-        guard let product = premium.product(for: selectedPlanID) else {
-            #if DEBUG
-            // Fallback for local testing without App Store Connect products configured.
-            dismiss()
-            #else
-            // In a real build, a missing product means StoreKit failed to load it (e.g. no
-            // network, or the product isn't live in App Store Connect yet) — tell the user
-            // instead of silently closing the paywall as if nothing happened.
-            errorMessage = "Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."
-            #endif
+        notice = nil
+        guard premium.offer(for: selectedPlanID) != nil else {
+            // Fehlendes Produkt heißt: StoreKit hat es nicht geladen (kein Netz, Produkt in App Store
+            // Connect noch nicht live) — in DEBUG wie Release sagen statt still zu schließen.
+            show(.error("Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."))
             return
         }
         do {
-            let success = try await premium.purchase(product)
-            if success { dismiss() }
+            switch try await premium.purchase(offerID: selectedPlanID) {
+            case .purchased:
+                dismiss()
+            case .cancelled:
+                break
+            case .pending:
+                show(.info("Der Kauf wartet auf Zustimmung. Sobald er bestätigt ist, wird Restock Pro automatisch freigeschaltet."))
+            }
         } catch {
-            errorMessage = "Kauf fehlgeschlagen: \(error.localizedDescription)"
+            show(.error("Kauf fehlgeschlagen: \(error.localizedDescription)"))
+        }
+    }
+
+    private func restore() async {
+        notice = nil
+        isRestoring = true
+        let outcome = await premium.restorePurchases()
+        isRestoring = false
+        switch outcome {
+        case .found:
+            dismiss()
+        case .none:
+            show(.info("Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut."))
+        case .failed:
+            show(.error("Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut."))
+        case .cancelled:
+            // Neutral statt Fehler: Apple meldet fehlendes Netz bei `AppStore.sync()` teils als Abbruch (PO 2026-10-20).
+            show(.info("Wiederherstellen wurde nicht abgeschlossen. Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung und versuche es erneut."))
         }
     }
 }

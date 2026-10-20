@@ -1,0 +1,14 @@
+# AC-17 Release-Nachweis #145 D4 — Mo. 19 Okt. 2026 15:46:46 CEST
+Commit-Basis: 42aa1968a16c9e36941712ccaeb919032662bce5 (plus uncommittete Änderungen Phase 6)
+Release-Build (-configuration Release, generic/platform=iOS Simulator): exit 0, ** BUILD SUCCEEDED **
+
+## Release: build/dd-impl/Build/Products/Release-iphonesimulator/Restock.app
+Mach-O-Dateien im Bündel (ohne Frameworks/PlugIns):
+Restock
+- build/dd-impl/Build/Products/Release-iphonesimulator/Restock.app/Restock: FakePurchaseStore=0, purchaseScenarioForUITests=0
+
+## Gegenprobe Debug: build/dd-impl/Build/Products/Debug-iphonesimulator/Restock.app (Build aus dem GREEN-Lauf)
+Restock
+Restock.debug.dylib
+- build/dd-impl/Build/Products/Debug-iphonesimulator/Restock.app/Restock: FakePurchaseStore=0, purchaseScenarioForUITests=0
+- build/dd-impl/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib: FakePurchaseStore=2, purchaseScenarioForUITests=1

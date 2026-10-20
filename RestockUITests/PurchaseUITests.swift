@@ -18,7 +18,8 @@ final class PurchaseUITests: XCTestCase {
         static let restoreFailed = "Wiederherstellen hat nicht geklappt"
         static let productMissing = "Der Kauf konnte nicht geladen werden"
         static let purchaseFailed = "Kauf fehlgeschlagen"
-        static let all = [pending, restoreNone, restoreFailed, productMissing, purchaseFailed]
+        static let restoreCancelled = "Wiederherstellen wurde nicht abgeschlossen"
+        static let all = [pending, restoreNone, restoreFailed, productMissing, purchaseFailed, restoreCancelled]
     }
 
     override func setUpWithError() throws {
@@ -86,10 +87,29 @@ final class PurchaseUITests: XCTestCase {
         tapWhenHittable(button, "„Käufe wiederherstellen“", file: file, line: line)
     }
 
-    private func assertNotice(_ text: String, in app: XCUIApplication,
+    /// Prüft Erscheinen und Sichtbarkeit (F001, Adversary Runde 1): Der Rahmen des Hinweises liegt
+    /// vollständig im App-Fenster und er ist antippbar — `isHittable` allein ist schon bei 11 % sichtbar wahr.
+    /// `screenshot` hängt bei Bedarf eine Bildschirmaufnahme mit diesem Namen an das Ergebnis.
+    private func assertNotice(_ text: String, in app: XCUIApplication, screenshot: String? = nil,
                               file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertTrue(notice(text, in: app).waitForExistence(timeout: UITestWait.defaultTimeout),
+        let hint = notice(text, in: app)
+        XCTAssertTrue(hint.waitForExistence(timeout: UITestWait.defaultTimeout),
                       "Hinweis „\(text) …“ erscheint nicht", file: file, line: line)
+        let window = app.windows.firstMatch.frame
+        let result = UITestWait.poll(
+            timeout: UITestWait.defaultTimeout,
+            read: { UITestWait.readState(exists: { hint.exists }, frame: { hint.frame },
+                                         isHittable: { hint.isHittable }) },
+            done: { $0.isHittable && window.contains($0.frame) })
+        XCTAssertTrue(result.matched,
+                      "Hinweis „\(text) …“ nicht vollständig sichtbar: Fenster \(window), zuletzt \(result.last)",
+                      file: file, line: line)
+        if let screenshot {
+            let shot = XCTAttachment(screenshot: app.screenshot())
+            shot.name = screenshot
+            shot.lifetime = .keepAlways
+            add(shot)
+        }
     }
 
     private func assertPaywallOpen(_ app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
@@ -140,7 +160,7 @@ final class PurchaseUITests: XCTestCase {
         let app = launch(scenario: "pending")
         openPaywall(app)
         tapBuy(app)
-        assertNotice(Notice.pending, in: app)
+        assertNotice(Notice.pending, in: app, screenshot: "fix1-hinweis-pending")
         assertPaywallOpen(app)
         closePaywall(app)
         // Noch nicht zugestimmt: Der Rezeptplan bleibt gesperrt.
@@ -170,7 +190,7 @@ final class PurchaseUITests: XCTestCase {
         let app = launch(scenario: "restoreNone")
         openPaywall(app)
         tapRestore(app)
-        assertNotice(Notice.restoreNone, in: app)
+        assertNotice(Notice.restoreNone, in: app, screenshot: "fix1-hinweis-restoreNone")
         assertPaywallOpen(app)
     }
 
@@ -187,6 +207,18 @@ final class PurchaseUITests: XCTestCase {
         openPaywall(app)
         tapRestore(app)
         assertNotice(Notice.restoreFailed, in: app)
+        assertPaywallOpen(app)
+    }
+
+    /// F002 (Adversary Runde 1, PO 2026-10-20): Abbruch der Anmeldung — Apple meldet so teils auch fehlendes
+    /// Netz — zeigt einen neutralen Hinweis statt der Fehlermeldung; die Paywall bleibt offen.
+    func testRestoreCancelledShowsNeutralNotice() {
+        let app = launch(scenario: "restoreCancel")
+        openPaywall(app)
+        tapRestore(app)
+        assertNotice("\(Notice.restoreCancelled). Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung",
+                     in: app)
+        XCTAssertFalse(notice(Notice.restoreFailed, in: app).exists, "Abbruch zeigt die Fehlermeldung")
         assertPaywallOpen(app)
     }
 
@@ -207,6 +239,30 @@ final class PurchaseUITests: XCTestCase {
         tapBuy(app)
         assertNotice(Notice.pending, in: app)
         XCTAssertFalse(notice(Notice.restoreNone, in: app).exists, "Wiederherstell-Hinweis bleibt nach Kaufversuch stehen")
+    }
+
+    /// F004 (Adversary Runde 3/4): Derselbe Hinweis zweimal hintereinander (synchron gesetzt) muss erneut
+    /// hinrollen. Zurückgerollt wird mit einem einzigen kurzen, langsamen Zug — mehrfaches Wischen nach unten
+    /// schließt das Sheet.
+    func testRepeatedSameNoticeScrollsIntoViewAgain() {
+        let app = launch(scenario: "productMissing")
+        openPaywall(app)
+        tapBuy(app)
+        assertNotice(Notice.productMissing, in: app)
+
+        let hint = notice(Notice.productMissing, in: app)
+        let window = app.windows.firstMatch.frame
+        let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        let end = start.withOffset(CGVector(dx: 0, dy: 90))
+        start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.3)
+        let scrolledAway = UITestWait.poll(timeout: UITestWait.defaultTimeout, read: { hint.frame },
+                                           done: { !window.contains($0) })
+        XCTAssertTrue(scrolledAway.matched, "Vorbedingung: Hinweis nach dem Zurückrollen noch ganz sichtbar (\(scrolledAway.last))")
+        assertPaywallOpen(app)
+
+        tapWhenHittable(buyButton(app), "Kaufknopf „Jetzt freischalten…“ nach dem Zurückrollen")
+        assertNotice(Notice.productMissing, in: app)
+        assertPaywallOpen(app)
     }
 
     func testNoticeIsDirectlyBelowRestoreButton() {

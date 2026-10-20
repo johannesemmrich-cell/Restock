@@ -1,0 +1,43 @@
+2026-10-19 16:29:06 +0000 -[AdversaryDurchlaufUITests testA1ChartBarPurchaseUnlocksAnalysis]: chart.bar: Paywall nach Kauf geschlossen=true
+2026-10-19 16:29:08 +0000 -[AdversaryDurchlaufUITests testA1ChartBarPurchaseUnlocksAnalysis]: chart.bar: Ausgaben-Analyse offen=true, Paywall=false
+2026-10-19 16:29:08 +0000 -[AdversaryDurchlaufUITests testA1ChartBarPurchaseUnlocksAnalysis]: Screenshot durchlauf-ac1-chartbar-nach-kauf.png
+2026-10-19 16:29:16 +0000 -[AdversaryDurchlaufUITests testA2SettingsRowPurchaseShowsProActive]: Screenshot durchlauf-ac1-einstellungen-vor-kauf.png
+2026-10-19 16:29:21 +0000 -[AdversaryDurchlaufUITests testA2SettingsRowPurchaseShowsProActive]: Einstellungen: Paywall zu=true, Pro aktiv=true, Zeile weg=true
+2026-10-19 16:29:21 +0000 -[AdversaryDurchlaufUITests testA2SettingsRowPurchaseShowsProActive]: Screenshot durchlauf-ac1-einstellungen-nach-kauf.png
+2026-10-19 16:29:31 +0000 -[AdversaryDurchlaufUITests testB1Success]: Szenario success (buy): Paywall offen=false, Hinweise=[]
+2026-10-19 16:29:31 +0000 -[AdversaryDurchlaufUITests testB1Success]: Screenshot durchlauf-success.png
+2026-10-19 16:29:33 +0000 -[AdversaryDurchlaufUITests testB1Success]: Szenario success: danach Rezeptplan offen=true, Paywall=false
+2026-10-19 16:29:33 +0000 -[AdversaryDurchlaufUITests testB1Success]: Screenshot durchlauf-success-danach.png
+2026-10-19 16:29:42 +0000 -[AdversaryDurchlaufUITests testB2Cancel]: Szenario cancel (buy): Paywall offen=true, Hinweise=[]
+2026-10-19 16:29:42 +0000 -[AdversaryDurchlaufUITests testB2Cancel]: Screenshot durchlauf-cancel.png
+2026-10-19 16:29:52 +0000 -[AdversaryDurchlaufUITests testB3Pending]: Szenario pending (buy): Paywall offen=true, Hinweise=["Der Kauf wartet auf Zustimmung. Sobald er bestätigt ist, wird Restock Pro automatisch freigeschaltet."]
+2026-10-19 16:29:52 +0000 -[AdversaryDurchlaufUITests testB3Pending]: Screenshot durchlauf-pending.png
+2026-10-19 16:30:03 +0000 -[AdversaryDurchlaufUITests testB4Fail]: Szenario fail (buy): Paywall offen=true, Hinweise=["Kauf fehlgeschlagen: Testfehler Kauf"]
+2026-10-19 16:30:03 +0000 -[AdversaryDurchlaufUITests testB4Fail]: Screenshot durchlauf-fail.png
+2026-10-19 16:30:15 +0000 -[AdversaryDurchlaufUITests testB5ProductMissing]: Szenario productMissing (buy): Paywall offen=true, Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-19 16:30:15 +0000 -[AdversaryDurchlaufUITests testB5ProductMissing]: Screenshot durchlauf-productMissing.png
+2026-10-19 16:30:24 +0000 -[AdversaryDurchlaufUITests testB6RestoreNone]: Szenario restoreNone (restore): Paywall offen=true, Hinweise=["Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut."]
+2026-10-19 16:30:24 +0000 -[AdversaryDurchlaufUITests testB6RestoreNone]: Screenshot durchlauf-restoreNone.png
+2026-10-19 16:30:34 +0000 -[AdversaryDurchlaufUITests testB7RestoreFound]: Szenario restoreFound (restore): Paywall offen=false, Hinweise=[]
+2026-10-19 16:30:34 +0000 -[AdversaryDurchlaufUITests testB7RestoreFound]: Screenshot durchlauf-restoreFound.png
+2026-10-19 16:30:36 +0000 -[AdversaryDurchlaufUITests testB7RestoreFound]: Szenario restoreFound: danach Rezeptplan offen=true, Paywall=false
+2026-10-19 16:30:36 +0000 -[AdversaryDurchlaufUITests testB7RestoreFound]: Screenshot durchlauf-restoreFound-danach.png
+2026-10-19 16:30:46 +0000 -[AdversaryDurchlaufUITests testB8RestoreFail]: Szenario restoreFail (restore): Paywall offen=true, Hinweise=["Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut."]
+2026-10-19 16:30:46 +0000 -[AdversaryDurchlaufUITests testB8RestoreFail]: Screenshot durchlauf-restoreFail.png
+2026-10-19 16:30:56 +0000 -[AdversaryDurchlaufUITests testC1UnknownScenarioBehavesLikeStoreKit]: Szenario gibtsnicht (buy): Paywall offen=true, Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-19 16:30:56 +0000 -[AdversaryDurchlaufUITests testC1UnknownScenarioBehavesLikeStoreKit]: Screenshot durchlauf-gibtsnicht.png
+2026-10-19 16:31:05 +0000 -[AdversaryDurchlaufUITests testC2DoubleTapBuyDuringPending]: Doppeltipp pending: Paywall offen=true, Hinweise=["Der Kauf wartet auf Zustimmung. Sobald er bestätigt ist, wird Restock Pro automatisch freigeschaltet."]
+2026-10-19 16:31:05 +0000 -[AdversaryDurchlaufUITests testC2DoubleTapBuyDuringPending]: Screenshot durchlauf-kante-doppeltipp-pending.png
+2026-10-19 16:31:15 +0000 -[AdversaryDurchlaufUITests testC3DoubleTapBuySuccess]: Doppeltipp success: Paywall offen=false, Hinweise=[], App-Zustand=4
+2026-10-19 16:31:15 +0000 -[AdversaryDurchlaufUITests testC3DoubleTapBuySuccess]: Screenshot durchlauf-kante-doppeltipp-success.png
+2026-10-19 16:31:17 +0000 -[AdversaryDurchlaufUITests testC3DoubleTapBuySuccess]: Doppeltipp success: danach Rezeptplan offen=true
+2026-10-19 16:31:28 +0000 -[AdversaryDurchlaufUITests testD1NoScenarioRealStoreKit]: ohne Szenario: Kaufknopf-Label=Jetzt freischalten — 8,99 €/Jahr
+2026-10-19 16:31:32 +0000 -[AdversaryDurchlaufUITests testD1NoScenarioRealStoreKit]: ohne Szenario Kauf: Paywall offen=true, Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-19 16:31:32 +0000 -[AdversaryDurchlaufUITests testD1NoScenarioRealStoreKit]: Screenshot durchlauf-ohne-szenario-kauf.png
+2026-10-19 16:31:35 +0000 -[AdversaryDurchlaufUITests testD1NoScenarioRealStoreKit]: ohne Szenario Wiederherstellen nach 2 s: Paywall offen=true, Knopf beschaeftigt=true, Hinweise=[], Systemdialog=Bei Apple Account anmelden / Knoepfe: ["Abbrechen", "OK"], App-Zustand=4
+2026-10-19 16:31:35 +0000 -[AdversaryDurchlaufUITests testD1NoScenarioRealStoreKit]: Screenshot durchlauf-ohne-szenario-wiederherstellen-2s.png
+2026-10-19 16:31:35 +0000 -[AdversaryDurchlaufUITests testD1NoScenarioRealStoreKit]: Systemdialog: tippe Abbrechen
+2026-10-19 16:31:42 +0000 -[AdversaryDurchlaufUITests testD1NoScenarioRealStoreKit]: ohne Szenario Wiederherstellen nach 8 s: Paywall offen=true, Knopf beschaeftigt=false, Hinweise=["Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut."], Systemdialog=keiner, App-Zustand=4
+2026-10-19 16:31:42 +0000 -[AdversaryDurchlaufUITests testD1NoScenarioRealStoreKit]: Screenshot durchlauf-ohne-szenario-wiederherstellen-8s.png
+2026-10-19 16:31:42 +0000 -[AdversaryDurchlaufUITests testD1NoScenarioRealStoreKit]: ohne Szenario Ende: Paywall offen=true, Hinweise=["Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut."], App-Zustand=4
+2026-10-19 16:31:42 +0000 -[AdversaryDurchlaufUITests testD1NoScenarioRealStoreKit]: Screenshot durchlauf-ohne-szenario-ende.png

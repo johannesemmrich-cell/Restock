@@ -1,0 +1,13 @@
+# Sondenlauf „fixedPaywall“ 2026-10-19 (Wegwerf-Kopie): Mess-Layout um jeden toolbarChip, hell+dunkel.
+# plain/ideal 99 = „Schließen“: Rezeptplan ohne Fix (Platzierung w=40 → 40), Paywall in diesem Lauf mit
+# .fixedSize() außen (Platzierung w=99). prominent = „Alle hinzufügen“ rechts im Rezeptplan.
+   6 APP-PROBE plain proposal w=nil h=nil -> size=(99.0, 38.0) ideal=(99.0, 38.0)
+   4 APP-PROBE plain proposal w=Optional(0.0) h=Optional(0.0) -> size=(40.0, 38.0) ideal=(99.0, 38.0)
+   4 APP-PROBE plain proposal w=Optional(10000.0) h=Optional(10000.0) -> size=(99.0, 38.0) ideal=(99.0, 38.0)
+   2 APP-PROBE plain proposal w=Optional(40.0) h=Optional(38.0) -> size=(40.0, 38.0) ideal=(99.0, 38.0)
+   2 APP-PROBE plain proposal w=Optional(99.0) h=Optional(38.0) -> size=(99.0, 38.0) ideal=(99.0, 38.0)
+   4 APP-PROBE prominent proposal w=nil h=nil -> size=(139.33333333333331, 38.0) ideal=(139.33333333333331, 38.0)
+   4 APP-PROBE prominent proposal w=Optional(0.0) h=Optional(0.0) -> size=(40.0, 38.0) ideal=(139.33333333333331, 38.0)
+   4 APP-PROBE prominent proposal w=Optional(10000.0) h=Optional(10000.0) -> size=(139.33333333333331, 38.0) ideal=(139.33333333333331, 38.0)
+   2 APP-PROBE prominent proposal w=Optional(139.33333333333331) h=Optional(38.0) -> size=(139.33333333333331, 38.0) ideal=(139.33333333333331, 38.0)
+   2 APP-PROBE prominent proposal w=Optional(139.33333333333334) h=Optional(38.0) -> size=(139.33333333333331, 38.0) ideal=(139.33333333333331, 38.0)

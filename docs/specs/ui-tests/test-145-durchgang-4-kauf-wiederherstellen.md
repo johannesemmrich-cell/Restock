@@ -195,7 +195,9 @@ Entscheidungsregeln im Dienst (reine, testbare Logik):
 - `purchase(offerID:)`: `isPurchasing` während des Aufrufs; `.purchased` → `refreshPurchases()` und
   Rückgabe `.purchased`; `.cancelled`/`.pending` unverändert zurück; ein geworfener Fehler wird
   weitergeworfen (Paywall zeigt „Kauf fehlgeschlagen: …“).
-- `restorePurchases()`: `sync()` wirft → `.failed` (kein `refreshPurchases`-Abbruch nötig, es wird dennoch
+- `restorePurchases()`: `sync()` wirft `PurchaseStoreError.cancelled` → `.cancelled` (`StoreKitPurchaseStore.sync`
+  bildet `StoreKitError.userCancelled` darauf ab; Apple meldet so die abgebrochene Anmeldung, laut Foren
+  692177/727101 teils auch fehlendes Netz); jeder andere Fehler → `.failed` (kein `refreshPurchases`-Abbruch nötig, es wird dennoch
   gelesen); sonst `refreshPurchases()` und `.found`, wenn `hasPremiumAccess` aus **Käufen** folgt
   (`purchasedProductIDs` enthält eine der drei IDs, **nicht** `developerMode`), sonst `.none`. Grund: Mit
   aktivem Dev-Modus wäre „gefunden“ sonst immer wahr.
@@ -218,6 +220,7 @@ Entscheidungsregeln im Dienst (reine, testbare Logik):
 | `restoreNone` | wie `success` | `.cancelled` | gelingt | leer |
 | `restoreFound` | wie `success` | `.cancelled` | gelingt | `lifetime` |
 | `restoreFail` | wie `success` | `.cancelled` | wirft | leer |
+| `restoreCancel` | wie `success` | `.cancelled` | wirft `PurchaseStoreError.cancelled` (Abbruch) | leer |
 
 Der Fake ist ein `actor` bzw. nutzt eine Sperre (Protokoll ist `Sendable`), hält die abgelegten IDs im
 Prozess und schreibt nirgends hin. Folge: Ein erneuter App-Start im selben Szenario beginnt immer leer;
@@ -226,7 +229,8 @@ Persistenzweg liegt bei StoreKit, siehe Grenze 1). Es entsteht kein Zustand im A
 daher kein Aufräum-Argument; `tearDown()` startet nichts (keine Persistenz zu bereinigen).
 
 **Paywall-Verhalten (Entwurf A, PO-freigegeben).** Hinweiszeile unmittelbar unter „Käufe wiederherstellen“
-(heutiger Platz des Fehlertexts). Die Paywall bleibt in allen Hinweis-Fällen offen. Der Hinweis verschwindet,
+(heutiger Platz des Fehlertexts). Erscheint ein Hinweis, rollt die Paywall animiert (`.smooth`) so weit, dass er
+vollständig sichtbar ist (`ScrollViewReader`/`scrollTo`, Platz unverändert; F001). Die Paywall bleibt in allen Hinweis-Fällen offen. Der Hinweis verschwindet,
 sobald der Nutzer „Jetzt freischalten“ oder „Käufe wiederherstellen“ antippt. Wörtliche Texte:
 
 | Fall | Art | Text |
@@ -234,6 +238,7 @@ sobald der Nutzer „Jetzt freischalten“ oder „Käufe wiederherstellen“ an
 | Kauf ausstehend | Info (Akzentfläche) | „Der Kauf wartet auf Zustimmung. Sobald er bestätigt ist, wird Restock Pro automatisch freigeschaltet.“ |
 | Wiederherstellen ohne Fund | Info (Akzentfläche) | „Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut.“ |
 | Wiederherstellen fehlgeschlagen | Fehler (Warnfarbe) | „Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut.“ |
+| Wiederherstellen abgebrochen (`.cancelled`) | Info (Akzentfläche) | „Wiederherstellen wurde nicht abgeschlossen. Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung und versuche es erneut.“ |
 | Produkt nicht geladen | Fehler (Warnfarbe) | „Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut.“ (bestehender Text, jetzt auch in DEBUG) |
 
 Unverändert: Kauf erfolgreich → Paywall schließt; Abbruch → keine Meldung, Paywall offen; Wiederherstellen
@@ -241,7 +246,7 @@ mit Fund → Paywall schließt; Kauffehler → „Kauf fehlgeschlagen: …“ (W
 Reihenfolge der Paywall.
 
 **Lokalisierung.** `PaywallView` benutzt heute deutsche Literale in `Text(...)` und `String`-Zuweisungen
-(`errorMessage = "…"`), kein `String(localized:)`. Dem folgt die Umsetzung: die vier neuen Texte stehen als
+(`errorMessage = "…"`), kein `String(localized:)`. Dem folgt die Umsetzung: die fünf neuen Texte stehen als
 `Text`-Literale bzw. als `PaywallNotice`-Zeichenkette in derselben Form; kein neuer Schlüssel in
 `Resources/`. Die Tests lesen die Texte über Teilstrings (Label enthält), damit Zeilenumbrüche nicht stören.
 
@@ -304,11 +309,13 @@ Unit, `RestockTests/PremiumServiceTests.swift`:
 - [ ] U10 `testRestoreWithoutPurchaseReturnsNone`, plus Variante mit aktivem Dev-Modus: weiter `.none` (zählt nur Käufe).
 - [ ] U11 `testRestoreSyncThrowingReturnsFailed`.
 - [ ] U12 `testUpdateStreamUnlocksAfterPending` — Kauf `.pending` (kein Zugang), danach meldet der Fake über `updates()` eine Berechtigung; Dienst hört zu und schaltet frei; `await` mit Frist 20 s, kein `sleep`.
+- [ ] U13 `testRestoreCancelledReturnsCancelledNotFailed` — `sync` wirft `PurchaseStoreError.cancelled`: `.cancelled`, nicht `.failed`, kein Zugang.
+- [ ] U14 `testUpdateStreamRevocationRemovesAccess` — erst Zugang, dann Widerruf über `updates()`: Zugang weg (F003).
 
 UI, `RestockUITests/PurchaseUITests.swift`:
 
 - [ ] P1 `testPurchaseSuccessClosesPaywallAndUnlocksRecipePlan` — Szenario `success`: „Jetzt freischalten…“ → Sheet zu → `fork.knife` öffnet erneut: `Tag hinzufügen` statt Paywall.
-- [ ] P2 `testPurchaseCancelledKeepsPaywallOpenWithoutMessage` — `cancel`: Paywall offen, keine der vier Meldungen.
+- [ ] P2 `testPurchaseCancelledKeepsPaywallOpenWithoutMessage` — `cancel`: Paywall offen, keine der fünf Meldungen.
 - [ ] P3 `testPurchasePendingShowsApprovalNoticeAndKeepsPaywallOpen` — `pending`: Text sichtbar, Sheet offen, danach `fork.knife` weiter gesperrt (nach Schließen öffnet erneut die Paywall).
 - [ ] P4 `testPurchaseFailureShowsErrorAndKeepsPaywallOpen` — `fail`: „Kauf fehlgeschlagen: Testfehler Kauf“ sichtbar, Sheet offen.
 - [ ] P5 `testMissingProductShowsLoadErrorInsteadOfClosing` — `productMissing`: Fehlertext sichtbar, Sheet offen (heute in DEBUG: schließt still).
@@ -317,6 +324,8 @@ UI, `RestockUITests/PurchaseUITests.swift`:
 - [ ] P8 `testRestoreFailureShowsErrorNotice` — `restoreFail`: Fehler sichtbar, Sheet offen.
 - [ ] P9 `testNoticeDisappearsOnNextTap` — `pending`, Hinweis da; Tipp auf „Käufe wiederherstellen“ lässt den Kauf-Hinweis verschwinden (im Szenario `pending` gelingt `sync`, ohne Fund erscheint danach der Wiederherstell-Hinweis, nie beide gleichzeitig); zweite Variante: Hinweis nach Tipp auf „Jetzt freischalten“ ersetzt.
 - [ ] P10 `testNoticeIsDirectlyBelowRestoreButton` — Hinweis-Rahmen liegt unter dem Rahmen von „Käufe wiederherstellen“ und über dem Rechtstext („Abonnements verlängern sich …“).
+- [ ] P12 `testRestoreCancelledShowsNeutralNotice` — `restoreCancel`: neutraler Hinweis vollständig sichtbar, keine Fehlermeldung, Sheet offen.
+- [ ] P13 `testRepeatedSameNoticeScrollsIntoViewAgain` — `productMissing`: Kaufen, Hinweis vollständig sichtbar; ein kurzer, langsamer Zug zurück nach oben (Sheet bleibt offen, Hinweis nicht mehr ganz sichtbar); erneut kaufen → derselbe Hinweis wieder vollständig sichtbar (F004).
 - [ ] P11 `testCloseChipShowsFullWord` — Chip-Breite gemäß „Prüfweg Schließen-Chip“, hell und dunkel (zwei Starts, `-AppleInterfaceStyle Dark` bzw. `Light`), Screenshot angehängt.
 
 Nachweise:
@@ -390,3 +399,8 @@ Kein Modell beteiligt: deterministische Testlogik, Regeln statt Sprachmodell.
 ## Changelog
 
 - 2026-10-19: Initial spec created (Durchgang 4 von #145; Naht vor StoreKit mit DEBUG-Fake, drei stille Stellen nach Entwurf A, „Schließen“-Chip mit Reproduktion vor dem Fix, Unit- und UI-Tests, offene Grenzen #175/#178)
+- 2026-10-19: Phase 6 umgesetzt (Naht `PurchaseStore` mit `StoreKitPurchaseStore` und DEBUG-`FakePurchaseStore`, `PurchaseOffer.price` als `Decimal?`, Hinweise unter „Käufe wiederherstellen“, DEBUG-`dismiss()` entfernt; Chip-Ursache: iOS 26.5 schlägt linken Toolbar-Elementen Breite 0 vor, `.frame(minWidth: 40)` ergab 40 pt „…“, Fix `.fixedSize(horizontal: true, vertical: false)` in `ToolbarChipModifier`, siehe `chip-ursache.md`; PO-Entscheidungen: Umfang ca. +810 Zeilen freigegeben, Chip-Fix app-weit auf alle linken Chips)
+- 2026-10-20: Adversary Runde 1: F001 Hinrollen, F002 neutraler Hinweis bei Abbruch (PO; Grund: Apple meldet fehlendes Netz bei AppStore.sync teils als userCancelled, Foren 692177/727101 — https://developer.apple.com/forums/thread/692177, https://developer.apple.com/forums/thread/727101; Apples Doku zu `AppStore.sync()` nennt keine Fehlerfälle). Neu: `RestoreOutcome.cancelled`, `PurchaseStoreError.cancelled`, Szenario `restoreCancel`, UI-Test `testRestoreCancelledShowsNeutralNotice`, `assertNotice` prüft vollständige Sichtbarkeit (Fenster enthält Rahmen, antippbar), Unit-Tests `testRestoreCancelledReturnsCancelledNotFailed` und `testUpdateStreamRevocationRemovesAccess` (F003). Umfang: PO ~+350 Zeilen App-Code (`loc_limit_override` 360)
+
+- 2026-10-20: Acceptance Criteria bewusst unverändert (Spec-Freeze nach Freigabe). Die PO-Entscheidungen F001 (Hinweis vollständig sichtbar) und F002 (neutraler Hinweis bei `restoreCancel`) sind in Implementation Details und Test Plan (U13, U14, P12) festgehalten und ergänzen AC-8/AC-10; AC-2 („keiner der vier Texte“) und AC-18(b) („acht Szenarien“) bleiben erfüllt, der Durchlauf nimmt `restoreCancel` zusätzlich auf. Eine versehentliche Bash-Änderung an AC-2/AC-18 und zwei Scope-Zeilen wurde zurückgenommen.
+- 2026-10-20: Adversary Runde 3/4: F004 Hinrollen an Ereignis gebunden (`noticeEvent` wechselt bei jedem gesetzten Hinweis, Hilfsfunktion `show(_:)`; vorher hing `onChange` am Wert, ein synchron gleich gesetzter Hinweis rollte nicht erneut). Test P13.

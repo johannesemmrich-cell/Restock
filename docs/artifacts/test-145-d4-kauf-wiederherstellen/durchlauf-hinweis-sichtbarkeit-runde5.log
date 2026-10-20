@@ -1,0 +1,262 @@
+# Adversary Runde 5 (nach Fix-Runde 2, F004) - Hinweis-Sichtbarkeit, erzeugt 2026-10-20T08:15:15
+# Prüfkopie: SmartCart/ byte-gleich zum Arbeitsstand (diff -rq leer), PurchaseUITests.swift unverändert plus Wegwerf-Klasse AdversaryRunde5UITests
+# SHA-256 PaywallView.swift: fab90cc71b17f8c30bf8b4867b2b8ca9bded673f304ea3f3112159195ed5c3c0
+# Geräte: Restock-Validate 8F696920-4B9A-40A7-96F0-7697BE887CC7 (402x874, iOS 26.5); Wegwerf Restock-Adv5-SE C59D0313-3280-43A3-9CA0-323168EB2187 (iPhone SE 3. Gen., 375x667, iOS 26.5, danach gelöscht)
+# Fälle: M = erster Tipp; W = Wiederholung nach 2x swipeDown (Runde-3-Ablauf); R = Wiederholung nach einem langsamen Zug um 90/200 pt; A/B = Ausgänge
+
+## Testergebnisse Restock-Validate (h874)
+Test Case '-[RestockUITests.AdversaryRunde5UITests testA1NoScenario]' passed (21.575 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testB1Success]' passed (10.738 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testB2RestoreFound]' passed (9.473 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testB3Cancel]' passed (9.944 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM1Pending]' passed (13.407 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM2Fail]' passed (10.038 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM3Missing]' passed (9.234 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM4RestoreNone]' passed (10.511 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM5RestoreFail]' passed (9.079 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM6RestoreCancel]' passed (8.952 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR1MissingDrag90]' passed (14.313 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR2MissingDrag200]' passed (14.900 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR3FailDrag90]' passed (15.281 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR4PendingDrag90]' passed (14.315 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR5RestoreNoneDrag90]' passed (13.508 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR6RestoreFailDrag90]' passed (14.836 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR7NoScenarioBuyDrag90]' passed (15.069 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testW1MissingRepeat]' passed (16.814 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testW2RestoreNoneRepeat]' passed (15.950 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testW3RestoreCancelRepeat]' passed (15.337 seconds).
+	 Executed 20 tests, with 0 failures (0 unexpected) in 263.273 (263.292) seconds
+Test Case '-[RestockUITests.PurchaseUITests testRepeatedSameNoticeScrollsIntoViewAgain]' passed (11.260 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 11.260 (11.261) seconds
+	 Executed 21 tests, with 0 failures (0 unexpected) in 274.533 (274.558) seconds
+	 Executed 21 tests, with 0 failures (0 unexpected) in 274.533 (274.578) seconds
+** TEST SUCCEEDED **
+
+## Testergebnisse SE (h667), Lauf 1
+Test Case '-[RestockUITests.AdversaryRunde5UITests testA1NoScenario]' passed (50.932 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testB1Success]' passed (15.549 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testB2RestoreFound]' passed (14.346 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testB3Cancel]' passed (15.049 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM1Pending]' passed (15.756 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM2Fail]' passed (24.150 seconds).
+/tmp/claude-501/-Users-hem-Developer-Restock/39e2d6a0-c975-47d9-88ea-72833cb4ccf0/scratchpad/adv5/RestockUITests/PurchaseUITests.swift:384: error: -[RestockUITests.AdversaryRunde5UITests testM3Missing] : XCTAssertTrue failed - Paywall öffnet nicht
+/tmp/claude-501/-Users-hem-Developer-Restock/39e2d6a0-c975-47d9-88ea-72833cb4ccf0/scratchpad/adv5/RestockUITests/PurchaseUITests.swift:393: error: -[RestockUITests.AdversaryRunde5UITests testM3Missing] : Failed to get matching snapshot: No matches found for first query match sequence: `Descendants matching type Button` -> `Elements matching predicate 'label BEGINSWITH "Jetzt freischalten"'`, given input App element pid: 53423
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM3Missing]' failed (53.606 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM4RestoreNone]' passed (24.680 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM5RestoreFail]' passed (16.997 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM6RestoreCancel]' passed (15.154 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR1MissingDrag90]' passed (34.770 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR2MissingDrag200]' passed (29.476 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR3FailDrag90]' passed (27.271 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR4PendingDrag90]' passed (15.981 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR5RestoreNoneDrag90]' passed (14.350 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR6RestoreFailDrag90]' passed (16.751 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testR7NoScenarioBuyDrag90]' passed (18.981 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testW1MissingRepeat]' passed (18.086 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testW2RestoreNoneRepeat]' passed (18.365 seconds).
+Test Case '-[RestockUITests.AdversaryRunde5UITests testW3RestoreCancelRepeat]' passed (18.301 seconds).
+	 Executed 20 tests, with 2 failures (0 unexpected) in 458.552 (458.711) seconds
+Test Case '-[RestockUITests.PurchaseUITests testRepeatedSameNoticeScrollsIntoViewAgain]' passed (11.964 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 11.964 (11.965) seconds
+	 Executed 21 tests, with 2 failures (0 unexpected) in 470.516 (470.680) seconds
+	 Executed 21 tests, with 2 failures (0 unexpected) in 470.516 (470.682) seconds
+** TEST FAILED **
+
+## Testergebnisse SE (h667), Lauf 2 (testM3Missing + P13 erneut)
+Test Case '-[RestockUITests.AdversaryRunde5UITests testM3Missing]' passed (14.907 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 14.907 (14.910) seconds
+Test Case '-[RestockUITests.PurchaseUITests testRepeatedSameNoticeScrollsIntoViewAgain]' passed (11.230 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 11.230 (11.231) seconds
+	 Executed 2 tests, with 0 failures (0 unexpected) in 26.138 (26.143) seconds
+	 Executed 2 tests, with 0 failures (0 unexpected) in 26.138 (26.144) seconds
+** TEST SUCCEEDED **
+
+## Messprotokoll
+2026-10-20 05:58:48 +0000 -[AdversaryRunde5UITests testA1NoScenario]: OHNE SZENARIO: Kaufknopf-Label=Jetzt freischalten — 8,99 €/Jahr
+2026-10-20 05:58:52 +0000 -[AdversaryRunde5UITests testA1NoScenario]: OHNE SZENARIO Kauf: Hinweis da=true Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 809.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true Label=Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut.
+2026-10-20 05:58:52 +0000 -[AdversaryRunde5UITests testA1NoScenario]: Screenshot h874-ohne-szenario-kauf.png
+2026-10-20 05:58:54 +0000 -[AdversaryRunde5UITests testA1NoScenario]: Screenshot h874-ohne-szenario-wiederherstellen-2s.png
+2026-10-20 05:58:55 +0000 -[AdversaryRunde5UITests testA1NoScenario]: DIALOG Springboard: Alerts=["Bei Apple Account anmelden"] Texte=["", "", "Bei Apple Account anmelden", "07:58"]
+2026-10-20 05:58:55 +0000 -[AdversaryRunde5UITests testA1NoScenario]: OHNE SZENARIO Wiederherstellen: Abbrechen getippt=Springboard Abbrechen
+2026-10-20 05:58:57 +0000 -[AdversaryRunde5UITests testA1NoScenario]: OHNE SZENARIO Wiederherstellen Ergebnis: Hinweise=["Wiederherstellen wurde nicht abgeschlossen. Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung und versuche es erneut."] Paywall offen=true Knopf=Käufe wiederherstellen
+2026-10-20 05:58:57 +0000 -[AdversaryRunde5UITests testA1NoScenario]: OHNE SZENARIO Sichtbarkeit: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(48.33333333333334, 776.3333333333334, 305.33333333333337, 51.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 05:58:57 +0000 -[AdversaryRunde5UITests testA1NoScenario]: Screenshot h874-ohne-szenario-wiederherstellen-ende.png
+2026-10-20 05:59:06 +0000 -[AdversaryRunde5UITests testB1Success]: SCHLIESSEN success: Paywall zu=true
+2026-10-20 05:59:06 +0000 -[AdversaryRunde5UITests testB1Success]: Screenshot h874-ausgang-success.png
+2026-10-20 05:59:08 +0000 -[AdversaryRunde5UITests testB1Success]: SCHLIESSEN success: Rezeptplan frei=true Paywall=false
+2026-10-20 05:59:08 +0000 -[AdversaryRunde5UITests testB1Success]: Screenshot h874-ausgang-success-danach.png
+2026-10-20 05:59:15 +0000 -[AdversaryRunde5UITests testB2RestoreFound]: SCHLIESSEN restoreFound: Paywall zu=true
+2026-10-20 05:59:15 +0000 -[AdversaryRunde5UITests testB2RestoreFound]: Screenshot h874-ausgang-restoreFound.png
+2026-10-20 05:59:17 +0000 -[AdversaryRunde5UITests testB2RestoreFound]: SCHLIESSEN restoreFound: Rezeptplan frei=true Paywall=false
+2026-10-20 05:59:17 +0000 -[AdversaryRunde5UITests testB2RestoreFound]: Screenshot h874-ausgang-restoreFound-danach.png
+2026-10-20 05:59:27 +0000 -[AdversaryRunde5UITests testB3Cancel]: CANCEL: Paywall offen=true Hinweise=[] Kaufknopf antippbar=true
+2026-10-20 05:59:27 +0000 -[AdversaryRunde5UITests testB3Cancel]: Screenshot h874-ausgang-cancel.png
+2026-10-20 05:59:37 +0000 -[AdversaryRunde5UITests testM1Pending]: VOR TIPP pending: Knopf=(24.0, 775.6666666666666, 354.0, 54.0) Wischer=0
+2026-10-20 05:59:41 +0000 -[AdversaryRunde5UITests testM1Pending]: MESSUNG pending: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(39.166666666666686, 794.3333333333334, 323.66666666666663, 33.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.1 s; Label=Der Kauf wartet auf Zustimmung. Sobald er bestätigt ist, wird Restock Pro automatisch freigeschaltet.; vorhandene Hinweise=["Der Kauf wartet auf Zustimmung. Sobald er bestätigt ist, wird Restock Pro automatisch freigeschaltet."]; Paywall offen=true; Knopf danach=(24.0, 687.3333333333334, 354.0, 54.0)
+2026-10-20 05:59:41 +0000 -[AdversaryRunde5UITests testM1Pending]: Screenshot h874-messung-pending.png
+2026-10-20 05:59:47 +0000 -[AdversaryRunde5UITests testM2Fail]: VOR TIPP fail: Knopf=(24.0, 775.6666666666666, 354.0, 54.0) Wischer=0
+2026-10-20 05:59:51 +0000 -[AdversaryRunde5UITests testM2Fail]: MESSUNG fail: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(97.0, 825.6666666666666, 208.0, 14.333333333333371) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.1 s; Label=Kauf fehlgeschlagen: Testfehler Kauf; vorhandene Hinweise=["Kauf fehlgeschlagen: Testfehler Kauf"]; Paywall offen=true; Knopf danach=(24.0, 730.6666666666666, 354.0, 54.0)
+2026-10-20 05:59:51 +0000 -[AdversaryRunde5UITests testM2Fail]: Screenshot h874-messung-fail.png
+2026-10-20 05:59:56 +0000 -[AdversaryRunde5UITests testM3Missing]: VOR TIPP productMissing: Knopf=(24.0, 775.6666666666666, 354.0, 54.0) Wischer=0
+2026-10-20 06:00:00 +0000 -[AdversaryRunde5UITests testM3Missing]: MESSUNG productMissing: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 809.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.1 s; Label=Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut.; vorhandene Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]; Paywall offen=true; Knopf danach=(24.0, 714.6666666666666, 354.0, 54.0)
+2026-10-20 06:00:00 +0000 -[AdversaryRunde5UITests testM3Missing]: Screenshot h874-messung-productMissing.png
+2026-10-20 06:00:07 +0000 -[AdversaryRunde5UITests testM4RestoreNone]: VOR TIPP restoreNone: Knopf=(127.0, 845.6666666666666, 148.0, 17.0) Wischer=0
+2026-10-20 06:00:11 +0000 -[AdversaryRunde5UITests testM4RestoreNone]: MESSUNG restoreNone: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(40.83333333333334, 776.3333333333334, 320.33333333333337, 51.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.1 s; Label=Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut.; vorhandene Hinweise=["Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut."]; Paywall offen=true; Knopf danach=(127.0, 739.3333333333334, 148.0, 17.0)
+2026-10-20 06:00:11 +0000 -[AdversaryRunde5UITests testM4RestoreNone]: Screenshot h874-messung-restoreNone.png
+2026-10-20 06:00:16 +0000 -[AdversaryRunde5UITests testM5RestoreFail]: VOR TIPP restoreFail: Knopf=(127.0, 845.6666666666666, 148.0, 17.0) Wischer=0
+2026-10-20 06:00:20 +0000 -[AdversaryRunde5UITests testM5RestoreFail]: MESSUNG restoreFail: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(69.5, 809.6666666666666, 263.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.1 s; Label=Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut.; vorhandene Hinweise=["Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut."]; Paywall offen=true; Knopf danach=(127.0, 784.6666666666666, 148.0, 17.0)
+2026-10-20 06:00:20 +0000 -[AdversaryRunde5UITests testM5RestoreFail]: Screenshot h874-messung-restoreFail.png
+2026-10-20 06:00:25 +0000 -[AdversaryRunde5UITests testM6RestoreCancel]: VOR TIPP restoreCancel: Knopf=(127.0, 845.6666666666666, 148.0, 17.0) Wischer=0
+2026-10-20 06:00:29 +0000 -[AdversaryRunde5UITests testM6RestoreCancel]: MESSUNG restoreCancel: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(48.33333333333334, 776.3333333333334, 305.33333333333337, 51.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.1 s; Label=Wiederherstellen wurde nicht abgeschlossen. Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung und versuche es erneut.; vorhandene Hinweise=["Wiederherstellen wurde nicht abgeschlossen. Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung und versuche es erneut."]; Paywall offen=true; Knopf danach=(127.0, 739.3333333333334, 148.0, 17.0)
+2026-10-20 06:00:29 +0000 -[AdversaryRunde5UITests testM6RestoreCancel]: Screenshot h874-messung-restoreCancel.png
+2026-10-20 06:00:38 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: R5 productMissing-drag90 erster Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 809.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:00:40 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: R5 productMissing-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 870.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=0.11 voll=false isHittable=true Knopf=(24.0, 775.6666666666666, 354.0, 54.0) knopfHittable=true
+2026-10-20 06:00:40 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: Screenshot h874-r5-productMissing-drag90-zurueck.png
+2026-10-20 06:00:40 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: R5 productMissing-drag90 vor zweitem Tipp: Wischer=0 Knopf=(24.0, 775.6666666666666, 354.0, 54.0) Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 870.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=0.11 voll=false isHittable=true
+2026-10-20 06:00:43 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: R5 productMissing-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 809.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.1 s; Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-20 06:00:43 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: Screenshot h874-r5-productMissing-drag90.png
+2026-10-20 06:00:52 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: R5 productMissing-drag200 erster Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 809.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:00:55 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: R5 productMissing-drag200 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 870.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=0.11 voll=false isHittable=true Knopf=(24.0, 775.6666666666666, 354.0, 54.0) knopfHittable=true
+2026-10-20 06:00:55 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: Screenshot h874-r5-productMissing-drag200-zurueck.png
+2026-10-20 06:00:55 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: R5 productMissing-drag200 vor zweitem Tipp: Wischer=0 Knopf=(24.0, 775.6666666666666, 354.0, 54.0) Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 870.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=0.11 voll=false isHittable=true
+2026-10-20 06:00:58 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: R5 productMissing-drag200 zweiter Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 809.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.1 s; Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-20 06:00:58 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: Screenshot h874-r5-productMissing-drag200.png
+2026-10-20 06:01:08 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: R5 fail-drag90 erster Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(97.0, 825.6666666666666, 208.0, 14.333333333333371) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:01:10 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: R5 fail-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(97.0, 870.6666666666666, 208.0, 14.333333333333371) sichtbarer Anteil=0.23 voll=false isHittable=true Knopf=(24.0, 775.6666666666666, 354.0, 54.0) knopfHittable=true
+2026-10-20 06:01:10 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: Screenshot h874-r5-fail-drag90-zurueck.png
+2026-10-20 06:01:11 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: R5 fail-drag90 vor zweitem Tipp: Wischer=0 Knopf=(24.0, 775.6666666666666, 354.0, 54.0) Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(97.0, 870.6666666666666, 208.0, 14.333333333333371) sichtbarer Anteil=0.23 voll=false isHittable=true
+2026-10-20 06:01:13 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: R5 fail-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(97.0, 825.6666666666666, 208.0, 14.333333333333371) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.1 s; Hinweise=["Kauf fehlgeschlagen: Testfehler Kauf"]
+2026-10-20 06:01:13 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: Screenshot h874-r5-fail-drag90.png
+2026-10-20 06:01:22 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: R5 pending-drag90 erster Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(39.166666666666686, 794.3333333333334, 323.66666666666663, 33.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:01:25 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: R5 pending-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(39.166666666666686, 874.3333333333334, 323.66666666666663, 33.666666666666515) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(24.0, 767.3333333333334, 354.0, 54.0) knopfHittable=true
+2026-10-20 06:01:25 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: Screenshot h874-r5-pending-drag90-zurueck.png
+2026-10-20 06:01:25 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: R5 pending-drag90 vor zweitem Tipp: Wischer=0 Knopf=(24.0, 767.3333333333334, 354.0, 54.0) Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(39.166666666666686, 874.3333333333334, 323.66666666666663, 33.666666666666515) sichtbarer Anteil=0.00 voll=false isHittable=false
+2026-10-20 06:01:27 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: R5 pending-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(39.166666666666686, 794.3333333333334, 323.66666666666663, 33.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.1 s; Hinweise=["Der Kauf wartet auf Zustimmung. Sobald er bestätigt ist, wird Restock Pro automatisch freigeschaltet."]
+2026-10-20 06:01:28 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: Screenshot h874-r5-pending-drag90.png
+2026-10-20 06:01:36 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: R5 restoreNone-drag90 erster Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(40.83333333333334, 776.3333333333334, 320.33333333333337, 51.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:01:39 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: R5 restoreNone-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(40.83333333333334, 856.3333333333334, 320.33333333333337, 51.666666666666515) sichtbarer Anteil=0.34 voll=false isHittable=true Knopf=(127.0, 819.3333333333334, 148.0, 17.0) knopfHittable=true
+2026-10-20 06:01:39 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: Screenshot h874-r5-restoreNone-drag90-zurueck.png
+2026-10-20 06:01:39 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: R5 restoreNone-drag90 vor zweitem Tipp: Wischer=0 Knopf=(127.0, 819.3333333333334, 148.0, 17.0) Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(40.83333333333334, 856.3333333333334, 320.33333333333337, 51.666666666666515) sichtbarer Anteil=0.34 voll=false isHittable=true
+2026-10-20 06:01:41 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: R5 restoreNone-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(40.83333333333334, 776.3333333333334, 320.33333333333337, 51.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.1 s; Hinweise=["Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut."]
+2026-10-20 06:01:41 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: Screenshot h874-r5-restoreNone-drag90.png
+2026-10-20 06:01:50 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: R5 restoreFail-drag90 erster Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(69.5, 809.6666666666666, 263.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:01:52 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: R5 restoreFail-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(69.5, 870.6666666666666, 263.0, 30.33333333333337) sichtbarer Anteil=0.11 voll=false isHittable=true Knopf=(127.0, 845.6666666666666, 148.0, 17.0) knopfHittable=true
+2026-10-20 06:01:53 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: Screenshot h874-r5-restoreFail-drag90-zurueck.png
+2026-10-20 06:01:53 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: R5 restoreFail-drag90 vor zweitem Tipp: Wischer=0 Knopf=(127.0, 845.6666666666666, 148.0, 17.0) Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(69.5, 870.6666666666666, 263.0, 30.33333333333337) sichtbarer Anteil=0.11 voll=false isHittable=true
+2026-10-20 06:01:56 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: R5 restoreFail-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(69.5, 809.6666666666666, 263.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.2 s; Hinweise=["Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut."]
+2026-10-20 06:01:56 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: Screenshot h874-r5-restoreFail-drag90.png
+2026-10-20 06:02:05 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: R5 ohne-szenario-drag90 erster Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 809.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:02:08 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: R5 ohne-szenario-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 870.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=0.11 voll=false isHittable=true Knopf=(24.0, 775.6666666666666, 354.0, 54.0) knopfHittable=true
+2026-10-20 06:02:08 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: Screenshot h874-r5-ohne-szenario-drag90-zurueck.png
+2026-10-20 06:02:08 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: R5 ohne-szenario-drag90 vor zweitem Tipp: Wischer=0 Knopf=(24.0, 775.6666666666666, 354.0, 54.0) Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 870.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=0.11 voll=false isHittable=true
+2026-10-20 06:02:11 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: R5 ohne-szenario-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 809.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.2 s; Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-20 06:02:11 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: Screenshot h874-r5-ohne-szenario-drag90.png
+2026-10-20 06:02:21 +0000 -[AdversaryRunde5UITests testW1MissingRepeat]: WIEDERHOLUNG productMissing erster Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 809.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:02:24 +0000 -[AdversaryRunde5UITests testW1MissingRepeat]: WIEDERHOLUNG productMissing nach Hochrollen: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 870.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=0.11 voll=false isHittable=true Knopf=(24.0, 775.6666666666666, 354.0, 54.0) knopfHittable=true
+2026-10-20 06:02:24 +0000 -[AdversaryRunde5UITests testW1MissingRepeat]: WIEDERHOLUNG productMissing vor zweitem Tipp: Knopf=(24.0, 775.6666666666666, 354.0, 54.0) Wischer=0
+2026-10-20 06:02:28 +0000 -[AdversaryRunde5UITests testW1MissingRepeat]: WIEDERHOLUNG productMissing zweiter Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(74.5, 809.6666666666666, 253.0, 30.33333333333337) sichtbarer Anteil=1.00 voll=true isHittable=true vorhandene Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-20 06:02:28 +0000 -[AdversaryRunde5UITests testW1MissingRepeat]: Screenshot h874-wiederholung-productMissing.png
+2026-10-20 06:02:37 +0000 -[AdversaryRunde5UITests testW2RestoreNoneRepeat]: WIEDERHOLUNG restoreNone erster Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(40.83333333333334, 776.3333333333334, 320.33333333333337, 51.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:02:40 +0000 -[AdversaryRunde5UITests testW2RestoreNoneRepeat]: WIEDERHOLUNG restoreNone nach Hochrollen: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(40.83333333333334, 882.6666666666666, 320.33333333333337, 51.66666666666674) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(127.0, 845.6666666666666, 148.0, 17.0) knopfHittable=true
+2026-10-20 06:02:40 +0000 -[AdversaryRunde5UITests testW2RestoreNoneRepeat]: WIEDERHOLUNG restoreNone vor zweitem Tipp: Knopf=(127.0, 845.6666666666666, 148.0, 17.0) Wischer=0
+2026-10-20 06:02:43 +0000 -[AdversaryRunde5UITests testW2RestoreNoneRepeat]: WIEDERHOLUNG restoreNone zweiter Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(40.83333333333334, 776.3333333333334, 320.33333333333337, 51.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true vorhandene Hinweise=["Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut."]
+2026-10-20 06:02:44 +0000 -[AdversaryRunde5UITests testW2RestoreNoneRepeat]: Screenshot h874-wiederholung-restoreNone.png
+2026-10-20 06:02:53 +0000 -[AdversaryRunde5UITests testW3RestoreCancelRepeat]: WIEDERHOLUNG restoreCancel erster Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(48.33333333333334, 776.3333333333334, 305.33333333333337, 51.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:02:56 +0000 -[AdversaryRunde5UITests testW3RestoreCancelRepeat]: WIEDERHOLUNG restoreCancel nach Hochrollen: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(48.33333333333334, 882.6666666666666, 305.33333333333337, 51.66666666666674) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(127.0, 845.6666666666666, 148.0, 17.0) knopfHittable=true
+2026-10-20 06:02:56 +0000 -[AdversaryRunde5UITests testW3RestoreCancelRepeat]: WIEDERHOLUNG restoreCancel vor zweitem Tipp: Knopf=(127.0, 845.6666666666666, 148.0, 17.0) Wischer=0
+2026-10-20 06:02:59 +0000 -[AdversaryRunde5UITests testW3RestoreCancelRepeat]: WIEDERHOLUNG restoreCancel zweiter Tipp: Fenster=(0.0, 0.0, 402.0, 874.0) Hinweis=(48.33333333333334, 776.3333333333334, 305.33333333333337, 51.666666666666515) sichtbarer Anteil=1.00 voll=true isHittable=true vorhandene Hinweise=["Wiederherstellen wurde nicht abgeschlossen. Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung und versuche es erneut."]
+2026-10-20 06:02:59 +0000 -[AdversaryRunde5UITests testW3RestoreCancelRepeat]: Screenshot h874-wiederholung-restoreCancel.png
+2026-10-20 06:04:57 +0000 -[AdversaryRunde5UITests testA1NoScenario]: OHNE SZENARIO: Kaufknopf-Label=Jetzt freischalten — 8,99 €/Jahr
+2026-10-20 06:05:02 +0000 -[AdversaryRunde5UITests testA1NoScenario]: OHNE SZENARIO Kauf: Hinweis da=true Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 636.5, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true Label=Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut.
+2026-10-20 06:05:02 +0000 -[AdversaryRunde5UITests testA1NoScenario]: Screenshot h667-ohne-szenario-kauf.png
+2026-10-20 06:05:14 +0000 -[AdversaryRunde5UITests testA1NoScenario]: Screenshot h667-ohne-szenario-wiederherstellen-2s.png
+2026-10-20 06:05:15 +0000 -[AdversaryRunde5UITests testA1NoScenario]: DIALOG Springboard: Alerts=["Bei Apple Account anmelden"] Texte=["Weiter", "Bei Apple Account anmelden", "Um deine Schreibgeschwindigkeit zu erhöhen, bewege deinen Finger über die Buchstaben, um ein Wort zu schreiben.", "Netzbetreiber", "08:05"]
+2026-10-20 06:05:17 +0000 -[AdversaryRunde5UITests testA1NoScenario]: OHNE SZENARIO Wiederherstellen: Abbrechen getippt=Springboard Abbrechen
+2026-10-20 06:05:25 +0000 -[AdversaryRunde5UITests testA1NoScenario]: OHNE SZENARIO Wiederherstellen Ergebnis: Hinweise=["Wiederherstellen wurde nicht abgeschlossen. Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung und versuche es erneut."] Paywall offen=true Knopf=Käufe wiederherstellen
+2026-10-20 06:05:26 +0000 -[AdversaryRunde5UITests testA1NoScenario]: OHNE SZENARIO Sichtbarkeit: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(36.0, 603.0, 303.0, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:05:26 +0000 -[AdversaryRunde5UITests testA1NoScenario]: Screenshot h667-ohne-szenario-wiederherstellen-ende.png
+2026-10-20 06:05:44 +0000 -[AdversaryRunde5UITests testB1Success]: SCHLIESSEN success: Paywall zu=true
+2026-10-20 06:05:44 +0000 -[AdversaryRunde5UITests testB1Success]: Screenshot h667-ausgang-success.png
+2026-10-20 06:05:45 +0000 -[AdversaryRunde5UITests testB1Success]: SCHLIESSEN success: Rezeptplan frei=true Paywall=false
+2026-10-20 06:05:46 +0000 -[AdversaryRunde5UITests testB1Success]: Screenshot h667-ausgang-success-danach.png
+2026-10-20 06:05:58 +0000 -[AdversaryRunde5UITests testB2RestoreFound]: SCHLIESSEN restoreFound: Paywall zu=true
+2026-10-20 06:05:58 +0000 -[AdversaryRunde5UITests testB2RestoreFound]: Screenshot h667-ausgang-restoreFound.png
+2026-10-20 06:06:00 +0000 -[AdversaryRunde5UITests testB2RestoreFound]: SCHLIESSEN restoreFound: Rezeptplan frei=true Paywall=false
+2026-10-20 06:06:00 +0000 -[AdversaryRunde5UITests testB2RestoreFound]: Screenshot h667-ausgang-restoreFound-danach.png
+2026-10-20 06:06:15 +0000 -[AdversaryRunde5UITests testB3Cancel]: CANCEL: Paywall offen=true Hinweise=[] Kaufknopf antippbar=true
+2026-10-20 06:06:15 +0000 -[AdversaryRunde5UITests testB3Cancel]: Screenshot h667-ausgang-cancel.png
+2026-10-20 06:06:25 +0000 -[AdversaryRunde5UITests testM1Pending]: VOR TIPP pending: Knopf=(24.0, 501.5, 327.0, 54.0) Wischer=1
+2026-10-20 06:06:30 +0000 -[AdversaryRunde5UITests testM1Pending]: MESSUNG pending: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(54.25, 603.0, 266.5, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.3 s; Label=Der Kauf wartet auf Zustimmung. Sobald er bestätigt ist, wird Restock Pro automatisch freigeschaltet.; vorhandene Hinweise=["Der Kauf wartet auf Zustimmung. Sobald er bestätigt ist, wird Restock Pro automatisch freigeschaltet."]; Paywall offen=true; Knopf danach=(24.0, 496.0, 327.0, 54.0)
+2026-10-20 06:06:30 +0000 -[AdversaryRunde5UITests testM1Pending]: Screenshot h667-messung-pending.png
+2026-10-20 06:06:48 +0000 -[AdversaryRunde5UITests testM2Fail]: VOR TIPP fail: Knopf=(24.0, 501.5, 327.0, 54.0) Wischer=1
+2026-10-20 06:06:55 +0000 -[AdversaryRunde5UITests testM2Fail]: MESSUNG fail: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(83.5, 652.5, 208.0, 14.5) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.3 s; Label=Kauf fehlgeschlagen: Testfehler Kauf; vorhandene Hinweise=["Kauf fehlgeschlagen: Testfehler Kauf"]; Paywall offen=true; Knopf danach=(24.0, 557.5, 327.0, 54.0)
+2026-10-20 06:06:55 +0000 -[AdversaryRunde5UITests testM2Fail]: Screenshot h667-messung-fail.png
+2026-10-20 06:08:08 +0000 -[AdversaryRunde5UITests testM4RestoreNone]: VOR TIPP restoreNone: Knopf=(113.5, 571.5, 148.0, 17.0) Wischer=2
+2026-10-20 06:08:13 +0000 -[AdversaryRunde5UITests testM4RestoreNone]: MESSUNG restoreNone: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(42.25, 603.0, 290.5, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.3 s; Label=Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut.; vorhandene Hinweise=["Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut."]; Paywall offen=true; Knopf danach=(113.5, 566.0, 148.0, 17.0)
+2026-10-20 06:08:13 +0000 -[AdversaryRunde5UITests testM4RestoreNone]: Screenshot h667-messung-restoreNone.png
+2026-10-20 06:08:26 +0000 -[AdversaryRunde5UITests testM5RestoreFail]: VOR TIPP restoreFail: Knopf=(113.5, 571.5, 148.0, 17.0) Wischer=1
+2026-10-20 06:08:30 +0000 -[AdversaryRunde5UITests testM5RestoreFail]: MESSUNG restoreFail: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(56.0, 636.5, 263.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.2 s; Label=Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut.; vorhandene Hinweise=["Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut."]; Paywall offen=true; Knopf danach=(113.5, 611.5, 148.0, 17.0)
+2026-10-20 06:08:30 +0000 -[AdversaryRunde5UITests testM5RestoreFail]: Screenshot h667-messung-restoreFail.png
+2026-10-20 06:08:40 +0000 -[AdversaryRunde5UITests testM6RestoreCancel]: VOR TIPP restoreCancel: Knopf=(113.5, 571.5, 148.0, 17.0) Wischer=1
+2026-10-20 06:08:45 +0000 -[AdversaryRunde5UITests testM6RestoreCancel]: MESSUNG restoreCancel: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(36.0, 603.0, 303.0, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.2 s; Label=Wiederherstellen wurde nicht abgeschlossen. Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung und versuche es erneut.; vorhandene Hinweise=["Wiederherstellen wurde nicht abgeschlossen. Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung und versuche es erneut."]; Paywall offen=true; Knopf danach=(113.5, 566.0, 148.0, 17.0)
+2026-10-20 06:08:45 +0000 -[AdversaryRunde5UITests testM6RestoreCancel]: Screenshot h667-messung-restoreCancel.png
+2026-10-20 06:09:09 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: R5 productMissing-drag90 erster Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 636.5, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:09:13 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: R5 productMissing-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 716.5, 253.0, 30.5) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(24.0, 621.5, 327.0, 54.0) knopfHittable=true
+2026-10-20 06:09:14 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: Screenshot h667-r5-productMissing-drag90-zurueck.png
+2026-10-20 06:09:15 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: R5 productMissing-drag90 vor zweitem Tipp: Wischer=0 Knopf=(24.0, 621.5, 327.0, 54.0) Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 716.5, 253.0, 30.5) sichtbarer Anteil=0.00 voll=false isHittable=false
+2026-10-20 06:09:19 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: R5 productMissing-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 636.5, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.6 s; Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-20 06:09:19 +0000 -[AdversaryRunde5UITests testR1MissingDrag90]: Screenshot h667-r5-productMissing-drag90.png
+2026-10-20 06:09:37 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: R5 productMissing-drag200 erster Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 636.5, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:09:41 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: R5 productMissing-drag200 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 826.5, 253.0, 30.5) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(24.0, 731.5, 327.0, 54.0) knopfHittable=false
+2026-10-20 06:09:42 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: Screenshot h667-r5-productMissing-drag200-zurueck.png
+2026-10-20 06:09:45 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: R5 productMissing-drag200 vor zweitem Tipp: Wischer=1 Knopf=(24.0, 463.0, 327.0, 54.0) Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 558.0, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:09:49 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: R5 productMissing-drag200 zweiter Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 636.5, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.3 s; Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-20 06:09:49 +0000 -[AdversaryRunde5UITests testR2MissingDrag200]: Screenshot h667-r5-productMissing-drag200.png
+2026-10-20 06:10:12 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: R5 fail-drag90 erster Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(83.5, 652.5, 208.0, 14.5) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:10:14 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: R5 fail-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(83.5, 732.5, 208.0, 14.5) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(24.0, 637.5, 327.0, 54.0) knopfHittable=true
+2026-10-20 06:10:14 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: Screenshot h667-r5-fail-drag90-zurueck.png
+2026-10-20 06:10:14 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: R5 fail-drag90 vor zweitem Tipp: Wischer=0 Knopf=(24.0, 637.5, 327.0, 54.0) Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(83.5, 732.5, 208.0, 14.5) sichtbarer Anteil=0.00 voll=false isHittable=false
+2026-10-20 06:10:17 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: R5 fail-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(83.5, 652.5, 208.0, 14.5) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.7 s; Hinweise=["Kauf fehlgeschlagen: Testfehler Kauf"]
+2026-10-20 06:10:17 +0000 -[AdversaryRunde5UITests testR3FailDrag90]: Screenshot h667-r5-fail-drag90.png
+2026-10-20 06:10:28 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: R5 pending-drag90 erster Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(54.25, 603.0, 266.5, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:10:31 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: R5 pending-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(54.25, 683.0, 266.5, 52.0) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(24.0, 576.0, 327.0, 54.0) knopfHittable=true
+2026-10-20 06:10:31 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: Screenshot h667-r5-pending-drag90-zurueck.png
+2026-10-20 06:10:31 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: R5 pending-drag90 vor zweitem Tipp: Wischer=0 Knopf=(24.0, 576.0, 327.0, 54.0) Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(54.25, 683.0, 266.5, 52.0) sichtbarer Anteil=0.00 voll=false isHittable=false
+2026-10-20 06:10:33 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: R5 pending-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(54.25, 603.0, 266.5, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.3 s; Hinweise=["Der Kauf wartet auf Zustimmung. Sobald er bestätigt ist, wird Restock Pro automatisch freigeschaltet."]
+2026-10-20 06:10:33 +0000 -[AdversaryRunde5UITests testR4PendingDrag90]: Screenshot h667-r5-pending-drag90.png
+2026-10-20 06:10:43 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: R5 restoreNone-drag90 erster Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(42.25, 603.0, 290.5, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:10:45 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: R5 restoreNone-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(42.25, 683.0, 290.5, 52.0) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(113.5, 646.0, 148.0, 17.0) knopfHittable=true
+2026-10-20 06:10:45 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: Screenshot h667-r5-restoreNone-drag90-zurueck.png
+2026-10-20 06:10:45 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: R5 restoreNone-drag90 vor zweitem Tipp: Wischer=0 Knopf=(113.5, 646.0, 148.0, 17.0) Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(42.25, 683.0, 290.5, 52.0) sichtbarer Anteil=0.00 voll=false isHittable=false
+2026-10-20 06:10:47 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: R5 restoreNone-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(42.25, 603.0, 290.5, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.3 s; Hinweise=["Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut."]
+2026-10-20 06:10:47 +0000 -[AdversaryRunde5UITests testR5RestoreNoneDrag90]: Screenshot h667-r5-restoreNone-drag90.png
+2026-10-20 06:10:57 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: R5 restoreFail-drag90 erster Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(56.0, 636.5, 263.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:11:00 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: R5 restoreFail-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(56.0, 716.5, 263.0, 30.5) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(113.5, 691.5, 148.0, 17.0) knopfHittable=false
+2026-10-20 06:11:01 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: Screenshot h667-r5-restoreFail-drag90-zurueck.png
+2026-10-20 06:11:02 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: R5 restoreFail-drag90 vor zweitem Tipp: Wischer=1 Knopf=(113.5, 533.0, 148.0, 17.0) Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(56.0, 558.0, 263.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:11:04 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: R5 restoreFail-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(56.0, 636.5, 263.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.1 s; Hinweise=["Wiederherstellen hat nicht geklappt. Prüfe die Internetverbindung und versuche es erneut."]
+2026-10-20 06:11:04 +0000 -[AdversaryRunde5UITests testR6RestoreFailDrag90]: Screenshot h667-r5-restoreFail-drag90.png
+2026-10-20 06:11:18 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: R5 ohne-szenario-drag90 erster Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 636.5, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:11:20 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: R5 ohne-szenario-drag90 nach Zurückrollen: Paywall offen=true Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 716.5, 253.0, 30.5) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(24.0, 621.5, 327.0, 54.0) knopfHittable=true
+2026-10-20 06:11:20 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: Screenshot h667-r5-ohne-szenario-drag90-zurueck.png
+2026-10-20 06:11:21 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: R5 ohne-szenario-drag90 vor zweitem Tipp: Wischer=0 Knopf=(24.0, 621.5, 327.0, 54.0) Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 716.5, 253.0, 30.5) sichtbarer Anteil=0.00 voll=false isHittable=false
+2026-10-20 06:11:23 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: R5 ohne-szenario-drag90 zweiter Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 636.5, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true voll nach 0.5 s; Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-20 06:11:23 +0000 -[AdversaryRunde5UITests testR7NoScenarioBuyDrag90]: Screenshot h667-r5-ohne-szenario-drag90.png
+2026-10-20 06:11:33 +0000 -[AdversaryRunde5UITests testW1MissingRepeat]: WIEDERHOLUNG productMissing erster Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 636.5, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:11:36 +0000 -[AdversaryRunde5UITests testW1MissingRepeat]: WIEDERHOLUNG productMissing nach Hochrollen: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 854.5, 253.0, 30.5) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(24.0, 759.5, 327.0, 54.0) knopfHittable=false
+2026-10-20 06:11:38 +0000 -[AdversaryRunde5UITests testW1MissingRepeat]: WIEDERHOLUNG productMissing vor zweitem Tipp: Knopf=(24.0, 463.0, 327.0, 54.0) Wischer=1
+2026-10-20 06:11:41 +0000 -[AdversaryRunde5UITests testW1MissingRepeat]: WIEDERHOLUNG productMissing zweiter Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 636.5, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true vorhandene Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]
+2026-10-20 06:11:41 +0000 -[AdversaryRunde5UITests testW1MissingRepeat]: Screenshot h667-wiederholung-productMissing.png
+2026-10-20 06:11:52 +0000 -[AdversaryRunde5UITests testW2RestoreNoneRepeat]: WIEDERHOLUNG restoreNone erster Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(42.25, 603.0, 290.5, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:11:55 +0000 -[AdversaryRunde5UITests testW2RestoreNoneRepeat]: WIEDERHOLUNG restoreNone nach Hochrollen: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(42.25, 866.5, 290.5, 52.0) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(113.5, 829.5, 148.0, 17.0) knopfHittable=false
+2026-10-20 06:11:56 +0000 -[AdversaryRunde5UITests testW2RestoreNoneRepeat]: WIEDERHOLUNG restoreNone vor zweitem Tipp: Knopf=(113.5, 487.5, 148.0, 17.0) Wischer=1
+2026-10-20 06:11:59 +0000 -[AdversaryRunde5UITests testW2RestoreNoneRepeat]: WIEDERHOLUNG restoreNone zweiter Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(42.25, 603.0, 290.5, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true vorhandene Hinweise=["Kein Kauf gefunden. Hast du Restock Pro mit einer anderen Apple-ID gekauft, melde dich mit ihr an und versuche es erneut."]
+2026-10-20 06:11:59 +0000 -[AdversaryRunde5UITests testW2RestoreNoneRepeat]: Screenshot h667-wiederholung-restoreNone.png
+2026-10-20 06:12:11 +0000 -[AdversaryRunde5UITests testW3RestoreCancelRepeat]: WIEDERHOLUNG restoreCancel erster Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(36.0, 603.0, 303.0, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true
+2026-10-20 06:12:14 +0000 -[AdversaryRunde5UITests testW3RestoreCancelRepeat]: WIEDERHOLUNG restoreCancel nach Hochrollen: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(36.0, 866.5, 303.0, 52.0) sichtbarer Anteil=0.00 voll=false isHittable=false Knopf=(113.5, 829.5, 148.0, 17.0) knopfHittable=false
+2026-10-20 06:12:15 +0000 -[AdversaryRunde5UITests testW3RestoreCancelRepeat]: WIEDERHOLUNG restoreCancel vor zweitem Tipp: Knopf=(113.5, 487.5, 148.0, 17.0) Wischer=1
+2026-10-20 06:12:18 +0000 -[AdversaryRunde5UITests testW3RestoreCancelRepeat]: WIEDERHOLUNG restoreCancel zweiter Tipp: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(36.0, 603.0, 303.0, 52.0) sichtbarer Anteil=1.00 voll=true isHittable=true vorhandene Hinweise=["Wiederherstellen wurde nicht abgeschlossen. Wenn du nicht selbst abgebrochen hast, prüfe die Internetverbindung und versuche es erneut."]
+2026-10-20 06:12:18 +0000 -[AdversaryRunde5UITests testW3RestoreCancelRepeat]: Screenshot h667-wiederholung-restoreCancel.png
+2026-10-20 06:14:20 +0000 -[AdversaryRunde5UITests testM3Missing]: VOR TIPP productMissing: Knopf=(24.0, 501.5, 327.0, 54.0) Wischer=1
+2026-10-20 06:14:24 +0000 -[AdversaryRunde5UITests testM3Missing]: MESSUNG productMissing: Fenster=(0.0, 0.0, 375.0, 667.0) Hinweis=(61.0, 636.5, 253.0, 30.5) sichtbarer Anteil=1.00 voll=true isHittable=true voll sichtbar nach 0.2 s; Label=Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut.; vorhandene Hinweise=["Der Kauf konnte nicht geladen werden. Bitte versuche es später erneut."]; Paywall offen=true; Knopf danach=(24.0, 541.5, 327.0, 54.0)
+2026-10-20 06:14:24 +0000 -[AdversaryRunde5UITests testM3Missing]: Screenshot h667-messung-productMissing.png

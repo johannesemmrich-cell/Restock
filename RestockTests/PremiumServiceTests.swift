@@ -155,6 +155,18 @@ final class PremiumServiceTests: XCTestCase {
         XCTAssertFalse(service.hasPremiumAccess)
     }
 
+    /// F002 (Adversary Runde 1, PO): Abgebrochene Apple-Anmeldung ist ein eigener Ausgang, kein Fehler.
+    func testRestoreCancelledReturnsCancelledNotFailed() async {
+        let store = ScriptedPurchaseStore()
+        store.syncError = PurchaseStoreError.cancelled
+        let service = makeService(store)
+        let outcome = await service.restorePurchases()
+        XCTAssertEqual(outcome, .cancelled, "Abbruch der Anmeldung wird nicht als eigener Ausgang gemeldet")
+        XCTAssertNotEqual(outcome, .failed, "Abbruch der Anmeldung wird als Fehler gemeldet")
+        XCTAssertEqual(store.syncCalls, 1)
+        XCTAssertFalse(service.hasPremiumAccess, "Abbruch schaltet frei")
+    }
+
     // MARK: - Update-Strom (U12)
 
     func testUpdateStreamUnlocksAfterPending() async throws {
@@ -177,6 +189,27 @@ final class PremiumServiceTests: XCTestCase {
             try await Task.sleep(nanoseconds: 50_000_000)
         }
         XCTAssertTrue(service.hasPremiumAccess, "Update-Strom schaltet nach Zustimmung nicht frei (Frist 20 s)")
+    }
+
+    /// F003 (Adversary Runde 1): Ein Widerruf (Erstattung) über den Update-Strom nimmt den Zugang weg.
+    func testUpdateStreamRevocationRemovesAccess() async throws {
+        let store = ScriptedPurchaseStore()
+        store.entitlementList = [EntitlementRecord(productID: PremiumService.lifetimeID, isRevoked: false)]
+        let service = makeService(store)
+        service.startListening()
+        await service.refreshPurchases()
+        XCTAssertTrue(service.hasPremiumAccess, "Vorbedingung: Einmalkauf schaltet nicht frei")
+
+        store.entitlementList = [EntitlementRecord(productID: PremiumService.lifetimeID, isRevoked: true)]
+        store.emitUpdate()
+
+        let deadline = Date().addingTimeInterval(20)
+        while service.hasPremiumAccess && Date() < deadline {
+            await Task.yield()
+            try await Task.sleep(nanoseconds: 50_000_000)
+        }
+        XCTAssertFalse(service.hasPremiumAccess, "Widerruf über den Update-Strom nimmt den Zugang nicht weg (Frist 20 s)")
+        XCTAssertTrue(service.purchasedProductIDs.isEmpty, "Widerrufene Kennung bleibt in purchasedProductIDs")
     }
 
     // MARK: - Auswahl der Naht (AC-13)
