@@ -145,6 +145,21 @@ final class AssignmentServiceQuantitySuggestionTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(ratio, 4.5, "Color.amber (dark) auf Color.surface (dark) muss WCAG 2.1 AA für Fließtext erfüllen")
     }
 
+    // Issue #75 (2026-10-20, PO-Entscheidung „A“): Der Hellmodus-Wert von RCAmber wurde von
+    // 0,663/0,498/0,180 (3,52:1) auf 0,544/0,408/0,148 abgedunkelt. Gegen den App-Hintergrund
+    // und gegen die weiße Karte (`.cardStyle()`) muss er AA für Fließtext erfüllen; der Test
+    // hält die Werte aus dem Asset-Katalog fest und ist rot, sobald jemand sie zurückdreht.
+    func testAmberLightModeContrastMeetsWCAGAA() {
+        let amberLight = (r: 0.544, g: 0.408, b: 0.148)
+        let surfaceLight = (r: 0.992, g: 0.984, b: 0.957)
+        let cardLight = (r: 1.0, g: 1.0, b: 1.0)
+
+        XCTAssertGreaterThanOrEqual(wcagContrastRatio(amberLight, surfaceLight), 4.5,
+                                    "Color.amber (light) auf Color.surface (light) muss WCAG 2.1 AA für Fließtext erfüllen")
+        XCTAssertGreaterThanOrEqual(wcagContrastRatio(amberLight, cardLight), 4.5,
+                                    "Color.amber (light) auf der weißen Karte muss WCAG 2.1 AA für Fließtext erfüllen")
+    }
+
     // MARK: - WCAG 2.1 Kontrastformel (relative Luminanz, Testcode — kein Produktcode)
 
     private func relativeLuminance(_ c: (r: Double, g: Double, b: Double)) -> Double {

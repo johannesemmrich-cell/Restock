@@ -244,7 +244,7 @@ unter 18 pt bzw. 14 pt fett, 3 : 1 für größeren Text
 | Modus | Vordergrund (`RCAmber`) | Hintergrund (`RCSurface`) | Kontrast |
 |---|---|---|---|
 | Dunkel | 0,784 / 0,604 / 0,290 | 0,114 / 0,110 / 0,086 | **6,64 : 1** — erfüllt AA |
-| Hell | 0,663 / 0,498 / 0,180 | 0,992 / 0,984 / 0,957 | **3,52 : 1** — erfüllt AA für Fließtext NICHT |
+| Hell | 0,663 / 0,498 / 0,180 | 0,992 / 0,984 / 0,957 | **3,52 : 1** — erfüllt AA für Fließtext NICHT (behoben in #75 am 2026-10-20: jetzt 0,544 / 0,408 / 0,148, 4,94 : 1; `testAmberLightModeContrastMeetsWCAGAA`) |
 
 Der Dunkelmodus-Fall aus AC-18 ist damit unauffällig — der eigentlich grenzwertige Fall ist der
 **Hellmodus**, der nach AC-18 nicht gefordert ist. `Color.amber` ist eine app-weite, bereits an

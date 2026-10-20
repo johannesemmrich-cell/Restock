@@ -1,0 +1,143 @@
+<title>Amber-Kontrast Entwurf</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: zwei Theme-Tafeln (hell, dunkel), darin je drei Spalten (Ist, Vorschlag A, Alternative B); Beispiele sind die echten App-Stellen. */
+  :root {
+    --bg: #f6f4ef; --fg: #1d1b16; --muted: #6a655b; --rule: #d9d4c8; --panel: #ffffff;
+    --app-surface-light: rgb(253,251,244); --app-ink-light: #1c1a14; --app-sec-light: #6b665c;
+    --app-surface-dark: rgb(29,28,22); --app-ink-dark: #f2efe6; --app-sec-dark: #a8a295;
+    --amber-ist-light: rgb(169,127,46); --amber-a-light: rgb(139,104,38); --amber-dark: rgb(200,154,74);
+    --font-body: "IBM Plex Sans", system-ui, sans-serif; --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #16150f; --fg: #ecE8de; --muted: #a39d90; --rule: #37342b; --panel: #201e17; color-scheme: dark } }
+  :root[data-theme="dark"] { --bg: #16150f; --fg: #ece8de; --muted: #a39d90; --rule: #37342b; --panel: #201e17; color-scheme: dark }
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 48px; line-height: 1.45 }
+  main { max-width: 1040px; margin: 0 auto; display: grid; gap: 28px }
+  h1 { font-size: 1.5rem; font-weight: 600; margin: 0; text-wrap: balance }
+  h2 { font-size: 1rem; font-weight: 600; margin: 0 0 10px; letter-spacing: .02em; text-transform: uppercase; color: var(--muted) }
+  p { margin: 0; max-width: 65ch }
+  .lead { color: var(--muted) }
+  .theme { border: 1px solid var(--rule); border-radius: 12px; padding: 18px; background: var(--panel) }
+  .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px }
+  @media (max-width: 720px) { .cols { grid-template-columns: 1fr } }
+  .col { min-width: 0; display: grid; gap: 10px; align-content: start }
+  .col h3 { font-size: .95rem; font-weight: 600; margin: 0 }
+  .ratio { font-family: var(--font-mono); font-size: .8rem; color: var(--muted) }
+  .ratio b { font-weight: 500 }
+  .ok { color: #2f7d3a } .bad { color: #b4412b }
+  :root[data-theme="dark"] .ok, :root:not([data-theme="light"]) .ok { color: #7fd38c }
+  :root[data-theme="dark"] .bad, :root:not([data-theme="light"]) .bad { color: #ff9b84 }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .ok { color: #2f7d3a } :root:not([data-theme="dark"]) .bad { color: #b4412b } }
+  /* Nachbau der App-Oberfläche, fest je Tafel (soll in beiden Betrachter-Themes so aussehen) */
+  .app { border-radius: 14px; padding: 12px; display: grid; gap: 10px; font-family: -apple-system, "SF Pro Text", var(--font-body); font-size: 15px }
+  .app.light { background: var(--app-surface-light); color: var(--app-ink-light); --sec: var(--app-sec-light); --card: #ffffff; --rule2: #e6e1d4 }
+  .app.dark { background: var(--app-surface-dark); color: var(--app-ink-dark); --sec: var(--app-sec-dark); --card: #2a2820; --rule2: #3b382e }
+  .row { background: var(--card); border-radius: 12px; padding: 10px 12px; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; font-variant-numeric: tabular-nums }
+  .row .name { font-weight: 500 }
+  .row .qty { font-size: 13px; grid-column: 1 }
+  .row .price { grid-column: 2; grid-row: 1; font-weight: 500 }
+  .row .src { grid-column: 2; grid-row: 2; font-size: 11px; text-align: right }
+  .pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px }
+  .banner { border-radius: 12px; padding: 10px 12px; display: grid; grid-template-columns: 10px 1fr; gap: 10px; align-items: start; font-size: 14px }
+  .dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px }
+  .banner .t { font-weight: 600 }
+  .banner .s { font-size: 12px; color: var(--sec) }
+  .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; border: 1px solid var(--rule) }
+  table { border-collapse: collapse; width: 100%; font-size: .9rem }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--rule); vertical-align: top }
+  td.n { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap }
+  .wrap { overflow-x: auto }
+  ul { margin: 0; padding-left: 1.2em }
+</style>
+
+<main>
+  <header style="display:grid;gap:8px">
+    <h1>Warnfarbe Amber: Kontrast im Hellmodus (Issue #75)</h1>
+    <p class="lead">Die App-weite Farbe für „ca.“-Schätzungen, vorbelegte Mengen und Nachkauf-Dringlichkeit erreicht im Hellmodus 3,52:1 gegen den App-Hintergrund. WCAG 2.1 AA verlangt für Fließtext 4,5:1. Unten die drei Wege nebeneinander, jeweils mit den echten Stellen der App.</p>
+  </header>
+
+  <section class="theme">
+    <h2>Hellmodus</h2>
+    <div class="cols">
+      <div class="col">
+        <h3><span class="swatch" style="background:var(--amber-ist-light)"></span>Ist</h3>
+        <div class="ratio">0,663 / 0,498 / 0,180 · <b class="bad">3,52:1</b> Hintergrund · <b class="bad">3,64:1</b> Karte</div>
+        <div class="app light">
+          <div class="row"><span class="name">Mozzarella</span><span class="qty" style="color:var(--amber-ist-light)">ca. 125 g</span><span class="price" style="color:var(--amber-ist-light)">ca. 1,09 €</span><span class="src" style="color:var(--amber-ist-light)">Schätzung</span></div>
+          <div class="row"><span class="name">Schlagsahne</span><span class="qty" style="color:var(--sec)">200 g</span><span class="price">0,99 €</span><span class="src" style="color:var(--sec)">Bon · 12.10.</span></div>
+          <div class="banner" style="background:rgba(169,127,46,.16)"><span class="dot" style="background:var(--amber-ist-light)"></span><div><div class="t" style="color:var(--amber-ist-light)">Zeit zum Nachkaufen</div><div class="s">Kaffee, Milch · fällig in 2 Tagen</div></div></div>
+          <div><span class="pill" style="color:var(--amber-ist-light);background:rgba(169,127,46,.12)">Preis?</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <h3><span class="swatch" style="background:var(--amber-a-light)"></span>Vorschlag A: dunklerer Amber</h3>
+        <div class="ratio">0,544 / 0,408 / 0,148 · <b class="ok">4,94:1</b> Hintergrund · <b class="ok">5,12:1</b> Karte</div>
+        <div class="app light">
+          <div class="row"><span class="name">Mozzarella</span><span class="qty" style="color:var(--amber-a-light)">ca. 125 g</span><span class="price" style="color:var(--amber-a-light)">ca. 1,09 €</span><span class="src" style="color:var(--amber-a-light)">Schätzung</span></div>
+          <div class="row"><span class="name">Schlagsahne</span><span class="qty" style="color:var(--sec)">200 g</span><span class="price">0,99 €</span><span class="src" style="color:var(--sec)">Bon · 12.10.</span></div>
+          <div class="banner" style="background:rgba(139,104,38,.16)"><span class="dot" style="background:var(--amber-a-light)"></span><div><div class="t" style="color:var(--amber-a-light)">Zeit zum Nachkaufen</div><div class="s">Kaffee, Milch · fällig in 2 Tagen</div></div></div>
+          <div><span class="pill" style="color:var(--amber-a-light);background:rgba(139,104,38,.12)">Preis?</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <h3><span class="swatch" style="background:var(--amber-ist-light)"></span>Alternative B: Farbe bleibt, Zeichen dazu</h3>
+        <div class="ratio">Kontrast unverändert <b class="bad">3,52:1</b>; Lesbarkeit über Symbol und Gewicht statt Farbe</div>
+        <div class="app light">
+          <div class="row"><span class="name">Mozzarella</span><span class="qty" style="color:var(--amber-ist-light);font-weight:600">≈ 125 g</span><span class="price" style="color:var(--amber-ist-light);font-weight:600">≈ 1,09 €</span><span class="src" style="color:var(--amber-ist-light);font-weight:600;text-decoration:underline dotted">Schätzung</span></div>
+          <div class="row"><span class="name">Schlagsahne</span><span class="qty" style="color:var(--sec)">200 g</span><span class="price">0,99 €</span><span class="src" style="color:var(--sec)">Bon · 12.10.</span></div>
+          <div class="banner" style="background:rgba(169,127,46,.16)"><span class="dot" style="background:var(--amber-ist-light)"></span><div><div class="t" style="color:var(--amber-ist-light)">Zeit zum Nachkaufen</div><div class="s">Kaffee, Milch · fällig in 2 Tagen</div></div></div>
+          <div><span class="pill" style="color:var(--amber-ist-light);background:rgba(169,127,46,.12)">Preis?</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="theme">
+    <h2>Dunkelmodus (unverändert bei allen Wegen)</h2>
+    <div class="cols">
+      <div class="col">
+        <h3><span class="swatch" style="background:var(--amber-dark)"></span>Ist = Vorschlag A</h3>
+        <div class="ratio">0,784 / 0,604 / 0,290 · <b class="ok">6,64:1</b> Hintergrund</div>
+        <div class="app dark">
+          <div class="row"><span class="name">Mozzarella</span><span class="qty" style="color:var(--amber-dark)">ca. 125 g</span><span class="price" style="color:var(--amber-dark)">ca. 1,09 €</span><span class="src" style="color:var(--amber-dark)">Schätzung</span></div>
+          <div class="row"><span class="name">Schlagsahne</span><span class="qty" style="color:var(--sec)">200 g</span><span class="price">0,99 €</span><span class="src" style="color:var(--sec)">Bon · 12.10.</span></div>
+          <div class="banner" style="background:rgba(200,154,74,.16)"><span class="dot" style="background:var(--amber-dark)"></span><div><div class="t" style="color:var(--amber-dark)">Zeit zum Nachkaufen</div><div class="s">Kaffee, Milch · fällig in 2 Tagen</div></div></div>
+          <div><span class="pill" style="color:var(--amber-dark);background:rgba(200,154,74,.12)">Preis?</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <h3>Alternative B im Dunkelmodus</h3>
+        <div class="ratio">Symbol und Gewicht kämen auch hier dazu, sonst wäre die Kennzeichnung je Modus verschieden</div>
+        <div class="app dark">
+          <div class="row"><span class="name">Mozzarella</span><span class="qty" style="color:var(--amber-dark);font-weight:600">≈ 125 g</span><span class="price" style="color:var(--amber-dark);font-weight:600">≈ 1,09 €</span><span class="src" style="color:var(--amber-dark);font-weight:600;text-decoration:underline dotted">Schätzung</span></div>
+          <div class="row"><span class="name">Schlagsahne</span><span class="qty" style="color:var(--sec)">200 g</span><span class="price">0,99 €</span><span class="src" style="color:var(--sec)">Bon · 12.10.</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <h3>Wo die Farbe überall steht</h3>
+        <ul style="font-size:.9rem">
+          <li>Artikelzeile: „ca.“-Menge, „ca.“-Preis, Quelle „Schätzung“, Chip „Preis?“</li>
+          <li>Startseite: Nachkauf-Banner (Punkt, Titel, Hintergrund 16 %)</li>
+          <li>Ladenliste: Abschnitt „Vielleicht auch fällig“ (Entwicklermodus)</li>
+          <li>Nachkauf-Statistik: Status „fällig“ (Entwicklermodus)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="theme">
+    <h2>Zahlen und Empfehlung</h2>
+    <div class="wrap">
+      <table>
+        <thead><tr><th>Weg</th><th>Hellmodus, Hintergrund</th><th>Hellmodus, Karte (weiß)</th><th>Dunkelmodus</th><th>Änderung</th></tr></thead>
+        <tbody>
+          <tr><td>Ist</td><td class="n bad">3,52:1</td><td class="n bad">3,64:1</td><td class="n ok">6,64:1</td><td>keine</td></tr>
+          <tr><td>A: dunklerer Amber (× 0,82)</td><td class="n ok">4,94:1</td><td class="n ok">5,12:1</td><td class="n ok">6,64:1</td><td>ein Farbwert im Asset-Katalog, keine Code-Änderung; Unit-Test wie für den Dunkelmodus</td></tr>
+          <tr><td>B: Zeichen und Gewicht</td><td class="n bad">3,52:1</td><td class="n bad">3,64:1</td><td class="n ok">6,64:1</td><td>mehrere Stellen in ItemRow, UI-Tests auf „ca. “ müssten nachziehen; Kontrast bleibt unter AA</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:12px"><strong>Empfehlung: A.</strong> Ein Wert im Asset-Katalog, Farbton bleibt erkennbar Amber, alle Stellen sind mit einem Schlag konform, und der bestehende Kontrast-Test bekommt ein Gegenstück für den Hellmodus. B löst das gemessene Problem nicht und verteilt die Änderung über den Code. Der Banner-Hintergrund (16 % Deckkraft) ist kein Text und bleibt bei beiden Wegen gleich.</p>
+  </section>
+</main>
