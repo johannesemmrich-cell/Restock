@@ -158,11 +158,18 @@ jobs:
         run: |
           set -o pipefail
           SELECTION=()
+          # Issue #145 D2: Der Mitteilungsdialog lässt sich je frischem Simulator genau einmal
+          # entscheiden (NotificationPermissionUITests, Gate RESTOCK_NOTIF_DECISION). Hälfte A
+          # erlaubt (Klasse zusätzlich gewählt, steht nicht in HEAVY_CLASSES), Hälfte B lehnt ab
+          # (Klasse ist Teil von RestockUITests). Ohne die Variable überspringt sich die Klasse.
           if [ "${{ matrix.half }}" = "A" ]; then
+            export TEST_RUNNER_RESTOCK_NOTIF_DECISION=allow
+            SELECTION+=("-only-testing:RestockUITests/NotificationPermissionUITests")
             for CLASS in $HEAVY_CLASSES; do
               SELECTION+=("-only-testing:RestockUITests/$CLASS")
             done
           else
+            export TEST_RUNNER_RESTOCK_NOTIF_DECISION=deny
             SELECTION+=("-only-testing:RestockUITests")
             for CLASS in $HEAVY_CLASSES; do
               SELECTION+=("-skip-testing:RestockUITests/$CLASS")

@@ -270,3 +270,7 @@ Kein Modell beteiligt: reine Konfiguration (Regeln vor Modell). Keine bestehende
 
 - 2026-10-11: Initial spec created (Issue #136; UI-Suite in zwei parallele Hälften, Entscheidung des PO
   2026-10-11, Nachweis durch YAML-Prüfung, Testzählung und echte CI-Läufe)
+
+## Nachtrag 2026-10-20 (Issue #145, Durchgang 2)
+
+Hälfte A wählt zusätzlich `NotificationPermissionUITests` und setzt `TEST_RUNNER_RESTOCK_NOTIF_DECISION=allow`, Hälfte B setzt `deny` (Klasse dort Teil von `RestockUITests`). `HEAVY_CLASSES` bleibt die einzige Quelle von A und ist unverändert. Strukturtest: `scripts/test_ci_notification_permission.py`.

@@ -234,6 +234,10 @@ verändert.
 
 ### CI-Anschluss
 
+**Stand 2026-10-20: angeschlossen** (Entwurf `docs/artifacts/test-145-d2-mitteilungserlaubnis/ci-anschluss-vertagt.diff`
+unverändert übernommen; Strukturtest `scripts/test_ci_notification_permission.py`). Erster CI-Lauf: siehe Nachtrag am
+Ende dieses Abschnitts.
+
 - Hälfte A bekommt `TEST_RUNNER_RESTOCK_NOTIF_DECISION=allow` und zusätzlich
   `-only-testing:RestockUITests/NotificationPermissionUITests`; Hälfte B bekommt `deny`. Die Klasse steht
   **nicht** in `HEAVY_CLASSES` (die Liste bleibt unverändert, einzige Quelle). In Hälfte B läuft sie damit
@@ -250,6 +254,11 @@ verändert.
   D2 mit Klasse + Skript erfüllt (DoD des Tickets: Test des echten Wegs); der CI-Anschluss wird als eigener
   Folgeschritt in #145 geführt, ohne die Hälften rot zu lassen. Vorbedingung für den Anschluss: lokaler
   Grün-Lauf beider Wege.
+
+**Nachtrag erster CI-Lauf:** wird nach dem Lauf des Anschluss-PRs ergänzt (Hälfte A `testAllow`, Hälfte B
+`testDeny`, Runner-Dialog englisch). Wechselwirkung mit #173: Scheitert `testAllow`/`testDeny` im ersten Durchlauf,
+startet die Wiederholung die App neu, die Entscheidung ist dann aber schon gespeichert; die Wiederholung endet mit
+„Installation nicht frisch“, der Job bleibt rot. Das ist beabsichtigt (AC-4), kein Fall für den Rückfall.
 
 ### Reihenfolge der Umsetzung
 
