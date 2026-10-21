@@ -1,0 +1,33 @@
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T10_fehlerInStreifen_uebrigeLaufenWeiter_groesseNullLeer]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T10_fehlerInStreifen_uebrigeLaufenWeiter_groesseNullLeer]' passed (0.014 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T1_erzeugtesHohesBild_streifenErkennenAlleArtikelUndEndsumme]' started.
+/Users/hem/Developer/Restock/.claude/worktrees/issue-195/RestockTests/ReceiptTextRecognizerTests.swift:52: error: -[RestockTests.ReceiptTextRecognizerTests test_T1_erzeugtesHohesBild_streifenErkennenAlleArtikelUndEndsumme] : XCTAssertEqual failed: ("15") is not equal to ("18") - keine doppelten Positionen aus der Überlappung
+/Users/hem/Developer/Restock/.claude/worktrees/issue-195/RestockTests/ReceiptTextRecognizerTests.swift:54: error: -[RestockTests.ReceiptTextRecognizerTests test_T1_erzeugtesHohesBild_streifenErkennenAlleArtikelUndEndsumme] : XCTAssertEqual failed: ("[0.59, 0.69, 0.69, 0.79, 0.89, 1.29, 1.29, 1.49, 1.89, 1.99, 2.19, 2.29, 2.45, 2.49, 4.99]") is not equal to ("[0.59, 0.69, 0.69, 0.78, 0.79, 0.85, 0.89, 1.29, 1.29, 1.49, 1.89, 1.99, 2.19, 2.29, 2.45, 2.49, 4.99, 8.99]")
+/Users/hem/Developer/Restock/.claude/worktrees/issue-195/RestockTests/ReceiptTextRecognizerTests.swift:56: error: -[RestockTests.ReceiptTextRecognizerTests test_T1_erzeugtesHohesBild_streifenErkennenAlleArtikelUndEndsumme] : XCTAssertGreaterThanOrEqual failed: ("15") is less than ("17") - ["Bananen lose", "Butter mild", "Eier Freiland", "Gouda Scheiben", "Gurke", "Joghurt Natur", "Mandelkerne", "Mineralwasser", "Nektarinen", "Olivenoel nativ", "Penne Rigate", "Schlagsahne", "Spaghetti", "Tomaten Rispe", "Zahnpasta"]
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T1_erzeugtesHohesBild_streifenErkennenAlleArtikelUndEndsumme]' failed (4.082 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T2_needsTiling_schwelleExklusiv2Komma5]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T2_needsTiling_schwelleExklusiv2Komma5]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T3_tiles_problembild_lueckenlosUeberlappendBisBildende]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T3_tiles_problembild_lueckenlosUeberlappendBisBildende]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T4_tiles_raender_keineHoeheNullKeinReinerUeberlappungsstreifen]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T4_tiles_raender_keineHoeheNullKeinReinerUeberlappungsstreifen]' passed (0.002 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T5_globalBox_ersterMittlererLetzterStreifen]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T5_globalBox_ersterMittlererLetzterStreifen]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T6_removingDuplicates_gleicheZeileAusZweiStreifen_bleibtEinmal]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T6_removingDuplicates_gleicheZeileAusZweiStreifen_bleibtEinmal]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T7_removingDuplicates_echteWiederholungUndAndererText_bleibenBeide]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T7_removingDuplicates_echteWiederholungUndAndererText_bleibenBeide]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T8_streifenBloecke_ergebenGleichePositionenWieGesamtbild]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T8_streifenBloecke_ergebenGleichePositionenWieGesamtbild]' passed (0.003 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T9_anfrage_einstellungenWieHeute]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T9_anfrage_einstellungenWieHeute]' passed (0.000 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T9_gedreht_ausgerichtetHoch_streifenAufDemAufgerichtetenBild]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T9_gedreht_ausgerichtetHoch_streifenAufDemAufgerichtetenBild]' passed (0.011 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T9_gedreht_ausgerichtetQuer_einDurchgangMitOriginalbildUndAusrichtung]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T9_gedreht_ausgerichtetQuer_einDurchgangMitOriginalbildUndAusrichtung]' passed (0.001 seconds).
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T9_normalesBild_einDurchgangUndGleichesErgebnisWieBisher]' started.
+Test Case '-[RestockTests.ReceiptTextRecognizerTests test_T9_normalesBild_einDurchgangUndGleichesErgebnisWieBisher]' passed (1.239 seconds).
+	 Executed 13 tests, with 3 failures (0 unexpected) in 5.355 (5.358) seconds
+	 Executed 13 tests, with 3 failures (0 unexpected) in 5.355 (5.361) seconds
+	 Executed 13 tests, with 3 failures (0 unexpected) in 5.355 (5.361) seconds
+** TEST FAILED **
