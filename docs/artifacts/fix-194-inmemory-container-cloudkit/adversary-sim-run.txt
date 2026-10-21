@@ -1,0 +1,71 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project Restock.xcodeproj -scheme Restock -destination "platform=iOS Simulator,id=9034BD4F-2D5F-49D5-B906-838326D51C95" "-only-testing:RestockTests/NotificationDigestChainTests" -derivedDataPath /private/tmp/claude-501/-Users-hem-Developer-Restock/2056e5d3-1e6f-4f64-8836-8af6e613992a/scratchpad/dd-194
+
+2026-10-21 09:58:33.614 xcodebuild[2120:1084745] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-21 09:58:47.264832+0200 Restock[2220:1085698] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-21 09:58:47.298920+0200 Restock[2220:1086363] [User Defaults] Could not resolve UID for user "mobile".
+2026-10-21 09:58:47.299551+0200 Restock[2220:1086363] [CK] Could not read account info validation counter. (This is a potential performance issue.)
+2026-10-21 09:58:47.313552+0200 Restock[2220:1086366] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1236): <NSCloudKitMirroringDelegate: 0x106ec01c0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x106e80500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/9034BD4F-2D5F-49D5-B906-838326D51C95/data/Containers/Shared/AppGroup/E04B5C94-F3D6-46A6-A422-A84485563DA2/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-21 09:58:47.313648+0200 Restock[2220:1086366] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2310): <NSCloudKitMirroringDelegate: 0x106ec01c0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-21 09:58:47.313702+0200 Restock[2220:1086366] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2623): <NSCloudKitMirroringDelegate: 0x106ec01c0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-21 09:58:47.316205+0200 Restock[2220:1086366] [sync] mirror setup failed (NSCocoaErrorDomain 134400): Der Vorgang konnte nicht abgeschlossen werden. (Cocoa-Fehler 134400.)
+2026-10-21 09:58:47.400444+0200 Restock[2220:1085698] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-10-21 09:58:47.758880+0200 Restock[2220:1086367] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+2026-10-21 09:58:48.532380+0200 Restock[2220:1085698] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+2026-10-21 09:58:48.534292+0200 Restock[2220:1085698] [API] cannot add handler to 0 from 0 - dropping
+2026-10-21 09:58:48.535774+0200 Restock[2220:1085698] [API] cannot add handler to 0 from 0 - dropping
+[AppDelegate] push registration succeeded, token length: 80
+Test Suite 'Selected tests' started at 2026-10-21 09:58:48.799.
+Test Suite 'RestockTests.xctest' started at 2026-10-21 09:58:48.801.
+Test Suite 'NotificationDigestChainTests' started at 2026-10-21 09:58:48.801.
+Test Case '-[RestockTests.NotificationDigestChainTests testCancelAllClearsCenterAndLog]' started.
+2026-10-21 09:58:48.854773+0200 Restock[2220:1085698] [SwiftData] Set a .modelContext in view's environment to use Query
+<unknown>:0: warning: -[RestockTests.NotificationDigestChainTests testCancelAllClearsCenterAndLog] : Set a .modelContext in view's environment to use Query
+Test Case '-[RestockTests.NotificationDigestChainTests testCancelAllClearsCenterAndLog]' passed (0.102 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testItemEntersLedgerOnlyAfterDeliveryTime]' started.
+2026-10-21 09:58:48.931705+0200 Restock[2220:1085698] [SwiftData] Set a .modelContext in view's environment to use Query
+<unknown>:0: warning: -[RestockTests.NotificationDigestChainTests testItemEntersLedgerOnlyAfterDeliveryTime] : Set a .modelContext in view's environment to use Query
+Test Case '-[RestockTests.NotificationDigestChainTests testItemEntersLedgerOnlyAfterDeliveryTime]' passed (0.053 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedOrLoggedWithoutPermissionAndItemStaysNotifiable]' started.
+2026-10-21 09:58:48.974350+0200 Restock[2220:1085698] [SwiftData] Set a .modelContext in view's environment to use Query
+<unknown>:0: warning: -[RestockTests.NotificationDigestChainTests testNothingIsPlannedOrLoggedWithoutPermissionAndItemStaysNotifiable] : Set a .modelContext in view's environment to use Query
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedOrLoggedWithoutPermissionAndItemStaysNotifiable]' passed (0.028 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedWhenDeveloperModeIsOff]' started.
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedWhenDeveloperModeIsOff]' passed (0.020 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedWhenNotificationsAreOff]' started.
+2026-10-21 09:58:49.017091+0200 Restock[2220:1085698] [SwiftData] Set a .modelContext in view's environment to use Query
+<unknown>:0: warning: -[RestockTests.NotificationDigestChainTests testNothingIsPlannedWhenNotificationsAreOff] : Set a .modelContext in view's environment to use Query
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedWhenNotificationsAreOff]' passed (0.020 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testProvisionalPermissionPlansLikeAuthorized]' started.
+2026-10-21 09:58:49.035875+0200 Restock[2220:1085698] [SwiftData] Set a .modelContext in view's environment to use Query
+<unknown>:0: warning: -[RestockTests.NotificationDigestChainTests testProvisionalPermissionPlansLikeAuthorized] : Set a .modelContext in view's environment to use Query
+Test Case '-[RestockTests.NotificationDigestChainTests testProvisionalPermissionPlansLikeAuthorized]' passed (0.019 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testPurchaseHistoryBecomesOneDigestAtNine]' started.
+Test Case '-[RestockTests.NotificationDigestChainTests testPurchaseHistoryBecomesOneDigestAtNine]' passed (0.013 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testSecondRunReplacesDigestAndKeepsForeignRequests]' started.
+2026-10-21 09:58:49.064894+0200 Restock[2220:1085698] [SwiftData] Set a .modelContext in view's environment to use Query
+2026-10-21 09:58:49.070068+0200 Restock[2220:1085698] [SwiftData] Set a .modelContext in view's environment to use Query
+<unknown>:0: warning: -[RestockTests.NotificationDigestChainTests testSecondRunReplacesDigestAndKeepsForeignRequests] : Set a .modelContext in view's environment to use Query
+Test Case '-[RestockTests.NotificationDigestChainTests testSecondRunReplacesDigestAndKeepsForeignRequests]' passed (0.042 seconds).
+Test Suite 'NotificationDigestChainTests' passed at 2026-10-21 09:58:49.101.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.297 (0.300) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-10-21 09:58:49.104.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.297 (0.302) seconds
+Test Suite 'Selected tests' passed at 2026-10-21 09:58:49.104.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.297 (0.305) seconds
+2026-10-21 09:58:49.128 xcodebuild[2120:1084745] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-21 09:58:49.132 xcodebuild[2120:1084745] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-21 09:58:49.141 xcodebuild[2120:1084745] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-21 10:08:49.552 xcodebuild[2120:1084750]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Timed out after 600.0 seconds while waiting for a response from the invoked process
+2026-10-21 10:08:49.622 xcodebuild[2120:1084745] [MT] IDETestOperationsObserverDebug: 617.272 elapsed -- Testing started completed.
+2026-10-21 10:08:49.622 xcodebuild[2120:1084745] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-21 10:08:49.622 xcodebuild[2120:1084745] [MT] IDETestOperationsObserverDebug: 617.272 sec, +617.272 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/claude-501/-Users-hem-Developer-Restock/2056e5d3-1e6f-4f64-8836-8af6e613992a/scratchpad/dd-194/Logs/Test/Test-Restock-2026.10.21_09-58-32-+0200.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

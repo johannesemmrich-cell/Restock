@@ -200,7 +200,7 @@ final class NotificationDigestChainTests: XCTestCase {
     private func makeContainer(items: [String]) throws -> ModelContainer {
         let schema = Schema(versionedSchema: SchemaV1.self)
         let container = try ModelContainer(
-            for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         )
         for name in items {
             for record in purchases(name) { container.mainContext.insert(record) }
