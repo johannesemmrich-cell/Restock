@@ -131,6 +131,13 @@ enum ReceiptParserService {
 
     // Führende Artikelnummern (5+ Ziffern)
     private static let articleNumberRegex = try? NSRegularExpression(pattern: #"^\d{5,}\s+"#)
+    // Preiszeile unter einer Namenszeile, optional mit vorangestellter Artikelnummer und
+    // angehängtem Währungszeichen — Decathlon druckt jede Position zweizeilig ("TREK FOOD PASTA
+    // BOLOGNESE No Size", darunter "4037949       8.99€", als PDF-Text mit einem Leerzeichen).
+    // Nur im pendingName-Zweig von `parseClassic` benutzt, nie für Zeilen ohne Namenszeile davor.
+    private static let articleNumberPriceRegex = try? NSRegularExpression(
+        pattern: #"^(?:\d{5,}\s+)?(\d{1,4}[,\.]\d{2})\s*(?:\p{Sc}|EUR)?\s*$"#
+    )
     // Anhängende MwSt-/Zeilentyp-Kennbuchstaben (A B 1 2 * E am Zeilenende) — "M" kam dazu, weil
     // Lidl die Pfand-Zeile eigens damit kennzeichnet ("Pfand 0,25 M", eigener Code statt echter
     // MwSt-Kategorie): ohne "M" in dieser Klasse matchte KEINE der Preis-Regexes in dieser Datei
@@ -174,7 +181,11 @@ enum ReceiptParserService {
     }
 
     static func parse(_ rawLines: [String]) -> [ReceiptLine] {
-        let lines = rawLines.map(repairSplitDecimals)
+        // Tabulatoren wie die Spaltenlücke der Vision-Rekonstruktion behandeln (2 Leerzeichen):
+        // PDF-Text kann Name und Preis per Tab trennen, beide Pfade splitten nur an `\s{2,}`.
+        let lines = rawLines
+            .map { $0.replacingOccurrences(of: "\t", with: "  ") }
+            .map(repairSplitDecimals)
         // Formaterkennung: mehrere POSITIONS-Zeilen mit Währungs-SUFFIX hinter dem Preis
         // (z. B. "…TOMATE ENTIER  2.50€") bedeuten einen südeuropäischen Bon
         // (Frankreich/Carrefour-Stil) mit eigener Struktur. Gezählt wird erst NACH dem
@@ -501,6 +512,17 @@ enum ReceiptParserService {
                         continue
                     }
                 }
+                // Decathlon: "4037949 8.99€" unter der Namenszeile (Artikelnummer + Preis + €).
+                if let rx = articleNumberPriceRegex,
+                   let match = rx.firstMatch(in: trimmed, range: nsRange),
+                   let priceRange = Range(match.range(at: 1), in: trimmed),
+                   let price = Double(trimmed[priceRange].replacingOccurrences(of: ",", with: ".")),
+                   price > 0.05, price < 999 {
+                    results.append(ReceiptLine(name: pending, price: price))
+                    pendingName = nil
+                    pendingPrice = nil
+                    continue
+                }
                 pendingName = nil
                 pendingPrice = nil
             }
@@ -641,11 +663,25 @@ enum ReceiptParserService {
         return Array(results.dropLast())
     }
 
-    /// Duplikate entfernen (letzter Preis gewinnt bei gleichem Namen), dann alphabetisch sortiert.
+    /// Gleichnamige Positionen zu einer zusammenfassen, dann alphabetisch sortiert. Zwei
+    /// getrennt gedruckte gleiche Artikel (Decathlon: zweimal „TREK FOOD PASTA BOLOGNESE“ à 8,99 €)
+    /// sind zwei Käufe: Preise und Mengen werden addiert (Menge 2, 17,98 €). Vorher gewann der
+    /// letzte Preis, und der zweite Artikel fehlte in der Summe.
     private static func dedupAndSort(_ results: [ReceiptLine]) -> [ReceiptLine] {
-        var seen: [String: ReceiptLine] = [:]
-        for r in results { seen[r.name.lowercased()] = r }
-        return seen.values.sorted { $0.name < $1.name }
+        var merged: [String: ReceiptLine] = [:]
+        for r in results {
+            let key = r.name.lowercased()
+            guard var existing = merged[key] else { merged[key] = r; continue }
+            existing.price += r.price
+            existing.quantity += r.quantity
+            if let a = existing.weightBasis, let b = r.weightBasis {
+                existing.weightBasis = a + b
+            } else {
+                existing.weightBasis = nil
+            }
+            merged[key] = existing
+        }
+        return merged.values.sorted { $0.name < $1.name }
     }
 
     // MARK: - Euro-Suffix-Format (französische Bons, z. B. Carrefour)
