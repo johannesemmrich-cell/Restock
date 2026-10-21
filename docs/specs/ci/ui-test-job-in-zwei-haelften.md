@@ -310,3 +310,14 @@ Belegt im Lauf 39573224713 (PR #197, Hälfte A): erster Lauf 43 Tests, 1 Fehler 
 1 Test in 79 s, Job gesamt 26 min statt Abbruch bei 60 min. Die JSON-Form von `xcresulttool` auf Xcode 26.6 ist damit
 belegt (Kennung korrekt gelesen). Die Wiederholung blieb rot, weil T1 ein echter Fehler war (Spaltenkopf 40 statt
 100 pt), wie vorgesehen.
+
+Dritter Befund (Läufe 39573224713, 39581094360, 39588635436): Die Wiederholung scheiterte dreimal an der
+**Vorbedingung** des wiederholten Tests, nie an seiner Sache: kein Entwicklermodus („Link fehlt nach 30 Wischern“),
+kein Seed („Karte „Ohne Laden“ fehlt“). Der wiederholte Test ist in `test-without-building` immer der erste Start
+seiner Sitzung, und der erste Start kommt gelegentlich ohne Launch-Argumente an (Issue #105/#128, dort gemessen).
+Folge: Klassen, die ihre Vorbedingung über Launch-Argumente herstellen, müssen über `UITestLaunch.start` starten
+(Gegenprobe auf ein Element, das nur mit den Argumenten erscheint, genau ein zweiter Start). Umgestellt:
+`DynamicTypeUITests` (DEV-Pill bzw. Kopfzeile des Prüf-Screens) und `QuickAddAssignmentUITests` (Kachel „Lidl“).
+Die übrigen gesäten Klassen mit nacktem `app.launch()` stehen in einem Folge-Issue; bis dahin kann ihre
+Wiederholung aus demselben Grund rot bleiben. Der erste Durchlauf von Hälfte A mit `DynamicTypeUITests` ist seit
+Lauf 39588635436 grün (43 Tests, 37 min).

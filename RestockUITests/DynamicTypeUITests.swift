@@ -141,7 +141,11 @@ final class DynamicTypeUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-developerMode", "YES",
                                 "-clearReceiptResolutionStatsForUITests"] + Self.launchArguments
-        app.launch()
+        // Start über den Helfer (Issue #105/#128): Der erste Start einer Testsitzung kommt gelegentlich ohne
+        // Launch-Argumente an. In der #173-Wiederholung ist der Test immer der erste Start — dreimal belegt
+        // (39573224713, 39581094360: kein Dev-Modus, „Link fehlt nach 30 Wischern“). Die DEV-Pill gibt es
+        // nur mit `-developerMode YES`, sie ist deshalb die Gegenprobe.
+        UITestLaunch.start(app, expecting: app.staticTexts["DEV"], description: "DEV-Pill (Entwicklermodus)")
         waitUntilSettled(app)
 
         openSettings(app)
@@ -183,7 +187,9 @@ final class DynamicTypeUITests: XCTestCase {
     func testReceiptReviewAndStoreListStayUsableAtLargestAccessibilitySize() {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewForUITests"] + Self.launchArguments
-        app.launch()
+        // Gegenprobe auf den Seed, siehe T1: ohne Argumente gäbe es keinen Prüf-Screen.
+        UITestLaunch.start(app, expecting: element(app, "receiptReview.sectionHeader"),
+                           description: "Kopfzeile des Bon-Prüf-Screens (Seed)")
         waitUntilSettled(app)
         XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 30),
                       "Das Bon-Prüf-Sheet ist nicht erschienen — Seed oder Handoff greift nicht.")

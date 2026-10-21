@@ -86,7 +86,11 @@ Bon-Seed und den Bon-Auflösungs-Zähler weg, die T2 beim Speichern erzeugt).
   Link auf der Startseite; `openSettings` prüft jetzt die Titelzeile „Einstellungen“ und tippt höchstens einmal
   nach, mit Messzeile (Muster `StoreSetupUITests.openSetup`). Hälfte A 41 min (Durchlauf 1 30,6 min, Wiederholung
   1 Test 94 s), Hälfte B 44,5 min, grün.
-- Nachweis: nächster CI-Lauf des PRs; Dauer von Hälfte A wird hier nachgetragen.
+- Vierter Lauf (39588635436): Hälfte A grün, 43 Tests, 37 min, T1 und T2 im ersten Durchlauf. Hälfte B rot durch
+  die bekannte Sporadik `QuickAddAssignmentUITests.testChoosingStoreForOneItemLeavesTheOtherOpen`, deren
+  Wiederholung ohne Launch-Argumente startete (kein Seed). Beide Klassen starten jetzt über `UITestLaunch.start`
+  (Gegenprobe DEV-Pill, Kopfzeile des Prüf-Screens, Kachel „Lidl“); Folge-Issue für die übrigen Klassen.
+- Nachweis: nächster CI-Lauf des PRs.
 
 ## P4
 
