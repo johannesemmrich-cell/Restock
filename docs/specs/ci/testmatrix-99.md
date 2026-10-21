@@ -23,7 +23,7 @@ nur Standardschrift und kaum Dunkelmodus, nur Debug gebaut.
 | Punkt | Entscheidung PO | Paket | Stand |
 |---|---|---|---|
 | 1 Teilen-Erweiterung | testen: dritter UI-Job mit `scripts/run-share-extension-uitest.sh`, blockierend | P4 | offen |
-| 2 Englisch | kein UI-Lauf; Unit-Test Schlüsselgleichheit `de.lproj`/`en.lproj` | P2 | offen |
+| 2 Englisch | kein UI-Lauf; Unit-Test Schlüsselgleichheit `de.lproj`/`en.lproj` | P2 | umgesetzt |
 | 3 iPad | entfällt für 1.0; `TARGETED_DEVICE_FAMILY = 1` in allen Konfigurationen | P1 | umgesetzt |
 | 4 Schrift/Dunkelmodus | gezielt: zwei UI-Tests mit `UICTContentSizeCategoryAccessibilityXXXL` auf Spaltenkopf „Gesamt“ (#93), Bon-Prüf-Screen, Ladenliste; Dunkelmodus bleibt (zwei Tests, Amber-Kontrast #75) | P3 | offen |
 | 5 Release-Build | testen: Job `release-build` in `ci.yml`, Release für den Simulator bei jedem PR | P1 | umgesetzt |
@@ -38,9 +38,19 @@ nur Standardschrift und kaum Dunkelmodus, nur Debug gebaut.
   Teilen-Erweiterung, Unit- und UI-Tests). Folge: App Store Connect verlangt nur iPhone-Screenshots (#175); auf dem
   iPad läuft die App im iPhone-Kompatibilitätsmodus.
 - Strukturtest `scripts/test_ci_release_build.py` (5 Prüfungen).
-- Nachweis: erster CI-Lauf des PRs; Nachtrag folgt.
+- Nachweis (PR #193, run 39551841477, 2026-10-21): alle vier Jobs grün. `release-build` 3 min 47 s (Schritt
+  „Build Release for simulator“ 3 min 35 s), deutlich unter der Schätzung. Unit-Job 11 min, ui-test A 30 min,
+  ui-test B 53 min, unverändert mit `TARGETED_DEVICE_FAMILY = 1`. Squash-Merge 13f8e14.
 
-## P2–P4
+## P2: Schlüsselgleichheit Deutsch/Englisch
+
+`RestockTests/LocalizationKeyParityTests.swift` liest die kompilierten Tabellen `de.lproj`/`en.lproj` aus dem
+App-Bundle (nicht die Quelldateien) und prüft: beide vorhanden und > 300 Schlüssel, keine leeren Texte, gleiche
+Schlüsselmengen (fehlende je Seite werden genannt), gleiche Platzhalter je Schlüssel (`%@`, `%d`, `%1$@`, `%.1f`,
+`%lld`; `%%` ausgenommen). Stand beim Anlegen: 378 Schlüssel je Sprache, keine Abweichung, 41 Texte mit
+Platzhaltern. Kein englischer UI-Lauf; die englische Oberfläche selbst bleibt beim Gerätetest (#187).
+
+## P3–P4
 
 Werden je als eigener PR umgesetzt und hier nachgetragen.
 
