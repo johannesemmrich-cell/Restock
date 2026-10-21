@@ -74,7 +74,13 @@ Bon-Seed und den Bon-Auflösungs-Zähler weg, die T2 beim Speichern erzeugt).
   Helfer wartete auf Existenz, bevor er wischte; behoben (wischen, solange das Element fehlt). Die Breitenmessung
   selbst kam noch nicht zum Zug. Nebenbefund: Die #173-Wiederholung lief die ganze Auswahl erneut, beide Hälften
   brachen am 60-min-Limit ab; behoben in diesem PR (Fassung 2, `ui-test-job-in-zwei-haelften.md`).
-- Nachweis: nächster CI-Lauf des PRs; Ergebnis der Breitenmessung wird hier nachgetragen.
+- Zweiter Lauf (39573224713): T1 misst und meldet den Fehler: Spaltenkopf „Gesamt“ 40,0 pt breit, nötig 100,0 pt
+  (caption bei AX5 × 0,7), also „Gesa…“ wie in #93, nur in großer Schrift. T2 grün. Produktfix im selben PR
+  (Entwickler-Bildschirm, keine Farbänderung): `ReceiptResolutionStatsView` stapelt ab
+  `dynamicTypeSize.isAccessibilitySize` je Stufe beschriftete Werte ohne feste Breiten, Kopfzeile nur „Stufe“,
+  Kennungen unverändert; Normalgröße unverändert. Zweiter Testfehler im Helfer behoben (Wischen bis zur Existenz,
+  dann kurze Züge; die Wiederholung wischte an der halb verdeckten Zeile vorbei bis zum Listenende).
+- Nachweis: nächster CI-Lauf des PRs (T1 grün erwartet); Dauer von Hälfte A wird hier nachgetragen.
 
 ## P4
 

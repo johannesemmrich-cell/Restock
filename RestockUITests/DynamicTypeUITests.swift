@@ -52,24 +52,36 @@ final class DynamicTypeUITests: XCTestCase {
         app.descendants(matching: .any).matching(identifier: identifier).firstMatch
     }
 
-    /// Wischt nach oben, bis das Element antippbar ist (in XXXL liegt fast alles unter dem Rand).
-    /// Eine `List` hält nur sichtbare Zeilen im Bedienhilfen-Baum: Was unter dem Rand liegt,
-    /// existiert noch nicht (CI-Lauf 39563379941: „Link fehlt“ nach 20 s Warten ohne einen Wisch).
-    /// Deshalb erst kurz auf Existenz warten, dann wischen, solange das Element fehlt oder nicht
-    /// antippbar ist. Scheitert mit dem zuletzt gesehenen Zustand, nie mit „failed to scroll“.
+    /// Wischt nach oben, bis das Element im Bedienhilfen-Baum ist, und zieht dann in kurzen Zügen
+    /// nach, bis es antippbar ist (in XXXL liegt fast alles unter dem Rand).
+    ///
+    /// Zwei Fehlbilder aus den CI-Läufen: Eine `List` hält nur sichtbare Zeilen im Baum, was unter
+    /// dem Rand liegt, existiert noch nicht (Lauf 39563379941: „fehlt“ nach 20 s Warten ohne Wisch).
+    /// Und wer wischt, bis das Element antippbar ist, wischt an einer halb verdeckten Zeile vorbei
+    /// bis zum Listenende, wo sie wieder aus dem Baum fällt (Lauf 39573224713, Wiederholung: „fehlt
+    /// auch nach 30 Wischern“). Deshalb: Wischen nur bis zur Existenz, danach höchstens vier kurze
+    /// Züge um 30 % der Bildschirmhöhe. Scheitert mit dem zuletzt gesehenen Zustand, nie mit
+    /// „failed to scroll“.
     private func scrollUntilHittable(_ app: XCUIApplication, _ target: XCUIElement, description: String,
                                      maxSwipes: Int = 12, file: StaticString = #filePath, line: UInt = #line) {
         _ = target.waitForExistence(timeout: 3)
         var swipes = 0
-        while !(target.exists && target.isHittable) && swipes < maxSwipes {
+        while !target.exists && swipes < maxSwipes {
             app.swipeUp()
             swipes += 1
         }
         XCTAssertTrue(target.waitForExistence(timeout: UITestWait.defaultTimeout),
                       "\(description) fehlt auch nach \(swipes) Wischern.", file: file, line: line)
-        let ready = target.waitUntilHittable(timeout: 5)
+        var nudges = 0
+        var ready = target.waitUntilHittable(timeout: 3)
+        while !ready.matched && nudges < 4 {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
+                .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
+            nudges += 1
+            ready = target.waitUntilHittable(timeout: 3)
+        }
         XCTAssertTrue(ready.matched,
-                      "\(description) ist auch nach \(swipes) Wischern nicht antippbar — zuletzt: \(ready.last)",
+                      "\(description) ist auch nach \(swipes) Wischern und \(nudges) kurzen Zügen nicht antippbar — zuletzt: \(ready.last)",
                       file: file, line: line)
     }
 
@@ -125,7 +137,9 @@ final class DynamicTypeUITests: XCTestCase {
                       "Spaltenkopf „Gesamt“ fehlt auf dem Bildschirm „Bon-Auflösung“.")
         assertInsideWindowHorizontally(app, header, description: "Spaltenkopf „Gesamt“")
 
-        // Kopfzeile: `.font(.caption)`, `.lineLimit(1)`, `.minimumScaleFactor(0.7)` (ReceiptResolutionStatsView.columns).
+        // Kopfzeile (Normalgröße: `.font(.caption)`, `.lineLimit(1)`, `.minimumScaleFactor(0.7)`,
+        // ReceiptResolutionStatsView.columns) bzw. Beschriftung je Stufe (Bedienhilfen-Größen,
+        // `labeledValue`, ebenfalls `.caption`). Erster Messlauf 39573224713 ohne Fix: 40 pt statt 100 pt.
         // Kleinschreibung als Untergrenze; die Großschreibung der Anzeige braucht eher mehr Platz.
         let needed = Self.requiredWidth(for: "Gesamt", style: .caption1, minimumScaleFactor: 0.7)
         let width = header.frame.width

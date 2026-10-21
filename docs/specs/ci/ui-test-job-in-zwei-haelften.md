@@ -304,3 +304,9 @@ mit Attrappen für `xcodebuild`/`xcrun` in vier Fällen (grün, rot→grün, rot
 durchgespielt. Offene Grenze: Die JSON-Form von `xcresulttool` ist aus Xcode 16+ bekannt, auf dem Runner (Xcode 26.6)
 erst mit dem nächsten Fehlschlag belegt; der Parser liefert bei fremder Form keine Kennung, dann bleibt der Lauf
 ohne Wiederholung rot statt falsch grün.
+
+Belegt im Lauf 39573224713 (PR #197, Hälfte A): erster Lauf 43 Tests, 1 Fehler (`DynamicTypeUITests` T1), danach
+`Wiederholung genau einmal (Issue #173): -only-testing:RestockUITests/DynamicTypeUITests/testResolutionStats…`,
+1 Test in 79 s, Job gesamt 26 min statt Abbruch bei 60 min. Die JSON-Form von `xcresulttool` auf Xcode 26.6 ist damit
+belegt (Kennung korrekt gelesen). Die Wiederholung blieb rot, weil T1 ein echter Fehler war (Spaltenkopf 40 statt
+100 pt), wie vorgesehen.
