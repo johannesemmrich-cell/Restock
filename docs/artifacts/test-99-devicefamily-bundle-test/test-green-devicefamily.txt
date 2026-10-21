@@ -1,0 +1,13 @@
+2026-10-21 11:35:32.325153+0200 Restock[36137:1297024] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2310): <NSCloudKitMirroringDelegate: 0x1066680e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-21 11:35:32.325200+0200 Restock[36137:1297024] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2623): <NSCloudKitMirroringDelegate: 0x1066680e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.DeviceFamilyTests testAppIsIphoneOnly]' started.
+Test Case '-[RestockTests.DeviceFamilyTests testAppIsIphoneOnly]' passed (0.002 seconds).
+Test Case '-[RestockTests.DeviceFamilyTests testShareExtensionIsIphoneOnly]' started.
+Test Case '-[RestockTests.DeviceFamilyTests testShareExtensionIsIphoneOnly]' passed (0.001 seconds).
+Test Case '-[RestockTests.DeviceFamilyTests testWidgetExtensionIsIphoneOnly]' started.
+Test Case '-[RestockTests.DeviceFamilyTests testWidgetExtensionIsIphoneOnly]' passed (0.000 seconds).
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.003 (0.005) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.003 (0.007) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.003 (0.009) seconds
+** TEST SUCCEEDED **
