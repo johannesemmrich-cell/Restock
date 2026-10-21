@@ -138,6 +138,14 @@ Unit-Suite; Durchlauf mit Bildschirmfoto. Protokolle unter `docs/artifacts/fix-1
 - Der Strukturtest prüft Text, nicht Laufzeitverhalten; ein Container, der anders als über
   `ModelConfiguration(isStoredInMemoryOnly: true)` entsteht, wird nicht erkannt.
 - `xcodebuild` kann nach Testende bis zu 10 min hängen (#21).
+- Das RED-Protokoll zu AC-3 stammt nicht von diesem Arbeitsstand, sondern von der Gegenprobe vom 2026-10-21
+  08:21 auf einer Wegwerf-Kopie von `e9a6b79` (Testdateien identisch zu `main`); ein erneuter RED-Lauf hätte dem
+  PO acht weitere Absturzmeldungen beschert, ohne neue Information (Adversary F001, LOW, offengelegt).
+- „CI prüft iOS 26" ist belegt für den Lauf 39209844531 vom 2026-10-19 (`Using iPhone 17 Pro … on runtime
+  iOS-26-5`, Xcode 26.6); die CI wählt die neueste Laufzeit des Runners, ein Wechsel auf iOS 27 kommt mit dem
+  nächsten Runner-Image von selbst.
+- Der Strukturtest meldet `cloudKitDatabase:.none` ohne Leerzeichen fälschlich und findet den Marker auch in
+  Kommentaren; beides ist im Projekt nicht vorhanden und würde beim ersten Auftreten sichtbar.
 
 ## Test Plan
 
@@ -218,3 +226,9 @@ Kein Modell beteiligt (Regeln vor Modell). Keine bestehende ADR wird gekippt.
 
 - 2026-10-21: Initial spec created (Issue #194; fünf In-Memory-Container ohne CloudKit-Spiegelung plus
   Strukturtest, PO-Entscheidung 2026-10-21)
+- 2026-10-21: Umgesetzt und validiert. Realer Umfang 7 Code-/Konfigurationsdateien, +81/−5 (Strukturtest 74
+  statt geschätzt 35 Zeilen, nach Adversary-Befund F002 um Schreibvarianten und Selbsttest erweitert).
+  Adversary 2 Runden VERIFIED (F001 LOW offengelegt, F002 behoben). Validierung auf iOS 27.0: 15 Strukturtests
+  grün; Unit-Suite 616 Tests, 615 grün, 0 Host-Neustarts, Absturzberichte 24 → 24, rot nur
+  `ReceiptTextRecognizerTests` T1 (#195); keine Regression gegen den Lauf vor der Validierung (4 neue grüne
+  Tests aus #196). Belege: `docs/artifacts/fix-194-inmemory-container-cloudkit/validation-*.txt`.
