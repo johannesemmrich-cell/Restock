@@ -53,16 +53,20 @@ final class DynamicTypeUITests: XCTestCase {
     }
 
     /// Wischt nach oben, bis das Element antippbar ist (in XXXL liegt fast alles unter dem Rand).
-    /// Scheitert mit dem zuletzt gesehenen Zustand, nie mit „failed to scroll“.
+    /// Eine `List` hält nur sichtbare Zeilen im Bedienhilfen-Baum: Was unter dem Rand liegt,
+    /// existiert noch nicht (CI-Lauf 39563379941: „Link fehlt“ nach 20 s Warten ohne einen Wisch).
+    /// Deshalb erst kurz auf Existenz warten, dann wischen, solange das Element fehlt oder nicht
+    /// antippbar ist. Scheitert mit dem zuletzt gesehenen Zustand, nie mit „failed to scroll“.
     private func scrollUntilHittable(_ app: XCUIApplication, _ target: XCUIElement, description: String,
                                      maxSwipes: Int = 12, file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertTrue(target.waitForExistence(timeout: UITestWait.defaultTimeout),
-                      "\(description) fehlt.", file: file, line: line)
+        _ = target.waitForExistence(timeout: 3)
         var swipes = 0
-        while !target.isHittable && swipes < maxSwipes {
+        while !(target.exists && target.isHittable) && swipes < maxSwipes {
             app.swipeUp()
             swipes += 1
         }
+        XCTAssertTrue(target.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "\(description) fehlt auch nach \(swipes) Wischern.", file: file, line: line)
         let ready = target.waitUntilHittable(timeout: 5)
         XCTAssertTrue(ready.matched,
                       "\(description) ist auch nach \(swipes) Wischern nicht antippbar — zuletzt: \(ready.last)",

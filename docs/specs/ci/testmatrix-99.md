@@ -69,7 +69,12 @@ Bon-Seed und den Bon-Auflösungs-Zähler weg, die T2 beim Speichern erzeugt).
   gerenderten Breite erkennbar (wie P11 in `PurchaseUITests`).
 - CI: Die Klasse steht in `HEAVY_CLASSES` (Hälfte A, 30 min), weil Hälfte B mit 53 min nahe am Limit von
   60 min lag; Ausnahme von „neue Klassen landen in B“, in `ui-test-job-in-zwei-haelften.md` nachgetragen.
-- Nachweis: erster CI-Lauf des PRs; Ergebnis und gefundene Produktfehler werden hier nachgetragen.
+- Erster Lauf (39563379941): T2 grün (72 s, Prüf-Screen und Ladenliste in XXXL bedienbar). T1 rot aus einem
+  Testfehler: Der Link „Bon-Auflösung“ lag in XXXL unter dem Rand und ist dort nicht im Bedienhilfen-Baum, der
+  Helfer wartete auf Existenz, bevor er wischte; behoben (wischen, solange das Element fehlt). Die Breitenmessung
+  selbst kam noch nicht zum Zug. Nebenbefund: Die #173-Wiederholung lief die ganze Auswahl erneut, beide Hälften
+  brachen am 60-min-Limit ab; behoben in diesem PR (Fassung 2, `ui-test-job-in-zwei-haelften.md`).
+- Nachweis: nächster CI-Lauf des PRs; Ergebnis der Breitenmessung wird hier nachgetragen.
 
 ## P4
 

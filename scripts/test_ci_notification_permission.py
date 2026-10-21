@@ -31,7 +31,7 @@ class NotificationPermissionCI(unittest.TestCase):
         self.assertNotIn(CLASS, self.job["env"]["HEAVY_CLASSES"], "HEAVY_CLASSES bleibt die einzige Quelle von A; die Klasse wird nur ergänzt")
 
     def test_decision_is_exported_before_xcodebuild(self):
-        self.assertLess(self.run.index("TEST_RUNNER_RESTOCK_NOTIF_DECISION"), self.run.index("xcodebuild test"))
+        self.assertLess(self.run.index("TEST_RUNNER_RESTOCK_NOTIF_DECISION"), self.run.index("run_ui_tests test "))
         self.assertEqual(self.run.count("export TEST_RUNNER_RESTOCK_NOTIF_DECISION="), 2)
 
 
