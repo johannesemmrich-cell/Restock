@@ -274,3 +274,10 @@ Kein Modell beteiligt: reine Konfiguration (Regeln vor Modell). Keine bestehende
 ## Nachtrag 2026-10-20 (Issue #145, Durchgang 2)
 
 Hälfte A wählt zusätzlich `NotificationPermissionUITests` und setzt `TEST_RUNNER_RESTOCK_NOTIF_DECISION=allow`, Hälfte B setzt `deny` (Klasse dort Teil von `RestockUITests`). `HEAVY_CLASSES` bleibt die einzige Quelle von A und ist unverändert. Strukturtest: `scripts/test_ci_notification_permission.py`.
+
+## Nachtrag 2026-10-21 (Issue #99, Paket 3)
+
+`DynamicTypeUITests` (zwei Tests in Schriftgröße XXXL) steht als fünfte Klasse in `HEAVY_CLASSES` und läuft in
+Hälfte A. Grund: Im Lauf 39551841477 brauchte Hälfte B 53 min (Limit 60 min), Hälfte A 30 min. Die Regel
+„neue Klassen landen automatisch in B“ bleibt; dies ist eine bewusste Ausnahme zur Lastverteilung. Die Liste
+steht weiter genau einmal in `ci.yml`.

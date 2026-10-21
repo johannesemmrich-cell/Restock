@@ -25,7 +25,7 @@ nur Standardschrift und kaum Dunkelmodus, nur Debug gebaut.
 | 1 Teilen-Erweiterung | testen: dritter UI-Job mit `scripts/run-share-extension-uitest.sh`, blockierend | P4 | offen |
 | 2 Englisch | kein UI-Lauf; Unit-Test Schlüsselgleichheit `de.lproj`/`en.lproj` | P2 | umgesetzt |
 | 3 iPad | entfällt für 1.0; `TARGETED_DEVICE_FAMILY = 1` in allen Konfigurationen | P1 | umgesetzt |
-| 4 Schrift/Dunkelmodus | gezielt: zwei UI-Tests mit `UICTContentSizeCategoryAccessibilityXXXL` auf Spaltenkopf „Gesamt“ (#93), Bon-Prüf-Screen, Ladenliste; Dunkelmodus bleibt (zwei Tests, Amber-Kontrast #75) | P3 | offen |
+| 4 Schrift/Dunkelmodus | gezielt: zwei UI-Tests mit `UICTContentSizeCategoryAccessibilityXXXL` auf Spaltenkopf „Gesamt“ (#93), Bon-Prüf-Screen, Ladenliste; Dunkelmodus bleibt (zwei Tests, Amber-Kontrast #75) | P3 | in Arbeit (PR offen) |
 | 5 Release-Build | testen: Job `release-build` in `ci.yml`, Release für den Simulator bei jedem PR | P1 | umgesetzt |
 
 ## P1: Release-Build-Job und iPhone-only
@@ -50,9 +50,30 @@ Schlüsselmengen (fehlende je Seite werden genannt), gleiche Platzhalter je Schl
 `%lld`; `%%` ausgenommen). Stand beim Anlegen: 378 Schlüssel je Sprache, keine Abweichung, 41 Texte mit
 Platzhaltern. Kein englischer UI-Lauf; die englische Oberfläche selbst bleibt beim Gerätetest (#187).
 
-## P3–P4
+## P3: Dynamic Type XXXL, zwei gezielte UI-Tests
 
-Werden je als eigener PR umgesetzt und hier nachgetragen.
+`RestockUITests/DynamicTypeUITests.swift` startet die App mit dem UIKit-Launch-Argument
+`-UIPreferredContentSizeCategoryName UICTContentSizeCategoryAccessibilityXXXL` (Argument-Domain nur dieses
+Prozesses, kein Zustand in der App-Gruppe, daher kein eigenes Aufräum-Argument; `tearDown` räumt nur den
+Bon-Seed und den Bon-Auflösungs-Zähler weg, die T2 beim Speichern erzeugt).
+
+- **T1 `testResolutionStatsHeaderGesamtFitsAtLargestAccessibilitySize`:** Dev-Modus → Einstellungen →
+  „Bon-Auflösung“. Der Spaltenkopf „Gesamt“ (#93) muss waagerecht im Fenster liegen und mindestens so breit
+  sein, wie der Text in `.caption` bei AX5 mit `minimumScaleFactor(0.7)` braucht (gemessen im Testläufer mit
+  `UIFont.preferredFont(forTextStyle:compatibleWith:)`, Kleinschreibung als Untergrenze). Dazu Summenzeile
+  „Alle Stufen“ im Fenster und mit Zahl am Anfang.
+- **T2 `testReceiptReviewAndStoreListStayUsableAtLargestAccessibilitySize`:** Bon-Seed → Prüf-Screen
+  (Kopfzeile, Bon-Text und Häkchen der ersten Zeile, „Speichern“-Chip im Fenster und antippbar) → Speichern →
+  Kachel „Lidl“ → Ladenliste (Schnelleingabe, Artikelzeile „Milch“, ···-Menü im Fenster, Zeile antippbar).
+- Warum Breitenmessung: XCUITest liefert immer das volle Label, ein „Gesa…“ ist von außen nur an der
+  gerenderten Breite erkennbar (wie P11 in `PurchaseUITests`).
+- CI: Die Klasse steht in `HEAVY_CLASSES` (Hälfte A, 30 min), weil Hälfte B mit 53 min nahe am Limit von
+  60 min lag; Ausnahme von „neue Klassen landen in B“, in `ui-test-job-in-zwei-haelften.md` nachgetragen.
+- Nachweis: erster CI-Lauf des PRs; Ergebnis und gefundene Produktfehler werden hier nachgetragen.
+
+## P4
+
+Wird als eigener PR umgesetzt und hier nachgetragen.
 
 ## Offene Grenzen
 
