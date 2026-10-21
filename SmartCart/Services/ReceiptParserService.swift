@@ -131,6 +131,13 @@ enum ReceiptParserService {
 
     // Führende Artikelnummern (5+ Ziffern)
     private static let articleNumberRegex = try? NSRegularExpression(pattern: #"^\d{5,}\s+"#)
+    // Preiszeile unter einer Namenszeile, optional mit vorangestellter Artikelnummer und
+    // angehängtem Währungszeichen — Decathlon druckt jede Position zweizeilig ("TREK FOOD PASTA
+    // BOLOGNESE No Size", darunter "4037949       8.99€", als PDF-Text mit einem Leerzeichen).
+    // Nur im pendingName-Zweig von `parseClassic` benutzt, nie für Zeilen ohne Namenszeile davor.
+    private static let articleNumberPriceRegex = try? NSRegularExpression(
+        pattern: #"^(?:\d{5,}\s+)?(\d{1,4}[,\.]\d{2})\s*(?:\p{Sc}|EUR)?\s*$"#
+    )
     // Anhängende MwSt-/Zeilentyp-Kennbuchstaben (A B 1 2 * E am Zeilenende) — "M" kam dazu, weil
     // Lidl die Pfand-Zeile eigens damit kennzeichnet ("Pfand 0,25 M", eigener Code statt echter
     // MwSt-Kategorie): ohne "M" in dieser Klasse matchte KEINE der Preis-Regexes in dieser Datei
@@ -174,7 +181,11 @@ enum ReceiptParserService {
     }
 
     static func parse(_ rawLines: [String]) -> [ReceiptLine] {
-        let lines = rawLines.map(repairSplitDecimals)
+        // Tabulatoren wie die Spaltenlücke der Vision-Rekonstruktion behandeln (2 Leerzeichen):
+        // PDF-Text kann Name und Preis per Tab trennen, beide Pfade splitten nur an `\s{2,}`.
+        let lines = rawLines
+            .map { $0.replacingOccurrences(of: "\t", with: "  ") }
+            .map(repairSplitDecimals)
         // Formaterkennung: mehrere POSITIONS-Zeilen mit Währungs-SUFFIX hinter dem Preis
         // (z. B. "…TOMATE ENTIER  2.50€") bedeuten einen südeuropäischen Bon
         // (Frankreich/Carrefour-Stil) mit eigener Struktur. Gezählt wird erst NACH dem
@@ -500,6 +511,17 @@ enum ReceiptParserService {
                         pendingPrice = nil
                         continue
                     }
+                }
+                // Decathlon: "4037949 8.99€" unter der Namenszeile (Artikelnummer + Preis + €).
+                if let rx = articleNumberPriceRegex,
+                   let match = rx.firstMatch(in: trimmed, range: nsRange),
+                   let priceRange = Range(match.range(at: 1), in: trimmed),
+                   let price = Double(trimmed[priceRange].replacingOccurrences(of: ",", with: ".")),
+                   price > 0.05, price < 999 {
+                    results.append(ReceiptLine(name: pending, price: price))
+                    pendingName = nil
+                    pendingPrice = nil
+                    continue
                 }
                 pendingName = nil
                 pendingPrice = nil
