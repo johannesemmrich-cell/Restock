@@ -285,3 +285,83 @@ jobs:
             UITestRetry.xcresult
           if-no-files-found: ignore
           retention-days: 7
+
+  # Issue #99, Punkt 1 (Paket 4, PO 2026-10-21): Der Weg Fotos-App → Teilen → Restock läuft bei
+  # jedem PR, blockierend. Die Oberfläche der Erweiterung ist für XCUITest unerreichbar (eigener
+  # Prozess); das Urteil fällt scripts/run-share-extension-uitest.sh von außen: Nutzlast in der
+  # App-Gruppe, Positionen und Endsumme, keine neuen Absturzberichte. Das echte Bon-Bild bleibt
+  # außerhalb des Repos (Datenschutz); hier dient das erzeugte Lidl-Plus-Bild aus
+  # scripts/make-test-receipt-image.swift (gleiche Zeilen wie GeneratedReceipt in
+  # ReceiptTextRecognizerTests: 18 Positionen, Endsumme 68,69).
+  share-extension:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest available Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$LATEST" ]; then LATEST="/Applications/Xcode.app"; fi
+          echo "DEVELOPER_DIR=$LATEST/Contents/Developer" >> "$GITHUB_ENV"
+
+      - name: Pick newest available iPhone simulator
+        id: sim
+        run: |
+          DEVICES=$(xcrun simctl list -j devices available)
+          RUNTIME=$(echo "$DEVICES" | jq -r '.devices | keys | map(select(test("iOS"))) | sort | last')
+          UDID=$(echo "$DEVICES" | jq -r --arg rt "$RUNTIME" '.devices[$rt] | map(select(.isAvailable and (.name | test("^iPhone")))) | .[0].udid')
+          NAME=$(echo "$DEVICES" | jq -r --arg rt "$RUNTIME" '.devices[$rt] | map(select(.isAvailable and (.name | test("^iPhone")))) | .[0].name')
+          if [ -z "$UDID" ] || [ "$UDID" = "null" ]; then
+            echo "No available iPhone simulator found" >&2
+            exit 1
+          fi
+          echo "Using $NAME ($UDID) on runtime $RUNTIME"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
+      - name: Boot simulator
+        run: |
+          xcrun simctl boot ${{ steps.sim.outputs.udid }}
+          xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
+
+      - name: Grant app permissions
+        run: |
+          xcrun simctl privacy ${{ steps.sim.outputs.udid }} grant camera com.johannesemmrich.Restock
+          xcrun simctl privacy ${{ steps.sim.outputs.udid }} grant photos com.johannesemmrich.Restock
+
+      - name: Generate test receipt image
+        run: |
+          swift scripts/make-test-receipt-image.swift "$RUNNER_TEMP/testbon.png"
+          ls -la "$RUNNER_TEMP/testbon.png"
+
+      - name: Photos → Share → Restock
+        run: |
+          set -o pipefail
+          TEST_IMAGE="$RUNNER_TEMP/testbon.png" \
+          MIN_POSITIONS=18 \
+          EXPECT_TOTAL=68,69 \
+          RESTOCK_XCODEBUILD_FLAGS="-skipMacroValidation CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES AD_HOC_CODE_SIGNING_ALLOWED=YES" \
+          RESTOCK_SHARE_DIAG_DIR="$RUNNER_TEMP/share-diag" \
+          bash scripts/run-share-extension-uitest.sh ${{ steps.sim.outputs.udid }} | tee share-extension.log
+
+      - name: Result block to job summary
+        if: always()
+        run: |
+          {
+            echo "### Teilen-Erweiterung: Ergebnisblock"
+            echo '```'
+            sed -n '/=== ERGEBNIS ===/,$p' share-extension.log 2>/dev/null || echo "kein Ergebnisblock (Lauf vorzeitig beendet)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload log and diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: share-extension-diagnose
+          path: |
+            share-extension.log
+            ${{ runner.temp }}/share-diag
+            ${{ runner.temp }}/testbon.png
+          if-no-files-found: ignore
+          retention-days: 7

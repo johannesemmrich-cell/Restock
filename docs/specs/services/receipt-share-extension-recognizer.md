@@ -329,3 +329,10 @@ Gekippte frühere Entscheidung bei A: keine. Bei B: „Erweiterung erkennt selbs
 
 - 2026-10-08: Initial spec created (Issue #120, Fortsetzung; Teilen-Erweiterung nutzt `ReceiptTextRecognizer`,
   Drift-Test, Prüfskript mit Positionszahl und Endsumme)
+
+## Nachtrag 2026-10-21 (Issue #99, Paket 4): Lauf in der CI
+
+Der Nachweislauf läuft seit Paket 4 bei jedem PR als blockierender Job `share-extension` in `ci.yml` mit dem
+erzeugten Bon-Bild aus `scripts/make-test-receipt-image.swift` (Abschrift von `GeneratedReceipt.makeTallImage`,
+18 Positionen, Endsumme 68,69); das echte Bild bleibt außerhalb des Repos (`TEST_IMAGE`). Das Skript nimmt
+`DEVELOPER_DIR` und `RESTOCK_XCODEBUILD_FLAGS` aus der Umgebung. Details: `docs/specs/ci/testmatrix-99.md`, P4.

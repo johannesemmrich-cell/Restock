@@ -13,6 +13,9 @@
 # härteren: Sie prüfen das Ergebnis, nicht seine Beschriftung.
 #
 # Aufruf:  scripts/run-share-extension-uitest.sh [<simulator-udid>]
+#          TEST_IMAGE=<bild.png> MIN_POSITIONS=<n> EXPECT_TOTAL=<x,xx> für ein anderes Bild;
+#          in der CI (ci.yml, Job share-extension, Issue #99 Paket 4) mit dem erzeugten Bild aus
+#          scripts/make-test-receipt-image.swift, DEVELOPER_DIR und RESTOCK_XCODEBUILD_FLAGS.
 #
 set -uo pipefail
 
@@ -27,6 +30,11 @@ MIN_POSITIONS="${MIN_POSITIONS:-18}"
 EXPECT_TOTAL="${EXPECT_TOTAL:-68,69}"
 BACKUP_FLAG="smartcart.preCloudBackupDone.v2"
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Issue #99, Paket 4: In der CI steht Xcode nicht unter /Applications/Xcode.app; ein gesetztes
+# DEVELOPER_DIR gilt, sonst der bisherige Standard. RESTOCK_XCODEBUILD_FLAGS trägt zusätzliche
+# xcodebuild-Argumente (CI: Signatur wie die anderen Jobs), lokal leer.
+XCODE_DEV="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
+read -r -a XB_FLAGS <<< "${RESTOCK_XCODEBUILD_FLAGS:-}"
 
 cd "$PROJECT_DIR" || exit 1
 
@@ -47,12 +55,12 @@ echo "→ Simulator: $DEVICE"
 # diesen Schritt lief die Erweiterung eines alten Stands (gemessen: Build 5 auf iOS 27).
 XB_DEST="platform=iOS Simulator,id=$DEVICE"
 echo "→ Baue Restock samt Erweiterung …"
-if ! DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build -scheme Restock \
-    -project Restock.xcodeproj -destination "$XB_DEST" 2>&1 | grep -E "error:|BUILD (SUCCEEDED|FAILED)"; then
+if ! DEVELOPER_DIR="$XCODE_DEV" xcodebuild build -scheme Restock \
+    -project Restock.xcodeproj -destination "$XB_DEST" ${XB_FLAGS[@]+"${XB_FLAGS[@]}"} 2>&1 | grep -E "error:|BUILD (SUCCEEDED|FAILED)"; then
   echo "ROT — Bau fehlgeschlagen, kein Testlauf."; exit 1
 fi
-BUILD_SETTINGS=$(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -showBuildSettings \
-  -scheme Restock -project Restock.xcodeproj -destination "$XB_DEST" 2>/dev/null)
+BUILD_SETTINGS=$(DEVELOPER_DIR="$XCODE_DEV" xcodebuild -showBuildSettings \
+  -scheme Restock -project Restock.xcodeproj -destination "$XB_DEST" ${XB_FLAGS[@]+"${XB_FLAGS[@]}"} 2>/dev/null)
 BUILT_APP="$(echo "$BUILD_SETTINGS" | awk -F' = ' '/^ *TARGET_BUILD_DIR = /{print $2; exit}')/$(echo "$BUILD_SETTINGS" | awk -F' = ' '/^ *FULL_PRODUCT_NAME = /{print $2; exit}')"
 if [ ! -d "$BUILT_APP/PlugIns/RestockShareExtension.appex" ] || ! xcrun simctl install "$DEVICE" "$BUILT_APP"; then
   echo "ROT — gebaute App fehlt oder Installation fehlgeschlagen: $BUILT_APP"; exit 1
@@ -175,13 +183,14 @@ echo "→ Starte UI-Test …"
 # gelaufen ist. xcodebuild reicht jede Variable mit dem Präfix `TEST_RUNNER_` an den
 # Testprozess durch und streift das Präfix ab. Ohne dieses Signal überspringt sich der Test —
 # so meldet die CI, die das ganze Target ohne dieses Skript startet, nicht falsch rot.
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
+DEVELOPER_DIR="$XCODE_DEV" \
 TEST_RUNNER_RESTOCK_SHARE_E2E=1 \
 xcodebuild test \
   -scheme Restock \
   -project Restock.xcodeproj \
   -destination "platform=iOS Simulator,id=$DEVICE" \
   -only-testing:RestockUITests/ReceiptShareExtensionTests \
+  ${XB_FLAGS[@]+"${XB_FLAGS[@]}"} \
   2>&1
 TEST_STATUS=$?
 
@@ -307,4 +316,21 @@ if [ -z "$FAILURES" ]; then
   exit 0
 fi
 echo "ROT —$FAILURES siehe Ergebnisblock oben."
+# --- Diagnose bei Rot (Issue #99, Paket 4): Messzeilen der Erweiterung, App-Gruppe, Bildschirmfoto ---
+# Die Erweiterung schreibt os_log-Zeilen (Kategorie `share`: Anhang, Zeilen/Positionen, Speicher,
+# Nutzlast; nur Zahlen). Ohne sie ist „keine Nutzlast“ nicht von „nichts erkannt“ zu unterscheiden.
+echo "--- Erweiterungs-Protokoll (process RestockShareExtension, seit $LOG_START) ---"
+xcrun simctl spawn "$DEVICE" log show --start "$LOG_START" --style compact --info \
+  --predicate 'process == "RestockShareExtension"' 2>/dev/null | grep -v "^Timestamp" | tail -n 80
+echo "--- App-Gruppe ---"
+if [ -n "$GROUP_PLIST" ]; then
+  echo "plist: $GROUP_PLIST"; /usr/libexec/PlistBuddy -c "Print" "$GROUP_PLIST" 2>/dev/null | grep -E "^\s+[A-Za-z]" | sed -E 's/= .*/= …/' | head -n 20
+else
+  echo "keine App-Gruppen-plist gefunden"
+fi
+if [ -n "${RESTOCK_SHARE_DIAG_DIR:-}" ]; then
+  mkdir -p "$RESTOCK_SHARE_DIAG_DIR"
+  xcrun simctl io "$DEVICE" screenshot "$RESTOCK_SHARE_DIAG_DIR/nach-dem-test.png" >/dev/null 2>&1 \
+    && echo "Bildschirmfoto: $RESTOCK_SHARE_DIAG_DIR/nach-dem-test.png"
+fi
 exit 1
