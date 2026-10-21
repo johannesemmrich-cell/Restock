@@ -316,4 +316,21 @@ if [ -z "$FAILURES" ]; then
   exit 0
 fi
 echo "ROT —$FAILURES siehe Ergebnisblock oben."
+# --- Diagnose bei Rot (Issue #99, Paket 4): Messzeilen der Erweiterung, App-Gruppe, Bildschirmfoto ---
+# Die Erweiterung schreibt os_log-Zeilen (Kategorie `share`: Anhang, Zeilen/Positionen, Speicher,
+# Nutzlast; nur Zahlen). Ohne sie ist „keine Nutzlast“ nicht von „nichts erkannt“ zu unterscheiden.
+echo "--- Erweiterungs-Protokoll (process RestockShareExtension, seit $LOG_START) ---"
+xcrun simctl spawn "$DEVICE" log show --start "$LOG_START" --style compact --info \
+  --predicate 'process == "RestockShareExtension"' 2>/dev/null | grep -v "^Timestamp" | tail -n 80
+echo "--- App-Gruppe ---"
+if [ -n "$GROUP_PLIST" ]; then
+  echo "plist: $GROUP_PLIST"; /usr/libexec/PlistBuddy -c "Print" "$GROUP_PLIST" 2>/dev/null | grep -E "^\s+[A-Za-z]" | sed -E 's/= .*/= …/' | head -n 20
+else
+  echo "keine App-Gruppen-plist gefunden"
+fi
+if [ -n "${RESTOCK_SHARE_DIAG_DIR:-}" ]; then
+  mkdir -p "$RESTOCK_SHARE_DIAG_DIR"
+  xcrun simctl io "$DEVICE" screenshot "$RESTOCK_SHARE_DIAG_DIR/nach-dem-test.png" >/dev/null 2>&1 \
+    && echo "Bildschirmfoto: $RESTOCK_SHARE_DIAG_DIR/nach-dem-test.png"
+fi
 exit 1

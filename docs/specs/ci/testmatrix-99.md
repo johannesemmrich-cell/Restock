@@ -111,7 +111,17 @@ Bon-Seed und den Bon-Auflösungs-Zähler weg, die T2 beim Speichern erzeugt).
   schritte gleich `ui-test`, Skriptaufruf mit Bild und Signaturflags ohne Anführungszeichen, `MIN_POSITIONS`/
   `EXPECT_TOTAL` aus dem Bildskript, Artikelliste und Endsumme gleich der Unit-Test-Vorlage, Geometrie gleich,
   Skript CI-fähig.
-- Nachweis: erster CI-Lauf des PRs; Dauer und Ergebnisblock werden hier nachgetragen.
+- Erster Lauf (39603940444, Job 16 min): Bild erzeugt (1206 × 9000), Bau und Installation, Fotos-Navigation auf dem
+  englischen Runner-Simulator (Begrüßung, Mitteilungsdialog der Fotos-App bedient), Teilen-Dialog, Zelle „Restock“,
+  Erweiterung lief (Prozessliste), keine Absturzberichte — aber **keine Nutzlast** und während der 90 s kein
+  Mitteilungsdialog der Erweiterung (der erst nach dem Ablegen der Nutzlast kommt): Die Verarbeitung endete vor dem
+  Ablegen. Hauptverdacht: Das Bildskript kippte den Kontext nicht wirklich (`flipped: true` ohne CTM), der Text
+  stand auf dem Kopf, Vision fand nichts → `noItemsFound`. Behoben: CTM gekippt; das Skript prüft sich jetzt selbst
+  mit Vision auf dem oberen Streifen (Kopfzeile und ≥ 6 der ersten 8 Artikelnamen, sonst Abbruch vor dem Lauf). Die
+  Erweiterung schreibt Messzeilen (`os.Logger`, Kategorie `share`: Anhanggröße, Zeilen/Positionen, Speicher,
+  Nutzlast; nur Zahlen), das Skript druckt sie bei Rot samt App-Gruppen-Schlüsseln und Bildschirmfoto (Artefakt
+  `share-extension-diagnose`).
+- Nachweis: nächster CI-Lauf des PRs; Dauer und Ergebnisblock werden hier nachgetragen.
 - Offene Grenzen: Der CI-Weg prüft das erzeugte Bild, nicht das echte Foto (das bleibt der lokale Lauf);
   die Fotos-App eines frischen Runner-Simulators (Begrüßung, englische Beschriftung) ist bis zum ersten
   Lauf nur aus dem Test abgedeckt (`openLibraryGrid`, Kennungen statt Texte).

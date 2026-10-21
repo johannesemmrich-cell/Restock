@@ -4,6 +4,7 @@ import SwiftData
 import PDFKit
 import UniformTypeIdentifiers
 import UserNotifications
+import os
 
 /// Principal-Klasse der Share Extension (siehe `NSExtensionPrincipalClass` in Info.plist) —
 /// reine Hülle, die die eigentliche Arbeit an eine SwiftUI-Ansicht delegiert. `extensionContext`
@@ -123,9 +124,14 @@ struct ShareReceiptView: View {
     /// `state = .success(...)` (und die anderen Zuweisungen) je nach Timing/Gerät auf einem
     /// Hintergrund-Thread weiter — undefiniertes SwiftUI-Rendering (kein Crash, aber die
     /// Erfolgs-Animation blieb bei manchen Nutzern stillschweigend aus, gemeldet 19.08.2026).
+    /// Messzeilen für den CI-Nachweislauf (`scripts/run-share-extension-uitest.sh` liest sie bei Rot
+    /// per `log show`): nur Zahlen und Zustände, nie Bon-Text (Datenschutz).
+    private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "RestockShareExtension", category: "share")
+
     @MainActor
     private func process() async {
         guard let attachment = await loadSharedAttachment() else {
+            Self.logger.error("Anhang: kein Bild oder PDF")
             state = .error("Kein Bild oder PDF gefunden.")
             return
         }
@@ -134,10 +140,12 @@ struct ShareReceiptView: View {
         switch attachment {
         case .image(let image):
             guard let cgImage = image.cgImage else {
+                Self.logger.error("Anhang: Bild ohne cgImage")
                 state = .error("Bild konnte nicht verarbeitet werden.")
                 return
             }
             let orientation = CGImagePropertyOrientation(image.imageOrientation)
+            Self.logger.info("Anhang: Bild \(cgImage.width)×\(cgImage.height), Ausrichtung \(orientation.rawValue)")
             // Issue #120: derselbe Erkenner wie der App-Scanner (sehr hohe Bilder in Streifen, sonst
             // Einzelzug, dieselben Vision-Einstellungen). Synchron, daher abseits des Main Actors, damit
             // der Spinner weiterläuft. Leere Blöcke → leere Zeilen → `.noItemsFound` unten.
@@ -149,12 +157,14 @@ struct ShareReceiptView: View {
         }
 
         let parsed = ReceiptParserService.parse(lines)
+        Self.logger.info("Erkennung: \(lines.count) Zeilen, \(parsed.count) Positionen")
         guard !parsed.isEmpty else {
             state = .noItemsFound
             return
         }
 
         guard let container = SharedModelContainer.make() else {
+            Self.logger.error("Kein Zugriff auf den gemeinsamen Speicher")
             state = .error("Kein Zugriff auf die Restock-Daten.")
             return
         }
@@ -198,6 +208,8 @@ struct ShareReceiptView: View {
             detectedTotal: ReceiptParserService.detectedTotal(from: lines)
         )
         ReceiptShareHandoff.store(payload)
+        let storeKind = detectedStore == nil ? "keiner" : (storeConfidentlyDetected ? "erkannt" : "geraten")
+        Self.logger.info("Nutzlast abgelegt: \(resolvedLines.count) Positionen, Laden \(storeKind, privacy: .public)")
         await requestNotificationPermissionIfNeeded()
         scheduleOpenReminder(storeName: detectedStore?.name, storeConfidentlyDetected: storeConfidentlyDetected, itemCount: resolvedLines.count)
         state = .success(storeName: detectedStore?.name, storeConfidentlyDetected: storeConfidentlyDetected, itemCount: resolvedLines.count)

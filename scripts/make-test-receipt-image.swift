@@ -11,6 +11,7 @@
 //
 import AppKit
 import Foundation
+import Vision
 
 let items: [(name: String, price: String)] = [
     ("Bananen lose", "1,29 A"), ("Nektarinen", "1,89 A"), ("Gouda Scheiben", "2,45 A"),
@@ -39,7 +40,12 @@ guard let context = CGContext(data: nil, width: width, height: height, bitsPerCo
 context.setFillColor(red: 1, green: 1, blue: 1, alpha: 1)
 context.fill(CGRect(x: 0, y: 0, width: width, height: height))
 
-// Gekippter Kontext: Ursprung oben links wie bei UIGraphicsImageRenderer, Text nicht gespiegelt.
+// Ursprung oben links wie bei UIGraphicsImageRenderer: Die Bitmap ist y-aufwärts, deshalb erst die
+// Transformation kippen und dann AppKit sagen, dass der Kontext gekippt ist. `flipped: true` allein
+// kippt NICHT (Lauf 39603940444: Erweiterung lief, erkannte aber nichts — Verdacht: Text stand auf
+// dem Kopf); die Selbstprüfung unten belegt die Lesbarkeit vor dem Lauf.
+context.translateBy(x: 0, y: CGFloat(height))
+context.scaleBy(x: 1, y: -1)
 NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: true)
 let font = NSFont(name: "Menlo-Regular", size: 40) ?? NSFont.monospacedSystemFont(ofSize: 40, weight: .regular)
 let gap: CGFloat = 66
@@ -79,3 +85,34 @@ do {
     exit(1)
 }
 print("Testbon geschrieben: \(outputPath) (\(width)×\(height) px, \(items.count) Positionen, Endsumme \(total))")
+
+// Selbstprüfung mit der Texterkennung des Runners, nur auf dem oberen Streifen (2 × Breite): Ein
+// Ganzbild-Durchgang verliert bei so hohen Bildern den Großteil des Textes (Issue #120), der Streifen
+// zeigt aber, ob Schrift und Ausrichtung stimmen. Scheitert laut, damit der Teilen-Lauf nicht an
+// einem unlesbaren Bild statt an der Erweiterung scheitert.
+let cropHeight = min(height, width * 2)
+guard let topCrop = image.cropping(to: CGRect(x: 0, y: 0, width: width, height: cropHeight)) else {
+    FileHandle.standardError.write("Selbstprüfung: Ausschnitt konnte nicht erzeugt werden\n".data(using: .utf8)!)
+    exit(1)
+}
+let request = VNRecognizeTextRequest()
+request.recognitionLevel = .accurate
+request.recognitionLanguages = ["de-DE"]
+request.usesLanguageCorrection = false
+do {
+    try VNImageRequestHandler(cgImage: topCrop, options: [:]).perform([request])
+} catch {
+    FileHandle.standardError.write("Selbstprüfung: Texterkennung fehlgeschlagen: \(error)\n".data(using: .utf8)!)
+    exit(1)
+}
+let texts = (request.results ?? []).compactMap { $0.topCandidates(1).first?.string }
+let expectedNames = items.prefix(8).map { $0.name }
+let foundNames = expectedNames.filter { name in texts.contains { $0.contains(name) } }
+let headerFound = texts.contains { $0.contains("Musterfiliale") }
+print("Selbstprüfung (Vision, obere \(cropHeight) px): \(texts.count) Textblöcke, "
+      + "\(foundNames.count)/\(expectedNames.count) der ersten Artikelnamen, Kopfzeile: \(headerFound ? "ja" : "nein")")
+if !headerFound || foundNames.count < 6 {
+    FileHandle.standardError.write(("Selbstprüfung FEHLGESCHLAGEN — erkannte Blöcke: "
+        + texts.prefix(12).joined(separator: " | ") + "\n").data(using: .utf8)!)
+    exit(1)
+}

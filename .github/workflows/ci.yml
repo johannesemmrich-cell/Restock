@@ -341,6 +341,7 @@ jobs:
           MIN_POSITIONS=18 \
           EXPECT_TOTAL=68,69 \
           RESTOCK_XCODEBUILD_FLAGS="-skipMacroValidation CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES AD_HOC_CODE_SIGNING_ALLOWED=YES" \
+          RESTOCK_SHARE_DIAG_DIR="$RUNNER_TEMP/share-diag" \
           bash scripts/run-share-extension-uitest.sh ${{ steps.sim.outputs.udid }} | tee share-extension.log
 
       - name: Result block to job summary
@@ -353,10 +354,14 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload log on failure
+      - name: Upload log and diagnostics on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: share-extension.log
-          path: share-extension.log
+          name: share-extension-diagnose
+          path: |
+            share-extension.log
+            ${{ runner.temp }}/share-diag
+            ${{ runner.temp }}/testbon.png
+          if-no-files-found: ignore
           retention-days: 7
