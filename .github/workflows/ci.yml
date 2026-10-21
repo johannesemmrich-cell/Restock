@@ -96,6 +96,40 @@ jobs:
           path: TestResults.xcresult
           retention-days: 7
 
+  # Issue #99, Punkt 5: TestFlight baut Release, die Tests bauen Debug. Dieser Job baut die App
+  # bei jedem PR als Release für den Simulator, damit Code, der nur unter DEBUG kompiliert
+  # (Launch-Argumente, Fakes), vor dem Upload auffällt. Nur bauen, keine Tests, keine Signatur.
+  release-build:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest available Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$LATEST" ]; then LATEST="/Applications/Xcode.app"; fi
+          echo "Using $LATEST"
+          echo "DEVELOPER_DIR=$LATEST/Contents/Developer" >> "$GITHUB_ENV"
+
+      - name: Install xcpretty
+        run: gem install xcpretty --no-document
+
+      - name: Build Release for simulator
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project Restock.xcodeproj \
+            -scheme Restock \
+            -configuration Release \
+            -destination 'generic/platform=iOS Simulator' \
+            -skipMacroValidation \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=YES \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            | xcpretty
+
   ui-test:
     name: ui-test (${{ matrix.half }})
     runs-on: macos-26
