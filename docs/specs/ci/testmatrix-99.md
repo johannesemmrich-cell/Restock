@@ -25,7 +25,7 @@ nur Standardschrift und kaum Dunkelmodus, nur Debug gebaut.
 | 1 Teilen-Erweiterung | testen: dritter UI-Job mit `scripts/run-share-extension-uitest.sh`, blockierend | P4 | offen |
 | 2 Englisch | kein UI-Lauf; Unit-Test Schlüsselgleichheit `de.lproj`/`en.lproj` | P2 | umgesetzt |
 | 3 iPad | entfällt für 1.0; `TARGETED_DEVICE_FAMILY = 1` in allen Konfigurationen | P1 | umgesetzt |
-| 4 Schrift/Dunkelmodus | gezielt: zwei UI-Tests mit `UICTContentSizeCategoryAccessibilityXXXL` auf Spaltenkopf „Gesamt“ (#93), Bon-Prüf-Screen, Ladenliste; Dunkelmodus bleibt (zwei Tests, Amber-Kontrast #75) | P3 | offen |
+| 4 Schrift/Dunkelmodus | gezielt: zwei UI-Tests mit `UICTContentSizeCategoryAccessibilityXXXL` auf Spaltenkopf „Gesamt“ (#93), Bon-Prüf-Screen, Ladenliste; Dunkelmodus bleibt (zwei Tests, Amber-Kontrast #75) | P3 | in Arbeit (PR offen) |
 | 5 Release-Build | testen: Job `release-build` in `ci.yml`, Release für den Simulator bei jedem PR | P1 | umgesetzt |
 
 ## P1: Release-Build-Job und iPhone-only
@@ -50,9 +50,51 @@ Schlüsselmengen (fehlende je Seite werden genannt), gleiche Platzhalter je Schl
 `%lld`; `%%` ausgenommen). Stand beim Anlegen: 378 Schlüssel je Sprache, keine Abweichung, 41 Texte mit
 Platzhaltern. Kein englischer UI-Lauf; die englische Oberfläche selbst bleibt beim Gerätetest (#187).
 
-## P3–P4
+## P3: Dynamic Type XXXL, zwei gezielte UI-Tests
 
-Werden je als eigener PR umgesetzt und hier nachgetragen.
+`RestockUITests/DynamicTypeUITests.swift` startet die App mit dem UIKit-Launch-Argument
+`-UIPreferredContentSizeCategoryName UICTContentSizeCategoryAccessibilityXXXL` (Argument-Domain nur dieses
+Prozesses, kein Zustand in der App-Gruppe, daher kein eigenes Aufräum-Argument; `tearDown` räumt nur den
+Bon-Seed und den Bon-Auflösungs-Zähler weg, die T2 beim Speichern erzeugt).
+
+- **T1 `testResolutionStatsHeaderGesamtFitsAtLargestAccessibilitySize`:** Dev-Modus → Einstellungen →
+  „Bon-Auflösung“. Der Spaltenkopf „Gesamt“ (#93) muss waagerecht im Fenster liegen und mindestens so breit
+  sein, wie der Text in `.caption` bei AX5 mit `minimumScaleFactor(0.7)` braucht (gemessen im Testläufer mit
+  `UIFont.preferredFont(forTextStyle:compatibleWith:)`, Kleinschreibung als Untergrenze). Dazu Summenzeile
+  „Alle Stufen“ im Fenster und mit Zahl am Anfang.
+- **T2 `testReceiptReviewAndStoreListStayUsableAtLargestAccessibilitySize`:** Bon-Seed → Prüf-Screen
+  (Kopfzeile, Bon-Text und Häkchen der ersten Zeile, „Speichern“-Chip im Fenster und antippbar) → Speichern →
+  Kachel „Lidl“ → Ladenliste (Schnelleingabe, Artikelzeile „Milch“, ···-Menü im Fenster, Zeile antippbar).
+- Warum Breitenmessung: XCUITest liefert immer das volle Label, ein „Gesa…“ ist von außen nur an der
+  gerenderten Breite erkennbar (wie P11 in `PurchaseUITests`).
+- CI: Die Klasse steht in `HEAVY_CLASSES` (Hälfte A, 30 min), weil Hälfte B mit 53 min nahe am Limit von
+  60 min lag; Ausnahme von „neue Klassen landen in B“, in `ui-test-job-in-zwei-haelften.md` nachgetragen.
+- Erster Lauf (39563379941): T2 grün (72 s, Prüf-Screen und Ladenliste in XXXL bedienbar). T1 rot aus einem
+  Testfehler: Der Link „Bon-Auflösung“ lag in XXXL unter dem Rand und ist dort nicht im Bedienhilfen-Baum, der
+  Helfer wartete auf Existenz, bevor er wischte; behoben (wischen, solange das Element fehlt). Die Breitenmessung
+  selbst kam noch nicht zum Zug. Nebenbefund: Die #173-Wiederholung lief die ganze Auswahl erneut, beide Hälften
+  brachen am 60-min-Limit ab; behoben in diesem PR (Fassung 2, `ui-test-job-in-zwei-haelften.md`).
+- Zweiter Lauf (39573224713): T1 misst und meldet den Fehler: Spaltenkopf „Gesamt“ 40,0 pt breit, nötig 100,0 pt
+  (caption bei AX5 × 0,7), also „Gesa…“ wie in #93, nur in großer Schrift. T2 grün. Produktfix im selben PR
+  (Entwickler-Bildschirm, keine Farbänderung): `ReceiptResolutionStatsView` stapelt ab
+  `dynamicTypeSize.isAccessibilitySize` je Stufe beschriftete Werte ohne feste Breiten, Kopfzeile nur „Stufe“,
+  Kennungen unverändert; Normalgröße unverändert. Zweiter Testfehler im Helfer behoben (Wischen bis zur Existenz,
+  dann kurze Züge; die Wiederholung wischte an der halb verdeckten Zeile vorbei bis zum Listenende).
+- Dritter Lauf (39581094360): Breitenmessung grün mit dem gestapelten Layout, T1 scheiterte danach an der
+  Summenzeile „Alle Stufen“ (in XXXL unter dem Rand, nicht im Baum); jetzt wird hingescrollt. In der #173-Wiederholung
+  (wie schon im zweiten Lauf) kam der erste Tipp auf das Zahnrad nach dem Kaltstart nicht an, die Wischer suchten den
+  Link auf der Startseite; `openSettings` prüft jetzt die Titelzeile „Einstellungen“ und tippt höchstens einmal
+  nach, mit Messzeile (Muster `StoreSetupUITests.openSetup`). Hälfte A 41 min (Durchlauf 1 30,6 min, Wiederholung
+  1 Test 94 s), Hälfte B 44,5 min, grün.
+- Vierter Lauf (39588635436): Hälfte A grün, 43 Tests, 37 min, T1 und T2 im ersten Durchlauf. Hälfte B rot durch
+  die bekannte Sporadik `QuickAddAssignmentUITests.testChoosingStoreForOneItemLeavesTheOtherOpen`, deren
+  Wiederholung ohne Launch-Argumente startete (kein Seed). Beide Klassen starten jetzt über `UITestLaunch.start`
+  (Gegenprobe DEV-Pill, Kopfzeile des Prüf-Screens, Kachel „Lidl“); Folge-Issue für die übrigen Klassen.
+- Nachweis: nächster CI-Lauf des PRs.
+
+## P4
+
+Wird als eigener PR umgesetzt und hier nachgetragen.
 
 ## Offene Grenzen
 

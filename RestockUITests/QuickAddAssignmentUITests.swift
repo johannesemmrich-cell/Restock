@@ -40,7 +40,11 @@ final class QuickAddAssignmentUITests: XCTestCase {
         if let toastDuration {
             app.launchArguments += ["-quickAddToastDurationForUITests", "\(toastDuration)"]
         }
-        app.launch()
+        // Start über den Helfer (Issue #105/#128) statt `app.launch()`: In der #173-Wiederholung (Fassung 2)
+        // ist der wiederholte Test der erste Start seiner Sitzung, und der kam im Lauf 39588635436 ohne
+        // Launch-Argumente an — kein Seed, „Karte „Ohne Laden“ fehlt“, obwohl derselbe Test im ersten
+        // Durchlauf nur an einer Zählung sporadisch scheiterte. Gegenprobe: die Kachel „Lidl“ aus dem Seed.
+        UITestLaunch.start(app, expecting: tile("Lidl", in: app), description: "Kachel „Lidl“")
         return app
     }
 

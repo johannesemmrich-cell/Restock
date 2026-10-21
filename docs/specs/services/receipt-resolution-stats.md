@@ -343,3 +343,12 @@ Lücke versteckt. Eine Messung der KI-Stufe geschieht ab Auslieferung auf Hennin
 ## Changelog
 
 - 2026-10-02: Erstfassung (Issue #14, Teil „Messung zuerst“, Variante A freigegeben).
+
+## Nachtrag 2026-10-21 (Issue #99, Paket 3): Bedienhilfen-Schriftgrößen
+
+Ab `dynamicTypeSize.isAccessibilitySize` (AX1–AX5) zeigt `ReceiptResolutionStatsView` je Stufe einen Block mit
+beschrifteten Werten („Gesamt“, „Geändert“, „Abgewählt“ in `.caption`, Wert rechts) statt vier Spalten mit festen
+Breiten; die Kopfzeile zeigt nur „Stufe“. Grund: In XXXL war der Spaltenkopf „Gesamt“ 40 pt breit statt der nötigen
+100 pt (`DynamicTypeUITests` T1, Lauf 39573224713), derselbe Fehler wie #93. Die `accessibilityIdentifier`
+(`resolutionStage.<key>`, `.total`, `.changed`, `.deselected`) sind in beiden Layouts gleich, die bestehenden
+UI-Tests laufen unverändert in Normalgröße.

@@ -143,7 +143,7 @@ jobs:
       matrix:
         half: [A, B]
     env:
-      HEAVY_CLASSES: "ReceiptReviewUITests ShoppingRouteUITests AddItemQuantitySuggestionUITests ReceiptResolutionStatsUITests"
+      HEAVY_CLASSES: "ReceiptReviewUITests ShoppingRouteUITests AddItemQuantitySuggestionUITests ReceiptResolutionStatsUITests DynamicTypeUITests"
     steps:
       - uses: actions/checkout@v4
 
@@ -210,24 +210,50 @@ jobs:
             done
           fi
           echo "Hälfte ${{ matrix.half }}: ${SELECTION[*]}"
-          # Issue #173: Ein fehlgeschlagener UI-Test läuft im selben Lauf genau einmal erneut
-          # (App wird dazu neu gestartet); grün bei grüner Wiederholung. Kein Test wird
-          # übersprungen. Die Zusammenfassung unten macht Wiederholungen sichtbar.
-          xcodebuild test \
-            -project Restock.xcodeproj \
-            -scheme Restock \
-            -destination 'platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}' \
-            "${SELECTION[@]}" \
-            -retry-tests-on-failure \
-            -test-iterations 2 \
-            -test-repetition-relaunch-enabled YES \
-            -resultBundlePath UITestResults.xcresult \
-            -skipMacroValidation \
-            CODE_SIGN_IDENTITY="-" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=YES \
-            AD_HOC_CODE_SIGNING_ALLOWED=YES \
-            | xcpretty
+          # Issue #173, Fassung 2 (2026-10-21): Ein fehlgeschlagener UI-Test läuft im selben Lauf genau
+          # einmal erneut, und zwar NUR er. Die erste Fassung (-retry-tests-on-failure -test-iterations 2
+          # -test-repetition-relaunch-enabled YES) wiederholte nach einem Fehlschlag die gesamte Auswahl
+          # (belegt im Lauf 39563379941: beide Hälften liefen den vollen Satz zweimal und brachen am
+          # Limit von 60 min ab). Jetzt: erster Lauf wie bisher; ist er rot, liest ci_failed_ui_tests.py
+          # die fehlgeschlagenen Testfälle aus dem Ergebnisbündel, und test-without-building startet
+          # genau diese (App-Neustart je Test ist bei XCUITest ohnehin der Fall). Grün bei grüner
+          # Wiederholung. Kein Test wird übersprungen; Rot ohne fehlgeschlagenen Testfall (Bau,
+          # Simulator, Abbruch) bleibt ohne Wiederholung rot.
+          run_ui_tests() {
+            local action="$1" bundle="$2"
+            shift 2
+            xcodebuild "$action" \
+              -project Restock.xcodeproj \
+              -scheme Restock \
+              -destination 'platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}' \
+              "$@" \
+              -resultBundlePath "$bundle" \
+              -skipMacroValidation \
+              CODE_SIGN_IDENTITY="-" \
+              CODE_SIGNING_REQUIRED=NO \
+              CODE_SIGNING_ALLOWED=YES \
+              AD_HOC_CODE_SIGNING_ALLOWED=YES \
+              | xcpretty
+          }
+          set +e
+          run_ui_tests test UITestResults.xcresult "${SELECTION[@]}"
+          FIRST_STATUS=$?
+          set -e
+          if [ "$FIRST_STATUS" -eq 0 ]; then
+            exit 0
+          fi
+          FAILED=$(xcrun xcresulttool get test-results tests --path UITestResults.xcresult --compact 2>/dev/null \
+            | python3 scripts/ci_failed_ui_tests.py)
+          if [ -z "$FAILED" ]; then
+            echo "Erster Lauf rot (Status $FIRST_STATUS) ohne fehlgeschlagenen Testfall: keine Wiederholung."
+            exit "$FIRST_STATUS"
+          fi
+          RETRY=()
+          for TEST in $FAILED; do
+            RETRY+=("-only-testing:RestockUITests/$TEST")
+          done
+          echo "Wiederholung genau einmal (Issue #173): ${RETRY[*]}"
+          run_ui_tests test-without-building UITestRetry.xcresult "${RETRY[@]}"
 
       - name: Test summary (incl. retries)
         if: always()
@@ -235,11 +261,18 @@ jobs:
           # Issue #173: xcresulttool-Zusammenfassung in die Lauf-Zusammenfassung, damit Tests, die
           # erst in der Wiederholung grün wurden, nicht unbemerkt bleiben. Nie fehlschlagen lassen.
           {
-            echo "### UI-Tests Hälfte ${{ matrix.half }}: xcresult-Zusammenfassung"
+            echo "### UI-Tests Hälfte ${{ matrix.half }}: xcresult-Zusammenfassung (erster Lauf)"
             echo '```json'
             xcrun xcresulttool get test-results summary --path UITestResults.xcresult --compact 2>/dev/null \
               || echo '{"error": "xcresulttool summary nicht lesbar"}'
             echo '```'
+            if [ -d UITestRetry.xcresult ]; then
+              echo "### UI-Tests Hälfte ${{ matrix.half }}: Wiederholung nur der fehlgeschlagenen Tests"
+              echo '```json'
+              xcrun xcresulttool get test-results summary --path UITestRetry.xcresult --compact 2>/dev/null \
+                || echo '{"error": "xcresulttool summary nicht lesbar"}'
+              echo '```'
+            fi
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload xcresult on failure
@@ -247,5 +280,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: UITestResults-${{ matrix.half }}.xcresult
-          path: UITestResults.xcresult
+          path: |
+            UITestResults.xcresult
+            UITestRetry.xcresult
+          if-no-files-found: ignore
           retention-days: 7
