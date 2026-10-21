@@ -80,7 +80,13 @@ Bon-Seed und den Bon-Auflösungs-Zähler weg, die T2 beim Speichern erzeugt).
   `dynamicTypeSize.isAccessibilitySize` je Stufe beschriftete Werte ohne feste Breiten, Kopfzeile nur „Stufe“,
   Kennungen unverändert; Normalgröße unverändert. Zweiter Testfehler im Helfer behoben (Wischen bis zur Existenz,
   dann kurze Züge; die Wiederholung wischte an der halb verdeckten Zeile vorbei bis zum Listenende).
-- Nachweis: nächster CI-Lauf des PRs (T1 grün erwartet); Dauer von Hälfte A wird hier nachgetragen.
+- Dritter Lauf (39581094360): Breitenmessung grün mit dem gestapelten Layout, T1 scheiterte danach an der
+  Summenzeile „Alle Stufen“ (in XXXL unter dem Rand, nicht im Baum); jetzt wird hingescrollt. In der #173-Wiederholung
+  (wie schon im zweiten Lauf) kam der erste Tipp auf das Zahnrad nach dem Kaltstart nicht an, die Wischer suchten den
+  Link auf der Startseite; `openSettings` prüft jetzt die Titelzeile „Einstellungen“ und tippt höchstens einmal
+  nach, mit Messzeile (Muster `StoreSetupUITests.openSetup`). Hälfte A 41 min (Durchlauf 1 30,6 min, Wiederholung
+  1 Test 94 s), Hälfte B 44,5 min, grün.
+- Nachweis: nächster CI-Lauf des PRs; Dauer von Hälfte A wird hier nachgetragen.
 
 ## P4
 

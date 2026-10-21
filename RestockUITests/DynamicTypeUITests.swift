@@ -105,12 +105,34 @@ final class DynamicTypeUITests: XCTestCase {
         return (width * minimumScaleFactor).rounded(.down)
     }
 
-    private func openSettings(_ app: XCUIApplication) {
+    /// Öffnet die Einstellungen und prüft, dass sie wirklich offen sind. In beiden Wiederholungsläufen
+    /// (39573224713, 39581094360) kam der erste Tipp auf das Zahnrad nach dem Kaltstart nicht an: Die
+    /// 30 Wischer suchten den Link auf der Startseite und meldeten „fehlt“, während derselbe Code im
+    /// warmen ersten Durchlauf traf (bekanntes Bild aus `StoreSetupUITests.openSetup`). Deshalb
+    /// höchstens ein zweiter Tipp, mit Messzeile — keine stille Abhilfe.
+    private func openSettings(_ app: XCUIApplication, function: String = #function) {
         let gear = app.buttons.matching(NSPredicate(
             format: "identifier == 'gearshape' OR label CONTAINS[c] 'Einstellungen'")).firstMatch
+        let settingsBar = app.navigationBars["Einstellungen"]
         let ready = gear.waitUntilHittable()
         XCTAssertTrue(ready.matched, "Einstellungen-Knopf (Zahnrad) nicht antippbar — zuletzt: \(ready.last)")
+        let firstTap = Date()
         gear.tap()
+        if !settingsBar.waitForExistence(timeout: 10) {
+            let again = gear.waitUntilHittable(timeout: 0)
+            if again.matched {
+                let load = UITestLaunch.loadAverage().map {
+                    String(format: "%.1f/%.1f/%.1f", locale: Locale(identifier: "en_US_POSIX"), $0.0, $0.1, $0.2)
+                } ?? "unbekannt"
+                let since = String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"),
+                                   Date().timeIntervalSince(firstTap))
+                NSLog("%@", "DynamicTypeUITests: zweiter Tipp auf das Zahnrad nötig — seit erstem Tipp \(since) s, "
+                      + "Zahnrad: \(again.last), Last \(load) [\(function)]")
+                gear.tap()
+            }
+        }
+        XCTAssertTrue(settingsBar.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Einstellungen nicht geöffnet.")
     }
 
     // MARK: - T1: Spaltenkopf „Gesamt“ der Bon-Auflösung (#93) in XXXL
@@ -147,9 +169,10 @@ final class DynamicTypeUITests: XCTestCase {
             "Spaltenkopf „Gesamt“ ist in XXXL nur \(width) pt breit, der Text braucht mindestens \(needed) pt "
             + "(caption bei AX5, Skalierung bis 0,7) — Anzeige gekürzt wie in #93.")
 
-        // Die Werte der Summenzeile bleiben im Fenster und lesbar.
+        // Die Werte der Summenzeile bleiben im Fenster und lesbar. In XXXL liegt die Summenzeile unter
+        // dem Rand und ist dort nicht im Baum (Lauf 39581094360: „fehlt“) — erst hinscrollen.
         let allTotal = element(app, "resolutionStage.all.total")
-        XCTAssertTrue(allTotal.waitForExistence(timeout: UITestWait.defaultTimeout), "Summenzeile „Alle Stufen“ fehlt.")
+        scrollUntilHittable(app, allTotal, description: "Wert „Gesamt“ der Summenzeile „Alle Stufen“")
         assertInsideWindowHorizontally(app, allTotal, description: "Wert „Gesamt“ der Summenzeile")
         XCTAssertNotNil(Int(allTotal.label.prefix { $0.isNumber }),
                         "Wert „Gesamt“ der Summenzeile beginnt nicht mit einer Zahl: „\(allTotal.label)“")
