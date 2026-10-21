@@ -1,0 +1,16 @@
+2026-10-21 08:04:26.681940+0200 Restock[69161:628875] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2310): <NSCloudKitMirroringDelegate: 0x1086e00e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-21 08:04:26.682009+0200 Restock[69161:628875] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2623): <NSCloudKitMirroringDelegate: 0x1086e00e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.DeviceFamilyTests testAppIsIphoneOnly]' started.
+/Users/hem/Developer/Restock/.claude/worktrees/feat-99-release-build-iphone-only/RestockTests/DeviceFamilyTests.swift:38: error: -[RestockTests.DeviceFamilyTests testAppIsIphoneOnly] : XCTAssertEqual failed: ("[1, 2]") is not equal to ("[1]") - App muss nur iPhone (1) unterstützen
+Test Case '-[RestockTests.DeviceFamilyTests testAppIsIphoneOnly]' failed (0.362 seconds).
+Test Case '-[RestockTests.DeviceFamilyTests testShareExtensionIsIphoneOnly]' started.
+/Users/hem/Developer/Restock/.claude/worktrees/feat-99-release-build-iphone-only/RestockTests/DeviceFamilyTests.swift:48: error: -[RestockTests.DeviceFamilyTests testShareExtensionIsIphoneOnly] : XCTAssertEqual failed: ("[1, 2]") is not equal to ("[1]") - Teilen-Erweiterung muss nur iPhone (1) unterstützen
+Test Case '-[RestockTests.DeviceFamilyTests testShareExtensionIsIphoneOnly]' failed (0.004 seconds).
+Test Case '-[RestockTests.DeviceFamilyTests testWidgetExtensionIsIphoneOnly]' started.
+/Users/hem/Developer/Restock/.claude/worktrees/feat-99-release-build-iphone-only/RestockTests/DeviceFamilyTests.swift:43: error: -[RestockTests.DeviceFamilyTests testWidgetExtensionIsIphoneOnly] : XCTAssertEqual failed: ("[1, 2]") is not equal to ("[1]") - Widget-Erweiterung muss nur iPhone (1) unterstützen
+Test Case '-[RestockTests.DeviceFamilyTests testWidgetExtensionIsIphoneOnly]' failed (0.001 seconds).
+	 Executed 3 tests, with 3 failures (0 unexpected) in 0.368 (0.370) seconds
+	 Executed 3 tests, with 3 failures (0 unexpected) in 0.368 (0.370) seconds
+	 Executed 3 tests, with 3 failures (0 unexpected) in 0.368 (0.372) seconds
+** TEST FAILED **
