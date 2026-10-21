@@ -38,9 +38,16 @@ final class ReceiptParserDecathlonTests: XCTestCase {
     ]
 
     private func assertDecathlonItems(_ parsed: [ReceiptLine], file: StaticString = #filePath, line: UInt = #line) {
-        let byName = Dictionary(parsed.map { ($0.name.lowercased(), $0.price) }, uniquingKeysWith: { a, _ in a })
-        XCTAssertEqual(byName["trek food pasta bolognese no size"], 8.99, "Trek Food fehlt: \(parsed.map(\.name))", file: file, line: line)
-        XCTAssertEqual(byName["1p 100 heva u black* de 36 / fr 38"], 9.99, "Badehose fehlt: \(parsed.map(\.name))", file: file, line: line)
+        let byName = Dictionary(parsed.map { ($0.name.lowercased(), $0) }, uniquingKeysWith: { a, _ in a })
+        // Zweimal gedruckt = zweimal gekauft: eine Position mit Menge 2 und 17,98 €.
+        let trek = byName["trek food pasta bolognese no size"]
+        XCTAssertEqual(trek?.price ?? 0, 17.98, accuracy: 0.001, "Trek Food: \(parsed.map { "\($0.name)=\($0.price)" })", file: file, line: line)
+        XCTAssertEqual(trek?.quantity ?? 0, 2, accuracy: 0.001, file: file, line: line)
+        XCTAssertEqual(trek?.unitPrice ?? 0, 8.99, accuracy: 0.001, file: file, line: line)
+        let heva = byName["1p 100 heva u black* de 36 / fr 38"]
+        XCTAssertEqual(heva?.price ?? 0, 9.99, accuracy: 0.001, "Badehose: \(parsed.map(\.name))", file: file, line: line)
+        XCTAssertEqual(heva?.quantity ?? 0, 1, accuracy: 0.001, file: file, line: line)
+        XCTAssertEqual(parsed.reduce(0) { $0 + $1.price }, 27.97, accuracy: 0.001, "Summe wie auf dem Bon", file: file, line: line)
         for forbidden in ["karte", "rfid", "gesamt", "artikel", "decathlon", "verkauf", "mwst"] {
             XCTAssertFalse(byName.keys.contains { $0.contains(forbidden) },
                            "Verwaltungszeile '\(forbidden)' als Position erkannt: \(parsed.map(\.name))", file: file, line: line)

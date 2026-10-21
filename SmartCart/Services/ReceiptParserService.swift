@@ -663,11 +663,25 @@ enum ReceiptParserService {
         return Array(results.dropLast())
     }
 
-    /// Duplikate entfernen (letzter Preis gewinnt bei gleichem Namen), dann alphabetisch sortiert.
+    /// Gleichnamige Positionen zu einer zusammenfassen, dann alphabetisch sortiert. Zwei
+    /// getrennt gedruckte gleiche Artikel (Decathlon: zweimal „TREK FOOD PASTA BOLOGNESE“ à 8,99 €)
+    /// sind zwei Käufe: Preise und Mengen werden addiert (Menge 2, 17,98 €). Vorher gewann der
+    /// letzte Preis, und der zweite Artikel fehlte in der Summe.
     private static func dedupAndSort(_ results: [ReceiptLine]) -> [ReceiptLine] {
-        var seen: [String: ReceiptLine] = [:]
-        for r in results { seen[r.name.lowercased()] = r }
-        return seen.values.sorted { $0.name < $1.name }
+        var merged: [String: ReceiptLine] = [:]
+        for r in results {
+            let key = r.name.lowercased()
+            guard var existing = merged[key] else { merged[key] = r; continue }
+            existing.price += r.price
+            existing.quantity += r.quantity
+            if let a = existing.weightBasis, let b = r.weightBasis {
+                existing.weightBasis = a + b
+            } else {
+                existing.weightBasis = nil
+            }
+            merged[key] = existing
+        }
+        return merged.values.sorted { $0.name < $1.name }
     }
 
     // MARK: - Euro-Suffix-Format (französische Bons, z. B. Carrefour)
