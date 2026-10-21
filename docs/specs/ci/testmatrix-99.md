@@ -22,10 +22,10 @@ nur Standardschrift und kaum Dunkelmodus, nur Debug gebaut.
 
 | Punkt | Entscheidung PO | Paket | Stand |
 |---|---|---|---|
-| 1 Teilen-Erweiterung | testen: dritter UI-Job mit `scripts/run-share-extension-uitest.sh`, blockierend | P4 | offen |
+| 1 Teilen-Erweiterung | testen: dritter UI-Job mit `scripts/run-share-extension-uitest.sh`, blockierend | P4 | in Arbeit (PR offen) |
 | 2 Englisch | kein UI-Lauf; Unit-Test Schlüsselgleichheit `de.lproj`/`en.lproj` | P2 | umgesetzt |
 | 3 iPad | entfällt für 1.0; `TARGETED_DEVICE_FAMILY = 1` in allen Konfigurationen | P1 | umgesetzt |
-| 4 Schrift/Dunkelmodus | gezielt: zwei UI-Tests mit `UICTContentSizeCategoryAccessibilityXXXL` auf Spaltenkopf „Gesamt“ (#93), Bon-Prüf-Screen, Ladenliste; Dunkelmodus bleibt (zwei Tests, Amber-Kontrast #75) | P3 | in Arbeit (PR offen) |
+| 4 Schrift/Dunkelmodus | gezielt: zwei UI-Tests mit `UICTContentSizeCategoryAccessibilityXXXL` auf Spaltenkopf „Gesamt“ (#93), Bon-Prüf-Screen, Ladenliste; Dunkelmodus bleibt (zwei Tests, Amber-Kontrast #75) | P3 | umgesetzt |
 | 5 Release-Build | testen: Job `release-build` in `ci.yml`, Release für den Simulator bei jedem PR | P1 | umgesetzt |
 
 ## P1: Release-Build-Job und iPhone-only
@@ -90,11 +90,31 @@ Bon-Seed und den Bon-Auflösungs-Zähler weg, die T2 beim Speichern erzeugt).
   die bekannte Sporadik `QuickAddAssignmentUITests.testChoosingStoreForOneItemLeavesTheOtherOpen`, deren
   Wiederholung ohne Launch-Argumente startete (kein Seed). Beide Klassen starten jetzt über `UITestLaunch.start`
   (Gegenprobe DEV-Pill, Kopfzeile des Prüf-Screens, Kachel „Lidl“); Folge-Issue für die übrigen Klassen.
-- Nachweis: nächster CI-Lauf des PRs.
+- Fünfter Lauf (39596137693): alle Jobs grün ohne Wiederholung, ui-test A 38 min, B 48 min. Squash-Merge 7dd4866.
 
-## P4
+## P4: Teilen-Erweiterung als blockierender CI-Job
 
-Wird als eigener PR umgesetzt und hier nachgetragen.
+- `ci.yml`, Job `share-extension` (macos-26, 45 min, kein `needs`, blockierend): Checkout, Xcode-Wahl,
+  Simulator-Wahl, Boot und Rechte wie `ui-test`; dann `swift scripts/make-test-receipt-image.swift` erzeugt das
+  Bon-Bild, danach `scripts/run-share-extension-uitest.sh <udid>` mit `TEST_IMAGE`, `MIN_POSITIONS=18`,
+  `EXPECT_TOTAL=68,69` und `RESTOCK_XCODEBUILD_FLAGS` (Signatur wie die anderen Jobs). Der Ergebnisblock des
+  Skripts landet in der Lauf-Zusammenfassung, das Protokoll bei Rot als Artefakt.
+- **Bild:** Das echte Lidl-Plus-Bild bleibt außerhalb des Repos (Datenschutz, Spec #120). In der CI dient die
+  Zeile-für-Zeile-Abschrift von `GeneratedReceipt.makeTallImage` (`ReceiptTextRecognizerTests`) als
+  macOS-Swift-Skript `scripts/make-test-receipt-image.swift` (1206 × 9000 px, Menlo 40, 18 Positionen,
+  Endsumme 68,69; AppKit statt UIKit, sonst gleich). Der Unit-Test T1 belegt für dieses Bild im Simulator
+  18 Positionen und 68,69 über den Streifenweg; der CI-Job prüft denselben Inhalt am Ende des Teilen-Wegs.
+- **Skript:** `run-share-extension-uitest.sh` nimmt `DEVELOPER_DIR` aus der Umgebung (sonst wie bisher
+  `/Applications/Xcode.app`) und zusätzliche xcodebuild-Argumente aus `RESTOCK_XCODEBUILD_FLAGS` (leeres
+  Array mit `${XB_FLAGS[@]+…}`, weil macOS-bash 3.2 unter `set -u` sonst abbricht). Lokaler Aufruf unverändert.
+- Strukturtest `scripts/test_ci_share_extension.py` (7 Prüfungen): Job blockierend und parallel, Vorbereitungs-
+  schritte gleich `ui-test`, Skriptaufruf mit Bild und Signaturflags ohne Anführungszeichen, `MIN_POSITIONS`/
+  `EXPECT_TOTAL` aus dem Bildskript, Artikelliste und Endsumme gleich der Unit-Test-Vorlage, Geometrie gleich,
+  Skript CI-fähig.
+- Nachweis: erster CI-Lauf des PRs; Dauer und Ergebnisblock werden hier nachgetragen.
+- Offene Grenzen: Der CI-Weg prüft das erzeugte Bild, nicht das echte Foto (das bleibt der lokale Lauf);
+  die Fotos-App eines frischen Runner-Simulators (Begrüßung, englische Beschriftung) ist bis zum ersten
+  Lauf nur aus dem Test abgedeckt (`openLibraryGrid`, Kennungen statt Texte).
 
 ## Offene Grenzen
 
