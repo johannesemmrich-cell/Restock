@@ -1,0 +1,37 @@
+Adversary Runde 1, 2026-10-21
+Strukturtest: Ran 2 tests, OK, EXIT=0
+grep -c "Restarting after unexpected exit" test-green-output-full.log -> 0
+Executed 612 tests, with 3 failures (0 unexpected); 611 passed-Zeilen; einziger "Test Case ... failed (": ReceiptTextRecognizerTests T1 (3 XCTAssert-Fehler ReceiptTextRecognizerTests.swift:52,54,56)
+Absturzberichte Restock-2026-10-21*: 24 (unveraendert vor/nach Adversary-Lauf)
+diff --stat: 6 files, 7 insertions(+), 5 deletions(-); je Swift-Datei 1 Zeile (+1/-1), CLAUDE.md +2 (Satz + Leerzeile)
+Eigener Simulatorlauf NotificationDigestChainTests (iOS 27.0): Executed 8 tests, 0 failures, 0 Restarting; Rohausgabe adversary-sim-run.txt
+Probe Strukturtest: "isStoredInMemoryOnly:true" (ohne Leerzeichen) -> nicht erkannt; "isStoredInMemoryOnly: m" -> nicht erkannt; "cloudKitDatabase: .automatic" -> erkannt
+
+## AC-5 Implementierer
+
+Befehle: diff --stat 0e6f24f und diff --name-only 0e6f24f im Arbeitsordner (Basis = Tip-Commit 0e6f24f, RED)
+
+ CLAUDE.md                                        |  2 ++
+ RestockTests/NotificationDigestChainTests.swift  |  2 +-
+ RestockTests/ReceiptAIResolutionChainTests.swift |  2 +-
+ RestockTests/ReceiptKnownItemNamesTests.swift    |  2 +-
+ RestockTests/ReceiptParserSuggestionTests.swift  |  2 +-
+ RestockTests/ReceiptResolutionStatsTests.swift   |  2 +-
+ scripts/test_inmemory_containers_no_cloudkit.py  | 15 +++++++++++++--
+ 7 files changed, 20 insertions(+), 7 deletions(-)
+CLAUDE.md
+RestockTests/NotificationDigestChainTests.swift
+RestockTests/ReceiptAIResolutionChainTests.swift
+RestockTests/ReceiptKnownItemNamesTests.swift
+RestockTests/ReceiptParserSuggestionTests.swift
+RestockTests/ReceiptResolutionStatsTests.swift
+scripts/test_inmemory_containers_no_cloudkit.py
+
+Treffer unter SmartCart/, SmartCartWidgets/, RestockShareExtension/, RestockUITests/, project.pbxproj: 0
+
+## F002 Implementierer: erweiterte Erkennung gegen Basis-Stand 0e6f24f (Export der RestockTests/ in den Scratchpad)
+5 Treffer: RestockTests/NotificationDigestChainTests.swift:203, RestockTests/ReceiptAIResolutionChainTests.swift:56, RestockTests/ReceiptKnownItemNamesTests.swift:11, RestockTests/ReceiptParserSuggestionTests.swift:14, RestockTests/ReceiptResolutionStatsTests.swift:33
+
+Runde 2 (Adversary): Strukturtest erneut: Ran 3 tests, OK, EXIT=0
+Variantenprobe: gemeldet v.swift:1 (ohne Leerzeichen), v.swift:2 (Variable); nicht gemeldet: isStoredInMemoryOnly: false und Aufruf mit cloudKitDatabase: .none
+diff --name-only 0e6f24f: CLAUDE.md, 5 Testdateien, scripts/test_inmemory_containers_no_cloudkit.py (7); kein Produktcode, RestockUITests, pbxproj

@@ -30,7 +30,7 @@ final class ReceiptResolutionStatsTests: XCTestCase {
 
     private func makeContext() throws -> ModelContext {
         let schema = Schema(versionedSchema: SchemaV1.self)
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let config = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         return ModelContext(try ModelContainer(for: schema, configurations: config))
     }
 

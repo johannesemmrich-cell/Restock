@@ -6,6 +6,7 @@ import SwiftUI
 /// Spec: `docs/specs/services/receipt-resolution-stats.md`.
 struct ReceiptResolutionStatsView: View {
     @State private var showResetConfirmation = false
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     /// Zähler liegen in UserDefaults, nicht in SwiftData — nach dem Zurücksetzen neu zeichnen.
     @State private var statsVersion = 0
 
@@ -55,36 +56,78 @@ struct ReceiptResolutionStatsView: View {
         .devFeedback(context: "Bon-Auflösung")
     }
 
-    /// Einzeilig, damit alle sieben Stufen und die Summenzeile ohne Scrollen sichtbar sind.
+    /// Ab den Bedienhilfen-Schriftgrößen (AX1–AX5) passen vier Spalten nicht nebeneinander: Die festen
+    /// Spaltenbreiten kürzten den Kopf „Gesamt“ in XXXL auf 40 pt, der Text braucht 100 pt (Issue #99
+    /// Paket 3, `DynamicTypeUITests` T1, Lauf 39573224713; derselbe Fehler wie #93 in großer Schrift).
+    /// Dann je Stufe ein Block mit beschrifteten Werten ohne feste Breiten und ohne Kürzung; die
+    /// Kennungen der Werte bleiben gleich, die Kopfzeile zeigt nur noch „Stufe“.
+    private var stacksForAccessibility: Bool { dynamicTypeSize.isAccessibilitySize }
+
+    /// Normalgröße einzeilig, damit alle sieben Stufen und die Summenzeile ohne Scrollen sichtbar sind.
+    @ViewBuilder
     private func stageRow(_ title: String, key: String, counts: ReceiptResolutionStats.Counts) -> some View {
-        HStack(spacing: 8) {
-            Text(title)
-                .foregroundStyle(Color.ink)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-            Spacer(minLength: 4)
-            value("\(counts.total)", width: Self.totalWidth, id: "resolutionStage.\(key).total")
-            value(withPercent(counts.changed, of: counts.total), width: Self.percentWidth, id: "resolutionStage.\(key).changed")
-            value(withPercent(counts.deselected, of: counts.total), width: Self.percentWidth, id: "resolutionStage.\(key).deselected")
+        if stacksForAccessibility {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .foregroundStyle(Color.ink)
+                labeledValue(String(localized: "Gesamt"), "\(counts.total)", id: "resolutionStage.\(key).total")
+                labeledValue(String(localized: "Geändert"), withPercent(counts.changed, of: counts.total),
+                             id: "resolutionStage.\(key).changed")
+                labeledValue(String(localized: "Abgewählt"), withPercent(counts.deselected, of: counts.total),
+                             id: "resolutionStage.\(key).deselected")
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("resolutionStage.\(key)")
+        } else {
+            HStack(spacing: 8) {
+                Text(title)
+                    .foregroundStyle(Color.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                Spacer(minLength: 4)
+                value("\(counts.total)", width: Self.totalWidth, id: "resolutionStage.\(key).total")
+                value(withPercent(counts.changed, of: counts.total), width: Self.percentWidth, id: "resolutionStage.\(key).changed")
+                value(withPercent(counts.deselected, of: counts.total), width: Self.percentWidth, id: "resolutionStage.\(key).deselected")
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("resolutionStage.\(key)")
         }
-        .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("resolutionStage.\(key)")
+    }
+
+    /// Beschriftung in `.caption` (wie die Kopfzeile), Wert rechts; nichts wird gekürzt.
+    private func labeledValue(_ label: String, _ text: String, id: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Spacer(minLength: 8)
+            Text(text)
+                .font(.subheadline)
+                .monospacedDigit()
+                .accessibilityIdentifier(id)
+        }
     }
 
     private static let totalWidth: CGFloat = 50
     private static let percentWidth: CGFloat = 76
 
+    @ViewBuilder
     private func columns(_ stage: String, _ total: String, _ changed: String, _ deselected: String) -> some View {
-        HStack(spacing: 8) {
+        if stacksForAccessibility {
             Text(stage)
-            Spacer(minLength: 4)
-            Text(total).frame(width: Self.totalWidth, alignment: .trailing)
-            Text(changed).frame(width: Self.percentWidth, alignment: .trailing)
-            Text(deselected).frame(width: Self.percentWidth, alignment: .trailing)
+                .font(.caption)
+        } else {
+            HStack(spacing: 8) {
+                Text(stage)
+                Spacer(minLength: 4)
+                Text(total).frame(width: Self.totalWidth, alignment: .trailing)
+                Text(changed).frame(width: Self.percentWidth, alignment: .trailing)
+                Text(deselected).frame(width: Self.percentWidth, alignment: .trailing)
+            }
+            .font(.caption)
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
         }
-        .font(.caption)
-        .lineLimit(1)
-        .minimumScaleFactor(0.7)
     }
 
     private func value(_ text: String, width: CGFloat, id: String) -> some View {

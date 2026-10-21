@@ -53,7 +53,7 @@ final class ReceiptAIResolutionChainTests: XCTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
         let schema = Schema(versionedSchema: SchemaV1.self)
-        container = try ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        container = try ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none))
         store = Store(name: "dm", emoji: "🧴", colorHex: "#123456")
         container.mainContext.insert(store)
     }

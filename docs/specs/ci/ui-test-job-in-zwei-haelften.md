@@ -274,3 +274,50 @@ Kein Modell beteiligt: reine Konfiguration (Regeln vor Modell). Keine bestehende
 ## Nachtrag 2026-10-20 (Issue #145, Durchgang 2)
 
 Hälfte A wählt zusätzlich `NotificationPermissionUITests` und setzt `TEST_RUNNER_RESTOCK_NOTIF_DECISION=allow`, Hälfte B setzt `deny` (Klasse dort Teil von `RestockUITests`). `HEAVY_CLASSES` bleibt die einzige Quelle von A und ist unverändert. Strukturtest: `scripts/test_ci_notification_permission.py`.
+
+## Nachtrag 2026-10-21 (Issue #99, Paket 3)
+
+`DynamicTypeUITests` (zwei Tests in Schriftgröße XXXL) steht als fünfte Klasse in `HEAVY_CLASSES` und läuft in
+Hälfte A. Grund: Im Lauf 39551841477 brauchte Hälfte B 53 min (Limit 60 min), Hälfte A 30 min. Die Regel
+„neue Klassen landen automatisch in B“ bleibt; dies ist eine bewusste Ausnahme zur Lastverteilung. Die Liste
+steht weiter genau einmal in `ci.yml`.
+
+## Nachtrag 2026-10-21: Wiederholung, Fassung 2 (Issue #173)
+
+Befund (PR #197, Lauf 39563379941): Die Flags `-retry-tests-on-failure -test-iterations 2
+-test-repetition-relaunch-enabled YES` wiederholten nach einem einzigen Fehlschlag **die gesamte Auswahl**, nicht
+den fehlgeschlagenen Test. Hälfte A: Durchlauf 1 07:48–08:15 (1 Fehler, `DynamicTypeUITests` T1), danach alle fünf
+Klassen von vorn bis zum Abbruch am 60-min-Limit um 08:38; Hälfte B: Durchlauf 1 07:48–08:29 (1 Fehler,
+`DataResetUITests.testAppUsableAfterEmergencyReset`, 5-s-Wartefrist auf „Nudeln“, bekannte Sporadik), danach alle
+Klassen von vorn bis zum Abbruch. Beide Hälften rot durch Zeitüberschreitung, obwohl der je einzige Fehler in der
+Wiederholung grün war (B) bzw. ein echter Testfehler war (A). Die erste Fassung war bis dahin nie mit einem
+Fehlschlag gelaufen; ihre Laufzeitschätzung („30–60 s zusätzlich“) war falsch.
+
+Maßnahme: Die Flags entfallen. Der Schritt ruft `xcodebuild test` einmal; ist der Lauf rot, liest
+`scripts/ci_failed_ui_tests.py` die fehlgeschlagenen Testfälle aus `xcrun xcresulttool get test-results tests`
+(Knoten `Test Case` mit Ergebnis `Failed`, Kennung ohne `()`), und `xcodebuild test-without-building` startet genau
+diese mit `-only-testing:RestockUITests/<Klasse>/<Test>` in ein zweites Bündel `UITestRetry.xcresult`. Grün bei
+grüner Wiederholung; Rot ohne fehlgeschlagenen Testfall (Bau, Simulator, Abbruch) bleibt ohne Wiederholung rot;
+kein Test wird übersprungen. Die Zusammenfassung zeigt beide Bündel, das Artefakt bei Rot enthält beide.
+Strukturtest `scripts/test_ci_ui_retry.py` (Aufbau und Kennungs-Parser mit Beispielbaum); der Schrittablauf ist
+mit Attrappen für `xcodebuild`/`xcrun` in vier Fällen (grün, rot→grün, rot→rot, rot ohne Testfall) trocken
+durchgespielt. Offene Grenze: Die JSON-Form von `xcresulttool` ist aus Xcode 16+ bekannt, auf dem Runner (Xcode 26.6)
+erst mit dem nächsten Fehlschlag belegt; der Parser liefert bei fremder Form keine Kennung, dann bleibt der Lauf
+ohne Wiederholung rot statt falsch grün.
+
+Belegt im Lauf 39573224713 (PR #197, Hälfte A): erster Lauf 43 Tests, 1 Fehler (`DynamicTypeUITests` T1), danach
+`Wiederholung genau einmal (Issue #173): -only-testing:RestockUITests/DynamicTypeUITests/testResolutionStats…`,
+1 Test in 79 s, Job gesamt 26 min statt Abbruch bei 60 min. Die JSON-Form von `xcresulttool` auf Xcode 26.6 ist damit
+belegt (Kennung korrekt gelesen). Die Wiederholung blieb rot, weil T1 ein echter Fehler war (Spaltenkopf 40 statt
+100 pt), wie vorgesehen.
+
+Dritter Befund (Läufe 39573224713, 39581094360, 39588635436): Die Wiederholung scheiterte dreimal an der
+**Vorbedingung** des wiederholten Tests, nie an seiner Sache: kein Entwicklermodus („Link fehlt nach 30 Wischern“),
+kein Seed („Karte „Ohne Laden“ fehlt“). Der wiederholte Test ist in `test-without-building` immer der erste Start
+seiner Sitzung, und der erste Start kommt gelegentlich ohne Launch-Argumente an (Issue #105/#128, dort gemessen).
+Folge: Klassen, die ihre Vorbedingung über Launch-Argumente herstellen, müssen über `UITestLaunch.start` starten
+(Gegenprobe auf ein Element, das nur mit den Argumenten erscheint, genau ein zweiter Start). Umgestellt:
+`DynamicTypeUITests` (DEV-Pill bzw. Kopfzeile des Prüf-Screens) und `QuickAddAssignmentUITests` (Kachel „Lidl“).
+Die übrigen gesäten Klassen mit nacktem `app.launch()` stehen in einem Folge-Issue; bis dahin kann ihre
+Wiederholung aus demselben Grund rot bleiben. Der erste Durchlauf von Hälfte A mit `DynamicTypeUITests` ist seit
+Lauf 39588635436 grün (43 Tests, 37 min).

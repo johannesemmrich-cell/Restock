@@ -1,0 +1,23 @@
+2026-10-21 08:54:59.094547+0200 Restock[87085:958279] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2310): <NSCloudKitMirroringDelegate: 0x108ab82a0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-21 08:54:59.094625+0200 Restock[87085:958279] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2623): <NSCloudKitMirroringDelegate: 0x108ab82a0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+Test Case '-[RestockTests.NotificationDigestChainTests testCancelAllClearsCenterAndLog]' started.
+Test Case '-[RestockTests.NotificationDigestChainTests testCancelAllClearsCenterAndLog]' passed (0.072 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testItemEntersLedgerOnlyAfterDeliveryTime]' started.
+Test Case '-[RestockTests.NotificationDigestChainTests testItemEntersLedgerOnlyAfterDeliveryTime]' passed (0.056 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedOrLoggedWithoutPermissionAndItemStaysNotifiable]' started.
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedOrLoggedWithoutPermissionAndItemStaysNotifiable]' passed (0.016 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedWhenDeveloperModeIsOff]' started.
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedWhenDeveloperModeIsOff]' passed (0.040 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedWhenNotificationsAreOff]' started.
+Test Case '-[RestockTests.NotificationDigestChainTests testNothingIsPlannedWhenNotificationsAreOff]' passed (0.030 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testProvisionalPermissionPlansLikeAuthorized]' started.
+Test Case '-[RestockTests.NotificationDigestChainTests testProvisionalPermissionPlansLikeAuthorized]' passed (0.038 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testPurchaseHistoryBecomesOneDigestAtNine]' started.
+Test Case '-[RestockTests.NotificationDigestChainTests testPurchaseHistoryBecomesOneDigestAtNine]' passed (0.030 seconds).
+Test Case '-[RestockTests.NotificationDigestChainTests testSecondRunReplacesDigestAndKeepsForeignRequests]' started.
+Test Case '-[RestockTests.NotificationDigestChainTests testSecondRunReplacesDigestAndKeepsForeignRequests]' passed (0.040 seconds).
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.322 (0.325) seconds
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.322 (0.327) seconds
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.322 (0.328) seconds
+** TEST SUCCEEDED **
