@@ -8,7 +8,7 @@ import SwiftData
 final class ReceiptKnownItemNamesTests: XCTestCase {
     private func makeInMemoryContext() throws -> ModelContext {
         let schema = Schema(versionedSchema: SchemaV1.self)
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let config = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         let container = try ModelContainer(for: schema, configurations: config)
         return ModelContext(container)
     }

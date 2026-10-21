@@ -11,7 +11,8 @@ from pathlib import Path
 
 R = Path(__file__).resolve().parent.parent
 TESTS = R / "RestockTests"
-MARKER = "isStoredInMemoryOnly: true"
+# Jeder Wert außer dem Literal `false` zählt: `true`, `:true` ohne Leerzeichen, Variablen (Adversary F002).
+MARKER = re.compile(r"isStoredInMemoryOnly\s*:(?!\s*false\b)")
 REQUIRED = "cloudKitDatabase: .none"
 
 
@@ -34,7 +35,7 @@ def _call_text(text: str, marker_pos: int) -> str:
 
 def violations_in(text: str, name: str = "<text>") -> list[str]:
     found = []
-    for m in re.finditer(re.escape(MARKER), text):
+    for m in MARKER.finditer(text):
         if REQUIRED not in _call_text(text, m.start()):
             found.append(f"{name}:{text.count(chr(10), 0, m.start()) + 1}")
     return found
@@ -57,6 +58,16 @@ class InMemoryContainersDisableCloudKit(unittest.TestCase):
             "    cloudKitDatabase: .none)\n"
         )
         self.assertEqual(violations_in(sample, "Beispiel.swift"), ["Beispiel.swift:2"])
+
+    def test_detector_sees_spelling_variants_and_ignores_false(self):
+        sample = (
+            "let a = ModelConfiguration(isStoredInMemoryOnly: true)\n"
+            "let b = ModelConfiguration(isStoredInMemoryOnly:true)\n"
+            "let c = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)\n"
+            "let d = ModelConfiguration(isStoredInMemoryOnly: false)\n"
+            "let e = ModelConfiguration(isStoredInMemoryOnly:true, cloudKitDatabase: .none)\n"
+        )
+        self.assertEqual(violations_in(sample, "V.swift"), ["V.swift:1", "V.swift:2", "V.swift:3"])
 
 
 if __name__ == "__main__":
