@@ -1,0 +1,60 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project /Users/hem/Developer/Restock/.claude/worktrees/fix-35-bon-pruef-screen-neuinstallation/Restock.xcodeproj -scheme Restock -destination "platform=iOS Simulator,id=27C1E49B-ED6C-4167-A12A-104CA74BC7AF" -derivedDataPath /private/tmp/claude-501/-Users-hem-Developer-Restock/2056e5d3-1e6f-4f64-8836-8af6e613992a/scratchpad/DerivedData "-only-testing:RestockUITests/ReceiptReviewUITests/testAiMarkStaysOnOneLine" -resultBundlePath /private/tmp/claude-501/-Users-hem-Developer-Restock/2056e5d3-1e6f-4f64-8836-8af6e613992a/scratchpad/repro-35-run3.xcresult
+
+Writing result bundle at path:
+	/private/tmp/claude-501/-Users-hem-Developer-Restock/2056e5d3-1e6f-4f64-8836-8af6e613992a/scratchpad/repro-35-run3.xcresult
+
+2026-10-20 21:51:32.868 xcodebuild[15385:126637] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-20 21:52:24.412706+0200 RestockUITests-Runner[15456:127986] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-20 21:54:50.599.
+Test Suite 'RestockUITests.xctest' started at 2026-10-20 21:54:50.601.
+Test Suite 'ReceiptReviewUITests' started at 2026-10-20 21:54:50.601.
+Test Case '-[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine]' started.
+    t =     0.08s Start Test at 2026-10-20 21:54:50.689
+objc[15456]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x105794398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105df4310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     0.62s Set Up
+    t =     0.65s Open com.johannesemmrich.Restock
+    t =     0.65s     Launch com.johannesemmrich.Restock
+2026-10-20 21:54:52.161 xcodebuild[15385:126637] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    57.60s         Setting up automation session
+    t =   116.64s         Wait for com.johannesemmrich.Restock to idle
+    t =   209.89s             App event loop idle notification not received, will attempt to continue.
+<unknown>:0: warning: -[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =   534.13s Checking `Expect predicate `state == 4` for object Target Application 'com.johannesemmrich.Restock'`
+    t =   535.95s Waiting 30.0s for "Bon scannen — Lidl" NavigationBar to exist
+    t =   536.98s     Checking `Expect predicate `existsNoRetry == 1` for object "Bon scannen — Lidl" NavigationBar`
+    t =   536.98s         Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =   566.22s         Capturing element debug description
+    t =   566.22s     Checking existence of `"Bon scannen — Lidl" NavigationBar`
+    t =   621.93s     Checking existence of `"Bon scannen — Lidl" NavigationBar` (retry 1)
+    t =   652.96s     Checking existence of `"Bon scannen — Lidl" NavigationBar` (retry 2)
+    t =   677.94s Waiting 5.0s for "receiptReview.line.0.aiMark" Any to exist
+    t =   679.00s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.line.0.aiMark" Any`
+    t =   679.01s         Checking existence of `"receiptReview.line.0.aiMark" Any`
+    t =   679.69s Find the "receiptReview.line.0.aiMark" Any
+    t =   680.32s Find the "receiptReview.line.0.aiMark" Other
+    t =   680.80s Find the "receiptReview.line.0.aiMark" Other
+    t =   681.50s Tear Down
+    t =   681.50s     Setting appearance mode to Light
+    t =   681.90s         Wait for com.johannesemmrich.Restock to idle
+    t =   681.97s     Open com.johannesemmrich.Restock
+    t =   681.97s         Launch com.johannesemmrich.Restock
+    t =   681.97s             Terminate com.johannesemmrich.Restock:15748
+2026-10-20 22:06:12.679 xcodebuild[15385:126637] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-20 22:06:12.687 xcodebuild[15385:126637] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-20 22:06:12.702 xcodebuild[15385:126637] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-20 22:06:13.730 xcodebuild[15385:126637] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =   684.44s             Setting up automation session
+    t =   751.80s             Wait for com.johannesemmrich.Restock to idle
+    t =   758.29s     Unable to monitor event loop
+    t =   758.30s     Unable to monitor animations
+    t =   759.31s     Terminate com.johannesemmrich.Restock:16765
+2026-10-20 22:08:52.173 xcodebuild[15385:126637] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-20 22:08:52.175 xcodebuild[15385:126637] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-20 22:08:52.175 xcodebuild[15385:126637] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+/Users/hem/Developer/Restock/.claude/worktrees/fix-35-bon-pruef-screen-neuinstallation/RestockUITests/ReceiptReviewUITests.swift:105: error: -[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine] : Failed to terminate com.johannesemmrich.Restock:16765: Failed to terminate com.johannesemmrich.Restock:0
+Test Case '-[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine]' failed (1170.468 seconds).
+Test Suite 'ReceiptReviewUITests' failed at 2026-10-20 22:14:21.158.
+	 Executed 1 test, with 1 failure (0 unexpected) in 1170.468 (1170.557) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-10-20 22:14:21.159.
