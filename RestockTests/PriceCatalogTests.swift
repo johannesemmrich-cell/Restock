@@ -171,7 +171,12 @@ final class PriceCatalogTests: XCTestCase {
         XCTAssertEqual(keywords.count, 556, "Zahl der eindeutigen Lebensmittel-Stichwörter (bewusst anpassen, wenn die Liste wächst)")
         XCTAssertEqual(before, 114, "vorher: Stichwörter mit Teilstring-Treffer der 32 Altstichwörter")
         XCTAssertGreaterThanOrEqual(share, 0.69, "Abdeckung der Stichwörter durch den Katalog gesunken: \(after)/\(keywords.count)")
-        XCTAssertEqual(after, 385, "nachher: Stichwörter mit Katalogtreffer (Messwert CI-Lauf 244 vom 2026-10-19; bei Katalogänderung bewusst anpassen)")
+        // 385 (CI-Lauf 244 vom 2026-10-19) → 432 mit der Erweiterung vom 2026-10-22 (PO): 47 Stichwörter
+        // mehr, u. a. neue Einträge (Kefir, Gorgonzola, Grapefruit, Ciabatta, Muffin, Cappuccino),
+        // Einzahlformen („erdbeere", „himbeere") und Tippfehler-Stufe („traube" → Trauben, „praline"
+        // → Pralinen); keiner verloren. „schwein" trifft jetzt Schweinefleisch statt „Wein".
+        // Nachgerechnet mit der Python-Nachbildung (docs/specs/models/price-catalog-expansion.md).
+        XCTAssertEqual(after, 432, "nachher: Stichwörter mit Katalogtreffer (bei Katalogänderung bewusst anpassen)")
         XCTAssertGreaterThan(after, before * 3, "Katalog muss die Abdeckung mindestens verdreifachen: \(before) → \(after)")
     }
 

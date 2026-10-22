@@ -8,6 +8,11 @@ import Foundation
 enum CommunityPrice {
     /// Quelle am Artikel: `"community:<Anzeigename der Kette>"`, `priceOrigin` = `"community"`.
     static let sourcePrefix = "community:"
+    /// Kennung „alle Ketten" (PO 2026-10-22): steht in der Quelle statt des Kettennamens
+    /// (`"community:*"`, Anzeige „Community · andere Läden") und als Kette im Zwischenspeicher
+    /// (`"*|<Artikel>"`). Kann nie mit einer echten Kette kollidieren, weil `chain(fromStoreName:)`
+    /// nur Buchstaben und Ziffern liefert.
+    static let allChainsMarker = "*"
     /// Ein Community-Preis gilt erst ab so vielen Beobachtungen derselben Kette …
     static let minimumObservations = 3
     /// … innerhalb dieser Frist …
@@ -81,16 +86,27 @@ enum CommunityPrice {
     struct Resolution: Equatable {
         let price: Double
         let unit: String
+        /// Anzeigename der eigenen Kette, bei kettenübergreifendem Wert `allChainsMarker`.
         let chainDisplayName: String
         let count: Int
         let latest: Date
         /// `"g"` nur bei `.rateOnly` (Gramm-Rate ohne belegte Menge), wie bei gelernten Preisen.
         let unitOverride: String?
+
+        /// Wert für `ShoppingItem.priceSource`: `"community:Rewe"` bzw. `"community:*"`.
+        var source: String { CommunityPrice.sourcePrefix + chainDisplayName }
+        var isAllChains: Bool { chainDisplayName == CommunityPrice.allChainsMarker }
     }
 
     /// Dieselbe Entscheidungstabelle und Obergrenze wie bei gelernten Preisen (Issue #10, #151):
     /// Bezugsgröße muss zur Einheit des Artikels passen, der Gesamtpreis bleibt unter
     /// `PriceEstimator.maxPlausibleLearnedLineTotal`. Exakter Schlüssel, kein Fuzzy.
+    ///
+    /// Reihenfolge (PO 2026-10-22): zuerst das Aggregat der eigenen Kette; fehlt es (weniger als
+    /// `minimumObservations` Beobachtungen dieser Kette), das kettenübergreifende Aggregat
+    /// (`allChainsMarker`, Median der jüngsten Beobachtungen aller Ketten). Verwirft die
+    /// Einheitentabelle oder die Obergrenze das Aggregat der eigenen Kette, wird nicht auf
+    /// „alle Ketten" ausgewichen — die eigene Kette ist dann die belastbarere Aussage.
     static func resolve(
         forLowercasedName itemLower: String, storeName: String?, itemUnit: String,
         quantityAmount: Double, quantitySource: String, cache: CommunityPriceCache = .shared
@@ -98,18 +114,28 @@ enum CommunityPrice {
         guard let storeName else { return nil }
         let chain = chain(fromStoreName: storeName)
         let key = itemKey(itemLower)
-        guard !chain.isEmpty, !key.isEmpty,
-              let aggregate = cache.aggregate(chain: chain, itemKey: key) else { return nil }
+        guard !chain.isEmpty, !key.isEmpty else { return nil }
+        let displayName: String
+        let aggregate: Aggregate
+        if let own = cache.aggregate(chain: chain, itemKey: key) {
+            displayName = chainDisplayName(fromStoreName: storeName)
+            aggregate = own
+        } else if let all = cache.aggregate(chain: allChainsMarker, itemKey: key) {
+            displayName = allChainsMarker
+            aggregate = all
+        } else {
+            return nil
+        }
         let plausibleQuantity = quantityAmount > 0 ? quantityAmount : 1
         guard aggregate.price * plausibleQuantity <= PriceEstimator.maxPlausibleLearnedLineTotal else { return nil }
         switch ShoppingItem.learnedRateUsage(learnedUnit: aggregate.unit, itemUnit: itemUnit, quantitySource: quantitySource) {
         case .reject:
             return nil
         case .apply:
-            return Resolution(price: aggregate.price, unit: aggregate.unit, chainDisplayName: chainDisplayName(fromStoreName: storeName),
+            return Resolution(price: aggregate.price, unit: aggregate.unit, chainDisplayName: displayName,
                               count: aggregate.count, latest: aggregate.latest, unitOverride: nil)
         case .rateOnly:
-            return Resolution(price: aggregate.price, unit: aggregate.unit, chainDisplayName: chainDisplayName(fromStoreName: storeName),
+            return Resolution(price: aggregate.price, unit: aggregate.unit, chainDisplayName: displayName,
                               count: aggregate.count, latest: aggregate.latest, unitOverride: "g")
         }
     }
@@ -117,6 +143,7 @@ enum CommunityPrice {
 
 /// Zwischenspeicher der Aggregate je „Kette|Artikelschlüssel" in der App-Gruppe. Gefüllt von
 /// `CommunityPriceService.refresh`, gelesen von `ShoppingItem.init` (synchron, ohne Netz).
+/// Kettenübergreifende Aggregate liegen unter der Kette `CommunityPrice.allChainsMarker`.
 struct CommunityPriceCache {
     static let storageKey = "communityPrices.v1"
     static let shared = CommunityPriceCache(

@@ -10,6 +10,10 @@ protocol CommunityPriceDatabase {
     func save(_ record: CKRecord) async throws -> CKRecord
     /// Alle Beobachtungen einer Kette zu den Artikelschlüsseln (`itemKey IN …`).
     func fetchCommunityRecords(chain: String, itemKeys: [String], resultsLimit: Int) async throws -> [CKRecord]
+    /// Beobachtungen aller Ketten zu den Artikelschlüsseln, jüngste zuerst (PO 2026-10-22).
+    /// Nur `itemKey IN …` und Sortierung nach `observedAt` — beide Felder sind im Schema schon
+    /// QUERYABLE bzw. SORTABLE, es braucht weder ein neues Feld noch einen neuen Index.
+    func fetchCommunityRecordsAllChains(itemKeys: [String], resultsLimit: Int) async throws -> [CKRecord]
 }
 
 extension CKDatabase: CommunityPriceDatabase {
@@ -17,6 +21,16 @@ extension CKDatabase: CommunityPriceDatabase {
         let predicate = NSPredicate(format: "%K == %@ AND %K IN %@",
                                     CommunityPriceSchema.chain, chain, CommunityPriceSchema.itemKey, itemKeys)
         let query = CKQuery(recordType: CommunityPriceSchema.recordType, predicate: predicate)
+        let (matchResults, _) = try await records(matching: query, resultsLimit: resultsLimit)
+        return matchResults.compactMap { try? $0.1.get() }
+    }
+
+    func fetchCommunityRecordsAllChains(itemKeys: [String], resultsLimit: Int) async throws -> [CKRecord] {
+        let predicate = NSPredicate(format: "%K IN %@", CommunityPriceSchema.itemKey, itemKeys)
+        let query = CKQuery(recordType: CommunityPriceSchema.recordType, predicate: predicate)
+        // Jüngste zuerst: Bei mehr Treffern als `resultsLimit` fallen die ältesten weg, und das
+        // Aggregat nimmt ohnehin nur die jüngsten `maximumObservationsPerAggregate`.
+        query.sortDescriptors = [NSSortDescriptor(key: CommunityPriceSchema.observedAt, ascending: false)]
         let (matchResults, _) = try await records(matching: query, resultsLimit: resultsLimit)
         return matchResults.compactMap { try? $0.1.get() }
     }
@@ -155,8 +169,12 @@ actor CommunityPriceService {
     }
 
     /// Holt die Beobachtungen der Kette zu den Artikelnamen und schreibt Aggregate in den
-    /// Zwischenspeicher. Liefert die Zahl der Artikel mit Aggregat; `nil` bei Netz-/Serverfehler
-    /// (der Zwischenspeicher bleibt dann unverändert).
+    /// Zwischenspeicher. Für Artikel ohne Aggregat der eigenen Kette folgt eine zweite Abfrage
+    /// über alle Ketten (PO 2026-10-22), abgelegt unter `CommunityPrice.allChainsMarker`.
+    /// Liefert die Zahl der Artikel mit Aggregat (eigene Kette oder alle Ketten); `nil` bei
+    /// Netz-/Serverfehler der ersten Abfrage (der Zwischenspeicher bleibt dann unverändert).
+    /// Scheitert nur die zweite Abfrage, bleiben die Aggregate der eigenen Kette gespeichert und
+    /// die kettenübergreifenden unverändert.
     func refresh(storeName: String, itemNames: [String]) async -> Int? {
         let chain = CommunityPrice.chain(fromStoreName: storeName)
         let keys = Array(Set(itemNames.map(CommunityPrice.itemKey).filter { !$0.isEmpty })).sorted()
@@ -180,7 +198,28 @@ actor CommunityPriceService {
             if let aggregate = CommunityPrice.aggregate(grouped[key] ?? [], now: reference) { aggregates[key] = aggregate }
         }
         cache.update(chain: chain, queriedKeys: keys, aggregates: aggregates)
-        return aggregates.count
+
+        let missing = keys.filter { aggregates[$0] == nil }
+        guard !missing.isEmpty else { return aggregates.count }
+        let crossRecords: [CKRecord]
+        do {
+            crossRecords = try await database.fetchCommunityRecordsAllChains(itemKeys: missing, resultsLimit: Self.fetchLimit)
+        } catch {
+            Self.logger.error("Community-Preise aller Ketten nicht geladen: \(SharedStoreSchema.errorText(error), privacy: .private)")
+            return aggregates.count
+        }
+        var crossGrouped: [String: [CommunityPrice.Observation]] = [:]
+        for record in crossRecords {
+            guard let key = record[CommunityPriceSchema.itemKey] as? String,
+                  let observation = CommunityPriceSchema.observation(from: record) else { continue }
+            crossGrouped[key, default: []].append(observation)
+        }
+        var crossAggregates: [String: CommunityPrice.Aggregate] = [:]
+        for key in missing {
+            if let aggregate = CommunityPrice.aggregate(crossGrouped[key] ?? [], now: reference) { crossAggregates[key] = aggregate }
+        }
+        cache.update(chain: CommunityPrice.allChainsMarker, queriedKeys: missing, aggregates: crossAggregates)
+        return aggregates.count + crossAggregates.count
     }
 
     /// Wendet den Zwischenspeicher auf offene Artikel an, deren Preis automatisch hergeleitet
@@ -194,7 +233,7 @@ actor CommunityPriceService {
                 forLowercasedName: item.name.lowercased(), storeName: storeName, itemUnit: item.unit,
                 quantityAmount: item.quantityAmount, quantitySource: item.quantitySource, cache: cache)
             if let resolution {
-                let source = CommunityPrice.sourcePrefix + resolution.chainDisplayName
+                let source = resolution.source
                 if item.priceSource == source, item.estimatedPrice == resolution.price { continue }
                 if let unitOverride = resolution.unitOverride { item.unit = unitOverride }
                 item.estimatedPrice = resolution.price
