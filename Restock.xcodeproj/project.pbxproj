@@ -52,6 +52,7 @@
 		C0DE1620000000000000A003 /* PriceCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000A001 /* PriceCatalog.swift */; };
 		C0DE1620000000000000A004 /* PriceCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000A001 /* PriceCatalog.swift */; };
 		C0DE1620000000000000A006 /* PriceCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000A005 /* PriceCatalogTests.swift */; };
+		C0DE1622000000000000A002 /* PriceCatalogExpansionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */; };
 		C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */; };
 		C0DE1630000000000000B002 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
 		C0DE1630000000000000B003 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
@@ -289,6 +290,7 @@
 		FEC66FDBE9289572AAAB96D7 /* AbbreviatedNameCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbbreviatedNameCleanup.swift; sourceTree = "<group>"; };
 		C0DE1620000000000000A001 /* PriceCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalog.swift; sourceTree = "<group>"; };
 		C0DE1620000000000000A005 /* PriceCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogTests.swift; sourceTree = "<group>"; };
+		C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogExpansionTests.swift; sourceTree = "<group>"; };
 		C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationKeyParityTests.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B001 /* CommunityPriceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceCache.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B005 /* CommunityPriceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceService.swift; sourceTree = "<group>"; };
@@ -780,6 +782,7 @@
 				C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */,
 				18C68E8D82565BA3E9CA923D /* PriceEstimatorStagesTests.swift */,
 				C0DE1620000000000000A005 /* PriceCatalogTests.swift */,
+				C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */,
 				C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */,
 				C0DE1630000000000000B007 /* CommunityPriceTests.swift */,
 				C0DE14540000000000000D02 /* PremiumServiceTests.swift */,
@@ -1199,6 +1202,7 @@
 				7169A936DC526EB4B1002F33 /* PriceEstimatorCategoryFallbackTests.swift in Sources */,
 				9023139F29439ED2491D853A /* PriceEstimatorStagesTests.swift in Sources */,
 				C0DE1620000000000000A006 /* PriceCatalogTests.swift in Sources */,
+				C0DE1622000000000000A002 /* PriceCatalogExpansionTests.swift in Sources */,
 				C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */,
 				C0DE1630000000000000B008 /* CommunityPriceTests.swift in Sources */,
 				C0DE14540000000000000D01 /* PremiumServiceTests.swift in Sources */,

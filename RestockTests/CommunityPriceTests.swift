@@ -321,6 +321,128 @@ final class CommunityPriceTests: XCTestCase {
                                                          priceCategory: "Milchprodukte", unit: "", quantityAmount: 1))
     }
 
+    // MARK: - Kettenübergreifend (PO 2026-10-22)
+
+    func testRefreshFallsBackToAllChainsWhenOwnChainHasTooFewObservations() async throws {
+        let fake = FakeCommunityPriceDatabase()
+        // Rewe: 2 Beobachtungen (zu wenig), Lidl 2, Aldi 1 → zusammen 5.
+        fake.add(itemKey: "mozzarella", chain: "rewe", price: 1.19, unit: "stk", observedAt: daysAgo(1), client: "c1")
+        fake.add(itemKey: "mozzarella", chain: "rewe", price: 1.09, unit: "stk", observedAt: daysAgo(2), client: "c2")
+        fake.add(itemKey: "mozzarella", chain: "lidl", price: 0.79, unit: "stk", observedAt: daysAgo(3), client: "c3")
+        fake.add(itemKey: "mozzarella", chain: "lidl", price: 0.89, unit: "stk", observedAt: daysAgo(4), client: "c4")
+        fake.add(itemKey: "mozzarella", chain: "aldi", price: 0.99, unit: "stk", observedAt: daysAgo(5), client: "c5")
+        // Butter: insgesamt nur 2 → auch kettenübergreifend nichts.
+        fake.add(itemKey: "butter", chain: "rewe", price: 2.19, unit: "stk", observedAt: daysAgo(1), client: "c1")
+        fake.add(itemKey: "butter", chain: "lidl", price: 1.99, unit: "stk", observedAt: daysAgo(1), client: "c3")
+        let service = makeService(fake, sharing: false)
+
+        let count = await service.refresh(storeName: "Rewe City", itemNames: ["Mozzarella", "Butter"])
+        XCTAssertEqual(count, 1, "nur Mozzarella hat ein Aggregat (über alle Ketten)")
+        XCTAssertEqual(fake.lastQuery?.chain, "rewe", "zuerst die eigene Kette")
+        XCTAssertEqual(fake.allChainsQueries, [["butter", "mozzarella"]], "dann alle Ketten, nur für Schlüssel ohne eigenes Aggregat")
+        XCTAssertNil(cache.aggregate(chain: "rewe", itemKey: "mozzarella"))
+        let all = try XCTUnwrap(cache.aggregate(chain: CommunityPrice.allChainsMarker, itemKey: "mozzarella"))
+        XCTAssertEqual(all.price, 0.99, accuracy: 0.0001, "Median von 0,79 0,89 0,99 1,09 1,19")
+        XCTAssertEqual(all.count, 5)
+        XCTAssertEqual(all.latest, daysAgo(1))
+        XCTAssertNil(cache.aggregate(chain: CommunityPrice.allChainsMarker, itemKey: "butter"), "zusammen < 3 → nichts")
+
+        // Lesen am Artikel: Quelle „community:*", Anzeige „andere Läden".
+        let resolution = try XCTUnwrap(CommunityPrice.resolve(
+            forLowercasedName: "mozzarella", storeName: "Rewe City", itemUnit: "", quantityAmount: 1,
+            quantitySource: "user", cache: cache))
+        XCTAssertTrue(resolution.isAllChains)
+        XCTAssertEqual(resolution.source, "community:*")
+        XCTAssertNil(CommunityPrice.resolve(forLowercasedName: "butter", storeName: "Rewe City", itemUnit: "",
+                                            quantityAmount: 1, quantitySource: "user", cache: cache))
+    }
+
+    func testOwnChainWithEnoughObservationsHasPriorityOverAllChains() async throws {
+        let fake = FakeCommunityPriceDatabase()
+        for (index, price) in [1.09, 1.19, 1.29].enumerated() {
+            fake.add(itemKey: "mozzarella", chain: "rewe", price: price, unit: "stk", observedAt: daysAgo(Double(index + 1)), client: "r\(index)")
+        }
+        for index in 0..<5 {
+            fake.add(itemKey: "mozzarella", chain: "lidl", price: 0.79, unit: "stk", observedAt: daysAgo(Double(index + 1)), client: "l\(index)")
+        }
+        let service = makeService(fake, sharing: false)
+        let count = await service.refresh(storeName: "Rewe", itemNames: ["Mozzarella"])
+        XCTAssertEqual(count, 1)
+        XCTAssertTrue(fake.allChainsQueries.isEmpty, "eigene Kette reicht, keine zweite Abfrage")
+        XCTAssertEqual(try XCTUnwrap(cache.aggregate(chain: "rewe", itemKey: "mozzarella")).price, 1.19, accuracy: 0.0001)
+
+        // Liegt zusätzlich ein (älteres) Aggregat aller Ketten im Zwischenspeicher, gewinnt trotzdem die eigene Kette.
+        cache.update(chain: CommunityPrice.allChainsMarker, queriedKeys: [],
+                     aggregates: ["mozzarella": .init(price: 0.79, unit: "stk", count: 8, latest: fixedNow)])
+        let resolution = try XCTUnwrap(CommunityPrice.resolve(
+            forLowercasedName: "mozzarella", storeName: "Rewe", itemUnit: "", quantityAmount: 1,
+            quantitySource: "user", cache: cache))
+        XCTAssertFalse(resolution.isAllChains)
+        XCTAssertEqual(resolution.source, "community:Rewe")
+        XCTAssertEqual(resolution.price, 1.19, accuracy: 0.0001)
+    }
+
+    func testAllChainsQueryFailureKeepsOwnChainResults() async throws {
+        let fake = FakeCommunityPriceDatabase()
+        for (index, price) in [1.09, 1.19, 1.29].enumerated() {
+            fake.add(itemKey: "mozzarella", chain: "rewe", price: price, unit: "stk", observedAt: daysAgo(Double(index + 1)), client: "r\(index)")
+        }
+        fake.add(itemKey: "butter", chain: "lidl", price: 1.99, unit: "stk", observedAt: daysAgo(1), client: "l0")
+        cache.update(chain: CommunityPrice.allChainsMarker, queriedKeys: [],
+                     aggregates: ["butter": .init(price: 2.09, unit: "stk", count: 4, latest: fixedNow)])
+        fake.allChainsFetchError = CKError(.networkUnavailable)
+        let service = makeService(fake, sharing: false)
+
+        let count = await service.refresh(storeName: "Rewe", itemNames: ["Mozzarella", "Butter"])
+        XCTAssertEqual(count, 1, "die eigene Kette zählt, die zweite Abfrage ist still gescheitert")
+        XCTAssertNotNil(cache.aggregate(chain: "rewe", itemKey: "mozzarella"))
+        XCTAssertEqual(cache.aggregate(chain: CommunityPrice.allChainsMarker, itemKey: "butter")?.price, 2.09,
+                       "bei Fehler bleibt das alte Aggregat aller Ketten")
+    }
+
+    func testShoppingItemShowsAllChainsSource() throws {
+        CommunityPriceCache.shared.update(chain: CommunityPrice.allChainsMarker, queriedKeys: [],
+                                          aggregates: ["mozzarella": .init(price: 0.99, unit: "stk", count: 5, latest: fixedNow)])
+        let rewe = Store(name: "Rewe City", emoji: "🛒", colorHex: "#123456")
+        let item = ShoppingItem(name: "Mozzarella", category: "Milchprodukte", store: rewe)
+        XCTAssertEqual(try XCTUnwrap(item.estimatedPrice), 0.99, accuracy: 0.0001)
+        XCTAssertTrue(item.estimatedPriceIsAutoDerived)
+        XCTAssertEqual(item.priceSource, "community:*")
+        XCTAssertEqual(item.priceOrigin, "community")
+        XCTAssertEqual(item.priceSourceDetail, CommunityPrice.allChainsMarker)
+        XCTAssertEqual(item.priceSourceDate, fixedNow)
+
+        let german = Locale(identifier: "de_DE")
+        let dated = PriceSourceDisplay.text(origin: "community", date: fixedNow, detail: item.priceSourceDetail, locale: german)
+        XCTAssertTrue(dated.hasPrefix("Community · andere Läden · "), dated)
+        XCTAssertEqual(PriceSourceDisplay.text(origin: "community", date: nil, detail: "*", locale: german),
+                       "Community · andere Läden")
+        // Eigene Kette weiter mit Namen.
+        XCTAssertEqual(PriceSourceDisplay.text(origin: "community", date: nil, detail: "Rewe", locale: german), "Community · Rewe")
+
+        // Ohne Laden gibt es keine Kette und damit auch keinen Wert aller Ketten (Siri, Widget).
+        XCTAssertEqual(ShoppingItem(name: "Mozzarella", category: "Milchprodukte").priceSource, "estimate")
+        // Ein Katalog-Neuberechnen fasst den Community-Wert nicht an.
+        XCTAssertNil(CatalogEstimateRefresh.refreshed(isAutoDerived: true, priceSource: "community:*", name: "Mozzarella",
+                                                      priceCategory: "Milchprodukte", unit: "", quantityAmount: 1))
+    }
+
+    func testApplyUsesAllChainsAggregate() throws {
+        cache.update(chain: CommunityPrice.allChainsMarker, queriedKeys: [],
+                     aggregates: ["mozzarella": .init(price: 0.99, unit: "stk", count: 5, latest: fixedNow)])
+        let rewe = Store(name: "Rewe", emoji: "🛒", colorHex: "#123456")
+        let item = ShoppingItem(name: "Mozzarella", category: "Milchprodukte", store: rewe)
+        XCTAssertEqual(item.priceSource, "estimate", "geteilter Zwischenspeicher ist leer, nur `cache` ist gefüllt")
+        XCTAssertEqual(CommunityPriceService.apply(cache: cache, to: [item], storeName: "Rewe"), 1)
+        XCTAssertEqual(item.priceSource, "community:*")
+        XCTAssertEqual(try XCTUnwrap(item.estimatedPrice), 0.99, accuracy: 0.0001)
+        // Eigene Kette kommt dazu → wechselt auf die eigene Kette.
+        cache.update(chain: "rewe", queriedKeys: [],
+                     aggregates: ["mozzarella": .init(price: 1.15, unit: "stk", count: 3, latest: fixedNow)])
+        XCTAssertEqual(CommunityPriceService.apply(cache: cache, to: [item], storeName: "Rewe"), 1)
+        XCTAssertEqual(item.priceSource, "community:Rewe")
+    }
+
     // MARK: - Schema und Texte
 
     func testSchemaFieldsMatchPublishedExport() throws {
@@ -341,7 +463,8 @@ final class CommunityPriceTests: XCTestCase {
 
     func testLocalizationKeysAreRegistered() {
         let keys = Set(PriceSourceDisplay.allLocalizationKeys)
-        for key in ["price.source.community", "price.source.community.undated", "settings.community.share", "settings.community.footer"] {
+        for key in ["price.source.community", "price.source.community.undated", "settings.community.share", "settings.community.footer",
+                    "price.source.community.allchains", "price.source.community.allchains.undated"] {
             XCTAssertTrue(keys.contains(key), key)
         }
     }
@@ -358,6 +481,9 @@ final class FakeCommunityPriceDatabase: CommunityPriceDatabase, @unchecked Senda
     var fetchError: Error?
     var failFirstSaveWithServerRecordChanged = false
     var lastQuery: (chain: String, itemKeys: [String])?
+    /// Artikelschlüssel jeder kettenübergreifenden Abfrage (PO 2026-10-22), in Aufrufreihenfolge.
+    var allChainsQueries: [[String]] = []
+    var allChainsFetchError: Error?
 
     func add(itemKey: String, chain: String, price: Double, unit: String, observedAt: Date, client: String) {
         let record = CKRecord(recordType: CommunityPriceSchema.recordType,
@@ -387,5 +513,15 @@ final class FakeCommunityPriceDatabase: CommunityPriceDatabase, @unchecked Senda
             ($0[CommunityPriceSchema.chain] as? String) == chain
                 && itemKeys.contains(($0[CommunityPriceSchema.itemKey] as? String) ?? "")
         }
+    }
+
+    func fetchCommunityRecordsAllChains(itemKeys: [String], resultsLimit: Int) async throws -> [CKRecord] {
+        lock.lock(); defer { lock.unlock() }
+        allChainsQueries.append(itemKeys)
+        if let allChainsFetchError { throw allChainsFetchError }
+        let matching = stored.values
+            .filter { itemKeys.contains(($0[CommunityPriceSchema.itemKey] as? String) ?? "") }
+            .sorted { (($0[CommunityPriceSchema.observedAt] as? Date) ?? .distantPast) > (($1[CommunityPriceSchema.observedAt] as? Date) ?? .distantPast) }
+        return Array(matching.prefix(resultsLimit))
     }
 }
