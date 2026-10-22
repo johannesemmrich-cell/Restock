@@ -533,4 +533,66 @@ final class ReceiptParserPriceTests: XCTestCase {
             )
         }
     }
+
+    // MARK: - Kyrillisches Steuerkürzel hinter dem Preis (Issue #195)
+
+    /// AC-1: Vision liest auf iOS 27 das „A“ hinter dem Preis als kyrillisches А (U+0410).
+    func testCyrillicTaxCodeAAfterPriceYieldsPositionLikeLatin() throws {
+        let latin = ReceiptParserService.parse(["Haferflocken  0,85 A"])
+        let cyrillic = ReceiptParserService.parse(["Haferflocken  0,85 \u{0410}"])
+        XCTAssertEqual(latin.count, 1, "Kontrolle: lateinisches Kürzel ergibt eine Position")
+        XCTAssertEqual(cyrillic.count, 1, "Kyrillisches А darf die Position nicht verlieren")
+        XCTAssertEqual(cyrillic.first?.name, latin.first?.name)
+        XCTAssertEqual(try XCTUnwrap(cyrillic.first?.price), 0.85, accuracy: 0.0001)
+    }
+
+    /// AC-2: Auch В, Е und М (U+0412, U+0415, U+041C) sind lateinischen Kürzeln zum Verwechseln ähnlich.
+    func testCyrillicTaxCodesBEMAfterPriceYieldPositions() throws {
+        let pairs: [(latin: String, cyrillic: String)] = [("B", "\u{0412}"), ("E", "\u{0415}"), ("M", "\u{041C}")]
+        for pair in pairs {
+            let latin = ReceiptParserService.parse(["Kaffee Bohnen  8,99 \(pair.latin)"])
+            let cyrillic = ReceiptParserService.parse(["Kaffee Bohnen  8,99 \(pair.cyrillic)"])
+            XCTAssertEqual(latin.count, 1, pair.latin)
+            XCTAssertEqual(cyrillic.count, 1, "Kürzel \(pair.latin) kyrillisch")
+            XCTAssertEqual(cyrillic.first?.name, latin.first?.name, pair.latin)
+            XCTAssertEqual(cyrillic.first?.price ?? -1, 8.99, accuracy: 0.0001, pair.latin)
+        }
+    }
+
+    /// AC-3: Kyrillische Zeichen im Namen bleiben unberührt; nur das Kürzel am Zeilenende wird gewandelt.
+    func testCyrillicLettersInNameAreUnchangedByNormalization() {
+        let unchanged = "M\u{043E}\u{043B}\u{0410}\u{043A}\u{043E}  1,29 A"
+        XCTAssertEqual(ReceiptParserService.normalizeTaxCodeHomoglyph(unchanged), unchanged)
+
+        let input = "\u{0410}pfel  1,29 \u{0410}"
+        let expected = "\u{0410}pfel  1,29 A"
+        XCTAssertEqual(ReceiptParserService.normalizeTaxCodeHomoglyph(input), expected,
+                       "Nur das Kürzel am Ende wird gewandelt, das А im Namen nicht")
+    }
+
+    /// AC-4: Ein kyrillisches А, das nicht direkt hinter einem Preis am Zeilenende steht, bleibt.
+    func testCyrillicAOutsideLineEndAfterPriceIsUnchanged() {
+        for line in ["Tee \u{0410} Sorte  1,29 A", "1,29 \u{0410} Rest", "Tee \u{0410}"] {
+            XCTAssertEqual(ReceiptParserService.normalizeTaxCodeHomoglyph(line), line)
+        }
+    }
+
+    /// AC-5: Der Euro-Suffix-Pfad verwirft Zeilen mit kyrillischem Namen weiterhin.
+    func testEuroSuffixStillRejectsCyrillicNames() {
+        let lines = [
+            "TOMATE ENTIER  2.50\u{20AC}",
+            "BAGUETTE  1.10\u{20AC}",
+            "\u{041C}\u{043E}\u{043B}\u{043E}\u{043A}\u{043E}  1.00\u{20AC}",
+        ]
+        let names = ReceiptParserService.parse(lines).map(\.name)
+        XCTAssertEqual(names.count, 2, "Kyrillischer Name bleibt verworfen: \(names)")
+        XCTAssertFalse(names.contains { $0.unicodeScalars.contains { (0x0400...0x04FF).contains($0.value) } })
+    }
+
+    /// AC-6: Die auf dem Bon gedruckte Endsumme wird auch mit kyrillischem Kürzel gefunden.
+    func testDetectedTotalFindsTotalWithCyrillicTaxCode() throws {
+        XCTAssertEqual(try XCTUnwrap(ReceiptParserService.detectedTotal(from: ["zu zahlen  68,69 A"])), 68.69, accuracy: 0.0001,
+                       "Kontrolle: lateinisch")
+        XCTAssertEqual(try XCTUnwrap(ReceiptParserService.detectedTotal(from: ["zu zahlen  68,69 \u{0410}"])), 68.69, accuracy: 0.0001)
+    }
 }

@@ -185,7 +185,7 @@ enum ReceiptParserService {
         // PDF-Text kann Name und Preis per Tab trennen, beide Pfade splitten nur an `\s{2,}`.
         let lines = rawLines
             .map { $0.replacingOccurrences(of: "\t", with: "  ") }
-            .map(repairSplitDecimals)
+            .map { normalizeTaxCodeHomoglyph(repairSplitDecimals($0)) }
         // Formaterkennung: mehrere POSITIONS-Zeilen mit Währungs-SUFFIX hinter dem Preis
         // (z. B. "…TOMATE ENTIER  2.50€") bedeuten einen südeuropäischen Bon
         // (Frankreich/Carrefour-Stil) mit eigener Struktur. Gezählt wird erst NACH dem
@@ -223,7 +223,7 @@ enum ReceiptParserService {
     private static let detectedTotalTriggerWords: Set<String> = ["zahlen", "kreditkarte", "ec-karte", "betrag"]
 
     static func detectedTotal(from rawLines: [String]) -> Double? {
-        let lines = rawLines.map(repairSplitDecimals)
+        let lines = rawLines.map { normalizeTaxCodeHomoglyph(repairSplitDecimals($0)) }
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             guard adminWords(trimmed.lowercased()).contains(where: detectedTotalTriggerWords.contains) else { continue }
@@ -255,6 +255,21 @@ enum ReceiptParserService {
         guard let rx = try? NSRegularExpression(pattern: #"(\d)(?:[,\.]\s{2,}[,\.]?|\s{2,}[,\.])(\d{2})\b"#) else { return line }
         let range = NSRange(line.startIndex..., in: line)
         return rx.stringByReplacingMatches(in: line, range: range, withTemplate: "$1,$2")
+    }
+
+    /// Vision liest auf iOS 27 (vereinzelt schon auf iOS 26) das MwSt-Kürzel hinter dem Preis als
+    /// kyrillischen Doppelgänger ("0,85 А" mit U+0410 statt "A"). Die Positions-Regexe erlauben am
+    /// Zeilenende nur lateinische Kürzel, die Zeile ginge als Position verloren (Issue #195).
+    /// Gewandelt wird NUR ein alleinstehendes А/В/Е/М direkt hinter einem Preis am Zeilenende;
+    /// kyrillische Zeichen im Namen oder mitten in der Zeile bleiben unberührt (der Euro-Suffix-Pfad
+    /// nutzt sie über `containsCyrillic` als Verwerfungs-Signal). Der Leerraum davor bleibt erhalten.
+    static func normalizeTaxCodeHomoglyph(_ line: String) -> String {
+        let latinFor: [String: String] = ["\u{0410}": "A", "\u{0412}": "B", "\u{0415}": "E", "\u{041C}": "M"]
+        guard let match = line.range(of: #"\d[,\.]\d{2}\s*[\x{0410}\x{0412}\x{0415}\x{041C}]\s*$"#,
+                                     options: .regularExpression),
+              let letterIndex = line[match].lastIndex(where: { latinFor[String($0)] != nil }),
+              let latin = latinFor[String(line[letterIndex])] else { return line }
+        return String(line[..<letterIndex]) + latin
     }
 
     /// PATCH Iteration 3: klassischer deutscher Positions-Kandidat — Spaltenform mit
