@@ -1,0 +1,131 @@
+Durchlauf #186 (AC-15), Do. 22 Okt. 2026 14:03 CEST (12:03 UTC), Commit d45a145f0cd05a37f8907805575ce6b36ce5299f — kein Patch, Arbeitsbaum sauber (git status --porcelain -- SmartCart RestockTests RestockUITests leer)
+Gerät Restock-Validate-27 (9034BD4F-2D5F-49D5-B906-838326D51C95), Simulator
+Start mit -hasCompletedOnboarding YES -seedReceiptReviewForUITests -clearCommunityPricesNoticeForUITests (Aufräumer der Klasse in setUp/tearDown)
+Lauf in einer frisch angelegten Wegwerf-Kopie dieses Stands; einzige Abweichung dort: Wegwerf-Testmethode CommunityShareNoticeUITests/testZZDurchlauf, die nur tippt und liest.
+Hinweis: DURCHLAUF-TEXT gibt alle staticTexts des Baums aus; die Startseite liegt unter dem Prüf-Sheet und erscheint deshalb schon in den Abschnitten [pruefscreen] und [hinweis].
+--- xcodebuild
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testZZDurchlauf]' started.
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testZZDurchlauf]' passed (47.230 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.230 (47.236) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.230 (47.239) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.230 (47.241) seconds
+** TEST SUCCEEDED **
+--- Durchlauf-Zeilen
+DURCHLAUF-SCHRITT 1-pruefscreen 2026-10-22 12:03:16 +0000
+DURCHLAUF-TEXT [pruefscreen] Bon scannen — Lidl
+DURCHLAUF-TEXT [pruefscreen] Restock
+DURCHLAUF-TEXT [pruefscreen] 6 Artikel in 1 Läden
+DURCHLAUF-TEXT [pruefscreen] Herbststipps
+DURCHLAUF-TEXT [pruefscreen] Meine Läden
+DURCHLAUF-TEXT [pruefscreen] 🛒
+DURCHLAUF-TEXT [pruefscreen] Lidl
+DURCHLAUF-TEXT [pruefscreen] · 6
+DURCHLAUF-TEXT [pruefscreen] 1x pro Woche
+DURCHLAUF-TEXT [pruefscreen] Brötchen, Hackfleisch…
+DURCHLAUF-TEXT [pruefscreen] Laden hinzufügen
+DURCHLAUF-TEXT [pruefscreen] Geteilter Liste beitreten
+DURCHLAUF-TEXT [pruefscreen] Kürbis
+DURCHLAUF-TEXT [pruefscreen] Herbstsaison
+DURCHLAUF-TEXT [pruefscreen] Champignons
+DURCHLAUF-TEXT [pruefscreen] Pilzsaison
+DURCHLAUF-TEXT [pruefscreen] Äpfel
+DURCHLAUF-TEXT [pruefscreen] Erntezeit
+DURCHLAUF-TEXT [pruefscreen] Birnen
+DURCHLAUF-TEXT [pruefscreen] Saisonal
+DURCHLAUF-TEXT [pruefscreen] Rotkohl
+DURCHLAUF-TEXT [pruefscreen] Herbstgemüse
+DURCHLAUF-TEXT [pruefscreen] Kastanien
+DURCHLAUF-TEXT [pruefscreen] Herbst
+DURCHLAUF-TEXT [pruefscreen] 4 Positionen · 4 ausgewählt · 8,73 €
+DURCHLAUF-TEXT [pruefscreen] MILCH 3,5% FRISCH
+DURCHLAUF-TEXT [pruefscreen] 1,19 € · 1 St. · 1,19 € je Stück
+DURCHLAUF-TEXT [pruefscreen] BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G
+DURCHLAUF-TEXT [pruefscreen] 4,99 € · 400g · 12,48 € je kg
+DURCHLAUF-TEXT [pruefscreen] MILCH
+DURCHLAUF-TEXT [pruefscreen] 0,99 € · 1 St. · 0,99 € je Stück
+DURCHLAUF-TEXT [pruefscreen] BROETCHEN
+DURCHLAUF-TEXT [pruefscreen] 1,56 € · 4 St. · 0,39 € je Stück
+DURCHLAUF-TEXT [pruefscreen] KI-Vorschlag
+DURCHLAUF-TEXT [pruefscreen] Hafermilch
+DURCHLAUF-TEXT [pruefscreen] auf deiner Liste
+DURCHLAUF-TEXT [pruefscreen] Buttermilch
+DURCHLAUF-TEXT [hinweis] Prüf-Screen dahinter noch offen: true
+DURCHLAUF-SCHRITT 2-hinweis 2026-10-22 12:03:25 +0000
+DURCHLAUF-TEXT [hinweis] Bon scannen — Lidl
+DURCHLAUF-TEXT [hinweis] Preise anonym teilen?
+DURCHLAUF-TEXT [hinweis] Restock teilt beim Bon-Scan und bei „Preis eintragen“ nur Artikel, Ladenkette, Preis und Datum, ohne Namen, Foto oder Filiale. Dafür siehst du Preise anderer als „Community“. Änderbar in den Einstellungen.
+DURCHLAUF-TEXT [hinweis] Restock
+DURCHLAUF-TEXT [hinweis] 6 Artikel in 1 Läden
+DURCHLAUF-TEXT [hinweis] Herbststipps
+DURCHLAUF-TEXT [hinweis] Meine Läden
+DURCHLAUF-TEXT [hinweis] 🛒
+DURCHLAUF-TEXT [hinweis] Lidl
+DURCHLAUF-TEXT [hinweis] · 6
+DURCHLAUF-TEXT [hinweis] 1x pro Woche
+DURCHLAUF-TEXT [hinweis] Brötchen, Hackfleisch…
+DURCHLAUF-TEXT [hinweis] Laden hinzufügen
+DURCHLAUF-TEXT [hinweis] Geteilter Liste beitreten
+DURCHLAUF-TEXT [hinweis] Kürbis
+DURCHLAUF-TEXT [hinweis] Herbstsaison
+DURCHLAUF-TEXT [hinweis] Champignons
+DURCHLAUF-TEXT [hinweis] Pilzsaison
+DURCHLAUF-TEXT [hinweis] Äpfel
+DURCHLAUF-TEXT [hinweis] Erntezeit
+DURCHLAUF-TEXT [hinweis] Birnen
+DURCHLAUF-TEXT [hinweis] Saisonal
+DURCHLAUF-TEXT [hinweis] Rotkohl
+DURCHLAUF-TEXT [hinweis] Herbstgemüse
+DURCHLAUF-TEXT [hinweis] Kastanien
+DURCHLAUF-TEXT [hinweis] Herbst
+DURCHLAUF-TEXT [hinweis] 4 Positionen · 4 ausgewählt · 8,73 €
+DURCHLAUF-TEXT [hinweis] MILCH 3,5% FRISCH
+DURCHLAUF-TEXT [hinweis] 1,19 € · 1 St. · 1,19 € je Stück
+DURCHLAUF-TEXT [hinweis] BIO-HACKFLEISCH GEMISCHT RIND SCHWEIN 400G
+DURCHLAUF-TEXT [hinweis] 4,99 € · 400g · 12,48 € je kg
+DURCHLAUF-TEXT [hinweis] MILCH
+DURCHLAUF-TEXT [hinweis] 0,99 € · 1 St. · 0,99 € je Stück
+DURCHLAUF-TEXT [hinweis] BROETCHEN
+DURCHLAUF-TEXT [hinweis] 1,56 € · 4 St. · 0,39 € je Stück
+DURCHLAUF-TEXT [hinweis] KI-Vorschlag
+DURCHLAUF-TEXT [hinweis] Hafermilch
+DURCHLAUF-TEXT [hinweis] auf deiner Liste
+DURCHLAUF-TEXT [hinweis] Buttermilch
+DURCHLAUF-TEXT [hinweis] ALERT-TITEL Preise anonym teilen?
+DURCHLAUF-TEXT [hinweis] ALERT-TEXT Preise anonym teilen?
+DURCHLAUF-TEXT [hinweis] ALERT-TEXT Restock teilt beim Bon-Scan und bei „Preis eintragen“ nur Artikel, Ladenkette, Preis und Datum, ohne Namen, Foto oder Filiale. Dafür siehst du Preise anderer als „Community“. Änderbar in den Einstellungen.
+DURCHLAUF-TEXT [hinweis] ALERT-KNOPF Weiter teilen
+DURCHLAUF-TEXT [hinweis] ALERT-KNOPF Nicht teilen
+DURCHLAUF-TEXT [startseite] Prüf-Screen offen: false, Hinweis offen: false
+DURCHLAUF-SCHRITT 3-startseite 2026-10-22 12:03:35 +0000
+DURCHLAUF-TEXT [startseite] Restock
+DURCHLAUF-TEXT [startseite] 6 Artikel in 1 Läden
+DURCHLAUF-TEXT [startseite] Herbststipps
+DURCHLAUF-TEXT [startseite] Meine Läden
+DURCHLAUF-TEXT [startseite] 🛒
+DURCHLAUF-TEXT [startseite] Lidl
+DURCHLAUF-TEXT [startseite] · 6
+DURCHLAUF-TEXT [startseite] 1x pro Woche
+DURCHLAUF-TEXT [startseite] Brötchen, Hackfleisch…
+DURCHLAUF-TEXT [startseite] Laden hinzufügen
+DURCHLAUF-TEXT [startseite] Geteilter Liste beitreten
+DURCHLAUF-TEXT [startseite] Kürbis
+DURCHLAUF-TEXT [startseite] Herbstsaison
+DURCHLAUF-TEXT [startseite] Champignons
+DURCHLAUF-TEXT [startseite] Pilzsaison
+DURCHLAUF-TEXT [startseite] Äpfel
+DURCHLAUF-TEXT [startseite] Erntezeit
+DURCHLAUF-TEXT [startseite] Birnen
+DURCHLAUF-TEXT [startseite] Saisonal
+DURCHLAUF-TEXT [startseite] Rotkohl
+DURCHLAUF-TEXT [startseite] Herbstgemüse
+DURCHLAUF-TEXT [startseite] Kastanien
+DURCHLAUF-TEXT [startseite] Herbst
+DURCHLAUF-TEXT [einstellungen] Schalter „Preise anonym mit anderen teilen“ Wert=0
+DURCHLAUF-SCHRITT 4-schalter 2026-10-22 12:03:41 +0000
+DURCHLAUF-ENDE 2026-10-22 12:03:45 +0000
+--- Fotos (Foto-Poller simctl io screenshot alle ~2 s, Auswahl je Schritt, Ortszeit)
+durchlauf-1-pruefscreen.png (14:03:18): Bon-Prüf-Screen „Bon scannen — Lidl“ mit 4 Positionen · 8,73 € und dem Knopf „Speichern“, noch kein Hinweis.
+durchlauf-2-hinweis.png (14:03:27): Systemhinweis „Preise anonym teilen?“ mit Erklärtext und den Knöpfen „Weiter teilen“/„Nicht teilen“, dahinter abgedunkelt der weiterhin offene Prüf-Screen.
+durchlauf-3-startseite.png (14:03:37): Nach „Nicht teilen“ ist der Prüf-Screen geschlossen, die Startseite mit der Lidl-Kachel ist sichtbar, kein Hinweis mehr.
+durchlauf-4-schalter-aus.png (14:03:43): Einstellungen, Abschnitt Funktionen: Schalter „Preise anonym mit anderen teilen“ steht auf aus (Wert 0).
+Volles xcodebuild-Protokoll: durchlauf-echte-app-xcodebuild.txt

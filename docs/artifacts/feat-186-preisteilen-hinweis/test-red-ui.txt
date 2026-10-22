@@ -1,0 +1,12 @@
+UI-RED #186 — CommunityShareNoticeUITests in Wegwerf-Kopie (neue Unit-Tests entfernt, sonst baut das Unit-Ziel nicht), Do. 22 Okt. 2026 11:00:36 CEST, Simulator Restock-Validate-27
+/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-swirling-yawning-pudding/ea989459-9858-4604-b619-fd09c5b7491f/scratchpad/red-copy/RestockUITests/CommunityShareNoticeUITests.swift:69: error: -[RestockUITests.CommunityShareNoticeUITests testFirstSaveAsksFirstAndDeclineTurnsSharingOff] : XCTAssertTrue failed - Nach dem ersten Speichern erscheint kein Hinweis „Preise anonym teilen?“.
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testFirstSaveAsksFirstAndDeclineTurnsSharingOff]' failed (42.016 seconds).
+/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-swirling-yawning-pudding/ea989459-9858-4604-b619-fd09c5b7491f/scratchpad/red-copy/RestockUITests/CommunityShareNoticeUITests.swift:69: error: -[RestockUITests.CommunityShareNoticeUITests testKeepSharingClosesScreenAndKeepsSwitchOn] : XCTAssertTrue failed - Nach dem ersten Speichern erscheint kein Hinweis „Preise anonym teilen?“.
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testKeepSharingClosesScreenAndKeepsSwitchOn]' failed (37.877 seconds).
+/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-swirling-yawning-pudding/ea989459-9858-4604-b619-fd09c5b7491f/scratchpad/red-copy/RestockUITests/CommunityShareNoticeUITests.swift:69: error: -[RestockUITests.CommunityShareNoticeUITests testSecondSaveShowsNoNotice] : XCTAssertTrue failed - Nach dem ersten Speichern erscheint kein Hinweis „Preise anonym teilen?“.
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testSecondSaveShowsNoNotice]' failed (37.596 seconds).
+	 Executed 3 tests, with 3 failures (0 unexpected) in 117.489 (117.494) seconds
+	 Executed 3 tests, with 3 failures (0 unexpected) in 117.489 (117.503) seconds
+	 Executed 3 tests, with 3 failures (0 unexpected) in 117.489 (117.506) seconds
+** TEST FAILED **
+exit=65

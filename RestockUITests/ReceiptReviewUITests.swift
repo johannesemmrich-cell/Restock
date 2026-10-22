@@ -109,7 +109,8 @@ final class ReceiptReviewUITests: XCTestCase {
 
     private func launchedApp() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewForUITests"]
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewForUITests",
+                                "-communityPricesNoticeShown", "YES"]
         app.launch()
         return app
     }
@@ -150,7 +151,8 @@ final class ReceiptReviewUITests: XCTestCase {
     /// unaufgelösten fünften Zeile „BTR", für die `reResolveAIIfNeeded()` wirklich läuft.
     private func launchedAppWithUnresolvedLine() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewUnresolvedLineForUITests"]
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewUnresolvedLineForUITests",
+                                "-communityPricesNoticeShown", "YES"]
         app.launch()
         return app
     }
@@ -833,7 +835,8 @@ final class ReceiptReviewUITests: XCTestCase {
     func testSavedWeightLineShowsGramsInExpenses() {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-premiumForScreenshots",
-                                "-seedReceiptReviewWeightLineForUITests"]
+                                "-seedReceiptReviewWeightLineForUITests",
+                                "-communityPricesNoticeShown", "YES"]
         app.launch()
         waitUntilSettled(app)
         XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 30),

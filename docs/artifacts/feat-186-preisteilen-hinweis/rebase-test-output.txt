@@ -1,0 +1,110 @@
+Nachlauf nach Aufsetzen auf main — Do. 22 Okt. 2026 12:46:38 CEST, HEAD 3a9719b (enthält 9bc25d3 #205) + Implementierung #186, Patch ff9018cc365f, Simulator Restock-Validate-27
+## Unit (gesamte Suite)
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.040 (0.043) seconds
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.025 (0.026) seconds
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.013 (0.014) seconds
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.009 (0.011) seconds
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.003 (0.003) seconds
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.054 (0.055) seconds
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.025 (0.027) seconds
+	 Executed 31 tests, with 0 failures (0 unexpected) in 0.123 (0.129) seconds
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.003 (0.005) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.054 (0.055) seconds
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.004 (0.006) seconds
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.057 (0.059) seconds
+	 Executed 15 tests, with 0 failures (0 unexpected) in 2.893 (2.899) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.163 (1.163) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.011 (0.012) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.007 (0.008) seconds
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.267 (0.268) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.098 (0.099) seconds
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.160 (0.163) seconds
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.246 (0.248) seconds
+	 Executed 17 tests, with 0 failures (0 unexpected) in 0.822 (0.825) seconds
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.073 (0.074) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.020 (0.022) seconds
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.120 (0.123) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
+	 Executed 25 tests, with 0 failures (0 unexpected) in 0.012 (0.018) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.034 (0.035) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.010 (0.010) seconds
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.011 (0.013) seconds
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.005 (0.007) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.008 (0.008) seconds
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.038 (0.039) seconds
+	 Executed 31 tests, with 0 failures (0 unexpected) in 0.017 (0.021) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.011 (0.011) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.012 (0.013) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.031 (0.032) seconds
+	 Executed 19 tests, with 0 failures (0 unexpected) in 3.903 (3.907) seconds
+	 Executed 40 tests, with 0 failures (0 unexpected) in 0.016 (0.023) seconds
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.004 (0.006) seconds
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.002 (0.004) seconds
+	 Executed 13 tests, with 0 failures (0 unexpected) in 5.009 (5.012) seconds
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.032 (0.034) seconds
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.020 (0.021) seconds
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.012 (0.015) seconds
+	 Executed 33 tests, with 0 failures (0 unexpected) in 0.039 (0.045) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 2.502 (2.502) seconds
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.015 (0.015) seconds
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.016 (0.017) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.013 (0.013) seconds
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.005 (0.007) seconds
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.112 (0.115) seconds
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.070 (0.072) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.005 (0.007) seconds
+	 Executed 27 tests, with 0 failures (0 unexpected) in 0.011 (0.020) seconds
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.020 (0.024) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.028 (0.029) seconds
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+	 Executed 674 tests, with 0 failures (0 unexpected) in 18.348 (18.490) seconds
+	 Executed 674 tests, with 0 failures (0 unexpected) in 18.348 (18.492) seconds
+** TEST SUCCEEDED **
+unit exit=0
+## UI (CommunityShareNotice, ReceiptReview, ReceiptResolutionStats, DynamicType)
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testFirstSaveAsksFirstAndDeclineTurnsSharingOff]' passed (23.146 seconds).
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testKeepSharingClosesScreenAndKeepsSwitchOn]' passed (21.116 seconds).
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testSecondSaveShowsNoNotice]' passed (29.935 seconds).
+	 Executed 3 tests, with 0 failures (0 unexpected) in 74.198 (74.203) seconds
+Test Case '-[RestockUITests.DynamicTypeUITests testReceiptReviewAndStoreListStayUsableAtLargestAccessibilitySize]' passed (25.737 seconds).
+Test Case '-[RestockUITests.DynamicTypeUITests testResolutionStatsHeaderGesamtFitsAtLargestAccessibilitySize]' passed (48.910 seconds).
+	 Executed 2 tests, with 0 failures (0 unexpected) in 74.647 (74.649) seconds
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' passed (22.757 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' passed (33.034 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' passed (46.030 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' passed (30.298 seconds).
+	 Executed 4 tests, with 0 failures (0 unexpected) in 132.118 (132.123) seconds
+Test Case '-[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine]' passed (13.209 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCardShowsAtMostFourSelectionOptions]' passed (16.799 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' passed (21.240 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeOpensPriceAndQuantityEditorAndUpdatesSummary]' passed (22.011 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testClearingCustomNameFieldKeepsPreviousItemName]' passed (19.470 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard]' passed (18.894 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCustomFieldIsPrefilledWithCapitalizedBonText]' passed (14.174 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCustomNameOptionOpensFocusedTextField]' passed (16.011 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' passed (17.574 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalTextAndAiMarkAreReadableInDarkMode]' passed (17.313 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' passed (18.729 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptDoesNotProduceOneCentItemPrice]' passed (20.808 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptShowsReceiptAsPriceSource]' passed (17.292 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedWeightLineShowsGramsInExpenses]' passed (20.354 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSaveIsNotTriggerableWithoutAnySelectedPosition]' passed (30.319 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' passed (18.557 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSectionHeaderShowsPositionsSelectedAndSum]' passed (13.044 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testTappingListMatchSelectsThatOption]' passed (13.638 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testTypingCustomNameIsAppliedWithEveryKeystroke]' passed (21.318 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardDimsItVisibly]' passed (15.474 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardLowersSelectedCountAndSum]' passed (14.581 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' passed (17.729 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testWhitespaceOnlyCustomNameKeepsPreviousItemName]' passed (18.167 seconds).
+	 Executed 23 tests, with 0 failures (0 unexpected) in 416.704 (416.725) seconds
+	 Executed 32 tests, with 0 failures (0 unexpected) in 697.668 (697.720) seconds
+	 Executed 32 tests, with 0 failures (0 unexpected) in 697.668 (697.722) seconds
+** TEST SUCCEEDED **
+ui exit=0

@@ -33,6 +33,7 @@ struct SmartCartApp: App {
             Self.clearDuplicateStoresForUITestsIfNeeded(context: container.mainContext)
             Self.seedDuplicateStoresForUITestsIfNeeded(context: container.mainContext)
             Self.clearDeveloperModeForUITestsIfNeeded()
+            Self.clearCommunityPricesNoticeForUITestsIfNeeded()
             Self.seedSharedAssignmentForScreenshotsIfNeeded(context: container.mainContext)
             Self.clearReceiptReviewSeedForUITestsIfNeeded(context: container.mainContext)
             Self.clearReceiptResolutionStatsForUITestsIfNeeded()
@@ -535,6 +536,15 @@ struct SmartCartApp: App {
     private static func clearDeveloperModeForUITestsIfNeeded() {
         guard ProcessInfo.processInfo.arguments.contains("-clearDeveloperModeForUITests") else { return }
         UserDefaults.standard.removeObject(forKey: "developerMode")
+    }
+
+    /// Issue #186: frischer Zustand für den Erst-Hinweis vor dem ersten Preisbeitrag — entfernt
+    /// Merker und Schalter-Schlüssel (`CommunityShareNoticeUITests`, `setUp`/`tearDown`).
+    /// Only runs on `-clearCommunityPricesNoticeForUITests`, DEBUG-only.
+    private static func clearCommunityPricesNoticeForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-clearCommunityPricesNoticeForUITests") else { return }
+        UserDefaults.standard.removeObject(forKey: CommunityPriceService.noticeShownKey)
+        UserDefaults.standard.removeObject(forKey: CommunityPriceService.sharingEnabledKey)
     }
 
     /// Schreibt über `CloudMirrorMonitor.handle` einen fehlgeschlagenen Export (Ursache

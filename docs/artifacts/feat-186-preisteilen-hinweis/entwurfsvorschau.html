@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preisteilen-Hinweis Entwurf</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  /* Seite: zwei Theme-Tafeln (App hell, App dunkel), je drei Spalten: Heute, Entwurf A, Alternative B. */
+  :root {
+    --bg: #f6f4ef; --fg: #1d1b16; --muted: #6a655b; --rule: #d9d4c8; --panel: #ffffff;
+    --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #16150f; --fg: #ece8de; --muted: #a39d90; --rule: #37342b; --panel: #201e17; color-scheme: dark } }
+  :root[data-theme="dark"] { --bg: #16150f; --fg: #ece8de; --muted: #a39d90; --rule: #37342b; --panel: #201e17; color-scheme: dark }
+  * { box-sizing: border-box }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body); padding: 24px 16px 48px; line-height: 1.45 }
+  main { max-width: 1080px; margin: 0 auto; display: grid; gap: 28px }
+  h1 { font-size: 1.5rem; font-weight: 600; margin: 0; text-wrap: balance }
+  h2 { font-size: .95rem; font-weight: 600; margin: 0 0 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted) }
+  h3 { font-size: .95rem; font-weight: 600; margin: 0 }
+  p { margin: 0; max-width: 68ch }
+  .lead { color: var(--muted) }
+  .theme { border: 1px solid var(--rule); border-radius: 12px; padding: 18px; background: var(--panel) }
+  .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px }
+  @media (max-width: 820px) { .cols { grid-template-columns: 1fr } }
+  .col { min-width: 0; display: grid; gap: 10px; align-content: start }
+  .note { font-size: .85rem; color: var(--muted) }
+  .shot { width: 100%; max-width: 300px; border-radius: 22px; border: 1px solid var(--rule) }
+
+  /* Nachgebautes iPhone, Farben aus den RC-Farbsätzen der App */
+  .phone { position: relative; width: 100%; max-width: 300px; aspect-ratio: 1206 / 2622; border-radius: 34px; overflow: hidden; border: 1px solid var(--rule);
+           font-family: -apple-system, "SF Pro Text", var(--font-body); font-size: 13px }
+  .phone.light { --canvas: rgb(245,242,233); --surface: rgb(253,251,244); --ink: rgb(32,29,22); --sec: rgb(111,106,91); --accent: rgb(102,111,56);
+                 --btn: rgb(32,29,22); --onbtn: rgb(245,242,233); --hair: rgba(32,29,22,.13); --glass: rgba(253,251,244,.82); --dim: rgba(0,0,0,.28) }
+  .phone.dark  { --canvas: rgb(20,19,16); --surface: rgb(29,28,22); --ink: rgb(235,231,218); --sec: rgb(162,155,138); --accent: rgb(167,174,107);
+                 --btn: rgb(232,228,214); --onbtn: rgb(32,29,22); --hair: rgba(235,231,218,.13); --glass: rgba(44,42,34,.86); --dim: rgba(0,0,0,.5) }
+  .phone { background: var(--canvas); color: var(--ink) }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 40px 12px 10px; gap: 6px }
+  .chip { border: 1px solid var(--hair); background: var(--surface); border-radius: 10px; padding: 6px 10px; font-weight: 600; font-size: 12px }
+  .chip.prim { background: var(--btn); color: var(--onbtn); border-color: transparent }
+  .title { font-weight: 600; font-size: 13px; white-space: nowrap }
+  .sum { padding: 4px 16px 8px; color: var(--sec); font-weight: 600 }
+  .card { margin: 0 14px 8px; background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; padding: 10px 12px; display: grid; gap: 6px }
+  .card .raw { font-size: 12px; letter-spacing: .02em }
+  .card .meta { display: flex; justify-content: space-between; color: var(--sec); font-size: 12px; border-top: 1px solid var(--hair); padding-top: 6px }
+  .card .meta b { color: var(--accent) }
+  .dim { position: absolute; inset: 0; background: var(--dim) }
+
+  /* Entwurf A: Systemhinweis (iOS 26, Glas) */
+  .alert { position: absolute; left: 9%; right: 9%; top: 31%; background: var(--glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+           border-radius: 28px; padding: 18px 16px 14px; display: grid; gap: 8px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,.25) }
+  .alert .t { font-weight: 600; font-size: 15px }
+  .alert .b { font-size: 12.5px; line-height: 1.35 }
+  .alert .btns { display: grid; gap: 6px; margin-top: 6px }
+  .alert .btn { border-radius: 999px; padding: 9px; font-weight: 600; font-size: 13px; background: var(--hair) }
+  .alert .btn.def { background: var(--btn); color: var(--onbtn) }
+
+  /* Alternative B: halbe Karte von unten */
+  .sheet { position: absolute; left: 6px; right: 6px; bottom: 6px; background: var(--surface); border-radius: 30px; padding: 10px 18px 18px; display: grid; gap: 10px;
+           box-shadow: 0 -6px 30px rgba(0,0,0,.2) }
+  .grab { width: 36px; height: 4px; border-radius: 2px; background: var(--hair); justify-self: center }
+  .sheet .icon { width: 40px; height: 40px; border-radius: 12px; background: var(--accent); color: var(--surface); display: grid; place-items: center; font-size: 20px; justify-self: center }
+  .sheet .t { font-weight: 700; font-size: 17px; text-align: center }
+  .sheet ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 12.5px }
+  .sheet li { display: grid; grid-template-columns: 18px 1fr; gap: 6px }
+  .sheet .yes { color: var(--accent); font-weight: 700 }
+  .sheet .no { color: var(--sec); font-weight: 700 }
+  .sheet .s { color: var(--sec); font-size: 11.5px; text-align: center }
+  .sheet .btn { border-radius: 14px; padding: 11px; text-align: center; font-weight: 600; font-size: 14px }
+  .sheet .btn.def { background: var(--btn); color: var(--onbtn) }
+  .sheet .btn.sec { color: var(--accent) }
+
+  table { border-collapse: collapse; width: 100%; font-size: .9rem }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--rule); vertical-align: top }
+  .wrap { overflow-x: auto }
+  ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 4px }
+</style>
+</head>
+<body>
+<main>
+  <header style="display:grid;gap:8px">
+    <h1>Einmaliger Hinweis vor dem ersten Preisteilen (Issue #186)</h1>
+    <p class="lead">Seit #183 ist „Preise anonym mit anderen teilen“ voreingestellt an. Neu: Beim ersten Speichern eines Bons oder beim ersten „Preis eintragen“ erscheint genau einmal ein Hinweis, <b>bevor</b> etwas hochgeladen wird. „Nicht teilen“ schaltet den Schalter aus, und kein Preis verlässt das Gerät, auch nicht der des gerade gespeicherten Bons. Alles andere (Preise lernen, Liste abhaken) läuft wie heute.</p>
+  </header>
+
+  <section class="theme">
+    <h2>App hell</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>Heute</h3>
+        <img class="shot" src="heute-bonpruefung.png" alt="Bon-Prüf-Screen mit Knopf Speichern">
+        <p class="note">Tipp auf „Speichern“: Fenster schließt sofort, Preise gehen ohne Hinweis hinaus. Erklärt wird das nur in den Einstellungen (Bild unten).</p>
+      </div>
+      <div class="col">
+        <h3>Entwurf A · Systemhinweis</h3>
+        <div class="phone light" aria-label="Entwurf A hell">
+          <div class="bar"><span class="chip">…</span><span class="title">Bon scannen — Lidl</span><span class="chip prim">Speichern</span></div>
+          <div class="sum">1 Positionen · 1 ausgewählt · 1,76 €</div>
+          <div class="card"><span class="raw">BANANE CHIQUITA</span><span>◉ Banane Chiquita</span><span class="meta"><span>1,76 € · 706 g</span><b>Ändern</b></span></div>
+          <div class="dim"></div>
+          <div class="alert">
+            <span class="t">Preise anonym teilen?</span>
+            <span class="b">Restock teilt beim Bon-Scan und bei „Preis eintragen“ nur Artikel, Ladenkette, Preis und Datum, ohne Namen, Foto oder Filiale. Dafür siehst du Preise anderer als „Community“. Änderbar in den Einstellungen.</span>
+            <div class="btns"><span class="btn def">Weiter teilen</span><span class="btn">Nicht teilen</span></div>
+          </div>
+        </div>
+        <p class="note">Apples Standard-Hinweis in der Bildschirmmitte. Ein Text, zwei Knöpfe. Danach schließt das Fenster wie heute.</p>
+      </div>
+      <div class="col">
+        <h3>Alternative B · Karte von unten</h3>
+        <div class="phone light" aria-label="Alternative B hell">
+          <div class="bar"><span class="chip">…</span><span class="title">Bon scannen — Lidl</span><span class="chip prim">Speichern</span></div>
+          <div class="sum">1 Positionen · 1 ausgewählt · 1,76 €</div>
+          <div class="card"><span class="raw">BANANE CHIQUITA</span><span>◉ Banane Chiquita</span><span class="meta"><span>1,76 € · 706 g</span><b>Ändern</b></span></div>
+          <div class="dim"></div>
+          <div class="sheet">
+            <span class="grab"></span>
+            <span class="icon">⇅</span>
+            <span class="t">Preise anonym teilen?</span>
+            <ul>
+              <li><span class="yes">✓</span><span>Artikel, Ladenkette, Preis, Datum</span></li>
+              <li><span class="no">✕</span><span>kein Name, kein Foto, keine Filiale</span></li>
+              <li><span class="yes">✓</span><span>dafür Preise anderer als „Community“</span></li>
+            </ul>
+            <span class="s">Jederzeit änderbar in den Einstellungen.</span>
+            <span class="btn def">Weiter teilen</span>
+            <span class="btn sec">Nicht teilen</span>
+          </div>
+        </div>
+        <p class="note">Eigene Karte mit Liste: übersichtlicher, aber ein eigener Bildschirm mehr (Text, Layout, Großschrift, Tests).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="theme">
+    <h2>App dunkel</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>Heute</h3>
+        <img class="shot" src="heute-einstellungen.png" alt="Einstellungen mit Schalter Preise anonym mit anderen teilen">
+        <p class="note">Schalter und Fußnote in den Einstellungen (Aufnahme vor #183, Schalter dort noch aus). Bleiben unverändert; „Nicht teilen“ stellt genau diesen Schalter auf aus.</p>
+      </div>
+      <div class="col">
+        <h3>Entwurf A · Systemhinweis</h3>
+        <div class="phone dark" aria-label="Entwurf A dunkel">
+          <div class="bar"><span class="chip">…</span><span class="title">Bon scannen — Lidl</span><span class="chip prim">Speichern</span></div>
+          <div class="sum">1 Positionen · 1 ausgewählt · 1,76 €</div>
+          <div class="card"><span class="raw">BANANE CHIQUITA</span><span>◉ Banane Chiquita</span><span class="meta"><span>1,76 € · 706 g</span><b>Ändern</b></span></div>
+          <div class="dim"></div>
+          <div class="alert">
+            <span class="t">Preise anonym teilen?</span>
+            <span class="b">Restock teilt beim Bon-Scan und bei „Preis eintragen“ nur Artikel, Ladenkette, Preis und Datum, ohne Namen, Foto oder Filiale. Dafür siehst du Preise anderer als „Community“. Änderbar in den Einstellungen.</span>
+            <div class="btns"><span class="btn def">Weiter teilen</span><span class="btn">Nicht teilen</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <h3>Alternative B · Karte von unten</h3>
+        <div class="phone dark" aria-label="Alternative B dunkel">
+          <div class="bar"><span class="chip">…</span><span class="title">Bon scannen — Lidl</span><span class="chip prim">Speichern</span></div>
+          <div class="sum">1 Positionen · 1 ausgewählt · 1,76 €</div>
+          <div class="card"><span class="raw">BANANE CHIQUITA</span><span>◉ Banane Chiquita</span><span class="meta"><span>1,76 € · 706 g</span><b>Ändern</b></span></div>
+          <div class="dim"></div>
+          <div class="sheet">
+            <span class="grab"></span>
+            <span class="icon">⇅</span>
+            <span class="t">Preise anonym teilen?</span>
+            <ul>
+              <li><span class="yes">✓</span><span>Artikel, Ladenkette, Preis, Datum</span></li>
+              <li><span class="no">✕</span><span>kein Name, kein Foto, keine Filiale</span></li>
+              <li><span class="yes">✓</span><span>dafür Preise anderer als „Community“</span></li>
+            </ul>
+            <span class="s">Jederzeit änderbar in den Einstellungen.</span>
+            <span class="btn def">Weiter teilen</span>
+            <span class="btn sec">Nicht teilen</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="theme">
+    <h2>Vergleich</h2>
+    <div class="wrap">
+      <table>
+        <thead><tr><th></th><th>Entwurf A · Systemhinweis</th><th>Alternative B · Karte</th></tr></thead>
+        <tbody>
+          <tr><td>Wirkung</td><td>knapp, sieht aus wie jeder iOS-Hinweis</td><td>auffälliger, Liste auf einen Blick</td></tr>
+          <tr><td>Großschrift, Dunkelmodus, VoiceOver</td><td>übernimmt iOS</td><td>muss eigens gebaut und geprüft werden</td></tr>
+          <tr><td>Wegtippen ohne Entscheidung</td><td>nicht möglich, einer der zwei Knöpfe</td><td>Wischen nach unten muss gesperrt oder als „später fragen“ behandelt werden</td></tr>
+          <tr><td>Umfang</td><td>klein</td><td>etwa doppelt so viel</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:12px"><b>Empfehlung: Entwurf A.</b> Der Hinweis erscheint genau einmal; Apples Standard-Hinweis ist dafür das passende Mittel, sieht in hell und dunkel ohne Zusatzarbeit richtig aus und lässt keine dritte, unklare Antwort zu. Gleicher Hinweis bei „Preis eintragen“.</p>
+    <ul class="plain note" style="margin-top:10px">
+      <li>Kommt nicht, wenn der Schalter schon aus ist oder der Bon keinen teilbaren Preis enthält.</li>
+      <li>Wird die App geschlossen, während der Hinweis steht: nichts geteilt, der Hinweis kommt beim nächsten Mal wieder.</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

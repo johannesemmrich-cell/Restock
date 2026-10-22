@@ -1,0 +1,80 @@
+# Test-Green-Output Issue #186 — 2026-10-22 11:29:25 +0200 — HEAD 36f19fb (plus uncommittete Implementierung)
+# Simulator Restock-Validate-27 (9034BD4F-2D5F-49D5-B906-838326D51C95); volle Logs: build/unit-186.log, build/ui-186.log
+
+## Lauf 1: Unit (CommunityPriceTests, LocalizationKeyParityTests)
+Test Case '-[RestockTests.CommunityPriceTests testAcceptedContributionsAreSentAfterDecision]' passed (0.016 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testActualPriceEntryCollectsContributionInsteadOfSending]' passed (0.021 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testAggregateNeedsThreeRecentObservationsAndUsesMedian]' passed (0.002 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testAggregateUsesMajorityUnitOnly]' passed (0.001 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testApplyTouchesOnlyAutoDerivedPendingItems]' passed (0.037 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testCacheUpdateKeepsOtherChainsAndRemovesQueriedKeysWithoutAggregate]' passed (0.007 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testCatalogRefreshLeavesCommunityPricesAlone]' passed (0.009 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testChainIsFirstWordLowercasedAlphanumeric]' passed (0.001 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testCommunityStageObeysUnitTableAndCap]' passed (0.005 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testCommunityStageSitsBetweenOwnPricesAndCatalog]' passed (0.014 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testContributeDoesNothingWhileSharingIsOff]' passed (0.003 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testContributeUpdatesServerRecordAfterServerRecordChanged]' passed (0.007 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testContributeWritesAnonymousRecordWithDeterministicName]' passed (0.004 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testDeclinedContributionsAreNotSentToDatabase]' passed (0.004 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testIsShareableMatchesContributeGuards]' passed (0.004 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testLocalizationKeysAreRegistered]' passed (0.003 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testNoticeDueWhenSwitchOnNoMarkerAndShareableContribution]' passed (0.003 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testNoticeNotDueWhenMarkerSet]' passed (0.002 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testNoticeNotDueWhenSwitchOff]' passed (0.003 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testNoticeNotDueWithoutShareableContribution]' passed (0.001 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testRecordDecisionDeclineTurnsSwitchOffAndSetsMarker]' passed (0.002 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testRecordDecisionShareKeepsSwitchAndSetsMarker]' passed (0.003 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testRefreshFillsCacheAndRemovesKeysWithoutEnoughData]' passed (0.009 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testSchemaFieldsMatchPublishedExport]' passed (0.006 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testSharingIsOnByDefaultWhenKeyIsAbsent]' passed (0.004 seconds).
+Test Case '-[RestockTests.CommunityPriceTests testSwitchOffLeavesMarkerUntouched]' passed (0.003 seconds).
+	 Executed 26 tests, with 0 failures (0 unexpected) in 0.173 (0.183) seconds
+Test Case '-[RestockTests.LocalizationKeyParityTests testBothTablesExistAndAreNotEmpty]' passed (0.002 seconds).
+Test Case '-[RestockTests.LocalizationKeyParityTests testGermanAndEnglishHaveTheSameKeys]' passed (0.002 seconds).
+Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholderExtraction]' passed (0.002 seconds).
+Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholdersMatchPerKey]' passed (0.006 seconds).
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.011 (0.012) seconds
+	 Executed 30 tests, with 0 failures (0 unexpected) in 0.183 (0.196) seconds
+	 Executed 30 tests, with 0 failures (0 unexpected) in 0.183 (0.200) seconds
+** TEST SUCCEEDED **
+
+## Lauf 2: UI (CommunityShareNoticeUITests, ReceiptReviewUITests, ReceiptResolutionStatsUITests, DynamicTypeUITests)
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testFirstSaveAsksFirstAndDeclineTurnsSharingOff]' passed (28.859 seconds).
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testKeepSharingClosesScreenAndKeepsSwitchOn]' passed (27.831 seconds).
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testSecondSaveShowsNoNotice]' passed (30.275 seconds).
+	 Executed 3 tests, with 0 failures (0 unexpected) in 86.965 (86.976) seconds
+Test Case '-[RestockUITests.DynamicTypeUITests testReceiptReviewAndStoreListStayUsableAtLargestAccessibilitySize]' passed (29.995 seconds).
+Test Case '-[RestockUITests.DynamicTypeUITests testResolutionStatsHeaderGesamtFitsAtLargestAccessibilitySize]' passed (60.250 seconds).
+	 Executed 2 tests, with 0 failures (0 unexpected) in 90.245 (90.249) seconds
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testLinkIsNotShownOutsideDeveloperMode]' passed (24.325 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testResetAsksForConfirmationAndClearsOnlyAfterConfirming]' passed (33.071 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testSavedReceiptIsCountedPerStageWithChangedAndDeselected]' passed (53.652 seconds).
+Test Case '-[RestockUITests.ReceiptResolutionStatsUITests testStatsScreenWithoutDataShowsSevenStagesAndZeroTotals]' passed (33.039 seconds).
+	 Executed 4 tests, with 0 failures (0 unexpected) in 144.087 (144.091) seconds
+Test Case '-[RestockUITests.ReceiptReviewUITests testAiMarkStaysOnOneLine]' passed (14.073 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCardShowsAtMostFourSelectionOptions]' passed (17.330 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeEditorWorksInDarkMode]' passed (28.619 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testChangeOpensPriceAndQuantityEditorAndUpdatesSummary]' passed (27.563 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testClearingCustomNameFieldKeepsPreviousItemName]' passed (20.598 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCopyingReceiptTextViaContextMenuPutsOriginalNameOnPasteboard]' passed (18.094 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCustomFieldIsPrefilledWithCapitalizedBonText]' passed (14.304 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testCustomNameOptionOpensFocusedTextField]' passed (16.094 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalReceiptTextIsVisibleOnEveryLine]' passed (17.732 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testOriginalTextAndAiMarkAreReadableInDarkMode]' passed (17.696 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testReviewSheetOpensFromShareHandoff]' passed (20.316 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptDoesNotProduceOneCentItemPrice]' passed (22.039 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedReceiptShowsReceiptAsPriceSource]' passed (17.021 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavedWeightLineShowsGramsInExpenses]' passed (30.638 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSaveIsNotTriggerableWithoutAnySelectedPosition]' passed (33.565 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSavingStillWritesLearnedPriceToMatchedItem]' passed (24.378 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testSectionHeaderShowsPositionsSelectedAndSum]' passed (14.689 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testTappingListMatchSelectsThatOption]' passed (13.926 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testTypingCustomNameIsAppliedWithEveryKeystroke]' passed (22.137 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardDimsItVisibly]' passed (16.121 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUncheckingCardLowersSelectedCountAndSum]' passed (14.998 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testUnresolvedLineEndsWithExactlyOneSelectedOptionAfterAiReresolution]' passed (18.081 seconds).
+Test Case '-[RestockUITests.ReceiptReviewUITests testWhitespaceOnlyCustomNameKeepsPreviousItemName]' passed (19.595 seconds).
+	 Executed 23 tests, with 0 failures (0 unexpected) in 459.610 (459.633) seconds
+	 Executed 32 tests, with 0 failures (0 unexpected) in 780.908 (780.971) seconds
+	 Executed 32 tests, with 0 failures (0 unexpected) in 780.908 (780.974) seconds
+** TEST SUCCEEDED **
