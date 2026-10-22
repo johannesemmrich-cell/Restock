@@ -1,6 +1,70 @@
 import ActivityKit
 import Foundation
 
+/// Wann die Live Activity (Dynamic Island, Sperrbildschirm) läuft — reine Regel, ohne ActivityKit
+/// testbar (`LiveActivityPolicyTests`). Beschluss des PO vom 2026-10-22: Start erst beim ersten
+/// Abhaken (nicht beim Öffnen der Liste), bleibt beim Verlassen der Liste und der App stehen,
+/// endet bei „alles erledigt“ oder nach `idleLimit` ohne Haken. Vorher startete jedes Öffnen
+/// einer Liste mit offenen Artikeln eine Anzeige, auch beim Planen zu Hause.
+enum LiveActivityPolicy {
+    enum Event: Equatable {
+        /// Ladenliste geöffnet (auch nach App-Neustart).
+        case listOpened
+        /// App kommt in den Vordergrund.
+        case appActivated
+        /// Ein Artikel wurde abgehakt (Liste, Dynamic Island, Widget).
+        case checkedOff
+        /// Ein Haken wurde zurückgenommen.
+        case unchecked
+        /// Offene Artikel haben sich anders geändert (hinzugefügt, gelöscht, Sync).
+        case itemsChanged
+    }
+
+    enum Action: Equatable {
+        case none
+        case startOrUpdate
+        case end
+    }
+
+    /// Ohne Haken so lange gilt der Einkauf als vorbei — dieselbe Grenze wie beim Lernen des
+    /// Einkaufswegs (`ShoppingRoute.tripGap`).
+    static let idleLimit: TimeInterval = ShoppingRoute.tripGap
+
+    /// `lastCheckOff`: letzter Haken des laufenden Einkaufs in diesem Laden (nil = keiner).
+    static func action(
+        for event: Event,
+        hasActivity: Bool,
+        pendingCount: Int,
+        lastCheckOff: Date?,
+        now: Date
+    ) -> Action {
+        let shopping = lastCheckOff.map { now.timeIntervalSince($0) <= idleLimit } ?? false
+        if pendingCount == 0 { return hasActivity ? .end : .none }
+        switch event {
+        case .checkedOff:
+            return .startOrUpdate
+        case .unchecked:
+            // Nach „alles erledigt“ einen Haken zurücknehmen: im laufenden Einkauf wieder anzeigen.
+            if hasActivity { return shopping ? .startOrUpdate : .end }
+            return shopping ? .startOrUpdate : .none
+        case .itemsChanged, .listOpened, .appActivated:
+            guard hasActivity else { return .none }
+            return shopping ? .startOrUpdate : .end
+        }
+    }
+
+    /// Ab wann eine laufende Anzeige als veraltet gilt: `idleLimit` nach dem letzten Haken.
+    /// Dient zugleich als Merkmal für `LiveActivityService.endIdleActivities`.
+    static func staleDate(lastCheckOff: Date?, now: Date) -> Date {
+        (lastCheckOff ?? now).addingTimeInterval(idleLimit)
+    }
+
+    static func isIdle(staleDate: Date?, now: Date) -> Bool {
+        guard let staleDate else { return false }
+        return now >= staleDate
+    }
+}
+
 @MainActor
 final class LiveActivityService {
     static let shared = LiveActivityService()
@@ -32,6 +96,52 @@ final class LiveActivityService {
         )
     }
 
+    /// Einziger Einstieg der Ansichten: wendet `LiveActivityPolicy` an.
+    func handle(_ event: LiveActivityPolicy.Event, for store: Store, now: Date = Date()) {
+        let action = LiveActivityPolicy.action(
+            for: event,
+            hasActivity: hasActiveActivity(for: store),
+            pendingCount: store.pendingItems.count,
+            lastCheckOff: store.currentTrip.lastActivity,
+            now: now
+        )
+        switch action {
+        case .none: break
+        case .startOrUpdate: start(for: store)
+        case .end: end(for: store)
+        }
+    }
+
+    func hasActiveActivity(for store: Store) -> Bool {
+        if let currentActivity, currentActivity.attributes.storeName == store.name,
+           currentActivity.activityState == .active {
+            return true
+        }
+        return Activity<ShoppingActivityAttributes>.activities
+            .contains { $0.attributes.storeName == store.name && $0.activityState == .active }
+    }
+
+    /// Beim Wechsel in den Vordergrund: Anzeigen beenden, deren letzter Haken länger als
+    /// `LiveActivityPolicy.idleLimit` zurückliegt (Merkmal ist das `staleDate`, siehe dort).
+    /// Läuft die App in der Zeit nicht, bleibt die Anzeige als „veraltet“ stehen, bis iOS sie
+    /// nach spätestens 8 Stunden selbst beendet.
+    func endIdleActivities(now: Date = Date()) {
+        for activity in Activity<ShoppingActivityAttributes>.activities
+            where activity.activityState == .active
+            && LiveActivityPolicy.isIdle(staleDate: activity.content.staleDate, now: now) {
+            Task { await activity.end(nil, dismissalPolicy: .immediate) }
+            if activity.id == currentActivity?.id {
+                currentActivity = nil
+                lastState = nil
+                trackedStore = nil
+            }
+        }
+    }
+
+    private func staleDate(for store: Store) -> Date {
+        LiveActivityPolicy.staleDate(lastCheckOff: store.currentTrip.lastActivity, now: Date())
+    }
+
     func start(for store: Store) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
 
@@ -39,6 +149,18 @@ final class LiveActivityService {
         guard !store.pendingItems.isEmpty else {
             end(for: store)
             return
+        }
+
+        // Immer nur ein Einkauf zugleich: ein Haken in einem anderen Laden beendet die Anzeige
+        // des vorigen, statt sie mit dem Stand dieses Ladens zu überschreiben.
+        // Nach einem App-Neustart kennt `currentActivity` sie nicht mehr, daher alle laufenden prüfen.
+        for other in Activity<ShoppingActivityAttributes>.activities
+            where other.attributes.storeName != store.name && other.activityState == .active {
+            Task { await other.end(nil, dismissalPolicy: .immediate) }
+        }
+        if let current = currentActivity, current.attributes.storeName != store.name {
+            currentActivity = nil
+            lastState = nil
         }
 
         // Nach App-Neustart: vorhandene Live Activity wiederfinden statt neue starten. Nur eine
@@ -55,7 +177,7 @@ final class LiveActivityService {
         trackedStore = store
         let state = makeState(for: store)
         lastState = state
-        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(7200))
+        let content = ActivityContent(state: state, staleDate: staleDate(for: store))
 
         if let existing = currentActivity {
             Task { await existing.update(content) }
@@ -64,28 +186,6 @@ final class LiveActivityService {
 
         let attrs = ShoppingActivityAttributes(storeName: store.name, storeEmoji: store.emoji)
         currentActivity = try? Activity.request(attributes: attrs, content: content, pushType: nil)
-    }
-
-    func update(for store: Store) {
-        // Alles abgehakt → Activity beenden statt mit leerem State weiterlaufen zu lassen
-        guard !store.pendingItems.isEmpty else {
-            end(for: store)
-            return
-        }
-        trackedStore = store
-        let state = makeState(for: store)
-        lastState = state
-        guard let activity = currentActivity else {
-            // Kein laufendes Tracking, aber wieder offene Artikel: passiert, wenn die Activity nach
-            // "alles abgehakt" beendet+genillt wurde und der Nutzer dann ein Item ENThakt. Eine
-            // beendete ActivityKit-Activity ist nicht wiederbelebbar — also neu starten statt den
-            // Update still zu verschlucken (sonst bleibt die Dynamic Island bis zum nächsten
-            // View-Wechsel leer).
-            start(for: store)
-            return
-        }
-        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(7200))
-        Task { await activity.update(content) }
     }
 
     func end(for store: Store) {
@@ -125,7 +225,7 @@ final class LiveActivityService {
             lastState = nil
             return
         }
-        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(7200))
+        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(LiveActivityPolicy.idleLimit))
         Task { await activity.update(content) }
     }
 
@@ -149,7 +249,7 @@ final class LiveActivityService {
         }
         lastState = state
         guard let activity = currentActivity else { return }
-        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(7200))
+        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(LiveActivityPolicy.idleLimit))
         Task { await activity.update(content) }
     }
 

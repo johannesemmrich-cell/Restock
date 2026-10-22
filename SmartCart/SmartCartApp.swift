@@ -896,6 +896,8 @@ struct SmartCartApp: App {
                         // nicht lief: Änderungen liegen nur lokal (die Widget-Extension kann
                         // nicht zu CloudKit pushen) — jetzt einmalig alle geteilten Läden pushen.
                         SyncCoordinator.shared.pushWidgetCheckoffsIfNeeded()
+                        // Einkauf seit 30 Minuten ohne Haken: Live Activity beenden (PO 2026-10-22).
+                        LiveActivityService.shared.endIdleActivities()
                     } else {
                         SyncCoordinator.shared.stopPeriodicPulls()
                         // Zentraler Reload-Hook: was auch immer in dieser Session hinzugefügt/
