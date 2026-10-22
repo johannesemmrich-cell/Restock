@@ -124,7 +124,9 @@ struct StoreDetailView: View {
             // ein seit über 30 Minuten ruhender Einkauf ist vorbei — jetzt lernen, damit die Liste
             // schon vor dem ersten Haken im gelernten Weg steht (Issue #79).
             store.finalizeStaleTrip()
-            LiveActivityService.shared.start(for: store)
+            // Startet nichts: die Anzeige beginnt erst mit dem ersten Haken. Eine laufende wird
+            // aktualisiert oder nach 30 Minuten ohne Haken beendet (`LiveActivityPolicy`).
+            LiveActivityService.shared.handle(.listOpened, for: store)
             // Kein eigener wiederkehrender Poll-Loop mehr hier — SyncCoordinator.startPeriodicPulls()
             // deckt bereits alle geteilten Stores app-weit alle 15s ab (Push + CloudKit-Notifications
             // bleiben der schnelle Pfad; Polling ist nur das Fallback-Netz), ein zusätzlicher lokaler
@@ -152,7 +154,7 @@ struct StoreDetailView: View {
             }
         }
         .onDisappear {
-            LiveActivityService.shared.end(for: store)
+            // Die Live Activity bleibt beim Verlassen der Liste bewusst stehen (PO 2026-10-22).
             if store.shareID != nil {
                 let generation = nextSyncGeneration()
                 Task {
@@ -162,7 +164,7 @@ struct StoreDetailView: View {
             }
         }
         .onChange(of: pending.count) { oldCount, newCount in
-            LiveActivityService.shared.update(for: store)
+            LiveActivityService.shared.handle(.itemsChanged, for: store)
             if newCount == 0, oldCount > 0, !store.completedItems.isEmpty {
                 showConfetti = true
                 Task {
@@ -219,6 +221,7 @@ struct StoreDetailView: View {
                 // Reihenfolge wie dort: erst die Haken aus der Dynamic Island übernehmen.
                 applyPendingCheckoffs()
                 store.finalizeStaleTrip()
+                LiveActivityService.shared.handle(.appActivated, for: store)
                 reorderTick += 1
             }
     }
@@ -1200,7 +1203,7 @@ struct StoreDetailView: View {
         }
         // Flush immediately so HomeView's @Query sees the change without delay
         try? context.save()
-        LiveActivityService.shared.update(for: store)
+        LiveActivityService.shared.handle(item.isCompleted ? .checkedOff : .unchecked, for: store)
         syncPush()
     }
 
@@ -1235,7 +1238,7 @@ struct StoreDetailView: View {
         let applied = CheckoffQueue.drain(for: store)
         guard applied > 0 else { return }
         try? context.save()
-        LiveActivityService.shared.update(for: store)
+        LiveActivityService.shared.handle(.checkedOff, for: store)
     }
 
     // MARK: - QuickAdd helpers
