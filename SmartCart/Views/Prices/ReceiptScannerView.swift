@@ -352,6 +352,9 @@ struct ReceiptScannerView: View {
     @State private var cameFromShareHandoff = false
     /// Issue #186: zurückgehaltene Community-Beiträge, solange der Erst-Hinweis steht (nil = keiner).
     @State private var pendingShare: [CommunityPriceService.Contribution]?
+    /// Issue #184: das zuletzt erkannte Bonfoto (JPEG) als Nachweis für Open Prices; nur im Foto-Weg,
+    /// die Übergabe aus der Teilen-Erweiterung bringt kein Bild mit.
+    @State private var receiptImageData: Data?
 
     enum Phase { case capture, processing, review }
 
@@ -709,6 +712,7 @@ struct ReceiptScannerView: View {
 
     private func process(_ image: UIImage) {
         phase = .processing
+        receiptImageData = image.jpegData(compressionQuality: 0.8)
         // Sofort zurücksetzen, nicht erst nach der OCR — sonst könnte ein Feedback-Tap während
         // dieses Scans (oder ein Scan, der schon am fehlenden cgImage scheitert, siehe Guard
         // unten) noch die Rohzeilen des VORHERIGEN Fotos anzeigen.
@@ -835,6 +839,10 @@ struct ReceiptScannerView: View {
         // pusht bereits zuverlässig, save() hier war die einzige Ausnahme (gemeldet 19.08.2026:
         // Bon-Import löste nie eine Push-Notification für andere Mitglieder aus).
         SyncCoordinator.shared.pushInBackground(store)
+        // Issue #184: Bon an Open Prices (eigener Opt-in, Anmeldung, Filiale, Foto — prüft der Dienst).
+        OpenPricesContributionService.shared.contributeInBackground(
+            lines: included.map { .init(name: $0.name, price: $0.price, quantity: $0.quantity, weightBasis: $0.weightBasis) },
+            imageData: receiptImageData, storeID: store.id, date: Date())
         // Issue #186: beim ersten Beitrag erst fragen, der Screen bleibt bis zur Entscheidung offen.
         if !CommunityPriceService.holdForNoticeOrSend(contributions, into: &pendingShare) { dismiss() }
     }

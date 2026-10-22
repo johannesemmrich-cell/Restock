@@ -22,12 +22,14 @@ Regeln beim Zusammenführen (je Eintrag ausgewiesen in `source`):
 """
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
 R = Path(__file__).resolve().parent.parent
 CATALOG = R / "data" / "price-catalog" / "catalog.json"
 MEDIANS = R / "data" / "price-catalog" / "open-prices-medians.json"
+OFF_CATEGORIES = R / "data" / "price-catalog" / "off-categories.json"
 OUTPUT = R / "SmartCart" / "Models" / "PriceCatalogEntries.swift"
 
 HEADER = """// Erzeugt von scripts/build-price-catalog.py aus data/price-catalog/catalog.json
@@ -37,9 +39,10 @@ import Foundation
 
 extension PriceCatalog {
     private static func e(_ names: [String], _ amount: Double, _ unit: String,
-                          _ low: Double, _ typical: Double, _ high: Double, _ source: String) -> PriceCatalogEntry {
+                          _ low: Double, _ typical: Double, _ high: Double, _ source: String,
+                          off: String? = nil) -> PriceCatalogEntry {
         PriceCatalogEntry(names: names, packageAmount: amount, packageUnit: unit,
-                          low: low, typical: typical, high: high, source: source)
+                          low: low, typical: typical, high: high, source: source, offCategory: off)
     }
 """
 
@@ -61,6 +64,13 @@ def load_medians(path: Path = MEDIANS) -> dict:
     if not path.exists():
         return {}
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_off_categories(path: Path = OFF_CATEGORIES) -> dict:
+    """Katalogname (erster Name) → OFF-Kategorie (`en:…`), Issue #184; leer, wenn die Datei fehlt."""
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8")).get("tags", {})
 
 
 def number(value: float) -> str:
@@ -99,8 +109,9 @@ def merged_entry(entry: dict, medians: dict, sources: dict, stats: dict) -> tupl
     return prices, hand_source
 
 
-def render(catalog: dict, medians: dict, stats: dict | None = None) -> str:
+def render(catalog: dict, medians: dict, stats: dict | None = None, off_categories: dict | None = None) -> str:
     stats = stats if stats is not None else {"applied": 0, "too_few": 0, "outside_range": 0}
+    off_categories = off_categories if off_categories is not None else {}
     lines = [HEADER]
     group_names = []
     for group in catalog["groups"]:
@@ -111,9 +122,11 @@ def render(catalog: dict, medians: dict, stats: dict | None = None) -> str:
         for entry in group["entries"]:
             prices, source = merged_entry(entry, medians, catalog.get("sources", {}), stats)
             names = ", ".join(swift_string(n) for n in entry["names"])
+            off = off_categories.get(entry["names"][0])
+            off_part = f", off: {swift_string(off)}" if off else ""
             lines.append(
                 f"        e([{names}], {number(entry['package']['amount'])}, {swift_string(entry['package']['unit'])}, "
-                f"{price(prices['low'])}, {price(prices['typical'])}, {price(prices['high'])}, {swift_string(source)}),")
+                f"{price(prices['low'])}, {price(prices['typical'])}, {price(prices['high'])}, {swift_string(source)}{off_part}),")
         lines.append("    ]")
         lines.append("")
     lines.pop()
@@ -159,8 +172,17 @@ def main(argv: list[str]) -> int:
         print("\n".join(problems))
         return 2
     medians = load_medians()
+    off_categories = load_off_categories()
+    unknown_off = sorted(set(off_categories) - {e["names"][0] for g in catalog["groups"] for e in g["entries"]})
+    if unknown_off:
+        print(f"off-categories.json nennt Namen ohne Katalogeintrag: {unknown_off}")
+        return 2
+    bad_tags = sorted(t for t in off_categories.values() if not re.fullmatch(r"[a-z]{2}:[a-z0-9-]+", t))
+    if bad_tags:
+        print(f"off-categories.json: ungültige Tags {bad_tags}")
+        return 2
     stats = {"applied": 0, "too_few": 0, "outside_range": 0}
-    text = render(catalog, medians, stats)
+    text = render(catalog, medians, stats, off_categories)
 
     if args.stats:
         total = 0
@@ -171,6 +193,7 @@ def main(argv: list[str]) -> int:
         print(f"Open-Prices-Mediane: übernommen {stats['applied']}, zu wenige Preise {stats['too_few']}, "
               f"außerhalb der Handspanne {stats['outside_range']}"
               + ("" if medians else " (keine Mediandatei)"))
+        print(f"OFF-Kategorien (Issue #184): {len(off_categories)} Einträge mit Tag")
     if args.check:
         current = OUTPUT.read_text(encoding="utf-8") if OUTPUT.exists() else ""
         if current != text:

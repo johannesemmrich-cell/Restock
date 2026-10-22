@@ -23,7 +23,7 @@ class PriceCatalogBuildTests(unittest.TestCase):
         self.assertEqual(build.validate(self.catalog), [])
 
     def test_generated_swift_matches_json(self):
-        rendered = build.render(self.catalog, build.load_medians())
+        rendered = build.render(self.catalog, build.load_medians(), None, build.load_off_categories())
         self.assertEqual(build.OUTPUT.read_text(encoding="utf-8"), rendered,
                          "PriceCatalogEntries.swift weicht von catalog.json ab — scripts/build-price-catalog.py laufen lassen")
 
@@ -75,3 +75,20 @@ class PriceCatalogBuildTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class OffCategoryTests(unittest.TestCase):
+    def test_off_categories_match_catalog_names_and_tag_shape(self):
+        import re
+        catalog = build.load_catalog()
+        names = {e["names"][0] for g in catalog["groups"] for e in g["entries"]}
+        tags = build.load_off_categories()
+        self.assertGreaterEqual(len(tags), 150)
+        self.assertEqual(sorted(set(tags) - names), [])
+        for name, tag in tags.items():
+            self.assertRegex(tag, r"^[a-z]{2}:[a-z0-9-]+$", name)
+
+    def test_generated_swift_carries_off_tags(self):
+        text = build.OUTPUT.read_text(encoding="utf-8")
+        self.assertIn('off: "en:milks"', text)
+        self.assertEqual(text.count(", off: \"en:"), len(build.load_off_categories()))

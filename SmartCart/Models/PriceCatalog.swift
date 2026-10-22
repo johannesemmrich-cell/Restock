@@ -20,6 +20,10 @@ struct PriceCatalogEntry: Equatable {
     /// `"openprices-de-<JJJJ-MM>"` (Median aus dem Open-Prices-Datensatz, Deutschland), siehe
     /// `scripts/build-price-catalog.py` (Issue #162).
     let source: String
+    /// Kategorie der Open-Food-Facts-Taxonomie (`en:milks`), Issue #184: Bonzeilen ohne Barcode
+    /// werden unter dieser Kategorie an Open Prices beigetragen; ohne Tag wird die Zeile übersprungen.
+    /// Quelle `data/price-catalog/off-categories.json`.
+    var offCategory: String? = nil
 
     /// Art der Quelle (`"hand"`, `"openprices-de"`) und Stichtag (`"JJJJ-MM"`), aus `source`:
     /// die letzten beiden Bindestrich-Teile sind der Stichtag, der Rest die Art.
