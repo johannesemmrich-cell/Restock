@@ -88,5 +88,9 @@ Entfernen, Fehler lässt Zwischenspeicher stehen), Stufe in `init` (Rangfolge, E
 - Nichts auf Hennings Geräten geprüft.
 
 Erst-Hinweis (Issue #186): Vor dem ersten Beitrag erscheint einmal ein Hinweis, Beiträge werden bis
-zur Entscheidung zurückgehalten, „Nicht teilen“ schaltet den Schalter aus. Details:
+zur Entscheidung zurückgehalten, „Nicht teilen“ sendet nichts und schaltet den Schalter aus. Merker
+`communityPricesNoticeShown` (`UserDefaults.standard`), beide Eingänge (Bon-Prüf-Screen, „Preis
+eintragen“). DEBUG-Aufräumer `-clearCommunityPricesNoticeForUITests`; Bestands-UI-Tests setzen
+`-communityPricesNoticeShown YES`. Offene Grenzen: „Preis eintragen“ ohne UI-Test, Bestandsnutzer
+sehen den Hinweis einmal, nichts auf Geräten geprüft. Details:
 `docs/specs/services/community-prices-erst-hinweis.md`.

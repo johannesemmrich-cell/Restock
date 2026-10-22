@@ -1,17 +1,17 @@
-Durchlauf #186 (AC-15), Do. 22 Okt. 2026 11:33 CEST, Commit 36f19fb35a8ec8b1d00647c2a8ede29c96412e4a + ungesicherte Implementierung (Patch-Hash e3c5993dc008)
+Durchlauf #186 (AC-15), Do. 22 Okt. 2026 14:03 CEST (12:03 UTC), Commit d45a145f0cd05a37f8907805575ce6b36ce5299f — kein Patch, Arbeitsbaum sauber (git status --porcelain -- SmartCart RestockTests RestockUITests leer)
 Gerät Restock-Validate-27 (9034BD4F-2D5F-49D5-B906-838326D51C95), Simulator
 Start mit -hasCompletedOnboarding YES -seedReceiptReviewForUITests -clearCommunityPricesNoticeForUITests (Aufräumer der Klasse in setUp/tearDown)
-Lauf in einer Wegwerf-Kopie des Arbeitsordners; einzige Abweichung dort: Wegwerf-Testmethode CommunityShareNoticeUITests/testZZDurchlauf, die nur tippt und liest.
+Lauf in einer frisch angelegten Wegwerf-Kopie dieses Stands; einzige Abweichung dort: Wegwerf-Testmethode CommunityShareNoticeUITests/testZZDurchlauf, die nur tippt und liest.
 Hinweis: DURCHLAUF-TEXT gibt alle staticTexts des Baums aus; die Startseite liegt unter dem Prüf-Sheet und erscheint deshalb schon in den Abschnitten [pruefscreen] und [hinweis].
 --- xcodebuild
 Test Case '-[RestockUITests.CommunityShareNoticeUITests testZZDurchlauf]' started.
-Test Case '-[RestockUITests.CommunityShareNoticeUITests testZZDurchlauf]' passed (53.497 seconds).
-	 Executed 1 test, with 0 failures (0 unexpected) in 53.497 (53.504) seconds
-	 Executed 1 test, with 0 failures (0 unexpected) in 53.497 (53.510) seconds
-	 Executed 1 test, with 0 failures (0 unexpected) in 53.497 (53.511) seconds
+Test Case '-[RestockUITests.CommunityShareNoticeUITests testZZDurchlauf]' passed (47.230 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.230 (47.236) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.230 (47.239) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.230 (47.241) seconds
 ** TEST SUCCEEDED **
 --- Durchlauf-Zeilen
-DURCHLAUF-SCHRITT 1-pruefscreen 2026-10-22 09:33:39 +0000
+DURCHLAUF-SCHRITT 1-pruefscreen 2026-10-22 12:03:16 +0000
 DURCHLAUF-TEXT [pruefscreen] Bon scannen — Lidl
 DURCHLAUF-TEXT [pruefscreen] Restock
 DURCHLAUF-TEXT [pruefscreen] 6 Artikel in 1 Läden
@@ -50,7 +50,7 @@ DURCHLAUF-TEXT [pruefscreen] Hafermilch
 DURCHLAUF-TEXT [pruefscreen] auf deiner Liste
 DURCHLAUF-TEXT [pruefscreen] Buttermilch
 DURCHLAUF-TEXT [hinweis] Prüf-Screen dahinter noch offen: true
-DURCHLAUF-SCHRITT 2-hinweis 2026-10-22 09:33:49 +0000
+DURCHLAUF-SCHRITT 2-hinweis 2026-10-22 12:03:25 +0000
 DURCHLAUF-TEXT [hinweis] Bon scannen — Lidl
 DURCHLAUF-TEXT [hinweis] Preise anonym teilen?
 DURCHLAUF-TEXT [hinweis] Restock teilt beim Bon-Scan und bei „Preis eintragen“ nur Artikel, Ladenkette, Preis und Datum, ohne Namen, Foto oder Filiale. Dafür siehst du Preise anderer als „Community“. Änderbar in den Einstellungen.
@@ -96,7 +96,7 @@ DURCHLAUF-TEXT [hinweis] ALERT-TEXT Restock teilt beim Bon-Scan und bei „Preis
 DURCHLAUF-TEXT [hinweis] ALERT-KNOPF Weiter teilen
 DURCHLAUF-TEXT [hinweis] ALERT-KNOPF Nicht teilen
 DURCHLAUF-TEXT [startseite] Prüf-Screen offen: false, Hinweis offen: false
-DURCHLAUF-SCHRITT 3-startseite 2026-10-22 09:33:59 +0000
+DURCHLAUF-SCHRITT 3-startseite 2026-10-22 12:03:35 +0000
 DURCHLAUF-TEXT [startseite] Restock
 DURCHLAUF-TEXT [startseite] 6 Artikel in 1 Läden
 DURCHLAUF-TEXT [startseite] Herbststipps
@@ -121,11 +121,11 @@ DURCHLAUF-TEXT [startseite] Herbstgemüse
 DURCHLAUF-TEXT [startseite] Kastanien
 DURCHLAUF-TEXT [startseite] Herbst
 DURCHLAUF-TEXT [einstellungen] Schalter „Preise anonym mit anderen teilen“ Wert=0
-DURCHLAUF-SCHRITT 4-schalter 2026-10-22 09:34:05 +0000
-DURCHLAUF-ENDE 2026-10-22 09:34:09 +0000
---- Fotos (Foto-Poller simctl io screenshot alle ~2 s, Auswahl je Schritt)
-durchlauf-1-pruefscreen.png (11:33:40): Bon-Prüf-Screen „Bon scannen — Lidl“ mit 4 Positionen · 8,73 € und dem Knopf „Speichern“, noch kein Hinweis.
-durchlauf-2-hinweis.png (11:33:50): Systemhinweis „Preise anonym teilen?“ mit Erklärtext und den Knöpfen „Weiter teilen“/„Nicht teilen“, dahinter abgedunkelt der weiterhin offene Prüf-Screen.
-durchlauf-3-startseite.png (11:34:00): Nach „Nicht teilen“ ist der Prüf-Screen geschlossen, die Startseite mit der Lidl-Kachel ist sichtbar, kein Hinweis mehr.
-durchlauf-4-schalter-aus.png (11:34:06): Einstellungen, Abschnitt Funktionen: Schalter „Preise anonym mit anderen teilen“ steht auf aus (Wert 0).
+DURCHLAUF-SCHRITT 4-schalter 2026-10-22 12:03:41 +0000
+DURCHLAUF-ENDE 2026-10-22 12:03:45 +0000
+--- Fotos (Foto-Poller simctl io screenshot alle ~2 s, Auswahl je Schritt, Ortszeit)
+durchlauf-1-pruefscreen.png (14:03:18): Bon-Prüf-Screen „Bon scannen — Lidl“ mit 4 Positionen · 8,73 € und dem Knopf „Speichern“, noch kein Hinweis.
+durchlauf-2-hinweis.png (14:03:27): Systemhinweis „Preise anonym teilen?“ mit Erklärtext und den Knöpfen „Weiter teilen“/„Nicht teilen“, dahinter abgedunkelt der weiterhin offene Prüf-Screen.
+durchlauf-3-startseite.png (14:03:37): Nach „Nicht teilen“ ist der Prüf-Screen geschlossen, die Startseite mit der Lidl-Kachel ist sichtbar, kein Hinweis mehr.
+durchlauf-4-schalter-aus.png (14:03:43): Einstellungen, Abschnitt Funktionen: Schalter „Preise anonym mit anderen teilen“ steht auf aus (Wert 0).
 Volles xcodebuild-Protokoll: durchlauf-echte-app-xcodebuild.txt
