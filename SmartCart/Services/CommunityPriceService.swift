@@ -93,8 +93,23 @@ actor CommunityPriceService {
     private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "SmartCart", category: "community")
 
     static let shared = CommunityPriceService(
-        database: CKContainer(identifier: containerID).publicCloudDatabase,
+        database: defaultDatabase(arguments: ProcessInfo.processInfo.arguments),
         defaults: .standard, cache: .shared)
+
+    /// Issue #208: UI-Tests speichern echte Bons und würden damit Beiträge an die CloudKit-
+    /// Entwicklungsumgebung senden (Fremddaten im Pool). Mit dem DEBUG-Launch-Argument
+    /// `-blockCommunityContributionsForUITests` bekommt der Dienst eine Datenbank, die jeden
+    /// Zugriff ablehnt; Schalter, Hinweis und Protokoll laufen wie produktiv. Im Release-Build
+    /// gibt es nur die echte Datenbank. Als reine Funktion über die Argumentliste testbar
+    /// (Muster `PremiumService.defaultStore(arguments:)`).
+    static let blockContributionsArgument = "-blockCommunityContributionsForUITests"
+
+    static func defaultDatabase(arguments: [String]) -> CommunityPriceDatabase {
+        #if DEBUG
+        if arguments.contains(blockContributionsArgument) { return BlockedCommunityPriceDatabase() }
+        #endif
+        return CKContainer(identifier: containerID).publicCloudDatabase
+    }
 
     let database: CommunityPriceDatabase
     let defaults: UserDefaults
@@ -174,10 +189,6 @@ actor CommunityPriceService {
             Self.logger.error("Community-Preis nicht gespeichert: \(SharedStoreSchema.errorText(error), privacy: .private)")
             return false
         }
-    }
-
-    nonisolated func contributeInBackground(_ contribution: Contribution) {
-        Task { await contribute(contribution) }
     }
 
     /// Issue #186: die in `save()` gesammelten Beiträge nacheinander senden; liefert die Zahl der
@@ -305,3 +316,15 @@ actor CommunityPriceService {
         await MainActor.run { _ = Self.apply(cache: cache, to: store.pendingItems, storeName: name) }
     }
 }
+
+#if DEBUG
+/// Issue #208: lehnt jeden Zugriff ab, damit ein UI-Testlauf keinen `CommunityPrice`-Record
+/// erzeugt und keinen liest. Lesen scheitert ebenfalls, damit der Zwischenspeicher im Test-
+/// Simulator unverändert bleibt (ein leeres Ergebnis würde Aggregate entfernen).
+struct BlockedCommunityPriceDatabase: CommunityPriceDatabase {
+    struct Blocked: Error {}
+    func save(_ record: CKRecord) async throws -> CKRecord { throw Blocked() }
+    func fetchCommunityRecords(chain: String, itemKeys: [String], resultsLimit: Int) async throws -> [CKRecord] { throw Blocked() }
+    func fetchCommunityRecordsAllChains(itemKeys: [String], resultsLimit: Int) async throws -> [CKRecord] { throw Blocked() }
+}
+#endif

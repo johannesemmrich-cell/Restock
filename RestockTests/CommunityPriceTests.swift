@@ -464,11 +464,35 @@ final class CommunityPriceTests: XCTestCase {
     func testLocalizationKeysAreRegistered() {
         let keys = Set(PriceSourceDisplay.allLocalizationKeys)
         for key in ["price.source.community", "price.source.community.undated", "settings.community.share", "settings.community.footer",
-                    "price.source.community.allchains", "price.source.community.allchains.undated",
+                    "settings.community.footer.off", "price.source.community.allchains", "price.source.community.allchains.undated",
                     "settings.community.notice.title", "settings.community.notice.message",
                     "settings.community.notice.share", "settings.community.notice.decline"] {
             XCTAssertTrue(keys.contains(key), key)
         }
+    }
+
+    // MARK: - Keine Fremddaten aus UI-Tests (Issue #208)
+
+    /// Nur das DEBUG-Argument wählt die ablehnende Datenbank; ohne Argument bleibt es die echte.
+    func testDefaultDatabaseIsBlockedOnlyWithArgument() {
+        XCTAssertTrue(CommunityPriceService.defaultDatabase(arguments: [CommunityPriceService.blockContributionsArgument])
+                        is BlockedCommunityPriceDatabase)
+        XCTAssertTrue(CommunityPriceService.defaultDatabase(arguments: ["-hasCompletedOnboarding", "YES"]) is CKDatabase)
+        XCTAssertEqual(CommunityPriceService.blockContributionsArgument, "-blockCommunityContributionsForUITests")
+    }
+
+    /// Mit der ablehnenden Datenbank geht kein Beitrag hinaus und kein Lesen verändert den Zwischenspeicher.
+    func testBlockedDatabaseSendsNothingAndKeepsCache() async {
+        cache.update(chain: "rewe", queriedKeys: ["mozzarella"],
+                     aggregates: ["mozzarella": .init(price: 1.09, unit: "stk", count: 3, latest: daysAgo(1))])
+        defaults.set(true, forKey: CommunityPriceService.sharingEnabledKey)
+        let service = CommunityPriceService(database: BlockedCommunityPriceDatabase(), defaults: defaults, cache: cache,
+                                            now: { self.fixedNow })
+        let sent = await service.contribute(.init(itemName: "Mozzarella", storeName: "Rewe City", perUnitPrice: 1.09, unit: "stk"))
+        XCTAssertFalse(sent)
+        let count = await service.refresh(storeName: "Rewe City", itemNames: ["Mozzarella"])
+        XCTAssertNil(count, "ein abgelehntes Lesen meldet Fehler statt leerem Ergebnis")
+        XCTAssertNotNil(cache.aggregate(chain: "rewe", itemKey: "mozzarella"), "der Zwischenspeicher bleibt unverändert")
     }
 
     // MARK: - Erst-Hinweis vor dem ersten Beitrag (Issue #186)

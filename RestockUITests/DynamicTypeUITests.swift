@@ -187,7 +187,7 @@ final class DynamicTypeUITests: XCTestCase {
     func testReceiptReviewAndStoreListStayUsableAtLargestAccessibilitySize() {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewForUITests",
-                                "-communityPricesNoticeShown", "YES"] + Self.launchArguments
+                                "-communityPricesNoticeShown", "YES", "-blockCommunityContributionsForUITests"] + Self.launchArguments
         // Gegenprobe auf den Seed, siehe T1: ohne Argumente gäbe es keinen Prüf-Screen.
         UITestLaunch.start(app, expecting: element(app, "receiptReview.sectionHeader"),
                            description: "Kopfzeile des Bon-Prüf-Screens (Seed)")

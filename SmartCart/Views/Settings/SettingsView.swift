@@ -109,7 +109,9 @@ struct SettingsView: View {
                     Toggle("Saisonale Vorschläge", isOn: $seasonalSuggestionsEnabled)
                     VStack(alignment: .leading, spacing: 4) {
                         Toggle(String(localized: "settings.community.share"), isOn: $communitySharingEnabled)
-                        Text(String(localized: "settings.community.footer"))
+                        // Issue #208: Fußnote folgt dem Schalterstand; „Voreingestellt an“ stand
+                        // sonst auch unter einem ausgeschalteten Schalter.
+                        Text(String(localized: communitySharingEnabled ? "settings.community.footer" : "settings.community.footer.off"))
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }

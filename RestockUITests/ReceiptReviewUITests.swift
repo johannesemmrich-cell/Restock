@@ -110,7 +110,7 @@ final class ReceiptReviewUITests: XCTestCase {
     private func launchedApp() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewForUITests",
-                                "-communityPricesNoticeShown", "YES"]
+                                "-communityPricesNoticeShown", "YES", "-blockCommunityContributionsForUITests"]
         app.launch()
         return app
     }
@@ -152,7 +152,7 @@ final class ReceiptReviewUITests: XCTestCase {
     private func launchedAppWithUnresolvedLine() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewUnresolvedLineForUITests",
-                                "-communityPricesNoticeShown", "YES"]
+                                "-communityPricesNoticeShown", "YES", "-blockCommunityContributionsForUITests"]
         app.launch()
         return app
     }
@@ -836,7 +836,7 @@ final class ReceiptReviewUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-premiumForScreenshots",
                                 "-seedReceiptReviewWeightLineForUITests",
-                                "-communityPricesNoticeShown", "YES"]
+                                "-communityPricesNoticeShown", "YES", "-blockCommunityContributionsForUITests"]
         app.launch()
         waitUntilSettled(app)
         XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 30),
