@@ -3,7 +3,8 @@ import XCTest
 @testable import Restock
 
 /// Wann die Live Activity läuft (PO 2026-10-22): Start erst beim ersten Abhaken, bleibt beim
-/// Verlassen der Liste und der App, endet bei „alles erledigt“ oder nach 30 Minuten ohne Haken.
+/// Wechsel in eine andere App, endet bei „alles erledigt“, nach 30 Minuten ohne Haken oder beim
+/// Verlassen der Liste in der App (P13, I4).
 /// Vorher startete jedes Öffnen einer Liste mit offenen Artikeln eine Anzeige — auch beim Planen
 /// zu Hause. P1–P12 prüfen die reine Regel `LiveActivityPolicy`, I1–I3 die Verdrahtung in
 /// `LiveActivityService` mit echtem ActivityKit im Simulator (wie `LiveActivityServiceReattachTests`).
@@ -99,6 +100,14 @@ final class LiveActivityPolicyTests: XCTestCase {
         XCTAssertFalse(LiveActivityPolicy.isIdle(staleDate: nil, now: now))
     }
 
+    /// P13: Liste in der App verlassen beendet eine laufende Anzeige, auch mitten im Einkauf;
+    /// ohne Anzeige passiert nichts (PO 2026-10-22, zweiter Beschluss).
+    func testP13_leavingListEndsActivity() {
+        XCTAssertEqual(action(.listClosed, hasActivity: true, lastCheckOffMinutesAgo: 1), .end)
+        XCTAssertEqual(action(.listClosed, hasActivity: false, lastCheckOffMinutesAgo: 1), .none)
+        XCTAssertEqual(action(.listClosed, hasActivity: false, lastCheckOffMinutesAgo: nil), .none)
+    }
+
     // MARK: - Verdrahtung mit echtem ActivityKit
 
     private var stores: [Store] = []
@@ -165,6 +174,20 @@ final class LiveActivityPolicyTests: XCTestCase {
         await checkOffFirst(store)
         try await Task.sleep(for: .milliseconds(500))
         XCTAssertEqual(activeCount(store), 0, "Nach dem letzten Haken darf keine Live Activity mehr aktiv sein")
+    }
+
+    /// I4: Zurück zum Hauptbildschirm (Liste verlassen) beendet die laufende Anzeige.
+    func testI4_leavingListEndsActivity() async throws {
+        try XCTSkipUnless(ActivityAuthorizationInfo().areActivitiesEnabled, "Live Activities im Testprozess deaktiviert")
+        let store = await makeStore()
+
+        await checkOffFirst(store)
+        try await Task.sleep(for: .milliseconds(300))
+        XCTAssertEqual(activeCount(store), 1)
+
+        await LiveActivityService.shared.handle(.listClosed, for: store)
+        try await Task.sleep(for: .milliseconds(500))
+        XCTAssertEqual(activeCount(store), 0, "Nach dem Verlassen der Liste darf keine Live Activity mehr aktiv sein")
     }
 
     /// I3: Ein Haken in einem zweiten Laden beendet die Anzeige des ersten.

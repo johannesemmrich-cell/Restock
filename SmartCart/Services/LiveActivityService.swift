@@ -3,13 +3,16 @@ import Foundation
 
 /// Wann die Live Activity (Dynamic Island, Sperrbildschirm) läuft — reine Regel, ohne ActivityKit
 /// testbar (`LiveActivityPolicyTests`). Beschluss des PO vom 2026-10-22: Start erst beim ersten
-/// Abhaken (nicht beim Öffnen der Liste), bleibt beim Verlassen der Liste und der App stehen,
-/// endet bei „alles erledigt“ oder nach `idleLimit` ohne Haken. Vorher startete jedes Öffnen
-/// einer Liste mit offenen Artikeln eine Anzeige, auch beim Planen zu Hause.
+/// Abhaken (nicht beim Öffnen der Liste), bleibt beim Wechsel in eine andere App und bei
+/// gesperrtem Gerät stehen, endet bei „alles erledigt“, nach `idleLimit` ohne Haken oder – seit
+/// dem zweiten Beschluss vom selben Tag – sobald man in der App die Liste verlässt. Vorher
+/// startete jedes Öffnen einer Liste mit offenen Artikeln eine Anzeige, auch beim Planen zu Hause.
 enum LiveActivityPolicy {
     enum Event: Equatable {
         /// Ladenliste geöffnet (auch nach App-Neustart).
         case listOpened
+        /// Ladenliste in der App verlassen (zurück zum Hauptbildschirm). Nicht: App im Hintergrund.
+        case listClosed
         /// App kommt in den Vordergrund.
         case appActivated
         /// Ein Artikel wurde abgehakt (Liste, Dynamic Island, Widget).
@@ -47,6 +50,8 @@ enum LiveActivityPolicy {
             // Nach „alles erledigt“ einen Haken zurücknehmen: im laufenden Einkauf wieder anzeigen.
             if hasActivity { return shopping ? .startOrUpdate : .end }
             return shopping ? .startOrUpdate : .none
+        case .listClosed:
+            return hasActivity ? .end : .none
         case .itemsChanged, .listOpened, .appActivated:
             guard hasActivity else { return .none }
             return shopping ? .startOrUpdate : .end

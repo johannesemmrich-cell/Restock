@@ -154,7 +154,9 @@ struct StoreDetailView: View {
             }
         }
         .onDisappear {
-            // Die Live Activity bleibt beim Verlassen der Liste bewusst stehen (PO 2026-10-22).
+            // Zurück zum Hauptbildschirm beendet die Live Activity (PO 2026-10-22, zweiter Beschluss).
+            // Geht die App nur in den Hintergrund, feuert `onDisappear` nicht – dort bleibt sie.
+            LiveActivityService.shared.handle(.listClosed, for: store)
             if store.shareID != nil {
                 let generation = nextSyncGeneration()
                 Task {
