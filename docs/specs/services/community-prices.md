@@ -2,7 +2,7 @@
 entity_id: community-prices
 type: module
 created: 2026-10-19
-updated: 2026-10-20
+updated: 2026-10-22
 status: draft
 version: "1.0"
 tags: [pricing, services, cloudkit, issue-163]
@@ -83,6 +83,10 @@ Entfernen, Fehler lässt Zwischenspeicher stehen), Stufe in `init` (Rangfolge, E
   deployt werden (`docs/testflight-setup.md`).
 - Exakter Schlüssel: „Skyr“ findet „skyr natur 500g“ nicht; Beiträge laufen deshalb unter dem Namen
   des gemeinten Artikels, nicht unter dem Bontext.
-- Kein Hinweis nach dem ersten Bon-Scan, keine Region, kein Missbrauchsschutz über Median und
-  Obergrenze hinaus; Weg B (Open Prices beitragen) als Folge-Issue.
+- Keine Region, kein Missbrauchsschutz über Median und Obergrenze hinaus; Weg B (Open Prices
+  beitragen) als Folge-Issue.
 - Nichts auf Hennings Geräten geprüft.
+
+Erst-Hinweis (Issue #186): Vor dem ersten Beitrag erscheint einmal ein Hinweis, Beiträge werden bis
+zur Entscheidung zurückgehalten, „Nicht teilen“ schaltet den Schalter aus. Details:
+`docs/specs/services/community-prices-erst-hinweis.md`.

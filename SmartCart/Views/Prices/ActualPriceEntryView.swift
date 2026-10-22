@@ -27,6 +27,8 @@ struct ActualPriceEntryView: View {
 
     @State private var lines: [SelectablePriceItem]
     @State private var paidText: String = ""
+    /// Issue #186: zurückgehaltene Community-Beiträge, solange der Erst-Hinweis steht (nil = keiner).
+    @State private var pendingShare: [CommunityPriceService.Contribution]?
 
     init(store: Store) {
         self.store = store
@@ -112,13 +114,14 @@ struct ActualPriceEntryView: View {
                 }
             }
         }
+        .communityShareNotice(pending: $pendingShare) { dismiss() }
         .devFeedback(context: "Preis eintragen")
 }
 
     // MARK: - Logic
 
     private func save() {
-        guard let paidTotal else { return }
+        guard pendingShare == nil, let paidTotal else { return }
         let selected = selectedLines.map(\.item)
         guard !selected.isEmpty else { return }
 
@@ -127,6 +130,7 @@ struct ActualPriceEntryView: View {
         // that distribution — there's no basis for "this item's fair share" without one.
         let withEstimate = selected.filter { $0.estimatedLineTotal != nil }
         let estimatedTotal = withEstimate.compactMap { $0.estimatedLineTotal }.reduce(0, +)
+        var contributions: [CommunityPriceService.Contribution] = []
 
         if estimatedTotal > 0 {
             let ratio = paidTotal / estimatedTotal
@@ -134,7 +138,7 @@ struct ActualPriceEntryView: View {
                 guard let lineTotal = item.estimatedLineTotal else { continue }
                 let itemActualTotal = lineTotal * ratio
                 Self.apply(itemActualTotal: itemActualTotal, to: item, in: store)
-                Self.share(item, in: store)
+                if let contribution = Self.contribution(for: item, in: store) { contributions.append(contribution) }
             }
         } else {
             // Nothing selected has a usable estimate (or every estimate is zero) — there's no
@@ -143,12 +147,13 @@ struct ActualPriceEntryView: View {
             let share = paidTotal / Double(selected.count)
             for item in selected {
                 Self.apply(itemActualTotal: share, to: item, in: store)
-                Self.share(item, in: store)
+                if let contribution = Self.contribution(for: item, in: store) { contributions.append(contribution) }
             }
         }
 
         Haptics.success()
-        dismiss()
+        // Issue #186: beim ersten Beitrag erst fragen, der Screen bleibt bis zur Entscheidung offen.
+        if !CommunityPriceService.holdForNoticeOrSend(contributions, into: &pendingShare) { dismiss() }
     }
 
     /// Writes one item's proportional share of the entered total into `store.learnedPrices`
@@ -157,10 +162,11 @@ struct ActualPriceEntryView: View {
     /// Statisch mit dem Laden als Parameter, damit testbar (Issue #151); Quelle „bezahlt“ am
     /// Artikel und als Herkunft des gelernten Eintrags.
     /// Issue #163: den eben eingetragenen Preis anonym teilen (nur mit Schalter, prüft der Dienst).
-    static func share(_ item: ShoppingItem, in store: Store) {
-        guard let price = item.estimatedPrice, price > 0 else { return }
-        CommunityPriceService.shared.contributeInBackground(.init(
-            itemName: item.name, storeName: store.name, perUnitPrice: price, unit: ShoppingItem.unitBucket(item.unit)))
+    /// Issue #186: liefert den Beitrag, statt ihn zu senden; `save()` sammelt und entscheidet am Ende.
+    static func contribution(for item: ShoppingItem, in store: Store) -> CommunityPriceService.Contribution? {
+        guard let price = item.estimatedPrice, price > 0 else { return nil }
+        return .init(itemName: item.name, storeName: store.name, perUnitPrice: price,
+                     unit: ShoppingItem.unitBucket(item.unit))
     }
 
     static func apply(itemActualTotal: Double, to item: ShoppingItem, in store: Store) {

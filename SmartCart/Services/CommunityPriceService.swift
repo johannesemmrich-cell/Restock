@@ -84,6 +84,9 @@ actor CommunityPriceService {
     /// 2026-10-20); nur ein ausdrücklich gespeichertes `false` schaltet das Teilen ab.
     static let sharingEnabledKey = "communityPricesSharingEnabled"
     static let sharingEnabledDefault = true
+    /// Issue #186: gesetzt nach der ersten Entscheidung im Erst-Hinweis (`UserDefaults.standard`,
+    /// je Gerät, kein iCloud-Abgleich). Fehlt er, erscheint der Hinweis vor dem ersten Beitrag.
+    static let noticeShownKey = "communityPricesNoticeShown"
     /// Pseudonyme Kennung je Installation in der App-Gruppe; keine Verbindung zur Apple-ID.
     static let clientIDKey = "communityPriceClientID"
     static let fetchLimit = 400
@@ -127,17 +130,26 @@ actor CommunityPriceService {
         let storeName: String
         let perUnitPrice: Double
         let unit: String
+
+        var chain: String { CommunityPrice.chain(fromStoreName: storeName) }
+        var itemKey: String { CommunityPrice.itemKey(itemName) }
+        var normalizedUnit: String { unit.trimmingCharacters(in: .whitespaces).lowercased() }
+
+        /// Dieselben Bedingungen, unter denen `contribute` sendet (ohne den Schalter): Preis > 0,
+        /// Kette, Artikelschlüssel und Bezugsgröße nicht leer (Issue #186).
+        var isShareable: Bool {
+            perUnitPrice > 0 && !chain.isEmpty && !itemKey.isEmpty && !normalizedUnit.isEmpty
+        }
     }
 
     /// Speichert eine Beobachtung als Upsert. `false`, wenn der Schalter aus ist, die Eingabe
     /// unbrauchbar ist oder CloudKit ablehnt.
     @discardableResult
     func contribute(_ contribution: Contribution) async -> Bool {
-        guard isSharingEnabled, contribution.perUnitPrice > 0 else { return false }
-        let chain = CommunityPrice.chain(fromStoreName: contribution.storeName)
-        let itemKey = CommunityPrice.itemKey(contribution.itemName)
-        let unit = contribution.unit.trimmingCharacters(in: .whitespaces).lowercased()
-        guard !chain.isEmpty, !itemKey.isEmpty, !unit.isEmpty else { return false }
+        guard isSharingEnabled, contribution.isShareable else { return false }
+        let chain = contribution.chain
+        let itemKey = contribution.itemKey
+        let unit = contribution.normalizedUnit
         let id = clientID()
         let recordID = CKRecord.ID(recordName: CommunityPriceSchema.recordName(clientID: id, chain: chain, itemKey: itemKey))
         let record = CKRecord(recordType: CommunityPriceSchema.recordType, recordID: recordID)
@@ -166,6 +178,37 @@ actor CommunityPriceService {
 
     nonisolated func contributeInBackground(_ contribution: Contribution) {
         Task { await contribute(contribution) }
+    }
+
+    /// Issue #186: die in `save()` gesammelten Beiträge nacheinander senden; liefert die Zahl der
+    /// erfolgreich gesendeten. Der Schalter wird je Beitrag in `contribute` geprüft.
+    @discardableResult
+    func contribute(_ list: [Contribution]) async -> Int {
+        var sent = 0
+        for contribution in list {
+            if await contribute(contribution) { sent += 1 }
+        }
+        return sent
+    }
+
+    nonisolated func contributeInBackground(_ list: [Contribution]) {
+        guard !list.isEmpty else { return }
+        Task { await contribute(list) }
+    }
+
+    /// Issue #186: Hinweis fällig, wenn der Schalter an ist, der Merker fehlt und mindestens ein
+    /// Beitrag teilbar ist. Bei ausgeschaltetem Schalter bleibt der Merker unberührt.
+    static func noticeDue(_ contributions: [Contribution], in defaults: UserDefaults) -> Bool {
+        guard isSharingEnabled(in: defaults), !defaults.bool(forKey: noticeShownKey) else { return false }
+        return contributions.contains { $0.isShareable }
+    }
+
+    /// Issue #186: Merker setzen; bei „Nicht teilen“ zusätzlich den Schalter ausdrücklich auf aus
+    /// (damit `@AppStorage` in den Einstellungen sofort „aus“ zeigt). Bei „Weiter teilen“ bleibt
+    /// der Schalter-Schlüssel unberührt.
+    static func recordNoticeDecision(share: Bool, in defaults: UserDefaults) {
+        defaults.set(true, forKey: noticeShownKey)
+        if !share { defaults.set(false, forKey: sharingEnabledKey) }
     }
 
     /// Holt die Beobachtungen der Kette zu den Artikelnamen und schreibt Aggregate in den

@@ -350,6 +350,8 @@ struct ReceiptScannerView: View {
     /// App-Speicherbudget, noch nachgeholt werden — sonst bleiben geteilte Bons dauerhaft auf den
     /// rohen OCR-Namen aus Stufe 1-4 hängen ("Namen nicht so gut wie vorher").
     @State private var cameFromShareHandoff = false
+    /// Issue #186: zurückgehaltene Community-Beiträge, solange der Erst-Hinweis steht (nil = keiner).
+    @State private var pendingShare: [CommunityPriceService.Contribution]?
 
     enum Phase { case capture, processing, review }
 
@@ -493,6 +495,7 @@ struct ReceiptScannerView: View {
                 Button("\(candidate.emoji) \(candidate.name)") { correctStore(to: candidate) }
             }
         }
+        .communityShareNotice(pending: $pendingShare) { dismiss() }
         .devFeedback(context: debugRawLines.isEmpty
             ? "Bon scannen — \(store.name)"
             : "Bon scannen — \(store.name)\n\nRohzeilen:\n\(debugRawLines.joined(separator: "\n"))")
@@ -753,12 +756,15 @@ struct ReceiptScannerView: View {
     }
 
     private func save() {
+        // Issue #186: Doppeltipp-Schutz, solange der Erst-Hinweis steht.
+        guard pendingShare == nil else { return }
         // Issue #14: Messung je Stufe — ALLE Zeilen, auch abgewählte (Spalte „Abgewählt“).
         ReceiptResolutionStats().record(parsedLines)
         let included = parsedLines.filter { EditableReceiptLine.isSavable($0) }
         let cutoff = Date().addingTimeInterval(-7 * 24 * 3600)
         let aliasLearnable = ReceiptLearning.aliasLearnableIndices(
             included.map { (name: $0.name, originalName: $0.originalName) })
+        var contributions: [CommunityPriceService.Contribution] = []
 
         for (index, line) in included.enumerated() {
             // Kürzel-Lernen: weicht der finale Name vom rohen Bon-Text ab (User hat die Position
@@ -787,8 +793,8 @@ struct ReceiptScannerView: View {
             ReceiptLearning.learn(plan, into: store, at: Date())
             // Issue #163: anonym teilen (nur mit Schalter; der Dienst prüft ihn selbst). Unter dem
             // Namen des gemeinten Artikels, damit andere Nutzer den Preis über „Mozzarella" finden
-            // und nicht nur über den Bontext.
-            CommunityPriceService.shared.contributeInBackground(.init(
+            // und nicht nur über den Bontext. Issue #186: erst sammeln, gesendet wird am Ende.
+            contributions.append(.init(
                 itemName: (matchedItem ?? match?.item)?.name ?? line.name, storeName: store.name,
                 perUnitPrice: plan.perUnitPrice, unit: plan.unit))
 
@@ -829,7 +835,8 @@ struct ReceiptScannerView: View {
         // pusht bereits zuverlässig, save() hier war die einzige Ausnahme (gemeldet 19.08.2026:
         // Bon-Import löste nie eine Push-Notification für andere Mitglieder aus).
         SyncCoordinator.shared.pushInBackground(store)
-        dismiss()
+        // Issue #186: beim ersten Beitrag erst fragen, der Screen bleibt bis zur Entscheidung offen.
+        if !CommunityPriceService.holdForNoticeOrSend(contributions, into: &pendingShare) { dismiss() }
     }
 }
 

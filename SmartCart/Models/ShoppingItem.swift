@@ -543,6 +543,8 @@ enum PriceSourceDisplay {
          "price.prompt", "price.prompt.accessibility", "price.total.estimated.count",
          "price.source.community", "price.source.community.undated", "settings.community.share", "settings.community.footer",
          "price.source.community.allchains", "price.source.community.allchains.undated",
+         "settings.community.notice.title", "settings.community.notice.message",
+         "settings.community.notice.share", "settings.community.notice.decline",
          "price.diagnosis.section", "price.diagnosis.entry",
          "price.diagnosis.entry.none", "price.diagnosis.item", "price.diagnosis.cap", "price.diagnosis.result"]
             + LearnedPriceResolution.Reason.allCases.map(PriceDiagnosis.reasonKey)
