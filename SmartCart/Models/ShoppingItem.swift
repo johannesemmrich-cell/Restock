@@ -548,6 +548,7 @@ enum PriceSourceDisplay {
          "price.diagnosis.section", "price.diagnosis.entry",
          "price.diagnosis.entry.none", "price.diagnosis.item", "price.diagnosis.cap", "price.diagnosis.result"]
             + LearnedPriceResolution.Reason.allCases.map(PriceDiagnosis.reasonKey)
+            + PriceCatalogDisplay.allLocalizationKeys
     }
 }
 

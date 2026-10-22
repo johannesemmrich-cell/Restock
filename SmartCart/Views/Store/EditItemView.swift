@@ -108,6 +108,15 @@ struct EditItemView: View {
                             .font(.system(size: 11))
                             .foregroundStyle(.tertiary)
                             .padding(.leading, 28)
+                        // Issue #162: Spanne, typische Packung und Quelle des Katalogeintrags zum
+                        // aktuellen Namen — nur Anzeige, der Betrag in der Zeile bleibt der Punktwert.
+                        if let catalogText = PriceCatalogDisplay.summary(forName: name) {
+                            Text(catalogText)
+                                .font(.system(size: 11))
+                                .foregroundStyle(.secondary)
+                                .padding(.leading, 28)
+                                .accessibilityIdentifier("editItem.catalogSummary")
+                        }
                     }
 
                     HStack {

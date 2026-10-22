@@ -30,6 +30,18 @@ jobs:
       # `xcodegen generate` would silently drop all of that. CI intentionally builds
       # the committed .xcodeproj as-is and does NOT run xcodegen.
 
+      # Reine Dateiprüfungen ohne Xcode (Issue #162): Drift-Test Katalog-JSON ↔ erzeugtes Swift und
+      # die Strukturtests aus scripts/, die keinen Arbeitsbaum-Zustand voraussetzen.
+      - name: Strukturtests (Python)
+        run: |
+          python3 -I scripts/build-price-catalog.py --check
+          for t in scripts/test_price_catalog_build.py \
+                   scripts/test_open_prices_medians.py \
+                   scripts/test_ui_tests_block_community_contributions.py \
+                   scripts/test_inmemory_containers_no_cloudkit.py; do
+            echo "== $t"; python3 -I "$t" || exit 1
+          done
+
       - name: Select latest available Xcode
         run: |
           LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
