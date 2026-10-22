@@ -464,9 +464,154 @@ final class CommunityPriceTests: XCTestCase {
     func testLocalizationKeysAreRegistered() {
         let keys = Set(PriceSourceDisplay.allLocalizationKeys)
         for key in ["price.source.community", "price.source.community.undated", "settings.community.share", "settings.community.footer",
-                    "price.source.community.allchains", "price.source.community.allchains.undated"] {
+                    "price.source.community.allchains", "price.source.community.allchains.undated",
+                    "settings.community.notice.title", "settings.community.notice.message",
+                    "settings.community.notice.share", "settings.community.notice.decline"] {
             XCTAssertTrue(keys.contains(key), key)
         }
+    }
+
+    // MARK: - Erst-Hinweis vor dem ersten Beitrag (Issue #186)
+
+    private let shareable = CommunityPriceService.Contribution(itemName: "Mozzarella", storeName: "Rewe City",
+                                                                perUnitPrice: 1.09, unit: "stk")
+
+    /// U1, AC-1: Schalter an (Schlüssel fehlt = Standard an), Merker fehlt, ein teilbarer Beitrag → Hinweis fällig.
+    func testNoticeDueWhenSwitchOnNoMarkerAndShareableContribution() {
+        XCTAssertNil(defaults.object(forKey: CommunityPriceService.noticeShownKey))
+        XCTAssertTrue(CommunityPriceService.noticeDue([shareable], in: defaults), "Standard an, Merker fehlt")
+        defaults.set(true, forKey: CommunityPriceService.sharingEnabledKey)
+        XCTAssertTrue(CommunityPriceService.noticeDue([shareable], in: defaults), "Schalter ausdrücklich an")
+    }
+
+    /// U2, AC-9: Schalter aus → kein Hinweis.
+    func testNoticeNotDueWhenSwitchOff() {
+        defaults.set(false, forKey: CommunityPriceService.sharingEnabledKey)
+        XCTAssertFalse(CommunityPriceService.noticeDue([shareable], in: defaults))
+    }
+
+    /// U3, AC-5: nach einer Entscheidung (Merker gesetzt) kein zweiter Hinweis.
+    func testNoticeNotDueWhenMarkerSet() {
+        CommunityPriceService.recordNoticeDecision(share: true, in: defaults)
+        XCTAssertFalse(CommunityPriceService.noticeDue([shareable], in: defaults))
+    }
+
+    /// U4, AC-10: Bon ohne teilbare Zeile → kein Hinweis.
+    func testNoticeNotDueWithoutShareableContribution() {
+        let unusable: [CommunityPriceService.Contribution] = [
+            .init(itemName: "Mozzarella", storeName: "Rewe City", perUnitPrice: 0, unit: "stk"),
+            .init(itemName: "Mozzarella", storeName: "", perUnitPrice: 1.09, unit: "stk"),
+            .init(itemName: "", storeName: "Rewe City", perUnitPrice: 1.09, unit: "stk"),
+            .init(itemName: "Mozzarella", storeName: "Rewe City", perUnitPrice: 1.09, unit: "  "),
+        ]
+        XCTAssertFalse(CommunityPriceService.noticeDue(unusable, in: defaults))
+        XCTAssertFalse(CommunityPriceService.noticeDue([], in: defaults))
+        XCTAssertTrue(CommunityPriceService.noticeDue(unusable + [shareable], in: defaults),
+                      "ein teilbarer Beitrag genügt")
+    }
+
+    /// U5, AC-10/AC-12: `isShareable` entscheidet wie die Guards von `contribute`.
+    func testIsShareableMatchesContributeGuards() async {
+        let cases: [CommunityPriceService.Contribution] = [
+            shareable,
+            .init(itemName: "Mozzarella", storeName: "Rewe City", perUnitPrice: 0, unit: "stk"),
+            .init(itemName: "Mozzarella", storeName: "Rewe City", perUnitPrice: -1, unit: "stk"),
+            .init(itemName: "Mozzarella", storeName: "", perUnitPrice: 1.09, unit: "stk"),
+            .init(itemName: "", storeName: "Rewe City", perUnitPrice: 1.09, unit: "stk"),
+            .init(itemName: "Mozzarella", storeName: "Rewe City", perUnitPrice: 1.09, unit: " "),
+            .init(itemName: "Hackfleisch", storeName: "Lidl", perUnitPrice: 0.012, unit: "g"),
+        ]
+        for contribution in cases {
+            let fake = FakeCommunityPriceDatabase()
+            let service = makeService(fake, sharing: true)
+            let sent = await service.contribute(contribution)
+            XCTAssertEqual(contribution.isShareable, sent, "\(contribution)")
+        }
+        // Zweite Sicherung bleibt: mit Schalter aus sendet `contribute` auch Teilbares nicht.
+        let fake = FakeCommunityPriceDatabase()
+        let off = makeService(fake, sharing: false)
+        let sent = await off.contribute(shareable)
+        XCTAssertFalse(sent)
+        XCTAssertTrue(fake.saved.isEmpty)
+    }
+
+    /// U6, AC-2: „Weiter teilen“ setzt den Merker und lässt den Schalter-Schlüssel unberührt.
+    func testRecordDecisionShareKeepsSwitchAndSetsMarker() {
+        CommunityPriceService.recordNoticeDecision(share: true, in: defaults)
+        XCTAssertEqual(defaults.object(forKey: CommunityPriceService.noticeShownKey) as? Bool, true)
+        XCTAssertNil(defaults.object(forKey: CommunityPriceService.sharingEnabledKey), "Schalter-Schlüssel unberührt")
+        XCTAssertTrue(CommunityPriceService.isSharingEnabled(in: defaults))
+    }
+
+    /// U7, AC-3: „Nicht teilen“ setzt den Merker und schreibt den Schalter ausdrücklich auf aus.
+    func testRecordDecisionDeclineTurnsSwitchOffAndSetsMarker() {
+        CommunityPriceService.recordNoticeDecision(share: false, in: defaults)
+        XCTAssertEqual(defaults.object(forKey: CommunityPriceService.noticeShownKey) as? Bool, true)
+        XCTAssertEqual(defaults.object(forKey: CommunityPriceService.sharingEnabledKey) as? Bool, false,
+                       "ausdrücklich false, damit @AppStorage in den Einstellungen sofort aus zeigt")
+        XCTAssertFalse(CommunityPriceService.isSharingEnabled(in: defaults))
+    }
+
+    /// U8, AC-3: Nach „Nicht teilen“ verlässt kein gesammelter Beitrag das Gerät, auch nicht der auslösende.
+    func testDeclinedContributionsAreNotSentToDatabase() async {
+        let fake = FakeCommunityPriceDatabase()
+        let service = CommunityPriceService(database: fake, defaults: defaults, cache: cache, now: { self.fixedNow })
+        let pending = [shareable, .init(itemName: "Butter", storeName: "Rewe City", perUnitPrice: 1.99, unit: "stk")]
+        XCTAssertTrue(CommunityPriceService.noticeDue(pending, in: defaults))
+
+        CommunityPriceService.recordNoticeDecision(share: false, in: defaults)
+        let sent = await service.contribute(pending)
+
+        XCTAssertEqual(sent, 0)
+        XCTAssertTrue(fake.saved.isEmpty, "nach „Nicht teilen“ bleibt die Datenbank leer")
+        XCTAssertEqual(fake.saveAttempts, 0)
+    }
+
+    /// U9, AC-2/AC-7: Nach „Weiter teilen“ geht jeder teilbare Beitrag genau einmal raus, Unbrauchbares nie.
+    func testAcceptedContributionsAreSentAfterDecision() async {
+        let fake = FakeCommunityPriceDatabase()
+        let service = CommunityPriceService(database: fake, defaults: defaults, cache: cache, now: { self.fixedNow })
+        let pending: [CommunityPriceService.Contribution] = [
+            shareable,
+            .init(itemName: "Butter", storeName: "Rewe City", perUnitPrice: 1.99, unit: "stk"),
+            .init(itemName: "Pfand", storeName: "Rewe City", perUnitPrice: 0, unit: "stk"),
+        ]
+        XCTAssertTrue(CommunityPriceService.noticeDue(pending, in: defaults))
+
+        CommunityPriceService.recordNoticeDecision(share: true, in: defaults)
+        let sent = await service.contribute(pending)
+
+        XCTAssertEqual(sent, 2)
+        XCTAssertEqual(fake.saveAttempts, 2, "jeder teilbare Beitrag genau einmal")
+        XCTAssertEqual(Set(fake.saved.compactMap { $0[CommunityPriceSchema.itemKey] as? String }), ["mozzarella", "butter"])
+        XCTAssertFalse(CommunityPriceService.noticeDue(pending, in: defaults), "kein zweiter Hinweis")
+    }
+
+    /// U10, AC-9: Bei ausgeschaltetem Schalter bleibt der Merker unberührt (späteres Einschalten fragt noch).
+    func testSwitchOffLeavesMarkerUntouched() {
+        defaults.set(false, forKey: CommunityPriceService.sharingEnabledKey)
+        XCTAssertFalse(CommunityPriceService.noticeDue([shareable], in: defaults))
+        XCTAssertNil(defaults.object(forKey: CommunityPriceService.noticeShownKey))
+        defaults.set(true, forKey: CommunityPriceService.sharingEnabledKey)
+        XCTAssertTrue(CommunityPriceService.noticeDue([shareable], in: defaults))
+    }
+
+    /// U11, AC-8/AC-11: „Preis eintragen“ liefert den Beitrag, statt ihn zu senden; dieselbe Regel wie beim Bon.
+    func testActualPriceEntryCollectsContributionInsteadOfSending() throws {
+        let store = Store(name: "Rewe City", emoji: "🛒", colorHex: "#123456")
+        let item = ShoppingItem(name: "Mozzarella", store: store)
+        ActualPriceEntryView.apply(itemActualTotal: 1.09, to: item, in: store)
+
+        let contribution = try XCTUnwrap(ActualPriceEntryView.contribution(for: item, in: store))
+        XCTAssertEqual(contribution.itemName, "Mozzarella")
+        XCTAssertEqual(contribution.storeName, "Rewe City")
+        XCTAssertEqual(contribution.perUnitPrice, try XCTUnwrap(item.estimatedPrice), accuracy: 0.000001)
+        XCTAssertEqual(contribution.unit, ShoppingItem.unitBucket(item.unit))
+        XCTAssertTrue(CommunityPriceService.noticeDue([contribution], in: defaults))
+
+        let unpriced = ShoppingItem(name: "Butter", store: store)
+        unpriced.estimatedPrice = 0
+        XCTAssertNil(ActualPriceEntryView.contribution(for: unpriced, in: store), "Preis 0 ist kein Beitrag")
     }
 }
 

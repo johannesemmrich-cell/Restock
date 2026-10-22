@@ -51,7 +51,8 @@ final class ReceiptResolutionStatsUITests: XCTestCase {
     /// Startet mit leerem Zähler; `seed` öffnet zusätzlich den Bon-Review.
     private func launch(seed: Bool, developerMode: Bool = true) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-clearReceiptResolutionStatsForUITests"]
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-clearReceiptResolutionStatsForUITests",
+                                "-communityPricesNoticeShown", "YES"]
         if developerMode { app.launchArguments += ["-developerMode", "YES"] }
         if seed { app.launchArguments += ["-seedReceiptReviewForUITests"] }
         app.launch()
