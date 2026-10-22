@@ -179,7 +179,7 @@ struct ItemRow: View {
     private func priceCell(amount: String) -> some View {
         let origin = item.priceOrigin
         let detail = item.priceSourceDetail
-        let color: Color = origin == "estimate" ? .amber : .secondary
+        let color: Color = origin == "estimate" || origin == "ai" ? .amber : .secondary
         return VStack(alignment: .trailing, spacing: 1) {
             Text(PriceSourceDisplay.amountPrefix(origin: origin) + amount)
                 .font(.system(size: 13, weight: .medium))

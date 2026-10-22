@@ -126,6 +126,10 @@ struct EditItemView: View {
                     }
                 }
 
+                if item.priceOrigin == AIPriceEstimation.source {
+                    aiPriceSection
+                }
+
                 photoSection
 
                 Section(String(localized: "item.category.section")) {
@@ -297,6 +301,38 @@ struct EditItemView: View {
             try? context.save()
             stagedPhotoData = data
         }
+    }
+
+    /// Issue #164: Spanne und angenommene Packung des KI-Preises aus dem Zwischenspeicher, dazu
+    /// „Stimmt so“ — macht den KI-Preis zum eigenen Preis (`manual`), ohne Netz.
+    @ViewBuilder
+    private var aiPriceSection: some View {
+        Section(String(localized: "item.price.ai.section")) {
+            if let text = Self.aiRangeText(for: item) {
+                Text(text)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("editItem.aiRange")
+            }
+            Button {
+                AIPriceEstimationService.confirm(item)
+                Haptics.success()
+            } label: {
+                Label(String(localized: "item.price.ai.confirm"), systemImage: "checkmark.seal")
+            }
+            .accessibilityIdentifier("editItem.aiConfirm")
+        }
+    }
+
+    /// „Angenommene Packung 125 g, Spanne 0,79 € – 1,79 €“ aus dem Zwischenspeicher; `nil` ohne Eintrag.
+    static func aiRangeText(for item: ShoppingItem, cache: AIPriceCache = .shared, locale: Locale = .current) -> String? {
+        let request = AIPriceEstimationService.request(for: item)
+        guard let guess = cache.entry(for: request.cacheKey)?.guess else { return nil }
+        let euro = FloatingPointFormatStyle<Double>.Currency(code: "EUR", locale: locale).precision(.fractionLength(2))
+        let package = guess.packageUnit == "stk"
+            ? String(localized: "price.catalog.package.piece")
+            : "\(guess.packageAmount.formatted(.number.locale(locale).precision(.fractionLength(0...1)))) \(guess.packageUnit)"
+        return String(format: String(localized: "item.price.ai.range"), package, guess.low.formatted(euro), guess.high.formatted(euro))
     }
 
     /// Dev-Diagnose (Issue #151): warum ein gelernter Preis greift oder verworfen wird — aus

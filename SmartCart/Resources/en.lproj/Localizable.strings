@@ -428,6 +428,12 @@
 "price.catalog.package.piece" = "per piece/pack";
 "price.catalog.source.hand" = "hand-curated %@";
 "price.catalog.source.openprices" = "Open Prices Germany %@";
+"price.source.ai" = "AI estimate";
+"item.price.ai.section" = "AI estimate";
+"item.price.ai.range" = "Assumed pack %1$@, range %2$@ – %3$@. Estimated by the on-device model, not from data.";
+"item.price.ai.confirm" = "Looks right";
+"settings.dev.aiPrice" = "AI price estimate";
+"settings.dev.aiPrice.footer" = "Only for items without an own, community or catalog price; on-device model (Apple Intelligence), nothing leaves the device. Off until the evaluation in #164 passes.";
 "price.diagnosis.section" = "Price diagnosis";
 "price.diagnosis.entry" = "Entry: %@ · %@ · basis %@ · date %@ · origin %@";
 "price.diagnosis.entry.none" = "Entry: none";

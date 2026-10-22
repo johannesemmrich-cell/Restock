@@ -114,6 +114,9 @@ struct StoreDetailView: View {
         .task(id: store.id) {
             // Issue #163: Community-Preise der Kette holen und auf geschätzte Artikel anwenden.
             await CommunityPriceService.shared.refreshAndApply(store: store)
+            // Issue #164: danach die KI-Stufe für den Rest ohne datenbasierten Preis (Zwischenspeicher
+            // immer, Modell nur mit Schalter im Entwicklermodus, bis der Nachweis steht).
+            await AIPriceEstimationService.shared.fill(store: store)
         }
         .onAppear {
             // Erst die aus der Dynamic Island gequeueten Haken persistieren, DANN die Activity

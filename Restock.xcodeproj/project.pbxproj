@@ -56,12 +56,15 @@
 		C0DE1640000000000000C004 /* PriceCatalogEntries.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1640000000000000C001 /* PriceCatalogEntries.swift */; };
 		C0DE1620000000000000A006 /* PriceCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000A005 /* PriceCatalogTests.swift */; };
 		C0DE1640000000000000C006 /* PriceCatalogDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1640000000000000C005 /* PriceCatalogDataTests.swift */; };
+		C0DE1650000000000000E004 /* AIPriceEstimationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1650000000000000E003 /* AIPriceEstimationTests.swift */; };
+		C0DE1650000000000000E006 /* AIPriceEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */; };
 		C0DE1622000000000000A002 /* PriceCatalogExpansionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */; };
 		C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */; };
 		C0DE1630000000000000B002 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
 		C0DE1630000000000000B003 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
 		C0DE1630000000000000B004 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
 		C0DE1630000000000000B006 /* CommunityPriceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B005 /* CommunityPriceService.swift */; };
+		C0DE1650000000000000E002 /* AIPriceEstimationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1650000000000000E001 /* AIPriceEstimationService.swift */; };
 		C0DE1630000000000000B008 /* CommunityPriceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B007 /* CommunityPriceTests.swift */; };
 		C0DE14540000000000000D01 /* PremiumServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE14540000000000000D02 /* PremiumServiceTests.swift */; };
 		4875ED5EEB7BE1A728289FBA /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */; };
@@ -298,10 +301,13 @@
 		C0DE1640000000000000C001 /* PriceCatalogEntries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogEntries.swift; sourceTree = "<group>"; };
 		C0DE1620000000000000A005 /* PriceCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogTests.swift; sourceTree = "<group>"; };
 		C0DE1640000000000000C005 /* PriceCatalogDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogDataTests.swift; sourceTree = "<group>"; };
+		C0DE1650000000000000E003 /* AIPriceEstimationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPriceEstimationTests.swift; sourceTree = "<group>"; };
+		C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPriceEvaluationTests.swift; sourceTree = "<group>"; };
 		C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogExpansionTests.swift; sourceTree = "<group>"; };
 		C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationKeyParityTests.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B001 /* CommunityPriceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceCache.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B005 /* CommunityPriceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceService.swift; sourceTree = "<group>"; };
+		C0DE1650000000000000E001 /* AIPriceEstimationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPriceEstimationService.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B007 /* CommunityPriceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceTests.swift; sourceTree = "<group>"; };
 		C0DE14540000000000000D02 /* PremiumServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumServiceTests.swift; sourceTree = "<group>"; };
 		137F4903637F2E7F3B8FF9D7 /* SmartCartWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCartWidgets.entitlements; sourceTree = "<group>"; };
@@ -748,6 +754,7 @@
 				418D17DD19B7E69AA8260DEB /* SeasonalService.swift */,
 				A1766165B3F2604B32CDF325 /* SharedStoreService.swift */,
 				C0DE1630000000000000B005 /* CommunityPriceService.swift */,
+				C0DE1650000000000000E001 /* AIPriceEstimationService.swift */,
 				0F85C5353E181E9C2D3A1562 /* PhotoCompressor.swift */,
 				E779152E6FDD65092144B963 /* SharedItemPhotoService.swift */,
 				BD783E672BFB6E63873F2F47 /* StoreAssignmentOverrideService.swift */,
@@ -795,6 +802,8 @@
 				18C68E8D82565BA3E9CA923D /* PriceEstimatorStagesTests.swift */,
 				C0DE1620000000000000A005 /* PriceCatalogTests.swift */,
 				C0DE1640000000000000C005 /* PriceCatalogDataTests.swift */,
+				C0DE1650000000000000E003 /* AIPriceEstimationTests.swift */,
+				C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */,
 				C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */,
 				C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */,
 				C0DE1630000000000000B007 /* CommunityPriceTests.swift */,
@@ -1143,6 +1152,7 @@
 				C0DE1640000000000000C003 /* PriceCatalogEntries.swift in Sources */,
 				C0DE1630000000000000B002 /* CommunityPriceCache.swift in Sources */,
 				C0DE1630000000000000B006 /* CommunityPriceService.swift in Sources */,
+				C0DE1650000000000000E002 /* AIPriceEstimationService.swift in Sources */,
 				83F7A018CC455374AA300D07 /* SmartCartApp.swift in Sources */,
 				47C167B4A1828C9F1D437D86 /* Store.swift in Sources */,
 				A0D490DE0D31D30BD9FEF341 /* StoreCategories.swift in Sources */,
@@ -1221,6 +1231,8 @@
 				9023139F29439ED2491D853A /* PriceEstimatorStagesTests.swift in Sources */,
 				C0DE1620000000000000A006 /* PriceCatalogTests.swift in Sources */,
 				C0DE1640000000000000C006 /* PriceCatalogDataTests.swift in Sources */,
+				C0DE1650000000000000E004 /* AIPriceEstimationTests.swift in Sources */,
+				C0DE1650000000000000E006 /* AIPriceEvaluationTests.swift in Sources */,
 				C0DE1622000000000000A002 /* PriceCatalogExpansionTests.swift in Sources */,
 				C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */,
 				C0DE1630000000000000B008 /* CommunityPriceTests.swift in Sources */,
