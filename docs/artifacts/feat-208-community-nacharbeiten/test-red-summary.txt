@@ -1,0 +1,22 @@
+** TEST BUILD FAILED **
+RestockTests/CommunityPriceTests.swift:652:40: error: type 'CommunityPriceService' has no member 'defaultDatabase'
+RestockTests/CommunityPriceTests.swift:653:29: error: cannot find type 'DiscardingCommunityPriceDatabase' in scope
+RestockTests/CommunityPriceTests.swift:658:46: error: type 'CommunityPriceService' has no member 'defaultDatabase'
+RestockTests/CommunityPriceTests.swift:658:89: error: cannot find type 'DiscardingCommunityPriceDatabase' in scope
+RestockTests/CommunityPriceTests.swift:659:114: error: cannot find type 'DiscardingCommunityPriceDatabase' in scope
+RestockTests/CommunityPriceTests.swift:659:46: error: type 'CommunityPriceService' has no member 'defaultDatabase'
+RestockTests/CommunityPriceTests.swift:663:52: error: cannot find 'DiscardingCommunityPriceDatabase' in scope
+RestockTests/CommunityPriceTests.swift:670:18: error: cannot find 'DiscardingCommunityPriceDatabase' in scope
+RestockTests/CommunityPriceTests.swift:676:62: error: cannot find 'DiscardingCommunityPriceDatabase' in scope
+RestockTests/CommunityPriceTests.swift:689:55: error: cannot find 'DiscardingCommunityPriceDatabase' in scope
+RestockTests/CommunityPriceTests.swift:693:62: error: cannot find 'DiscardingCommunityPriceDatabase' in scope
+FAIL: test_app_knows_the_cleanup_argument (__main__.DiscardCommunityPrices.test_app_knows_the_cleanup_argument)
+AssertionError: False is not true : SmartCartApp kennt das Aufräum-Argument nicht
+FAIL: test_every_sending_class_passes_the_discard_argument (__main__.DiscardCommunityPrices.test_every_sending_class_passes_the_discard_argument)
+AssertionError: Lists differ: ['CommunityShareNoticeUITests.swift', 'Dyn[87 chars]ift'] != []
+FAIL: test_service_knows_the_discard_argument (__main__.DiscardCommunityPrices.test_service_knows_the_discard_argument)
+AssertionError: False is not true : CommunityPriceService kennt das Argument nicht
+FAIL: test_the_four_known_classes_are_covered (__main__.DiscardCommunityPrices.test_the_four_known_classes_are_covered)
+AssertionError: False is not true : ReceiptReviewUITests ohne -discardCommunityPricesForUITests
+Ran 5 tests in 0.004s
+FAILED (failures=4)

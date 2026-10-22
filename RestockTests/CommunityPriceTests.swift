@@ -613,6 +613,86 @@ final class CommunityPriceTests: XCTestCase {
         unpriced.estimatedPrice = 0
         XCTAssertNil(ActualPriceEntryView.contribution(for: unpriced, in: store), "Preis 0 ist kein Beitrag")
     }
+
+    // MARK: - Nacharbeiten (Issue #208)
+
+    private func footerTexts() throws -> [String: String] {
+        var result: [String: String] = [:]
+        for loc in ["de", "en"] {
+            let url = try XCTUnwrap(Bundle.main.url(forResource: "Localizable", withExtension: "strings",
+                                                    subdirectory: nil, localization: loc))
+            let table = try XCTUnwrap(NSDictionary(contentsOf: url) as? [String: String])
+            result[loc] = try XCTUnwrap(table["settings.community.footer"], "Schlüssel fehlt in \(loc)")
+        }
+        return result
+    }
+
+    /// U1, AC-1: Die Fußnote beginnt nicht mehr mit dem Satz „Voreingestellt an.“ und nennt „Community“.
+    func testFooterDoesNotStartWithDefaultOnSentence() throws {
+        let texts = try footerTexts()
+        XCTAssertFalse(texts["de"]!.hasPrefix("Voreingestellt an."))
+        XCTAssertFalse(texts["en"]!.hasPrefix("On by default."))
+        XCTAssertTrue(texts["de"]!.contains("Community"))
+        XCTAssertTrue(texts["en"]!.contains("Community"))
+    }
+
+    /// U2, AC-2: Es gibt nur diesen einen Fußnoten-Schlüssel, keinen zweiten je Schalterstand.
+    func testFooterIsSameTextRegardlessOfSwitch() throws {
+        for loc in ["de", "en"] {
+            let url = try XCTUnwrap(Bundle.main.url(forResource: "Localizable", withExtension: "strings",
+                                                    subdirectory: nil, localization: loc))
+            let table = try XCTUnwrap(NSDictionary(contentsOf: url) as? [String: String])
+            let footerKeys = table.keys.filter { $0.hasPrefix("settings.community.footer") }
+            XCTAssertEqual(footerKeys, ["settings.community.footer"], "\(loc): genau ein Fußnoten-Schlüssel")
+        }
+    }
+
+    /// U3, AC-4: Mit dem Argument wählt die Auswahl die Ersatz-Datenbank.
+    func testDefaultDatabaseWithDiscardArgumentIsDiscarding() {
+        let db = CommunityPriceService.defaultDatabase(arguments: ["Restock", "-discardCommunityPricesForUITests"])
+        XCTAssertTrue(db is DiscardingCommunityPriceDatabase)
+    }
+
+    /// U4, AC-4: Ohne oder mit unbekanntem Argument bleibt es die Produktionsdatenbank.
+    func testDefaultDatabaseWithoutOrUnknownArgumentIsCloudKit() {
+        XCTAssertFalse(CommunityPriceService.defaultDatabase(arguments: ["Restock"]) is DiscardingCommunityPriceDatabase)
+        XCTAssertFalse(CommunityPriceService.defaultDatabase(arguments: ["Restock", "-discardSomethingElse"]) is DiscardingCommunityPriceDatabase)
+    }
+
+    private func clearDiscardCount() {
+        UserDefaults.standard.removeObject(forKey: DiscardingCommunityPriceDatabase.countKey)
+    }
+
+    /// U5, AC-5: Die Ersatz-Datenbank verwirft, gibt den Record zurück und zählt.
+    func testDiscardingDatabaseCountsAndDiscards() async throws {
+        clearDiscardCount()
+        defer { clearDiscardCount() }
+        let db = DiscardingCommunityPriceDatabase()
+        let record = CKRecord(recordType: "CommunityPrice", recordID: CKRecord.ID(recordName: "UT-208"))
+        let first = try await db.save(record)
+        let second = try await db.save(record)
+        XCTAssertEqual(first.recordID, record.recordID)
+        XCTAssertEqual(second.recordID, record.recordID)
+        XCTAssertEqual(UserDefaults.standard.integer(forKey: DiscardingCommunityPriceDatabase.countKey), 2)
+        let own = try await db.fetchCommunityRecords(chain: "rewe", itemKeys: ["mozzarella"], resultsLimit: 10)
+        let all = try await db.fetchCommunityRecordsAllChains(itemKeys: ["mozzarella"], resultsLimit: 10)
+        XCTAssertTrue(own.isEmpty)
+        XCTAssertTrue(all.isEmpty)
+    }
+
+    /// U6, AC-6: Ein Beitrag über den Dienst mit Ersatz-Datenbank zählt und erreicht keine Fake-Produktion.
+    func testContributionThroughDiscardingServiceNeverReachesFakeAndCounts() async {
+        clearDiscardCount()
+        defer { clearDiscardCount() }
+        let fake = FakeCommunityPriceDatabase()
+        defaults.set(true, forKey: CommunityPriceService.sharingEnabledKey)
+        let service = CommunityPriceService(database: DiscardingCommunityPriceDatabase(), defaults: defaults,
+                                            cache: cache, now: { self.fixedNow })
+        let ok = await service.contribute(.init(itemName: "Mozzarella", storeName: "Rewe City", perUnitPrice: 1.09, unit: "stk"))
+        XCTAssertTrue(ok)
+        XCTAssertEqual(UserDefaults.standard.integer(forKey: DiscardingCommunityPriceDatabase.countKey), 1)
+        XCTAssertTrue(fake.saved.isEmpty)
+    }
 }
 
 // MARK: - Fake
