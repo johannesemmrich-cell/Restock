@@ -114,10 +114,12 @@ final class AIPriceEstimationTests: XCTestCase {
     }
 
     /// Legt einen Artikel im Laden an und sichert, damit `store.pendingItems` ihn über die Beziehung sieht.
+    /// Mit fester Kategorie wie `AddItemView`/Quick-Add: Ohne Kategorie gäbe es keine Pauschale und die
+    /// Quelle wäre `estimate` ohne Preis (CI-Lauf 39936627638), die Stufe prüft aber den Fall „Pauschale“.
     @MainActor
     @discardableResult
     private func addItem(_ name: String, to store: Store, in container: ModelContainer) throws -> ShoppingItem {
-        let item = ShoppingItem(name: name, store: store)
+        let item = ShoppingItem(name: name, category: "Milchprodukte", store: store)
         container.mainContext.insert(item)
         try container.mainContext.save()
         return item
