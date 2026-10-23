@@ -102,6 +102,8 @@ final class AIPriceEstimationTests: XCTestCase {
 
     // MARK: - Dienst
 
+    /// `mainContext` ist Main-Actor-gebunden; alle Aufrufer sind `@MainActor`-Tests.
+    @MainActor
     private func makeStore() throws -> (ModelContainer, Store) {
         let schema = Schema(versionedSchema: SchemaV1.self)
         let config = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
