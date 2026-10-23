@@ -100,4 +100,70 @@ final class PrivacyManifestTests: XCTestCase {
         XCTAssertTrue(source.contains("Ausgaben-Analyse (Premium)"))
         XCTAssertTrue(source.contains("- Menüplanung (Premium)"), "Rezeptplan gehört zu Pro")
     }
+
+    // MARK: - Durchgang A2
+
+    private func repoFile(_ path: String) -> URL {
+        URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent(path)
+    }
+
+    private func infoPlistStrings(_ language: String) throws -> [String: String] {
+        let url = repoFile("SmartCart/Resources/\(language).lproj/InfoPlist.strings")
+        let dict = try XCTUnwrap(NSDictionary(contentsOf: url) as? [String: String],
+                                 "\(language).lproj/InfoPlist.strings fehlt oder ist nicht lesbar")
+        return dict
+    }
+
+    // AC-6
+    func testInfoPlistStringsExistInGermanAndEnglish() throws {
+        let keys = ["NSCameraUsageDescription", "NSPhotoLibraryUsageDescription"]
+        let de = try infoPlistStrings("de")
+        let en = try infoPlistStrings("en")
+        XCTAssertEqual(Set(de.keys), Set(en.keys), "Schlüssel von de und en weichen ab")
+        for key in keys {
+            XCTAssertFalse((de[key] ?? "").isEmpty, "de: \(key) fehlt oder leer")
+            XCTAssertFalse((en[key] ?? "").isEmpty, "en: \(key) fehlt oder leer")
+        }
+    }
+
+    // AC-6
+    func testCameraTextNamesReceiptsBarcodesAndRecipes() throws {
+        let de = try infoPlistStrings("de")
+        let en = try infoPlistStrings("en")
+        let deCamera = de["NSCameraUsageDescription"] ?? ""
+        for term in ["Bon", "Barcode", "Rezept"] {
+            XCTAssertTrue(deCamera.contains(term), "de Kameratext nennt „\(term)“ nicht")
+        }
+        let enCamera = (en["NSCameraUsageDescription"] ?? "").lowercased()
+        for term in ["receipt", "barcode", "recipe"] {
+            XCTAssertTrue(enCamera.contains(term), "en Kameratext nennt „\(term)“ nicht")
+        }
+        let dePhotos = de["NSPhotoLibraryUsageDescription"] ?? ""
+        for term in ["Bon", "Rezept"] {
+            XCTAssertTrue(dePhotos.contains(term), "de Fototext nennt „\(term)“ nicht")
+        }
+        let enPhotos = (en["NSPhotoLibraryUsageDescription"] ?? "").lowercased()
+        for term in ["receipt", "recipe"] {
+            XCTAssertTrue(enPhotos.contains(term), "en Fototext nennt „\(term)“ nicht")
+        }
+    }
+
+    // AC-7
+    func testBuildNumberIs37InBothProjectFiles() throws {
+        let yml = try String(contentsOf: repoFile("project.yml"), encoding: .utf8)
+        let pbx = try String(contentsOf: repoFile("Restock.xcodeproj/project.pbxproj"), encoding: .utf8)
+        let ymlValues = yml.components(separatedBy: "\n")
+            .filter { $0.contains("CURRENT_PROJECT_VERSION:") }
+            .map { $0.components(separatedBy: ":").last!.trimmingCharacters(in: .whitespaces) }
+        let pbxValues = pbx.components(separatedBy: "\n")
+            .filter { $0.contains("CURRENT_PROJECT_VERSION =") }
+            .map { $0.components(separatedBy: "=").last!.trimmingCharacters(in: CharacterSet(charactersIn: "; \t")) }
+        XCTAssertFalse(ymlValues.isEmpty)
+        XCTAssertFalse(pbxValues.isEmpty)
+        XCTAssertEqual(Set(ymlValues), ["37"], "project.yml: \(ymlValues)")
+        XCTAssertEqual(Set(pbxValues), ["37"], "project.pbxproj: \(pbxValues)")
+        // Strings-Dateien müssen im App-Ziel registriert sein (Ressourcen-Phase).
+        XCTAssertTrue(pbx.contains("InfoPlist.strings in Resources"), "InfoPlist.strings nicht in den Ressourcen")
+    }
 }
