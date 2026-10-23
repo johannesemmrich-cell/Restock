@@ -34,6 +34,7 @@ struct SmartCartApp: App {
             Self.seedDuplicateStoresForUITestsIfNeeded(context: container.mainContext)
             Self.clearDeveloperModeForUITestsIfNeeded()
             Self.clearCommunityPricesNoticeForUITestsIfNeeded()
+            Self.clearDiscardedCommunityPricesForUITestsIfNeeded()
             Self.seedSharedAssignmentForScreenshotsIfNeeded(context: container.mainContext)
             Self.clearReceiptReviewSeedForUITestsIfNeeded(context: container.mainContext)
             Self.clearReceiptResolutionStatsForUITestsIfNeeded()
@@ -545,6 +546,14 @@ struct SmartCartApp: App {
         guard ProcessInfo.processInfo.arguments.contains("-clearCommunityPricesNoticeForUITests") else { return }
         UserDefaults.standard.removeObject(forKey: CommunityPriceService.noticeShownKey)
         UserDefaults.standard.removeObject(forKey: CommunityPriceService.sharingEnabledKey)
+    }
+
+    /// Issue #208: entfernt den Zähler der Ersatz-Datenbank (`-discardCommunityPricesForUITests`),
+    /// damit spätere Läufe keinen Altwert sehen. Only runs on
+    /// `-clearDiscardedCommunityPricesForUITests`, DEBUG-only.
+    private static func clearDiscardedCommunityPricesForUITestsIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-clearDiscardedCommunityPricesForUITests") else { return }
+        UserDefaults.standard.removeObject(forKey: DiscardingCommunityPriceDatabase.countKey)
     }
 
     /// Schreibt über `CloudMirrorMonitor.handle` einen fehlgeschlagenen Export (Ursache

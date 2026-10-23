@@ -23,7 +23,8 @@ final class CommunityShareNoticeUITests: XCTestCase {
     }
 
     private static let cleanup = ["-hasCompletedOnboarding", "YES",
-                                  "-clearCommunityPricesNoticeForUITests", "-clearReceiptReviewSeedForUITests"]
+                                  "-clearCommunityPricesNoticeForUITests", "-clearReceiptReviewSeedForUITests",
+                                  "-discardCommunityPricesForUITests", "-clearDiscardedCommunityPricesForUITests"]
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -47,7 +48,8 @@ final class CommunityShareNoticeUITests: XCTestCase {
     /// Startet mit dem gesäten Lidl-Bon; mit `freshNotice` zusätzlich mit dem Aufräumer (Merker weg).
     private func openedReview(freshNotice: Bool) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewForUITests"]
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewForUITests",
+                                "-discardCommunityPricesForUITests"]
         if freshNotice { app.launchArguments += ["-clearCommunityPricesNoticeForUITests"] }
         UITestLaunch.start(app, expecting: app.descendants(matching: .any)
                             .matching(identifier: "receiptReview.sectionHeader").firstMatch,

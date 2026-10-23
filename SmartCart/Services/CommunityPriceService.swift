@@ -93,8 +93,20 @@ actor CommunityPriceService {
     private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "SmartCart", category: "community")
 
     static let shared = CommunityPriceService(
-        database: CKContainer(identifier: containerID).publicCloudDatabase,
+        database: CommunityPriceService.defaultDatabase(arguments: ProcessInfo.processInfo.arguments),
         defaults: .standard, cache: .shared)
+
+    /// Issue #208: In DEBUG und mit `-discardCommunityPricesForUITests` verwirft eine
+    /// Ersatz-Datenbank jeden Beitrag (UI-Tests senden so nichts in den Pool); sonst und in jedem
+    /// Release-Build die öffentliche CloudKit-Datenbank. Muster `PremiumService.defaultStore`.
+    static func defaultDatabase(arguments: [String]) -> CommunityPriceDatabase {
+        #if DEBUG
+        if arguments.contains("-discardCommunityPricesForUITests") {
+            return DiscardingCommunityPriceDatabase()
+        }
+        #endif
+        return CKContainer(identifier: containerID).publicCloudDatabase
+    }
 
     let database: CommunityPriceDatabase
     let defaults: UserDefaults
@@ -174,10 +186,6 @@ actor CommunityPriceService {
             Self.logger.error("Community-Preis nicht gespeichert: \(SharedStoreSchema.errorText(error), privacy: .private)")
             return false
         }
-    }
-
-    nonisolated func contributeInBackground(_ contribution: Contribution) {
-        Task { await contribute(contribution) }
     }
 
     /// Issue #186: die in `save()` gesammelten Beiträge nacheinander senden; liefert die Zahl der
