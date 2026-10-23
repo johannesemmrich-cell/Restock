@@ -1,0 +1,17 @@
+Release-Nachweis Issue #208 (AC-8), 2026-10-22 19:46:30
+Commit-Basis: b47aa0a + Arbeitsstand (uncommitted)
+Release-Build: xcodebuild build -configuration Release -destination 'generic/platform=iOS Simulator'
+** BUILD SUCCEEDED **
+
+== Release-Binary: build/dd-208rel/Build/Products/Release-iphonesimulator/Restock.app/Restock
+(kein .debug.dylib im Release-Bündel)
+-discardCommunityPricesForUITests: 0 Treffer
+-clearDiscardedCommunityPricesForUITests: 0 Treffer
+communityPricesDiscardedSaveCount: 0 Treffer
+DiscardingCommunityPriceDatabase: 0 Treffer
+
+== Gegenprobe Debug-Binary: build/dd-208/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib
+-discardCommunityPricesForUITests: 1 Treffer
+-clearDiscardedCommunityPricesForUITests: 1 Treffer
+communityPricesDiscardedSaveCount: 1 Treffer
+DiscardingCommunityPriceDatabase: 1 Treffer

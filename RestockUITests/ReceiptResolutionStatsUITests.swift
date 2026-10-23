@@ -31,6 +31,7 @@ final class ReceiptResolutionStatsUITests: XCTestCase {
             "-hasCompletedOnboarding", "YES",
             "-clearReceiptReviewSeedForUITests",
             "-clearReceiptResolutionStatsForUITests",
+            "-clearDiscardedCommunityPricesForUITests",
         ]
         cleaner.launch()
         cleaner.terminate()
@@ -52,7 +53,7 @@ final class ReceiptResolutionStatsUITests: XCTestCase {
     private func launch(seed: Bool, developerMode: Bool = true) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-clearReceiptResolutionStatsForUITests",
-                                "-communityPricesNoticeShown", "YES"]
+                                "-communityPricesNoticeShown", "YES", "-discardCommunityPricesForUITests"]
         if developerMode { app.launchArguments += ["-developerMode", "YES"] }
         if seed { app.launchArguments += ["-seedReceiptReviewForUITests"] }
         app.launch()
