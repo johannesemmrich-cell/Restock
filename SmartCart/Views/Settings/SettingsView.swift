@@ -18,6 +18,8 @@ struct SettingsView: View {
     /// Issue #163: Standard an (Opt-out seit 2026-10-20, PO); gelesen von `CommunityPriceService`
     /// (gleicher Schlüssel, gleicher Standard `sharingEnabledDefault`).
     @AppStorage(CommunityPriceService.sharingEnabledKey) private var communitySharingEnabled = CommunityPriceService.sharingEnabledDefault
+    /// Issue #164: Standard aus, bis der Nachweis gegen den Prüfsatz bestanden ist.
+    @AppStorage(AIPriceEstimation.isEnabledKey) private var aiPriceEstimationEnabled = AIPriceEstimation.isEnabledDefault
     // Gleicher Key wie HomeView.storeViewModeRaw, damit eine Änderung hier sofort dort
     // (und umgekehrt) wirkt.
     @AppStorage("storeViewMode") private var storeViewModeRaw = StoreViewMode.cards.rawValue
@@ -132,6 +134,12 @@ struct SettingsView: View {
                         DefaultStoresSettingsView()
                     } label: {
                         Text("Standard-Läden")
+                    }
+                    // Issue #184: Beitrag an Open Prices (Opt-in, eigenes Konto, Bonfoto öffentlich).
+                    NavigationLink {
+                        OpenPricesSettingsView()
+                    } label: {
+                        Text(String(localized: "settings.openprices.title"))
                     }
                 } header: {
                     settingsHeader("Funktionen")
@@ -311,6 +319,15 @@ struct SettingsView: View {
                             HiddenReplenishmentsView()
                         } label: {
                             Label("Ausgeblendete Vorschläge", systemImage: "eye.slash")
+                        }
+
+                        // Issue #164: KI-Preisschätzung bleibt aus, bis der Nachweis bestanden ist;
+                        // hier nur zum Ausprobieren auf dem Gerät (Standard aus).
+                        VStack(alignment: .leading, spacing: 4) {
+                            Toggle(String(localized: "settings.dev.aiPrice"), isOn: $aiPriceEstimationEnabled)
+                            Text(String(localized: "settings.dev.aiPrice.footer"))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
                         }
 
                         Button(role: .destructive) {

@@ -79,6 +79,9 @@ Wenn du eine Einkaufsliste mit anderen teilst, werden die Listendaten (Artikelna
 **Community-Preise (jederzeit abschaltbar)**
 Solange in den Einstellungen „Preise anonym mit anderen teilen" eingeschaltet ist (voreingestellt an), werden beim Bon-Scan und bei „Preis eintragen" Artikelname, Ladenkette (z. B. „Rewe"), Preis je Einheit und Datum in Apples CloudKit Public Database gespeichert — ohne deinen Namen, ohne Bonfoto, ohne Filiale oder Standort. Eine zufällige Kennung je Installation sorgt dafür, dass du je Artikel und Kette nur einen aktuellen Eintrag hältst; sie ist nicht mit deiner Apple-ID verknüpft. Preise anderer Nutzer werden nur gelesen und als „Community" angezeigt; das Lesen überträgt keine Daten über dich.
 
+**Open Prices (nur nach ausdrücklicher Anmeldung)**
+Wenn du in den Einstellungen „Bons an Open Prices beitragen" einschaltest und dich mit deinem Open-Food-Facts-Konto anmeldest, werden gespeicherte Bons an Open Prices (prices.openfoodfacts.org, ein Projekt von Open Food Facts) übertragen: das Bonfoto als Nachweis (öffentlich unter der Lizenz CC BY-SA 4.0 — decke persönliche Angaben vorher ab), die von dir gewählte Filiale als OpenStreetMap-Ort, Datum sowie je erkannter Position Produktkategorie und Preis (Lizenz ODbL). Dein Open-Food-Facts-Nutzername erscheint dort als Beitragender. Das Zugangstoken liegt im Schlüsselbund dieses Geräts. Ausgeschaltet oder abgemeldet wird nichts übertragen. Datenschutz: world.openfoodfacts.org/privacy.
+
 **In-App-Käufe**
 Käufe werden ausschließlich über Apples StoreKit-Dienst abgewickelt. Restock erhält dabei keine Zahlungsinformationen oder Kontodaten.
 
@@ -89,7 +92,7 @@ Restock verwendet keine Analyse-Tools, keine Werbenetzwerke und kein Tracking. E
 
 **3. Weitergabe an Dritte**
 
-Deine Daten werden nicht verkauft oder vermarktet. Eine Weitergabe erfolgt ausschließlich im Rahmen der oben genannten Dienste (Apple CloudKit, Open Food Facts) und nur in dem Umfang, der für die jeweilige Funktion notwendig ist.
+Deine Daten werden nicht verkauft oder vermarktet. Eine Weitergabe erfolgt ausschließlich im Rahmen der oben genannten Dienste (Apple CloudKit, Open Food Facts, Open Prices, OpenStreetMap-Ortssuche) und nur in dem Umfang, der für die jeweilige Funktion notwendig ist.
 
 ---
 

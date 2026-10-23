@@ -51,13 +51,22 @@
 		C0DE1620000000000000A002 /* PriceCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000A001 /* PriceCatalog.swift */; };
 		C0DE1620000000000000A003 /* PriceCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000A001 /* PriceCatalog.swift */; };
 		C0DE1620000000000000A004 /* PriceCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000A001 /* PriceCatalog.swift */; };
+		C0DE1640000000000000C002 /* PriceCatalogEntries.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1640000000000000C001 /* PriceCatalogEntries.swift */; };
+		C0DE1640000000000000C003 /* PriceCatalogEntries.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1640000000000000C001 /* PriceCatalogEntries.swift */; };
+		C0DE1640000000000000C004 /* PriceCatalogEntries.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1640000000000000C001 /* PriceCatalogEntries.swift */; };
 		C0DE1620000000000000A006 /* PriceCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000A005 /* PriceCatalogTests.swift */; };
+		C0DE1640000000000000C006 /* PriceCatalogDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1640000000000000C005 /* PriceCatalogDataTests.swift */; };
+		C0DE1650000000000000E004 /* AIPriceEstimationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1650000000000000E003 /* AIPriceEstimationTests.swift */; };
+		C0DE1660000000000000F006 /* OpenPricesContributionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1660000000000000F005 /* OpenPricesContributionTests.swift */; };
+		C0DE1650000000000000E006 /* AIPriceEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */; };
 		C0DE1622000000000000A002 /* PriceCatalogExpansionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */; };
 		C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */; };
 		C0DE1630000000000000B002 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
 		C0DE1630000000000000B003 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
 		C0DE1630000000000000B004 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
 		C0DE1630000000000000B006 /* CommunityPriceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B005 /* CommunityPriceService.swift */; };
+		C0DE1650000000000000E002 /* AIPriceEstimationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1650000000000000E001 /* AIPriceEstimationService.swift */; };
+		C0DE1660000000000000F002 /* OpenPricesContributionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1660000000000000F001 /* OpenPricesContributionService.swift */; };
 		C0DE20800000000000000A01 /* DiscardingCommunityPriceDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE20800000000000000A02 /* DiscardingCommunityPriceDatabase.swift */; };
 		C0DE1630000000000000B008 /* CommunityPriceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B007 /* CommunityPriceTests.swift */; };
 		C0DE14540000000000000D01 /* PremiumServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE14540000000000000D02 /* PremiumServiceTests.swift */; };
@@ -67,6 +76,7 @@
 		B47F2C9081DA4E6135C0A712 /* ReceiptReviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A61D4E27B48F0A5D31C86 /* ReceiptReviewCard.swift */; };
 		52AFCA1171068886BF74BF47 /* RecipeRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD924269EE28D045DBDAE33 /* RecipeRecognitionService.swift */; };
 		53580D0BF528C8409B394E47 /* LegalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59CED41FC8E666B11CC8C09 /* LegalView.swift */; };
+		C0DE1660000000000000F004 /* OpenPricesSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1660000000000000F003 /* OpenPricesSettingsView.swift */; };
 		5BA9390E49F89DCBF753FDA6 /* ShoppingListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7BD9F3BC448DE79398597F /* ShoppingListWidget.swift */; };
 		5C7508E97A69CBA21B6DE5C5 /* CheckOffItemIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EA668475A6DE0784E49FA3 /* CheckOffItemIntent.swift */; };
 		66061099219273F5BD83F273 /* AssignmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4084283388CDEF7C7D514BF7 /* AssignmentService.swift */; };
@@ -292,11 +302,18 @@
 		B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceReset.swift; sourceTree = "<group>"; };
 		FEC66FDBE9289572AAAB96D7 /* AbbreviatedNameCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbbreviatedNameCleanup.swift; sourceTree = "<group>"; };
 		C0DE1620000000000000A001 /* PriceCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalog.swift; sourceTree = "<group>"; };
+		C0DE1640000000000000C001 /* PriceCatalogEntries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogEntries.swift; sourceTree = "<group>"; };
 		C0DE1620000000000000A005 /* PriceCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogTests.swift; sourceTree = "<group>"; };
+		C0DE1640000000000000C005 /* PriceCatalogDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogDataTests.swift; sourceTree = "<group>"; };
+		C0DE1650000000000000E003 /* AIPriceEstimationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPriceEstimationTests.swift; sourceTree = "<group>"; };
+		C0DE1660000000000000F005 /* OpenPricesContributionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenPricesContributionTests.swift; sourceTree = "<group>"; };
+		C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPriceEvaluationTests.swift; sourceTree = "<group>"; };
 		C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogExpansionTests.swift; sourceTree = "<group>"; };
 		C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationKeyParityTests.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B001 /* CommunityPriceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceCache.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B005 /* CommunityPriceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceService.swift; sourceTree = "<group>"; };
+		C0DE1650000000000000E001 /* AIPriceEstimationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPriceEstimationService.swift; sourceTree = "<group>"; };
+		C0DE1660000000000000F001 /* OpenPricesContributionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenPricesContributionService.swift; sourceTree = "<group>"; };
 		C0DE20800000000000000A02 /* DiscardingCommunityPriceDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscardingCommunityPriceDatabase.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B007 /* CommunityPriceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceTests.swift; sourceTree = "<group>"; };
 		C0DE14540000000000000D02 /* PremiumServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumServiceTests.swift; sourceTree = "<group>"; };
@@ -391,6 +408,7 @@
 		E27BD0C5EE55D1C2CCC616ED /* SchemaVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaVersions.swift; sourceTree = "<group>"; };
 		E46D46BF139B378E43E1466C /* QuickAddControlIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddControlIntent.swift; sourceTree = "<group>"; };
 		E59CED41FC8E666B11CC8C09 /* LegalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalView.swift; sourceTree = "<group>"; };
+		C0DE1660000000000000F003 /* OpenPricesSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenPricesSettingsView.swift; sourceTree = "<group>"; };
 		F2567C6C42C00F59D0860F1F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		10D468C02AE4FED05FA03700 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		5D50B46194D499838CA3B954 /* RestockShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RestockShareExtension.entitlements; sourceTree = "<group>"; };
@@ -616,6 +634,7 @@
 				B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */,
 				FEC66FDBE9289572AAAB96D7 /* AbbreviatedNameCleanup.swift */,
 				C0DE1620000000000000A001 /* PriceCatalog.swift */,
+				C0DE1640000000000000C001 /* PriceCatalogEntries.swift */,
 				C0DE1630000000000000B001 /* CommunityPriceCache.swift */,
 				79B54EB99B9957838C1031AD /* TodoItem.swift */,
 			);
@@ -681,6 +700,7 @@
 			children = (
 				1CC6F3E41F217D74D6B1A8AA /* BrowseStoresView.swift */,
 				E59CED41FC8E666B11CC8C09 /* LegalView.swift */,
+				C0DE1660000000000000F003 /* OpenPricesSettingsView.swift */,
 				CF6EFC0DED7A8C344540C9E4 /* OnboardingView.swift */,
 				D9E2BAE2A0C9CCD5623B0983 /* SettingsView.swift */,
 				8B5C49213E1D6DACA024E359 /* StoreSetupView.swift */,
@@ -743,6 +763,8 @@
 				418D17DD19B7E69AA8260DEB /* SeasonalService.swift */,
 				A1766165B3F2604B32CDF325 /* SharedStoreService.swift */,
 				C0DE1630000000000000B005 /* CommunityPriceService.swift */,
+				C0DE1650000000000000E001 /* AIPriceEstimationService.swift */,
+				C0DE1660000000000000F001 /* OpenPricesContributionService.swift */,
 				C0DE20800000000000000A02 /* DiscardingCommunityPriceDatabase.swift */,
 				0F85C5353E181E9C2D3A1562 /* PhotoCompressor.swift */,
 				E779152E6FDD65092144B963 /* SharedItemPhotoService.swift */,
@@ -790,6 +812,10 @@
 				C387CE8FD4EF1CED862D77C1 /* PriceEstimatorCategoryFallbackTests.swift */,
 				18C68E8D82565BA3E9CA923D /* PriceEstimatorStagesTests.swift */,
 				C0DE1620000000000000A005 /* PriceCatalogTests.swift */,
+				C0DE1640000000000000C005 /* PriceCatalogDataTests.swift */,
+				C0DE1650000000000000E003 /* AIPriceEstimationTests.swift */,
+				C0DE1660000000000000F005 /* OpenPricesContributionTests.swift */,
+				C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */,
 				C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */,
 				C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */,
 				C0DE1630000000000000B007 /* CommunityPriceTests.swift */,
@@ -1049,6 +1075,7 @@
 				0E572B57E04F1F59292F514F /* ShoppingActivityAttributes.swift in Sources */,
 				12BB14633A0596B41063BFCA /* ShoppingItem.swift in Sources */,
 				C0DE1620000000000000A003 /* PriceCatalog.swift in Sources */,
+				C0DE1640000000000000C002 /* PriceCatalogEntries.swift in Sources */,
 				C0DE1630000000000000B003 /* CommunityPriceCache.swift in Sources */,
 				5BA9390E49F89DCBF753FDA6 /* ShoppingListWidget.swift in Sources */,
 				86AF02F353829B169AD82B87 /* ShoppingLiveActivity.swift in Sources */,
@@ -1095,6 +1122,7 @@
 				6A1C2E4B8D3F4A5B9C7E1D21 /* QuickAddTargetViews.swift in Sources */,
 				2861E90DF572FC0C3CFBA1C6 /* ItemRow.swift in Sources */,
 				53580D0BF528C8409B394E47 /* LegalView.swift in Sources */,
+				C0DE1660000000000000F004 /* OpenPricesSettingsView.swift in Sources */,
 				708347169C9B1DF2C1D474FF /* LiveActivityService.swift in Sources */,
 				CB7F8102C5139B92F839960C /* MenuPlanView.swift in Sources */,
 				059ED66B634ECEBA14ADDC6B /* NotificationService.swift in Sources */,
@@ -1134,8 +1162,11 @@
 				6A8BB1A057222174ABCEEA9E /* ShoppingActivityAttributes.swift in Sources */,
 				4875ED5EEB7BE1A728289FBA /* ShoppingItem.swift in Sources */,
 				C0DE1620000000000000A002 /* PriceCatalog.swift in Sources */,
+				C0DE1640000000000000C003 /* PriceCatalogEntries.swift in Sources */,
 				C0DE1630000000000000B002 /* CommunityPriceCache.swift in Sources */,
 				C0DE1630000000000000B006 /* CommunityPriceService.swift in Sources */,
+				C0DE1650000000000000E002 /* AIPriceEstimationService.swift in Sources */,
+				C0DE1660000000000000F002 /* OpenPricesContributionService.swift in Sources */,
 				C0DE20800000000000000A01 /* DiscardingCommunityPriceDatabase.swift in Sources */,
 				83F7A018CC455374AA300D07 /* SmartCartApp.swift in Sources */,
 				47C167B4A1828C9F1D437D86 /* Store.swift in Sources */,
@@ -1175,6 +1206,7 @@
 				F3DABE87F8692179869E652E /* ShoppingRoute.swift in Sources */,
 				B711DBF38176A71AC66E9C5A /* ShoppingItem.swift in Sources */,
 				C0DE1620000000000000A004 /* PriceCatalog.swift in Sources */,
+				C0DE1640000000000000C004 /* PriceCatalogEntries.swift in Sources */,
 				C0DE1630000000000000B004 /* CommunityPriceCache.swift in Sources */,
 				526C089A5B6BCE0A9721DBFA /* PurchaseRecord.swift in Sources */,
 				61A8C33F2B04D602F6FA2F69 /* SchemaVersions.swift in Sources */,
@@ -1213,6 +1245,10 @@
 				7169A936DC526EB4B1002F33 /* PriceEstimatorCategoryFallbackTests.swift in Sources */,
 				9023139F29439ED2491D853A /* PriceEstimatorStagesTests.swift in Sources */,
 				C0DE1620000000000000A006 /* PriceCatalogTests.swift in Sources */,
+				C0DE1640000000000000C006 /* PriceCatalogDataTests.swift in Sources */,
+				C0DE1650000000000000E004 /* AIPriceEstimationTests.swift in Sources */,
+				C0DE1660000000000000F006 /* OpenPricesContributionTests.swift in Sources */,
+				C0DE1650000000000000E006 /* AIPriceEvaluationTests.swift in Sources */,
 				C0DE1622000000000000A002 /* PriceCatalogExpansionTests.swift in Sources */,
 				C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */,
 				C0DE1630000000000000B008 /* CommunityPriceTests.swift in Sources */,

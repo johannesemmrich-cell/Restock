@@ -202,7 +202,7 @@ class ShoppingItem {
     /// Kennungen, die `priceSource` tragen darf. `"category"` (Issue #160) ist die reine
     /// Kategorie-Pauschale, `"estimate"` ein Treffer im `PriceCatalog`. Dazu kommt die Form
     /// `"otherStore:<Ladenname>"` (Issue #161), siehe `otherStoreSourcePrefix`.
-    static let knownPriceSources: Set<String> = ["receipt", "paid", "learned", "manual", "estimate", "category"]
+    static let knownPriceSources: Set<String> = ["receipt", "paid", "learned", "manual", "estimate", "category", "ai"]
 
     /// Präfix der Quelle „eigener Preis aus anderem Laden"; dahinter steht der Ladenname, damit die
     /// Zeile „zuletzt bei Lidl" zeigen kann, ohne ein weiteres gespiegeltes Feld anzulegen.
@@ -499,6 +499,7 @@ enum PriceSourceDisplay {
         case "manual": return String(localized: "price.source.manual")
         case "estimate": return String(localized: "price.source.estimate")
         case "category": return String(localized: "price.source.category")
+        case "ai": return String(localized: "price.source.ai")
         case "otherStore": return String(format: String(localized: "price.source.otherstore"), detail)
         case "community":
             // `"community:*"`: Median über alle Ketten (PO 2026-10-22) → „Community · andere Läden".
@@ -522,7 +523,7 @@ enum PriceSourceDisplay {
 
     /// „ca. " nur bei einer Schätzung (Katalog oder Pauschale) — wie die angenommene Menge in `ItemRow`.
     static func amountPrefix(origin: String) -> String {
-        origin == "estimate" || origin == "category" ? "ca. " : ""
+        origin == "estimate" || origin == "category" || origin == "ai" ? "ca. " : ""
     }
 
     /// Issue #160: Eine Kategorie-Pauschale ist kein Artikelpreis. Die Zeile zeigt statt eines
@@ -548,6 +549,18 @@ enum PriceSourceDisplay {
          "price.diagnosis.section", "price.diagnosis.entry",
          "price.diagnosis.entry.none", "price.diagnosis.item", "price.diagnosis.cap", "price.diagnosis.result"]
             + LearnedPriceResolution.Reason.allCases.map(PriceDiagnosis.reasonKey)
+            + PriceCatalogDisplay.allLocalizationKeys
+            + ["price.source.ai", "item.price.ai.section", "item.price.ai.range", "item.price.ai.confirm",
+               "settings.dev.aiPrice", "settings.dev.aiPrice.footer"]
+            // Issue #184 (Open Prices): als Literale, weil `OpenPricesContribution` nur im App-Ziel
+            // kompiliert, diese Datei aber auch in Widget und Teilen-Erweiterung.
+            + ["settings.openprices.title", "settings.openprices.toggle", "settings.openprices.footer",
+               "settings.openprices.confirm.title", "settings.openprices.confirm.message", "settings.openprices.confirm.ok",
+               "settings.openprices.account", "settings.openprices.username", "settings.openprices.password",
+               "settings.openprices.login", "settings.openprices.logout", "settings.openprices.loggedin",
+               "settings.openprices.login.failed", "settings.openprices.locations", "settings.openprices.locations.footer",
+               "settings.openprices.location.choose", "settings.openprices.location.search", "settings.openprices.location.none",
+               "settings.openprices.last", "settings.openprices.last.none", "settings.openprices.environment"]
     }
 }
 
