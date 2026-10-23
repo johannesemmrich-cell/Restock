@@ -159,3 +159,7 @@ Activated by tapping the version number 5× in Settings → password sheet (SHA2
 ### Barcode scanning
 
 `BarcodeScannerSheet` wraps `DataScannerViewController` (VisionKit, iOS 16+). On barcode tap, calls Open Food Facts API (`world.openfoodfacts.org/api/v2/product/{barcode}`) for product name. Camera permission is already declared in the project settings.
+
+### Datenschutz-Manifest und Store-Angaben (Issue #175)
+
+`SmartCart/PrivacyInfo.xcprivacy` deklariert seit Durchgang A1 (2026-10-23) sechs erhobene Datenarten, alle mit Zweck App-Funktionalität und ohne Tracking: Name, Sonstige Nutzerinhalte, Fotos, Kaufverlauf und Nutzer-ID (verknüpft; Open-Prices-Beiträge stehen öffentlich unter dem Open-Food-Facts-Namen) sowie Geräte-ID (nicht verknüpft; `clientID` der Community-Preise). Die EAN-Abfrage bei Open Food Facts zählt nicht als Nutzerangabe. `RestockTests/PrivacyManifestTests.swift` hält die Liste, den Fotos- und Open-Prices-Absatz sowie den Stand „Oktober 2026“ in `LegalView` fest; wer eine Datenart ergänzt, ändert Manifest, Test, `LegalView` und den App-Privacy-Fragebogen in App Store Connect gemeinsam. Spec und offene Durchgänge (A2: lokalisierte Kamera-/Fototexte und Build 37, B: Texte, Skripte und Eintragungen in App Store Connect): `docs/specs/appstore/app-store-auftritt.md`. Offene Grenzen: Datenschutz-URL (`emmrich-business.com/datenschutz`) beschreibt die Funktionen noch falsch; Standort-Deklaration für die Open-Prices-Filiale wird beim Fragebogen entschieden (Empfehlung der Prüfung: „Genauer Standort“); nichts auf Hennings Geräten geprüft.
