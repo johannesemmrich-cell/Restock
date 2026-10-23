@@ -10,7 +10,8 @@ final class PrivacyManifestTests: XCTestCase {
         ("NSPrivacyCollectedDataTypeName", true),
         ("NSPrivacyCollectedDataTypeOtherUserContent", true),
         ("NSPrivacyCollectedDataTypePhotosorVideos", true),
-        ("NSPrivacyCollectedDataTypePurchaseHistory", false),
+        ("NSPrivacyCollectedDataTypePurchaseHistory", true),
+        ("NSPrivacyCollectedDataTypeUserID", true),
         ("NSPrivacyCollectedDataTypeDeviceID", false),
     ]
 
@@ -83,8 +84,20 @@ final class PrivacyManifestTests: XCTestCase {
         let source = try legalSource()
         XCTAssertFalse(source.contains("Geteilte Listen Add-on"), "Das Add-on entfällt (PO 2026-10-23)")
         XCTAssertFalse(source.contains("Premium / Add-on"))
-        XCTAssertTrue(source.contains("Oktober 2026"), "Stand der Datenschutzerklärung")
-        XCTAssertTrue(source.contains("Artikelfoto") || source.contains("Fotos geteilter"),
-                      "Fotos geteilter Artikel fehlen in der Datenschutzerklärung")
+        XCTAssertTrue(source.contains("**Datenschutzerklärung**\nStand: Oktober 2026"), "Stand der Datenschutzerklärung")
+        XCTAssertTrue(source.contains("**Nutzungsbedingungen**\nStand: Oktober 2026"), "Stand der Nutzungsbedingungen")
+        XCTAssertTrue(source.contains("**Fotos geteilter Artikel**"),
+                      "Abschnitt „Fotos geteilter Artikel“ fehlt in der Datenschutzerklärung")
+        // Open-Prices-Beitrag: Bonfoto, Filiale, Preise und Benutzername gehen an einen Dritten.
+        let openPrices = try XCTUnwrap(source.components(separatedBy: "**Open Prices").dropFirst().first?
+            .components(separatedBy: "\n\n").first, "Abschnitt „Open Prices“ fehlt")
+        for term in ["Bonfoto", "Filiale", "Preis", "Nutzername"] {
+            XCTAssertTrue(openPrices.contains(term), "Open Prices nennt „\(term)“ nicht")
+        }
+        // Pro enthält in 1.0 nur Rezeptplan und Ausgaben-Analyse (HomeView: PaywallRequest).
+        XCTAssertFalse(source.contains("Geteilte Listen (Premium)"), "Teilen ist kostenlos")
+        XCTAssertFalse(source.contains("Kassenbon-Scan und Preiserfassung (Premium)"), "Bon-Scan ist kostenlos")
+        XCTAssertTrue(source.contains("Ausgaben-Analyse (Premium)"))
+        XCTAssertTrue(source.contains("- Menüplanung (Premium)"), "Rezeptplan gehört zu Pro")
     }
 }

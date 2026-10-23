@@ -81,7 +81,7 @@ die Trennung). Reihenfolge A1, A2, B. Der Upload von Build 37 ist außenwirksam 
 
 | Datei | Änderung |
 |-------|----------|
-| `SmartCart/PrivacyInfo.xcprivacy` | `NSPrivacyCollectedDataTypes` mit fünf Einträgen (Tabelle unten) |
+| `SmartCart/PrivacyInfo.xcprivacy` | `NSPrivacyCollectedDataTypes` mit sechs Einträgen (Tabelle unten) |
 | `SmartCart/Views/Settings/LegalView.swift` | Datenschutz: Fotos geteilter Artikel, Stand neu; Nutzungsbedingungen: Zeile „Geteilte Listen Add-on“ entfernen |
 | `RestockTests/PrivacyManifestTests.swift` | NEU: Manifest, Tracking, Bundle, LegalView |
 | `Restock.xcodeproj/project.pbxproj` | Testdatei registrieren (PBXBuildFile, PBXFileReference, Gruppe, Sources-Phase) |
@@ -105,14 +105,25 @@ Deklarierte Datentypen (Entwurf; Zweck jeweils App-Funktionalität, Tracking nei
 |-----------------|--------------------|-----------|---------------|
 | Kontaktdaten › Name | `NSPrivacyCollectedDataTypeName` | ja | Anzeigename der Mitglieder in geteilten Läden (`SharedStoreService`) |
 | Nutzerinhalte › Sonstige Nutzerinhalte | `NSPrivacyCollectedDataTypeOtherUserContent` | ja | Artikel, Listen, Zuweisungen, Preise geteilter Läden |
-| Nutzerinhalte › Fotos oder Videos | `NSPrivacyCollectedDataTypePhotosorVideos` | ja | Artikelfotos geteilter Läden (`SharedItemPhotoService`, `_ckAsset`) |
-| Käufe › Kaufverlauf | `NSPrivacyCollectedDataTypePurchaseHistory` | nein | Community-Preise je Artikel/Kette (`CommunityPriceService`) |
+| Nutzerinhalte › Fotos oder Videos | `NSPrivacyCollectedDataTypePhotosorVideos` | ja | Artikelfotos geteilter Läden (`SharedItemPhotoService`, `_ckAsset`); Bonfoto beim Open-Prices-Beitrag (`OpenPricesContributionService`) |
+| Käufe › Kaufverlauf | `NSPrivacyCollectedDataTypePurchaseHistory` | ja | Community-Preise je Artikel/Kette (`CommunityPriceService`); Preise und Filiale der Open-Prices-Beiträge, öffentlich unter dem Benutzernamen sichtbar |
+| Kennungen › Nutzer-ID | `NSPrivacyCollectedDataTypeUserID` | ja | Open-Food-Facts-Benutzername der Open-Prices-Beiträge (Opt-in „Bons an Open Prices beitragen“, `SettingsView`, Standard aus, für alle Nutzer sichtbar) |
 | Kennungen › Geräte-ID | `NSPrivacyCollectedDataTypeDeviceID` | nein | zufällige Installationskennung `clientID` der Community-Preise |
 
-Nicht deklariert, begründet: Die EAN an Open Food Facts ist eine Produktnummer, keine Angabe über den Nutzer; es wird keine
-Kennung mitgesendet. Die private iCloud-Spiegelung zählt nicht, weil nur der Nutzer selbst Zugriff hat (Apple: „Collect“ =
-Daten verlassen das Gerät und sind für den Entwickler zugänglich). `NSPrivacyTracking` bleibt `false`, die Tracking-Domains
-leer, die UserDefaults-Angabe unverändert.
+Nicht deklariert, begründet:
+
+- **EAN an Open Food Facts:** eine Produktnummer, keine Angabe über den Nutzer; es wird keine Kennung mitgesendet.
+- **Private iCloud-Spiegelung:** zählt nicht, weil nur der Nutzer selbst Zugriff hat (Apple: „Collect“ = Daten verlassen das
+  Gerät und sind für den Entwickler zugänglich).
+- **Standort:** Die Filiale beim Open-Prices-Beitrag ist ein vom Nutzer gewählter Laden (OpenStreetMap-Ort), kein Gerätestandort;
+  die App liest keinen Gerätestandort. Deshalb wird kein Standort-Typ deklariert. Gegenmeinung: Konservativ ließe sich
+  „Grober Standort“ deklarieren, weil ein Laden den Aufenthaltsort des Nutzers andeutet. Die Entscheidung fällt beim Fragebogen
+  und wird im Test festgehalten.
+
+Open Prices ist **nicht** unter „nicht deklariert“ geführt, sondern deklariert (Fotos, Kaufverlauf, Nutzer-ID): Apple zählt auch
+Daten, die an Drittpartner gehen. Die Ausnahme „optionale Offenlegung“ greift nicht, weil sie voraussetzt, dass der Nutzer die
+Weitergabe jedes Mal ausdrücklich wählt; der Opt-in ist ein dauerhafter Schalter. `NSPrivacyTracking` bleibt `false`, die
+Tracking-Domains leer, die UserDefaults-Angabe unverändert.
 
 ### Durchgang B1: Store-Texte (3 Dateien, geschätzt +220 Zeilen)
 
@@ -152,7 +163,7 @@ der Upload von Build 37 (außenwirksam, nur auf Wort) liegt zwischen A2 und dem 
 ## Implementation Details
 
 ```
-A1: Manifest-Plist um fünf Dicts erweitern (Name, Linked, Tracking=false, Purposes=[AppFunctionality]);
+A1: Manifest-Plist um sechs Dicts erweitern (Name, Linked, Tracking=false, Purposes=[AppFunctionality]);
     LegalView-Strings ergänzen; PrivacyManifestTests liest Repo-Dateien per #filePath.
 A2: InfoPlist.strings de/en; project.yml + pbxproj Build 37; Tests ergänzen.
 B:  Texte als Dateien; asc_lib/asc_publish/asc_check: JWT signieren, PATCH/POST auf die eigene App-ID,
@@ -162,7 +173,7 @@ B:  Texte als Dateien; asc_lib/asc_publish/asc_check: JWT signieren, PATCH/POST 
 ## Expected Behavior
 
 - **Input:** Repo-Texte und Manifest, ASC-Schlüssel aus der Umgebung (Pfad), Simulator mit Seed.
-- **Output:** Build 37 mit wahrem Manifest und lokalisierten Texten; ASC-Eintrag, dessen gelesene Werte den Repo-Dateien
+- **Output:** Build 37 mit wahrem Manifest (sechs Datentypen, einschließlich Open Prices) und lokalisierten Texten; ASC-Eintrag, dessen gelesene Werte den Repo-Dateien
   gleichen; Gegenlese-Protokoll im Repo.
 - **Side effects:** Außenwirksam sind nur Upload von Build 37 und Einreichen, beide nur auf Hennings Wort. Das Setzen der
   Metadaten in ASC verändert nur den Entwurf (Status bleibt `PREPARE_FOR_SUBMISSION`). Keine Gerätezugriffe.
@@ -296,7 +307,9 @@ Ablehnung wäre kein Blocker, die Kategorie ist änderbar).
 3. **Datenschutzseite andernorts statt auf `emmrich-business.com`** (siehe Abschnitt Datenschutz-URL, Wege b und c). Kippt
    die Annahme, dass die Seite beim Verantwortlichen auf dessen Domain liegen muss.
 4. **Nutzerdaten konservativer einordnen:** Kaufverlauf und Kennung als „mit dem Nutzer verknüpft“ deklarieren, weil die
-   `clientID` Einträge einer Installation verbindet. Sicherer gegen Ablehnung, kostet nur einen Haken je Typ. Kippt die
+   `clientID` Einträge einer Installation verbindet. **Teilweise umgesetzt:** Kaufverlauf ist wegen der Open-Prices-Beiträge
+   (öffentlich unter dem Benutzernamen) jetzt verknüpft und die Nutzer-ID deklariert; offen ist nur noch die Geräte-ID der
+   Community-Preise. Sicherer gegen Ablehnung, kostet nur einen Haken je Typ. Kippt die
    Annahme „zufällige, nicht an Apple-ID gebundene Kennung = nicht verknüpft“. Entscheidung beim Fragebogen; der Test
    (`PrivacyManifestTests`) hält die gewählte Fassung fest.
 5. **Screenshots vom Gerät statt aus dem Simulator.** Echter Datenbestand, aber Gerätezugriff nur auf Hennings Wort (#187).
@@ -320,8 +333,8 @@ Fertig ist das Ticket, wenn:
 
 Durchgang A1
 
-- **AC-1:** Vorbedingung: Manifest `SmartCart/PrivacyInfo.xcprivacy`. Aktion: Plist parsen. Ergebnis: genau die fünf
-  Datentypen der Tabelle (Name, OtherUserContent, PhotosorVideos verknüpft; PurchaseHistory, DeviceID nicht verknüpft), je
+- **AC-1:** Vorbedingung: Manifest `SmartCart/PrivacyInfo.xcprivacy`. Aktion: Plist parsen. Ergebnis: genau die sechs
+  Datentypen der Tabelle (verknüpft: Name, OtherUserContent, PhotosorVideos, PurchaseHistory, UserID; nicht verknüpft: DeviceID), je
   Zweck `NSPrivacyCollectedDataTypePurposeAppFunctionality`, `NSPrivacyCollectedDataTypeTracking` false.
   - Test: `RestockTests/PrivacyManifestTests.swift::testCollectedDataTypesEqualDocumentedList`
 - **AC-2:** `NSPrivacyTracking` false, `NSPrivacyTrackingDomains` leer, Required-Reason `UserDefaults`/`1C8F.1` unverändert,
@@ -329,10 +342,11 @@ Durchgang A1
   - Test: `RestockTests/PrivacyManifestTests.swift::testTrackingFalseAndUserDefaultsReasonKept`, `::testNoBarcodeDataTypeDeclared`
 - **AC-3:** Das Manifest liegt im Release-Bundle (Release-Übersetzung für den Simulator) und stimmt mit der Quelle überein.
   - Test: `RestockTests/PrivacyManifestTests.swift::testManifestIsPartOfBundle`
-  - Nachweis: `plutil -p <App>.app/PrivacyInfo.xcprivacy` am Release-Bundle, erwartet die fünf Typen; Ausgabe in
+  - Nachweis: `plutil -p <App>.app/PrivacyInfo.xcprivacy` am Release-Bundle, erwartet die sechs Typen; Ausgabe in
     `docs/artifacts/feat-175-app-store-auftritt/release-manifest-check.txt`
-- **AC-4:** `LegalView` nennt in der Datenschutzerklärung Fotos geteilter Artikel (Stand Oktober 2026) und enthält keine Zeile
-  „Geteilte Listen Add-on“ mehr in den Nutzungsbedingungen.
+- **AC-4:** `LegalView` nennt in der Datenschutzerklärung Fotos geteilter Artikel und den Open-Prices-Beitrag (Bonfoto, Filiale,
+  Preise, Benutzername) und trägt „Stand: Oktober 2026“; die Nutzungsbedingungen tragen ebenfalls „Stand: Oktober 2026“ und
+  enthalten keine Zeile „Geteilte Listen Add-on“ mehr.
   - Test: `RestockTests/PrivacyManifestTests.swift::testLegalTextMentionsPhotosAndNoLongerAddOn`
 - **AC-5:** Nach A1 sind Unit-Suite und `LocalizationKeyParityTests` grün.
   - Nachweis: `xcodebuild test` auf `Restock-Validate`, erwartet Testzahl > 0, 0 Fehlschläge, kein Runner-Abbruch
@@ -374,7 +388,7 @@ Durchgang B (AC-9 und AC-10 in B2, AC-11 bis AC-19 in B3 gegen ASC)
 - **AC-13:** Kategorie (primär, sekundär), Altersfreigabe, Content Rights, Preise/Verfügbarkeit der App sind gesetzt.
   - Nachweis: `python3 scripts/asc_check.py --section appinfo` (GET `appInfos`, `ageRatingDeclarations`,
     `appPriceSchedule`), erwartet „ok“; was die API nicht kann, per Browser mit Beleg-Screenshot
-- **AC-14:** Der App-Privacy-Fragebogen ist ausgefüllt und veröffentlicht mit genau den Datentypen der Tabelle, Tracking nein.
+- **AC-14:** Der App-Privacy-Fragebogen ist ausgefüllt und veröffentlicht mit genau den sechs Datentypen der Tabelle (Name, Sonstige Nutzerinhalte, Fotos oder Videos, Kaufverlauf, Nutzer-ID verknüpft; Geräte-ID nicht verknüpft), Tracking nein.
   - Nachweis: API-Gegenlesen, falls möglich; sonst Beleg-Screenshots der ASC-Seite „App Privacy“ im Zustand
     „Veröffentlicht“ unter `docs/artifacts/feat-175-app-store-auftritt/`, zeilenweise gegen die Tabelle abgeglichen
 - **AC-15:** Abo-Gruppe „Restock Pro“ mit monthly und yearly sowie das nicht verbrauchbare lifetime
@@ -435,7 +449,8 @@ Offene Grenzen:
 - **Privacy-Fragebogen per API:** nicht belegt, dass er setzbar ist; Rückfall Browser mit Beleg-Screenshots (Chrome-Werkzeug).
   Veröffentlichung („Publish“) braucht die Rolle Account Holder/Admin/App Manager, der Schlüssel hat Admin.
 - **Einordnung der Datentypen:** Die Zuordnung der eigenen CloudKit-Daten zu „erhoben“ folgt aus Apples Definition, ist dort
-  nicht wörtlich geregelt. Die Wahl „nicht verknüpft“ für Kaufverlauf und Kennung ist eine Schlussfolgerung (siehe Alternative 4).
+  nicht wörtlich geregelt. Die Wahl „nicht verknüpft“ für die Geräte-ID und die Einordnung der Open-Prices-Daten sind Schlussfolgerungen (siehe Alternative 4).
+  Open Prices läuft derzeit nur gegen Pre-Production; ein Beitrag in der Produktion ist nicht erprobt, die Einordnung bleibt Schlussfolgerung.
   Ob Apple die Einordnung akzeptiert, wissen wir erst im Review.
 - **Manifest-Schlüsselnamen** stammen aus Apples Dokumentation zu Privacy-Manifesten; der Build prüft sie nicht. Eine falsche
   Schreibweise zeigt sich erst bei Upload-Validierung oder im Datenschutzbericht von Xcode.
@@ -467,3 +482,4 @@ Simulator-Screenshots). #175 blockiert Release 1.0.
 ## Changelog
 
 - 2026-10-23: Initial spec created (Entwurf, wartet auf Freigabe und die Antwort zur Datenschutz-URL).
+- 2026-10-23: Nachbesserung per PO-`override`: Der Adversary fand den Opt-in „Bons an Open Prices beitragen“ (Bonfoto, Filiale, Preise, Open-Food-Facts-Benutzername an einen Dritten), im Manifest nicht genannt. Sechs statt fünf Datentypen (neu UserID, PurchaseHistory verknüpft), Standort-Begründung, AC-1, AC-4, Alternative 4 und Offene Grenzen angepasst.

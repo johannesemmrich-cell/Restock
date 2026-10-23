@@ -1,7 +1,7 @@
 ---
 spec_file: docs/specs/appstore/app-store-auftritt.md
-spec_sha256: d73da6007f3b9b40a2b6892ae9537dbc03d96e34664150aa7895d6c38c7ae633
-spec_frozen_sha256: 8a3e1d67e127d0e0a0ead3574b604e96b06964324e1a44da832ea8869d882f37
+spec_sha256: fbe8b7aa15a4338c262398be326555011ad78e1f8779bd3f84e3c3f00758e9bb
+spec_frozen_sha256: 0f7b528836c5c44e0be204d06a6712e2930976650191dae12e98adb330bdc9dd
 ---
 
 # PO-Briefing: feat-175-app-store-auftritt
@@ -12,22 +12,22 @@ spec_frozen_sha256: 8a3e1d67e127d0e0a0ead3574b604e96b06964324e1a44da832ea8869d88
 
 ## Was gebaut wird
 
-Alle Pflichtangaben für den App Store werden ausgefüllt, sodass Restock zur Prüfung einreichbar ist.
+Restock wird in App Store Connect vollständig ausgefüllt, damit ein Build ohne fehlende Pflichtangaben zur Prüfung einreichbar ist.
 
 ## Definition of Done
 
-Prüfskript meldet für Version 1.0 keine fehlende Pflichtangabe; eingereicht wird nur auf dein ausdrückliches Wort.
+Das Prüfskript meldet für Version 1.0 keine fehlende Pflichtangabe; eingereicht wird nur auf dein ausdrückliches Wort.
 
 ## Wie geprüft wird
 
-Automatische Tests prüfen Datenschutz-Angaben und Texte; Angaben in App Store Connect werden nur gegengelesen, nicht von Apple abgenommen.
+Automatische Tests prüfen Datenschutz-Angaben und Texte; die Einträge bei Apple werden nur gegengelesen, nicht von Apple abgenommen.
 
 ## Kritische Anmerkungen
 
-- Datenschutz-URL: bestehende Seite ist falsch, Zugang zur Domain ungeklärt; ohne Berichtigung nicht einreichbar. Kaufprodukte: drei statt vier, wie beschlossen.
-- Datentyp-Einordnung (Kaufverlauf, Kennung „nicht verknüpft“) ist Schlussfolgerung, Apple entscheidet im Review; Teil B2 ist mit ~520 Zeilen zu groß.
-- Nur auf dein Wort: Upload Build 37, Einreichen. Store-Texte (de/en) stehen wörtlich in der Spec, Abschnitt „Texte“, zur Freigabe.
+- Nachgebessert: sechs statt fünf Datenarten, weil der Open-Prices-Beitrag Daten an Dritte schickt; Datenschutz-URL bleibt falsch, Zugang ungeklärt.
+- Datenart-Einordnung ist Schlussfolgerung, Apple entscheidet im Review; Teil B2 ist mit etwa 520 Zeilen zu groß.
+- Nur auf dein Wort: Upload von Build 37 und Einreichen.
 
 ## Freigabe-Frage
 
-Gibst du Spec und Store-Texte frei, obwohl die Datenschutz-URL noch ungeklärt ist?
+Gibst du die nachgebesserte Spec samt Store-Texten frei, obwohl die Datenschutz-URL noch ungeklärt ist?
