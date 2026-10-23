@@ -1,0 +1,65 @@
+<title>Fußnote Preise teilen</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  /* Layout: je Variante eine Zeile mit vier Einstellungs-Ausschnitten (an/aus, hell/dunkel). */
+  :root { --bg:#f6f4ef; --fg:#1d1b16; --muted:#6a655b; --rule:#d9d4c8; --panel:#fff; --font:"IBM Plex Sans",system-ui,sans-serif }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#16150f; --fg:#ece8de; --muted:#a39d90; --rule:#37342b; --panel:#201e17; color-scheme:dark } }
+  :root[data-theme="dark"]{ --bg:#16150f; --fg:#ece8de; --muted:#a39d90; --rule:#37342b; --panel:#201e17; color-scheme:dark }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.45;margin:0;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  main{max-width:1080px;margin:0 auto;display:grid;gap:24px}
+  h1{font-size:1.5rem;margin:0;text-wrap:balance}
+  h2{font-size:1rem;margin:0;text-wrap:balance}
+  p{margin:0;max-width:68ch}
+  .muted{color:var(--muted);font-size:.9rem}
+  .variant{border:1px solid var(--rule);border-radius:12px;padding:16px;background:var(--panel);display:grid;gap:12px}
+  .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:520px){.grid{grid-template-columns:1fr}}
+  .cell{min-width:0;display:grid;gap:6px;align-content:start}
+  .cap{font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .light{--canvas:rgb(245,242,233);--surface:rgb(253,251,244);--ink:rgb(32,29,22);--sec:rgb(111,106,91);--hair:rgba(32,29,22,.13);--on:rgb(102,111,56);--off:rgba(32,29,22,.2)}
+  .dark{--canvas:rgb(20,19,16);--surface:rgb(29,28,22);--ink:rgb(235,231,218);--sec:rgb(162,155,138);--hair:rgba(235,231,218,.13);--on:rgb(167,174,107);--off:rgba(235,231,218,.2)}
+  .set{background:var(--canvas);color:var(--ink);border:1px solid var(--rule);border-radius:16px;padding:12px;font-family:-apple-system,"SF Pro Text",var(--font);font-size:13px}
+  .rows{background:var(--surface);border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+  .tg{flex:none;width:36px;height:22px;border-radius:11px;background:var(--off);position:relative}
+  .tg.on{background:var(--on)}
+  .tg::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff}
+  .tg.on::after{left:16px}
+  .foot{font-size:11px;color:var(--sec);padding:6px 4px 0;line-height:1.35}
+  .bad{outline:2px solid #c0392b;outline-offset:2px;border-radius:4px}
+</style>
+<main>
+  <header style="display:grid;gap:8px">
+    <h1>Fußnote unter „Preise anonym mit anderen teilen“</h1>
+    <p class="muted">Einstellungen → Funktionen. Je Variante: Schalter an und aus, hell und dunkel.</p>
+  </header>
+  <div id="root" style="display:grid;gap:24px"></div>
+</main>
+<script>
+  var CORE = "Teilt beim Bon-Scan und bei „Preis eintragen“ nur Artikel, Ladenkette, Preis und Datum – ohne Namen, Foto oder Filiale. Preise anderer Nutzer erscheinen als „Community“.";
+  var OFF_B = "Du teilst nichts. Preise anderer Nutzer siehst du weiterhin als „Community“.";
+  var variants = [
+    { id: "h0", title: "Heute", note: "Bei „aus“ steht trotzdem „Voreingestellt an.“ (Durchlauf 4 aus #186, rot markiert).",
+      on: "Voreingestellt an. " + CORE, off: "Voreingestellt an. " + CORE, badOff: true },
+    { id: "ha", title: "Entwurf A (Empfehlung): „Voreingestellt an.“ streichen, ein Text für beide Zustände",
+      note: "Keine Logik, eine Übersetzung weniger. Die Voreinstellung erklärt schon der Erst-Hinweis. Grenze: Bei „aus“ liest sich „Teilt …“ als Beschreibung des Schalters, nicht als Zustand.",
+      on: CORE, off: CORE },
+    { id: "hb", title: "Alternative B: Text nach Schalterstand",
+      note: "Bei „aus“ sagt die Zeile, was jetzt gilt. Kostet zwei Texte je Sprache und eine Fallunterscheidung in der Ansicht.",
+      on: CORE, off: OFF_B }
+  ];
+  var cells = [["An · hell","light",true],["Aus · hell","light",false],["An · dunkel","dark",true],["Aus · dunkel","dark",false]];
+  var html = "";
+  variants.forEach(function (v) {
+    html += '<section class="variant" aria-labelledby="' + v.id + '"><h2 id="' + v.id + '">' + v.title + '</h2><p class="muted">' + v.note + '</p><div class="grid">';
+    cells.forEach(function (c) {
+      var text = c[2] ? v.on : v.off;
+      var bad = (!c[2] && v.badOff) ? " bad" : "";
+      html += '<div class="cell"><span class="cap">' + c[0] + '</span><div class="set ' + c[1] + '"><div class="rows"><span>Preise anonym mit anderen teilen</span><i class="tg' + (c[2] ? " on" : "") + '"></i></div><p class="foot' + bad + '">' + text + '</p></div></div>';
+    });
+    html += "</div></section>";
+  });
+  document.getElementById("root").innerHTML = html;
+</script>

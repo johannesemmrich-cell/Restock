@@ -11,9 +11,6 @@ import XCTest
 /// ganzen Lauf. Frischer Zustand nur über den Aufräumer `-clearCommunityPricesNoticeForUITests`
 /// (entfernt Merker und Schalter-Schlüssel), in `setUp` und `tearDown`.
 ///
-/// Issue #208: Jeder Start, der speichern kann, setzt `-blockCommunityContributionsForUITests`, damit
-/// „Weiter teilen“ keinen echten Beitrag an die CloudKit-Entwicklungsumgebung sendet.
-///
 /// Spec: docs/specs/services/community-prices-erst-hinweis.md (AC-1 bis AC-5, AC-14).
 final class CommunityShareNoticeUITests: XCTestCase {
 
@@ -26,7 +23,8 @@ final class CommunityShareNoticeUITests: XCTestCase {
     }
 
     private static let cleanup = ["-hasCompletedOnboarding", "YES",
-                                  "-clearCommunityPricesNoticeForUITests", "-clearReceiptReviewSeedForUITests"]
+                                  "-clearCommunityPricesNoticeForUITests", "-clearReceiptReviewSeedForUITests",
+                                  "-discardCommunityPricesForUITests", "-clearDiscardedCommunityPricesForUITests"]
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -51,7 +49,7 @@ final class CommunityShareNoticeUITests: XCTestCase {
     private func openedReview(freshNotice: Bool) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewForUITests",
-                                "-blockCommunityContributionsForUITests"]
+                                "-discardCommunityPricesForUITests"]
         if freshNotice { app.launchArguments += ["-clearCommunityPricesNoticeForUITests"] }
         UITestLaunch.start(app, expecting: app.descendants(matching: .any)
                             .matching(identifier: "receiptReview.sectionHeader").firstMatch,

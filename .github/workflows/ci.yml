@@ -37,7 +37,7 @@ jobs:
           python3 -I scripts/build-price-catalog.py --check
           for t in scripts/test_price_catalog_build.py \
                    scripts/test_open_prices_medians.py \
-                   scripts/test_ui_tests_block_community_contributions.py \
+                   scripts/test_ui_tests_discard_community_prices.py \
                    scripts/test_inmemory_containers_no_cloudkit.py; do
             echo "== $t"; python3 -I "$t" || exit 1
           done

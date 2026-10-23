@@ -94,12 +94,3 @@ eintragen“). DEBUG-Aufräumer `-clearCommunityPricesNoticeForUITests`; Bestand
 `-communityPricesNoticeShown YES`. Offene Grenzen: „Preis eintragen“ ohne UI-Test, Bestandsnutzer
 sehen den Hinweis einmal, nichts auf Geräten geprüft. Details:
 `docs/specs/services/community-prices-erst-hinweis.md`.
-
-Nacharbeiten (Issue #208, 2026-10-22): Die Fußnote unter dem Schalter folgt dem Schalterstand
-(`settings.community.footer` an, `settings.community.footer.off` aus; „Voreingestellt an“ steht nur noch
-in `LegalView`). UI-Tests, die einen Bon speichern, setzen `-blockCommunityContributionsForUITests`;
-damit bekommt `CommunityPriceService.shared` (`defaultDatabase(arguments:)`, DEBUG) die
-`BlockedCommunityPriceDatabase`, die Speichern und Lesen ablehnt — kein UI-Testlauf erzeugt einen
-`CommunityPrice`-Record (Strukturtest `scripts/test_ui_tests_block_community_contributions.py`). Die
-Einzel-Überladung `contributeInBackground(_ contribution:)` ist entfernt. Kontext:
-`docs/context/fix-208-community-nacharbeiten.md`.

@@ -100,7 +100,8 @@ final class ReceiptReviewUITests: XCTestCase {
         // Dunkelmodus-Tests stellen das Gerät um — zurücksetzen, sonst erbt ihn der nächste Test.
         XCUIDevice.shared.appearance = .light
         let cleaner = XCUIApplication()
-        cleaner.launchArguments = ["-hasCompletedOnboarding", "YES", "-clearReceiptReviewSeedForUITests"]
+        cleaner.launchArguments = ["-hasCompletedOnboarding", "YES", "-clearReceiptReviewSeedForUITests",
+                                   "-clearDiscardedCommunityPricesForUITests"]
         cleaner.launch()
         cleaner.terminate()
     }
@@ -110,7 +111,7 @@ final class ReceiptReviewUITests: XCTestCase {
     private func launchedApp() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewForUITests",
-                                "-communityPricesNoticeShown", "YES", "-blockCommunityContributionsForUITests"]
+                                "-communityPricesNoticeShown", "YES", "-discardCommunityPricesForUITests"]
         app.launch()
         return app
     }
@@ -152,7 +153,7 @@ final class ReceiptReviewUITests: XCTestCase {
     private func launchedAppWithUnresolvedLine() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReceiptReviewUnresolvedLineForUITests",
-                                "-communityPricesNoticeShown", "YES", "-blockCommunityContributionsForUITests"]
+                                "-communityPricesNoticeShown", "YES", "-discardCommunityPricesForUITests"]
         app.launch()
         return app
     }
@@ -836,7 +837,7 @@ final class ReceiptReviewUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-premiumForScreenshots",
                                 "-seedReceiptReviewWeightLineForUITests",
-                                "-communityPricesNoticeShown", "YES", "-blockCommunityContributionsForUITests"]
+                                "-communityPricesNoticeShown", "YES", "-discardCommunityPricesForUITests"]
         app.launch()
         waitUntilSettled(app)
         XCTAssertTrue(app.navigationBars["Bon scannen — Lidl"].waitForExistence(timeout: 30),

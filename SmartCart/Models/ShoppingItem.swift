@@ -543,7 +543,7 @@ enum PriceSourceDisplay {
          "price.source.manual", "price.source.estimate", "price.source.category", "price.source.otherstore",
          "price.prompt", "price.prompt.accessibility", "price.total.estimated.count",
          "price.source.community", "price.source.community.undated", "settings.community.share", "settings.community.footer",
-         "settings.community.footer.off", "price.source.community.allchains", "price.source.community.allchains.undated",
+         "price.source.community.allchains", "price.source.community.allchains.undated",
          "settings.community.notice.title", "settings.community.notice.message",
          "settings.community.notice.share", "settings.community.notice.decline",
          "price.diagnosis.section", "price.diagnosis.entry",

@@ -258,7 +258,8 @@ spielen.
   an die Entwicklungsumgebung.
 - Nebenbefund, nicht Teil dieses Tickets: Bestands-UI-Tests senden heute bei Standard-Schalter echte Beiträge an die
   CloudKit-Entwicklungsumgebung. Mit dem Merker nicht schlimmer (sie unterdrücken den Hinweis, der Schalter bleibt an);
-  eigenes Thema.
+  eigenes Thema. Behoben in Issue #208: Die vier betroffenen Klassen (auch `CommunityShareNoticeUITests`) senden über
+  `-discardCommunityPricesForUITests` an eine Ersatz-Datenbank, siehe `docs/specs/services/community-prices-nacharbeiten.md`.
 - Nichts auf Hennings Geräten geprüft (AC-17).
 
 ## Doku-Änderungen

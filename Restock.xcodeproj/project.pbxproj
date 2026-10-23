@@ -67,6 +67,7 @@
 		C0DE1630000000000000B006 /* CommunityPriceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B005 /* CommunityPriceService.swift */; };
 		C0DE1650000000000000E002 /* AIPriceEstimationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1650000000000000E001 /* AIPriceEstimationService.swift */; };
 		C0DE1660000000000000F002 /* OpenPricesContributionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1660000000000000F001 /* OpenPricesContributionService.swift */; };
+		C0DE20800000000000000A01 /* DiscardingCommunityPriceDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE20800000000000000A02 /* DiscardingCommunityPriceDatabase.swift */; };
 		C0DE1630000000000000B008 /* CommunityPriceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B007 /* CommunityPriceTests.swift */; };
 		C0DE14540000000000000D01 /* PremiumServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE14540000000000000D02 /* PremiumServiceTests.swift */; };
 		4875ED5EEB7BE1A728289FBA /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */; };
@@ -313,6 +314,7 @@
 		C0DE1630000000000000B005 /* CommunityPriceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceService.swift; sourceTree = "<group>"; };
 		C0DE1650000000000000E001 /* AIPriceEstimationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPriceEstimationService.swift; sourceTree = "<group>"; };
 		C0DE1660000000000000F001 /* OpenPricesContributionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenPricesContributionService.swift; sourceTree = "<group>"; };
+		C0DE20800000000000000A02 /* DiscardingCommunityPriceDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscardingCommunityPriceDatabase.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B007 /* CommunityPriceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceTests.swift; sourceTree = "<group>"; };
 		C0DE14540000000000000D02 /* PremiumServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumServiceTests.swift; sourceTree = "<group>"; };
 		137F4903637F2E7F3B8FF9D7 /* SmartCartWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCartWidgets.entitlements; sourceTree = "<group>"; };
@@ -763,6 +765,7 @@
 				C0DE1630000000000000B005 /* CommunityPriceService.swift */,
 				C0DE1650000000000000E001 /* AIPriceEstimationService.swift */,
 				C0DE1660000000000000F001 /* OpenPricesContributionService.swift */,
+				C0DE20800000000000000A02 /* DiscardingCommunityPriceDatabase.swift */,
 				0F85C5353E181E9C2D3A1562 /* PhotoCompressor.swift */,
 				E779152E6FDD65092144B963 /* SharedItemPhotoService.swift */,
 				BD783E672BFB6E63873F2F47 /* StoreAssignmentOverrideService.swift */,
@@ -1164,6 +1167,7 @@
 				C0DE1630000000000000B006 /* CommunityPriceService.swift in Sources */,
 				C0DE1650000000000000E002 /* AIPriceEstimationService.swift in Sources */,
 				C0DE1660000000000000F002 /* OpenPricesContributionService.swift in Sources */,
+				C0DE20800000000000000A01 /* DiscardingCommunityPriceDatabase.swift in Sources */,
 				83F7A018CC455374AA300D07 /* SmartCartApp.swift in Sources */,
 				47C167B4A1828C9F1D437D86 /* Store.swift in Sources */,
 				A0D490DE0D31D30BD9FEF341 /* StoreCategories.swift in Sources */,
