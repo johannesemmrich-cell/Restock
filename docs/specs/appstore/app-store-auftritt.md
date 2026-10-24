@@ -70,8 +70,8 @@ aus der Zeit vor #121/#163.
 Drei Durchgänge, jeder mit höchstens 5 Dateien und ±250 LoC (Texte und Skripte zählt das LoC-Gate als Produktivcode, daher
 die Trennung). Reihenfolge A1, A2, B. Der Upload von Build 37 ist außenwirksam und folgt nur Hennings ausdrücklichem Wort.
 
-- **Affected Files:** Vereinigung aller Durchgänge A1, A2, B1, B2, B3 (Einzellisten in den Unterabschnitten).
-- **Estimated Changes:** ~90 (A1) + ~47 (A2) + ~220 (B1) + ~520 (B2, über dem Limit, wird vor Beginn vorgelegt) + ~0 (B3) = ca. 877 LoC gesamt.
+- **Affected Files:** Vereinigung aller Durchgänge A1, A2, B1, B2a, B2b, B3 (Einzellisten in den Unterabschnitten).
+- **Estimated Changes:** ~90 (A1) + ~47 (A2) + ~220 (B1) + ~330 (B2a, über dem Limit, vom PO am 2026-10-24 angenommen) + ~190 (B2b) + ~0 (B3) = ca. 877 LoC gesamt.
 
 ### Durchgang A1: Manifest und Rechtstext (4 Dateien, geschätzt +85/−6 Zeilen)
 
@@ -132,21 +132,58 @@ Tracking-Domains leer, die UserDefaults-Angabe unverändert.
 
 | Datei | Änderung |
 |-------|----------|
-| `docs/appstore/de.md`, `docs/appstore/en.md` | NEU: je Sprache `name`, `subtitle`, `keywords`, `promotional_text`, `description`, `support_url`, `privacy_url` (feste, sprachneutrale Überschriften, damit B2 beide mit einem Parser liest; kein „Was ist neu“, Apple bietet es für die erste Version nicht an) |
+| `docs/appstore/de.md`, `docs/appstore/en.md` | NEU: je Sprache `name`, `subtitle`, `keywords`, `promotional_text`, `description`, `support_url`, `privacy_url` (feste, sprachneutrale Überschriften, damit B2a/B2b beide mit einem Parser lesen; kein „Was ist neu“, Apple bietet es für die erste Version nicht an) |
 | `docs/appstore/datenschutz.md` | NEU: eine zweisprachige Seite, `## Deutsch` wortgleich mit `LegalView.privacyPolicy`, `## English` als Übersetzung (deutsche Fassung maßgeblich) |
 
-### Durchgang B2: Skripte und Strukturtests (5 Dateien, geschätzt +520 Zeilen)
+### Durchgang B2a: Schreibskript und Sicherheitstest (3 Dateien, geschätzt +330 Zeilen)
 
-- **Affected Files:** `scripts/asc_lib.py`, `scripts/asc_publish.py`, `scripts/asc_check.py`,
-  `scripts/test_asc_texts.py`, `scripts/test_asc_scripts.py`
-- **Estimated Changes:** ~520 LoC (asc_lib ~90, asc_publish ~130, asc_check ~170, Tests ~130). Das liegt über ±250; vor
-  Beginn wird B2 mit dieser Schätzung vorgelegt und bei Bedarf in B2a (`asc_lib`, `asc_publish`, `test_asc_scripts`) und
-  B2b (`asc_check`, `test_asc_texts`) geteilt.
+PO-Schnitt vom 2026-10-24: B2 (vorher 5 Dateien, ~520 Zeilen) wird in B2a und B2b geteilt. B2a enthält alles, was außen
+schreiben kann, samt dem Test, der das Schreiben einhegt (AC-10).
+
+- **Affected Files:** `scripts/asc_lib.py`, `scripts/asc_publish.py`, `scripts/test_asc_scripts.py`
+- **Estimated Changes:** ~330 LoC (asc_lib ~100, asc_publish ~120, Test ~110). Das liegt über ±250; der PO hat den Umfang am
+  2026-10-24 ausdrücklich angenommen (ein Durchgang, Skript schreibt, Trockenlauf Standard). Offen vermerkt: Das
+  LoC-Gate zählt Skripte als Produktivcode, die Schätzung kann abweichen.
 
 | Datei | Änderung |
 |-------|----------|
-| `scripts/asc_lib.py`, `scripts/asc_publish.py`, `scripts/asc_check.py` | NEU: JWT aus dem Schlüssel (Inhalt nie gelesen oder ausgegeben), Schreiben nur auf dem eigenen App-Eintrag, Gegenlesen |
-| `scripts/test_asc_texts.py`, `scripts/test_asc_scripts.py` | NEU: Strukturtests (Python, Muster wie `scripts/test_*.py`) |
+| `scripts/asc_lib.py` | NEU: `parse_texts(path)` (Abschnitte `## <name>` aus `docs/appstore/{de,en}.md`, von B2b wiederverwendet); `make_token(env, sign=…)` (ES256-JWT; Schlüsselpfad nur aus `ASC_KEY_PATH`, Key-ID und Issuer aus `ASC_KEY_ID`/`ASC_ISSUER_ID`; `aud` `appstoreconnect-v1`, `exp` ≤ `iat` + 1200 s; Signatur über `openssl dgst -sha256 -sign` als Argumentliste, DER nach R‖S (64 Byte) umgewandelt; `sign` injizierbar); `api(method, path, body, send=…)` (nur Host `api.appstoreconnect.apple.com`, nur GET/POST/PATCH, Pfad-Erlaubnisliste, Fehlermeldungen nur mit Status und Pfad, `send` injizierbar) |
+| `scripts/asc_publish.py` | NEU: Ablauf siehe unten; Trockenlauf ist Standard, Schreiben nur mit `--apply` |
+| `scripts/test_asc_scripts.py` | NEU: AC-10 und AC-10a bis AC-10h; `unittest`, nur Standardbibliothek, ohne Netz, ohne Schlüssel (Schein-`send`, Schein-`sign`) |
+
+Ablauf von `asc_publish.py`:
+
+1. Lesen und prüfen, noch ohne Schreiben: `GET /v1/apps?filter[bundleId]=com.johannesemmrich.Restock` (genau 1 Treffer);
+   `GET /v1/apps/{id}/appStoreVersions?filter[versionString]=1.0&filter[platform]=IOS` (genau 1 Treffer mit
+   `appVersionState` = `PREPARE_FOR_SUBMISSION`); `GET /v1/apps/{id}/appInfos` (genau 1 Eintrag mit `state` =
+   `PREPARE_FOR_SUBMISSION`); dann `GET …/appStoreVersionLocalizations` und `GET …/appInfoLocalizations` dieser beiden Einträge.
+   Jede Abweichung (0 oder mehr als 1 Treffer, anderer oder unbekannter Zustand) beendet das Skript mit Fehler, bevor es
+   irgendetwas schreibt.
+2. Feldzuordnung je Sprache (de-DE aus `de.md`, en-US aus `en.md`): `appStoreVersionLocalizations` ← `description`,
+   `keywords`, `promotionalText` (`promotional_text`), `supportUrl` (`support_url`), **kein** `whatsNew`;
+   `appInfoLocalizations` ← `name`, `subtitle`, `privacyPolicyUrl` (`privacy_url`).
+3. Plan: je Sprache und Ressource `PATCH /v1/appStoreVersionLocalizations/{id}` bzw. `/v1/appInfoLocalizations/{id}` nur mit den
+   abweichenden Feldern; fehlt die Sprache ganz, `POST` auf die jeweilige Sammlung mit Relationship auf die gelesene Version
+   bzw. das gelesene appInfo; eine vorhandene Sprache bekommt nie ein `POST` (sonst 409). Gleiche Werte erzeugen keinen Aufruf.
+4. Ausgabe: der Plan (Feld, alt, neu, Aktion). Ohne `--apply` endet das Skript hier (Trockenlauf, Exit 0). Mit `--apply` werden
+   die Aufrufe des Plans nacheinander ausgeführt; der erste Fehler bricht ab.
+
+Offene Grenzen von B2a: Es gibt in B2a keinen echten API-Lauf; der erste folgt in B3 auf Hennings Wort (zuerst Trockenlauf,
+dann `--apply`). Ob Name und Untertitel im Zustand des vorhandenen appInfo änderbar sind, zeigt erst B3. Bricht `--apply`
+mitten im Schreiben ab (z. B. de geschrieben, en gescheitert), wird das nicht verhindert, sondern durch Idempotenz (zweiter
+Lauf schreibt nur den Rest) und das Gegenlesen in B2b abgefangen.
+
+### Durchgang B2b: Gegenlesen und Texttest (2 Dateien, geschätzt +190 Zeilen)
+
+- **Affected Files:** `scripts/asc_check.py`, `scripts/test_asc_texts.py`
+- **Estimated Changes:** ~190 LoC (asc_check ~130, Texttest ~60). B2a und B2b zusammen bleiben bei ~520 Zeilen. B2b folgt
+  getrennt nach B2a und nutzt `parse_texts` und `api` aus `asc_lib`, ohne `asc_lib` zu ändern. Wird dabei ±250 überschritten,
+  wird B2b vor Beginn vorgelegt.
+
+| Datei | Änderung |
+|-------|----------|
+| `scripts/asc_check.py` | NEU: nur GET, Abschnitte `metadata`, `privacy-url`, `appinfo`, `iap`, `screenshots`, `build`, `status`, `--all` (AC-11 bis AC-19) |
+| `scripts/test_asc_texts.py` | NEU: dauerhafte Längen-, Begriffs- und URL-Tests über `docs/appstore/{de,en}.md` (AC-9 bis AC-9c) und Wortgleichheit `datenschutz.md` ↔ `LegalView.privacyPolicy` (AC-9d) |
 
 ### Durchgang B3: Ablauf und Belege (keine Quelldatei, Belege unter `docs/artifacts/`)
 
@@ -157,7 +194,7 @@ Tracking-Domains leer, die UserDefaults-Angabe unverändert.
   siehe Offene Grenzen). Außerhalb des Repos: ASC (Produktseite de/en, Kategorie, Altersfreigabe, Datenschutz-URL,
   Privacy-Fragebogen, Screenshots, drei In-App-Käufe samt Abo-Gruppe).
 
-Die Durchgänge folgen A1, A2, B1, B2, B3. Texte für die Datenschutzseite und der Privacy-Fragebogen folgen der Tabelle oben;
+Die Durchgänge folgen A1, A2, B1, B2a, B2b, B3. Texte für die Datenschutzseite und der Privacy-Fragebogen folgen der Tabelle oben;
 der Upload von Build 37 (außenwirksam, nur auf Wort) liegt zwischen A2 und dem Einreichen.
 
 ## Implementation Details
@@ -166,8 +203,11 @@ der Upload von Build 37 (außenwirksam, nur auf Wort) liegt zwischen A2 und dem 
 A1: Manifest-Plist um sechs Dicts erweitern (Name, Linked, Tracking=false, Purposes=[AppFunctionality]);
     LegalView-Strings ergänzen; PrivacyManifestTests liest Repo-Dateien per #filePath.
 A2: InfoPlist.strings de/en; project.yml + pbxproj Build 37; Tests ergänzen.
-B:  Texte als Dateien; asc_lib/asc_publish/asc_check: JWT signieren, PATCH/POST auf die eigene App-ID,
-    danach GET und Vergleich mit den Dateien; Screenshots per simctl aus dem Simulator.
+B1: Texte als Dateien.
+B2a: asc_lib (Parser, JWT, api), asc_publish (erst lesen und prüfen, dann PATCH/POST auf die eigene App-ID,
+    Trockenlauf Standard), test_asc_scripts (AC-10).
+B2b: asc_check (nur GET, Vergleich mit den Dateien), test_asc_texts.
+B3: echter Lauf auf Hennings Wort; Screenshots per simctl aus dem Simulator.
 ```
 
 ## Expected Behavior
@@ -313,8 +353,8 @@ ohnehin). Jedes Wort hat mehr als 2 Zeichen; Name, Firma und fremde Marken komme
 
 Sprachneutrale, feste Überschriften der Ebene 2, in dieser Reihenfolge: `## name`, `## subtitle`, `## keywords`,
 `## promotional_text`, `## description`, `## support_url`, `## privacy_url`. Unter jeder Überschrift steht der Feldwert ohne
-Codezaun und ohne Anführungszeichen (Beschreibung mit Leerzeilen und Absätzen wie oben); **kein** `whats_new`. B2 liest beide
-Dateien mit demselben Parser.
+Codezaun und ohne Anführungszeichen (Beschreibung mit Leerzeilen und Absätzen wie oben); **kein** `whats_new`. B2a und B2b lesen beide
+Dateien mit demselben Parser (`asc_lib.parse_texts`).
 
 ### Datei `docs/appstore/datenschutz.md` (B1)
 
@@ -357,6 +397,13 @@ Ablehnung wäre kein Blocker, die Kategorie ist änderbar).
 8. **(B1) Datenschutztext aus einer Repo-Datei in die App erzeugen** (eine Quelle für App und Web): würde `LegalView` umbauen,
    sprengt B1, gehört zu #214.
 9. **(B1) Englische Store-Seite erst mit 1.1:** weniger Arbeit, kippt den Beschluss „de und en“; en-US ist Standardsprache vieler Länder.
+10. **(B2a) Nur Gegenlesen automatisieren, Texte in B3 per Hand im Browser eintragen:** kleinster und sicherster Weg (kein
+    Schreibrecht im Skript), spart rund 150 Zeilen. Verliert die Wiederholbarkeit (1.1, weitere Sprachen) und fängt Tippfehler
+    erst beim Gegenlesen. Vom PO am 2026-10-24 verworfen; hätte die Entscheidung „Skript schreibt“ gekippt.
+11. **(B2a) fastlane `deliver`:** fertig, aber neue Ruby-Abhängigkeit (Projektregel: keine neuen Dependencies) und ein
+    Einreichen per Schalter, was AC-10/AC-18 schwerer garantierbar macht. Verworfen.
+12. **(B2a) B2a weiter teilen** (`asc_lib` mit Test, dann `asc_publish`): hält die Limits, aber der erste Teil hat allein keinen
+    Nutzen. Nicht gewählt; der PO nahm ~330 Zeilen in einem Durchgang an.
 
 ## Definition of Done
 
@@ -410,7 +457,7 @@ Durchgang A2
   - Nachweis: `xcodebuild test` wie AC-5 (erwartet 0 Fehlschläge) plus Simulator-Screenshots unter
     `docs/artifacts/feat-175-app-store-auftritt/`
 
-Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler und dauerhaft in B2, AC-10 in B2, AC-11 bis AC-19 in B3 gegen ASC)
+Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler und dauerhaft in B2b, AC-10 mit AC-10a bis AC-10h in B2a, AC-11 bis AC-19 in B3 gegen ASC)
 
 - **AC-9 (B1, korrigiert):** `docs/appstore/de.md` und `en.md` enthalten genau die Überschriften `## name`, `## subtitle`,
   `## keywords`, `## promotional_text`, `## description`, `## support_url`, `## privacy_url` (kein `whats_new`), jede mit
@@ -418,23 +465,59 @@ Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler und dauerhaft in B
   - Nachweis B1: Python-Einzeiler über beide Dateien, Ausgabe in `docs/artifacts/feat-175-b1-store-texte/laengen.txt`
 - **AC-9a (B1):** Grenzen eingehalten: Name 2–30 Zeichen, Untertitel ≤ 30, Werbetext ≤ 170, Beschreibung ≤ 4000,
   Schlüsselwörter ≤ 100 **Bytes** (UTF-8) und kein Wort ≤ 2 Zeichen; Werte entsprechen der Tabelle „Felder und gezählte Längen“.
-  - Nachweis B1: wie AC-9 (Zeichen- und Byte-Zahl je Feld im Artefakt); dauerhafter Test erst in B2: `python3 scripts/test_asc_texts.py`
+  - Nachweis B1: wie AC-9 (Zeichen- und Byte-Zahl je Feld im Artefakt); dauerhafter Test erst in B2b: `python3 scripts/test_asc_texts.py`
 - **AC-9b (B1):** Verbotene Begriffe fehlen in beiden Dateien (ohne Groß-/Kleinschreibung): „Nachkauf“, „Erinnerung“,
   „replenish“, „reminder“, „Open Prices“, „KI-Preis“/„AI price“, „Was ist neu“/„What's new“; die Schlüsselwörter enthalten weder
   „Einkaufsliste“ noch „shopping list“ noch „Restock“.
-  - Nachweis B1: Python-Einzeiler, Ausgabe im Artefakt; dauerhaft in B2
+  - Nachweis B1: Python-Einzeiler, Ausgabe im Artefakt; dauerhaft in B2b
 - **AC-9c (B1):** Beide Beschreibungen enthalten ausgeschrieben `https://emmrich-business.com/datenschutz` und
   `https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`; `privacy_url` ist in beiden Dateien gleich,
   `support_url` ist `https://emmrich-business.com/support.html`.
-  - Nachweis B1: Python-Einzeiler, Ausgabe im Artefakt; dauerhaft in B2
+  - Nachweis B1: Python-Einzeiler, Ausgabe im Artefakt; dauerhaft in B2b
 - **AC-9d (B1):** `docs/appstore/datenschutz.md` hat `## Deutsch` und `## English`; der Abschnitt Deutsch ist wortgleich mit
   `LegalView.privacyPolicy`; der englische Abschnitt nennt, dass die deutsche Fassung maßgeblich ist.
   - Nachweis B1: Skript-Vergleich (Python liest die Strings aus `LegalView.swift`, vergleicht normalisierte Absätze),
     Ausgabe im Artefakt
-- **AC-10:** Die ASC-Skripte rufen nur `https://api.appstoreconnect.apple.com/` auf, nur GET/POST/PATCH, nur Pfade der eigenen
-  App-ID, geben den Schlüsselinhalt nie aus und kennen keinen Einreichungs-Endpunkt (`reviewSubmissions`,
-  `appStoreVersionSubmissions`).
+- **AC-10 (B2a):** Die ASC-Skripte (`asc_lib.py`, `asc_publish.py`) rufen nur `https://api.appstoreconnect.apple.com/` auf, nur
+  GET/POST/PATCH, nur Pfade der eigenen App-ID (bzw. IDs aus deren Antworten), geben Token und Schlüsselinhalt nie aus und
+  kennen keinen Einreichungs-Endpunkt (`reviewSubmissions`, `appStoreVersionSubmissions`). Die Unterpunkte AC-10a bis AC-10h
+  machen das prüfbar; AC-10 gilt als erfüllt, wenn alle gelten.
   - Nachweis: `python3 scripts/test_asc_scripts.py` (statische Quelltextprüfung plus Aufruf mit Schein-Antworten), erwartet Exit 0
+- **AC-10a (Host, Methoden, Pfade):** `api` lehnt jeden anderen Host als `api.appstoreconnect.apple.com`, jede andere Methode
+  als GET/POST/PATCH und jeden Pfad außerhalb der Erlaubnisliste ab, bevor `send` aufgerufen wird. Erlaubt sind nur
+  `/v1/apps` mit Filter, `/v1/apps/{id}/appStoreVersions`, `/v1/apps/{id}/appInfos`,
+  `/v1/appStoreVersions/{id}/appStoreVersionLocalizations`, `/v1/appInfos/{id}/appInfoLocalizations`,
+  `/v1/appStoreVersionLocalizations[/{id}]`, `/v1/appInfoLocalizations[/{id}]`.
+  - Nachweis: Test ruft `api` mit Fremdhost, `DELETE`, `PUT`, `/v1/reviewSubmissions`, `/v1/appStoreVersionSubmissions` und `/v2/…`; erwartet Ausnahme und null Aufrufe von `send`
+- **AC-10b (nur eigene App):** In einem Durchlauf mit Schein-`send` liegen alle Pfade unter der App-ID aus der Antwort auf
+  `filter[bundleId]=com.johannesemmrich.Restock` bzw. unter IDs, die aus den Antworten auf diese Pfade stammen; kein Pfad enthält
+  eine andere ID.
+  - Nachweis: Test zeichnet alle Pfade des Schein-`send` auf und prüft sie gegen die Menge der aus Antworten stammenden IDs
+- **AC-10c (Trockenlauf schreibt nie):** Ohne `--apply` ruft `asc_publish` `send` nie mit POST oder PATCH auf und gibt den
+  geplanten Unterschied aus; Exit 0.
+  - Nachweis: Test mit abweichenden Schein-Daten, erwartet 0 Schreibaufrufe, Plan in der Ausgabe
+- **AC-10d (Zustandsprüfung vor jedem Schreiben):** Bei 0 oder mehr als 1 App, Version oder appInfo im Zustand
+  `PREPARE_FOR_SUBMISSION` sowie bei jedem anderen oder unbekannten Zustandswert bricht `asc_publish` mit Fehler (Exit ≠ 0)
+  ab, auch mit `--apply`; bis dahin gab es nur GETs.
+  - Nachweis: Test mit Schein-Antworten je Fall (z. B. `READY_FOR_REVIEW`, `WAITING_FOR_REVIEW`, zwei Versionen, leere App-Liste), erwartet Exit ≠ 0 und 0 Schreibaufrufe
+- **AC-10e (409-Vermeidung, Feldzuordnung):** Für eine vorhandene Sprache gibt es nie ein POST, sondern ein PATCH mit nur den
+  abweichenden Feldern; nur für eine fehlende Sprache ein POST (mit Relationship auf Version bzw. appInfo). Gesendet werden
+  nur `description`, `keywords`, `promotionalText`, `supportUrl` (Version) und `name`, `subtitle`, `privacyPolicyUrl`
+  (appInfo); `whatsNew` kommt nie vor.
+  - Nachweis: Test mit Schein-Daten (de vorhanden, en fehlt), erwartet je ein PATCH für de und ein POST für en, Feldnamen wie angegeben
+- **AC-10f (Idempotenz):** Ein Lauf mit `--apply` gegen Schein-Daten, die den Dateien schon gleichen, ruft weder POST noch
+  PATCH auf; ein zweiter Lauf nach einem ersten, dessen Schreibaufrufe der Schein-Zustand übernimmt, ebenso.
+  - Nachweis: Test, erwartet 0 Schreibaufrufe
+- **AC-10g (keine Geheimnisse in Ausgabe und Fehlern):** Weder Token noch Schlüsselinhalt noch der Wert von `ASC_KEY_PATH`
+  erscheinen in Ausgabe, Fehlermeldungen oder Ausnahmen; Fehlermeldungen von `api` enthalten nur Status und Pfad. Der Schlüssel
+  wird von den Skripten nie gelesen, der Pfad geht nur als Argument an `openssl`; `exp` ≤ `iat` + 1200 s, `aud`
+  `appstoreconnect-v1`; eine DER-Signatur wird mit fester Probe korrekt nach R‖S (64 Byte) umgewandelt.
+  - Nachweis: Test mit Schein-`sign` und Schein-`send`, der einen Fehler mit Token im Antworttext liefert, erwartet Meldung nur mit Status und Pfad, Ausgabe ohne Token; Test von `make_token` (Kopf, Nutzlast, Länge 64) und der Umwandlung mit fester DER-Probe
+- **AC-10h (Quelltextverbote):** Im Quelltext von `asc_lib.py` und `asc_publish.py` kommen nicht vor: `shell=True`,
+  `DELETE`, `reviewSubmissions`, `appStoreVersionSubmissions`, `whatsNew`, fremde Hosts (jede URL außer
+  `https://api.appstoreconnect.apple.com`), das Öffnen oder Lesen der Schlüsseldatei (`open(` auf `ASC_KEY_PATH`) und jede
+  Drittbibliothek (nur Standardbibliothek); `openssl` wird als Argumentliste aufgerufen.
+  - Nachweis: statische Prüfung in `scripts/test_asc_scripts.py` über den Quelltext beider Dateien
 - **AC-11:** Version 1.0 hat in de-DE und en-US Beschreibung, Schlüsselwörter, Werbetext, Support-URL (kein „Was ist neu“, für die erste Version nicht verfügbar);
   `appInfoLocalizations` haben Name, Untertitel, Datenschutz-URL; gelesene Werte sind wortgleich mit den Dateien.
   - Nachweis: `python3 scripts/asc_check.py --section metadata`, erwartet „ok“ je Feld; Protokoll
@@ -485,9 +568,9 @@ Automatisch, an die ACs oben gebunden (jedes AC erscheint):
 - AC-6, AC-7 (A2): `PrivacyManifestTests` (InfoPlist de/en, gleiche Schlüssel, Textinhalt; Build-Nummer in `project.yml` und
   `project.pbxproj`).
 - AC-8 zusätzlich: Durchlauf als Nutzer im Simulator (Datenschutzerklärung, Kamera-Text).
-- AC-9, AC-9a bis AC-9d: in B1 per Python-Einzeiler (Artefakt `docs/artifacts/feat-175-b1-store-texte/laengen.txt`); dauerhaft in B2: `python3 scripts/test_asc_texts.py` (Python, ohne Netz).
-- AC-10 (B2): `python3 scripts/test_asc_scripts.py` (ohne Netz).
-- AC-11 bis AC-19 (B3): Gegenlese-Lauf `python3 scripts/asc_check.py` gegen ASC (`--section metadata|privacy-url|appinfo|iap|
+- AC-9, AC-9a bis AC-9d: in B1 per Python-Einzeiler (Artefakt `docs/artifacts/feat-175-b1-store-texte/laengen.txt`); dauerhaft in B2b: `python3 scripts/test_asc_texts.py` (Python, ohne Netz).
+- AC-10, AC-10a bis AC-10h (B2a): `python3 scripts/test_asc_scripts.py` (ohne Netz, ohne Schlüssel, Schein-`send` und Schein-`sign`; kein echter API-Lauf).
+- AC-11 bis AC-19 (B3): Gegenlese-Lauf `python3 scripts/asc_check.py` (in B2b gebaut, in B3 gefahren) gegen ASC (`--section metadata|privacy-url|appinfo|iap|
   screenshots|build|status`, `--all`), lesend (GET); AC-14 bei Bedarf mit Beleg-Screenshots; AC-16 zusätzlich `sips`.
   Der Lauf darf mit Hennings Wort nach jedem Setzen erneut laufen.
 
@@ -530,6 +613,14 @@ Offene Grenzen:
   steht auf `.preProduction`; Hinweis an #184. Die Store-Beschreibung nennt Open Prices nicht, die Datenschutzseite beschreibt es.
 - **B1, englische Datenschutzübersetzung** ohne juristische Prüfung; die deutsche Fassung ist maßgeblich.
 - **B1, Schlüsselwörter** liegen mit 93 (de) und 87 Bytes (en) unter der Grenze; jede Änderung muss neu in Bytes gezählt werden.
+- **B2a, kein echter API-Lauf:** Die Tests laufen nur mit Schein-Antworten. Ob Apple Feldnamen, den Zustandswert
+  `PREPARE_FOR_SUBMISSION` (Version `appVersionState`, appInfo `state`) und die Pfade so annimmt, zeigt erst B3 auf Hennings Wort
+  (zuerst Trockenlauf, dann `--apply`). Die Zustandswerte stammen aus einer Abschrift von Apples OpenAPI-Dokument und
+  fastlane-Berichten, nicht aus einem eigenen Lauf.
+- **B2a, Name und Untertitel:** Ob sie im Zustand des vorhandenen appInfo änderbar sind, zeigt erst B3.
+- **B2a, Teil-Schreiben:** Bricht `--apply` mitten im Schreiben ab, bleibt ein Teilstand im Entwurf. Das Skript verhindert es
+  nicht; Idempotenz (erneuter Lauf schreibt nur den Rest) und das Gegenlesen in B2b fangen es ab. Der Entwurf ist nie eingereicht.
+- **B2a, Umfang:** ~330 statt ±250 Zeilen, vom PO am 2026-10-24 angenommen; die Schätzung kann abweichen.
 - **Nichts auf Hennings Geräten geprüft.**
 - **Dateizählung B3:** Screenshots und Protokolle unter `docs/artifacts/` sind Belege, keine Quelldateien; zählt das Gate sie
   einzeln, wird B3 nach Sprache geteilt.
@@ -553,3 +644,4 @@ Simulator-Screenshots). #175 blockiert Release 1.0.
 - 2026-10-23: Initial spec created (Entwurf, wartet auf Freigabe und die Antwort zur Datenschutz-URL).
 - 2026-10-23: Nachbesserung per PO-`override`: Der Adversary fand den Opt-in „Bons an Open Prices beitragen“ (Bonfoto, Filiale, Preise, Open-Food-Facts-Benutzername an einen Dritten), im Manifest nicht genannt. Sechs statt fünf Datentypen (neu UserID, PurchaseHistory verknüpft), Standort-Begründung, AC-1, AC-4, Alternative 4 und Offene Grenzen angepasst.
 - 2026-10-24: Durchgang B1 korrigiert und vervollständigt: kein „Was ist neu“ für 1.0, Schlüsselwörter in Bytes ohne Untertitelwörter, Beschreibung endet mit Datenschutz-URL und Standard-EULA-Link, Dateiformat mit festen Überschriften, finale Texte und Längentabelle, AC-9 bis AC-9d, Alternativen 6–9, Offene Grenzen.
+- 2026-10-24: Durchgang B2 in B2a (`asc_lib`, `asc_publish`, `test_asc_scripts`, ~330 Zeilen, PO-angenommen) und B2b (`asc_check`, `test_asc_texts`) geteilt; AC-10 in AC-10a bis AC-10h präzisiert (Trockenlauf, Zustandsprüfung, 409-Vermeidung, Idempotenz, Geheimnisse, Quelltextverbote); dauerhafte Tests AC-9 bis AC-9d in B2b; Alternativen 10–12 und Offene Grenzen zu B2a.

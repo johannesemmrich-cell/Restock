@@ -1,0 +1,20 @@
+test_api_rejects_before_send (__main__.AscScripts.test_api_rejects_before_send) ... ok
+test_api_rejects_foreign_queries_before_send (__main__.AscScripts.test_api_rejects_foreign_queries_before_send) ... ok
+test_api_turns_redirect_status_into_error (__main__.AscScripts.test_api_turns_redirect_status_into_error) ... ok
+test_default_sign_with_throwaway_key (__main__.AscScripts.test_default_sign_with_throwaway_key) ... ok
+test_der_to_raw_and_token (__main__.AscScripts.test_der_to_raw_and_token) ... ok
+test_dry_run_never_writes (__main__.AscScripts.test_dry_run_never_writes) ... ok
+test_idempotent (__main__.AscScripts.test_idempotent) ... ok
+test_live_and_draft_appinfo_picks_draft (__main__.AscScripts.test_live_and_draft_appinfo_picks_draft) ... ok
+test_no_secrets_in_output_or_errors (__main__.AscScripts.test_no_secrets_in_output_or_errors) ... ok
+test_only_own_app_and_host (__main__.AscScripts.test_only_own_app_and_host) ... ok
+test_parse_texts (__main__.AscScripts.test_parse_texts) ... ok
+test_patch_existing_post_missing (__main__.AscScripts.test_patch_existing_post_missing) ... ok
+test_source_bans (__main__.AscScripts.test_source_bans) ... ok
+test_state_checks_abort_before_writing (__main__.AscScripts.test_state_checks_abort_before_writing) ... ok
+test_urllib_send_never_follows_redirect (__main__.AscScripts.test_urllib_send_never_follows_redirect) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 1.041s
+
+OK
