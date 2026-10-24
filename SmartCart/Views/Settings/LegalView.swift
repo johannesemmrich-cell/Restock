@@ -50,7 +50,7 @@ struct LegalView: View {
 
     private let privacyPolicy = """
 **Datenschutzerklärung**
-Stand: Juni 2026
+Stand: Oktober 2026
 
 ---
 
@@ -73,8 +73,11 @@ Wenn iCloud auf deinem Gerät aktiviert ist, werden die App-Daten über Apples C
 **Barcode-Scanner**
 Beim Scannen eines Produktbarcodes wird ausschließlich die EAN-Nummer an den Open-Food-Facts-Dienst (openfoodfacts.org) übermittelt, um den Produktnamen abzufragen. Es werden keine personenbezogenen Daten übertragen. Open Food Facts ist ein gemeinnütziges Projekt mit eigener Datenschutzrichtlinie unter world.openfoodfacts.org/privacy.
 
-**Geteilte Listen (Premium)**
+**Geteilte Listen**
 Wenn du eine Einkaufsliste mit anderen teilst, werden die Listendaten (Artikelnamen, Status, Zuweisung, Preise) sowie die von dir vergebenen Anzeigenamen der Mitglieder in Apples CloudKit Public Database gespeichert. Der Zugriff erfolgt über einen Einladungscode, der ausschließlich über den Teilen-Dialog der App weitergegeben werden sollte. Es werden keine Kontodaten (z. B. Apple-ID, E-Mail) gespeichert.
+
+**Fotos geteilter Artikel**
+Fügst du einem Artikel in einer geteilten Liste ein Artikelfoto hinzu, wird das Foto ebenfalls in Apples CloudKit Public Database gespeichert und ist für alle Mitglieder dieser geteilten Liste sichtbar. Fotos von Artikeln in nicht geteilten Listen bleiben auf deinem Gerät bzw. in deiner eigenen iCloud.
 
 **Community-Preise (jederzeit abschaltbar)**
 Solange in den Einstellungen „Preise anonym mit anderen teilen" eingeschaltet ist (voreingestellt an), werden beim Bon-Scan und bei „Preis eintragen" Artikelname, Ladenkette (z. B. „Rewe"), Preis je Einheit und Datum in Apples CloudKit Public Database gespeichert — ohne deinen Namen, ohne Bonfoto, ohne Filiale oder Standort. Eine zufällige Kennung je Installation sorgt dafür, dass du je Artikel und Kette nur einen aktuellen Eintrag hältst; sie ist nicht mit deiner Apple-ID verknüpft. Preise anderer Nutzer werden nur gelesen und als „Community" angezeigt; das Lesen überträgt keine Daten über dich.
@@ -131,7 +134,7 @@ support@emmrich-business.com
 
     private let termsOfUse = """
 **Nutzungsbedingungen**
-Stand: Juni 2026
+Stand: Oktober 2026
 
 ---
 
@@ -146,9 +149,9 @@ Diese Nutzungsbedingungen gelten für die iOS-App Restock (nachfolgend „App"),
 Restock bietet digitale Einkaufslisten mit folgenden Funktionen:
 - Artikel hinzufügen, organisieren und abhaken
 - Automatische Ladenzuweisung basierend auf Kaufhistorie
-- Kassenbon-Scan und Preiserfassung (Premium)
-- Menüplanung
-- Geteilte Listen zur Zusammenarbeit (Premium / Add-on)
+- Kassenbon-Scan und Preiserfassung
+- Menüplanung (Premium)
+- Geteilte Listen zur Zusammenarbeit
 - Ausgaben-Analyse (Premium)
 
 Der genaue Funktionsumfang kann sich zwischen kostenlosen und kostenpflichtigen Versionen unterscheiden.
@@ -162,7 +165,6 @@ Bestimmte Funktionen erfordern ein Restock-Pro-Abonnement oder einen Einmalkauf.
 - **Monatliches Abo** — automatische Verlängerung monatlich
 - **Jährliches Abo** — automatische Verlängerung jährlich
 - **Einmalkauf (Lifetime)** — einmalige Zahlung, dauerhafter Zugang
-- **Geteilte Listen Add-on** — Einmalkauf für das Teilen-Feature
 
 **Automatische Verlängerung:** Abonnements verlängern sich automatisch, sofern nicht mindestens 24 Stunden vor Ende des aktuellen Zeitraums in den Apple-ID-Einstellungen gekündigt wird.
 

@@ -1,0 +1,100 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination id=9034BD4F-2D5F-49D5-B906-838326D51C95 -derivedDataPath build/dd-unit175 "-only-testing:RestockTests/PrivacyManifestTests" "-only-testing:RestockTests/LocalizationKeyParityTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/dd-unit175/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/dd-unit175/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/dd-unit175/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/dd-unit175/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/dd-unit175/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-10-23 16:38:12.493 xcodebuild[99938:7590314] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-23 16:38:25.401751+0200 Restock[105:7590988] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-23 16:38:25.424446+0200 Restock[105:7591491] [User Defaults] Could not resolve UID for user "mobile".
+2026-10-23 16:38:25.424975+0200 Restock[105:7591491] [CK] Could not read account info validation counter. (This is a potential performance issue.)
+2026-10-23 16:38:25.432675+0200 Restock[105:7591492] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1236): <NSCloudKitMirroringDelegate: 0x104f001c0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x104ea8500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/9034BD4F-2D5F-49D5-B906-838326D51C95/data/Containers/Shared/AppGroup/E04B5C94-F3D6-46A6-A422-A84485563DA2/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-23 16:38:25.432759+0200 Restock[105:7591492] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2310): <NSCloudKitMirroringDelegate: 0x104f001c0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-23 16:38:25.432804+0200 Restock[105:7591492] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2623): <NSCloudKitMirroringDelegate: 0x104f001c0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-23 16:38:25.435276+0200 Restock[105:7591492] [sync] mirror setup failed (NSCocoaErrorDomain 134400): Der Vorgang konnte nicht abgeschlossen werden. (Cocoa-Fehler 134400.)
+2026-10-23 16:38:25.488592+0200 Restock[105:7590988] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-10-23 16:38:25.705921+0200 Restock[105:7591492] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+2026-10-23 16:38:26.322123+0200 Restock[105:7590988] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+2026-10-23 16:38:26.324157+0200 Restock[105:7590988] [API] cannot add handler to 0 from 0 - dropping
+2026-10-23 16:38:26.326385+0200 Restock[105:7590988] [API] cannot add handler to 0 from 0 - dropping
+[AppDelegate] push registration succeeded, token length: 80
+Test Suite 'Selected tests' started at 2026-10-23 16:38:26.574.
+Test Suite 'RestockTests.xctest' started at 2026-10-23 16:38:26.576.
+Test Suite 'LocalizationKeyParityTests' started at 2026-10-23 16:38:26.576.
+Test Case '-[RestockTests.LocalizationKeyParityTests testBothTablesExistAndAreNotEmpty]' started.
+Test Case '-[RestockTests.LocalizationKeyParityTests testBothTablesExistAndAreNotEmpty]' passed (0.004 seconds).
+Test Case '-[RestockTests.LocalizationKeyParityTests testGermanAndEnglishHaveTheSameKeys]' started.
+Test Case '-[RestockTests.LocalizationKeyParityTests testGermanAndEnglishHaveTheSameKeys]' passed (0.001 seconds).
+Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholderExtraction]' started.
+Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholderExtraction]' passed (0.002 seconds).
+Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholdersMatchPerKey]' started.
+Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholdersMatchPerKey]' passed (0.006 seconds).
+Test Suite 'LocalizationKeyParityTests' passed at 2026-10-23 16:38:26.591.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.013 (0.015) seconds
+Test Suite 'PrivacyManifestTests' started at 2026-10-23 16:38:26.593.
+Test Case '-[RestockTests.PrivacyManifestTests testCollectedDataTypesEqualDocumentedList]' started.
+Test Case '-[RestockTests.PrivacyManifestTests testCollectedDataTypesEqualDocumentedList]' passed (0.004 seconds).
+Test Case '-[RestockTests.PrivacyManifestTests testLegalTextMentionsPhotosAndNoLongerAddOn]' started.
+Test Case '-[RestockTests.PrivacyManifestTests testLegalTextMentionsPhotosAndNoLongerAddOn]' passed (0.002 seconds).
+Test Case '-[RestockTests.PrivacyManifestTests testManifestIsPartOfBundle]' started.
+Test Case '-[RestockTests.PrivacyManifestTests testManifestIsPartOfBundle]' passed (0.002 seconds).
+Test Case '-[RestockTests.PrivacyManifestTests testNoBarcodeDataTypeDeclared]' started.
+Test Case '-[RestockTests.PrivacyManifestTests testNoBarcodeDataTypeDeclared]' passed (0.000 seconds).
+Test Case '-[RestockTests.PrivacyManifestTests testTrackingFalseAndUserDefaultsReasonKept]' started.
+Test Case '-[RestockTests.PrivacyManifestTests testTrackingFalseAndUserDefaultsReasonKept]' passed (0.000 seconds).
+Test Suite 'PrivacyManifestTests' passed at 2026-10-23 16:38:26.603.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.009 (0.010) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-10-23 16:38:26.603.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.022 (0.027) seconds
+Test Suite 'Selected tests' passed at 2026-10-23 16:38:26.603.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.022 (0.029) seconds
+2026-10-23 16:38:26.615 xcodebuild[99938:7590314] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-23 16:38:26.616 xcodebuild[99938:7590314] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-23 16:38:26.617 xcodebuild[99938:7590314] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-23 16:38:26.888 xcodebuild[99938:7590314] [MT] IDETestOperationsObserverDebug: 15.810 elapsed -- Testing started completed.
+2026-10-23 16:38:26.888 xcodebuild[99938:7590314] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-23 16:38:26.888 xcodebuild[99938:7590314] [MT] IDETestOperationsObserverDebug: 15.810 sec, +15.810 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/dd-unit175/Logs/Test/Test-Restock-2026.10.23_16-38-10-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started
+exit=0

@@ -60,6 +60,7 @@
 		C0DE1660000000000000F006 /* OpenPricesContributionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1660000000000000F005 /* OpenPricesContributionTests.swift */; };
 		C0DE1650000000000000E006 /* AIPriceEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */; };
 		C0DE1622000000000000A002 /* PriceCatalogExpansionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */; };
+		C0DE17500000000000000002 /* PrivacyManifestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE17500000000000000001 /* PrivacyManifestTests.swift */; };
 		C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */; };
 		C0DE1630000000000000B002 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
 		C0DE1630000000000000B003 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
@@ -126,6 +127,7 @@
 		CCF05C1044554FC71B37CE85 /* RecipeImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1CCE5E2CCD992195A314DA /* RecipeImportView.swift */; };
 		CD15CBC7F7ECE203FC144441 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3C52A86F4702DAAA38F3DB10 /* PrivacyInfo.xcprivacy */; };
 		D10A0619CC398EC1070C0A83 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 71849F80113C0491D3447DBC /* Localizable.strings */; };
+		A175A2000000000000000001 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A175A2000000000000000002 /* InfoPlist.strings */; };
 		D1DF4ECFAFDF255FFD0C5C55 /* SchemaVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27BD0C5EE55D1C2CCC616ED /* SchemaVersions.swift */; };
 		D1F81BBFA8DB2C7EACB7F631 /* CloudPreferencesSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 236336393E480FD30FC90DC7 /* CloudPreferencesSync.swift */; };
 		D37E2BA6393338A828F93BA0 /* PurchaseRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49543DB9877A4EABA86E2BF /* PurchaseRecord.swift */; };
@@ -309,6 +311,7 @@
 		C0DE1660000000000000F005 /* OpenPricesContributionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenPricesContributionTests.swift; sourceTree = "<group>"; };
 		C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPriceEvaluationTests.swift; sourceTree = "<group>"; };
 		C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogExpansionTests.swift; sourceTree = "<group>"; };
+		C0DE17500000000000000001 /* PrivacyManifestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyManifestTests.swift; sourceTree = "<group>"; };
 		C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationKeyParityTests.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B001 /* CommunityPriceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceCache.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B005 /* CommunityPriceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceService.swift; sourceTree = "<group>"; };
@@ -345,6 +348,7 @@
 		55FE00DB3C7B8614AD9DA385 /* StoreShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreShareSheet.swift; sourceTree = "<group>"; };
 		5A1CCE5E2CCD992195A314DA /* RecipeImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportView.swift; sourceTree = "<group>"; };
 		607111C83CB9E39ECC518AC2 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A175A2000000000000000003 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		68D7F4FB432EE17B51EBF4B1 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
 		6E7BD9F3BC448DE79398597F /* ShoppingListWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListWidget.swift; sourceTree = "<group>"; };
 		6FC528160F1AD80A0C4650A6 /* ReceiptResolutionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptResolutionService.swift; sourceTree = "<group>"; };
@@ -365,6 +369,7 @@
 		7C284A22C7B2DA626A8FD817 /* AllItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllItemsView.swift; sourceTree = "<group>"; };
 		7F284820C68BD8D5DFB6B618 /* SmartCartApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCartApp.swift; sourceTree = "<group>"; };
 		818EC8436AA31FBCC7D67776 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A175A2000000000000000004 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8201E82B5845703F82CFAAED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85CD0A3509C2B5BC3891F016 /* Generated-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Generated-Info.plist"; sourceTree = "<group>"; };
 		85D363F6318E4B4C5F6CE843 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -586,6 +591,7 @@
 			isa = PBXGroup;
 			children = (
 				C7BD628F084722440A5EE964 /* Fonts */,
+				A175A2000000000000000002 /* InfoPlist.strings */,
 				71849F80113C0491D3447DBC /* Localizable.strings */,
 			);
 			path = Resources;
@@ -818,6 +824,7 @@
 				C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */,
 				C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */,
 				C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */,
+				C0DE17500000000000000001 /* PrivacyManifestTests.swift */,
 				C0DE1630000000000000B007 /* CommunityPriceTests.swift */,
 				C0DE14540000000000000D02 /* PremiumServiceTests.swift */,
 				7784928A73C7D6A4CDAC53AF /* ReceiptParserDecathlonTests.swift */,
@@ -1049,6 +1056,7 @@
 			files = (
 				34E78219B894911B8BD58189 /* Assets.xcassets in Resources */,
 				6BA9AE00008A24FF621597EE /* ClashDisplay-Semibold.ttf in Resources */,
+				A175A2000000000000000001 /* InfoPlist.strings in Resources */,
 				D10A0619CC398EC1070C0A83 /* Localizable.strings in Resources */,
 				3AE623C4465C7562182EA6CE /* Preview Assets.xcassets in Resources */,
 				CD15CBC7F7ECE203FC144441 /* PrivacyInfo.xcprivacy in Resources */,
@@ -1251,6 +1259,7 @@
 				C0DE1650000000000000E006 /* AIPriceEvaluationTests.swift in Sources */,
 				C0DE1622000000000000A002 /* PriceCatalogExpansionTests.swift in Sources */,
 				C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */,
+				C0DE17500000000000000002 /* PrivacyManifestTests.swift in Sources */,
 				C0DE1630000000000000B008 /* CommunityPriceTests.swift in Sources */,
 				C0DE14540000000000000D01 /* PremiumServiceTests.swift in Sources */,
 				34277AF8A6B1159ABC3C3893 /* ReceiptParserDecathlonTests.swift in Sources */,
@@ -1349,6 +1358,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		A175A2000000000000000002 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A175A2000000000000000003 /* de */,
+				A175A2000000000000000004 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		71849F80113C0491D3447DBC /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1429,7 +1447,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SmartCartWidgets/SmartCartWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SmartCartWidgets/Info.plist;
@@ -1457,7 +1475,7 @@
 				CODE_SIGN_ENTITLEMENTS = SmartCart/SmartCart.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "SmartCart/Generated-Info.plist";
@@ -1548,7 +1566,7 @@
 				CODE_SIGN_ENTITLEMENTS = SmartCart/SmartCart.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "SmartCart/Generated-Info.plist";
@@ -1580,7 +1598,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SmartCartWidgets/SmartCartWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SmartCartWidgets/Info.plist;
@@ -1605,7 +1623,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = RestockShareExtension/RestockShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = RestockShareExtension/Info.plist;
@@ -1630,7 +1648,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = RestockShareExtension/RestockShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = XK87E2B3VR;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = RestockShareExtension/Info.plist;
