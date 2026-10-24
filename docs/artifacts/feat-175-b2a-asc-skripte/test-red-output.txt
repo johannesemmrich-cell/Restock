@@ -1,0 +1,125 @@
+test_api_rejects_before_send (__main__.AscScripts.test_api_rejects_before_send) ... FAIL
+test_default_sign_with_throwaway_key (__main__.AscScripts.test_default_sign_with_throwaway_key) ... FAIL
+test_der_to_raw_and_token (__main__.AscScripts.test_der_to_raw_and_token) ... FAIL
+test_dry_run_never_writes (__main__.AscScripts.test_dry_run_never_writes) ... FAIL
+test_idempotent (__main__.AscScripts.test_idempotent) ... FAIL
+test_live_and_draft_appinfo_picks_draft (__main__.AscScripts.test_live_and_draft_appinfo_picks_draft) ... FAIL
+test_no_secrets_in_output_or_errors (__main__.AscScripts.test_no_secrets_in_output_or_errors) ... FAIL
+test_only_own_app_and_host (__main__.AscScripts.test_only_own_app_and_host) ... FAIL
+test_parse_texts (__main__.AscScripts.test_parse_texts) ... FAIL
+test_patch_existing_post_missing (__main__.AscScripts.test_patch_existing_post_missing) ... FAIL
+test_source_bans (__main__.AscScripts.test_source_bans) ... FAIL
+test_state_checks_abort_before_writing (__main__.AscScripts.test_state_checks_abort_before_writing) ... FAIL
+
+======================================================================
+FAIL: test_api_rejects_before_send (__main__.AscScripts.test_api_rejects_before_send)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_default_sign_with_throwaway_key (__main__.AscScripts.test_default_sign_with_throwaway_key)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_der_to_raw_and_token (__main__.AscScripts.test_der_to_raw_and_token)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_dry_run_never_writes (__main__.AscScripts.test_dry_run_never_writes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_idempotent (__main__.AscScripts.test_idempotent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_live_and_draft_appinfo_picks_draft (__main__.AscScripts.test_live_and_draft_appinfo_picks_draft)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_no_secrets_in_output_or_errors (__main__.AscScripts.test_no_secrets_in_output_or_errors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_only_own_app_and_host (__main__.AscScripts.test_only_own_app_and_host)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_parse_texts (__main__.AscScripts.test_parse_texts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_patch_existing_post_missing (__main__.AscScripts.test_patch_existing_post_missing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_source_bans (__main__.AscScripts.test_source_bans)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+======================================================================
+FAIL: test_state_checks_abort_before_writing (__main__.AscScripts.test_state_checks_abort_before_writing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 99, in setUp
+    self.assertIsNotNone(asc_lib, "scripts/asc_lib.py und scripts/asc_publish.py fehlen")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_lib.py und scripts/asc_publish.py fehlen
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.001s
+
+FAILED (failures=12)
