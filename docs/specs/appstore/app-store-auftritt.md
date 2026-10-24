@@ -2,7 +2,7 @@
 entity_id: app-store-auftritt
 type: feature
 created: 2026-10-23
-updated: 2026-10-23
+updated: 2026-10-24
 status: draft
 version: "1.0"
 workflow: feat-175-app-store-auftritt
@@ -128,12 +128,12 @@ Tracking-Domains leer, die UserDefaults-Angabe unverändert.
 ### Durchgang B1: Store-Texte (3 Dateien, geschätzt +220 Zeilen)
 
 - **Affected Files:** `docs/appstore/de.md`, `docs/appstore/en.md`, `docs/appstore/datenschutz.md`
-- **Estimated Changes:** ~220 LoC (de.md ~55, en.md ~55, datenschutz.md zweisprachig ~110)
+- **Estimated Changes:** ~220 LoC (de.md ~55, en.md ~55, datenschutz.md zweisprachig ~110); kein App-Code, kein Build. Belegartefakt: `docs/artifacts/feat-175-b1-store-texte/laengen.txt`
 
 | Datei | Änderung |
 |-------|----------|
-| `docs/appstore/de.md`, `docs/appstore/en.md` | NEU: je Sprache Name, Untertitel, Beschreibung, Schlüsselwörter, Werbetext, „Was ist neu“, Support-URL (Abschnitte mit festen Überschriften, damit Skripte sie lesen) |
-| `docs/appstore/datenschutz.md` | NEU: Datenschutzseite als Text in Deutsch und Englisch, nach Durchgang A1 aus `LegalView` abgeleitet |
+| `docs/appstore/de.md`, `docs/appstore/en.md` | NEU: je Sprache `name`, `subtitle`, `keywords`, `promotional_text`, `description`, `support_url`, `privacy_url` (feste, sprachneutrale Überschriften, damit B2 beide mit einem Parser liest; kein „Was ist neu“, Apple bietet es für die erste Version nicht an) |
+| `docs/appstore/datenschutz.md` | NEU: eine zweisprachige Seite, `## Deutsch` wortgleich mit `LegalView.privacyPolicy`, `## English` als Übersetzung (deutsche Fassung maßgeblich) |
 
 ### Durchgang B2: Skripte und Strukturtests (5 Dateien, geschätzt +520 Zeilen)
 
@@ -183,7 +183,7 @@ B:  Texte als Dateien; asc_lib/asc_publish/asc_check: JWT signieren, PATCH/POST 
 Apple verlangt eine öffentliche Datenschutz-URL (Pflicht, belegt in der ASC-Hilfe „Manage app privacy“). Die einzige
 vorhandene Adresse ist falsch (Befund 1). **Einreichbarkeit hängt davon ab, dass diese Seite berichtigt wird**, deutsch und
 englisch, mit dem Inhalt von `docs/appstore/datenschutz.md`. Wer `emmrich-business.com` ändern kann, ist offen
-(Open Question; PO: „Unklar“, Tech Lead klärt). Die Spec trifft diese Entscheidung nicht; mögliche Wege, die Seite
+(PO 2026-10-24: wird nach B1 geklärt). Die Spec trifft diese Entscheidung nicht; mögliche Wege, die Seite
 bereitzustellen, falls der Zugang auf die Domain nicht zu bekommen ist:
 
 - (a) Berichtigung der bestehenden Seite durch den Domaininhaber (bevorzugt, URL bleibt);
@@ -202,15 +202,19 @@ Nur Funktionen, die in 1.0 für jeden Nutzer existieren (Code und CLAUDE.md gepr
 Läden, Community-Preise (voreingestellt an, abschaltbar), Siri, Widget, Live Activity, Schnell-hinzufügen-Knopf, saisonale
 Vorschläge, iCloud-Abgleich; **Pro:** Rezeptplan und Ausgaben-Analyse (`HomeView`: `PaywallRequest` nur für diese beiden).
 **Nicht genannt:** Nachkauf-Vorschläge und Tagesmitteilung (im Normalbetrieb erst 1.1, nur im Entwicklermodus sichtbar).
-Zeichenlimits sind mit Python gezählt.
+Zeichenlimits sind mit Python gezählt. Korrekturen für B1 (Recherche 2026-10-24): kein „Was ist neu“ (Apple: nicht verfügbar
+für die erste Version, developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information);
+Schlüsselwörter zählen in **Bytes** (UTF-8), ohne Wörter aus Untertitel, Name, Firma oder fremden Marken; Beschreibung endet
+mit ausgeschriebener Datenschutz-URL und Link zu Apples Standard-EULA (Abo-Richtlinie 3.1.2). **Nicht genannt:** Nachkauf und
+Erinnerungen (erst 1.1), Open Prices (läuft gegen Testserver), KI-Preisschätzung (nur Entwicklermodus). Keine Preise, keine
+Superlative, kein Bezug auf andere Apps (Richtlinie 2.3.7). Pro = Rezeptplan und Ausgaben-Analyse.
 
 ### Deutsch
 
 - **Name (≤ 30):** `Restock` (7)
 - **Untertitel (≤ 30):** `Einkaufsliste mit Ladenwahl` (27)
-- **Schlüsselwörter (≤ 100):** `Einkaufsliste,Einkaufszettel,Kassenbon,Preise,Supermarkt,Läden,Menüplan,Barcode,Ausgaben,Haushalt` (97)
+- **Schlüsselwörter (≤ 100 Bytes):** `Einkaufszettel,Kassenbon,Preise,Supermarkt,Läden,Menüplan,Barcode,Ausgaben,Haushalt,Rezepte` (91 Zeichen, 93 Bytes)
 - **Werbetext (≤ 170):** `Schreib auf, was fehlt. Restock sortiert es in den passenden Laden und lernt deinen Weg durch den Markt.`
-- **Was ist neu (1.0):** `Erste Version von Restock.`
 - **Beschreibung (≤ 4000):**
 
 ```
@@ -241,16 +245,16 @@ RESTOCK PRO
 Rezeptplan und Ausgaben-Analyse gibt es mit Restock Pro: monatlich, jährlich oder einmalig als Lifetime-Kauf. Abos verlängern sich automatisch, wenn sie nicht mindestens 24 Stunden vor Ablauf in den Apple-ID-Einstellungen gekündigt werden. Käufe lassen sich dort verwalten und wiederherstellen.
 
 Restock ist werbefrei und nutzt kein Tracking.
-Datenschutz: siehe Datenschutz-URL dieser Seite. Nutzungsbedingungen: Apples Standard-Lizenzvereinbarung.
+Datenschutz: https://emmrich-business.com/datenschutz
+Nutzungsbedingungen (Apples Standard-Lizenzvereinbarung): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 ```
 
 ### English
 
 - **Name (≤ 30):** `Restock` (7)
 - **Subtitle (≤ 30):** `Smart shopping list by store` (28)
-- **Keywords (≤ 100):** `shopping list,grocery,receipt,scanner,prices,supermarket,stores,meal plan,barcode,spending,household` (100)
+- **Keywords (≤ 100 Bytes):** `grocery,receipt,scanner,prices,supermarket,meal plan,barcode,spending,household,recipes` (87 Zeichen, 87 Bytes; „stores“ entfällt, weil „store“ im Untertitel steht)
 - **Promotional text (≤ 170):** `Jot down what's missing. Restock files it under the right store and learns your path through the supermarket.`
-- **What's new (1.0):** `First release of Restock.`
 - **Description (≤ 4000):**
 
 ```
@@ -281,11 +285,42 @@ RESTOCK PRO
 Meal plan and spending analysis come with Restock Pro: monthly, yearly or as a one-time lifetime purchase. Subscriptions renew automatically unless cancelled at least 24 hours before the end of the period in your Apple ID settings. You can manage and restore purchases there.
 
 Restock has no ads and no tracking.
-Privacy: see the privacy policy URL on this page. Terms: Apple's standard license agreement.
+Privacy policy: https://emmrich-business.com/datenschutz
+Terms of Use (Apple's standard license agreement): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 ```
 
 Die Bildunterschriften der Screenshots (de/en) werden in Durchgang B3 mit den Bildern vorgelegt (Vorschau-Regel).
 Die Texte gehen vor dem Eintragen an Henning (Freigabe), danach in `docs/appstore/de.md` und `en.md`.
+
+### Felder und gezählte Längen (B1)
+
+Gezählt mit `python3` (`len(s)`, `len(s.encode('utf-8'))`); Beschreibung ist der Text im Codeblock oben.
+
+| Feld | Grenze | Deutsch | English |
+|------|--------|---------|---------|
+| `name` | 2–30 Zeichen | 7 | 7 |
+| `subtitle` | ≤ 30 Zeichen | 27 | 28 |
+| `keywords` | ≤ 100 **Bytes** | 93 Bytes (91 Zeichen) | 87 Bytes (87 Zeichen) |
+| `promotional_text` | ≤ 170 Zeichen | 104 | 109 |
+| `description` | ≤ 4000 Zeichen | 2008 | 1844 |
+| `support_url` | – | `https://emmrich-business.com/support.html` | gleich |
+| `privacy_url` | – | `https://emmrich-business.com/datenschutz` | gleich (eine zweisprachige Seite) |
+
+Schlüsselwörter: Untertitelwörter („Einkaufsliste“, „shopping list“) fehlen mit Absicht (Apple indiziert den Untertitel
+ohnehin). Jedes Wort hat mehr als 2 Zeichen; Name, Firma und fremde Marken kommen nicht vor.
+
+### Dateiformat `docs/appstore/{de,en}.md` (B1)
+
+Sprachneutrale, feste Überschriften der Ebene 2, in dieser Reihenfolge: `## name`, `## subtitle`, `## keywords`,
+`## promotional_text`, `## description`, `## support_url`, `## privacy_url`. Unter jeder Überschrift steht der Feldwert ohne
+Codezaun und ohne Anführungszeichen (Beschreibung mit Leerzeilen und Absätzen wie oben); **kein** `whats_new`. B2 liest beide
+Dateien mit demselben Parser.
+
+### Datei `docs/appstore/datenschutz.md` (B1)
+
+Eine zweisprachige Seite: `## Deutsch` wortgleich mit `LegalView.privacyPolicy` (Stand Oktober 2026), danach `## English` als
+Übersetzung mit dem Hinweis am Anfang, dass die deutsche Fassung maßgeblich ist. Die Übersetzung ist nicht juristisch geprüft.
+Dieselbe Seite wird später unter `https://emmrich-business.com/datenschutz` veröffentlicht.
 
 ### Kategorie
 
@@ -314,6 +349,14 @@ Ablehnung wäre kein Blocker, die Kategorie ist änderbar).
    (`PrivacyManifestTests`) hält die gewählte Fassung fest.
 5. **Screenshots vom Gerät statt aus dem Simulator.** Echter Datenbestand, aber Gerätezugriff nur auf Hennings Wort (#187).
    Kippt die Annahme, dass Simulator-Bilder mit Seed reichen.
+
+6. **(B1) Zwei getrennte Datenschutzseiten** (`/datenschutz`, `/en/privacy`) statt einer zweisprachigen: sauberer je Sprache,
+   aber doppelte Pflege auf einer Domain mit offenem Zugang. Nicht empfohlen.
+7. **(B1) Nur deutsche Datenschutzseite:** Apple verlangt keine Übersetzung, englische Nutzer läsen aber einen Text, den sie
+   nicht verstehen. Kippt nichts Beschlossenes, kostet Vertrauen.
+8. **(B1) Datenschutztext aus einer Repo-Datei in die App erzeugen** (eine Quelle für App und Web): würde `LegalView` umbauen,
+   sprengt B1, gehört zu #214.
+9. **(B1) Englische Store-Seite erst mit 1.1:** weniger Arbeit, kippt den Beschluss „de und en“; en-US ist Standardsprache vieler Länder.
 
 ## Definition of Done
 
@@ -367,17 +410,32 @@ Durchgang A2
   - Nachweis: `xcodebuild test` wie AC-5 (erwartet 0 Fehlschläge) plus Simulator-Screenshots unter
     `docs/artifacts/feat-175-app-store-auftritt/`
 
-Durchgang B (AC-9 und AC-10 in B2, AC-11 bis AC-19 in B3 gegen ASC)
+Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler und dauerhaft in B2, AC-10 in B2, AC-11 bis AC-19 in B3 gegen ASC)
 
-- **AC-9:** Alle Texte in `docs/appstore/de.md` und `docs/appstore/en.md` vorhanden, Limits eingehalten (Name ≤ 30,
-  Untertitel ≤ 30, Schlüsselwörter ≤ 100, Werbetext ≤ 170, Beschreibung ≤ 4000, „Was ist neu“ ≤ 4000); Beschreibung ohne
-  „Nachkauf“ und „Erinnerung“.
-  - Nachweis: `python3 scripts/test_asc_texts.py`, erwartet alle Tests OK, Exit 0
+- **AC-9 (B1, korrigiert):** `docs/appstore/de.md` und `en.md` enthalten genau die Überschriften `## name`, `## subtitle`,
+  `## keywords`, `## promotional_text`, `## description`, `## support_url`, `## privacy_url` (kein `whats_new`), jede mit
+  nicht leerem Wert.
+  - Nachweis B1: Python-Einzeiler über beide Dateien, Ausgabe in `docs/artifacts/feat-175-b1-store-texte/laengen.txt`
+- **AC-9a (B1):** Grenzen eingehalten: Name 2–30 Zeichen, Untertitel ≤ 30, Werbetext ≤ 170, Beschreibung ≤ 4000,
+  Schlüsselwörter ≤ 100 **Bytes** (UTF-8) und kein Wort ≤ 2 Zeichen; Werte entsprechen der Tabelle „Felder und gezählte Längen“.
+  - Nachweis B1: wie AC-9 (Zeichen- und Byte-Zahl je Feld im Artefakt); dauerhafter Test erst in B2: `python3 scripts/test_asc_texts.py`
+- **AC-9b (B1):** Verbotene Begriffe fehlen in beiden Dateien (ohne Groß-/Kleinschreibung): „Nachkauf“, „Erinnerung“,
+  „replenish“, „reminder“, „Open Prices“, „KI-Preis“/„AI price“, „Was ist neu“/„What's new“; die Schlüsselwörter enthalten weder
+  „Einkaufsliste“ noch „shopping list“ noch „Restock“.
+  - Nachweis B1: Python-Einzeiler, Ausgabe im Artefakt; dauerhaft in B2
+- **AC-9c (B1):** Beide Beschreibungen enthalten ausgeschrieben `https://emmrich-business.com/datenschutz` und
+  `https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`; `privacy_url` ist in beiden Dateien gleich,
+  `support_url` ist `https://emmrich-business.com/support.html`.
+  - Nachweis B1: Python-Einzeiler, Ausgabe im Artefakt; dauerhaft in B2
+- **AC-9d (B1):** `docs/appstore/datenschutz.md` hat `## Deutsch` und `## English`; der Abschnitt Deutsch ist wortgleich mit
+  `LegalView.privacyPolicy`; der englische Abschnitt nennt, dass die deutsche Fassung maßgeblich ist.
+  - Nachweis B1: Skript-Vergleich (Python liest die Strings aus `LegalView.swift`, vergleicht normalisierte Absätze),
+    Ausgabe im Artefakt
 - **AC-10:** Die ASC-Skripte rufen nur `https://api.appstoreconnect.apple.com/` auf, nur GET/POST/PATCH, nur Pfade der eigenen
   App-ID, geben den Schlüsselinhalt nie aus und kennen keinen Einreichungs-Endpunkt (`reviewSubmissions`,
   `appStoreVersionSubmissions`).
   - Nachweis: `python3 scripts/test_asc_scripts.py` (statische Quelltextprüfung plus Aufruf mit Schein-Antworten), erwartet Exit 0
-- **AC-11:** Version 1.0 hat in de-DE und en-US Beschreibung, Schlüsselwörter, Werbetext, „Was ist neu“, Support-URL;
+- **AC-11:** Version 1.0 hat in de-DE und en-US Beschreibung, Schlüsselwörter, Werbetext, Support-URL (kein „Was ist neu“, für die erste Version nicht verfügbar);
   `appInfoLocalizations` haben Name, Untertitel, Datenschutz-URL; gelesene Werte sind wortgleich mit den Dateien.
   - Nachweis: `python3 scripts/asc_check.py --section metadata`, erwartet „ok“ je Feld; Protokoll
     `docs/artifacts/feat-175-app-store-auftritt/asc-readback.txt`
@@ -427,7 +485,7 @@ Automatisch, an die ACs oben gebunden (jedes AC erscheint):
 - AC-6, AC-7 (A2): `PrivacyManifestTests` (InfoPlist de/en, gleiche Schlüssel, Textinhalt; Build-Nummer in `project.yml` und
   `project.pbxproj`).
 - AC-8 zusätzlich: Durchlauf als Nutzer im Simulator (Datenschutzerklärung, Kamera-Text).
-- AC-9 (B2): `python3 scripts/test_asc_texts.py` (Python, ohne Netz).
+- AC-9, AC-9a bis AC-9d: in B1 per Python-Einzeiler (Artefakt `docs/artifacts/feat-175-b1-store-texte/laengen.txt`); dauerhaft in B2: `python3 scripts/test_asc_texts.py` (Python, ohne Netz).
 - AC-10 (B2): `python3 scripts/test_asc_scripts.py` (ohne Netz).
 - AC-11 bis AC-19 (B3): Gegenlese-Lauf `python3 scripts/asc_check.py` gegen ASC (`--section metadata|privacy-url|appinfo|iap|
   screenshots|build|status`, `--all`), lesend (GET); AC-14 bei Bedarf mit Beleg-Screenshots; AC-16 zusätzlich `sips`.
@@ -444,7 +502,7 @@ lokalisierten Text.
 
 Offene Grenzen:
 
-- **Datenschutz-URL:** Berichtigung der Seite hängt an jemandem mit Zugriff auf `emmrich-business.com`; ungeklärt. Ohne sie
+- **Datenschutz-URL:** Berichtigung der Seite hängt an jemandem mit Zugriff auf `emmrich-business.com`; wird nach B1 geklärt (PO 2026-10-24). Ohne sie
   ist das Ticket nicht abschließbar (AC-12).
 - **Privacy-Fragebogen per API:** nicht belegt, dass er setzbar ist; Rückfall Browser mit Beleg-Screenshots (Chrome-Werkzeug).
   Veröffentlichung („Publish“) braucht die Rolle Account Holder/Admin/App Manager, der Schlüssel hat Admin.
@@ -461,6 +519,17 @@ Offene Grenzen:
   nicht automatisiert geprüft (#178), Produkte in ASC wären hier erstmals angelegt (#175 deckt das ab).
 - **Screenshots** zeigen gesäte Daten aus dem Simulator, nicht Hennings Alltag; Gerätebild erst nach #187 und nur auf sein Wort.
   Dass nur der 6,9"-Satz nötig ist (Apple leitet kleinere ab), stammt aus Drittquellen und wird in ASC gegengeprüft.
+- **B1, Paywall ohne Links:** `PaywallView` zeigt keine Links zu Datenschutz und Nutzungsbedingungen; Ablehnungsrisiko nach
+  Abo-Richtlinie 3.1.2. Produktänderung, nicht B1: Issue #215. Die Belege für 3.1.2 sind Entwicklerberichte (Apple-Foren), Schedule 2 selbst ist nicht gelesen.
+- **B1, Support-Seite ohne Anschrift:** `emmrich-business.com/support.html` hat Kontaktformular und verschleierte E-Mail, keine
+  Anschrift; möglicher Review-Einwand, gleiche Domain-Frage wie die Datenschutzseite.
+- **B1, Datenschutzseite noch nicht online:** Wer sie auf `emmrich-business.com` stellt, wird nach B1 geklärt (PO 2026-10-24).
+  Bis dahin zeigt die Datenschutz-URL in den Texten auf die alte, falsche Seite (AC-12 bleibt blockiert).
+- **B1, `restock.html` veraltet** (Nachkauf, Rezeptfoto, „Geteilte Listen“-Add-on); gleiche Domain, nicht B1.
+- **B1, Open Prices in 1.0 sichtbar gegen den Testserver:** Einstellungen zeigen den Eintrag ohne Entwicklermodus, `environment`
+  steht auf `.preProduction`; Hinweis an #184. Die Store-Beschreibung nennt Open Prices nicht, die Datenschutzseite beschreibt es.
+- **B1, englische Datenschutzübersetzung** ohne juristische Prüfung; die deutsche Fassung ist maßgeblich.
+- **B1, Schlüsselwörter** liegen mit 93 (de) und 87 Bytes (en) unter der Grenze; jede Änderung muss neu in Bytes gezählt werden.
 - **Nichts auf Hennings Geräten geprüft.**
 - **Dateizählung B3:** Screenshots und Protokolle unter `docs/artifacts/` sind Belege, keine Quelldateien; zählt das Gate sie
   einzeln, wird B3 nach Sprache geteilt.
@@ -483,3 +552,4 @@ Simulator-Screenshots). #175 blockiert Release 1.0.
 
 - 2026-10-23: Initial spec created (Entwurf, wartet auf Freigabe und die Antwort zur Datenschutz-URL).
 - 2026-10-23: Nachbesserung per PO-`override`: Der Adversary fand den Opt-in „Bons an Open Prices beitragen“ (Bonfoto, Filiale, Preise, Open-Food-Facts-Benutzername an einen Dritten), im Manifest nicht genannt. Sechs statt fünf Datentypen (neu UserID, PurchaseHistory verknüpft), Standort-Begründung, AC-1, AC-4, Alternative 4 und Offene Grenzen angepasst.
+- 2026-10-24: Durchgang B1 korrigiert und vervollständigt: kein „Was ist neu“ für 1.0, Schlüsselwörter in Bytes ohne Untertitelwörter, Beschreibung endet mit Datenschutz-URL und Standard-EULA-Link, Dateiformat mit festen Überschriften, finale Texte und Längentabelle, AC-9 bis AC-9d, Alternativen 6–9, Offene Grenzen.
