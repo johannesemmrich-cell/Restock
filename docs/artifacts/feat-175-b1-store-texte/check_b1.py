@@ -82,7 +82,7 @@ privacy = [check_store_file(lang) for lang in ("de", "en")]
 check(privacy[0] == privacy[1] == PRIVACY_URL, f"privacy_url in beiden Dateien = {PRIVACY_URL}")
 check_privacy_page()
 
-out = "\n".join(lines) + f"\n\n{len(lines) - len(failures)} ok, {len(failures)} FAIL\n"
+out = "\n".join(lines) + f"\n\n{len(lines) - len(failures)} passed, {len(failures)} failed\n"
 print(out)
 (Path(__file__).parent / "laengen.txt").write_text(out, encoding="utf-8")
 sys.exit(1 if failures else 0)

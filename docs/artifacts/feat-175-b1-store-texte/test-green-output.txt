@@ -1,0 +1,47 @@
+ok   de: Datei docs/appstore/de.md existiert
+ok   de: Überschriften genau ['name', 'subtitle', 'keywords', 'promotional_text', 'description', 'support_url', 'privacy_url'] (gefunden ['name', 'subtitle', 'keywords', 'promotional_text', 'description', 'support_url', 'privacy_url'])
+ok   de: name nicht leer
+ok   de: subtitle nicht leer
+ok   de: keywords nicht leer
+ok   de: promotional_text nicht leer
+ok   de: description nicht leer
+ok   de: support_url nicht leer
+ok   de: privacy_url nicht leer
+ok   de: name 7 Zeichen (2–30)
+ok   de: subtitle 27 Zeichen (≤ 30)
+ok   de: promotional_text 104 Zeichen (≤ 170)
+ok   de: description 2008 Zeichen (≤ 4000)
+ok   de: keywords 93 Bytes, 91 Zeichen (≤ 100 Bytes)
+ok   de: jedes Schlüsselwort > 2 Zeichen
+ok   de: Schlüsselwörter ohne ['einkaufsliste', 'shopping list', 'restock']
+ok   de: keine verbotenen Begriffe (gefunden [])
+ok   de: Beschreibung nennt Datenschutz- und EULA-URL
+ok   de: support_url = https://emmrich-business.com/support.html
+ok   en: Datei docs/appstore/en.md existiert
+ok   en: Überschriften genau ['name', 'subtitle', 'keywords', 'promotional_text', 'description', 'support_url', 'privacy_url'] (gefunden ['name', 'subtitle', 'keywords', 'promotional_text', 'description', 'support_url', 'privacy_url'])
+ok   en: name nicht leer
+ok   en: subtitle nicht leer
+ok   en: keywords nicht leer
+ok   en: promotional_text nicht leer
+ok   en: description nicht leer
+ok   en: support_url nicht leer
+ok   en: privacy_url nicht leer
+ok   en: name 7 Zeichen (2–30)
+ok   en: subtitle 28 Zeichen (≤ 30)
+ok   en: promotional_text 109 Zeichen (≤ 170)
+ok   en: description 1844 Zeichen (≤ 4000)
+ok   en: keywords 87 Bytes, 87 Zeichen (≤ 100 Bytes)
+ok   en: jedes Schlüsselwort > 2 Zeichen
+ok   en: Schlüsselwörter ohne ['einkaufsliste', 'shopping list', 'restock']
+ok   en: keine verbotenen Begriffe (gefunden [])
+ok   en: Beschreibung nennt Datenschutz- und EULA-URL
+ok   en: support_url = https://emmrich-business.com/support.html
+ok   privacy_url in beiden Dateien = https://emmrich-business.com/datenschutz
+ok   datenschutz: Datei docs/appstore/datenschutz.md existiert
+ok   datenschutz: Abschnitte ## Deutsch und ## English
+ok   datenschutz: Deutsch wortgleich mit LegalView.privacyPolicy
+ok   datenschutz: English nennt die deutsche Fassung als maßgeblich
+
+43 passed, 0 failed
+
+exit 0

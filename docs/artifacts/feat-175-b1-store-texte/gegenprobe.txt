@@ -1,0 +1,10 @@
+Gegenprobe check_b1.py (B1, #175), 2026-10-24
+Je Fall eine Kopie von docs/appstore/*, check_b1.py und LegalView.swift im Scratch-Verzeichnis, Repo-Dateien unveraendert.
+
+(0) unveraendert: exit 0, 0 FAIL
+(a) 'Nachkauf' in de.md description: exit 1
+    FAIL de: keine verbotenen Begriffe (gefunden ['nachkauf'])
+(b) datenschutz.md Deutsch 'nicht verkauft' -> 'niemals verkauft': exit 1
+    FAIL datenschutz: Deutsch wortgleich mit LegalView.privacyPolicy
+(c) de.md keywords um ',Vorratskammer,Lebensmittel' verlaengert: exit 1
+    FAIL de: keywords 120 Bytes, 118 Zeichen (≤ 100 Bytes)
