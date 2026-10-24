@@ -239,6 +239,61 @@ class AscScripts(unittest.TestCase):
                     self.assertIsInstance(n.args[0], (ast.List, ast.Name), f"{name}: Aufruf ohne Argumentliste")
                     self.assertFalse(any(k.arg == "shell" for k in n.keywords), name)
 
+    def test_api_rejects_foreign_queries_before_send(self):  # F002/F003: nur exakte Abfragen
+        send = mock.Mock(return_value=(200, b"{}"))
+        for m, p in (("GET", "/v1/apps?filter[bundleId]=x"), ("GET", "/v1/apps"),
+                     ("GET", "/v1/apps?filter[bundleId]=com.johannesemmrich.Restock&include=builds"),
+                     ("PATCH", "/v1/appInfoLocalizations/abc?x=1"), ("POST", "/v1/appInfoLocalizations?x=1"),
+                     ("POST", "/v1/appInfoLocalizations?"), ("GET", f"/v1/apps/{APP}/appInfos?x=//evil"),
+                     ("GET", f"/v1/apps/{APP}/appInfos?"),
+                     ("GET", f"/v1/apps/{APP}/appStoreVersions?filter[versionString]=2.0&filter[platform]=IOS"),
+                     ("GET", "/v1/apps?filter[bundleId]=com.johannesemmrich.Restock\r\nX-Evil: 1")):
+            with self.assertRaises(Exception, msg=f"{m} {p!r}"):
+                asc_lib.api(m, p, token="T", send=send)
+        send.assert_not_called()
+        asc_lib.api("GET", f"/v1/apps/{APP}/appStoreVersions?filter[versionString]=1.0&filter[platform]=IOS",
+                    token="T", send=send)
+        asc_lib.api("GET", f"/v1/apps/{APP}/appInfos", token="T", send=send)
+        self.assertEqual(send.call_count, 2)
+
+    def test_urllib_send_never_follows_redirect(self):  # F001: Token geht nie zum Ziel einer Weiterleitung
+        import http.server, threading
+        hits = []
+
+        class Target(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):
+                hits.append(self.headers.get("Authorization"))
+                self.send_response(200), self.end_headers(), self.wfile.write(b"{}")
+            log_message = lambda *a: None
+
+        target = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Target)
+
+        class Redirect(Target):
+            def do_GET(self):
+                self.send_response(302)
+                self.send_header("Location", f"http://127.0.0.1:{target.server_port}/stolen")
+                self.end_headers()
+
+        origin = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Redirect)
+        for srv in (target, origin):
+            threading.Thread(target=srv.serve_forever, daemon=True).start()
+        try:
+            status, _ = asc_lib.urllib_send("GET", f"http://127.0.0.1:{origin.server_port}/v1/apps",
+                                            {"Authorization": "Bearer GEHEIM"}, None)
+        finally:
+            for srv in (target, origin):
+                srv.shutdown(), srv.server_close()
+        self.assertEqual((status, hits), (302, []))
+        proxies = [h for h in asc_lib.OPENER.handlers if isinstance(h, asc_lib.urllib.request.ProxyHandler)]
+        self.assertTrue(all(h.proxies == {} for h in proxies))
+        self.assertIsNone(asc_lib.NoRedirect().redirect_request(None, None, 302, "", {}, "http://127.0.0.1/"))
+
+    def test_api_turns_redirect_status_into_error(self):  # F001: 3xx endet als Fehler mit Status und Pfad
+        with self.assertRaises(Exception) as e:
+            asc_lib.api("GET", f"/v1/apps/{APP}/appInfos", token="GEHEIM", send=lambda *a: (302, b""))
+        self.assertIn("302", str(e.exception))
+        self.assertNotIn("GEHEIM", str(e.exception))
+
 
 if __name__ == "__main__":
     unittest.main()
