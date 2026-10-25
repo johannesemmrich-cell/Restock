@@ -239,22 +239,38 @@ final class NonFoodCategoryTests: XCTestCase {
         XCTAssertEqual(AssignmentService.assign(itemName: "Milch", to: [lidl, hornbach])?.name, "Lidl")
     }
 
-    /// Ist-Verhalten, kein Beschluss (Bestand vor #221, Änderung in #224): „Werkzeug“ steht in
-    /// `Category.variety` UND `Category.hardware`, darum zählt ein Sonstiges-Laden wie Action auch als
-    /// Baumarkt und ein Baumarkt auch als Sonstiges-Laden; unter den Kandidaten gewinnt ohne Kaufhistorie
-    /// der meistbesuchte. Ohne Baumarkt fällt Baumarkt-Ware auf den Sonstiges-Laden zurück.
-    func testVarietyStoreAlsoCountsAsHardwareStoreByVisits() {
+    /// Issue #224 (PO 2026-10-25): Ein Alles-Laden wie Action ist Rückfall-Laden. „Werkzeug“ steht in
+    /// `Category.variety` und `Category.hardware`, zählt aber für keinen Ladentyp als Kennzeichen:
+    /// Baumarkt-Ware geht zum Baumarkt, sobald es einen gibt; Elektro-Kleinkram, Deko und Haushaltswaren
+    /// bleiben beim Sonstiges-Laden, auch wenn der Baumarkt öfter besucht wird; ohne Baumarkt fällt
+    /// Baumarkt-Ware auf den Sonstiges-Laden zurück.
+    func testGeneralStoreIsFallbackOnlyAndHardwareStoreWinsHardwareItems() {
         let lidl = store("Lidl", Category.grocery, visits: 3)
         let action = store("Action", Category.variety, visits: 1)
         let hornbach = store("Hornbach", Category.hardware, visits: 0.5)
-        XCTAssertEqual(AssignmentService.assign(itemName: "OSB-Platte", to: [lidl, action, hornbach])?.name, "Action")
+        XCTAssertEqual(AssignmentService.assign(itemName: "OSB-Platte", to: [lidl, action, hornbach])?.name, "Hornbach")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Spax 4x50", to: [lidl, action, hornbach])?.name, "Hornbach")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Akkuschrauber", to: [lidl, action, hornbach])?.name, "Hornbach",
+                       "Werkzeug ist Baumarkt-Ware, sobald ein Baumarkt da ist")
         XCTAssertEqual(AssignmentService.assign(itemName: "Batterien", to: [lidl, action, hornbach])?.name, "Action")
-        XCTAssertEqual(AssignmentService.assign(itemName: "Dübel", to: [lidl, action])?.name, "Action")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Dübel", to: [lidl, action])?.name, "Action", "ohne Baumarkt Rückfall")
         let hornbachWeekly = store("Hornbach", Category.hardware, visits: 2)
         XCTAssertEqual(AssignmentService.assign(itemName: "Lichtschalter", to: [lidl, action, hornbachWeekly])?.name, "Hornbach")
-        // Die Überlappung wirkt in beide Richtungen: Hornbach zählt über „Werkzeug“ auch als Sonstiges-Laden
-        // und gewinnt Elektro-Kleinkram, sobald er öfter besucht wird (CI-Lauf 40196002586; Folge-Issue #224).
-        XCTAssertEqual(AssignmentService.assign(itemName: "Batterien", to: [lidl, action, hornbachWeekly])?.name, "Hornbach")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Batterien", to: [lidl, action, hornbachWeekly])?.name, "Action",
+                       "Elektro-Kleinkram bleibt beim Sonstiges-Laden, auch wenn der Baumarkt öfter besucht wird")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Kerzen", to: [lidl, action, hornbachWeekly])?.name, "Action")
+    }
+
+    func testStoreTypeMarkersIgnoreSharedWerkzeug() {
+        XCTAssertTrue(Category.isHardwareStore(Category.hardware))
+        XCTAssertFalse(Category.isVarietyStore(Category.hardware))
+        XCTAssertTrue(Category.isVarietyStore(Category.variety))
+        XCTAssertFalse(Category.isHardwareStore(Category.variety))
+        // Ein Laden, der nur „Werkzeug“ nennt, zählt wie bisher als beides.
+        XCTAssertTrue(Category.isHardwareStore(["Werkzeug"]))
+        XCTAssertTrue(Category.isVarietyStore(["Werkzeug"]))
+        XCTAssertFalse(Category.isHardwareStore(Category.grocery))
+        XCTAssertFalse(Category.isVarietyStore(Category.drugstore))
     }
 
     func testStoreGroupYieldsToLongerFoodKeyword() {

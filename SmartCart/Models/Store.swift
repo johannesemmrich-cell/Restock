@@ -731,6 +731,30 @@ enum Category {
     static let hardware  = ["Werkzeug", "Eisenwaren", "Baumaterial", "Holz", "Boden & Fliesen", "Garten", "Pflanzen",
                             "Farbe & Lack", "Sanitär"]
     static let sports    = ["Sport & Outdoor", "Fitness", "Fahrrad", "Camping", "Schwimmen", "Bekleidung"]
+
+    // MARK: Ladentyp-Kennzeichen (Issue #224, PO 2026-10-25)
+    //
+    // „Werkzeug“ steht in `variety` UND `hardware`, weil Action wie Hornbach Werkzeug führen. Als
+    // Kennzeichen des Ladentyps taugt es deshalb nicht: Ein Alles-Laden (Action, Karstadt, Woolworth)
+    // ist Rückfall-Laden und verliert gegen einen Fachmarkt, ein Baumarkt ist kein Sonstiges-Laden.
+    // Nur ein Laden, der außer „Werkzeug“ kein weiteres Regal nennt, zählt wie bisher als beides.
+
+    /// Regale, die nur ein Baumarkt führt.
+    static let hardwareMarkers: [String] = hardware.filter { $0 != "Werkzeug" }
+    /// Regale, die nur ein Sonstiges-Laden führt.
+    static let varietyMarkers: [String] = variety.filter { $0 != "Werkzeug" }
+
+    /// Baumarkt: mindestens ein reines Baumarkt-Regal, oder „Werkzeug“ ohne jedes Sonstiges-Regal.
+    static func isHardwareStore(_ categories: [String]) -> Bool {
+        if categories.contains(where: { hardwareMarkers.contains($0) }) { return true }
+        return categories.contains("Werkzeug") && !categories.contains(where: { varietyMarkers.contains($0) })
+    }
+
+    /// Sonstiges-Laden: mindestens ein reines Sonstiges-Regal, oder „Werkzeug“ ohne jedes Baumarkt-Regal.
+    static func isVarietyStore(_ categories: [String]) -> Bool {
+        if categories.contains(where: { varietyMarkers.contains($0) }) { return true }
+        return categories.contains("Werkzeug") && !categories.contains(where: { hardwareMarkers.contains($0) })
+    }
 }
 
 /// Uhr für das Abschließen eines ruhenden Einkaufs (`Store.finalizeStaleTrip`). In Release immer

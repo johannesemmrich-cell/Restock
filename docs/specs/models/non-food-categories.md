@@ -135,9 +135,12 @@ eigene Liste („Pfanne“ nicht mehr Elektronik über „fan“, „Gurkenhobel
   nicht und sortiert sie nach `categoryOrder` ein.
 - Pauschalen und Stichwörter handgepflegt; die Messung ist eine Python-Nachbildung, nicht der Swift-Lauf.
   Nachweis ist der CI-Lauf (`test`, Hälften A/B unverändert).
-- Ist-Verhalten aus dem Bestand, kein Beschluss: „Werkzeug“ steht in `Category.variety` und
-  `Category.hardware`, darum gilt ein Sonstiges-Laden (Action) in `assignDetailed` auch als Baumarkt, und
-  ohne Kaufhistorie gewinnt unter den Kandidaten der meistbesuchte (Action 1×/Woche vor Hornbach 0,5×).
-  Erster CI-Lauf (40191683943) hat das belegt; Test `testVarietyStoreAlsoCountsAsHardwareStoreByVisits`
-  hält es fest. Ob Action aus der Baumarkt-Liste raus soll, ist eine Produktfrage an den PO.
+- Geklärt mit Issue #224 (PO 2026-10-25, „Hört sich sinnvoll an“): Ein Alles-Laden (Action, Karstadt,
+  Woolworth; Ladentyp „Sonstiges“) ist Rückfall-Laden. `Category.isHardwareStore`/`isVarietyStore`
+  (`Store.swift`) ignorieren das geteilte Etikett „Werkzeug“: Baumarkt ist, wer ein reines Baumarkt-Regal
+  nennt, Sonstiges-Laden, wer ein reines Sonstiges-Regal nennt; ein Laden mit nur „Werkzeug“ zählt wie
+  bisher als beides. `assignDetailed` nutzt beide Funktionen für Kandidaten und Rückfall. Belegt in den
+  CI-Läufen 40191683943 und 40196002586 (vorher: OSB-Platte → Action, Batterien → Hornbach, je nach
+  Besuchshäufigkeit). Test `testGeneralStoreIsFallbackOnlyAndHardwareStoreWinsHardwareItems`,
+  `testStoreTypeMarkersIgnoreSharedWerkzeug`.
 - Nichts auf Hennings Geräten geprüft.
