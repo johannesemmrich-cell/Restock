@@ -230,17 +230,30 @@ final class NonFoodCategoryTests: XCTestCase {
 
     func testHardwareItemsGoToTheHardwareStore() {
         let lidl = store("Lidl", Category.grocery, visits: 3)
-        let action = store("Action", Category.variety)
         let hornbach = store("Hornbach", Category.hardware, visits: 0.5)
-        XCTAssertEqual(AssignmentService.assign(itemName: "OSB-Platte", to: [lidl, action, hornbach])?.name, "Hornbach")
-        XCTAssertEqual(AssignmentService.assign(itemName: "Spax 4x50", to: [lidl, action, hornbach])?.name, "Hornbach")
-        XCTAssertEqual(AssignmentService.assign(itemName: "Laminat", to: [lidl, action, hornbach])?.name, "Hornbach")
-        XCTAssertEqual(AssignmentService.assign(itemName: "Tomatenpflanze", to: [lidl, action, hornbach])?.name, "Hornbach")
-        // Elektro-Kleinkram bleibt wie bisher beim Sonstiges-Laden, Installationsmaterial geht in den Baumarkt.
+        XCTAssertEqual(AssignmentService.assign(itemName: "OSB-Platte", to: [lidl, hornbach])?.name, "Hornbach")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Spax 4x50", to: [lidl, hornbach])?.name, "Hornbach")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Laminat", to: [lidl, hornbach])?.name, "Hornbach")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Tomatenpflanze", to: [lidl, hornbach])?.name, "Hornbach")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Lichtschalter", to: [lidl, hornbach])?.name, "Hornbach")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Milch", to: [lidl, hornbach])?.name, "Lidl")
+    }
+
+    /// Ist-Verhalten, kein Beschluss (Bestand vor #221): „Werkzeug“ steht in `Category.variety` UND
+    /// `Category.hardware`, darum zählt ein Sonstiges-Laden wie Action auch als Baumarkt, und unter den
+    /// Baumarkt-Kandidaten gewinnt ohne Kaufhistorie der meistbesuchte. Elektro-Kleinkram geht wie
+    /// bisher zum Sonstiges-Laden; ohne Baumarkt fällt Baumarkt-Ware auf ihn zurück.
+    func testVarietyStoreAlsoCountsAsHardwareStoreByVisits() {
+        let lidl = store("Lidl", Category.grocery, visits: 3)
+        let action = store("Action", Category.variety, visits: 1)
+        let hornbach = store("Hornbach", Category.hardware, visits: 0.5)
+        XCTAssertEqual(AssignmentService.assign(itemName: "OSB-Platte", to: [lidl, action, hornbach])?.name, "Action")
         XCTAssertEqual(AssignmentService.assign(itemName: "Batterien", to: [lidl, action, hornbach])?.name, "Action")
-        XCTAssertEqual(AssignmentService.assign(itemName: "Lichtschalter", to: [lidl, action, hornbach])?.name, "Hornbach")
-        // Ohne Baumarkt fällt Baumarkt-Ware wie bisher auf den Sonstiges-Laden zurück.
         XCTAssertEqual(AssignmentService.assign(itemName: "Dübel", to: [lidl, action])?.name, "Action")
+        let hornbachWeekly = store("Hornbach", Category.hardware, visits: 2)
+        XCTAssertEqual(AssignmentService.assign(itemName: "Lichtschalter", to: [lidl, action, hornbachWeekly])?.name, "Hornbach")
+        XCTAssertEqual(AssignmentService.assign(itemName: "Batterien", to: [lidl, action, hornbachWeekly])?.name, "Action",
+                       "Elektro-Kleinkram bleibt beim Sonstiges-Laden, auch wenn der Baumarkt öfter besucht wird")
     }
 
     func testStoreGroupYieldsToLongerFoodKeyword() {

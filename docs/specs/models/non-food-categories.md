@@ -135,4 +135,9 @@ eigene Liste („Pfanne“ nicht mehr Elektronik über „fan“, „Gurkenhobel
   nicht und sortiert sie nach `categoryOrder` ein.
 - Pauschalen und Stichwörter handgepflegt; die Messung ist eine Python-Nachbildung, nicht der Swift-Lauf.
   Nachweis ist der CI-Lauf (`test`, Hälften A/B unverändert).
+- Ist-Verhalten aus dem Bestand, kein Beschluss: „Werkzeug“ steht in `Category.variety` und
+  `Category.hardware`, darum gilt ein Sonstiges-Laden (Action) in `assignDetailed` auch als Baumarkt, und
+  ohne Kaufhistorie gewinnt unter den Kandidaten der meistbesuchte (Action 1×/Woche vor Hornbach 0,5×).
+  Erster CI-Lauf (40191683943) hat das belegt; Test `testVarietyStoreAlsoCountsAsHardwareStoreByVisits`
+  hält es fest. Ob Action aus der Baumarkt-Liste raus soll, ist eine Produktfrage an den PO.
 - Nichts auf Hennings Geräten geprüft.
