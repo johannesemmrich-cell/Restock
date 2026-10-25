@@ -2,7 +2,7 @@
 entity_id: app-store-auftritt
 type: feature
 created: 2026-10-23
-updated: 2026-10-24
+updated: 2026-10-25
 status: draft
 version: "1.0"
 workflow: feat-175-app-store-auftritt
@@ -67,11 +67,11 @@ aus der Zeit vor #121/#163.
 
 ## Scope
 
-Drei Durchgänge, jeder mit höchstens 5 Dateien und ±250 LoC (Texte und Skripte zählt das LoC-Gate als Produktivcode, daher
-die Trennung). Reihenfolge A1, A2, B. Der Upload von Build 37 ist außenwirksam und folgt nur Hennings ausdrücklichem Wort.
+Sechs Durchgänge, jeder mit höchstens 5 Dateien und ±250 LoC, wo der PO nichts anderes angenommen hat (B2a, B2b; Texte und
+Skripte zählt das LoC-Gate als Produktivcode, daher die Trennung). Reihenfolge A1, A2, B1, B2a, B2b, B3. Der Upload von Build 37 ist außenwirksam und folgt nur Hennings ausdrücklichem Wort.
 
 - **Affected Files:** Vereinigung aller Durchgänge A1, A2, B1, B2a, B2b, B3 (Einzellisten in den Unterabschnitten).
-- **Estimated Changes:** ~90 (A1) + ~47 (A2) + ~220 (B1) + ~330 (B2a, über dem Limit, vom PO am 2026-10-24 angenommen) + ~190 (B2b) + ~0 (B3) = ca. 877 LoC gesamt.
+- **Estimated Changes:** ~90 (A1) + ~47 (A2) + ~220 (B1) + ~330 (B2a, über dem Limit, vom PO am 2026-10-24 angenommen) + ~460 (B2b, über dem Limit, vom PO am 2026-10-25 mit „Ein Durchgang“ angenommen) + ~0 (B3) = ca. 1147 LoC gesamt.
 
 ### Durchgang A1: Manifest und Rechtstext (4 Dateien, geschätzt +85/−6 Zeilen)
 
@@ -147,7 +147,7 @@ schreiben kann, samt dem Test, der das Schreiben einhegt (AC-10).
 
 | Datei | Änderung |
 |-------|----------|
-| `scripts/asc_lib.py` | NEU: `parse_texts(path)` (Abschnitte `## <name>` aus `docs/appstore/{de,en}.md`, von B2b wiederverwendet); `make_token(env, sign=…)` (ES256-JWT; Schlüsselpfad nur aus `ASC_KEY_PATH`, Key-ID und Issuer aus `ASC_KEY_ID`/`ASC_ISSUER_ID`; `aud` `appstoreconnect-v1`, `exp` ≤ `iat` + 1200 s; Signatur über `openssl dgst -sha256 -sign` als Argumentliste, DER nach R‖S (64 Byte) umgewandelt; `sign` injizierbar); `api(method, path, body, send=…)` (nur Host `api.appstoreconnect.apple.com`, nur GET/POST/PATCH, Pfad-Erlaubnisliste, Fehlermeldungen nur mit Status und Pfad, `send` injizierbar) |
+| `scripts/asc_lib.py` | NEU: `parse_texts(path)` (Abschnitte `## <name>` aus `docs/appstore/{de,en}.md`, von B2b wiederverwendet); `make_token(env, sign=…)` (ES256-JWT; Schlüsselpfad nur aus `ASC_KEY_PATH`, Key-ID und Issuer aus `ASC_KEY_ID`/`ASC_ISSUER_ID`; `aud` `appstoreconnect-v1`, `exp` ≤ `iat` + 1200 s; Signatur über `openssl dgst -sha256 -sign` als Argumentliste, DER nach R‖S (64 Byte) umgewandelt; `sign` injizierbar); Konstante `BUNDLE`; `urllib_send(method, url, headers, data)` (Opener ohne Proxy, ohne Weiterleitung, von B2b wiederverwendet); `api(method, path, token, send=urllib_send, body=None)` (nur Host `api.appstoreconnect.apple.com`, nur GET/POST/PATCH, Pfad-Erlaubnisliste, Fehlermeldungen nur mit Status und Pfad, `send` injizierbar) |
 | `scripts/asc_publish.py` | NEU: Ablauf siehe unten; Trockenlauf ist Standard, Schreiben nur mit `--apply` |
 | `scripts/test_asc_scripts.py` | NEU: AC-10 und AC-10a bis AC-10h; `unittest`, nur Standardbibliothek, ohne Netz, ohne Schlüssel (Schein-`send`, Schein-`sign`) |
 
@@ -173,17 +173,63 @@ dann `--apply`). Ob Name und Untertitel im Zustand des vorhandenen appInfo ände
 mitten im Schreiben ab (z. B. de geschrieben, en gescheitert), wird das nicht verhindert, sondern durch Idempotenz (zweiter
 Lauf schreibt nur den Rest) und das Gegenlesen in B2b abgefangen.
 
-### Durchgang B2b: Gegenlesen und Texttest (2 Dateien, geschätzt +190 Zeilen)
+### Durchgang B2b: Gegenlesen, Texttest und CI-Anschluss (5 Dateien, geschätzt +460 Zeilen)
 
-- **Affected Files:** `scripts/asc_check.py`, `scripts/test_asc_texts.py`
-- **Estimated Changes:** ~190 LoC (asc_check ~130, Texttest ~60). B2a und B2b zusammen bleiben bei ~520 Zeilen. B2b folgt
-  getrennt nach B2a und nutzt `parse_texts` und `api` aus `asc_lib`, ohne `asc_lib` zu ändern. Wird dabei ±250 überschritten,
-  wird B2b vor Beginn vorgelegt.
+- **Affected Files:** `scripts/asc_check.py` (NEU), `scripts/test_asc_check.py` (NEU), `scripts/test_asc_texts.py` (NEU),
+  `.github/workflows/ci.yml` (MODIFY), diese Spec (Doku)
+- **Estimated Changes:** ~460 LoC (asc_check ~240, test_asc_check ~150, test_asc_texts ~70, ci.yml ~+3). Das liegt über ±250;
+  der PO hat den Umfang am 2026-10-25 mit „Ein Durchgang“ ausdrücklich angenommen (5 Dateien, davon 3 neu). Offen vermerkt:
+  Das LoC-Gate zählt Skripte als Produktivcode, die Schätzung kann abweichen. Die frühere Schätzung (~190, zwei Dateien) übersah
+  den Test für `asc_check`, den eigenen Lesezaun und den CI-Anschluss.
+- **Technischer Weg:** `asc_check` bekommt einen **eigenen, reinen GET-Zaun** (`read(path)`): fester Host
+  `api.appstoreconnect.apple.com`, nur GET, eigene Leseliste der Pfadmuster, Pfade nur unter IDs aus Antworten (wie AC-10b). Genutzt
+  werden `make_token`, `urllib_send` (ohne Proxy, ohne Weiterleitung), `parse_texts` und `BUNDLE` aus `asc_lib`. `asc_lib` bleibt
+  **unverändert**; der B2a-Test, der `GET /v1/apps/{id}/builds` in `api` verbietet, bleibt gültig. `asc_check` kennt keine
+  Schreibmethoden. `main(argv, env, send, sign, out)` ist wie bei `asc_publish` injizierbar.
 
 | Datei | Änderung |
 |-------|----------|
-| `scripts/asc_check.py` | NEU: nur GET, Abschnitte `metadata`, `privacy-url`, `appinfo`, `iap`, `screenshots`, `build`, `status`, `--all` (AC-11 bis AC-19) |
-| `scripts/test_asc_texts.py` | NEU: dauerhafte Längen-, Begriffs- und URL-Tests über `docs/appstore/{de,en}.md` (AC-9 bis AC-9c) und Wortgleichheit `datenschutz.md` ↔ `LegalView.privacyPolicy` (AC-9d) |
+| `scripts/asc_check.py` | NEU: Abschnitte `metadata`, `privacy-url`, `appinfo`, `iap`, `screenshots`, `build`, `review`, `status`, `--all` (AC-11 bis AC-19, AC-17a); Ausgabe je Prüfpunkt „ok“ oder „Abweichung: Feld, Soll, Ist“; Protokollkopf mit Zeitstempel und Commit-Kennung |
+| `scripts/test_asc_check.py` | NEU: AC-20 bis AC-20g mit Schein-Antworten (Muster `FakeASC` aus `test_asc_scripts.py`), ohne Netz und ohne Schlüssel |
+| `scripts/test_asc_texts.py` | NEU: AC-9 bis AC-9e dauerhaft (Logik aus `docs/artifacts/feat-175-b1-store-texte/check_b1.py` plus Merkpunkt F001 der B1-Prüfung) und AC-21-Strukturcheck |
+| `.github/workflows/ci.yml` | MODIFY: `scripts/test_asc_texts.py`, `scripts/test_asc_scripts.py`, `scripts/test_asc_check.py` in die Schleife des Schritts „Strukturtests (Python)“ (`python3 -I`, kein Netz, kein Schlüssel); bisher läuft keiner der ASC-Tests in CI |
+| `docs/specs/appstore/app-store-auftritt.md` | MODIFY: diese Überarbeitung |
+
+Leseliste von `asc_check` (nach App Store Connect API 4.4/4.4.1; Quellen im Kontextdokument `docs/context/feat-175-b2b-asc-check.md`),
+alle nur GET und nur unter IDs aus Antworten:
+
+- `/v1/apps?filter[bundleId]=com.johannesemmrich.Restock` (Attribut `contentRightsDeclaration` für Content Rights);
+- `/v1/apps/{id}/appStoreVersions?filter[versionString]=1.0&filter[platform]=IOS`, `/v1/apps/{id}/appInfos`;
+- `/v1/appStoreVersions/{id}/appStoreVersionLocalizations`, `/v1/appInfos/{id}/appInfoLocalizations`;
+- `/v1/appInfos/{id}/ageRatingDeclaration` (der Pfad `appStoreVersions/{id}/ageRatingDeclaration` ist seit API 4.4 entfernt),
+  `/v1/appInfos/{id}/primaryCategory` und `…/secondaryCategory`;
+- `/v1/apps/{id}/appPriceSchedule`, `/v1/apps/{id}/appAvailabilityV2`, `/v1/appStoreVersions/{id}/appStoreReviewDetail`;
+- `/v1/apps/{id}/inAppPurchasesV2`, `/v1/apps/{id}/subscriptionGroups`, die Abos der Gruppe und die Lokalisierungen und
+  Review-Screenshots der Produkte (Pfadform der Lokalisierungen: seit API 4.4.1 versionsbasiert, am echten Konto erst in B3
+  belegt, im Test nur gegen Schein-Antworten);
+- `/v1/appStoreVersionLocalizations/{id}/appScreenshotSets` und `/v1/appScreenshotSets/{id}/appScreenshots`;
+- `/v1/appStoreVersions/{id}/build`.
+
+Datenschutz-URL (AC-12): eigener Abruf in `asc_check` **ohne** Authorization-Header über einen eigenen Opener ohne Weiterleitung,
+nur `https://emmrich-business.com/datenschutz`; dieser Abruf läuft nie über den ASC-Zaun, das Token geht nie an den Fremdhost.
+Der Inhalt wird mit `docs/appstore/datenschutz.md` verglichen (Wortgleichheit normalisierter Absätze je Sprachabschnitt, weil die Datei
+die Quelle der Seite ist; Schlüsselbegriffe allein würden eine teilweise veraltete Seite durchlassen).
+
+Screenshots (AC-16): Geprüft werden Bildbreite und -höhe aus den Attributen der Screenshots (1320×2868), nicht der Enum-Name
+des Display-Typs (6,9" ist in der Doku nicht aufgeführt, Forum: größter iPhone-Wert weiter `APP_IPHONE_67`).
+
+Export-Compliance (AC-17): Der Abschnitt `build` liest am zugeordneten Build das Attribut `usesNonExemptEncryption` und verlangt
+`false` (gesetzt über `ITSAppUsesNonExemptEncryption` im Build); fehlt der Wert (`null`, Frage unbeantwortet), ist das eine
+Abweichung, kein „ok“.
+
+Review-Kontakt (AC-17a): Der Abschnitt `review` liest `/v1/appStoreVersions/{id}/appStoreReviewDetail` und verlangt nicht leere
+`contactFirstName`, `contactLastName`, `contactEmail`, `contactPhone`; `demoAccountRequired` ist `false` (die App hat kein
+Konto). Fehlt die Ressource ganz, ist das eine Abweichung. Die Werte selbst (Name, Telefon, E-Mail) stehen nicht im Repo, werden
+nicht mit einem Sollwert verglichen und erscheinen in der Ausgabe nur als „gesetzt“/„leer“, nie im Klartext.
+
+App Privacy (AC-14): Dafür gibt es keine öffentliche API (fastlane nutzt eine inoffizielle Schnittstelle mit Apple-ID). Der Abschnitt
+meldet „manuell belegen“, nie „ok“. `--all` endet mit Exit 0 nur, wenn alle API-Abschnitte „ok“ sind, und nennt AC-14
+ausdrücklich als offen.
 
 ### Durchgang B3: Ablauf und Belege (keine Quelldatei, Belege unter `docs/artifacts/`)
 
@@ -206,7 +252,8 @@ A2: InfoPlist.strings de/en; project.yml + pbxproj Build 37; Tests ergänzen.
 B1: Texte als Dateien.
 B2a: asc_lib (Parser, JWT, api), asc_publish (erst lesen und prüfen, dann PATCH/POST auf die eigene App-ID,
     Trockenlauf Standard), test_asc_scripts (AC-10).
-B2b: asc_check (nur GET, Vergleich mit den Dateien), test_asc_texts.
+B2b: asc_check (eigener GET-Zaun, Vergleich mit den Dateien), test_asc_check (Schein-Antworten), test_asc_texts,
+    ci.yml (drei ASC-Tests im Python-Strukturtest-Schritt).
 B3: echter Lauf auf Hennings Wort; Screenshots per simctl aus dem Simulator.
 ```
 
@@ -404,6 +451,12 @@ Ablehnung wäre kein Blocker, die Kategorie ist änderbar).
     Einreichen per Schalter, was AC-10/AC-18 schwerer garantierbar macht. Verworfen.
 12. **(B2a) B2a weiter teilen** (`asc_lib` mit Test, dann `asc_publish`): hält die Limits, aber der erste Teil hat allein keinen
     Nutzen. Nicht gewählt; der PO nahm ~330 Zeilen in einem Durchgang an.
+13. **(B2b) Leseliste in `asc_lib.ALLOWED` erweitern** statt eigenem Zaun in `asc_check`: weniger Code, aber ein Zaun für das
+    schreibende und das lesende Skript zugleich, `asc_lib` würde geändert und der B2a-Test (builds verboten) kippen. Verworfen;
+    der eigene reine GET-Zaun ist kleiner im Risiko, weil `asc_check` Schreibmethoden gar nicht kennt.
+14. **(B2b) Kein Gegenlese-Skript, B3 nur per Browser mit Beleg-Screenshots:** spart rund 390 Zeilen, aber AC-19 („ein Lauf, alles
+    ok“) wäre nie wiederholbar, und jede Nachkorrektur kostete einen neuen Browser-Durchgang. Verworfen; kippt AC-11 bis AC-19 als
+    Skript-Nachweis. Für AC-14 bleibt der Browser ohnehin der Weg.
 
 ## Definition of Done
 
@@ -412,10 +465,11 @@ Fertig ist das Ticket, wenn:
 - [ ] Jede Acceptance Criterion unten durch einen automatischen Test belegt ist. **Ausnahme: Nachweis-ACs, weil die Prüfung
   außerhalb der App in App Store Connect liegt:** AC-11 (Texte in ASC), AC-12 (Datenschutz-URL), AC-13 (Kategorie,
   Altersfreigabe), AC-14 (Privacy-Fragebogen), AC-15 (Käufe), AC-16 (Screenshots), AC-17 (Build), AC-18 (Status),
-  AC-19 (Gesamtcheckliste). Sie sind durch das Gegenlese-Skript `scripts/asc_check.py` bzw. Beleg-Screenshots belegt.
+  AC-19 (Gesamtcheckliste). Sie sind durch das Gegenlese-Skript `scripts/asc_check.py` bzw. Beleg-Screenshots belegt (AC-14 nur
+  per Beleg-Screenshots, die API kann es nicht lesen). Das Werkzeug selbst ist durch AC-20 bis AC-21 automatisch belegt.
   AC-3, AC-7 und AC-8 sind zusätzlich durch Befehle am Release-Bundle bzw. den Simulator-Durchlauf belegt
-- [ ] `python3 scripts/asc_check.py --all` meldet für Version 1.0 keine fehlende Pflichtangabe (AC-19): ein Build ist
-  einreichbar; das Einreichen selbst bleibt Hennings ausdrückliches Wort
+- [ ] `python3 scripts/asc_check.py --all` meldet für Version 1.0 keine fehlende Pflichtangabe (AC-19; alle API-Abschnitte ok, AC-14
+  per Beleg): ein Build ist einreichbar; das Einreichen selbst bleibt Hennings ausdrückliches Wort
 - [ ] Die Datenschutz-URL zeigt die berichtigte Seite in Deutsch und Englisch (AC-12)
 - [ ] Keine bestehende Funktion ist dabei kaputtgegangen (Regressionslauf grün, AC-5 und AC-8)
 
@@ -457,27 +511,37 @@ Durchgang A2
   - Nachweis: `xcodebuild test` wie AC-5 (erwartet 0 Fehlschläge) plus Simulator-Screenshots unter
     `docs/artifacts/feat-175-app-store-auftritt/`
 
-Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler und dauerhaft in B2b, AC-10 mit AC-10a bis AC-10h in B2a, AC-11 bis AC-19 in B3 gegen ASC)
+Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b mit AC-9e; AC-10 mit AC-10a bis AC-10h in B2a; AC-20 und AC-21 in B2b; AC-11 bis AC-19 in B3 gegen ASC, ihre Abschnitte in B2b gegen Schein-Antworten getestet)
 
 - **AC-9 (B1, korrigiert):** `docs/appstore/de.md` und `en.md` enthalten genau die Überschriften `## name`, `## subtitle`,
   `## keywords`, `## promotional_text`, `## description`, `## support_url`, `## privacy_url` (kein `whats_new`), jede mit
   nicht leerem Wert.
   - Nachweis B1: Python-Einzeiler über beide Dateien, Ausgabe in `docs/artifacts/feat-175-b1-store-texte/laengen.txt`
+  - Test: `scripts/test_asc_texts.py::test_sections_present_and_not_empty`
 - **AC-9a (B1):** Grenzen eingehalten: Name 2–30 Zeichen, Untertitel ≤ 30, Werbetext ≤ 170, Beschreibung ≤ 4000,
   Schlüsselwörter ≤ 100 **Bytes** (UTF-8) und kein Wort ≤ 2 Zeichen; Werte entsprechen der Tabelle „Felder und gezählte Längen“.
-  - Nachweis B1: wie AC-9 (Zeichen- und Byte-Zahl je Feld im Artefakt); dauerhafter Test erst in B2b: `python3 scripts/test_asc_texts.py`
+  - Nachweis B1: wie AC-9 (Zeichen- und Byte-Zahl je Feld im Artefakt)
+  - Test: `scripts/test_asc_texts.py::test_field_limits`, `::test_keywords_bytes_and_word_length`
 - **AC-9b (B1):** Verbotene Begriffe fehlen in beiden Dateien (ohne Groß-/Kleinschreibung): „Nachkauf“, „Erinnerung“,
   „replenish“, „reminder“, „Open Prices“, „KI-Preis“/„AI price“, „Was ist neu“/„What's new“; die Schlüsselwörter enthalten weder
   „Einkaufsliste“ noch „shopping list“ noch „Restock“.
-  - Nachweis B1: Python-Einzeiler, Ausgabe im Artefakt; dauerhaft in B2b
+  - Nachweis B1: Python-Einzeiler, Ausgabe im Artefakt
+  - Test: `scripts/test_asc_texts.py::test_forbidden_terms_absent`
 - **AC-9c (B1):** Beide Beschreibungen enthalten ausgeschrieben `https://emmrich-business.com/datenschutz` und
   `https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`; `privacy_url` ist in beiden Dateien gleich,
   `support_url` ist `https://emmrich-business.com/support.html`.
-  - Nachweis B1: Python-Einzeiler, Ausgabe im Artefakt; dauerhaft in B2b
+  - Nachweis B1: Python-Einzeiler, Ausgabe im Artefakt
+  - Test: `scripts/test_asc_texts.py::test_description_links_and_urls`
 - **AC-9d (B1):** `docs/appstore/datenschutz.md` hat `## Deutsch` und `## English`; der Abschnitt Deutsch ist wortgleich mit
   `LegalView.privacyPolicy`; der englische Abschnitt nennt, dass die deutsche Fassung maßgeblich ist.
   - Nachweis B1: Skript-Vergleich (Python liest die Strings aus `LegalView.swift`, vergleicht normalisierte Absätze),
     Ausgabe im Artefakt
+  - Test: `scripts/test_asc_texts.py::test_privacy_page_equals_legalview`, `::test_privacy_page_english_notes_german_authoritative`
+- **AC-9e (B2b, Merkpunkt F001 der B1-Prüfung):** Die Werte in `docs/appstore/{de,en}.md` gleichen dem Spec-Wortlaut (Abschnitt
+  „Texte“ und Tabelle „Felder und gezählte Längen“: Name, Untertitel, Schlüsselwörter, Werbetext, `support_url`, `privacy_url`;
+  die Beschreibung gleicht dem Codeblock der Spec), und beide Dateien sowie `datenschutz.md` enthalten keine unsichtbaren Zeichen
+  (U+200B, U+00A0, U+00AD, U+FEFF), kein CR (`\r`) und kein BOM am Dateianfang.
+  - Test: `scripts/test_asc_texts.py::test_values_equal_spec_wording`, `::test_no_invisible_characters_cr_or_bom`
 - **AC-10 (B2a):** Die ASC-Skripte (`asc_lib.py`, `asc_publish.py`) rufen nur `https://api.appstoreconnect.apple.com/` auf, nur
   GET/POST/PATCH, nur Pfade der eigenen App-ID (bzw. IDs aus deren Antworten), geben Token und Schlüsselinhalt nie aus und
   kennen keinen Einreichungs-Endpunkt (`reviewSubmissions`, `appStoreVersionSubmissions`). Die Unterpunkte AC-10a bis AC-10h
@@ -520,39 +584,93 @@ Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler und dauerhaft in B
   - Nachweis: statische Prüfung in `scripts/test_asc_scripts.py` über den Quelltext beider Dateien
 - **AC-11:** Version 1.0 hat in de-DE und en-US Beschreibung, Schlüsselwörter, Werbetext, Support-URL (kein „Was ist neu“, für die erste Version nicht verfügbar);
   `appInfoLocalizations` haben Name, Untertitel, Datenschutz-URL; gelesene Werte sind wortgleich mit den Dateien.
-  - Nachweis: `python3 scripts/asc_check.py --section metadata`, erwartet „ok“ je Feld; Protokoll
+  - Test: `scripts/test_asc_check.py::test_section_metadata_ok_and_deviation`
+  - Nachweis (B3): `python3 scripts/asc_check.py --section metadata`, erwartet „ok“ je Feld; Protokoll
     `docs/artifacts/feat-175-app-store-auftritt/asc-readback.txt`
 - **AC-12:** Die Datenschutz-URL liefert HTTP 200, enthält die Aussagen zu öffentlicher Datenbank (geteilte Läden,
   Community-Preise, Fotos), Kamera/Bon-Scan und Open Food Facts, auf Deutsch und Englisch. **Blockiert, solange die Seite
   nicht berichtigt ist.**
-  - Nachweis: `python3 scripts/asc_check.py --section privacy-url`, erwartet „ok“ für beide Sprachen
+  - Test: `scripts/test_asc_check.py::test_section_privacy_url_ok_and_deviation` (Abruf ohne Authorization-Header: AC-20b)
+  - Nachweis (B3): `python3 scripts/asc_check.py --section privacy-url`, erwartet „ok“ für beide Sprachen
 - **AC-13:** Kategorie (primär, sekundär), Altersfreigabe, Content Rights, Preise/Verfügbarkeit der App sind gesetzt.
-  - Nachweis: `python3 scripts/asc_check.py --section appinfo` (GET `appInfos`, `ageRatingDeclarations`,
-    `appPriceSchedule`), erwartet „ok“; was die API nicht kann, per Browser mit Beleg-Screenshot
+  - Test: `scripts/test_asc_check.py::test_section_appinfo_ok_and_deviation`
+  - Nachweis (B3): `python3 scripts/asc_check.py --section appinfo` (GET `appInfos`, `appInfos/{id}/ageRatingDeclaration`,
+    `primaryCategory`/`secondaryCategory`, `appPriceSchedule`, `appAvailabilityV2`, Attribut `contentRightsDeclaration` der App),
+    erwartet „ok“; was die API nicht kann, per Browser mit Beleg-Screenshot
 - **AC-14:** Der App-Privacy-Fragebogen ist ausgefüllt und veröffentlicht mit genau den sechs Datentypen der Tabelle (Name, Sonstige Nutzerinhalte, Fotos oder Videos, Kaufverlauf, Nutzer-ID verknüpft; Geräte-ID nicht verknüpft), Tracking nein.
-  - Nachweis: API-Gegenlesen, falls möglich; sonst Beleg-Screenshots der ASC-Seite „App Privacy“ im Zustand
-    „Veröffentlicht“ unter `docs/artifacts/feat-175-app-store-auftritt/`, zeilenweise gegen die Tabelle abgeglichen
+  Dafür gibt es keine öffentliche API; `asc_check` meldet „manuell belegen“ (nie „ok“).
+  - Test: `scripts/test_asc_check.py::test_privacy_questionnaire_reports_manual` (AC-20d)
+  - Nachweis (B3): Beleg-Screenshots der ASC-Seite „App Privacy“ im Zustand „Veröffentlicht“ unter
+    `docs/artifacts/feat-175-app-store-auftritt/`, zeilenweise gegen die Tabelle abgeglichen
 - **AC-15:** Abo-Gruppe „Restock Pro“ mit monthly und yearly sowie das nicht verbrauchbare lifetime
   (`com.johannesemmrich.smartcart.premium.{monthly,yearly,lifetime}`), Preise 1,99 / 8,99 / 14,99 € (Basisland
   Deutschland), Anzeigename und Beschreibung de und en, je ein Review-Screenshot; kein Produkt `sharedlists`.
-  - Nachweis: `python3 scripts/asc_check.py --section iap`, erwartet „ok“ je Produkt, Status bereit zum Einreichen (nicht eingereicht)
+  - Test: `scripts/test_asc_check.py::test_section_iap_ok_and_deviation`
+  - Nachweis (B3): `python3 scripts/asc_check.py --section iap`, erwartet „ok“ je Produkt, Status bereit zum Einreichen (nicht eingereicht)
 - **AC-16:** Ein Satz iPhone-Screenshots 6,9" (1320×2868) je Sprache in ASC, 3 bis 10 Bilder, aus dem Simulator mit
   `-premiumForScreenshots` und gesäten Daten, ohne echte Namen oder Fotos; die Bilder gehen vor dem Hochladen an Henning.
-  - Nachweis: `sips -g pixelWidth -g pixelHeight` an den Dateien unter
+  - Test: `scripts/test_asc_check.py::test_section_screenshots_checks_pixel_size_not_enum`
+  - Nachweis (B3): `sips -g pixelWidth -g pixelHeight` an den Dateien unter
     `docs/artifacts/feat-175-app-store-auftritt/screenshots/{de,en}/`, erwartet 1320×2868;
-    `python3 scripts/asc_check.py --section screenshots`, erwartet „ok“ mit 3 bis 10 Bildern je Sprache
+    `python3 scripts/asc_check.py --section screenshots`, erwartet „ok“ mit 3 bis 10 Bildern je Sprache (Maße aus den Attributen, nicht aus dem Enum-Namen)
 - **AC-17:** Build 37 oder höher (Verarbeitung abgeschlossen) ist Version 1.0 zugeordnet; Export-Compliance beantwortet
   (`ITSAppUsesNonExemptEncryption` false).
-  - Nachweis: `python3 scripts/asc_check.py --section build`, erwartet „ok“
+  - Test: `scripts/test_asc_check.py::test_section_build_ok_and_deviation`, `::test_section_build_requires_export_compliance_false`
+  - Nachweis (B3): `python3 scripts/asc_check.py --section build`, erwartet „ok“
+- **AC-17a (Review-Kontakt):** Version 1.0 hat ein `appStoreReviewDetail` mit nicht leerem Vor- und Nachnamen, E-Mail und
+  Telefon des Kontakts und `demoAccountRequired` false; die Ausgabe zeigt je Feld nur „gesetzt“ oder „leer“, nie den Wert.
+  - Test: `scripts/test_asc_check.py::test_section_review_ok_and_deviation`, `::test_section_review_never_prints_contact_values`
+  - Nachweis (B3): `python3 scripts/asc_check.py --section review`, erwartet „ok“
 - **AC-18:** Es wurde nichts eingereicht und nichts außenwirksam veröffentlicht ohne Hennings ausdrückliches Wort; der Status
   der Version ist `PREPARE_FOR_SUBMISSION`.
-  - Nachweis: `python3 scripts/asc_check.py --section status`, erwartet `PREPARE_FOR_SUBMISSION`; AC-10 verbietet die
-    Einreichungs-Endpunkte im Skript
+  - Test: `scripts/test_asc_check.py::test_section_status_ok_and_deviation`
+  - Nachweis (B3): `python3 scripts/asc_check.py --section status`, erwartet `PREPARE_FOR_SUBMISSION`; AC-10 und AC-20a/AC-20f
+    verbieten die Einreichungs-Endpunkte in den Skripten
 - **AC-19 (Definition of Done des Tickets):** Alle Abschnitte von `asc_check.py` in einem Lauf „ok“: Name, Untertitel,
-  Beschreibung, Schlüsselwörter, Support-URL, Datenschutz-URL, Kategorie, Altersfreigabe, Content Rights, App-Privacy
-  veröffentlicht, Preise/Verfügbarkeit, Build, Screenshots je Sprache, drei Käufe vollständig, Review-Kontakt/-Hinweise.
-  - Nachweis: `python3 scripts/asc_check.py --all`, erwartet Exit 0 und Protokoll `asc-readback.txt` mit Zeitstempel und
+  Beschreibung, Schlüsselwörter, Support-URL, Datenschutz-URL, Kategorie, Altersfreigabe, Content Rights,
+  Preise/Verfügbarkeit, Build, Screenshots je Sprache, drei Käufe vollständig, Review-Kontakt/-Hinweise. Der App-Privacy-Fragebogen
+  (AC-14) ist per API nicht lesbar: `--all` weist ihn als „manuell belegen“ aus; AC-19 gilt als erfüllt, wenn alle API-Abschnitte
+  „ok“ sind und der Beleg-Screenshot zu AC-14 vorliegt.
+  - Test: `scripts/test_asc_check.py::test_all_exit_zero_only_if_all_api_sections_ok` (AC-20d), `::test_protocol_has_timestamp_and_commit` (AC-20g)
+  - Nachweis (B3): `python3 scripts/asc_check.py --all`, erwartet Exit 0 und Protokoll `asc-readback.txt` mit Zeitstempel und
     Commit-Kennung
+- **AC-20 (B2b, Werkzeug selbst):** `scripts/asc_check.py` liest nur, hält Host, Methode und Leseliste ein, gibt keine Geheimnisse
+  aus und meldet Abweichungen eindeutig. AC-20 gilt als erfüllt, wenn AC-20a bis AC-20g gelten; geprüft mit Schein-Antworten
+  (Schein-`send`, Schein-`sign`, Schein-Opener), ohne Netz und ohne Schlüssel.
+  - Nachweis: `python3 scripts/test_asc_check.py`, erwartet Exit 0
+- **AC-20a (Zaun):** `read` lehnt vor `send` ab: jeden anderen Host als `api.appstoreconnect.apple.com`, jede Methode außer GET
+  (POST, PATCH, DELETE, PUT), jeden Pfad außerhalb der Leseliste (z. B. `/v1/apps/{id}/builds` mit fremder ID, `/v2/…`) und
+  die Einreichungs-Endpunkte `reviewSubmissions`, `appStoreVersionSubmissions`.
+  - Test: `scripts/test_asc_check.py::test_fence_rejects_before_send`
+- **AC-20b (Datenschutzseite, fremder Host):** Der Abruf von `https://emmrich-business.com/datenschutz` sendet keinen
+  Authorization-Header, folgt keiner Weiterleitung (3xx = Fehler mit Status) und lässt keine andere URL zu; das Token erreicht
+  den Fremdhost nie.
+  - Test: `scripts/test_asc_check.py::test_privacy_fetch_without_authorization_and_redirect`, `::test_privacy_fetch_only_exact_url`
+- **AC-20c (Abschnitte ok und Abweichung):** Jeder Abschnitt (`metadata`, `privacy-url`, `appinfo`, `iap`, `screenshots`,
+  `build`, `review`, `status`) meldet bei passenden Schein-Daten „ok“ (Exit 0) und bei abweichenden „Abweichung“ (Exit ≠ 0); die Ausgabe nennt
+  Feld, Soll und Ist.
+  - Test: `scripts/test_asc_check.py::test_section_metadata_ok_and_deviation`, `::test_section_privacy_url_ok_and_deviation`,
+    `::test_section_appinfo_ok_and_deviation`, `::test_section_iap_ok_and_deviation`,
+    `::test_section_screenshots_checks_pixel_size_not_enum`, `::test_section_build_ok_and_deviation`,
+    `::test_section_review_ok_and_deviation`, `::test_section_status_ok_and_deviation`, `::test_deviation_names_field_expected_actual`
+- **AC-20d (`--all`, App Privacy):** `--all` endet mit Exit 0 nur, wenn alle API-Abschnitte „ok“ sind; der Fragebogen (AC-14)
+  steht in der Ausgabe als „manuell belegen“, nie als „ok“. Genügt ein Abschnitt nicht, ist der Exit ≠ 0.
+  - Test: `scripts/test_asc_check.py::test_all_exit_zero_only_if_all_api_sections_ok`, `::test_privacy_questionnaire_reports_manual`
+- **AC-20e (keine Geheimnisse):** Weder Token noch Schlüsselinhalt noch der Wert von `ASC_KEY_PATH` erscheinen in Ausgabe,
+  Fehlern oder Protokoll; Fehlermeldungen des Zauns enthalten nur Status und Pfad (wie AC-10g).
+  - Test: `scripts/test_asc_check.py::test_no_secrets_in_output_or_errors`
+- **AC-20f (Quelltextverbote):** Im Quelltext von `asc_check.py` kommen nicht vor: `shell=True`, die Zeichenfolgen
+  `POST`, `PATCH`, `DELETE`, `PUT` als Methodenaufruf, `reviewSubmissions`, `appStoreVersionSubmissions`, fremde Hosts (jede
+  URL außer `https://api.appstoreconnect.apple.com` und `https://emmrich-business.com/datenschutz`), das Öffnen oder Lesen der
+  Schlüsseldatei (`open(` auf `ASC_KEY_PATH`) und jede Drittbibliothek (nur Standardbibliothek).
+  - Test: `scripts/test_asc_check.py::test_source_bans`
+- **AC-20g (Protokoll):** Die Ausgabe von `--all` beginnt mit Zeitstempel (UTC) und Commit-Kennung (`git rev-parse HEAD`
+  als Argumentliste; ist sie nicht ermittelbar, steht `unbekannt`), damit B3 die Ausgabe unverändert als `asc-readback.txt` ablegen kann.
+  - Test: `scripts/test_asc_check.py::test_protocol_has_timestamp_and_commit`
+- **AC-21 (B2b, CI):** `.github/workflows/ci.yml` führt im Schritt „Strukturtests (Python)“ `scripts/test_asc_texts.py`,
+  `scripts/test_asc_scripts.py` und `scripts/test_asc_check.py` aus (ohne Netz, ohne Schlüssel).
+  - Test: `scripts/test_asc_texts.py::test_ci_runs_asc_tests` (liest `ci.yml` und verlangt alle drei Dateinamen in der Schleife)
+  - Nachweis: grüner CI-Lauf des Pull Requests mit den drei Zeilen `== scripts/test_asc_…` im Protokoll
 
 ## Test Plan
 
@@ -568,10 +686,12 @@ Automatisch, an die ACs oben gebunden (jedes AC erscheint):
 - AC-6, AC-7 (A2): `PrivacyManifestTests` (InfoPlist de/en, gleiche Schlüssel, Textinhalt; Build-Nummer in `project.yml` und
   `project.pbxproj`).
 - AC-8 zusätzlich: Durchlauf als Nutzer im Simulator (Datenschutzerklärung, Kamera-Text).
-- AC-9, AC-9a bis AC-9d: in B1 per Python-Einzeiler (Artefakt `docs/artifacts/feat-175-b1-store-texte/laengen.txt`); dauerhaft in B2b: `python3 scripts/test_asc_texts.py` (Python, ohne Netz).
+- AC-9, AC-9a bis AC-9d: in B1 per Python-Einzeiler (Artefakt `docs/artifacts/feat-175-b1-store-texte/laengen.txt`); dauerhaft in B2b: `python3 scripts/test_asc_texts.py` (Python, ohne Netz); dort auch AC-9e und AC-21 (Strukturcheck von `ci.yml`).
 - AC-10, AC-10a bis AC-10h (B2a): `python3 scripts/test_asc_scripts.py` (ohne Netz, ohne Schlüssel, Schein-`send` und Schein-`sign`; kein echter API-Lauf).
-- AC-11 bis AC-19 (B3): Gegenlese-Lauf `python3 scripts/asc_check.py` (in B2b gebaut, in B3 gefahren) gegen ASC (`--section metadata|privacy-url|appinfo|iap|
-  screenshots|build|status`, `--all`), lesend (GET); AC-14 bei Bedarf mit Beleg-Screenshots; AC-16 zusätzlich `sips`.
+- AC-20 bis AC-20g und die Abschnitte zu AC-11 bis AC-19 samt AC-17a (B2b): `python3 scripts/test_asc_check.py` (ohne Netz, ohne Schlüssel, Schein-`send`, Schein-`sign`, Schein-Opener; kein echter API-Lauf).
+- AC-21 (B2b): die drei ASC-Tests laufen in CI (`.github/workflows/ci.yml`, Schritt „Strukturtests (Python)“); Beleg: grüner CI-Lauf.
+- AC-11 bis AC-19 mit AC-17a (B3): Gegenlese-Lauf `python3 scripts/asc_check.py` (in B2b gebaut, in B3 gefahren) gegen ASC (`--section metadata|privacy-url|appinfo|iap|
+  screenshots|build|review|status`, `--all`), lesend (GET); AC-14 immer mit Beleg-Screenshots (keine API); AC-16 zusätzlich `sips`.
   Der Lauf darf mit Hennings Wort nach jedem Setzen erneut laufen.
 
 Keine manuellen Tests und keine Geräteprüfung; Simulator nur über Wegwerf-Geräte beziehungsweise `Restock-Validate`, mit den
@@ -621,6 +741,30 @@ Offene Grenzen:
 - **B2a, Teil-Schreiben:** Bricht `--apply` mitten im Schreiben ab, bleibt ein Teilstand im Entwurf. Das Skript verhindert es
   nicht; Idempotenz (erneuter Lauf schreibt nur den Rest) und das Gegenlesen in B2b fangen es ab. Der Entwurf ist nie eingereicht.
 - **B2a, Umfang:** ~330 statt ±250 Zeilen, vom PO am 2026-10-24 angenommen; die Schätzung kann abweichen.
+- **B2b, kein echter API-Lauf vor B3:** `asc_check` ist nur gegen Schein-Antworten getestet. Die v2-Kauf-Endpunkte (`inAppPurchasesV2`,
+  versionsbasierte Lokalisierungen, API 4.4.1) und die Pfade für Kategorien, Verfügbarkeit und Review-Detail sind am echten Konto
+  unbelegt; Pfadform und Feldnamen können in B3 Anpassungen nötig machen.
+- **B2b, Kaufpfade vor B3 nachziehen (Validierung 2026-10-25):** `asc_check` liest Lokalisierung und Review-Screenshot des
+  Einmalkaufs unter `/v1/inAppPurchases/{id}/…`; Apple dokumentiert dafür `/v2/inAppPurchases/{id}/…`
+  ([Doku](https://developer.apple.com/documentation/appstoreconnectapi/in-app-purchase-app-store-review-screenshots.md)). Den
+  Preis liest es unter `/v1/inAppPurchasePriceSchedules/{id}/manualPrices` mit der Kauf-ID als Preisplan-ID; ob beide gleich sind,
+  ist nicht belegt, der sichere Weg ist `/v2/inAppPurchases/{id}/iapPriceSchedule` und dann die Kennung aus der Antwort
+  ([Forum 732527](https://developer.apple.com/forums/thread/732527)). Die beiden Preispfade (`…/manualPrices`,
+  `/v1/subscriptions/{id}/prices`) stehen im Zaun, fehlen aber in der Leseliste oben. In B3 vor dem ersten Lauf korrigieren; ein
+  falscher Pfad endet als „Fehler iap“, nie als falsches „ok“.
+- **B2b, AC-12 nur „alle Zeilen vorhanden“:** `privacy-url` verlangt jede normalisierte Zeile aus `datenschutz.md` als Teil des
+  Seitentexts, nicht getrennt je Sprachabschnitt; ein zusätzlicher veralteter Satz auf der Seite fällt nicht auf.
+- **B2b, App Privacy per API nicht lesbar:** AC-14 bleibt Beleg-Screenshot; `--all` weist ihn als „manuell belegen“ aus.
+- **B2b, AC-12 blockiert,** bis die Datenschutzseite berichtigt ist; der Vergleich mit `datenschutz.md` ist wortgleich (normalisierte
+  Absätze), jede Layout- oder Textänderung der Webseite (z. B. Navigation) kann ihn rot machen, dann ist die Normalisierung nachzuziehen.
+- **B2b, Umfang:** ~460 statt ±250 Zeilen, vom PO am 2026-10-25 mit „Ein Durchgang“ angenommen; tatsächlich ~790 Zeilen
+  (asc_check ~320, test_asc_check ~335, test_asc_texts 117), vom PO nach GREEN am 2026-10-25 mit `go` angenommen.
+- **B2b, Kategorien als Menge (Adversary F002):** `appinfo` prüft {Shopping, Produktivität} ohne Rolle, weil die Spec die umgekehrte
+  Reihenfolge als Rückfall erlaubt; welche primär ist, steht nur als Ist-Wert im Protokoll von B3.
+- **B2b, Mischfall ohne productId (Adversary F005):** Fehlt einem Produkt die productId und gibt es zugleich ein fremdes Produkt,
+  endet `iap` als „Fehler“ statt mit Einzelzeilen; Ergebnis bleibt Abweichung (Exit ≠ 0), kein falsches „ok“.
+- **B2b, Schein-Antworten vom Implementierer:** `FakeASC` bildet Apples Antworten nach eigener Lesart nach; Strukturfehler gegenüber
+  der echten API fängt der Test nicht, nur B3.
 - **Nichts auf Hennings Geräten geprüft.**
 - **Dateizählung B3:** Screenshots und Protokolle unter `docs/artifacts/` sind Belege, keine Quelldateien; zählt das Gate sie
   einzeln, wird B3 nach Sprache geteilt.
@@ -645,3 +789,5 @@ Simulator-Screenshots). #175 blockiert Release 1.0.
 - 2026-10-23: Nachbesserung per PO-`override`: Der Adversary fand den Opt-in „Bons an Open Prices beitragen“ (Bonfoto, Filiale, Preise, Open-Food-Facts-Benutzername an einen Dritten), im Manifest nicht genannt. Sechs statt fünf Datentypen (neu UserID, PurchaseHistory verknüpft), Standort-Begründung, AC-1, AC-4, Alternative 4 und Offene Grenzen angepasst.
 - 2026-10-24: Durchgang B1 korrigiert und vervollständigt: kein „Was ist neu“ für 1.0, Schlüsselwörter in Bytes ohne Untertitelwörter, Beschreibung endet mit Datenschutz-URL und Standard-EULA-Link, Dateiformat mit festen Überschriften, finale Texte und Längentabelle, AC-9 bis AC-9d, Alternativen 6–9, Offene Grenzen.
 - 2026-10-24: Durchgang B2 in B2a (`asc_lib`, `asc_publish`, `test_asc_scripts`, ~330 Zeilen, PO-angenommen) und B2b (`asc_check`, `test_asc_texts`) geteilt; AC-10 in AC-10a bis AC-10h präzisiert (Trockenlauf, Zustandsprüfung, 409-Vermeidung, Idempotenz, Geheimnisse, Quelltextverbote); dauerhafte Tests AC-9 bis AC-9d in B2b; Alternativen 10–12 und Offene Grenzen zu B2a.
+- 2026-10-25: Durchgang B2b neu gefasst: 5 Dateien (`asc_check`, `test_asc_check`, `test_asc_texts`, `ci.yml`, Spec), ~460 Zeilen (PO: „Ein Durchgang“), eigener reiner GET-Zaun statt Änderung von `asc_lib`, Leseliste nach API 4.4/4.4.1 (Altersfreigabe über `appInfos`), Datenschutz-URL-Abruf ohne Token, AC-14 „manuell belegen“, Screenshot-Prüfung über Bildmaße; neue AC-9e (F001), AC-20 bis AC-20g, AC-21; AC-9 bis AC-9d mit Testnamen; AC-11 bis AC-19 mit Schein-Test; Alternativen 13–14, Offene Grenzen zu B2b.
+- 2026-10-25: Nach dem ersten PO-Briefing: Abschnitt `review` mit AC-17a (Review-Kontakt aus `appStoreReviewDetail`, Werte nie im Klartext) und Export-Compliance im Abschnitt `build` (`usesNonExemptEncryption` false, eigener Test) ergänzt; vorher von AC-17/AC-19 verlangt, aber ohne Prüfung.
