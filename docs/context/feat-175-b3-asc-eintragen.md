@@ -80,3 +80,53 @@ heute den ersten `customerPrice` aus `included` – bei mehreren Einträgen nich
 - **Screenshots:** 6,9" (1320×2868), 3–10 je Sprache, ohne echte Namen/Fotos; Motive und Bildunterschriften vorher zeigen.
 - **Umfang:** Pfadkorrektur ~30–60 Zeilen Skript + Test; Belege zählen das Gate ggf. als Dateien (Spec: dann nach Sprache teilen).
 - **Nichts auf Hennings Geräten.**
+
+## Analysis
+
+### Type
+Feature (Fortsetzung #175: Lesepfade korrigieren, danach echter Lauf gegen App Store Connect)
+
+### Zusatzbefund aus OpenAPI 4.5.1 (2026-10-25, nach dem Kontext)
+- Der Preis eines Einmalkaufs steht unter `manualPrices` **oder** `automaticPrices` des Preisplans (`GET /v2/inAppPurchases/{id}/iapPriceSchedule`
+  → Plan-ID → `GET /v1/inAppPurchasePriceSchedules/{plan}/manualPrices|automaticPrices`, je `filter[territory]`, `include`).
+  Ist das Basisland nicht DEU, liegt der deutsche Preis nur unter `automaticPrices`; das heutige Skript meldete dann „kein Preis“.
+- `InAppPurchasePrice.attributes` = `startDate`, `endDate`, `manual`; `SubscriptionPrice.attributes` = `startDate`, `preserved`, `planType`.
+  Gültig ist der Eintrag mit `startDate` null/≤ heute und `endDate` null/≥ heute; der Preis wird über die Beziehung zum Preispunkt
+  im `included` zugeordnet, nicht „erster customerPrice“.
+- Anlegen von Käufen per API gäbe es (`POST /v2/inAppPurchases`, `/v1/subscriptionGroups`, `/v1/subscriptions`, `/v1/subscriptionPrices`,
+  `/v1/inAppPurchasePriceSchedules`, Lokalisierungen, Asset-Upload für Review-Screenshots); `asc_lib` erlaubt keinen davon.
+
+### Affected Files (with changes)
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `scripts/asc_check.py` | MODIFY | IAP-Lokalisierung/Review-Screenshot auf v2; Preisplan-Schritt; manual + automatic; gültigen Preis über Preispunkt-Beziehung wählen; Abo-Preise mit derselben Gültigkeitsregel; Zaun um zwei Muster ergänzt |
+| `scripts/test_asc_check.py` | MODIFY | `FakeASC`-Routen auf neue Pfade; Fälle: manual leer/automatic gefüllt, abgelaufenes `endDate`, mehrere Einträge, kein gültiger Preis = Abweichung; ID-Herkunft weiter geprüft |
+| `docs/specs/appstore/app-store-auftritt.md` | MODIFY | Leseliste auf 4.5.1, Durchgang B3a, Ablauf B3 |
+| `docs/artifacts/feat-175-app-store-auftritt/` | CREATE (B3-Lauf) | `asc-readback.txt`, Screenshots de/en, Browser-Belege |
+
+### Scope Assessment
+- B3a (Code): 2 Dateien + Spec, ~+70/−20 Zeilen, innerhalb der Grenzen
+- B3 (Lauf): ~0 Zeilen Quellcode, nur Belege; außenwirksam
+- Risk Level: LOW für B3a (nur Lesen, ohne Netz getestet), HIGH für B3-Lauf (unumkehrbare Produktkennungen, Basisland des Preisplans)
+
+### Technical Approach (Empfehlung)
+1. **Dieser Workflow = B3a:** Pfadkorrektur in `asc_check.py` samt Tests, ohne Außenwirkung. Code mit Test-Gate gehört nicht in denselben
+   Durchgang wie das Schreiben in ASC.
+2. Danach **B3 als Betriebsdurchgang**, jeder außenwirksame Schritt einzeln auf Hennings Wort: Lesetrockenlauf `asc_check --all` (nur GET) →
+   `asc_publish` Trockenlauf → `--apply` → Browser (Käufe mit kopierter Kennung aus `PremiumService.swift:124-126`, Basisland DEU,
+   Abo-Gruppe, Kategorien, Altersfreigabe, Content Rights, Preise/Verfügbarkeit, Review-Kontakt, App Privacy, Screenshot-Upload) →
+   Screenshots 1320×2868 aus dem Simulator mit Vorschau → Build 37 per `testflight.yml` → Zuordnung → Schlusslauf → `asc-readback.txt`.
+
+### Alternativen
+- **Käufe per API** (Schreibzaun erweitern, ~150–250 Zeilen, eigener Durchgang): wiederholbar, kippt aber AC-10a/AC-20f (Schreibzaun nur Texte);
+  bei einmaligem, unumkehrbarem Anlegen kein Vorteil. Nicht empfohlen.
+- **Alles im Browser, kein Skript-Gegenlesen:** Nachweis nur Screenshots, nicht wiederholbar; kippt Entscheidung 14 der Spec. Verworfen.
+- **Version 1.0 ohne Käufe einreichen:** Produktentscheid, kippt AC-15/AC-19 und Release-1.0-Umfang; nur Rückfall, falls der Kauf-Teil hängt.
+
+### Dependencies / Blocker (betreffen B3, nicht B3a)
+- Datenschutzseite `emmrich-business.com/datenschutz` mit altem Text, nicht im Repo → AC-12, damit AC-19 offen (PO-Frage: wer pflegt sie).
+- Build 37 nicht hochgeladen → AC-17 offen (Upload nur auf Wort).
+- Paywall ohne Rechtslinks (#215) → Ablehnungsrisiko vor dem Einreichen, nicht Teil von B3.
+
+### Open Questions
+- [ ] Wer stellt den Text aus `docs/appstore/datenschutz.md` auf `emmrich-business.com/datenschutz`? (PO)
