@@ -227,18 +227,18 @@ extension AssignmentService {
 
         // 1. Hardware/DIY items → hardware store, variety store as fallback
         if isHardware {
-            let hardwareStores = activeStores.filter { $0.categories.contains(where: { Category.hardware.contains($0) }) }
+            // Issue #224: nur echte Baumärkte; ein Alles-Laden mit „Werkzeug“ ist kein Baumarkt.
+            let hardwareStores = activeStores.filter { Category.isHardwareStore($0.categories) }
             if let result = choose("hardware", hardwareStores) { return result }
             // No hardware store → fall through to variety
-            let varietyFallback = activeStores.filter { $0.categories.contains(where: { Category.variety.contains($0) }) }
+            let varietyFallback = activeStores.filter { Category.isVarietyStore($0.categories) }
             if let result = choose("variety", varietyFallback) { return result }
         }
 
         // 2. Variety/discount store items → variety store
         if isVariety {
-            let varietyStores = activeStores.filter { store in
-                store.categories.contains(where: { Category.variety.contains($0) })
-            }
+            // Issue #224: ein Baumarkt mit „Werkzeug“ ist kein Sonstiges-Laden.
+            let varietyStores = activeStores.filter { Category.isVarietyStore($0.categories) }
             if let result = choose("variety", varietyStores) { return result }
         }
 
