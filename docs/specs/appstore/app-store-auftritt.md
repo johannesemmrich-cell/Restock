@@ -67,12 +67,12 @@ aus der Zeit vor #121/#163.
 
 ## Scope
 
-Sieben Durchgänge, jeder mit höchstens 5 Dateien und ±250 LoC, wo der PO nichts anderes angenommen hat (B2a, B2b; Texte und
-Skripte zählt das LoC-Gate als Produktivcode, daher die Trennung). Reihenfolge A1, A2, B1, B2a, B2b, B3a, B3. B3a ist reines Lesen
-ohne Außenwirkung; B3 ändert keinen Quellcode. Der Upload von Build 37 ist außenwirksam und folgt nur Hennings ausdrücklichem Wort.
+Acht Durchgänge, jeder mit höchstens 5 Dateien und ±250 LoC, wo der PO nichts anderes angenommen hat (B2a, B2b; Texte und
+Skripte zählt das LoC-Gate als Produktivcode, daher die Trennung). Reihenfolge A1, A2, B1, B2a, B2b, B3a, B3b, B3. B3a und B3b sind reines Lesen
+ohne Außenwirkung; B3 ändert keinen Quellcode (Korrekturen am Gegenleser nach dem ersten echten Lauf stehen in B3b, davor). Der Upload von Build 37 ist außenwirksam und folgt nur Hennings ausdrücklichem Wort.
 
-- **Affected Files:** Vereinigung aller Durchgänge A1, A2, B1, B2a, B2b, B3a, B3 (Einzellisten in den Unterabschnitten).
-- **Estimated Changes:** ~90 (A1) + ~47 (A2) + ~220 (B1) + ~330 (B2a, über dem Limit, vom PO am 2026-10-24 angenommen) + ~460 (B2b, über dem Limit, vom PO am 2026-10-25 mit „Ein Durchgang“ angenommen) + ~215 (B3a) + ~0 (B3) = ca. 1362 LoC gesamt.
+- **Affected Files:** Vereinigung aller Durchgänge A1, A2, B1, B2a, B2b, B3a, B3b, B3 (Einzellisten in den Unterabschnitten).
+- **Estimated Changes:** ~90 (A1) + ~47 (A2) + ~220 (B1) + ~330 (B2a, über dem Limit, vom PO am 2026-10-24 angenommen) + ~460 (B2b, über dem Limit, vom PO am 2026-10-25 mit „Ein Durchgang“ angenommen) + ~215 (B3a) + ~90 (B3b) + ~0 (B3) = ca. 1452 LoC gesamt.
 
 ### Durchgang A1: Manifest und Rechtstext (4 Dateien, geschätzt +85/−6 Zeilen)
 
@@ -196,7 +196,7 @@ Lauf schreibt nur den Rest) und das Gegenlesen in B2b abgefangen.
 | `.github/workflows/ci.yml` | MODIFY: `scripts/test_asc_texts.py`, `scripts/test_asc_scripts.py`, `scripts/test_asc_check.py` in die Schleife des Schritts „Strukturtests (Python)“ (`python3 -I`, kein Netz, kein Schlüssel); bisher läuft keiner der ASC-Tests in CI |
 | `docs/specs/appstore/app-store-auftritt.md` | MODIFY: diese Überarbeitung |
 
-Leseliste von `asc_check` (Stand B3a, nach App Store Connect API 4.5.1, Abgleich im Kontextdokument `docs/context/feat-175-b3-asc-eintragen.md`;
+Leseliste von `asc_check` (Stand B3b, um Preisplan der App und Basisland ergänzt; davor B3a, nach App Store Connect API 4.5.1, Abgleich im Kontextdokument `docs/context/feat-175-b3-asc-eintragen.md`;
 die B2b-Fassung nach 4.4/4.4.1 hatte falsche v1-Pfade für Einmalkauf-Lokalisierung und -Screenshot, siehe B3a),
 alle nur GET und nur unter IDs aus Antworten:
 
@@ -206,6 +206,8 @@ alle nur GET und nur unter IDs aus Antworten:
 - `/v1/appInfos/{id}/ageRatingDeclaration` (der Pfad `appStoreVersions/{id}/ageRatingDeclaration` ist seit API 4.4 entfernt),
   `/v1/appInfos/{id}/primaryCategory` und `…/secondaryCategory`;
 - `/v1/apps/{id}/appPriceSchedule`, `/v1/apps/{id}/appAvailabilityV2`, `/v1/appStoreVersions/{id}/appStoreReviewDetail`;
+  (B3b) mit der Plan-ID aus der Antwort von `appPriceSchedule`: `/v1/appPriceSchedules/{plan}/baseTerritory` und
+  `/v1/appPriceSchedules/{plan}/manualPrices?include=appPricePoint&filter[territory]=DEU` (sonst keine Pfade unter `appPriceSchedules`);
 - `/v1/apps/{id}/inAppPurchasesV2`, `/v1/apps/{id}/subscriptionGroups`, `/v1/subscriptionGroups/{id}/subscriptions`;
   Einmalkauf (B3a, API 4.5.1): `/v2/inAppPurchases/{id}/inAppPurchaseLocalizations`, `/v2/inAppPurchases/{id}/appStoreReviewScreenshot`,
   `/v2/inAppPurchases/{id}/iapPriceSchedule` und mit der Plan-ID aus dessen Antwort
@@ -262,6 +264,48 @@ ausdrücklich als offen.
      IAP-Lokalisierung/-Screenshot entfernt; die Plan-ID wird nur aus einer Antwort übernommen.
   6. Spec: Leseliste auf 4.5.1, Offene Grenze „Kaufpfade vor B3 nachziehen“ als durch B3a erledigt gekennzeichnet.
 
+### Durchgang B3b: Gegenleser-Korrekturen nach dem ersten echten Lauf (3 Dateien, geschätzt ~90 Zeilen)
+
+- **Affected Files:** `scripts/asc_check.py` (MODIFY), `scripts/test_asc_check.py` (MODIFY), diese Spec (Doku). Kein App-Code,
+  keine Schreibwege, `scripts/asc_lib.py` und `scripts/asc_publish.py` bleiben unverändert.
+- **Estimated Changes:** Code ~+30/−5, Test ~+55, zusammen ca. 90 geänderte Zeilen (Bereich 70 bis 110), innerhalb ±250.
+  Nur Lesen, keine Außenwirkung, getestet ohne Netz und ohne Schlüssel.
+- **Anlass:** Der erste echte Leselauf gegen Apple (2026-10-25 12:15 UTC, Commit eac705e, nur GET, Protokoll
+  `docs/artifacts/feat-175-b3-asc-betrieb/asc-erstlauf-2026-10-25.txt`) zeigte drei Fehler des Gegenlesers. Auth, Zaun und die übrigen
+  Lesepfade funktionierten; der Entwurf ist fast leer (nur `name (de-DE)` und Status `PREPARE_FOR_SUBMISSION` stimmen).
+- **Änderungen:**
+  1. **F1, Datenschutzseite:** `fetch_privacy` sendet keinen `User-Agent`; die Seite antwortet `Python-urllib/3.15` mit 403 (Protokoll:
+     „privacy-url: HTTP-Status: Soll 200, Ist 403“). Belegt: `curl/8`, ein Browser-UA und `Restock-asc-check/1.0` liefern 200. Fix: fester
+     Kopf `User-Agent: Restock-asc-check/1.0`; sonst unverändert (kein Token, keine Weiterleitung, nur die eine URL).
+  2. **F2a, Altersfreigabe:** Apple legt `ageRatingDeclaration` automatisch an, alle Antwortfelder sind `null`; `Report.present` prüft nur
+     die Existenz und meldete „ok“. Fix: „ok“ nur, wenn alle Pflichtfelder gesetzt (nicht `null`) sind; sonst eine Abweichung mit der Liste der leeren Felder
+     (genauer Wortlaut in AC-23b). Pflichtfelder (OpenAPI 4.5.1, Schema `AgeRatingDeclaration`, die
+     24 Inhaltsangaben): `advertising`, `alcoholTobaccoOrDrugUseOrReferences`, `contests`, `gambling`, `gamblingSimulated`,
+     `gunsOrOtherWeapons`, `healthOrWellnessTopics`, `lootBox`, `medicalOrTreatmentInformation`, `messagingAndChat`, `parentalControls`,
+     `profanityOrCrudeHumor`, `ageAssurance`, `sexualContentGraphicAndNudity`, `sexualContentOrNudity`, `socialMedia`,
+     `socialMediaAgeRestricted`, `horrorOrFearThemes`, `matureOrSuggestiveThemes`, `unrestrictedWebAccess`, `userGeneratedContent`,
+     `violenceCartoonOrFantasy`, `violenceRealisticProlongedGraphicOrSadistic`, `violenceRealistic`. Keine Antwort im Sinn der Regel
+     sind die Overrides (`ageRatingOverride`, `ageRatingOverrideV2`, `koreaAgeRatingOverride`; sie stehen auch ohne Antwort auf `NONE`),
+     `kidsAgeBand` (nur Kinder-Kategorie), `gracRatingClassificationNumber` und `developerAgeRatingInfoUrl`. In RED wird die Liste an
+     der echten Antwort aus dem Erstlauf gegengeprüft (Feld fehlt in der Antwort oder ist `null` = leer); ein Feld, das Apple für
+     diese App nie liefert, würde sonst dauerhaft „leer“ melden.
+  3. **F2b, Preisplan der App:** `appPriceSchedule` existiert immer (im Erstlauf beobachtet: Ressource-ID = App-ID) und wurde als „ok“
+     gemeldet. Fix: Plan-ID trotzdem aus der Antwort lesen (die Beobachtung ist nur Befund, keine Annahme im Code), dann `baseTerritory` und `manualPrices` (beide Pfade stehen in der Leseliste). Soll: Basisland `DEU` und genau ein
+     zum Stichtag gültiger Betrag, und der ist 0. **Annahme, in der Spec bisher nicht ausdrücklich festgehalten:** Die App selbst ist
+     kostenlos, Pro kommt nur über die In-App-Käufe aus AC-15. Gültigkeit und Zuordnung über den Preispunkt wie in B3a (`valid_amounts`
+     mit Beziehung `appPricePoint`, Preispunkt-Attribut `customerPrice`; Feldnamen gemäß OpenAPI 4.5.1: `AppPriceV2` mit
+     `startDate`/`endDate` und Beziehungen `appPricePoint`, `territory`; `AppPriceSchedule` mit `baseTerritory`, `manualPrices`,
+     `automaticPrices`). Anderes Basisland, kein gültiger Eintrag oder Betrag ≠ 0 ist eine Abweichung, nie „ok“.
+  4. **F3, Verfügbarkeit:** `GET /v1/apps/{id}/appAvailabilityV2` antwortet bei der neuen App mit 404 und brach den Abschnitt `appinfo` als
+     „Fehler“ ab (Protokoll: „Fehler appinfo: HTTP 404 bei GET /v1/apps/6790839680/appAvailabilityV2“). Fix: Ein 404 **nur an
+     diesem Pfad** wird zu einer Abweichung „nicht eingerichtet“ (Soll „eingerichtet“, genauer Wortlaut in AC-23d); jedes andere 404 bleibt ein Fehler.
+     Dass Apple 404 für „noch nicht eingerichtet“ nutzt, ist nur durch Forenberichte gestützt, nicht durch Apples Dokumentation.
+- **Nachweis nach Umsetzung:** erneuter Leselauf `python3 scripts/asc_check.py --all` gegen Apple (nur GET) mit Protokoll unter
+  `docs/artifacts/feat-175-b3-asc-betrieb/` (zweiter Lauf, neben dem Erstlauf). Erwartet: `privacy-url` HTTP 200 mit Inhaltsabweichung
+  (Seite noch alt), Altersfreigabe, Preisplan und Verfügbarkeit als Abweichung statt „ok“ oder „Fehler“. Der Lauf ist nur lesend und
+  braucht kein Wort für außenwirksame Schritte.
+- **Nicht Teil von B3b:** der Betrieb (Eintragen, Käufe, Screenshots, Build 37) bleibt B3, je Schritt auf Hennings Wort.
+
 ### Durchgang B3: Ablauf und Belege (keine Quelldatei, Belege unter `docs/artifacts/`)
 
 - **Affected Files:** `docs/artifacts/feat-175-app-store-auftritt/asc-readback.txt`,
@@ -271,10 +315,11 @@ ausdrücklich als offen.
   siehe Offene Grenzen). Außerhalb des Repos: ASC (Produktseite de/en, Kategorie, Altersfreigabe, Datenschutz-URL,
   Privacy-Fragebogen, Screenshots, drei In-App-Käufe samt Abo-Gruppe).
 
-Die Durchgänge folgen A1, A2, B1, B2a, B2b, B3a, B3. B3 kommt nach B3a, ändert keinen Quellcode, und jeder außenwirksame Schritt
+Die Durchgänge folgen A1, A2, B1, B2a, B2b, B3a, B3b, B3. B3 kommt nach B3b, ändert keinen Quellcode, und jeder außenwirksame Schritt
 läuft einzeln auf Hennings ausdrückliches Wort:
 
-1. Lesetrockenlauf `python3 scripts/asc_check.py --all` (nur GET; zeigt den unbekannten Zustand des Entwurfs).
+1. Lesetrockenlauf `python3 scripts/asc_check.py --all` (nur GET; zeigt den unbekannten Zustand des Entwurfs; der erste Lauf vom
+   2026-10-25 war der Anlass für B3b und wird danach wiederholt).
 2. `asc_publish` Trockenlauf (Plan sichten).
 3. `asc_publish --apply` (schreibt die Texte de-DE/en-US in den Entwurf).
 4. Browser (Chrome-Werkzeug, mit Beleg-Screenshots): drei Käufe mit den Kennungen aus `SmartCart/Services/PremiumService.swift:124-126`
@@ -302,6 +347,10 @@ B2b: asc_check (eigener GET-Zaun, Vergleich mit den Dateien), test_asc_check (Sc
     ci.yml (drei ASC-Tests im Python-Strukturtest-Schritt).
 B3a: asc_check Kaufpfade v2 + Preisplan (iapPriceSchedule → Plan-ID → manual + automatic), Gültigkeit und Preispunkt-Zuordnung,
     Zaun-Muster; test_asc_check: FakeASC-Routen, Plan-ID ≠ Kauf-ID, Preisfälle.
+B3b: asc_check fetch_privacy mit User-Agent, Altersfreigabe-Pflichtfelder, App-Preisplan (baseTerritory, manualPrices),
+    404 nur an appAvailabilityV2 als Abweichung; test_asc_check mit Erstlauf-Antwortformen.
+    PO-Beschluss 2026-10-25 (nach dem Briefing, per Auswahl): Die App ist kostenlos, Pro nur über die drei Käufe; der Sollwert
+    „Basisland DEU, Betrag 0“ in AC-23c ist damit entschieden, keine Annahme mehr.
 B3: Betrieb nach der Liste im Abschnitt B3, kein Quellcode; Screenshots per simctl aus dem Simulator.
 ```
 
@@ -511,6 +560,11 @@ Ablehnung wäre kein Blocker, die Kategorie ist änderbar).
     fehlt. Nicht empfohlen; Browser mit Beleg-Screenshots.
 16. **(B3a) Version 1.0 ohne Käufe einreichen:** Produktentscheid; kippt AC-15, AC-19 und den Release-1.0-Umfang (Pro: Rezeptplan,
     Ausgaben-Analyse). Nur Rückfall, falls der Kauf-Teil hängt.
+17. **(B3b) Betrieb zuerst, Gegenleser-Korrekturen danach:** schneller, aber jeder Zwischenlauf zeigt falsches „ok“ (Altersfreigabe,
+    Preisplan) und eine falsche 403 an der Datenschutzseite; die Kontrolle müsste der Browser-Beleg ersetzen. Verworfen; kippt die
+    Reihenfolge (hier B3a, B3b, B3).
+18. **(B3b) Nur F1 und F3 beheben (~15 Zeilen), F2 später:** F2 ist der gefährlichste Fehler, weil er Grün meldet, wo nichts gesetzt
+    ist, und würde in `--all` (AC-19) mitlaufen. Verworfen.
 
 ## Definition of Done
 
@@ -565,7 +619,7 @@ Durchgang A2
   - Nachweis: `xcodebuild test` wie AC-5 (erwartet 0 Fehlschläge) plus Simulator-Screenshots unter
     `docs/artifacts/feat-175-app-store-auftritt/`
 
-Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b mit AC-9e; AC-10 mit AC-10a bis AC-10h in B2a; AC-20 und AC-21 in B2b; AC-22 bis AC-22g in B3a; AC-11 bis AC-19 in B3 gegen ASC, ihre Abschnitte in B2b gegen Schein-Antworten getestet)
+Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b mit AC-9e; AC-10 mit AC-10a bis AC-10h in B2a; AC-20 und AC-21 in B2b; AC-22 bis AC-22g in B3a; AC-23 bis AC-23e in B3b; AC-11 bis AC-19 in B3 gegen ASC, ihre Abschnitte in B2b gegen Schein-Antworten getestet)
 
 - **AC-9 (B1, korrigiert):** `docs/appstore/de.md` und `en.md` enthalten genau die Überschriften `## name`, `## subtitle`,
   `## keywords`, `## promotional_text`, `## description`, `## support_url`, `## privacy_url` (kein `whats_new`), jede mit
@@ -646,7 +700,7 @@ Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b 
   nicht berichtigt ist.**
   - Test: `scripts/test_asc_check.py::test_section_privacy_url_ok_and_deviation` (Abruf ohne Authorization-Header: AC-20b)
   - Nachweis (B3): `python3 scripts/asc_check.py --section privacy-url`, erwartet „ok“ für beide Sprachen
-- **AC-13:** Kategorie (primär, sekundär), Altersfreigabe, Content Rights, Preise/Verfügbarkeit der App sind gesetzt.
+- **AC-13:** Kategorie (primär, sekundär), Altersfreigabe, Content Rights, Preise/Verfügbarkeit der App sind gesetzt (B3b: bei der Altersfreigabe heißt das alle Pflichtangaben beantwortet, beim Preis Basisland DEU mit Betrag 0, bei der Verfügbarkeit eingerichtet; siehe AC-23b bis AC-23d).
   - Test: `scripts/test_asc_check.py::test_section_appinfo_ok_and_deviation`
   - Nachweis (B3): `python3 scripts/asc_check.py --section appinfo` (GET `appInfos`, `appInfos/{id}/ageRatingDeclaration`,
     `primaryCategory`/`secondaryCategory`, `appPriceSchedule`, `appAvailabilityV2`, Attribut `contentRightsDeclaration` der App),
@@ -754,6 +808,35 @@ Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b 
   von der Systemuhr ab.
   - Test: `scripts/test_asc_check.py::test_section_iap_ok_and_deviation`, `::test_fence_rejects_before_send`, `::test_today_is_injectable`
 
+- **AC-23 (B3b, Werkzeug):** Der Gegenleser meldet nach dem ersten echten Lauf keine Falschmeldung mehr: Datenschutzseite mit eigenem
+  `User-Agent`, Altersfreigabe und Preisplan der App nur „ok“ mit Inhalt, fehlende Verfügbarkeit als Abweichung. AC-23 gilt, wenn AC-23a
+  bis AC-23e gelten.
+  - Nachweis: `python3 scripts/test_asc_check.py`, erwartet Exit 0; zweiter Leselauf gegen Apple (siehe Abschnitt B3b)
+- **AC-23a (F1, User-Agent):** `fetch_privacy` ruft `send` mit dem Header `User-Agent: Restock-asc-check/1.0` und ohne `Authorization`;
+  URL und Methode bleiben wie in AC-20b (nur die eine URL, GET, keine Weiterleitung). Ein Schein-`send`, der ohne diesen Kopf 403
+  liefert, führt in `privacy-url` nicht mehr zu einer Statusabweichung.
+  - Test: `scripts/test_asc_check.py::test_privacy_fetch_sends_user_agent_and_no_authorization`
+- **AC-23b (F2a, Altersfreigabe):** Sind alle 24 Pflichtfelder `null` (Antwortform aus dem Erstlauf, Overrides `NONE`), meldet `appinfo`
+  „Abweichung: ageRatingDeclaration: Soll alle Angaben gesetzt, Ist leer: “ und dahinter die Namen aller leeren Pflichtfelder, kommagetrennt in der Reihenfolge der B3b-Liste (der Test bei lauter `null` erwartet alle 24); fehlt auch nur ein Pflichtfeld, bleibt es
+  eine Abweichung, die genau dieses Feld nennt. Sind alle 24 gesetzt (Booleans auch mit `false`, Stufen auch mit `NONE`), ist es „ok“. Overrides
+  und `kidsAgeBand` zählen nicht als Antwort; nur `null` oder fehlend gilt als leer.
+  - Test: `scripts/test_asc_check.py::test_age_rating_all_null_is_deviation`, `::test_age_rating_names_missing_field`, `::test_age_rating_complete_is_ok`
+- **AC-23c (F2b, Preisplan der App):** `appinfo` liest `baseTerritory` und `manualPrices` des Plans (Plan-ID aus der Antwort von
+  `appPriceSchedule`, nie die App-ID als Annahme). „ok“ nur bei Basisland `DEU` und genau einem gültigen Betrag 0 (Annahme: App kostenlos,
+  siehe B3b F2b); ohne `manualPrices`, mit Basisland ≠ `DEU`, mit Betrag ≠ 0 oder ohne auflösbaren Preispunkt ist es eine Abweichung mit Soll und Ist.
+  - Test: `scripts/test_asc_check.py::test_app_price_schedule_without_manual_prices_is_deviation`, `::test_app_price_schedule_wrong_base_territory`,
+    `::test_app_price_schedule_complete_is_ok`
+- **AC-23d (F3, 404 nur an der Verfügbarkeit):** Antwortet `GET /v1/apps/{id}/appAvailabilityV2` mit 404, meldet `appinfo`
+  „Abweichung: appAvailabilityV2: Soll eingerichtet, Ist nicht eingerichtet“ und läuft weiter (kein Abbruch, Exit ≠ 0 über die Abweichung).
+  Ein 404 an jedem anderen Pfad (z. B. `appInfos/{id}/primaryCategory`, `appPriceSchedule`) bleibt „Fehler“ mit Status und Pfad. Andere
+  Statuscodes (403, 500) an der Verfügbarkeit bleiben ebenfalls Fehler.
+  - Test: `scripts/test_asc_check.py::test_availability_404_is_deviation`, `::test_404_on_other_path_stays_error`
+- **AC-23e (Zaun und Bestand):** Der Zaun lässt nur die zwei neuen Pfade `/v1/appPriceSchedules/{plan}/baseTerritory` (ohne jede
+  Abfrage) und `/v1/appPriceSchedules/{plan}/manualPrices` mit genau der Abfrage `include=appPricePoint&filter[territory]=DEU` zu, und nur mit einer
+  Plan-ID aus einer Antwort; `automaticPrices` der App, `/v1/appPriceSchedules` (Liste), nicht gelistete Pfade, andere Methoden und Hosts
+  werden vor `send` abgelehnt. Alle Tests aus AC-20 bis AC-22 bleiben grün; der Quelltext erfüllt weiterhin AC-20f.
+  - Test: `scripts/test_asc_check.py::test_fence_allows_only_app_price_schedule_paths`, `::test_fence_rejects_before_send`, `::test_source_bans`
+
 ## Test Plan
 
 Automatisch, an die ACs oben gebunden (jedes AC erscheint):
@@ -772,6 +855,7 @@ Automatisch, an die ACs oben gebunden (jedes AC erscheint):
 - AC-10, AC-10a bis AC-10h (B2a): `python3 scripts/test_asc_scripts.py` (ohne Netz, ohne Schlüssel, Schein-`send` und Schein-`sign`; kein echter API-Lauf).
 - AC-20 bis AC-20g und die Abschnitte zu AC-11 bis AC-19 samt AC-17a (B2b): `python3 scripts/test_asc_check.py` (ohne Netz, ohne Schlüssel, Schein-`send`, Schein-`sign`, Schein-Opener; kein echter API-Lauf).
 - AC-22 bis AC-22g (B3a): `python3 scripts/test_asc_check.py` (ohne Netz, ohne Schlüssel, `FakeASC` mit Preisplan-Route, Plan-ID ≠ Kauf-ID, eingestelltes „heute“); B3a läuft vor B3.
+- AC-23 bis AC-23e (B3b): `python3 scripts/test_asc_check.py` (ohne Netz, ohne Schlüssel, Schein-Antworten in der echten Form des Erstlaufs: Altersfreigabe mit lauter `null`, 404 an `appAvailabilityV2`, Schein-`send` mit `User-Agent`-Prüfung); danach ein zweiter Leselauf gegen Apple (nur GET) als Protokoll unter `docs/artifacts/feat-175-b3-asc-betrieb/`; B3b läuft vor B3. Neu in RED anzulegen sind alle in AC-23a bis AC-23d genannten Tests und `test_fence_allows_only_app_price_schedule_paths`; `test_fence_rejects_before_send` und `test_source_bans` bestehen schon und müssen grün bleiben.
 - AC-21 (B2b): die drei ASC-Tests laufen in CI (`.github/workflows/ci.yml`, Schritt „Strukturtests (Python)“); Beleg: grüner CI-Lauf.
 - AC-11 bis AC-19 mit AC-17a (B3): Gegenlese-Lauf `python3 scripts/asc_check.py` (in B2b gebaut, in B3 gefahren) gegen ASC (`--section metadata|privacy-url|appinfo|iap|
   screenshots|build|review|status`, `--all`), lesend (GET); AC-14 immer mit Beleg-Screenshots (keine API); AC-16 zusätzlich `sips`.
@@ -860,6 +944,19 @@ Offene Grenzen:
   endet als „Fehler iap“ (nie „ok“), bricht aber den ganzen Abschnitt ab, sodass die übrigen Käufe ungeprüft bleiben. Preisantworten
   werden nicht über `links.next` weitergelesen (F005); ein falsches „ok“ setzt mehr als eine Seite DEU-Preise voraus. Protokoll:
   `docs/artifacts/feat-175-b3-asc-eintragen/adversary-dialog.md`.
+- **B3b, nur Schein-Antworten plus ein Leselauf:** Die neuen Pfade (`baseTerritory`, `manualPrices` der App) und der Zusammenhang
+  `appPricePoint` sind gegen OpenAPI 4.5.1 geprüft, am echten Konto aber erst belegt, wenn der Preisplan der App gesetzt ist; bis dahin
+  meldet der Leselauf dort eine Abweichung. Kaufpfade und -preise (B3a) bleiben bis zum Anlegen der Käufe ungeprüft gegen Apple.
+- **B3b, Bedeutung des 404:** Dass `appAvailabilityV2` bei „nicht eingerichtet“ mit 404 antwortet, stützen nur Forenberichte, keine Apple-Aussage.
+  Ein 404 aus anderem Grund an diesem Pfad (z. B. falsche App-ID) würde fälschlich als „nicht eingerichtet“ gelten; eine 200-Antwort mit
+  leerer `territoryAvailabilities` prüft B3b nicht.
+- **B3b, Pflichtfelder der Altersfreigabe:** Die Liste der 24 Felder stammt aus dem Schema, nicht aus Apples Aussage, welche davon
+  für diese App verlangt sind. Neue Pflichtfelder in einer späteren API-Version werden nicht erkannt.
+- **B3b, Preis der App:** Soll „Betrag 0“ beruht auf der Annahme, dass die App kostenlos ist und Pro nur über Käufe kommt; ein anderer
+  App-Preis würde als Abweichung gemeldet.
+- **B3b, Datenschutzseite:** Der Dritte pflegt sie weiterhin; AC-12 bleibt blockiert, der Leselauf zeigt nach F1 nur noch die Inhaltsabweichung.
+  Dass die Seite den Kopf `Restock-asc-check/1.0` heute nicht sperrt, ist ein Momentbefund.
+- **B3b, Umfang:** ~90 Zeilen, innerhalb ±250.
 - **Nichts auf Hennings Geräten geprüft.**
 - **Dateizählung B3:** Screenshots und Protokolle unter `docs/artifacts/` sind Belege, keine Quelldateien; zählt das Gate sie
   einzeln, wird B3 nach Sprache geteilt.
@@ -887,3 +984,4 @@ Simulator-Screenshots). #175 blockiert Release 1.0.
 - 2026-10-25: Durchgang B2b neu gefasst: 5 Dateien (`asc_check`, `test_asc_check`, `test_asc_texts`, `ci.yml`, Spec), ~460 Zeilen (PO: „Ein Durchgang“), eigener reiner GET-Zaun statt Änderung von `asc_lib`, Leseliste nach API 4.4/4.4.1 (Altersfreigabe über `appInfos`), Datenschutz-URL-Abruf ohne Token, AC-14 „manuell belegen“, Screenshot-Prüfung über Bildmaße; neue AC-9e (F001), AC-20 bis AC-20g, AC-21; AC-9 bis AC-9d mit Testnamen; AC-11 bis AC-19 mit Schein-Test; Alternativen 13–14, Offene Grenzen zu B2b.
 - 2026-10-25: Durchgang B3a ergänzt (Kaufpfade nach API 4.5.1: v2-Lokalisierung/-Screenshot, Preisplan aus `iapPriceSchedule`, manual + automatic, Gültigkeit und Preispunkt-Zuordnung, Zaun); AC-22 bis AC-22g; B3 als Betriebsdurchgang nach B3a präzisiert; Leseliste auf 4.5.1; Alternativen 15–16; Offene Grenzen.
 - 2026-10-25: Nach dem ersten PO-Briefing: Abschnitt `review` mit AC-17a (Review-Kontakt aus `appStoreReviewDetail`, Werte nie im Klartext) und Export-Compliance im Abschnitt `build` (`usesNonExemptEncryption` false, eigener Test) ergänzt; vorher von AC-17/AC-19 verlangt, aber ohne Prüfung.
+- 2026-10-25: Durchgang B3b ergänzt (Gegenleser-Korrekturen nach dem ersten echten Lauf: eigener User-Agent für die Datenschutzseite, Altersfreigabe nur mit beantworteten Pflichtfeldern, Preisplan der App mit Basisland und Betrag 0 als benannte Annahme, 404 nur an `appAvailabilityV2` als Abweichung); AC-23 bis AC-23e; Leseliste um `baseTerritory`/`manualPrices` der App erweitert; AC-13 präzisiert; Reihenfolge A1 bis B3a, B3b, B3; Alternativen 17–18; Offene Grenzen.

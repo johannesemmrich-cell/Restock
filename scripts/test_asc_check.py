@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Test des Gegenlesers scripts/asc_check.py (Issue #175, Durchgänge B2b und B3a, AC-11 bis AC-22g der Spec
+"""Test des Gegenlesers scripts/asc_check.py (Issue #175, Durchgänge B2b, B3a und B3b, AC-11 bis AC-23e der Spec
 docs/specs/appstore/app-store-auftritt.md). Ohne Netz und ohne Schlüssel: Apple wird durch FakeASC ersetzt, die
-Datenschutzseite durch einen Schein-Abruf, die Signatur durch fake_sign. Kaufpfade und Preisantworten nach API 4.5.1."""
+Datenschutzseite durch einen Schein-Abruf, die Signatur durch fake_sign. Kaufpfade und Preisantworten nach API 4.5.1;
+Altersfreigabe, App-Preisplan und Verfügbarkeit in der Form des ersten echten Laufs
+(docs/artifacts/feat-175-b3-asc-betrieb/asc-antwortformen-2026-10-25.txt)."""
 import ast, contextlib, datetime, html, importlib, inspect, io, json, re, sys, unittest
 from pathlib import Path
 from unittest import mock
@@ -38,6 +40,23 @@ def res(kind, rid, **attrs):
     return {"id": rid, "type": kind, "attributes": attrs}
 
 
+UA = "Restock-asc-check/1.0"
+# Die 24 Inhaltsangaben der Altersfreigabe (Spec B3b F2a); in der echten Antwort alle null, solange nichts beantwortet ist
+AGE_FIELDS = ("advertising", "alcoholTobaccoOrDrugUseOrReferences", "contests", "gambling", "gamblingSimulated",
+              "gunsOrOtherWeapons", "healthOrWellnessTopics", "lootBox", "medicalOrTreatmentInformation", "messagingAndChat",
+              "parentalControls", "profanityOrCrudeHumor", "ageAssurance", "sexualContentGraphicAndNudity",
+              "sexualContentOrNudity", "socialMedia", "socialMediaAgeRestricted", "horrorOrFearThemes",
+              "matureOrSuggestiveThemes", "unrestrictedWebAccess", "userGeneratedContent", "violenceCartoonOrFantasy",
+              "violenceRealisticProlongedGraphicOrSadistic", "violenceRealistic")
+AGE_EXTRA = {"ageRatingOverride": "NONE", "ageRatingOverrideV2": "NONE", "koreaAgeRatingOverride": "NONE",
+             "kidsAgeBand": None, "gracRatingClassificationNumber": None, "developerAgeRatingInfoUrl": None}
+
+
+def age_attrs(value=lambda i: False if i % 2 else "NONE"):
+    """Booleans mit false und Stufen mit NONE sind beantwortet; die Zusatzfelder wie in der echten Antwort."""
+    return {**{f: value(i) for i, f in enumerate(AGE_FIELDS)}, **AGE_EXTRA}
+
+
 TODAY = datetime.date(2026, 10, 25)
 PRICE_KINDS = {"IAP": ("inAppPurchasePrices", "inAppPurchasePricePoint", "inAppPurchasePricePoints"),
                "SUB": ("subscriptionPrices", "subscriptionPricePoint", "subscriptionPricePoints")}
@@ -65,8 +84,11 @@ class FakeASC:
         self.ilocs = [res("appInfoLocalizations", f"IL-{l}", locale=l,
                           **{k: TEXTS[l][f] for k, f in INFO_FIELDS.items()}) for l in TEXTS]
         self.primary, self.secondary = {"id": "SHOPPING", "type": "appCategories"}, {"id": "PRODUCTIVITY", "type": "appCategories"}
-        self.age = res("ageRatingDeclarations", "AGE-1", violenceCartoonOrFantasy="NONE")
-        self.price_schedule, self.availability = res("appPriceSchedules", "PS-1"), res("appAvailabilities", "AV-1")
+        self.age = res("ageRatingDeclarations", "AGE-1", **age_attrs())
+        self.price_schedule, self.availability = res("appPriceSchedules", "APS-1"), res("appAvailabilities", "AV-1")
+        # Preisplan der App (B3b): Plan-ID ≠ App-ID, Basisland, manualPrices als (startDate, endDate, Betrag; None = Preispunkt fehlt)
+        self.base_territory, self.app_prices = {"id": "DEU", "type": "territories"}, [(None, None, "0.0")]
+        self.status_override = {}  # Pfad → HTTP-Status, z. B. 404 an appAvailabilityV2 wie im Erstlauf
         self.iaps = [res("inAppPurchases", "IAP-life", productId=PREFIX + "lifetime", inAppPurchaseType="NON_CONSUMABLE",
                          state="READY_TO_SUBMIT")]
         self.groups = [res("subscriptionGroups", "GRP-1", referenceName="Restock Pro")]
@@ -111,6 +133,13 @@ class FakeASC:
         p = unquote(urlsplit(url).path)
         if method != "GET":
             return 405, b"{}"
+        if p in self.status_override:
+            return self.status_override[p], b'{"errors": [{"status": "404"}]}'
+        m = re.fullmatch(r"/v1/appPriceSchedules/([^/]+)/(baseTerritory|manualPrices)", p)
+        if m:  # nur unter der Plan-ID aus der Antwort, nie unter der App-ID
+            if not self.price_schedule or m[1] != self.price_schedule["id"]:
+                return 404, b"{}"
+            return 200, (json.dumps({"data": self.base_territory}).encode() if m[2] == "baseTerritory" else self.app_price_doc())
         m = re.fullmatch(r"/v2/inAppPurchases/([^/]+)/iapPriceSchedule", p)
         if m and m[1] in self.prices:
             plan = self.plans.get(m[1])
@@ -145,6 +174,18 @@ class FakeASC:
                 included.insert(0, res(other, f"PP-{pid}-{w}-{i}", customerPrice=self.foreign_type_points[pid]))
             if amount is not None:
                 included.append(res(point, f"PP-{pid}-{w}-{i}", customerPrice=amount))
+        return json.dumps({"data": data, "included": included}).encode()
+
+    def app_price_doc(self):
+        """manualPrices des App-Preisplans: AppPriceV2-Einträge mit Beziehung appPricePoint, Preispunkte in included."""
+        data, included = [], []
+        for i, (start, end, amount) in enumerate(self.app_prices):
+            entry = res("appPrices", f"AP-{i}", startDate=start, endDate=end)
+            entry["relationships"] = {"appPricePoint": {"data": {"type": "appPricePoints", "id": f"APP-PP-{i}"}},
+                                      "territory": {"data": {"type": "territories", "id": "DEU"}}}
+            data.append(entry)
+            if amount is not None:
+                included.append(res("appPricePoints", f"APP-PP-{i}", customerPrice=amount))
         return json.dumps({"data": data, "included": included}).encode()
 
     paths = property(lambda self: [unquote(urlsplit(c[1]).path) for c in self.calls])
@@ -467,6 +508,117 @@ class AscCheck(unittest.TestCase):
         fake.price_entries["IAP-life"] = [("manual", None, "2026-12-31", "14.99"), ("manual", "2027-01-01", None, "19.99")]
         self.assert_iap(fake, True, today=datetime.date(2026, 10, 25))
         self.assert_iap(fake, False, "19.99", today=datetime.date(2027, 2, 1))
+
+    def assert_appinfo(self, fake, ok, *needles):
+        code, out = run(fake, "--section", "appinfo")
+        self.assertEqual(code == 0, ok, out)
+        for needle in needles:
+            self.assertIn(needle, out)
+        return out
+
+    def test_privacy_fetch_sends_user_agent_and_no_authorization(self):  # AC-23a
+        page = FakePage()
+        guarded = lambda m, u, h, d: page(m, u, h, d) if h.get("User-Agent") == UA else (403, b"")  # sperrt Python-urllib
+        code, out = run(FakeASC(), "--section", "privacy-url", page=guarded)
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("403", out)
+        self.assertEqual([(m, u) for m, u, _ in page.calls], [("GET", PRIVACY_URL)])
+        self.assertEqual(page.calls[0][2].get("User-Agent"), UA)
+        self.assertFalse(any(k.lower() == "authorization" for k in page.calls[0][2]))
+
+    def test_age_rating_all_null_is_deviation(self):  # AC-23b, Antwortform des Erstlaufs
+        fake = FakeASC()
+        fake.age["attributes"] = age_attrs(lambda i: None)
+        out = self.assert_appinfo(fake, False, "ageRatingDeclaration: Soll alle Angaben gesetzt, Ist leer: ")
+        line = next(l for l in out.splitlines() if "ageRatingDeclaration" in l)
+        self.assertTrue(line.startswith("Abweichung"), line)
+        self.assertEqual(line.split("Ist leer: ", 1)[1], ", ".join(AGE_FIELDS))
+        self.assertNotRegex(out, r"(?m)^ok\s+appinfo: ageRatingDeclaration")
+
+    def test_age_rating_names_missing_field(self):  # AC-23b
+        fake = FakeASC()
+        fake.age["attributes"]["lootBox"] = None
+        del fake.age["attributes"]["socialMedia"]  # fehlt ganz = leer
+        out = self.assert_appinfo(fake, False, "ageRatingDeclaration")
+        line = next(l for l in out.splitlines() if "ageRatingDeclaration" in l)
+        self.assertEqual(line.split("Ist leer: ", 1)[1], "lootBox, socialMedia")
+
+    def test_age_rating_complete_is_ok(self):  # AC-23b
+        fake = FakeASC()  # false und NONE beantwortet; kidsAgeBand, URL und GRAC-Nummer null; Overrides NONE
+        out = self.assert_appinfo(fake, True)
+        self.assertRegex(out, r"(?m)^ok\s+appinfo: ageRatingDeclaration$")
+        fake.age["attributes"] = {f: True for f in AGE_FIELDS}  # ohne die Zusatzfelder
+        self.assert_appinfo(fake, True)
+
+    def test_app_price_schedule_without_manual_prices_is_deviation(self):  # AC-23c
+        fake = FakeASC()
+        fake.app_prices = []
+        self.assert_appinfo(fake, False, "Abweichung appinfo: App-Preis (DEU): Soll 0, Ist kein gültiger Preis")
+        fake.app_prices = [(None, None, None)]
+        self.assert_appinfo(fake, False, "Preispunkt fehlt")
+        fake.app_prices = [(None, "2026-10-24", "0.0")]  # abgelaufen
+        self.assert_appinfo(fake, False, "App-Preis (DEU)")
+        fake = FakeASC()
+        fake.base_territory = None
+        self.assert_appinfo(fake, False, "Abweichung appinfo: Basisland: Soll DEU, Ist (leer)")
+
+    def test_app_price_schedule_wrong_base_territory(self):  # AC-23c
+        fake = FakeASC()
+        fake.base_territory = {"id": "USA", "type": "territories"}
+        self.assert_appinfo(fake, False, "Abweichung appinfo: Basisland: Soll DEU, Ist USA")
+        fake = FakeASC()
+        fake.app_prices = [(None, None, "0.99")]
+        self.assert_appinfo(fake, False, "Abweichung appinfo: App-Preis (DEU): Soll 0, Ist 0.99")
+
+    def test_app_price_schedule_complete_is_ok(self):  # AC-23c
+        fake = FakeASC()
+        out = self.assert_appinfo(fake, True)
+        self.assertRegex(out, r"(?m)^ok\s+appinfo: Basisland$")
+        self.assertRegex(out, r"(?m)^ok\s+appinfo: App-Preis \(DEU\)$")
+        self.assertIn("/v1/appPriceSchedules/APS-1/baseTerritory", fake.paths)
+        query = [unquote(urlsplit(c[1]).query) for c in fake.calls if "/v1/appPriceSchedules/APS-1/manualPrices" in c[1]]
+        self.assertEqual(query, ["include=appPricePoint&filter[territory]=DEU"])
+        self.assertFalse([p for p in fake.paths if p.startswith(f"/v1/appPriceSchedules/{APP}")], fake.paths)
+        fake.app_prices = [(None, "2026-03-31", "0.99"), ("2026-04-01", None, "0.0")]
+        self.assert_appinfo(fake, True)  # nur der zum Stichtag gültige zählt
+
+    def test_availability_404_is_deviation(self):  # AC-23d
+        fake = FakeASC()
+        fake.status_override[f"/v1/apps/{APP}/appAvailabilityV2"] = 404
+        out = self.assert_appinfo(fake, False, "Abweichung appinfo: appAvailabilityV2: Soll eingerichtet, Ist nicht eingerichtet")
+        self.assertNotIn("Fehler appinfo", out)
+        for rel in ("primaryCategory", "ageRatingDeclaration", "Basisland", "App-Preis (DEU)"):
+            self.assertIn(rel, out)  # der Abschnitt läuft weiter
+        for status in (403, 500):
+            fake.status_override[f"/v1/apps/{APP}/appAvailabilityV2"] = status
+            self.assert_appinfo(fake, False, f"Fehler appinfo: HTTP {status} bei GET /v1/apps/{APP}/appAvailabilityV2")
+
+    def test_404_on_other_path_stays_error(self):  # AC-23d
+        for path in ("/v1/appInfos/INFO-1/primaryCategory", f"/v1/apps/{APP}/appPriceSchedule",
+                     "/v1/appInfos/INFO-1/ageRatingDeclaration", "/v1/appPriceSchedules/APS-1/manualPrices"):
+            fake = FakeASC()
+            fake.status_override[path] = 404
+            out = self.assert_appinfo(fake, False, f"Fehler appinfo: HTTP 404 bei GET {path}")
+            self.assertNotIn("nicht eingerichtet", out)
+
+    def test_fence_allows_only_app_price_schedule_paths(self):  # AC-23e
+        send = mock.Mock(return_value=(200, b"{}"))
+        reader = asc_check.Reader("T", send=send)
+        reader.ids.update({APP, "APS-1"})
+        for p in ("/v1/appPriceSchedules/APS-1/baseTerritory?include=x", "/v1/appPriceSchedules/APS-1/manualPrices",
+                  "/v1/appPriceSchedules/APS-1/manualPrices?include=appPricePoint",
+                  "/v1/appPriceSchedules/APS-1/automaticPrices?include=appPricePoint&filter[territory]=DEU",
+                  "/v1/appPriceSchedules", "/v1/appPriceSchedules/APS-1",
+                  "/v1/appPriceSchedules/APS-fremd/baseTerritory"):
+            with self.assertRaises(Exception, msg=p):
+                reader.get(p)
+        send.assert_not_called()
+        for m in ("POST", "PATCH"):
+            with self.assertRaises(Exception, msg=m):
+                asc_check.check_read(m, "/v1/appPriceSchedules/APS-1/baseTerritory", {"APS-1"})
+        reader.get("/v1/appPriceSchedules/APS-1/baseTerritory")
+        reader.get("/v1/appPriceSchedules/APS-1/manualPrices?include=appPricePoint&filter[territory]=DEU")
+        self.assertEqual(send.call_count, 2)
 
     def test_protocol_has_timestamp_and_commit(self):  # AC-20g
         _, out = run(FakeASC(), "--all")
