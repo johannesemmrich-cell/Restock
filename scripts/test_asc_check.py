@@ -593,9 +593,23 @@ class AscCheck(unittest.TestCase):
             fake.status_override[f"/v1/apps/{APP}/appAvailabilityV2"] = status
             self.assert_appinfo(fake, False, f"Fehler appinfo: HTTP {status} bei GET /v1/apps/{APP}/appAvailabilityV2")
 
-    def test_404_on_other_path_stays_error(self):  # AC-23d
+    def test_app_manual_prices_404_is_not_configured(self):  # AC-23c, Nachtrag nach dem zweiten Leselauf
+        path = "/v1/appPriceSchedules/APS-1/manualPrices"
+        fake = FakeASC()
+        fake.status_override[path] = 404  # echte Antwort, solange kein App-Preis eingetragen ist
+        out = self.assert_appinfo(fake, False, "Abweichung appinfo: App-Preis (DEU): Soll 0, Ist nicht eingerichtet")
+        self.assertNotIn("Fehler appinfo", out)
+        self.assertRegex(out, r"(?m)^ok\s+appinfo: Basisland$")
+        self.assertIn(f"/v1/apps/{APP}/appAvailabilityV2", fake.paths)  # der Abschnitt läuft weiter
+        self.assertRegex(out, r"(?m)^ok\s+appinfo: appAvailabilityV2$")
+        for status in (403, 500):
+            fake = FakeASC()
+            fake.status_override[path] = status
+            self.assert_appinfo(fake, False, f"Fehler appinfo: HTTP {status} bei GET {path}")
+
+    def test_404_on_other_path_stays_error(self):  # AC-23d; manualPrices des App-Preisplans ist die Ausnahme aus AC-23c
         for path in ("/v1/appInfos/INFO-1/primaryCategory", f"/v1/apps/{APP}/appPriceSchedule",
-                     "/v1/appInfos/INFO-1/ageRatingDeclaration", "/v1/appPriceSchedules/APS-1/manualPrices"):
+                     "/v1/appInfos/INFO-1/ageRatingDeclaration", "/v1/appPriceSchedules/APS-1/baseTerritory"):
             fake = FakeASC()
             fake.status_override[path] = 404
             out = self.assert_appinfo(fake, False, f"Fehler appinfo: HTTP 404 bei GET {path}")

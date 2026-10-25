@@ -3,7 +3,10 @@
 Nur GET über einen eigenen Lesezaun; der Schreibweg von asc_lib wird nicht benutzt. Die Datenschutzseite wird
 ohne Token abgerufen. Ausgabe je Prüfpunkt „ok“ oder „Abweichung: Feld, Soll, Ist“; Kontaktwerte nur als gesetzt/leer.
 Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status> oder --all.
-B3a: Kaufpfade nach API 4.5.1; Preise zählen nur gültig zum Stichtag und über ihren Preispunkt in `included`."""
+B3a: Kaufpfade nach API 4.5.1; Preise zählen nur gültig zum Stichtag und über ihren Preispunkt in `included`.
+B3b: Datenschutzseite mit eigenem User-Agent, Altersfreigabe nur mit beantworteten Pflichtfeldern, App-Preisplan
+(Basisland DEU, Betrag 0), 404 nur an manualPrices des App-Preisplans und an appAvailabilityV2 als Abweichung
+„nicht eingerichtet“."""
 import datetime, html, json, os, re, subprocess, sys
 from decimal import Decimal
 from pathlib import Path
@@ -27,6 +30,14 @@ PRICE_PATHS = {"IAP": ("/v1/inAppPurchasePriceSchedules/{id}/manualPrices", "/v1
 PRICE_QUERY = {"IAP": "include=inAppPurchasePricePoint&filter[territory]=DEU",
                "SUB": "include=subscriptionPricePoint,territory&filter[territory]=DEU"}
 PRICE_POINT = {"IAP": "inAppPurchasePricePoint", "SUB": "subscriptionPricePoint"}
+APP_PRICE_QUERY = "include=appPricePoint&filter[territory]=DEU"
+# Die 24 Inhaltsangaben der Altersfreigabe (OpenAPI 4.5.1); Overrides, kidsAgeBand, GRAC-Nummer und Info-URL zählen nicht (B3b F2a)
+AGE_FIELDS = ("advertising", "alcoholTobaccoOrDrugUseOrReferences", "contests", "gambling", "gamblingSimulated",
+              "gunsOrOtherWeapons", "healthOrWellnessTopics", "lootBox", "medicalOrTreatmentInformation", "messagingAndChat",
+              "parentalControls", "profanityOrCrudeHumor", "ageAssurance", "sexualContentGraphicAndNudity",
+              "sexualContentOrNudity", "socialMedia", "socialMediaAgeRestricted", "horrorOrFearThemes",
+              "matureOrSuggestiveThemes", "unrestrictedWebAccess", "userGeneratedContent", "violenceCartoonOrFantasy",
+              "violenceRealisticProlongedGraphicOrSadistic", "violenceRealistic")
 SECTIONS = ("metadata", "privacy-url", "appinfo", "iap", "screenshots", "build", "review", "status")
 _ID = r"([A-Za-z0-9_-]+)"
 FENCE = [(r"/v1/apps", f"filter[bundleId]={BUNDLE}"), (rf"/v1/apps/{_ID}/appStoreVersions", VERSION_QUERY),
@@ -35,7 +46,9 @@ FENCE = [(r"/v1/apps", f"filter[bundleId]={BUNDLE}"), (rf"/v1/apps/{_ID}/appStor
          (rf"/v1/appInfos/{_ID}/(?:appInfoLocalizations|ageRatingDeclaration|primaryCategory|secondaryCategory)", None),
          (rf"/v1/subscriptionGroups/{_ID}/subscriptions", None),
          (rf"/v1/appStoreVersionLocalizations/{_ID}/appScreenshotSets", None),
-         (rf"/v1/appScreenshotSets/{_ID}/appScreenshots", None)]
+         (rf"/v1/appScreenshotSets/{_ID}/appScreenshots", None),
+         (rf"/v1/appPriceSchedules/{_ID}/baseTerritory", None),
+         (rf"/v1/appPriceSchedules/{_ID}/manualPrices", APP_PRICE_QUERY)]
 FENCE += [(p.replace("{id}", _ID), None) for p in (*PRODUCT_PATHS["IAP"], *PRODUCT_PATHS["SUB"], IAP_PLAN)]
 FENCE += [(p.replace("{id}", _ID), PRICE_QUERY[k]) for k, paths in PRICE_PATHS.items() for p in paths]
 
@@ -56,6 +69,14 @@ def check_read(method, path, ids):
     raise ValueError(f"Pfad nicht erlaubt: GET {base}")
 
 
+class HttpError(RuntimeError):
+    """HTTP-Fehler mit Status; Meldung nur Status und Pfad (AC-20e), Status für den 404 an appAvailabilityV2 (AC-23d)."""
+
+    def __init__(self, status, path):
+        super().__init__(f"HTTP {status} bei GET {path}")
+        self.status = status
+
+
 class Reader:
     def __init__(self, token, send=urllib_send, today=None):
         self.token, self.send, self.ids = token, send, set()
@@ -65,7 +86,7 @@ class Reader:
         check_read("GET", path, self.ids)
         status, raw = self.send("GET", HOST + path, {"Authorization": f"Bearer {self.token}"}, None)
         if not 200 <= status < 300:  # nur Status und Pfad, nie Antworttext oder Token
-            raise RuntimeError(f"HTTP {status} bei GET {path.partition('?')[0]}")
+            raise HttpError(status, path.partition('?')[0])
         doc = json.loads(raw) if raw else {}
         items = doc.get("data")
         for x in (items if isinstance(items, list) else [items] if items else []) + doc.get("included", []):
@@ -77,10 +98,11 @@ class Reader:
 
 
 def fetch_privacy(url, send=urllib_send):
-    """Datenschutzseite ohne Authorization-Header; urllib_send folgt keiner Weiterleitung (AC-20b)."""
+    """Datenschutzseite ohne Authorization-Header; urllib_send folgt keiner Weiterleitung (AC-20b).
+    Eigener User-Agent, weil die Seite Python-urllib mit 403 abweist (AC-23a)."""
     if url != PRIVACY_URL:
         raise ValueError("Nur die Datenschutz-URL ist erlaubt")
-    return send("GET", url, {}, None)
+    return send("GET", url, {"User-Agent": "Restock-asc-check/1.0"}, None)
 
 
 def flat(value):
@@ -174,9 +196,47 @@ def sec_appinfo(rd, ctx, rep, page_send):
         cats[rel] = rd.data(f"/v1/appInfos/{info}/{rel}")
         rep.present("appinfo", rel, cats[rel])
     rep.eq("appinfo", "Kategorien", {"SHOPPING", "PRODUCTIVITY"}, {c["id"] for c in cats.values() if c})
-    rep.present("appinfo", "ageRatingDeclaration", rd.data(f"/v1/appInfos/{info}/ageRatingDeclaration"))
-    for rel in ("appPriceSchedule", "appAvailabilityV2"):
-        rep.present("appinfo", rel, rd.data(f"/v1/apps/{app}/{rel}"))
+    check_age(rep, rd.data(f"/v1/appInfos/{info}/ageRatingDeclaration"))
+    plan = rd.data(f"/v1/apps/{app}/appPriceSchedule")
+    rep.present("appinfo", "appPriceSchedule", plan)
+    if plan:
+        check_app_price(rd, rep, plan["id"])  # Plan-ID aus der Antwort, nie die App-ID (AC-23c)
+    try:
+        availability = rd.data(f"/v1/apps/{app}/appAvailabilityV2")
+    except HttpError as e:  # nur hier heißt 404 „nicht eingerichtet“ (AC-23d); jeder andere Status bleibt ein Fehler
+        if e.status != 404:
+            raise
+        rep.check("appinfo", "appAvailabilityV2", False, "eingerichtet", "nicht eingerichtet")
+        return
+    rep.present("appinfo", "appAvailabilityV2", availability)
+
+
+def check_age(rep, decl):
+    """„ok“ nur, wenn alle Pflichtangaben gesetzt sind; fehlende oder null-Felder in Listenreihenfolge (AC-23b)."""
+    if not decl:
+        rep.present("appinfo", "ageRatingDeclaration", decl)
+        return
+    attrs = decl.get("attributes") or {}
+    empty = [f for f in AGE_FIELDS if attrs.get(f) is None]
+    rep.check("appinfo", "ageRatingDeclaration", not empty, "alle Angaben gesetzt", "leer: " + ", ".join(empty))
+
+
+def check_app_price(rd, rep, plan):
+    """Basisland DEU und genau ein zum Stichtag gültiger Betrag 0 (AC-23c; PO-Entscheidung 2026-10-25: App kostenlos,
+    Pro per Kauf). 404 an manualPrices heißt „nicht eingerichtet“; jeder andere Status bleibt ein Fehler."""
+    base = rd.data(f"/v1/appPriceSchedules/{plan}/baseTerritory")
+    rep.eq("appinfo", "Basisland", "DEU", base.get("id") if base else None)
+    try:
+        prices = rd.get(f"/v1/appPriceSchedules/{plan}/manualPrices?{APP_PRICE_QUERY}")
+    except HttpError as e:
+        if e.status != 404:
+            raise
+        rep.check("appinfo", "App-Preis (DEU)", False, "0", "nicht eingerichtet")
+        return
+    amounts = valid_amounts(prices, "appPricePoint", rd.today)
+    distinct = set(amounts)
+    got = ", ".join(sorted("Preispunkt fehlt" if a is None else str(a) for a in distinct)) or "kein gültiger Preis"
+    rep.check("appinfo", "App-Preis (DEU)", distinct == {Decimal(0)}, "0", got)
 
 
 def products(rd, app, rep):

@@ -291,18 +291,24 @@ ausdrücklich als offen.
      diese App nie liefert, würde sonst dauerhaft „leer“ melden.
   3. **F2b, Preisplan der App:** `appPriceSchedule` existiert immer (im Erstlauf beobachtet: Ressource-ID = App-ID) und wurde als „ok“
      gemeldet. Fix: Plan-ID trotzdem aus der Antwort lesen (die Beobachtung ist nur Befund, keine Annahme im Code), dann `baseTerritory` und `manualPrices` (beide Pfade stehen in der Leseliste). Soll: Basisland `DEU` und genau ein
-     zum Stichtag gültiger Betrag, und der ist 0. **Annahme, in der Spec bisher nicht ausdrücklich festgehalten:** Die App selbst ist
+     zum Stichtag gültiger Betrag, und der ist 0. **PO-Entscheidung 2026-10-25:** Die App selbst ist
      kostenlos, Pro kommt nur über die In-App-Käufe aus AC-15. Gültigkeit und Zuordnung über den Preispunkt wie in B3a (`valid_amounts`
      mit Beziehung `appPricePoint`, Preispunkt-Attribut `customerPrice`; Feldnamen gemäß OpenAPI 4.5.1: `AppPriceV2` mit
      `startDate`/`endDate` und Beziehungen `appPricePoint`, `territory`; `AppPriceSchedule` mit `baseTerritory`, `manualPrices`,
      `automaticPrices`). Anderes Basisland, kein gültiger Eintrag oder Betrag ≠ 0 ist eine Abweichung, nie „ok“.
+     **Nachtrag nach dem zweiten Leselauf (PO 2026-10-25):** Ist für die App noch kein Preis eingetragen, antwortet `manualPrices` mit
+     404, obwohl `appPriceSchedule` und `baseTerritory` mit 200 antworten (Protokoll `asc-check-lauf-2-2026-10-25.txt`; dasselbe
+     Verhalten berichten asc-CLI PR #2574 und core-hub PR #200, keine Apple-Aussage). Ein 404 **nur an diesem Pfad** wird zur Abweichung
+     „App-Preis (DEU): Soll 0, Ist nicht eingerichtet“, der Abschnitt läuft weiter (Wortlaut in AC-23c).
   4. **F3, Verfügbarkeit:** `GET /v1/apps/{id}/appAvailabilityV2` antwortet bei der neuen App mit 404 und brach den Abschnitt `appinfo` als
      „Fehler“ ab (Protokoll: „Fehler appinfo: HTTP 404 bei GET /v1/apps/6790839680/appAvailabilityV2“). Fix: Ein 404 **nur an
-     diesem Pfad** wird zu einer Abweichung „nicht eingerichtet“ (Soll „eingerichtet“, genauer Wortlaut in AC-23d); jedes andere 404 bleibt ein Fehler.
+     diesem Pfad** wird zu einer Abweichung „nicht eingerichtet“ (Soll „eingerichtet“, genauer Wortlaut in AC-23d); jedes andere 404 bleibt ein Fehler (einzige weitere Ausnahme: `manualPrices` des App-Preisplans, Nachtrag in F2b).
      Dass Apple 404 für „noch nicht eingerichtet“ nutzt, ist nur durch Forenberichte gestützt, nicht durch Apples Dokumentation.
 - **Nachweis nach Umsetzung:** erneuter Leselauf `python3 scripts/asc_check.py --all` gegen Apple (nur GET) mit Protokoll unter
-  `docs/artifacts/feat-175-b3-asc-betrieb/` (zweiter Lauf, neben dem Erstlauf). Erwartet: `privacy-url` HTTP 200 mit Inhaltsabweichung
-  (Seite noch alt), Altersfreigabe, Preisplan und Verfügbarkeit als Abweichung statt „ok“ oder „Fehler“. Der Lauf ist nur lesend und
+  `docs/artifacts/feat-175-b3-asc-betrieb/`. Nachweis nach dem Nachtrag ist der dritte Leselauf, Protokoll `asc-check-lauf-3-2026-10-25.txt`
+  (der zweite Lauf, `asc-check-lauf-2-2026-10-25.txt`, zeigte noch „Fehler“ am 404 von `manualPrices`, daher der Nachtrag in F2b).
+  Erwartet: `privacy-url` HTTP 200 mit Inhaltsabweichung (Seite noch alt), Altersfreigabe, Preisplan und Verfügbarkeit als Abweichung
+  statt „ok“ oder „Fehler“. Der Lauf ist nur lesend und
   braucht kein Wort für außenwirksame Schritte.
 - **Nicht Teil von B3b:** der Betrieb (Eintragen, Käufe, Screenshots, Build 37) bleibt B3, je Schritt auf Hennings Wort.
 
@@ -348,7 +354,7 @@ B2b: asc_check (eigener GET-Zaun, Vergleich mit den Dateien), test_asc_check (Sc
 B3a: asc_check Kaufpfade v2 + Preisplan (iapPriceSchedule → Plan-ID → manual + automatic), Gültigkeit und Preispunkt-Zuordnung,
     Zaun-Muster; test_asc_check: FakeASC-Routen, Plan-ID ≠ Kauf-ID, Preisfälle.
 B3b: asc_check fetch_privacy mit User-Agent, Altersfreigabe-Pflichtfelder, App-Preisplan (baseTerritory, manualPrices),
-    404 nur an appAvailabilityV2 als Abweichung; test_asc_check mit Erstlauf-Antwortformen.
+    404 an manualPrices des App-Preisplans und an appAvailabilityV2 als Abweichung; test_asc_check mit Erstlauf-Antwortformen.
     PO-Beschluss 2026-10-25 (nach dem Briefing, per Auswahl): Die App ist kostenlos, Pro nur über die drei Käufe; der Sollwert
     „Basisland DEU, Betrag 0“ in AC-23c ist damit entschieden, keine Annahme mehr.
 B3: Betrieb nach der Liste im Abschnitt B3, kein Quellcode; Screenshots per simctl aus dem Simulator.
@@ -811,7 +817,7 @@ Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b 
 - **AC-23 (B3b, Werkzeug):** Der Gegenleser meldet nach dem ersten echten Lauf keine Falschmeldung mehr: Datenschutzseite mit eigenem
   `User-Agent`, Altersfreigabe und Preisplan der App nur „ok“ mit Inhalt, fehlende Verfügbarkeit als Abweichung. AC-23 gilt, wenn AC-23a
   bis AC-23e gelten.
-  - Nachweis: `python3 scripts/test_asc_check.py`, erwartet Exit 0; zweiter Leselauf gegen Apple (siehe Abschnitt B3b)
+  - Nachweis: `python3 scripts/test_asc_check.py`, erwartet Exit 0; dritter Leselauf gegen Apple, Protokoll `asc-check-lauf-3-2026-10-25.txt` (siehe Abschnitt B3b)
 - **AC-23a (F1, User-Agent):** `fetch_privacy` ruft `send` mit dem Header `User-Agent: Restock-asc-check/1.0` und ohne `Authorization`;
   URL und Methode bleiben wie in AC-20b (nur die eine URL, GET, keine Weiterleitung). Ein Schein-`send`, der ohne diesen Kopf 403
   liefert, führt in `privacy-url` nicht mehr zu einer Statusabweichung.
@@ -822,13 +828,15 @@ Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b 
   und `kidsAgeBand` zählen nicht als Antwort; nur `null` oder fehlend gilt als leer.
   - Test: `scripts/test_asc_check.py::test_age_rating_all_null_is_deviation`, `::test_age_rating_names_missing_field`, `::test_age_rating_complete_is_ok`
 - **AC-23c (F2b, Preisplan der App):** `appinfo` liest `baseTerritory` und `manualPrices` des Plans (Plan-ID aus der Antwort von
-  `appPriceSchedule`, nie die App-ID als Annahme). „ok“ nur bei Basisland `DEU` und genau einem gültigen Betrag 0 (Annahme: App kostenlos,
+  `appPriceSchedule`, nie die App-ID als Annahme). „ok“ nur bei Basisland `DEU` und genau einem gültigen Betrag 0 (PO-Entscheidung 2026-10-25: App kostenlos,
   siehe B3b F2b); ohne `manualPrices`, mit Basisland ≠ `DEU`, mit Betrag ≠ 0 oder ohne auflösbaren Preispunkt ist es eine Abweichung mit Soll und Ist.
+  Antwortet `GET /v1/appPriceSchedules/{plan}/manualPrices` mit 404, meldet `appinfo` „Abweichung: App-Preis (DEU): Soll 0, Ist nicht
+  eingerichtet“ und prüft danach weiter (Verfügbarkeit, AC-23d); andere Statuscodes dort (403, 500) bleiben Fehler.
   - Test: `scripts/test_asc_check.py::test_app_price_schedule_without_manual_prices_is_deviation`, `::test_app_price_schedule_wrong_base_territory`,
-    `::test_app_price_schedule_complete_is_ok`
-- **AC-23d (F3, 404 nur an der Verfügbarkeit):** Antwortet `GET /v1/apps/{id}/appAvailabilityV2` mit 404, meldet `appinfo`
+    `::test_app_price_schedule_complete_is_ok`, `::test_app_manual_prices_404_is_not_configured`
+- **AC-23d (F3, 404 an der Verfügbarkeit):** Antwortet `GET /v1/apps/{id}/appAvailabilityV2` mit 404, meldet `appinfo`
   „Abweichung: appAvailabilityV2: Soll eingerichtet, Ist nicht eingerichtet“ und läuft weiter (kein Abbruch, Exit ≠ 0 über die Abweichung).
-  Ein 404 an jedem anderen Pfad (z. B. `appInfos/{id}/primaryCategory`, `appPriceSchedule`) bleibt „Fehler“ mit Status und Pfad. Andere
+  Ein 404 an jedem anderen Pfad (z. B. `appInfos/{id}/primaryCategory`, `appPriceSchedule`; Ausnahme `manualPrices` des App-Preisplans, AC-23c) bleibt „Fehler“ mit Status und Pfad. Andere
   Statuscodes (403, 500) an der Verfügbarkeit bleiben ebenfalls Fehler.
   - Test: `scripts/test_asc_check.py::test_availability_404_is_deviation`, `::test_404_on_other_path_stays_error`
 - **AC-23e (Zaun und Bestand):** Der Zaun lässt nur die zwei neuen Pfade `/v1/appPriceSchedules/{plan}/baseTerritory` (ohne jede
@@ -855,7 +863,7 @@ Automatisch, an die ACs oben gebunden (jedes AC erscheint):
 - AC-10, AC-10a bis AC-10h (B2a): `python3 scripts/test_asc_scripts.py` (ohne Netz, ohne Schlüssel, Schein-`send` und Schein-`sign`; kein echter API-Lauf).
 - AC-20 bis AC-20g und die Abschnitte zu AC-11 bis AC-19 samt AC-17a (B2b): `python3 scripts/test_asc_check.py` (ohne Netz, ohne Schlüssel, Schein-`send`, Schein-`sign`, Schein-Opener; kein echter API-Lauf).
 - AC-22 bis AC-22g (B3a): `python3 scripts/test_asc_check.py` (ohne Netz, ohne Schlüssel, `FakeASC` mit Preisplan-Route, Plan-ID ≠ Kauf-ID, eingestelltes „heute“); B3a läuft vor B3.
-- AC-23 bis AC-23e (B3b): `python3 scripts/test_asc_check.py` (ohne Netz, ohne Schlüssel, Schein-Antworten in der echten Form des Erstlaufs: Altersfreigabe mit lauter `null`, 404 an `appAvailabilityV2`, Schein-`send` mit `User-Agent`-Prüfung); danach ein zweiter Leselauf gegen Apple (nur GET) als Protokoll unter `docs/artifacts/feat-175-b3-asc-betrieb/`; B3b läuft vor B3. Neu in RED anzulegen sind alle in AC-23a bis AC-23d genannten Tests und `test_fence_allows_only_app_price_schedule_paths`; `test_fence_rejects_before_send` und `test_source_bans` bestehen schon und müssen grün bleiben.
+- AC-23 bis AC-23e (B3b): `python3 scripts/test_asc_check.py` (ohne Netz, ohne Schlüssel, Schein-Antworten in der echten Form des Erstlaufs: Altersfreigabe mit lauter `null`, 404 an `appAvailabilityV2` und an `manualPrices` des App-Preisplans, Schein-`send` mit `User-Agent`-Prüfung); danach der dritte Leselauf gegen Apple (nur GET) als Protokoll `docs/artifacts/feat-175-b3-asc-betrieb/asc-check-lauf-3-2026-10-25.txt`; B3b läuft vor B3. Neu in RED anzulegen sind alle in AC-23a bis AC-23d genannten Tests und `test_fence_allows_only_app_price_schedule_paths`; `test_fence_rejects_before_send` und `test_source_bans` bestehen schon und müssen grün bleiben. Nachtrag nach dem zweiten Leselauf: neu `test_app_manual_prices_404_is_not_configured` (404 an `manualPrices` → Abweichung „nicht eingerichtet“, danach Verfügbarkeit geprüft; 403/500 dort bleiben Fehler); `test_404_on_other_path_stays_error` prüft `manualPrices` nicht mehr.
 - AC-21 (B2b): die drei ASC-Tests laufen in CI (`.github/workflows/ci.yml`, Schritt „Strukturtests (Python)“); Beleg: grüner CI-Lauf.
 - AC-11 bis AC-19 mit AC-17a (B3): Gegenlese-Lauf `python3 scripts/asc_check.py` (in B2b gebaut, in B3 gefahren) gegen ASC (`--section metadata|privacy-url|appinfo|iap|
   screenshots|build|review|status`, `--all`), lesend (GET); AC-14 immer mit Beleg-Screenshots (keine API); AC-16 zusätzlich `sips`.
@@ -944,15 +952,17 @@ Offene Grenzen:
   endet als „Fehler iap“ (nie „ok“), bricht aber den ganzen Abschnitt ab, sodass die übrigen Käufe ungeprüft bleiben. Preisantworten
   werden nicht über `links.next` weitergelesen (F005); ein falsches „ok“ setzt mehr als eine Seite DEU-Preise voraus. Protokoll:
   `docs/artifacts/feat-175-b3-asc-eintragen/adversary-dialog.md`.
-- **B3b, nur Schein-Antworten plus ein Leselauf:** Die neuen Pfade (`baseTerritory`, `manualPrices` der App) und der Zusammenhang
+- **B3b, nur Schein-Antworten plus Leseläufe:** Die neuen Pfade (`baseTerritory`, `manualPrices` der App) und der Zusammenhang
   `appPricePoint` sind gegen OpenAPI 4.5.1 geprüft, am echten Konto aber erst belegt, wenn der Preisplan der App gesetzt ist; bis dahin
   meldet der Leselauf dort eine Abweichung. Kaufpfade und -preise (B3a) bleiben bis zum Anlegen der Käufe ungeprüft gegen Apple.
 - **B3b, Bedeutung des 404:** Dass `appAvailabilityV2` bei „nicht eingerichtet“ mit 404 antwortet, stützen nur Forenberichte, keine Apple-Aussage.
   Ein 404 aus anderem Grund an diesem Pfad (z. B. falsche App-ID) würde fälschlich als „nicht eingerichtet“ gelten; eine 200-Antwort mit
-  leerer `territoryAvailabilities` prüft B3b nicht.
+  leerer `territoryAvailabilities` prüft B3b nicht. Dasselbe gilt für das 404 an `manualPrices` des App-Preisplans (belegt im zweiten
+  Leselauf und in zwei fremden Werkzeugen, nicht von Apple dokumentiert). Ein App-Preis, der nur unter `automaticPrices` stünde, würde
+  bei 404 an `manualPrices` als „nicht eingerichtet“ gemeldet; `automaticPrices` der App liest B3b nicht (Zaun AC-23e).
 - **B3b, Pflichtfelder der Altersfreigabe:** Die Liste der 24 Felder stammt aus dem Schema, nicht aus Apples Aussage, welche davon
   für diese App verlangt sind. Neue Pflichtfelder in einer späteren API-Version werden nicht erkannt.
-- **B3b, Preis der App:** Soll „Betrag 0“ beruht auf der Annahme, dass die App kostenlos ist und Pro nur über Käufe kommt; ein anderer
+- **B3b, Preis der App:** Soll „Betrag 0“ folgt der PO-Entscheidung vom 2026-10-25 (App kostenlos, Pro nur über Käufe); ein anderer
   App-Preis würde als Abweichung gemeldet.
 - **B3b, Datenschutzseite:** Der Dritte pflegt sie weiterhin; AC-12 bleibt blockiert, der Leselauf zeigt nach F1 nur noch die Inhaltsabweichung.
   Dass die Seite den Kopf `Restock-asc-check/1.0` heute nicht sperrt, ist ein Momentbefund.
@@ -985,3 +995,4 @@ Simulator-Screenshots). #175 blockiert Release 1.0.
 - 2026-10-25: Durchgang B3a ergänzt (Kaufpfade nach API 4.5.1: v2-Lokalisierung/-Screenshot, Preisplan aus `iapPriceSchedule`, manual + automatic, Gültigkeit und Preispunkt-Zuordnung, Zaun); AC-22 bis AC-22g; B3 als Betriebsdurchgang nach B3a präzisiert; Leseliste auf 4.5.1; Alternativen 15–16; Offene Grenzen.
 - 2026-10-25: Nach dem ersten PO-Briefing: Abschnitt `review` mit AC-17a (Review-Kontakt aus `appStoreReviewDetail`, Werte nie im Klartext) und Export-Compliance im Abschnitt `build` (`usesNonExemptEncryption` false, eigener Test) ergänzt; vorher von AC-17/AC-19 verlangt, aber ohne Prüfung.
 - 2026-10-25: Durchgang B3b ergänzt (Gegenleser-Korrekturen nach dem ersten echten Lauf: eigener User-Agent für die Datenschutzseite, Altersfreigabe nur mit beantworteten Pflichtfeldern, Preisplan der App mit Basisland und Betrag 0 als benannte Annahme, 404 nur an `appAvailabilityV2` als Abweichung); AC-23 bis AC-23e; Leseliste um `baseTerritory`/`manualPrices` der App erweitert; AC-13 präzisiert; Reihenfolge A1 bis B3a, B3b, B3; Alternativen 17–18; Offene Grenzen.
+- 2026-10-25: B3b-Nachtrag nach dem zweiten Leselauf (PO-Wort): 404 an `manualPrices` des App-Preisplans ist die Abweichung „App-Preis (DEU): Soll 0, Ist nicht eingerichtet“ statt eines Fehlers (F2b, Nachweis-Absatz B3b, Implementation Details B3b, AC-23-Nachweis, AC-23c, AC-23d, Testplan, Offene Grenzen); Nachweis ist der dritte Leselauf.

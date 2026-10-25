@@ -1,7 +1,7 @@
 ---
 spec_file: docs/specs/appstore/app-store-auftritt.md
-spec_sha256: ebde69da2054e47c5a9da97657a71e5882675c279c9b2bf205efb2b73de575a1
-spec_frozen_sha256: 0e882e196ea0b4e943771ccef7f821e6c36e130f830e389b9f8e848c39e7133d
+spec_sha256: de460581e72d23bb0a7ff07f18bb80e3072739a597463f56705c138edda26a83
+spec_frozen_sha256: a0513db3ac378f5339916bd0866d4eaa96bfd9debdd4fe1b196935f179df867c
 ---
 
 # PO-Briefing: feat-175-b3-asc-betrieb
@@ -12,22 +12,22 @@ spec_frozen_sha256: 0e882e196ea0b4e943771ccef7f821e6c36e130f830e389b9f8e848c39e7
 
 ## Was gebaut wird
 
-Das Prüfwerkzeug für App Store Connect meldet kein falsches Grün und keinen Abbruch mehr; die App selbst bleibt unverändert.
+Das Prüfwerkzeug für App Store Connect meldet fehlende Einträge künftig als Abweichung statt fälschlich als in Ordnung oder als Abbruch.
 
 ## Definition of Done
 
-Ein zweiter, nur lesender Prüflauf gegen Apple zeigt Altersfreigabe, Preis und Verfügbarkeit als Abweichung statt „ok“, die Datenschutzseite ohne Zugriffsfehler.
+Ein dritter lesender Lauf gegen Apple meldet Datenschutzseite erreichbar sowie Altersfreigabe, App-Preis und Verfügbarkeit als Abweichungen, nie als ok oder Fehler.
 
 ## Wie geprüft wird
 
-Automatische Tests mit nachgebildeten Apple-Antworten belegen jede Korrektur; ob echte Apple-Antworten so aussehen, zeigt erst der zweite Leselauf.
+Tests mit nachgebauten Apple-Antworten belegen jede Meldung; echte Apple-Antworten prüfen sie nicht.
 
 ## Kritische Anmerkungen
 
-- Annahme ohne PO-Beschluss: Die App selbst ist kostenlos (0 €), Pro nur per Kauf.
-- Datenschutzseite bleibt veraltet, hängt am Dritten; unverändert blockiert.
-- Bedeutung von „404“ als „nicht eingerichtet“ stützt sich nur auf Forenberichte.
+- Der dritte Echtlauf als Nachweis der Nachbesserung ist noch nicht erfolgt; bisher gibt es nur nachgebaute Antworten.
+- Fehlender Preis und fehlende Verfügbarkeit gelten als „nicht eingerichtet“, gestützt nur auf Forenberichte, nicht auf Apple.
+- Die 24 Pflichtfelder der Altersfreigabe stammen aus dem Schema; ob Apple alle verlangt, ist unbelegt.
 
 ## Freigabe-Frage
 
-Ist es für dich richtig, dass die App selbst kostenlos ist und Pro nur über In-App-Käufe kommt?
+Gibst du die Korrektur des Prüfwerkzeugs frei, damit danach der dritte Lesetest gegen Apple laufen kann?
