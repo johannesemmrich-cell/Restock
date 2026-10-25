@@ -75,7 +75,7 @@ und paarweise verschieden zu allen 26 alten; `PriceEstimatorCategoryFallbackTest
 
 Eine Tabelle `nonFoodCategoryMap` mit 33 Einträgen und 4425 Stichwörtern (deutsch, Marken, englisch):
 Stichwörter → Kategorie → bevorzugter Ladentyp (`"drugstore"`, `"hardware"`, `"variety"` oder nil).
-Dazu 192 Wortend-Regeln `nonFoodCategoryEndings` als abstraktes Wissen über deutsche Komposita
+Dazu 195 Wortend-Regeln `nonFoodCategoryEndings` als abstraktes Wissen über deutsche Komposita
 („…schrauben“ → Eisenwaren, „…futter“ → Tierbedarf, „…shampoo“ → Haarpflege, „…fliese“ → Boden & Fliesen,
 „…dünger“ → Garten). Die Datei kompiliert in App, Widget und Teilen-Erweiterung.
 
