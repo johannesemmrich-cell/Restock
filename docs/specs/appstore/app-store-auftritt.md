@@ -855,6 +855,11 @@ Offene Grenzen:
   eine Abweichung. Ob das in der Praxis vorkommt, zeigt B3.
 - **B3a, nur Territorium DEU:** Preise anderer Länder werden nicht geprüft.
 - **B3a, Umfang:** ~215 Zeilen, innerhalb ±250.
+- **B3a, Befunde der Prüfung (LOW, offen gelassen):** Der Stichtag ist `date.today()` in Ortszeit, der Protokollkopf UTC; kurz nach
+  Mitternacht nennen beide verschiedene Tage (F003). Ein leeres `startDate`/`endDate` (`""`) gilt wie `null` (F004); ein kaputtes Datum
+  endet als „Fehler iap“ (nie „ok“), bricht aber den ganzen Abschnitt ab, sodass die übrigen Käufe ungeprüft bleiben. Preisantworten
+  werden nicht über `links.next` weitergelesen (F005); ein falsches „ok“ setzt mehr als eine Seite DEU-Preise voraus. Protokoll:
+  `docs/artifacts/feat-175-b3-asc-eintragen/adversary-dialog.md`.
 - **Nichts auf Hennings Geräten geprüft.**
 - **Dateizählung B3:** Screenshots und Protokolle unter `docs/artifacts/` sind Belege, keine Quelldateien; zählt das Gate sie
   einzeln, wird B3 nach Sprache geteilt.

@@ -74,6 +74,7 @@ class FakeASC:
         self.prices = {"IAP-life": "14.99", "SUB-monthly": "1.99", "SUB-yearly": "8.99"}
         # Preisplan ≠ Kauf-ID (AC-22b); Einträge je Produkt: (Ort, startDate, endDate, Betrag; None = Preispunkt fehlt)
         self.plans, self.price_entries, self.decoys = {"IAP-life": "PLAN-x"}, {}, {}
+        self.foreign_type_points = {}  # Preispunkt mit gleicher ID wie der Eintrag, aber fremdem Typ, steht vorn (F002)
         self.product_locs = {pid: [res("localizations", f"LOC-{pid}-{l}", locale=l, name="Restock Pro", description="Alles")
                                    for l in TEXTS] for pid in self.prices}
         self.review_shots = {pid: res("appStoreReviewScreenshots", f"RS-{pid}") for pid in self.prices}
@@ -139,6 +140,9 @@ class FakeASC:
             entry = res(kind, f"PR-{pid}-{w}-{i}", startDate=start, endDate=end)
             entry["relationships"] = {rel: {"data": {"type": point, "id": f"PP-{pid}-{w}-{i}"}}}
             data.append(entry)
+            if pid in self.foreign_type_points:
+                other = PRICE_KINDS["SUB" if pid.startswith("IAP") else "IAP"][2]
+                included.insert(0, res(other, f"PP-{pid}-{w}-{i}", customerPrice=self.foreign_type_points[pid]))
             if amount is not None:
                 included.append(res(point, f"PP-{pid}-{w}-{i}", customerPrice=amount))
         return json.dumps({"data": data, "included": included}).encode()
@@ -425,6 +429,13 @@ class AscCheck(unittest.TestCase):
         self.assert_iap(fake, True)
         fake.price_entries["IAP-life"] = [("manual", None, "2026-01-31", "14.99"), ("manual", "2026-02-01", None, "9.99")]
         self.assert_iap(fake, False, "9.99")
+        fake = FakeASC()  # F002: gleiche ID, fremder Typ zählt nicht
+        fake.foreign_type_points["IAP-life"] = "4.99"
+        fake.price_entries["IAP-life"] = [("manual", None, None, "14.99")]
+        self.assert_iap(fake, True)
+        fake.foreign_type_points["IAP-life"] = "14.99"
+        fake.price_entries["IAP-life"] = [("manual", None, None, None)]
+        self.assert_iap(fake, False, "lifetime")
 
     def test_no_valid_price_is_deviation(self):  # AC-22e
         fake = FakeASC()
@@ -433,6 +444,8 @@ class AscCheck(unittest.TestCase):
                         [("manual", None, None, "14.99"), ("automatic", None, None, "19.99")]):
             fake.price_entries["IAP-life"] = entries
             self.assert_iap(fake, False, "lifetime")
+        fake.price_entries["IAP-life"] = [("manual", None, None, "14.99"), ("automatic", None, None, None)]  # F001
+        self.assertIn("Preispunkt fehlt", self.assert_iap(fake, False, "lifetime"))
         fake.price_entries["IAP-life"] = [("manual", None, None, "14.99"), ("automatic", None, None, "14.99")]
         self.assert_iap(fake, True)  # mehrere gültige mit gleichem Betrag
 
