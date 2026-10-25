@@ -1,0 +1,205 @@
+test_all_exit_zero_only_if_all_api_sections_ok (__main__.AscCheck.test_all_exit_zero_only_if_all_api_sections_ok) ... FAIL
+test_deviation_names_field_expected_actual (__main__.AscCheck.test_deviation_names_field_expected_actual) ... FAIL
+test_fence_rejects_before_send (__main__.AscCheck.test_fence_rejects_before_send) ... FAIL
+test_no_secrets_in_output_or_errors (__main__.AscCheck.test_no_secrets_in_output_or_errors) ... FAIL
+test_only_get_and_ids_from_answers (__main__.AscCheck.test_only_get_and_ids_from_answers) ... FAIL
+test_privacy_fetch_only_exact_url (__main__.AscCheck.test_privacy_fetch_only_exact_url) ... FAIL
+test_privacy_fetch_without_authorization_and_redirect (__main__.AscCheck.test_privacy_fetch_without_authorization_and_redirect) ... FAIL
+test_privacy_questionnaire_reports_manual (__main__.AscCheck.test_privacy_questionnaire_reports_manual) ... FAIL
+test_protocol_has_timestamp_and_commit (__main__.AscCheck.test_protocol_has_timestamp_and_commit) ... FAIL
+test_section_appinfo_ok_and_deviation (__main__.AscCheck.test_section_appinfo_ok_and_deviation) ... FAIL
+test_section_build_ok_and_deviation (__main__.AscCheck.test_section_build_ok_and_deviation) ... FAIL
+test_section_build_requires_export_compliance_false (__main__.AscCheck.test_section_build_requires_export_compliance_false) ... FAIL
+test_section_iap_ok_and_deviation (__main__.AscCheck.test_section_iap_ok_and_deviation) ... FAIL
+test_section_metadata_ok_and_deviation (__main__.AscCheck.test_section_metadata_ok_and_deviation) ... FAIL
+test_section_privacy_url_ok_and_deviation (__main__.AscCheck.test_section_privacy_url_ok_and_deviation) ... FAIL
+test_section_review_never_prints_contact_values (__main__.AscCheck.test_section_review_never_prints_contact_values) ... FAIL
+test_section_review_ok_and_deviation (__main__.AscCheck.test_section_review_ok_and_deviation) ... FAIL
+test_section_screenshots_checks_pixel_size_not_enum (__main__.AscCheck.test_section_screenshots_checks_pixel_size_not_enum) ... FAIL
+test_section_status_ok_and_deviation (__main__.AscCheck.test_section_status_ok_and_deviation) ... FAIL
+test_source_bans (__main__.AscCheck.test_source_bans) ... FAIL
+
+======================================================================
+FAIL: test_all_exit_zero_only_if_all_api_sections_ok (__main__.AscCheck.test_all_exit_zero_only_if_all_api_sections_ok)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_deviation_names_field_expected_actual (__main__.AscCheck.test_deviation_names_field_expected_actual)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_fence_rejects_before_send (__main__.AscCheck.test_fence_rejects_before_send)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_no_secrets_in_output_or_errors (__main__.AscCheck.test_no_secrets_in_output_or_errors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_only_get_and_ids_from_answers (__main__.AscCheck.test_only_get_and_ids_from_answers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_privacy_fetch_only_exact_url (__main__.AscCheck.test_privacy_fetch_only_exact_url)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_privacy_fetch_without_authorization_and_redirect (__main__.AscCheck.test_privacy_fetch_without_authorization_and_redirect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_privacy_questionnaire_reports_manual (__main__.AscCheck.test_privacy_questionnaire_reports_manual)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_protocol_has_timestamp_and_commit (__main__.AscCheck.test_protocol_has_timestamp_and_commit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_section_appinfo_ok_and_deviation (__main__.AscCheck.test_section_appinfo_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_section_build_ok_and_deviation (__main__.AscCheck.test_section_build_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_section_build_requires_export_compliance_false (__main__.AscCheck.test_section_build_requires_export_compliance_false)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_section_iap_ok_and_deviation (__main__.AscCheck.test_section_iap_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_section_metadata_ok_and_deviation (__main__.AscCheck.test_section_metadata_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_section_privacy_url_ok_and_deviation (__main__.AscCheck.test_section_privacy_url_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_section_review_never_prints_contact_values (__main__.AscCheck.test_section_review_never_prints_contact_values)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_section_review_ok_and_deviation (__main__.AscCheck.test_section_review_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_section_screenshots_checks_pixel_size_not_enum (__main__.AscCheck.test_section_screenshots_checks_pixel_size_not_enum)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_section_status_ok_and_deviation (__main__.AscCheck.test_section_status_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+======================================================================
+FAIL: test_source_bans (__main__.AscCheck.test_source_bans)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 136, in setUp
+    self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : scripts/asc_check.py fehlt
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.002s
+
+FAILED (failures=20)

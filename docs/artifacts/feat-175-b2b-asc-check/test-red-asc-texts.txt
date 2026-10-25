@@ -1,0 +1,24 @@
+test_ci_runs_asc_tests (__main__.AscTexts.test_ci_runs_asc_tests) ... FAIL
+test_description_links_and_urls (__main__.AscTexts.test_description_links_and_urls) ... ok
+test_field_limits (__main__.AscTexts.test_field_limits) ... ok
+test_forbidden_terms_absent (__main__.AscTexts.test_forbidden_terms_absent) ... ok
+test_keywords_bytes_and_word_length (__main__.AscTexts.test_keywords_bytes_and_word_length) ... ok
+test_no_invisible_characters_cr_or_bom (__main__.AscTexts.test_no_invisible_characters_cr_or_bom) ... ok
+test_privacy_page_english_notes_german_authoritative (__main__.AscTexts.test_privacy_page_english_notes_german_authoritative) ... ok
+test_privacy_page_equals_legalview (__main__.AscTexts.test_privacy_page_equals_legalview) ... ok
+test_sections_present_and_not_empty (__main__.AscTexts.test_sections_present_and_not_empty) ... ok
+test_values_equal_spec_wording (__main__.AscTexts.test_values_equal_spec_wording) ... ok
+
+======================================================================
+FAIL: test_ci_runs_asc_tests (__main__.AscTexts.test_ci_runs_asc_tests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_texts.py", line 113, in test_ci_runs_asc_tests
+    self.assertIn(name, loop.group(1))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'scripts/test_asc_texts.py' not found in 'scripts/test_price_catalog_build.py \\\n                   scripts/test_open_prices_medians.py \\\n                   scripts/test_ui_tests_discard_community_prices.py \\\n                   scripts/test_inmemory_containers_no_cloudkit.py'
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.003s
+
+FAILED (failures=1)
