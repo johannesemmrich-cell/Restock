@@ -1,0 +1,72 @@
+AGE {
+ "attributes": {
+  "advertising": null,
+  "ageAssurance": null,
+  "ageRatingOverride": "NONE",
+  "ageRatingOverrideV2": "NONE",
+  "alcoholTobaccoOrDrugUseOrReferences": null,
+  "contests": null,
+  "developerAgeRatingInfoUrl": null,
+  "gambling": null,
+  "gamblingSimulated": null,
+  "gracRatingClassificationNumber": null,
+  "gunsOrOtherWeapons": null,
+  "healthOrWellnessTopics": null,
+  "horrorOrFearThemes": null,
+  "kidsAgeBand": null,
+  "koreaAgeRatingOverride": "NONE",
+  "lootBox": null,
+  "matureOrSuggestiveThemes": null,
+  "medicalOrTreatmentInformation": null,
+  "messagingAndChat": null,
+  "parentalControls": null,
+  "profanityOrCrudeHumor": null,
+  "sexualContentGraphicAndNudity": null,
+  "sexualContentOrNudity": null,
+  "socialMedia": null,
+  "socialMediaAgeRestricted": null,
+  "unrestrictedWebAccess": null,
+  "userGeneratedContent": null,
+  "violenceCartoonOrFantasy": null,
+  "violenceRealistic": null,
+  "violenceRealisticProlongedGraphicOrSadistic": null
+ },
+ "id": "c3fff66e-8ae8-45bc-ab6c-b9ca133b994a",
+ "links": {
+  "self": "https://api.appstoreconnect.apple.com/v1/ageRatingDeclarations/c3fff66e-8ae8-45bc-ab6c-b9ca133b994a"
+ },
+ "type": "ageRatingDeclarations"
+}
+PLAN {
+ "data": {
+  "id": "6790839680",
+  "links": {
+   "self": "https://api.appstoreconnect.apple.com/v1/appPriceSchedules/6790839680"
+  },
+  "relationships": {
+   "automaticPrices": {
+    "links": {
+     "related": "https://api.appstoreconnect.apple.com/v1/appPriceSchedules/6790839680/automaticPrices",
+     "self": "https://api.appstoreconnect.apple.com/v1/appPriceSchedules/6790839680/relationships/automaticPrices"
+    }
+   },
+   "baseTerritory": {
+    "links": {
+     "related": "https://api.appstoreconnect.apple.com/v1/appPriceSchedules/6790839680/baseTerritory",
+     "self": "https://api.appstoreconnect.apple.com/v1/appPriceSchedules/6790839680/relationships/baseTerritory"
+    }
+   },
+   "manualPrices": {
+    "links": {
+     "related": "https://api.appstoreconnect.apple.com/v1/appPriceSchedules/6790839680/manualPrices",
+     "self": "https://api.appstoreconnect.apple.com/v1/appPriceSchedules/6790839680/relationships/manualPrices"
+    }
+   }
+  },
+  "type": "appPriceSchedules"
+ },
+ "links": {
+  "self": "https://api.appstoreconnect.apple.com/v1/apps/6790839680/appPriceSchedule"
+ }
+}
+AVAIL HTTP 404 bei GET /v1/apps/6790839680/appAvailabilityV2
