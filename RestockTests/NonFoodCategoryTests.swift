@@ -239,10 +239,10 @@ final class NonFoodCategoryTests: XCTestCase {
         XCTAssertEqual(AssignmentService.assign(itemName: "Milch", to: [lidl, hornbach])?.name, "Lidl")
     }
 
-    /// Ist-Verhalten, kein Beschluss (Bestand vor #221): „Werkzeug“ steht in `Category.variety` UND
-    /// `Category.hardware`, darum zählt ein Sonstiges-Laden wie Action auch als Baumarkt, und unter den
-    /// Baumarkt-Kandidaten gewinnt ohne Kaufhistorie der meistbesuchte. Elektro-Kleinkram geht wie
-    /// bisher zum Sonstiges-Laden; ohne Baumarkt fällt Baumarkt-Ware auf ihn zurück.
+    /// Ist-Verhalten, kein Beschluss (Bestand vor #221, Änderung in #224): „Werkzeug“ steht in
+    /// `Category.variety` UND `Category.hardware`, darum zählt ein Sonstiges-Laden wie Action auch als
+    /// Baumarkt und ein Baumarkt auch als Sonstiges-Laden; unter den Kandidaten gewinnt ohne Kaufhistorie
+    /// der meistbesuchte. Ohne Baumarkt fällt Baumarkt-Ware auf den Sonstiges-Laden zurück.
     func testVarietyStoreAlsoCountsAsHardwareStoreByVisits() {
         let lidl = store("Lidl", Category.grocery, visits: 3)
         let action = store("Action", Category.variety, visits: 1)
@@ -252,8 +252,9 @@ final class NonFoodCategoryTests: XCTestCase {
         XCTAssertEqual(AssignmentService.assign(itemName: "Dübel", to: [lidl, action])?.name, "Action")
         let hornbachWeekly = store("Hornbach", Category.hardware, visits: 2)
         XCTAssertEqual(AssignmentService.assign(itemName: "Lichtschalter", to: [lidl, action, hornbachWeekly])?.name, "Hornbach")
-        XCTAssertEqual(AssignmentService.assign(itemName: "Batterien", to: [lidl, action, hornbachWeekly])?.name, "Action",
-                       "Elektro-Kleinkram bleibt beim Sonstiges-Laden, auch wenn der Baumarkt öfter besucht wird")
+        // Die Überlappung wirkt in beide Richtungen: Hornbach zählt über „Werkzeug“ auch als Sonstiges-Laden
+        // und gewinnt Elektro-Kleinkram, sobald er öfter besucht wird (CI-Lauf 40196002586; Folge-Issue #224).
+        XCTAssertEqual(AssignmentService.assign(itemName: "Batterien", to: [lidl, action, hornbachWeekly])?.name, "Hornbach")
     }
 
     func testStoreGroupYieldsToLongerFoodKeyword() {
