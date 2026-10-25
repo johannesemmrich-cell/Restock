@@ -129,4 +129,4 @@ Feature (Fortsetzung #175: Lesepfade korrigieren, danach echter Lauf gegen App S
 - Paywall ohne Rechtslinks (#215) → Ablehnungsrisiko vor dem Einreichen, nicht Teil von B3.
 
 ### Open Questions
-- [ ] Wer stellt den Text aus `docs/appstore/datenschutz.md` auf `emmrich-business.com/datenschutz`? (PO)
+- [x] Datenschutzseite: pflegt eine andere Person (PO 2026-10-25). Claude bereitet den Text de/en zum Weitergeben vor; Abschluss von #175 (AC-12, AC-19) wartet, bis die Seite steht.
