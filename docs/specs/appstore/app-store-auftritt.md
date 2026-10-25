@@ -67,11 +67,12 @@ aus der Zeit vor #121/#163.
 
 ## Scope
 
-Sechs Durchgänge, jeder mit höchstens 5 Dateien und ±250 LoC, wo der PO nichts anderes angenommen hat (B2a, B2b; Texte und
-Skripte zählt das LoC-Gate als Produktivcode, daher die Trennung). Reihenfolge A1, A2, B1, B2a, B2b, B3. Der Upload von Build 37 ist außenwirksam und folgt nur Hennings ausdrücklichem Wort.
+Sieben Durchgänge, jeder mit höchstens 5 Dateien und ±250 LoC, wo der PO nichts anderes angenommen hat (B2a, B2b; Texte und
+Skripte zählt das LoC-Gate als Produktivcode, daher die Trennung). Reihenfolge A1, A2, B1, B2a, B2b, B3a, B3. B3a ist reines Lesen
+ohne Außenwirkung; B3 ändert keinen Quellcode. Der Upload von Build 37 ist außenwirksam und folgt nur Hennings ausdrücklichem Wort.
 
-- **Affected Files:** Vereinigung aller Durchgänge A1, A2, B1, B2a, B2b, B3 (Einzellisten in den Unterabschnitten).
-- **Estimated Changes:** ~90 (A1) + ~47 (A2) + ~220 (B1) + ~330 (B2a, über dem Limit, vom PO am 2026-10-24 angenommen) + ~460 (B2b, über dem Limit, vom PO am 2026-10-25 mit „Ein Durchgang“ angenommen) + ~0 (B3) = ca. 1147 LoC gesamt.
+- **Affected Files:** Vereinigung aller Durchgänge A1, A2, B1, B2a, B2b, B3a, B3 (Einzellisten in den Unterabschnitten).
+- **Estimated Changes:** ~90 (A1) + ~47 (A2) + ~220 (B1) + ~330 (B2a, über dem Limit, vom PO am 2026-10-24 angenommen) + ~460 (B2b, über dem Limit, vom PO am 2026-10-25 mit „Ein Durchgang“ angenommen) + ~215 (B3a) + ~0 (B3) = ca. 1362 LoC gesamt.
 
 ### Durchgang A1: Manifest und Rechtstext (4 Dateien, geschätzt +85/−6 Zeilen)
 
@@ -195,7 +196,8 @@ Lauf schreibt nur den Rest) und das Gegenlesen in B2b abgefangen.
 | `.github/workflows/ci.yml` | MODIFY: `scripts/test_asc_texts.py`, `scripts/test_asc_scripts.py`, `scripts/test_asc_check.py` in die Schleife des Schritts „Strukturtests (Python)“ (`python3 -I`, kein Netz, kein Schlüssel); bisher läuft keiner der ASC-Tests in CI |
 | `docs/specs/appstore/app-store-auftritt.md` | MODIFY: diese Überarbeitung |
 
-Leseliste von `asc_check` (nach App Store Connect API 4.4/4.4.1; Quellen im Kontextdokument `docs/context/feat-175-b2b-asc-check.md`),
+Leseliste von `asc_check` (Stand B3a, nach App Store Connect API 4.5.1, Abgleich im Kontextdokument `docs/context/feat-175-b3-asc-eintragen.md`;
+die B2b-Fassung nach 4.4/4.4.1 hatte falsche v1-Pfade für Einmalkauf-Lokalisierung und -Screenshot, siehe B3a),
 alle nur GET und nur unter IDs aus Antworten:
 
 - `/v1/apps?filter[bundleId]=com.johannesemmrich.Restock` (Attribut `contentRightsDeclaration` für Content Rights);
@@ -204,9 +206,13 @@ alle nur GET und nur unter IDs aus Antworten:
 - `/v1/appInfos/{id}/ageRatingDeclaration` (der Pfad `appStoreVersions/{id}/ageRatingDeclaration` ist seit API 4.4 entfernt),
   `/v1/appInfos/{id}/primaryCategory` und `…/secondaryCategory`;
 - `/v1/apps/{id}/appPriceSchedule`, `/v1/apps/{id}/appAvailabilityV2`, `/v1/appStoreVersions/{id}/appStoreReviewDetail`;
-- `/v1/apps/{id}/inAppPurchasesV2`, `/v1/apps/{id}/subscriptionGroups`, die Abos der Gruppe und die Lokalisierungen und
-  Review-Screenshots der Produkte (Pfadform der Lokalisierungen: seit API 4.4.1 versionsbasiert, am echten Konto erst in B3
-  belegt, im Test nur gegen Schein-Antworten);
+- `/v1/apps/{id}/inAppPurchasesV2`, `/v1/apps/{id}/subscriptionGroups`, `/v1/subscriptionGroups/{id}/subscriptions`;
+  Einmalkauf (B3a, API 4.5.1): `/v2/inAppPurchases/{id}/inAppPurchaseLocalizations`, `/v2/inAppPurchases/{id}/appStoreReviewScreenshot`,
+  `/v2/inAppPurchases/{id}/iapPriceSchedule` und mit der Plan-ID aus dessen Antwort
+  `/v1/inAppPurchasePriceSchedules/{plan}/manualPrices` und `…/automaticPrices`; Abo: `/v1/subscriptions/{id}/subscriptionLocalizations`,
+  `/v1/subscriptions/{id}/appStoreReviewScreenshot`, `/v1/subscriptions/{id}/prices` (die v1-Pfade
+  `/v1/inAppPurchases/{id}/…` gibt es in 4.5.1 nicht und stehen nicht mehr im Zaun); am echten Konto erst in B3 belegt, im Test
+  nur gegen Schein-Antworten;
 - `/v1/appStoreVersionLocalizations/{id}/appScreenshotSets` und `/v1/appScreenshotSets/{id}/appScreenshots`;
 - `/v1/appStoreVersions/{id}/build`.
 
@@ -231,6 +237,31 @@ App Privacy (AC-14): Dafür gibt es keine öffentliche API (fastlane nutzt eine 
 meldet „manuell belegen“, nie „ok“. `--all` endet mit Exit 0 nur, wenn alle API-Abschnitte „ok“ sind, und nennt AC-14
 ausdrücklich als offen.
 
+### Durchgang B3a: Kaufpfade nach API 4.5.1 (3 Dateien, geschätzt ~215 Zeilen)
+
+- **Affected Files:** `scripts/asc_check.py` (MODIFY), `scripts/test_asc_check.py` (MODIFY), diese Spec (Doku)
+- **Estimated Changes:** Code ~+70/−20, Test ~+110/−15, zusammen ca. 215 geänderte Zeilen (die Analyse schätzte ~90 für beide
+  Dateien; die Testfälle mit Preisplan, Gültigkeit und Abo kosten mehr als der Code). Innerhalb ±250. Nur Lesen, keine Außenwirkung,
+  getestet ohne Netz und ohne Schlüssel.
+- **Anlass:** Der Abgleich aller Pfade mit Apples OpenAPI 4.5.1 (2026-10-25) zeigte: `/v1/inAppPurchases/{id}/inAppPurchaseLocalizations`
+  und `…/appStoreReviewScreenshot` existieren nicht (nur `/v2/…`; das Skript endete mit „Fehler iap“, HTTP 404); der Preisplan eines
+  Einmalkaufs ist nicht die Kauf-ID; der Preis steht unter `manualPrices` oder `automaticPrices`; `manualPrices` kann künftige Preise
+  mitliefern (Forum 728685, 732527). Ein falscher Pfad endet als Fehler, aber „erster `customerPrice`“ konnte einen falschen Preis als
+  „ok“ durchlassen. Das behebt B3a.
+- **Änderungen:**
+  1. IAP-Lokalisierung und -Review-Screenshot auf `/v2/inAppPurchases/{id}/…`.
+  2. Preis Einmalkauf: `GET /v2/inAppPurchases/{id}/iapPriceSchedule`, Plan-ID aus der Antwort, dann
+     `GET /v1/inAppPurchasePriceSchedules/{plan}/manualPrices` und `…/automaticPrices` (je `filter[territory]=DEU`,
+     `include=inAppPurchasePricePoint`). Liegt der deutsche Preis nur unter `automaticPrices` (Basisland nicht DEU), ist das ok, sofern der Betrag stimmt.
+  3. Gültiger Preis: Eintrag mit `startDate` null oder ≤ heute und `endDate` null oder ≥ heute; der Betrag kommt über die Beziehung des
+     Eintrags zum Preispunkt aus `included`, nie als „erster `customerPrice`“. Kein gültiger Eintrag oder mehrere gültige mit
+     verschiedenem Betrag sind Abweichungen, nie „ok“. „Heute“ ist injizierbar (`today` in `main`, Standard `date.today()`).
+  4. Abo: `/v1/subscriptions/{id}/prices` bleibt, mit `include=subscriptionPricePoint,territory`, gleiche Gültigkeitsregel und gleiche
+     Zuordnung über den Preispunkt.
+  5. Zaun: neue Muster (`iapPriceSchedule`, `automaticPrices`, v2-Lokalisierung, v2-Review-Screenshot) ergänzt, v1-Muster der
+     IAP-Lokalisierung/-Screenshot entfernt; die Plan-ID wird nur aus einer Antwort übernommen.
+  6. Spec: Leseliste auf 4.5.1, Offene Grenze „Kaufpfade vor B3 nachziehen“ als durch B3a erledigt gekennzeichnet.
+
 ### Durchgang B3: Ablauf und Belege (keine Quelldatei, Belege unter `docs/artifacts/`)
 
 - **Affected Files:** `docs/artifacts/feat-175-app-store-auftritt/asc-readback.txt`,
@@ -240,8 +271,23 @@ ausdrücklich als offen.
   siehe Offene Grenzen). Außerhalb des Repos: ASC (Produktseite de/en, Kategorie, Altersfreigabe, Datenschutz-URL,
   Privacy-Fragebogen, Screenshots, drei In-App-Käufe samt Abo-Gruppe).
 
-Die Durchgänge folgen A1, A2, B1, B2a, B2b, B3. Texte für die Datenschutzseite und der Privacy-Fragebogen folgen der Tabelle oben;
-der Upload von Build 37 (außenwirksam, nur auf Wort) liegt zwischen A2 und dem Einreichen.
+Die Durchgänge folgen A1, A2, B1, B2a, B2b, B3a, B3. B3 kommt nach B3a, ändert keinen Quellcode, und jeder außenwirksame Schritt
+läuft einzeln auf Hennings ausdrückliches Wort:
+
+1. Lesetrockenlauf `python3 scripts/asc_check.py --all` (nur GET; zeigt den unbekannten Zustand des Entwurfs).
+2. `asc_publish` Trockenlauf (Plan sichten).
+3. `asc_publish --apply` (schreibt die Texte de-DE/en-US in den Entwurf).
+4. Browser (Chrome-Werkzeug, mit Beleg-Screenshots): drei Käufe mit den Kennungen aus `SmartCart/Services/PremiumService.swift:124-126`
+   (`com.johannesemmrich.smartcart.premium.{monthly,yearly,lifetime}`), Basisland DEU, Abo-Gruppe „Restock Pro“, Preise 1,99 / 8,99 / 14,99,
+   Kategorien, Altersfreigabe, Content Rights, Preise/Verfügbarkeit der App, Review-Kontakt, App Privacy (AC-14).
+5. Screenshots 1320×2868 aus dem Simulator (`-premiumForScreenshots`, gesäte Daten); Vorschau samt Bildunterschriften de/en an Henning, dann Upload.
+6. Build 37 per `testflight.yml` (`build_number=37`), Zuordnung zu Version 1.0.
+7. Schlusslauf `asc_check --all`, Ausgabe als `asc-readback.txt`.
+
+Blocker: Die Datenschutzseite pflegt ein Dritter (PO 2026-10-25); Claude bereitet den Text de/en zum Weitergeben vor, AC-12 und AC-19
+warten darauf. Build 37 ist nicht hochgeladen (AC-17). Die Paywall ohne Rechtslinks (#215) ist ein Ablehnungsrisiko, nicht Teil von B3.
+Käufe anlegen ist unumkehrbar (Produktkennungen); deshalb vorher Schritt 1 und die Kennungen gegen den Code prüfen. Texte für die
+Datenschutzseite und der Privacy-Fragebogen folgen der Tabelle oben.
 
 ## Implementation Details
 
@@ -254,7 +300,9 @@ B2a: asc_lib (Parser, JWT, api), asc_publish (erst lesen und prüfen, dann PATCH
     Trockenlauf Standard), test_asc_scripts (AC-10).
 B2b: asc_check (eigener GET-Zaun, Vergleich mit den Dateien), test_asc_check (Schein-Antworten), test_asc_texts,
     ci.yml (drei ASC-Tests im Python-Strukturtest-Schritt).
-B3: echter Lauf auf Hennings Wort; Screenshots per simctl aus dem Simulator.
+B3a: asc_check Kaufpfade v2 + Preisplan (iapPriceSchedule → Plan-ID → manual + automatic), Gültigkeit und Preispunkt-Zuordnung,
+    Zaun-Muster; test_asc_check: FakeASC-Routen, Plan-ID ≠ Kauf-ID, Preisfälle.
+B3: Betrieb nach der Liste im Abschnitt B3, kein Quellcode; Screenshots per simctl aus dem Simulator.
 ```
 
 ## Expected Behavior
@@ -457,6 +505,12 @@ Ablehnung wäre kein Blocker, die Kategorie ist änderbar).
 14. **(B2b) Kein Gegenlese-Skript, B3 nur per Browser mit Beleg-Screenshots:** spart rund 390 Zeilen, aber AC-19 („ein Lauf, alles
     ok“) wäre nie wiederholbar, und jede Nachkorrektur kostete einen neuen Browser-Durchgang. Verworfen; kippt AC-11 bis AC-19 als
     Skript-Nachweis. Für AC-14 bleibt der Browser ohnehin der Weg.
+15. **(B3a) Käufe per API anlegen** (`POST /v2/inAppPurchases`, `/v1/subscriptionGroups`, `/v1/subscriptions`, Preisplan,
+    Lokalisierungen, Asset-Upload für Review-Screenshots): wiederholbar, aber ein eigener Durchgang von ~150–250 Zeilen. Kippt
+    AC-10a und AC-20f (Schreibzaun nur Texte, `asc_lib` ohne diese Pfade). Anlegen ist einmalig und unumkehrbar, ein Wiederholungsnutzen
+    fehlt. Nicht empfohlen; Browser mit Beleg-Screenshots.
+16. **(B3a) Version 1.0 ohne Käufe einreichen:** Produktentscheid; kippt AC-15, AC-19 und den Release-1.0-Umfang (Pro: Rezeptplan,
+    Ausgaben-Analyse). Nur Rückfall, falls der Kauf-Teil hängt.
 
 ## Definition of Done
 
@@ -511,7 +565,7 @@ Durchgang A2
   - Nachweis: `xcodebuild test` wie AC-5 (erwartet 0 Fehlschläge) plus Simulator-Screenshots unter
     `docs/artifacts/feat-175-app-store-auftritt/`
 
-Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b mit AC-9e; AC-10 mit AC-10a bis AC-10h in B2a; AC-20 und AC-21 in B2b; AC-11 bis AC-19 in B3 gegen ASC, ihre Abschnitte in B2b gegen Schein-Antworten getestet)
+Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b mit AC-9e; AC-10 mit AC-10a bis AC-10h in B2a; AC-20 und AC-21 in B2b; AC-22 bis AC-22g in B3a; AC-11 bis AC-19 in B3 gegen ASC, ihre Abschnitte in B2b gegen Schein-Antworten getestet)
 
 - **AC-9 (B1, korrigiert):** `docs/appstore/de.md` und `en.md` enthalten genau die Überschriften `## name`, `## subtitle`,
   `## keywords`, `## promotional_text`, `## description`, `## support_url`, `## privacy_url` (kein `whats_new`), jede mit
@@ -639,7 +693,7 @@ Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b 
   (Schein-`send`, Schein-`sign`, Schein-Opener), ohne Netz und ohne Schlüssel.
   - Nachweis: `python3 scripts/test_asc_check.py`, erwartet Exit 0
 - **AC-20a (Zaun):** `read` lehnt vor `send` ab: jeden anderen Host als `api.appstoreconnect.apple.com`, jede Methode außer GET
-  (POST, PATCH, DELETE, PUT), jeden Pfad außerhalb der Leseliste (z. B. `/v1/apps/{id}/builds` mit fremder ID, `/v2/…`) und
+  (POST, PATCH, DELETE, PUT), jeden Pfad außerhalb der Leseliste (z. B. `/v1/apps/{id}/builds` mit fremder ID, `/v2/apps`) und
   die Einreichungs-Endpunkte `reviewSubmissions`, `appStoreVersionSubmissions`.
   - Test: `scripts/test_asc_check.py::test_fence_rejects_before_send`
 - **AC-20b (Datenschutzseite, fremder Host):** Der Abruf von `https://emmrich-business.com/datenschutz` sendet keinen
@@ -671,6 +725,34 @@ Durchgang B (AC-9, AC-9a bis AC-9d in B1 per Python-Einzeiler, dauerhaft in B2b 
   `scripts/test_asc_scripts.py` und `scripts/test_asc_check.py` aus (ohne Netz, ohne Schlüssel).
   - Test: `scripts/test_asc_texts.py::test_ci_runs_asc_tests` (liest `ci.yml` und verlangt alle drei Dateinamen in der Schleife)
   - Nachweis: grüner CI-Lauf des Pull Requests mit den drei Zeilen `== scripts/test_asc_…` im Protokoll
+- **AC-22 (B3a, Werkzeug):** `asc_check` liest Einmalkauf-Lokalisierung, -Review-Screenshot und -Preis nur über die 4.5.1-Pfade und
+  wertet Preise nur nach Gültigkeit und Preispunkt; ein falscher Preis wird nie „ok“. AC-22 gilt, wenn AC-22a bis AC-22g gelten.
+  - Nachweis: `python3 scripts/test_asc_check.py`, erwartet Exit 0
+- **AC-22a (v2-Pfade, v1 verboten):** `section iap` ruft `/v2/inAppPurchases/{id}/inAppPurchaseLocalizations` und `…/appStoreReviewScreenshot`
+  auf; `/v1/inAppPurchases/{id}/inAppPurchaseLocalizations` und `/v1/inAppPurchases/{id}/appStoreReviewScreenshot` werden vom
+  Zaun vor `send` abgelehnt (Pfadmuster). Dass die Kauf-ID nie als Plan-ID benutzt wird, kann der Zaun nicht am Muster erkennen
+  (beide IDs stammen aus Antworten); das belegt AC-22b über die tatsächlich aufgerufenen Pfade.
+  - Test: `scripts/test_asc_check.py::test_iap_uses_v2_paths_and_fence_rejects_v1`
+- **AC-22b (Plan-ID aus der Antwort):** Der Fake liefert Plan-ID `PLAN-x` ≠ Kauf-ID `IAP-life`; die Preisabfragen gehen an
+  `…/PLAN-x/manualPrices` und `…/PLAN-x/automaticPrices`, nie an die Kauf-ID. Antwortet `iapPriceSchedule` ohne Plan, ist das eine Abweichung.
+  - Test: `scripts/test_asc_check.py::test_price_plan_id_taken_from_schedule_response`
+- **AC-22c (manual oder automatic):** Ist `manualPrices` leer und `automaticPrices` mit 14,99 € gefüllt, ist der Preis „ok“; mit
+  falschem Betrag in `automaticPrices` ist es eine Abweichung.
+  - Test: `scripts/test_asc_check.py::test_price_found_under_automatic_prices`
+- **AC-22d (Gültigkeit):** Ein Eintrag mit `endDate` < heute und ein Eintrag mit `startDate` > heute werden ignoriert; gewertet wird nur
+  der gültige (`startDate` null/≤ heute, `endDate` null/≥ heute). Der Test stellt „heute“ ein und liegt so, dass ein Fehler im Filter den
+  Betrag ändern würde.
+  - Test: `scripts/test_asc_check.py::test_price_ignores_expired_and_future_entries`
+- **AC-22e (Zuordnung über Preispunkt):** Bei mehreren Einträgen und Preispunkten in `included` zählt der Betrag des Preispunkts, auf den
+  der gültige Eintrag zeigt, nicht der erste `customerPrice`; kein gültiger Eintrag, ein gültiger ohne auflösbaren Preispunkt oder
+  mehrere gültige mit verschiedenem Betrag sind Abweichungen, nie „ok“.
+  - Test: `scripts/test_asc_check.py::test_price_mapped_via_price_point_not_first`, `::test_no_valid_price_is_deviation`
+- **AC-22f (Abo, gleiche Regel):** `/v1/subscriptions/{id}/prices` mit `include=subscriptionPricePoint,territory` wird nach derselben
+  Gültigkeits- und Zuordnungsregel gewertet (abgelaufener Eintrag ignoriert, Betrag über den Preispunkt, falscher Betrag = Abweichung).
+  - Test: `scripts/test_asc_check.py::test_subscription_price_same_validity_rule`
+- **AC-22g (Bestand):** Alle AC-20-Tests und `test_section_iap_ok_and_deviation` bleiben grün; „heute“ ist injizierbar, kein Test hängt
+  von der Systemuhr ab.
+  - Test: `scripts/test_asc_check.py::test_section_iap_ok_and_deviation`, `::test_fence_rejects_before_send`, `::test_today_is_injectable`
 
 ## Test Plan
 
@@ -689,6 +771,7 @@ Automatisch, an die ACs oben gebunden (jedes AC erscheint):
 - AC-9, AC-9a bis AC-9d: in B1 per Python-Einzeiler (Artefakt `docs/artifacts/feat-175-b1-store-texte/laengen.txt`); dauerhaft in B2b: `python3 scripts/test_asc_texts.py` (Python, ohne Netz); dort auch AC-9e und AC-21 (Strukturcheck von `ci.yml`).
 - AC-10, AC-10a bis AC-10h (B2a): `python3 scripts/test_asc_scripts.py` (ohne Netz, ohne Schlüssel, Schein-`send` und Schein-`sign`; kein echter API-Lauf).
 - AC-20 bis AC-20g und die Abschnitte zu AC-11 bis AC-19 samt AC-17a (B2b): `python3 scripts/test_asc_check.py` (ohne Netz, ohne Schlüssel, Schein-`send`, Schein-`sign`, Schein-Opener; kein echter API-Lauf).
+- AC-22 bis AC-22g (B3a): `python3 scripts/test_asc_check.py` (ohne Netz, ohne Schlüssel, `FakeASC` mit Preisplan-Route, Plan-ID ≠ Kauf-ID, eingestelltes „heute“); B3a läuft vor B3.
 - AC-21 (B2b): die drei ASC-Tests laufen in CI (`.github/workflows/ci.yml`, Schritt „Strukturtests (Python)“); Beleg: grüner CI-Lauf.
 - AC-11 bis AC-19 mit AC-17a (B3): Gegenlese-Lauf `python3 scripts/asc_check.py` (in B2b gebaut, in B3 gefahren) gegen ASC (`--section metadata|privacy-url|appinfo|iap|
   screenshots|build|review|status`, `--all`), lesend (GET); AC-14 immer mit Beleg-Screenshots (keine API); AC-16 zusätzlich `sips`.
@@ -744,10 +827,11 @@ Offene Grenzen:
 - **B2b, kein echter API-Lauf vor B3:** `asc_check` ist nur gegen Schein-Antworten getestet. Die v2-Kauf-Endpunkte (`inAppPurchasesV2`,
   versionsbasierte Lokalisierungen, API 4.4.1) und die Pfade für Kategorien, Verfügbarkeit und Review-Detail sind am echten Konto
   unbelegt; Pfadform und Feldnamen können in B3 Anpassungen nötig machen.
-- **B2b, Kaufpfade vor B3 nachziehen (Validierung 2026-10-25):** `asc_check` liest Lokalisierung und Review-Screenshot des
+- **B2b, Kaufpfade vor B3 nachziehen (Validierung 2026-10-25) – erledigt durch B3a** (v2-Pfade, Plan-ID aus der Antwort, manual +
+  automatic, Gültigkeit; AC-22 bis AC-22g; der Text bleibt als Herkunft stehen): `asc_check` las Lokalisierung und Review-Screenshot des
   Einmalkaufs unter `/v1/inAppPurchases/{id}/…`; Apple dokumentiert dafür `/v2/inAppPurchases/{id}/…`
   ([Doku](https://developer.apple.com/documentation/appstoreconnectapi/in-app-purchase-app-store-review-screenshots.md)). Den
-  Preis liest es unter `/v1/inAppPurchasePriceSchedules/{id}/manualPrices` mit der Kauf-ID als Preisplan-ID; ob beide gleich sind,
+  Preis las es (alter Stand, ersetzt durch B3a) unter `/v1/inAppPurchasePriceSchedules/{id}/manualPrices` mit der Kauf-ID als Preisplan-ID; ob beide gleich sind,
   ist nicht belegt, der sichere Weg ist `/v2/inAppPurchases/{id}/iapPriceSchedule` und dann die Kennung aus der Antwort
   ([Forum 732527](https://developer.apple.com/forums/thread/732527)). Die beiden Preispfade (`…/manualPrices`,
   `/v1/subscriptions/{id}/prices`) stehen im Zaun, fehlen aber in der Leseliste oben. In B3 vor dem ersten Lauf korrigieren; ein
@@ -765,6 +849,17 @@ Offene Grenzen:
   endet `iap` als „Fehler“ statt mit Einzelzeilen; Ergebnis bleibt Abweichung (Exit ≠ 0), kein falsches „ok“.
 - **B2b, Schein-Antworten vom Implementierer:** `FakeASC` bildet Apples Antworten nach eigener Lesart nach; Strukturfehler gegenüber
   der echten API fängt der Test nicht, nur B3.
+- **B3a, nur Schein-Antworten:** Die echte Antwortstruktur (Beziehungsnamen `inAppPurchasePricePoint`, `subscriptionPricePoint`)
+  ist erst in B3 belegt; Abweichungen führen zu „Fehler“ oder „Abweichung“, nie zu einem falschen „ok“.
+- **B3a, Abo-Preise:** `filter[planType]` (neu in 4.5.1) wird nicht genutzt; liefert ein Territorium mehrere gültige Beträge, ist das
+  eine Abweichung. Ob das in der Praxis vorkommt, zeigt B3.
+- **B3a, nur Territorium DEU:** Preise anderer Länder werden nicht geprüft.
+- **B3a, Umfang:** ~215 Zeilen, innerhalb ±250.
+- **B3a, Befunde der Prüfung (LOW, offen gelassen):** Der Stichtag ist `date.today()` in Ortszeit, der Protokollkopf UTC; kurz nach
+  Mitternacht nennen beide verschiedene Tage (F003). Ein leeres `startDate`/`endDate` (`""`) gilt wie `null` (F004); ein kaputtes Datum
+  endet als „Fehler iap“ (nie „ok“), bricht aber den ganzen Abschnitt ab, sodass die übrigen Käufe ungeprüft bleiben. Preisantworten
+  werden nicht über `links.next` weitergelesen (F005); ein falsches „ok“ setzt mehr als eine Seite DEU-Preise voraus. Protokoll:
+  `docs/artifacts/feat-175-b3-asc-eintragen/adversary-dialog.md`.
 - **Nichts auf Hennings Geräten geprüft.**
 - **Dateizählung B3:** Screenshots und Protokolle unter `docs/artifacts/` sind Belege, keine Quelldateien; zählt das Gate sie
   einzeln, wird B3 nach Sprache geteilt.
@@ -790,4 +885,5 @@ Simulator-Screenshots). #175 blockiert Release 1.0.
 - 2026-10-24: Durchgang B1 korrigiert und vervollständigt: kein „Was ist neu“ für 1.0, Schlüsselwörter in Bytes ohne Untertitelwörter, Beschreibung endet mit Datenschutz-URL und Standard-EULA-Link, Dateiformat mit festen Überschriften, finale Texte und Längentabelle, AC-9 bis AC-9d, Alternativen 6–9, Offene Grenzen.
 - 2026-10-24: Durchgang B2 in B2a (`asc_lib`, `asc_publish`, `test_asc_scripts`, ~330 Zeilen, PO-angenommen) und B2b (`asc_check`, `test_asc_texts`) geteilt; AC-10 in AC-10a bis AC-10h präzisiert (Trockenlauf, Zustandsprüfung, 409-Vermeidung, Idempotenz, Geheimnisse, Quelltextverbote); dauerhafte Tests AC-9 bis AC-9d in B2b; Alternativen 10–12 und Offene Grenzen zu B2a.
 - 2026-10-25: Durchgang B2b neu gefasst: 5 Dateien (`asc_check`, `test_asc_check`, `test_asc_texts`, `ci.yml`, Spec), ~460 Zeilen (PO: „Ein Durchgang“), eigener reiner GET-Zaun statt Änderung von `asc_lib`, Leseliste nach API 4.4/4.4.1 (Altersfreigabe über `appInfos`), Datenschutz-URL-Abruf ohne Token, AC-14 „manuell belegen“, Screenshot-Prüfung über Bildmaße; neue AC-9e (F001), AC-20 bis AC-20g, AC-21; AC-9 bis AC-9d mit Testnamen; AC-11 bis AC-19 mit Schein-Test; Alternativen 13–14, Offene Grenzen zu B2b.
+- 2026-10-25: Durchgang B3a ergänzt (Kaufpfade nach API 4.5.1: v2-Lokalisierung/-Screenshot, Preisplan aus `iapPriceSchedule`, manual + automatic, Gültigkeit und Preispunkt-Zuordnung, Zaun); AC-22 bis AC-22g; B3 als Betriebsdurchgang nach B3a präzisiert; Leseliste auf 4.5.1; Alternativen 15–16; Offene Grenzen.
 - 2026-10-25: Nach dem ersten PO-Briefing: Abschnitt `review` mit AC-17a (Review-Kontakt aus `appStoreReviewDetail`, Werte nie im Klartext) und Export-Compliance im Abschnitt `build` (`usesNonExemptEncryption` false, eigener Test) ergänzt; vorher von AC-17/AC-19 verlangt, aber ohne Prüfung.

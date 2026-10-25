@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Test des Gegenlesers scripts/asc_check.py (Issue #175, Durchgang B2b, AC-11 bis AC-20g der Spec
+"""Test des Gegenlesers scripts/asc_check.py (Issue #175, Durchgänge B2b und B3a, AC-11 bis AC-22g der Spec
 docs/specs/appstore/app-store-auftritt.md). Ohne Netz und ohne Schlüssel: Apple wird durch FakeASC ersetzt, die
-Datenschutzseite durch einen Schein-Abruf, die Signatur durch fake_sign."""
+Datenschutzseite durch einen Schein-Abruf, die Signatur durch fake_sign. Kaufpfade und Preisantworten nach API 4.5.1."""
 import ast, contextlib, datetime, html, importlib, inspect, io, json, re, sys, unittest
 from pathlib import Path
 from unittest import mock
@@ -38,6 +38,11 @@ def res(kind, rid, **attrs):
     return {"id": rid, "type": kind, "attributes": attrs}
 
 
+TODAY = datetime.date(2026, 10, 25)
+PRICE_KINDS = {"IAP": ("inAppPurchasePrices", "inAppPurchasePricePoint", "inAppPurchasePricePoints"),
+               "SUB": ("subscriptionPrices", "subscriptionPricePoint", "subscriptionPricePoints")}
+
+
 def page_html(drop_english=False):
     md = (R / "docs/appstore/datenschutz.md").read_text(encoding="utf-8")
     if drop_english:
@@ -67,6 +72,9 @@ class FakeASC:
         self.groups = [res("subscriptionGroups", "GRP-1", referenceName="Restock Pro")]
         self.subs = [res("subscriptions", f"SUB-{p}", productId=PREFIX + p, state="READY_TO_SUBMIT") for p in ("monthly", "yearly")]
         self.prices = {"IAP-life": "14.99", "SUB-monthly": "1.99", "SUB-yearly": "8.99"}
+        # Preisplan ≠ Kauf-ID (AC-22b); Einträge je Produkt: (Ort, startDate, endDate, Betrag; None = Preispunkt fehlt)
+        self.plans, self.price_entries, self.decoys = {"IAP-life": "PLAN-x"}, {}, {}
+        self.foreign_type_points = {}  # Preispunkt mit gleicher ID wie der Eintrag, aber fremdem Typ, steht vorn (F002)
         self.product_locs = {pid: [res("localizations", f"LOC-{pid}-{l}", locale=l, name="Restock Pro", description="Alles")
                                    for l in TEXTS] for pid in self.prices}
         self.review_shots = {pid: res("appStoreReviewScreenshots", f"RS-{pid}") for pid in self.prices}
@@ -87,9 +95,10 @@ class FakeASC:
              f"/v1/apps/{APP}/inAppPurchasesV2": self.iaps, f"/v1/apps/{APP}/subscriptionGroups": self.groups,
              "/v1/subscriptionGroups/GRP-1/subscriptions": self.subs,
              "/v1/appStoreVersions/VER-1/build": self.build, "/v1/appStoreVersions/VER-1/appStoreReviewDetail": self.review}
-        for pid in self.prices:
-            r.update({p.format(id=pid): v for p, v in zip(asc_check.PRODUCT_PATHS[pid.split("-")[0]],
-                                                          (self.product_locs[pid], self.review_shots[pid]))})
+        for pid in self.prices:  # Pfade fest nach API 4.5.1, nicht aus asc_check übernommen
+            base, locs = (f"/v2/inAppPurchases/{pid}", "inAppPurchaseLocalizations") if pid.startswith("IAP") else \
+                         (f"/v1/subscriptions/{pid}", "subscriptionLocalizations")
+            r.update({f"{base}/{locs}": self.product_locs[pid], f"{base}/appStoreReviewScreenshot": self.review_shots[pid]})
         for v in self.vlocs:
             l = v["attributes"]["locale"]
             r[f"/v1/appStoreVersionLocalizations/{v['id']}/appScreenshotSets"] = self.sets.get(l, [])
@@ -102,15 +111,43 @@ class FakeASC:
         p = unquote(urlsplit(url).path)
         if method != "GET":
             return 405, b"{}"
-        for pid, price in self.prices.items():  # Preispunkte (Abfrage mit include, Basisland Deutschland)
-            if p == asc_check.PRICE_PATHS[pid.split("-")[0]].format(id=pid):
-                return 200, json.dumps({"data": [res("prices", f"PR-{pid}")],
-                                        "included": [res("pricePoints", f"PP-{pid}", customerPrice=price)]}).encode()
+        m = re.fullmatch(r"/v2/inAppPurchases/([^/]+)/iapPriceSchedule", p)
+        if m and m[1] in self.prices:
+            plan = self.plans.get(m[1])
+            return 200, json.dumps({"data": res("inAppPurchasePriceSchedules", plan) if plan else None}).encode()
+        m = re.fullmatch(r"/v1/inAppPurchasePriceSchedules/([^/]+)/(manual|automatic)Prices", p)
+        if m:  # nur unter einer Plan-ID; die Kauf-ID als Plan gibt es bei Apple nicht
+            pid = next((k for k, v in self.plans.items() if v == m[1]), None)
+            return (200, self.price_doc(pid, m[2])) if pid else (404, b"{}")
+        m = re.fullmatch(r"/v1/subscriptions/([^/]+)/prices", p)
+        if m and m[1] in self.prices:
+            return 200, self.price_doc(m[1], "prices")
         routes = self.routes()
         if p not in routes:
             return 404, b"{}"
         return 200, json.dumps({"data": routes[p]}).encode()
 
+    def price_doc(self, pid, where):
+        """Preisantwort mit Einträgen (startDate/endDate) und Preispunkten in included, Basisland Deutschland."""
+        kind, rel, point = PRICE_KINDS[pid.split("-")[0]]
+        default = [("manual" if pid.startswith("IAP") else "prices", None, None, self.prices[pid])]
+        data, included = [], [res("territories", "DEU", currency="EUR")] if kind == "subscriptionPrices" else []
+        if pid in self.decoys:  # Preispunkt ohne Bezug, steht vorn
+            included.append(res(point, f"PP-decoy-{pid}", customerPrice=self.decoys[pid]))
+        for i, (w, start, end, amount) in enumerate(self.price_entries.get(pid, default)):
+            if w != where:
+                continue
+            entry = res(kind, f"PR-{pid}-{w}-{i}", startDate=start, endDate=end)
+            entry["relationships"] = {rel: {"data": {"type": point, "id": f"PP-{pid}-{w}-{i}"}}}
+            data.append(entry)
+            if pid in self.foreign_type_points:
+                other = PRICE_KINDS["SUB" if pid.startswith("IAP") else "IAP"][2]
+                included.insert(0, res(other, f"PP-{pid}-{w}-{i}", customerPrice=self.foreign_type_points[pid]))
+            if amount is not None:
+                included.append(res(point, f"PP-{pid}-{w}-{i}", customerPrice=amount))
+        return json.dumps({"data": data, "included": included}).encode()
+
+    paths = property(lambda self: [unquote(urlsplit(c[1]).path) for c in self.calls])
     tokens = property(lambda self: [c[2].get("Authorization", "").split(" ")[-1] for c in self.calls])
 
 
@@ -123,11 +160,12 @@ class FakePage:
         return self.status, self.body
 
 
-def run(fake, *argv, page=None, commit=lambda: "abc1234def", now=datetime.datetime(2026, 10, 25, 12, 0, tzinfo=datetime.timezone.utc)):
+def run(fake, *argv, page=None, commit=lambda: "abc1234def", now=datetime.datetime(2026, 10, 25, 12, 0, tzinfo=datetime.timezone.utc),
+        today=TODAY):
     out, err = io.StringIO(), io.StringIO()
     with contextlib.redirect_stderr(err):
         code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
-                              page_send=page or FakePage(), commit=commit, now=now)
+                              page_send=page or FakePage(), commit=commit, now=now, today=today)
     return code, out.getvalue() + err.getvalue()
 
 
@@ -270,7 +308,7 @@ class AscCheck(unittest.TestCase):
         self.assertTrue(fake.calls)
         for method, url, _ in fake.calls:
             self.assertEqual(method, "GET")
-            self.assertTrue(url.startswith("https://api.appstoreconnect.apple.com/v1/"), url)
+            self.assertRegex(url, r"^https://api\.appstoreconnect\.apple\.com/v[12]/", url)
 
     def test_privacy_fetch_without_authorization_and_redirect(self):  # AC-20b
         page = FakePage()
@@ -322,6 +360,113 @@ class AscCheck(unittest.TestCase):
                 self.assertFalse(any(k.arg == "shell" for k in n.keywords))
             if isinstance(n, ast.Call) and getattr(n.func, "id", "") == "open":
                 self.fail("asc_check öffnet keine Dateien selbst (Texte über asc_lib.parse_texts)")
+
+    def assert_iap(self, fake, ok, needle="", today=TODAY):
+        code, out = run(fake, "--section", "iap", today=today)
+        if ok:
+            self.assertEqual(code, 0, out)
+        else:
+            self.assertNotEqual(code, 0, out)
+            self.assertIn("Abweichung", out)
+            self.assertIn(needle, out)
+        return out
+
+    def test_iap_uses_v2_paths_and_fence_rejects_v1(self):  # AC-22a
+        fake = FakeASC()
+        self.assert_iap(fake, True)
+        self.assertIn("/v2/inAppPurchases/IAP-life/inAppPurchaseLocalizations", fake.paths)
+        self.assertIn("/v2/inAppPurchases/IAP-life/appStoreReviewScreenshot", fake.paths)
+        self.assertFalse([p for p in fake.paths if p.startswith("/v1/inAppPurchases/")], fake.paths)
+        send = mock.Mock(return_value=(200, b"{}"))
+        reader = asc_check.Reader("T", send=send)
+        reader.ids.update({"IAP-life", "PLAN-x"})
+        for p in ("/v1/inAppPurchases/IAP-life/inAppPurchaseLocalizations", "/v1/inAppPurchases/IAP-life/appStoreReviewScreenshot",
+                  "/v2/inAppPurchases/IAP-fremd/iapPriceSchedule", "/v1/inAppPurchasePriceSchedules/PLAN-x/manualPrices"):
+            with self.assertRaises(Exception, msg=p):
+                reader.get(p)
+        send.assert_not_called()
+        for p in ("/v2/inAppPurchases/IAP-life/inAppPurchaseLocalizations", "/v2/inAppPurchases/IAP-life/appStoreReviewScreenshot",
+                  "/v2/inAppPurchases/IAP-life/iapPriceSchedule",
+                  "/v1/inAppPurchasePriceSchedules/PLAN-x/manualPrices?include=inAppPurchasePricePoint&filter[territory]=DEU",
+                  "/v1/inAppPurchasePriceSchedules/PLAN-x/automaticPrices?include=inAppPurchasePricePoint&filter[territory]=DEU"):
+            reader.get(p)
+
+    def test_price_plan_id_taken_from_schedule_response(self):  # AC-22b
+        fake = FakeASC()
+        self.assert_iap(fake, True)
+        self.assertIn("/v2/inAppPurchases/IAP-life/iapPriceSchedule", fake.paths)
+        self.assertIn("/v1/inAppPurchasePriceSchedules/PLAN-x/manualPrices", fake.paths)
+        self.assertIn("/v1/inAppPurchasePriceSchedules/PLAN-x/automaticPrices", fake.paths)
+        self.assertFalse([p for p in fake.paths if "/inAppPurchasePriceSchedules/IAP-life" in p], fake.paths)
+        fake = FakeASC()
+        fake.plans["IAP-life"] = None
+        self.assert_iap(fake, False, "lifetime")
+        self.assertFalse([p for p in fake.paths if "/inAppPurchasePriceSchedules/" in p], fake.paths)
+
+    def test_price_found_under_automatic_prices(self):  # AC-22c
+        fake = FakeASC()
+        fake.price_entries["IAP-life"] = [("automatic", None, None, "14.99")]
+        self.assert_iap(fake, True)
+        fake.price_entries["IAP-life"] = [("automatic", None, None, "19.99")]
+        out = self.assert_iap(fake, False, "14.99")
+        self.assertIn("19.99", out)
+
+    def test_price_ignores_expired_and_future_entries(self):  # AC-22d
+        fake = FakeASC()
+        fake.price_entries["IAP-life"] = [("manual", "2025-01-01", "2026-10-24", "9.99"),
+                                          ("manual", "2026-10-25", None, "14.99"),
+                                          ("manual", "2026-10-26", None, "19.99")]
+        self.assert_iap(fake, True)
+        fake.price_entries["IAP-life"] = [("manual", None, "2026-10-25", "14.99"), ("manual", "2026-10-26", None, "19.99")]
+        self.assert_iap(fake, True)  # endDate = heute gilt noch
+        fake.price_entries["IAP-life"] = [("manual", None, "2026-10-24", "14.99"), ("manual", "2026-10-26", None, "14.99")]
+        self.assert_iap(fake, False, "lifetime")
+
+    def test_price_mapped_via_price_point_not_first(self):  # AC-22e
+        fake = FakeASC()
+        fake.decoys["IAP-life"] = "4.99"
+        fake.price_entries["IAP-life"] = [("manual", None, "2026-01-31", "9.99"), ("manual", "2026-02-01", None, "14.99")]
+        self.assert_iap(fake, True)
+        fake.price_entries["IAP-life"] = [("manual", None, "2026-01-31", "14.99"), ("manual", "2026-02-01", None, "9.99")]
+        self.assert_iap(fake, False, "9.99")
+        fake = FakeASC()  # F002: gleiche ID, fremder Typ zählt nicht
+        fake.foreign_type_points["IAP-life"] = "4.99"
+        fake.price_entries["IAP-life"] = [("manual", None, None, "14.99")]
+        self.assert_iap(fake, True)
+        fake.foreign_type_points["IAP-life"] = "14.99"
+        fake.price_entries["IAP-life"] = [("manual", None, None, None)]
+        self.assert_iap(fake, False, "lifetime")
+
+    def test_no_valid_price_is_deviation(self):  # AC-22e
+        fake = FakeASC()
+        fake.decoys["IAP-life"] = "14.99"
+        for entries in ([], [("manual", None, "2026-01-31", "14.99")], [("manual", None, None, None)],
+                        [("manual", None, None, "14.99"), ("automatic", None, None, "19.99")]):
+            fake.price_entries["IAP-life"] = entries
+            self.assert_iap(fake, False, "lifetime")
+        fake.price_entries["IAP-life"] = [("manual", None, None, "14.99"), ("automatic", None, None, None)]  # F001
+        self.assertIn("Preispunkt fehlt", self.assert_iap(fake, False, "lifetime"))
+        fake.price_entries["IAP-life"] = [("manual", None, None, "14.99"), ("automatic", None, None, "14.99")]
+        self.assert_iap(fake, True)  # mehrere gültige mit gleichem Betrag
+
+    def test_subscription_price_same_validity_rule(self):  # AC-22f
+        fake = FakeASC()
+        fake.decoys["SUB-monthly"] = "2.49"
+        fake.price_entries["SUB-monthly"] = [("prices", None, "2026-03-31", "2.99"), ("prices", "2026-04-01", None, "1.99"),
+                                             ("prices", "2027-01-01", None, "2.49")]
+        self.assert_iap(fake, True)
+        query = [unquote(urlsplit(c[1]).query) for c in fake.calls if "/v1/subscriptions/SUB-monthly/prices" in c[1]]
+        self.assertEqual(query, ["include=subscriptionPricePoint,territory&filter[territory]=DEU"])
+        fake.price_entries["SUB-monthly"] = [("prices", None, "2026-03-31", "1.99"), ("prices", "2026-04-01", None, "2.99")]
+        out = self.assert_iap(fake, False, "1.99")
+        self.assertIn("2.99", out)
+
+    def test_today_is_injectable(self):  # AC-22g
+        self.assertIn("today", inspect.signature(asc_check.main).parameters)
+        fake = FakeASC()
+        fake.price_entries["IAP-life"] = [("manual", None, "2026-12-31", "14.99"), ("manual", "2027-01-01", None, "19.99")]
+        self.assert_iap(fake, True, today=datetime.date(2026, 10, 25))
+        self.assert_iap(fake, False, "19.99", today=datetime.date(2027, 2, 1))
 
     def test_protocol_has_timestamp_and_commit(self):  # AC-20g
         _, out = run(FakeASC(), "--all")

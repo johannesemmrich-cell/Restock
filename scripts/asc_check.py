@@ -2,7 +2,8 @@
 """Liest den Entwurf von Version 1.0 aus App Store Connect und vergleicht ihn mit dem Repo (Issue #175, B2b).
 Nur GET über einen eigenen Lesezaun; der Schreibweg von asc_lib wird nicht benutzt. Die Datenschutzseite wird
 ohne Token abgerufen. Ausgabe je Prüfpunkt „ok“ oder „Abweichung: Feld, Soll, Ist“; Kontaktwerte nur als gesetzt/leer.
-Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status> oder --all."""
+Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status> oder --all.
+B3a: Kaufpfade nach API 4.5.1; Preise zählen nur gültig zum Stichtag und über ihren Preispunkt in `included`."""
 import datetime, html, json, os, re, subprocess, sys
 from decimal import Decimal
 from pathlib import Path
@@ -17,12 +18,15 @@ VERSION_FIELDS = {"description": "description", "keywords": "keywords", "promoti
 INFO_FIELDS = {"name": "name", "subtitle": "subtitle", "privacyPolicyUrl": "privacy_url"}
 PREFIX = "com.johannesemmrich.smartcart.premium."
 PRICES = {"lifetime": "14.99", "monthly": "1.99", "yearly": "8.99"}
-# Pfadform der Produkt-Lokalisierungen und Review-Screenshots ist erst in B3 am echten Konto belegt (Spec, API 4.4.1).
-PRODUCT_PATHS = {"IAP": ("/v1/inAppPurchases/{id}/inAppPurchaseLocalizations", "/v1/inAppPurchases/{id}/appStoreReviewScreenshot"),
+# Kaufpfade nach API 4.5.1 (Spec B3a), am echten Konto erst in B3 belegt; Einmalkauf-Preise hängen am Preisplan, nicht am Kauf.
+PRODUCT_PATHS = {"IAP": ("/v2/inAppPurchases/{id}/inAppPurchaseLocalizations", "/v2/inAppPurchases/{id}/appStoreReviewScreenshot"),
                  "SUB": ("/v1/subscriptions/{id}/subscriptionLocalizations", "/v1/subscriptions/{id}/appStoreReviewScreenshot")}
-PRICE_PATHS = {"IAP": "/v1/inAppPurchasePriceSchedules/{id}/manualPrices", "SUB": "/v1/subscriptions/{id}/prices"}
+IAP_PLAN = "/v2/inAppPurchases/{id}/iapPriceSchedule"
+PRICE_PATHS = {"IAP": ("/v1/inAppPurchasePriceSchedules/{id}/manualPrices", "/v1/inAppPurchasePriceSchedules/{id}/automaticPrices"),
+               "SUB": ("/v1/subscriptions/{id}/prices",)}
 PRICE_QUERY = {"IAP": "include=inAppPurchasePricePoint&filter[territory]=DEU",
-               "SUB": "include=subscriptionPricePoint&filter[territory]=DEU"}
+               "SUB": "include=subscriptionPricePoint,territory&filter[territory]=DEU"}
+PRICE_POINT = {"IAP": "inAppPurchasePricePoint", "SUB": "subscriptionPricePoint"}
 SECTIONS = ("metadata", "privacy-url", "appinfo", "iap", "screenshots", "build", "review", "status")
 _ID = r"([A-Za-z0-9_-]+)"
 FENCE = [(r"/v1/apps", f"filter[bundleId]={BUNDLE}"), (rf"/v1/apps/{_ID}/appStoreVersions", VERSION_QUERY),
@@ -32,8 +36,8 @@ FENCE = [(r"/v1/apps", f"filter[bundleId]={BUNDLE}"), (rf"/v1/apps/{_ID}/appStor
          (rf"/v1/subscriptionGroups/{_ID}/subscriptions", None),
          (rf"/v1/appStoreVersionLocalizations/{_ID}/appScreenshotSets", None),
          (rf"/v1/appScreenshotSets/{_ID}/appScreenshots", None)]
-FENCE += [(p.replace("{id}", _ID), None) for pair in PRODUCT_PATHS.values() for p in pair]
-FENCE += [(PRICE_PATHS[k].replace("{id}", _ID), PRICE_QUERY[k]) for k in PRICE_PATHS]
+FENCE += [(p.replace("{id}", _ID), None) for p in (*PRODUCT_PATHS["IAP"], *PRODUCT_PATHS["SUB"], IAP_PLAN)]
+FENCE += [(p.replace("{id}", _ID), PRICE_QUERY[k]) for k, paths in PRICE_PATHS.items() for p in paths]
 
 
 def check_read(method, path, ids):
@@ -53,8 +57,9 @@ def check_read(method, path, ids):
 
 
 class Reader:
-    def __init__(self, token, send=urllib_send):
+    def __init__(self, token, send=urllib_send, today=None):
         self.token, self.send, self.ids = token, send, set()
+        self.today = today or datetime.date.today()  # Stichtag der Preisgültigkeit (AC-22d, AC-22g)
 
     def get(self, path):
         check_read("GET", path, self.ids)
@@ -205,15 +210,43 @@ def products(rd, app, rep):
     return result
 
 
+def valid_amounts(doc, rel, today):
+    """Beträge aller zum Stichtag gültigen Einträge, je über den Preispunkt des Eintrags; None = Preispunkt fehlt."""
+    points = {(x.get("type"), x["id"]): x.get("attributes", {}).get("customerPrice") for x in doc.get("included", [])}
+    amounts = []
+    for e in doc.get("data") or []:
+        a = e.get("attributes", {})
+        start, end = a.get("startDate"), a.get("endDate")
+        if (start and datetime.date.fromisoformat(start) > today) or (end and datetime.date.fromisoformat(end) < today):
+            continue
+        ref = ((e.get("relationships") or {}).get(rel) or {}).get("data") or {}
+        got = points.get((ref.get("type"), ref.get("id")))
+        amounts.append(None if got is None else Decimal(str(got)))
+    return amounts
+
+
+def check_price(rd, rep, name, kind, pid):
+    """Genau ein gültiger Betrag, und er stimmt (AC-22b bis AC-22f); sonst Abweichung, nie „ok“."""
+    field = f"{name} Preis (DEU)"
+    if kind == "IAP":
+        plan = rd.data(IAP_PLAN.format(id=pid))  # Plan-ID nur aus der Antwort, nie die Kauf-ID (AC-22b)
+        if not plan:
+            rep.check("iap", field, False, PRICES[name], "kein Preisplan")
+            return
+        pid = plan["id"]
+    amounts = [a for p in PRICE_PATHS[kind] for a in
+               valid_amounts(rd.get(f"{p.format(id=pid)}?{PRICE_QUERY[kind]}"), PRICE_POINT[kind], rd.today)]
+    distinct = set(amounts)
+    got = ", ".join(sorted("Preispunkt fehlt" if a is None else str(a) for a in distinct)) or "kein gültiger Preis"
+    rep.check("iap", field, distinct == {Decimal(PRICES[name])}, PRICES[name], got)
+
+
 def check_product(rd, rep, name, kind, item):
     pid, attrs = item["id"], item["attributes"]
     if kind == "IAP":
         rep.eq("iap", f"{name} inAppPurchaseType", "NON_CONSUMABLE", attrs.get("inAppPurchaseType"))
     rep.eq("iap", f"{name} state", "READY_TO_SUBMIT", attrs.get("state"))
-    doc = rd.get(f"{PRICE_PATHS[kind].format(id=pid)}?{PRICE_QUERY[kind]}")
-    got = next((x["attributes"].get("customerPrice") for x in doc.get("included", [])
-                if "customerPrice" in x.get("attributes", {})), None)
-    rep.check("iap", f"{name} Preis (DEU)", got is not None and Decimal(str(got)) == Decimal(PRICES[name]), PRICES[name], got)
+    check_price(rd, rep, name, kind, pid)
     locs_path, shot_path = (p.format(id=pid) for p in PRODUCT_PATHS[kind])
     locs = by_locale(rd.data(locs_path))
     for loc in LOCALES:
@@ -289,7 +322,8 @@ def git_commit():
     return done.stdout.strip() if done.returncode == 0 else None
 
 
-def main(argv, env=None, send=urllib_send, sign=openssl_sign, out=sys.stdout, page_send=urllib_send, commit=None, now=None):
+def main(argv, env=None, send=urllib_send, sign=openssl_sign, out=sys.stdout, page_send=urllib_send, commit=None, now=None,
+         today=None):
     if argv == ["--all"]:
         chosen = SECTIONS
     elif len(argv) == 2 and argv[0] == "--section" and argv[1] in SECTIONS:
@@ -301,7 +335,7 @@ def main(argv, env=None, send=urllib_send, sign=openssl_sign, out=sys.stdout, pa
     print(f"asc_check {stamp} Commit {(commit or git_commit)() or 'unbekannt'}", file=out)
     rep, ctx, failed = Report(out), {}, 0
     try:
-        rd = Reader(make_token(os.environ if env is None else env, sign=sign), send=send)
+        rd = Reader(make_token(os.environ if env is None else env, sign=sign), send=send, today=today)
     except Exception as e:  # Meldungen aus asc_lib nennen nie Schlüsselpfad oder Token
         print(f"Fehler: {e}", file=sys.stderr)
         return 1

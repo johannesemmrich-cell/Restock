@@ -1,0 +1,375 @@
+test_all_exit_zero_only_if_all_api_sections_ok (__main__.AscCheck.test_all_exit_zero_only_if_all_api_sections_ok) ... ERROR
+test_deviation_names_field_expected_actual (__main__.AscCheck.test_deviation_names_field_expected_actual) ... ERROR
+test_fence_rejects_before_send (__main__.AscCheck.test_fence_rejects_before_send) ... ok
+test_iap_uses_v2_paths_and_fence_rejects_v1 (__main__.AscCheck.test_iap_uses_v2_paths_and_fence_rejects_v1) ... ERROR
+test_no_secrets_in_output_or_errors (__main__.AscCheck.test_no_secrets_in_output_or_errors) ... ERROR
+test_no_valid_price_is_deviation (__main__.AscCheck.test_no_valid_price_is_deviation) ... ERROR
+test_only_get_and_ids_from_answers (__main__.AscCheck.test_only_get_and_ids_from_answers) ... ERROR
+test_price_found_under_automatic_prices (__main__.AscCheck.test_price_found_under_automatic_prices) ... ERROR
+test_price_ignores_expired_and_future_entries (__main__.AscCheck.test_price_ignores_expired_and_future_entries) ... ERROR
+test_price_mapped_via_price_point_not_first (__main__.AscCheck.test_price_mapped_via_price_point_not_first) ... ERROR
+test_price_plan_id_taken_from_schedule_response (__main__.AscCheck.test_price_plan_id_taken_from_schedule_response) ... ERROR
+test_privacy_fetch_only_exact_url (__main__.AscCheck.test_privacy_fetch_only_exact_url) ... ok
+test_privacy_fetch_without_authorization_and_redirect (__main__.AscCheck.test_privacy_fetch_without_authorization_and_redirect) ... ERROR
+test_privacy_questionnaire_reports_manual (__main__.AscCheck.test_privacy_questionnaire_reports_manual) ... ERROR
+test_protocol_has_timestamp_and_commit (__main__.AscCheck.test_protocol_has_timestamp_and_commit) ... ERROR
+test_section_appinfo_ok_and_deviation (__main__.AscCheck.test_section_appinfo_ok_and_deviation) ... ERROR
+test_section_build_ok_and_deviation (__main__.AscCheck.test_section_build_ok_and_deviation) ... ERROR
+test_section_build_requires_export_compliance_false (__main__.AscCheck.test_section_build_requires_export_compliance_false) ... ERROR
+test_section_iap_ok_and_deviation (__main__.AscCheck.test_section_iap_ok_and_deviation) ... ERROR
+test_section_metadata_ok_and_deviation (__main__.AscCheck.test_section_metadata_ok_and_deviation) ... ERROR
+test_section_privacy_url_ok_and_deviation (__main__.AscCheck.test_section_privacy_url_ok_and_deviation) ... ERROR
+test_section_review_never_prints_contact_values (__main__.AscCheck.test_section_review_never_prints_contact_values) ... ERROR
+test_section_review_ok_and_deviation (__main__.AscCheck.test_section_review_ok_and_deviation) ... ERROR
+test_section_screenshots_checks_pixel_size_not_enum (__main__.AscCheck.test_section_screenshots_checks_pixel_size_not_enum) ... ERROR
+test_section_status_ok_and_deviation (__main__.AscCheck.test_section_status_ok_and_deviation) ... ERROR
+test_source_bans (__main__.AscCheck.test_source_bans) ... ok
+test_subscription_price_same_validity_rule (__main__.AscCheck.test_subscription_price_same_validity_rule) ... ERROR
+test_today_is_injectable (__main__.AscCheck.test_today_is_injectable) ... FAIL
+
+======================================================================
+ERROR: test_all_exit_zero_only_if_all_api_sections_ok (__main__.AscCheck.test_all_exit_zero_only_if_all_api_sections_ok)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 265, in test_all_exit_zero_only_if_all_api_sections_ok
+    code, out = run(FakeASC(), "--all")
+                ~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_deviation_names_field_expected_actual (__main__.AscCheck.test_deviation_names_field_expected_actual)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 258, in test_deviation_names_field_expected_actual
+    out = self.assert_section("metadata", lambda f: f.ilocs[0]["attributes"].update(subtitle="Falscher Untertitel"), "subtitle")
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 173, in assert_section
+    self.assertEqual(run(FakeASC(), "--section", section)[0], 0, f"{section} ok-Fall")
+                     ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_iap_uses_v2_paths_and_fence_rejects_v1 (__main__.AscCheck.test_iap_uses_v2_paths_and_fence_rejects_v1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 372, in test_iap_uses_v2_paths_and_fence_rejects_v1
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 361, in assert_iap
+    code, out = run(fake, "--section", "iap", today=today)
+                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_no_secrets_in_output_or_errors (__main__.AscCheck.test_no_secrets_in_output_or_errors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 330, in test_no_secrets_in_output_or_errors
+    _, out = run(fake, "--all")
+             ~~~^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_no_valid_price_is_deviation (__main__.AscCheck.test_no_valid_price_is_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 435, in test_no_valid_price_is_deviation
+    self.assert_iap(fake, False, "lifetime")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 361, in assert_iap
+    code, out = run(fake, "--section", "iap", today=today)
+                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_only_get_and_ids_from_answers (__main__.AscCheck.test_only_get_and_ids_from_answers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 303, in test_only_get_and_ids_from_answers
+    run(fake, "--all")
+    ~~~^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_price_found_under_automatic_prices (__main__.AscCheck.test_price_found_under_automatic_prices)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 405, in test_price_found_under_automatic_prices
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 361, in assert_iap
+    code, out = run(fake, "--section", "iap", today=today)
+                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_price_ignores_expired_and_future_entries (__main__.AscCheck.test_price_ignores_expired_and_future_entries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 415, in test_price_ignores_expired_and_future_entries
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 361, in assert_iap
+    code, out = run(fake, "--section", "iap", today=today)
+                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_price_mapped_via_price_point_not_first (__main__.AscCheck.test_price_mapped_via_price_point_not_first)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 425, in test_price_mapped_via_price_point_not_first
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 361, in assert_iap
+    code, out = run(fake, "--section", "iap", today=today)
+                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_price_plan_id_taken_from_schedule_response (__main__.AscCheck.test_price_plan_id_taken_from_schedule_response)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 392, in test_price_plan_id_taken_from_schedule_response
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 361, in assert_iap
+    code, out = run(fake, "--section", "iap", today=today)
+                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_privacy_fetch_without_authorization_and_redirect (__main__.AscCheck.test_privacy_fetch_without_authorization_and_redirect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 311, in test_privacy_fetch_without_authorization_and_redirect
+    run(FakeASC(), "--section", "privacy-url", page=page)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_privacy_questionnaire_reports_manual (__main__.AscCheck.test_privacy_questionnaire_reports_manual)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 203, in test_privacy_questionnaire_reports_manual
+    code, out = run(FakeASC(), "--all")
+                ~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_protocol_has_timestamp_and_commit (__main__.AscCheck.test_protocol_has_timestamp_and_commit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 459, in test_protocol_has_timestamp_and_commit
+    _, out = run(FakeASC(), "--all")
+             ~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_section_appinfo_ok_and_deviation (__main__.AscCheck.test_section_appinfo_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 196, in test_section_appinfo_ok_and_deviation
+    self.assert_section("appinfo", lambda f: setattr(f, "age", None), "ageRating")
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 173, in assert_section
+    self.assertEqual(run(FakeASC(), "--section", section)[0], 0, f"{section} ok-Fall")
+                     ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_section_build_ok_and_deviation (__main__.AscCheck.test_section_build_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 230, in test_section_build_ok_and_deviation
+    self.assert_section("build", lambda f: f.build["attributes"].update(version="36"), "37")
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 173, in assert_section
+    self.assertEqual(run(FakeASC(), "--section", section)[0], 0, f"{section} ok-Fall")
+                     ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_section_build_requires_export_compliance_false (__main__.AscCheck.test_section_build_requires_export_compliance_false)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 235, in test_section_build_requires_export_compliance_false
+    self.assert_section("build", lambda f: f.build["attributes"].update(usesNonExemptEncryption=None), "usesNonExemptEncryption")
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 173, in assert_section
+    self.assertEqual(run(FakeASC(), "--section", section)[0], 0, f"{section} ok-Fall")
+                     ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_section_iap_ok_and_deviation (__main__.AscCheck.test_section_iap_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 209, in test_section_iap_ok_and_deviation
+    self.assert_section("iap", lambda f: f.subs.pop(), "yearly")
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 173, in assert_section
+    self.assertEqual(run(FakeASC(), "--section", section)[0], 0, f"{section} ok-Fall")
+                     ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_section_metadata_ok_and_deviation (__main__.AscCheck.test_section_metadata_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 183, in test_section_metadata_ok_and_deviation
+    out = self.assert_section("metadata", lambda f: f.vlocs[1]["attributes"].update(keywords="alt,falsch"), "keywords")
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 173, in assert_section
+    self.assertEqual(run(FakeASC(), "--section", section)[0], 0, f"{section} ok-Fall")
+                     ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_section_privacy_url_ok_and_deviation (__main__.AscCheck.test_section_privacy_url_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 188, in test_section_privacy_url_ok_and_deviation
+    self.assertEqual(run(FakeASC(), "--section", "privacy-url")[0], 0)
+                     ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_section_review_never_prints_contact_values (__main__.AscCheck.test_section_review_never_prints_contact_values)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 248, in test_section_review_never_prints_contact_values
+    _, out = run(f, "--section", "review")
+             ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_section_review_ok_and_deviation (__main__.AscCheck.test_section_review_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 239, in test_section_review_ok_and_deviation
+    self.assert_section("review", lambda f: f.review["attributes"].update(contactPhone=""), "contactPhone")
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 173, in assert_section
+    self.assertEqual(run(FakeASC(), "--section", section)[0], 0, f"{section} ok-Fall")
+                     ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_section_screenshots_checks_pixel_size_not_enum (__main__.AscCheck.test_section_screenshots_checks_pixel_size_not_enum)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 224, in test_section_screenshots_checks_pixel_size_not_enum
+    self.assertEqual(run(fake, "--section", "screenshots")[0], 0, "Enum-Name darf keine Rolle spielen")
+                     ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_section_status_ok_and_deviation (__main__.AscCheck.test_section_status_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 254, in test_section_status_ok_and_deviation
+    self.assert_section("status", lambda f: f.version["attributes"].update(appVersionState="WAITING_FOR_REVIEW"),
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        "WAITING_FOR_REVIEW")
+                        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 173, in assert_section
+    self.assertEqual(run(FakeASC(), "--section", section)[0], 0, f"{section} ok-Fall")
+                     ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+ERROR: test_subscription_price_same_validity_rule (__main__.AscCheck.test_subscription_price_same_validity_rule)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 444, in test_subscription_price_same_validity_rule
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 361, in assert_iap
+    code, out = run(fake, "--section", "iap", today=today)
+                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 163, in run
+    code = asc_check.main(list(argv), env=dict(ENV), send=fake, sign=fake_sign, out=out,
+                          page_send=page or FakePage(), commit=commit, now=now, today=today)
+TypeError: main() got an unexpected keyword argument 'today'
+
+======================================================================
+FAIL: test_today_is_injectable (__main__.AscCheck.test_today_is_injectable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 452, in test_today_is_injectable
+    self.assertIn("today", inspect.signature(asc_check.main).parameters)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'today' not found in mappingproxy(OrderedDict({'argv': <Parameter "argv">, 'env': <Parameter "env=None">, 'send': <Parameter "send=<function urllib_send at 0x10a9c1dd0>">, 'sign': <Parameter "sign=<function openssl_sign at 0x10a9c1c70>">, 'out': <Parameter "out=<_io.TextIOWrapper name='<stdout>' mode='w' encoding='utf-8'>">, 'page_send': <Parameter "page_send=<function urllib_send at 0x10a9c1dd0>">, 'commit': <Parameter "commit=None">, 'now': <Parameter "now=None">}))
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.032s
+
+FAILED (failures=1, errors=24)

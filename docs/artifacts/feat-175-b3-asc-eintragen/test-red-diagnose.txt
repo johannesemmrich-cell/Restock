@@ -1,0 +1,268 @@
+test_all_exit_zero_only_if_all_api_sections_ok (test_asc_check.AscCheck.test_all_exit_zero_only_if_all_api_sections_ok) ... FAIL
+test_deviation_names_field_expected_actual (test_asc_check.AscCheck.test_deviation_names_field_expected_actual) ... ok
+test_fence_rejects_before_send (test_asc_check.AscCheck.test_fence_rejects_before_send) ... ok
+test_iap_uses_v2_paths_and_fence_rejects_v1 (test_asc_check.AscCheck.test_iap_uses_v2_paths_and_fence_rejects_v1) ... FAIL
+test_no_secrets_in_output_or_errors (test_asc_check.AscCheck.test_no_secrets_in_output_or_errors) ... ok
+test_no_valid_price_is_deviation (test_asc_check.AscCheck.test_no_valid_price_is_deviation) ... FAIL
+test_only_get_and_ids_from_answers (test_asc_check.AscCheck.test_only_get_and_ids_from_answers) ... ok
+test_price_found_under_automatic_prices (test_asc_check.AscCheck.test_price_found_under_automatic_prices) ... FAIL
+test_price_ignores_expired_and_future_entries (test_asc_check.AscCheck.test_price_ignores_expired_and_future_entries) ... FAIL
+test_price_mapped_via_price_point_not_first (test_asc_check.AscCheck.test_price_mapped_via_price_point_not_first) ... FAIL
+test_price_plan_id_taken_from_schedule_response (test_asc_check.AscCheck.test_price_plan_id_taken_from_schedule_response) ... FAIL
+test_privacy_fetch_only_exact_url (test_asc_check.AscCheck.test_privacy_fetch_only_exact_url) ... ok
+test_privacy_fetch_without_authorization_and_redirect (test_asc_check.AscCheck.test_privacy_fetch_without_authorization_and_redirect) ... ok
+test_privacy_questionnaire_reports_manual (test_asc_check.AscCheck.test_privacy_questionnaire_reports_manual) ... ok
+test_protocol_has_timestamp_and_commit (test_asc_check.AscCheck.test_protocol_has_timestamp_and_commit) ... ok
+test_section_appinfo_ok_and_deviation (test_asc_check.AscCheck.test_section_appinfo_ok_and_deviation) ... ok
+test_section_build_ok_and_deviation (test_asc_check.AscCheck.test_section_build_ok_and_deviation) ... ok
+test_section_build_requires_export_compliance_false (test_asc_check.AscCheck.test_section_build_requires_export_compliance_false) ... ok
+test_section_iap_ok_and_deviation (test_asc_check.AscCheck.test_section_iap_ok_and_deviation) ... FAIL
+test_section_metadata_ok_and_deviation (test_asc_check.AscCheck.test_section_metadata_ok_and_deviation) ... ok
+test_section_privacy_url_ok_and_deviation (test_asc_check.AscCheck.test_section_privacy_url_ok_and_deviation) ... ok
+test_section_review_never_prints_contact_values (test_asc_check.AscCheck.test_section_review_never_prints_contact_values) ... ok
+test_section_review_ok_and_deviation (test_asc_check.AscCheck.test_section_review_ok_and_deviation) ... ok
+test_section_screenshots_checks_pixel_size_not_enum (test_asc_check.AscCheck.test_section_screenshots_checks_pixel_size_not_enum) ... ok
+test_section_status_ok_and_deviation (test_asc_check.AscCheck.test_section_status_ok_and_deviation) ... ok
+test_source_bans (test_asc_check.AscCheck.test_source_bans) ... ok
+test_subscription_price_same_validity_rule (test_asc_check.AscCheck.test_subscription_price_same_validity_rule) ... FAIL
+test_today_is_injectable (test_asc_check.AscCheck.test_today_is_injectable) ... FAIL
+
+======================================================================
+FAIL: test_all_exit_zero_only_if_all_api_sections_ok (test_asc_check.AscCheck.test_all_exit_zero_only_if_all_api_sections_ok)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 266, in test_all_exit_zero_only_if_all_api_sections_ok
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== metadata
+ok   metadata: description (de-DE)
+ok   metadata: keywords (de-DE)
+ok   metadata: promotionalText (de-DE)
+ok   metadata: supportUrl (de-DE)
+ok   metadata: description (en-US)
+ok   metadata: keywords (en-US)
+ok   metadata: promotionalText (en-US)
+ok   metadata: supportUrl (en-US)
+ok   metadata: name (de-DE)
+ok   metadata: subtitle (de-DE)
+ok   metadata: privacyPolicyUrl (de-DE)
+ok   metadata: name (en-US)
+ok   metadata: subtitle (en-US)
+ok   metadata: privacyPolicyUrl (en-US)
+== privacy-url
+ok   privacy-url: HTTP-Status
+ok   privacy-url: Abschnitt Deutsch (42 Zeilen)
+ok   privacy-url: Abschnitt English (43 Zeilen)
+== appinfo
+ok   appinfo: contentRightsDeclaration
+ok   appinfo: primaryCategory
+ok   appinfo: secondaryCategory
+ok   appinfo: Kategorien
+ok   appinfo: ageRatingDeclaration
+ok   appinfo: appPriceSchedule
+ok   appinfo: appAvailabilityV2
+== iap
+ok   iap: Abo-Gruppe „Restock Pro“
+ok   iap: lifetime vorhanden (IAP)
+ok   iap: monthly vorhanden (SUB)
+ok   iap: yearly vorhanden (SUB)
+ok   iap: lifetime inAppPurchaseType
+ok   iap: lifetime state
+Fehler iap: HTTP 404 bei GET /v1/inAppPurchasePriceSchedules/IAP-life/manualPrices
+== screenshots
+ok   screenshots: Anzahl (de-DE)
+ok   screenshots: Anzahl (en-US)
+== build
+ok   build: build zugeordnet
+ok   build: version
+ok   build: processingState
+ok   build: usesNonExemptEncryption
+== review
+ok   review: appStoreReviewDetail
+ok   review: contactFirstName
+ok   review: contactLastName
+ok   review: contactEmail
+ok   review: contactPhone
+ok   review: demoAccountRequired
+== status
+ok   status: appVersionState
+offen AC-14 App-Privacy-Fragebogen: per API nicht lesbar, manuell belegen (Beleg-Screenshot)
+
+
+======================================================================
+FAIL: test_iap_uses_v2_paths_and_fence_rejects_v1 (test_asc_check.AscCheck.test_iap_uses_v2_paths_and_fence_rejects_v1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 372, in test_iap_uses_v2_paths_and_fence_rejects_v1
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 363, in assert_iap
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== iap
+ok   iap: Abo-Gruppe „Restock Pro“
+ok   iap: lifetime vorhanden (IAP)
+ok   iap: monthly vorhanden (SUB)
+ok   iap: yearly vorhanden (SUB)
+ok   iap: lifetime inAppPurchaseType
+ok   iap: lifetime state
+Fehler iap: HTTP 404 bei GET /v1/inAppPurchasePriceSchedules/IAP-life/manualPrices
+
+
+======================================================================
+FAIL: test_no_valid_price_is_deviation (test_asc_check.AscCheck.test_no_valid_price_is_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 435, in test_no_valid_price_is_deviation
+    self.assert_iap(fake, False, "lifetime")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 366, in assert_iap
+    self.assertIn("Abweichung", out)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+AssertionError: 'Abweichung' not found in 'asc_check 2026-10-25T12:00:00Z Commit abc1234def\n== iap\nok   iap: Abo-Gruppe „Restock Pro“\nok   iap: lifetime vorhanden (IAP)\nok   iap: monthly vorhanden (SUB)\nok   iap: yearly vorhanden (SUB)\nok   iap: lifetime inAppPurchaseType\nok   iap: lifetime state\nFehler iap: HTTP 404 bei GET /v1/inAppPurchasePriceSchedules/IAP-life/manualPrices\n'
+
+======================================================================
+FAIL: test_price_found_under_automatic_prices (test_asc_check.AscCheck.test_price_found_under_automatic_prices)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 405, in test_price_found_under_automatic_prices
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 363, in assert_iap
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== iap
+ok   iap: Abo-Gruppe „Restock Pro“
+ok   iap: lifetime vorhanden (IAP)
+ok   iap: monthly vorhanden (SUB)
+ok   iap: yearly vorhanden (SUB)
+ok   iap: lifetime inAppPurchaseType
+ok   iap: lifetime state
+Fehler iap: HTTP 404 bei GET /v1/inAppPurchasePriceSchedules/IAP-life/manualPrices
+
+
+======================================================================
+FAIL: test_price_ignores_expired_and_future_entries (test_asc_check.AscCheck.test_price_ignores_expired_and_future_entries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 415, in test_price_ignores_expired_and_future_entries
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 363, in assert_iap
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== iap
+ok   iap: Abo-Gruppe „Restock Pro“
+ok   iap: lifetime vorhanden (IAP)
+ok   iap: monthly vorhanden (SUB)
+ok   iap: yearly vorhanden (SUB)
+ok   iap: lifetime inAppPurchaseType
+ok   iap: lifetime state
+Fehler iap: HTTP 404 bei GET /v1/inAppPurchasePriceSchedules/IAP-life/manualPrices
+
+
+======================================================================
+FAIL: test_price_mapped_via_price_point_not_first (test_asc_check.AscCheck.test_price_mapped_via_price_point_not_first)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 425, in test_price_mapped_via_price_point_not_first
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 363, in assert_iap
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== iap
+ok   iap: Abo-Gruppe „Restock Pro“
+ok   iap: lifetime vorhanden (IAP)
+ok   iap: monthly vorhanden (SUB)
+ok   iap: yearly vorhanden (SUB)
+ok   iap: lifetime inAppPurchaseType
+ok   iap: lifetime state
+Fehler iap: HTTP 404 bei GET /v1/inAppPurchasePriceSchedules/IAP-life/manualPrices
+
+
+======================================================================
+FAIL: test_price_plan_id_taken_from_schedule_response (test_asc_check.AscCheck.test_price_plan_id_taken_from_schedule_response)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 392, in test_price_plan_id_taken_from_schedule_response
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 363, in assert_iap
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== iap
+ok   iap: Abo-Gruppe „Restock Pro“
+ok   iap: lifetime vorhanden (IAP)
+ok   iap: monthly vorhanden (SUB)
+ok   iap: yearly vorhanden (SUB)
+ok   iap: lifetime inAppPurchaseType
+ok   iap: lifetime state
+Fehler iap: HTTP 404 bei GET /v1/inAppPurchasePriceSchedules/IAP-life/manualPrices
+
+
+======================================================================
+FAIL: test_section_iap_ok_and_deviation (test_asc_check.AscCheck.test_section_iap_ok_and_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 209, in test_section_iap_ok_and_deviation
+    self.assert_section("iap", lambda f: f.subs.pop(), "yearly")
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 173, in assert_section
+    self.assertEqual(run(FakeASC(), "--section", section)[0], 0, f"{section} ok-Fall")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : iap ok-Fall
+
+======================================================================
+FAIL: test_subscription_price_same_validity_rule (test_asc_check.AscCheck.test_subscription_price_same_validity_rule)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 444, in test_subscription_price_same_validity_rule
+    self.assert_iap(fake, True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 363, in assert_iap
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== iap
+ok   iap: Abo-Gruppe „Restock Pro“
+ok   iap: lifetime vorhanden (IAP)
+ok   iap: monthly vorhanden (SUB)
+ok   iap: yearly vorhanden (SUB)
+ok   iap: lifetime inAppPurchaseType
+ok   iap: lifetime state
+Fehler iap: HTTP 404 bei GET /v1/inAppPurchasePriceSchedules/IAP-life/manualPrices
+
+
+======================================================================
+FAIL: test_today_is_injectable (test_asc_check.AscCheck.test_today_is_injectable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 455, in test_today_is_injectable
+    self.assert_iap(fake, True, today=datetime.date(2026, 10, 25))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 363, in assert_iap
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== iap
+ok   iap: Abo-Gruppe „Restock Pro“
+ok   iap: lifetime vorhanden (IAP)
+ok   iap: monthly vorhanden (SUB)
+ok   iap: yearly vorhanden (SUB)
+ok   iap: lifetime inAppPurchaseType
+ok   iap: lifetime state
+Fehler iap: HTTP 404 bei GET /v1/inAppPurchasePriceSchedules/IAP-life/manualPrices
+
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.029s
+
+FAILED (failures=10)
+Diagnoselauf: asc_check.main ohne today-Parameter umhüllt (nur im Prozess, Repo unverändert)
