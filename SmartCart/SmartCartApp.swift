@@ -983,9 +983,6 @@ private struct DevModeIndicator: View {
 
             Button {
                 developerMode = false
-                // Siehe SettingsView.swift ("Developer Mode deaktivieren") für dieselbe
-                // Begründung — dieser Pill-Button ist der zweite Ausstiegspunkt aus dem Dev-Mode.
-                NotificationService.shared.cancelAll()
             } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 9, weight: .bold))

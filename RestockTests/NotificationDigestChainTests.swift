@@ -68,14 +68,16 @@ final class NotificationDigestChainTests: XCTestCase {
 
     // MARK: - D2 Abgemeldet
 
-    func testNothingIsPlannedWhenDeveloperModeIsOff() async throws {
+    /// Seit der PO-Freigabe (Issue #30, 2026-10-25) hängt die Tagesmitteilung nicht mehr am
+    /// Developer Mode, nur noch am Schalter „Nachkauf-Erinnerungen“.
+    func testDigestIsPlannedWithoutDeveloperMode() async throws {
         UserDefaults.standard.set(false, forKey: "developerMode")
         let container = try makeContainer(items: ["Milch"])
 
         await ReplenishmentBackgroundRefresh.run(container: container, now: date(9, 21, hour: 8), center: center)
 
-        XCTAssertTrue(center.requests.isEmpty)
-        XCTAssertTrue(ReplenishmentDigestLog().planned().isEmpty)
+        XCTAssertEqual(center.digestRequests.count, 1)
+        XCTAssertEqual(ReplenishmentDigestLog().planned().first?.itemNames, ["Milch"])
     }
 
     func testNothingIsPlannedWhenNotificationsAreOff() async throws {

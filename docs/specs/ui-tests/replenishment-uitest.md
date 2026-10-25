@@ -231,7 +231,7 @@ Start wie oben, Kachel „Listenladen,“ öffnen. Abschnitt „Vielleicht auch 
 | T7 | `testAlsoDuePlusAddsItem` (L2) | UI | AC-8 |
 | T8 | `testAlsoDueStillHaveItHidesSuggestion` (L3) | UI | AC-9 |
 | T9 | `testAlsoDueBlockSurvivesRestart` (L4) | UI | AC-10 |
-| T10 | `testNothingWithoutDeveloperMode` (N) | UI | AC-11 |
+| T10 | `testVisibleWithoutDeveloperMode` (seit der PO-Freigabe von #30 am 2026-10-25 positiv; vorher `testNothingWithoutDeveloperMode` (N)) | UI | AC-11 |
 | T11 | tearDown-Prüfung (Folgetest sieht frischen Seed) | UI | AC-14 |
 | T12 | Release-Build, `#if DEBUG`-Prüfung | Build | AC-16 |
 | T13 | Bestandssuiten gemeinsamer Lauf | UI+Unit | AC-17 |

@@ -216,7 +216,6 @@ struct StoreDetailView: View {
             .onChange(of: blockedReplenishmentsData) { refreshAlsoDue() }
             .onChange(of: snoozedReplenishmentsData) { refreshAlsoDue() }
             .onChange(of: dismissedReplenishmentsData) { refreshAlsoDue() }
-            .onChange(of: developerMode) { refreshAlsoDue() }
             .onChange(of: store.visitsPerWeek) { refreshAlsoDue() }
             .onChange(of: scenePhase) { _, phase in
                 guard phase == .active else { return }
@@ -718,7 +717,7 @@ struct StoreDetailView: View {
 
     @ViewBuilder
     private var alsoDueSection: some View {
-        if developerMode && !alsoDueItems.isEmpty {
+        if !alsoDueItems.isEmpty {
             Section {
                 if !alsoDueCollapsed {
                     ForEach(alsoDueItems, id: \.itemName) { pattern in
@@ -807,10 +806,6 @@ struct StoreDetailView: View {
     /// Berechnet „Vielleicht auch fällig“ neu. Gehört ein Artikel laut `AssignmentService` in
     /// einen anderen Laden, erscheint er dort und nicht hier.
     private func refreshAlsoDue() {
-        guard developerMode else {
-            alsoDueItems = []
-            return
-        }
         let storeKey = store.name.lowercased()
         visitGapDays = StoreVisitForecast.visitGapDays(
             purchaseDates: allRecords.filter { $0.storeName.lowercased() == storeKey }.map(\.date),
