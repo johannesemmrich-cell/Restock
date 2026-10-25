@@ -664,8 +664,8 @@ enum PriceEstimator {
         let source: String
     }
 
-    /// Pauschale je Kategorie (Preis je Stück/kg/l), unverändert aus Issue #12: deckt alle 26
-    /// Kategorien aus `AssignmentService.categoryOrder` ab, paarweise verschieden.
+    /// Pauschale je Kategorie (Preis je Stück/kg/l), unverändert aus Issue #12: deckt alle 35
+    /// Kategorien aus `AssignmentService.categoryOrder` ab (26 + neun aus Issue #221), paarweise verschieden.
     static func categoryFlatRate(_ category: String) -> Double? {
         switch category {
         case "Obst & Gemüse": return 2.50
@@ -694,6 +694,16 @@ enum PriceEstimator {
         case "Farbe & Lack": return 15.00
         case "Sanitär": return 11.50
         case "Baumaterial": return 13.50
+        // Issue #221 (handgepflegt, Drogerie-/Baumarkt-Niveau 2026, paarweise verschieden zu allen anderen)
+        case "Haarpflege": return 4.20
+        case "Zahnpflege": return 3.30
+        case "Kosmetik": return 6.90
+        case "Hygieneartikel": return 3.60
+        case "Tierbedarf": return 4.80
+        case "Eisenwaren": return 5.50
+        case "Holz": return 16.00
+        case "Boden & Fliesen": return 18.00
+        case "Pflanzen": return 5.90
         default: return nil
         }
     }

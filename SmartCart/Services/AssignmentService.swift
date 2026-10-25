@@ -190,10 +190,16 @@ extension AssignmentService {
         guard !activeStores.isEmpty else { return (nil, .noStoresAtAll) }
 
         let nameLower = itemName.lowercased()
-        let isHardware = hardwareStoreKeywords.contains(where: { nameLower.contains($0) })
-        let isVariety = varietyStoreKeywords.contains(where: { nameLower.contains($0) })
-            || nonFoodCompoundEndings.contains(where: { nameLower.hasSuffix($0) })
-        let isDrugstore = drugstoreKeywords.contains(where: { nameLower.contains($0) })
+        // Issue #221: Die Warenkunde (`nonFoodCategoryMap`) nennt den Ladentyp, wenn ihr längstes
+        // Stichwort trifft; sonst entscheiden wie bisher die drei Stichwortlisten.
+        let mappedGroup = nonFoodStoreGroup(forLowercased: nameLower)
+        let isHardware = mappedGroup == "hardware"
+            || (mappedGroup == nil && hardwareStoreKeywords.contains(where: { nameLower.contains($0) }))
+        let isVariety = mappedGroup == "variety"
+            || (mappedGroup == nil && (varietyStoreKeywords.contains(where: { nameLower.contains($0) })
+                || nonFoodCompoundEndings.contains(where: { nameLower.hasSuffix($0) })))
+        let isDrugstore = mappedGroup == "drugstore"
+            || (mappedGroup == nil && drugstoreKeywords.contains(where: { nameLower.contains($0) }))
         let itemGroup = isHardware ? "hardware" : isVariety ? "variety" : isDrugstore ? "drugstore" : "grocery"
 
         /// Standard-Laden vor Kaufhistorie-/Besuchsheuristik; bei genau einem Kandidaten „einziger Laden“.

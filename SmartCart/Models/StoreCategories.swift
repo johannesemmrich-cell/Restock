@@ -32,6 +32,7 @@ enum StoreCategories {
         "🏷️", "🧊", "❄️", "🥖", "🥐", "🍞", "🧀", "🥛", "🥚", "🥩", "🍗", "🐟",
         "🥦", "🍎", "🍌", "🥕", "🌿", "🍝", "🥫", "🫙", "🧂", "🍫", "🍪", "🍷",
         "🍺", "🥤", "☕️", "🧃", "🧴", "🧼", "🧻", "💊", "👶", "🐾", "🌸", "🛒",
+        "💇", "🦷", "💄", "🔧", "🔩", "🪵", "🧱", "🎨", "🚿", "💡", "🌷", "🌱",
     ]
 
     /// Stichwörter → Emoji-Vorschlag für einen neuen Namen. Erste Übereinstimmung gewinnt.
@@ -53,7 +54,18 @@ enum StoreCategories {
         (["bier"], "🍺"),
         (["getränk", "wasser", "saft"], "🥤"),
         (["kaffee", "tee"], "☕️"),
-        (["drogerie", "pflege", "kosmetik"], "🧴"),
+        (["haar", "friseur"], "💇"),
+        (["zahn", "mund"], "🦷"),
+        (["make-up", "makeup", "schmink", "kosmetik", "parfum", "parfüm", "duft"], "💄"),
+        (["drogerie", "pflege"], "🧴"),
+        (["schraube", "eisenwaren", "befestigung", "beschlag"], "🔩"),
+        (["holz", "brett", "latte"], "🪵"),
+        (["fliese", "boden", "laminat", "parkett"], "🧱"),
+        (["farbe", "lack", "tapete"], "🎨"),
+        (["sanitär", "bad", "rohr", "heizung"], "🚿"),
+        (["elektro", "leucht", "lampe", "kabel"], "💡"),
+        (["werkzeug", "maschine"], "🔧"),
+        (["garten", "erde", "dünger"], "🌱"),
         (["putz", "reinig", "wasch"], "🧼"),
         (["papier", "hygiene"], "🧻"),
         (["apotheke", "medizin"], "💊"),

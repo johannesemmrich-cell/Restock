@@ -216,12 +216,17 @@ struct AssignmentService {
     // nicht der alphabetischen oder sonst einer technischen Ordnung — Grundlage für den
     // Sortier-Fallback in Store.pendingItems, solange für einen Artikel noch keine gelernte
     // Abhak-Reihenfolge existiert.
+    // Issue #221: neun Kategorien für Drogerie- und Baumärkte dazu (Haarpflege, Zahnpflege, Kosmetik,
+    // Hygieneartikel, Tierbedarf; Eisenwaren, Holz, Boden & Fliesen, Pflanzen), eingeordnet neben
+    // ihren Nachbarregalen; die Reihenfolge der alten 26 untereinander ist unverändert.
     static let categoryOrder = [
         "Obst & Gemüse", "Backwaren", "Fleisch & Wurst", "Milchprodukte",
         "Getränke", "Tiefkühlkost", "Konserven", "Gewürze & Backen", "Snacks", "Lebensmittel",
-        "Körperpflege", "Reinigung", "Medikamente", "Babybedarf", "Haushaltswaren",
+        "Körperpflege", "Haarpflege", "Zahnpflege", "Kosmetik", "Hygieneartikel",
+        "Reinigung", "Medikamente", "Babybedarf", "Tierbedarf", "Haushaltswaren",
         "Küchenausstattung", "Elektronik", "Textilien", "Schreibwaren", "Spielzeug",
-        "Dekoration", "Werkzeug", "Garten", "Farbe & Lack", "Sanitär", "Baumaterial"
+        "Dekoration", "Werkzeug", "Eisenwaren", "Garten", "Pflanzen", "Farbe & Lack", "Sanitär",
+        "Boden & Fliesen", "Holz", "Baumaterial"
     ]
 
     /// Localized label for a raw category value — display only. The raw value itself
@@ -255,6 +260,15 @@ struct AssignmentService {
         case "Farbe & Lack":      return String(localized: "category.paint")
         case "Sanitär":           return String(localized: "category.plumbing")
         case "Baumaterial":       return String(localized: "category.building")
+        case "Haarpflege":        return String(localized: "category.haircare")
+        case "Zahnpflege":        return String(localized: "category.dentalcare")
+        case "Kosmetik":          return String(localized: "category.cosmetics")
+        case "Hygieneartikel":    return String(localized: "category.hygiene")
+        case "Tierbedarf":        return String(localized: "category.pets")
+        case "Eisenwaren":        return String(localized: "category.fasteners")
+        case "Holz":              return String(localized: "category.wood")
+        case "Boden & Fliesen":   return String(localized: "category.flooring")
+        case "Pflanzen":          return String(localized: "category.plants")
         default:                  return category
         }
     }
@@ -287,6 +301,15 @@ struct AssignmentService {
         case "Farbe & Lack":      return "🎨"
         case "Sanitär":           return "🚿"
         case "Baumaterial":       return "🏗️"
+        case "Haarpflege":        return "💇"
+        case "Zahnpflege":        return "🦷"
+        case "Kosmetik":          return "💄"
+        case "Hygieneartikel":    return "🧻"
+        case "Tierbedarf":        return "🐾"
+        case "Eisenwaren":        return "🔩"
+        case "Holz":              return "🪵"
+        case "Boden & Fliesen":   return "🧱"
+        case "Pflanzen":          return "🌷"
         default:                  return "🏷️"
         }
     }
@@ -454,7 +477,19 @@ struct AssignmentService {
 
     static func category(for itemName: String) -> String {
         let nameLower = itemName.lowercased()
+        let food = bestFoodMatch(forLowercased: nameLower)
 
+        // Issue #221: Warenkunde Drogerie & Baumarkt zuerst, längstes Stichwort gewinnt — auch gegen
+        // die Lebensmittel-Stichwörter („reinigungsmilch“ schlägt „milch“, „cremefraiche“ schlägt
+        // „creme“). Bei Gleichstand gewinnt Non-Food.
+        if let nonFood = nonFoodMatch(forLowercased: nameLower) {
+            if let food, food.keyword.count > nonFood.keyword.count {
+                return food.category
+            }
+            return nonFood.category
+        }
+
+        // Bisheriger Weg für Stichwörter, die nur in den Ladentyp-Listen stehen (unverändert).
         if hardwareStoreKeywords.contains(where: { nameLower.contains($0) }) {
             return detectHardwareCategory(nameLower)
         }
@@ -467,12 +502,27 @@ struct AssignmentService {
             return detectDrugstoreCategory(nameLower)
         }
 
-        // Pick the category whose matched keyword is the longest (most specific),
-        // scanning across ALL entries rather than stopping at the first array match.
-        // This avoids false positives from short/bare substrings (e.g. "wein" inside
-        // "weingummi", "bier" inside "bierschinken", "tee" inside "teewurst") beating
-        // a longer, more specific keyword listed under the correct category, purely
-        // because that category happens to come first in `categoryMap`.
+        if let food {
+            return food.category
+        }
+
+        // Issue #221: Wortend-Regeln als letzte Stufe vor der Pauschale „Lebensmittel“.
+        if let byEnding = nonFoodCategoryByEnding(forLowercased: nameLower) {
+            return byEnding
+        }
+
+        return "Lebensmittel"
+    }
+
+    /// Längstes Lebensmittel-Stichwort aus `categoryMap` im (kleingeschriebenen) Namen.
+    ///
+    /// Pick the category whose matched keyword is the longest (most specific),
+    /// scanning across ALL entries rather than stopping at the first array match.
+    /// This avoids false positives from short/bare substrings (e.g. "wein" inside
+    /// "weingummi", "bier" inside "bierschinken", "tee" inside "teewurst") beating
+    /// a longer, more specific keyword listed under the correct category, purely
+    /// because that category happens to come first in `categoryMap`.
+    static func bestFoodMatch(forLowercased nameLower: String) -> (keyword: String, category: String)? {
         var bestMatch: (keyword: String, category: String)?
         for entry in categoryMap {
             for keyword in entry.keywords where nameLower.contains(keyword) {
@@ -481,11 +531,7 @@ struct AssignmentService {
                 }
             }
         }
-        if let bestMatch {
-            return bestMatch.category
-        }
-
-        return "Lebensmittel"
+        return bestMatch
     }
 
     private static func detectHardwareCategory(_ nameLower: String) -> String {
