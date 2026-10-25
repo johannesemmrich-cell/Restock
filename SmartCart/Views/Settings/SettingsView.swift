@@ -120,15 +120,16 @@ struct SettingsView: View {
                     } label: {
                         Text("Siri & Schnellzugriff")
                     }
-                    // Enthält nur noch den Developer-Mode-Schalter für Nachkauf-Erinnerungen, seit
-                    // die Sortierung pro Laden im ···-Menü gewählt wird (Issue #79) — ohne Developer
-                    // Mode wäre die Seite leer.
-                    if developerMode {
-                        NavigationLink {
-                            NotificationSettingsView()
-                        } label: {
-                            Text("Benachrichtigungen")
-                        }
+                    NavigationLink {
+                        NotificationSettingsView()
+                    } label: {
+                        Text("Benachrichtigungen")
+                    }
+                    // Issue #30, Entscheidung 3: eigenes Untermenü, seit der Freigabe für alle.
+                    NavigationLink {
+                        HiddenReplenishmentsView()
+                    } label: {
+                        Text(String(localized: "settings.replenish.hidden"))
                     }
                     NavigationLink {
                         DefaultStoresSettingsView()
@@ -315,12 +316,6 @@ struct SettingsView: View {
                                    isFailure: false, systemImage: "square.on.square")
                         }
 
-                        NavigationLink {
-                            HiddenReplenishmentsView()
-                        } label: {
-                            Label("Ausgeblendete Vorschläge", systemImage: "eye.slash")
-                        }
-
                         // Issue #164: KI-Preisschätzung bleibt aus, bis der Nachweis bestanden ist;
                         // hier nur zum Ausprobieren auf dem Gerät (Standard aus).
                         VStack(alignment: .leading, spacing: 4) {
@@ -332,11 +327,6 @@ struct SettingsView: View {
 
                         Button(role: .destructive) {
                             developerMode = false
-                            // Nachkauf-Erinnerungen sind außerhalb des Dev-Mode kein Feature mehr
-                            // (siehe HomeView.refreshDueSoon) — bereits für frühere due-soon-Items
-                            // geplante, noch ausstehende Benachrichtigungen sonst würden trotzdem
-                            // feuern, obwohl das Feature jetzt komplett inaktiv sein soll.
-                            NotificationService.shared.cancelAll()
                             Haptics.impact(.medium)
                         } label: {
                             Label("Developer Mode deaktivieren", systemImage: "xmark.circle")
@@ -481,26 +471,20 @@ struct SettingsView: View {
 
 struct NotificationSettingsView: View {
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
-    @AppStorage("developerMode") private var developerMode = false
 
     var body: some View {
         List {
             Section {
-                // Nachkauf-Erinnerungen sind kein Feature der normalen Version mehr — der Toggle
-                // (und die dahinterliegende Planung in HomeView.refreshDueSoon) existiert nur noch
-                // im Developer Mode.
-                if developerMode {
-                    Toggle(String(localized: "settings.notifications.replenish"), isOn: $notificationsEnabled)
-                        .onChange(of: notificationsEnabled) { _, enabled in
-                            if enabled {
-                                Task {
-                                    notificationsEnabled = await NotificationService.shared.requestPermission()
-                                }
-                            } else {
-                                NotificationService.shared.cancelAll()
+                Toggle(String(localized: "settings.notifications.replenish"), isOn: $notificationsEnabled)
+                    .onChange(of: notificationsEnabled) { _, enabled in
+                        if enabled {
+                            Task {
+                                notificationsEnabled = await NotificationService.shared.requestPermission()
                             }
+                        } else {
+                            NotificationService.shared.cancelAll()
                         }
-                }
+                    }
             }
             .listRowBackground(Color.surface)
         }

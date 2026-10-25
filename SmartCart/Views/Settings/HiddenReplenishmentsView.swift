@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Developer Mode: Vorschläge, die im Banner „Zeit zum Nachkaufen“ per „Nicht mehr vorschlagen“
+/// Vorschläge, die im Banner „Zeit zum Nachkaufen“ per „Nicht mehr vorschlagen“
 /// ausgeblendet oder per „Hab noch“ verschoben wurden (Issue #30, C1). Eigenes Untermenü, damit
 /// die Einstellungen nicht überladen werden; beides lässt sich hier rückgängig machen.
 struct HiddenReplenishmentsView: View {
@@ -21,7 +21,7 @@ struct HiddenReplenishmentsView: View {
         List {
             Section {
                 if blocked.isEmpty {
-                    Text("Keine ausgeblendeten Artikel")
+                    Text(String(localized: "replenish.hidden.blocked.empty"))
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                 } else {
@@ -29,7 +29,7 @@ struct HiddenReplenishmentsView: View {
                         HStack {
                             Text(name)
                             Spacer()
-                            Button("Wieder vorschlagen") {
+                            Button(String(localized: "replenish.hidden.unblock")) {
                                 ReplenishmentBlocklist().unblock(name)
                                 Haptics.impact(.light)
                             }
@@ -39,14 +39,14 @@ struct HiddenReplenishmentsView: View {
                     }
                 }
             } header: {
-                Text("Nicht mehr vorschlagen")
+                Text(String(localized: "replenish.block"))
             } footer: {
-                Text("Diese Artikel erscheinen nicht mehr im Banner „Zeit zum Nachkaufen“, bis du sie hier wieder freigibst.")
+                Text(String(localized: "replenish.hidden.blocked.footer"))
             }
 
             Section {
                 if snoozes.isEmpty {
-                    Text("Keine verschobenen Artikel")
+                    Text(String(localized: "replenish.hidden.snoozed.empty"))
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                 } else {
@@ -54,12 +54,12 @@ struct HiddenReplenishmentsView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(snooze.itemName)
-                                Text("bis \(Date(timeIntervalSince1970: snooze.snoozedUntil).formatted(date: .abbreviated, time: .omitted))")
+                                Text(String(format: String(localized: "replenish.hidden.until"), Date(timeIntervalSince1970: snooze.snoozedUntil).formatted(date: .abbreviated, time: .omitted)))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
-                            Button("Zurücksetzen") {
+                            Button(String(localized: "replenish.hidden.reset")) {
                                 ReplenishmentSnoozes().remove(snooze.itemName)
                                 Haptics.impact(.light)
                             }
@@ -69,12 +69,12 @@ struct HiddenReplenishmentsView: View {
                     }
                 }
             } header: {
-                Text("Hab noch")
+                Text(String(localized: "replenish.snooze"))
             } footer: {
-                Text("„Hab noch“ verschiebt den Termin um die Hälfte des üblichen Abstands (1–14 Tage) und gilt bis zum nächsten Kauf.")
+                Text(String(localized: "replenish.hidden.snoozed.footer"))
             }
         }
-        .navigationTitle("Ausgeblendete Vorschläge")
+        .navigationTitle(String(localized: "settings.replenish.hidden"))
         .devFeedback(context: "Ausgeblendete Vorschläge")
     }
 }

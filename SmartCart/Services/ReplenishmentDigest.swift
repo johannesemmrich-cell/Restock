@@ -144,12 +144,10 @@ enum ReplenishmentBackgroundRefresh {
     /// Aufgabe tatsächlich läuft, entscheidet iOS.
     static let earliestHour = 5
 
-    /// Wie in `HomeView.refreshDueSoon()`: nur im Developer Mode (Entscheidung 1 in #30) und nur
-    /// mit eingeschalteten Benachrichtigungen (`@AppStorage`-Standard `true`).
+    /// Nur mit eingeschalteten Benachrichtigungen (`@AppStorage`-Standard `true`). Seit der
+    /// PO-Freigabe (Issue #30, 2026-10-25) nicht mehr an den Developer Mode gebunden.
     static var isEnabled: Bool {
-        let defaults = UserDefaults.standard
-        return defaults.bool(forKey: "developerMode")
-            && (defaults.object(forKey: "notificationsEnabled") as? Bool ?? true)
+        UserDefaults.standard.object(forKey: "notificationsEnabled") as? Bool ?? true
     }
 
     static func earliestBeginDate(after now: Date, calendar: Calendar = .current) -> Date {

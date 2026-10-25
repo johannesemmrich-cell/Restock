@@ -5,8 +5,9 @@ import XCTest
 /// „Vielleicht auch fällig" → `+`, „Hab noch", „Nicht mehr vorschlagen", „Alle hinzufügen".
 ///
 /// Der Seed (`-seedReplenishmentForUITests`) legt nur Rohdaten an: zwei Läden und rückdatierte
-/// Käufe. Welche Vorschläge fällig sind, rechnet die App selbst. Beide Oberflächen gibt es nur im
-/// Entwicklermodus, deshalb starten die Tests mit `-developerMode YES`.
+/// Käufe. Welche Vorschläge fällig sind, rechnet die App selbst. Seit der PO-Freigabe (Issue #30,
+/// 2026-10-25) gibt es beide Oberflächen auch ohne Entwicklermodus; die Tests starten weiter mit
+/// `-developerMode YES`, `testVisibleWithoutDeveloperMode` ausdrücklich mit `NO`.
 final class ReplenishmentUITests: XCTestCase {
 
     override func setUpWithError() throws {
@@ -44,7 +45,7 @@ final class ReplenishmentUITests: XCTestCase {
     private func launchSeeded(developerMode: Bool = true) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedReplenishmentForUITests"]
-        if developerMode { app.launchArguments += ["-developerMode", "YES"] }
+        app.launchArguments += ["-developerMode", developerMode ? "YES" : "NO"]
         launch(app, waitingFor: "Bannerladen")
         return app
     }
@@ -249,19 +250,18 @@ final class ReplenishmentUITests: XCTestCase {
                        "„Listenreis“ kehrt nach dem Neustart zurück")
     }
 
-    // MARK: - Negativ-Kontrolle
+    // MARK: - Freigabe für alle (Issue #30, PO 2026-10-25)
 
-    /// AC-11: ohne Entwicklermodus gibt es weder Banner noch Abschnitt.
-    func testNothingWithoutDeveloperMode() {
+    /// Vorher AC-11 („ohne Entwicklermodus nichts“): seit der Freigabe erscheinen Banner und
+    /// Abschnitt auch ohne Entwicklermodus.
+    func testVisibleWithoutDeveloperMode() {
         let app = launchSeeded(developerMode: false)
-        // Dem Banner Zeit geben, falls er (fälschlich) erscheinen würde.
-        XCTAssertFalse(app.staticTexts["Zeit zum Nachkaufen"].waitForExistence(timeout: 3),
-                       "Banner erscheint ohne Entwicklermodus")
+        XCTAssertTrue(app.staticTexts["Zeit zum Nachkaufen"].waitForExistence(timeout: 10),
+                      "Banner fehlt ohne Entwicklermodus")
         openStore("Listenladen", in: app)
-        // Gegenprobe: die Ladenansicht ist wirklich offen, sonst wäre „nichts zu sehen“ wertlos.
         XCTAssertTrue(app.navigationBars["Listenladen"].waitForExistence(timeout: 10),
                       "Ladenansicht „Listenladen“ nicht geöffnet")
-        XCTAssertFalse(app.staticTexts["Vielleicht auch fällig"].waitForExistence(timeout: 3),
-                       "Abschnitt erscheint ohne Entwicklermodus")
+        XCTAssertTrue(app.staticTexts["Vielleicht auch fällig"].waitForExistence(timeout: 10),
+                      "Abschnitt fehlt ohne Entwicklermodus")
     }
 }

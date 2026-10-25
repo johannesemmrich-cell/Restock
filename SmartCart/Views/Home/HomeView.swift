@@ -166,7 +166,7 @@ struct HomeView: View {
             VStack(spacing: 20) {
                 headerCard
                 quickAddBar
-                if developerMode && !dueSoonItems.isEmpty {
+                if !dueSoonItems.isEmpty {
                     replenishmentBanner
                 }
                 if !seasonalSuggestions.isEmpty {
@@ -1640,12 +1640,8 @@ struct HomeView: View {
     }
 
     private func refreshDueSoon() {
-        // Nachkauf-Erinnerungen sind kein Feature der normalen Version mehr — nur noch im
-        // Developer Mode sichtbar/aktiv (Banner oben in `body`, Benachrichtigungen hier).
-        guard developerMode else {
-            dueSoonItems = []
-            return
-        }
+        // Seit der PO-Freigabe (Issue #30, 2026-10-25) für alle Nutzer, nicht mehr nur im
+        // Developer Mode.
         let snoozes = ReplenishmentSnoozes()
         let patterns = HabitService.patterns(allRecords: allRecords)
         ReplenishmentKeyMigration.runIfNeeded(patterns: patterns)
