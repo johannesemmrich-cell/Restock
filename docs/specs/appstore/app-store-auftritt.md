@@ -744,6 +744,16 @@ Offene Grenzen:
 - **B2b, kein echter API-Lauf vor B3:** `asc_check` ist nur gegen Schein-Antworten getestet. Die v2-Kauf-Endpunkte (`inAppPurchasesV2`,
   versionsbasierte Lokalisierungen, API 4.4.1) und die Pfade für Kategorien, Verfügbarkeit und Review-Detail sind am echten Konto
   unbelegt; Pfadform und Feldnamen können in B3 Anpassungen nötig machen.
+- **B2b, Kaufpfade vor B3 nachziehen (Validierung 2026-10-25):** `asc_check` liest Lokalisierung und Review-Screenshot des
+  Einmalkaufs unter `/v1/inAppPurchases/{id}/…`; Apple dokumentiert dafür `/v2/inAppPurchases/{id}/…`
+  ([Doku](https://developer.apple.com/documentation/appstoreconnectapi/in-app-purchase-app-store-review-screenshots.md)). Den
+  Preis liest es unter `/v1/inAppPurchasePriceSchedules/{id}/manualPrices` mit der Kauf-ID als Preisplan-ID; ob beide gleich sind,
+  ist nicht belegt, der sichere Weg ist `/v2/inAppPurchases/{id}/iapPriceSchedule` und dann die Kennung aus der Antwort
+  ([Forum 732527](https://developer.apple.com/forums/thread/732527)). Die beiden Preispfade (`…/manualPrices`,
+  `/v1/subscriptions/{id}/prices`) stehen im Zaun, fehlen aber in der Leseliste oben. In B3 vor dem ersten Lauf korrigieren; ein
+  falscher Pfad endet als „Fehler iap“, nie als falsches „ok“.
+- **B2b, AC-12 nur „alle Zeilen vorhanden“:** `privacy-url` verlangt jede normalisierte Zeile aus `datenschutz.md` als Teil des
+  Seitentexts, nicht getrennt je Sprachabschnitt; ein zusätzlicher veralteter Satz auf der Seite fällt nicht auf.
 - **B2b, App Privacy per API nicht lesbar:** AC-14 bleibt Beleg-Screenshot; `--all` weist ihn als „manuell belegen“ aus.
 - **B2b, AC-12 blockiert,** bis die Datenschutzseite berichtigt ist; der Vergleich mit `datenschutz.md` ist wortgleich (normalisierte
   Absätze), jede Layout- oder Textänderung der Webseite (z. B. Navigation) kann ihn rot machen, dann ist die Normalisierung nachzuziehen.
