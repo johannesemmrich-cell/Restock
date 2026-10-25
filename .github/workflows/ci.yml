@@ -38,7 +38,10 @@ jobs:
           for t in scripts/test_price_catalog_build.py \
                    scripts/test_open_prices_medians.py \
                    scripts/test_ui_tests_discard_community_prices.py \
-                   scripts/test_inmemory_containers_no_cloudkit.py; do
+                   scripts/test_inmemory_containers_no_cloudkit.py \
+                   scripts/test_asc_texts.py \
+                   scripts/test_asc_scripts.py \
+                   scripts/test_asc_check.py; do
             echo "== $t"; python3 -I "$t" || exit 1
           done
 

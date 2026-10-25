@@ -180,6 +180,8 @@ class AscCheck(unittest.TestCase):
         self.assert_section("iap", lambda f: f.product_locs["IAP-life"].pop(), "en-US")
         self.assert_section("iap", lambda f: f.review_shots.update({"SUB-yearly": None}), "Review-Screenshot")
         self.assert_section("iap", lambda f: f.subs[0]["attributes"].update(state="WAITING_FOR_REVIEW"), "WAITING_FOR_REVIEW")
+        out = self.assert_section("iap", lambda f: f.subs.append(dict(f.subs[0])), "doppeltes Produkt")  # F003
+        self.assertIn(PREFIX + "monthly 2-mal", out)
 
     def test_section_screenshots_checks_pixel_size_not_enum(self):  # AC-16
         fake = FakeASC()
@@ -203,6 +205,7 @@ class AscCheck(unittest.TestCase):
         self.assert_section("review", lambda f: f.review["attributes"].update(contactPhone=""), "contactPhone")
         self.assert_section("review", lambda f: f.review["attributes"].update(demoAccountRequired=True), "demoAccountRequired")
         self.assert_section("review", lambda f: setattr(f, "review", None), "appStoreReviewDetail")
+        self.assert_section("review", lambda f: f.review["attributes"].update(contactEmail="   "), "contactEmail")  # F001
 
     def test_section_review_never_prints_contact_values(self):  # AC-17a
         fake = FakeASC()
@@ -233,6 +236,12 @@ class AscCheck(unittest.TestCase):
         fake.build["attributes"]["processingState"] = "INVALID"
         self.assertNotEqual(run(fake, "--all")[0], 0)
         self.assertNotEqual(run(FakeASC(), "--all", page=FakePage(status=404))[0], 0)
+        fake = FakeASC()  # F004: keine Version 1.0 → jeder Abschnitt nennt die Ursache, kein KeyError
+        fake.version["attributes"]["versionString"] = "2.0"
+        code, out = run(fake, "--all")
+        self.assertNotEqual(code, 0)
+        self.assertNotRegex(out, r": '(app|ver|info)'")
+        self.assertEqual(out.count("Version 1.0 (IOS): 0 Treffer"), 7, out)
 
     def test_fence_rejects_before_send(self):  # AC-20a
         send = mock.Mock(return_value=(200, json.dumps({"data": [res("apps", APP)]}).encode()))

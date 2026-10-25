@@ -747,7 +747,14 @@ Offene Grenzen:
 - **B2b, App Privacy per API nicht lesbar:** AC-14 bleibt Beleg-Screenshot; `--all` weist ihn als „manuell belegen“ aus.
 - **B2b, AC-12 blockiert,** bis die Datenschutzseite berichtigt ist; der Vergleich mit `datenschutz.md` ist wortgleich (normalisierte
   Absätze), jede Layout- oder Textänderung der Webseite (z. B. Navigation) kann ihn rot machen, dann ist die Normalisierung nachzuziehen.
-- **B2b, Umfang:** ~460 statt ±250 Zeilen, vom PO am 2026-10-25 mit „Ein Durchgang“ angenommen; die Schätzung kann abweichen.
+- **B2b, Umfang:** ~460 statt ±250 Zeilen, vom PO am 2026-10-25 mit „Ein Durchgang“ angenommen; tatsächlich ~790 Zeilen
+  (asc_check ~320, test_asc_check ~335, test_asc_texts 117), vom PO nach GREEN am 2026-10-25 mit `go` angenommen.
+- **B2b, Kategorien als Menge (Adversary F002):** `appinfo` prüft {Shopping, Produktivität} ohne Rolle, weil die Spec die umgekehrte
+  Reihenfolge als Rückfall erlaubt; welche primär ist, steht nur als Ist-Wert im Protokoll von B3.
+- **B2b, Mischfall ohne productId (Adversary F005):** Fehlt einem Produkt die productId und gibt es zugleich ein fremdes Produkt,
+  endet `iap` als „Fehler“ statt mit Einzelzeilen; Ergebnis bleibt Abweichung (Exit ≠ 0), kein falsches „ok“.
+- **B2b, Schein-Antworten vom Implementierer:** `FakeASC` bildet Apples Antworten nach eigener Lesart nach; Strukturfehler gegenüber
+  der echten API fängt der Test nicht, nur B3.
 - **Nichts auf Hennings Geräten geprüft.**
 - **Dateizählung B3:** Screenshots und Protokolle unter `docs/artifacts/` sind Belege, keine Quelldateien; zählt das Gate sie
   einzeln, wird B3 nach Sprache geteilt.
