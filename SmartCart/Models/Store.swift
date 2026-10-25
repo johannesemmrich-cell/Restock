@@ -722,10 +722,14 @@ extension Store {
 
 enum Category {
     static let grocery   = ["Lebensmittel", "Obst & Gemüse", "Fleisch & Wurst", "Milchprodukte", "Backwaren", "Tiefkühlkost", "Getränke", "Snacks", "Konserven"]
-    static let drugstore = ["Körperpflege", "Kosmetik", "Reinigung", "Medikamente", "Haushalt", "Babybedarf"]
+    /// Issue #221: „Haushalt“ (nie eine Artikelkategorie) durch die echten Regale ersetzt; alte Läden
+    /// mit „Haushalt“ in `categories` bleiben über die anderen Einträge als Drogerie erkennbar.
+    static let drugstore = ["Körperpflege", "Haarpflege", "Zahnpflege", "Kosmetik", "Hygieneartikel", "Reinigung",
+                            "Medikamente", "Babybedarf", "Tierbedarf"]
     /// Variety / discount stores (Action, Woolworth, etc.) — general merchandise, small appliances, seasonal, stationery
     static let variety   = ["Haushaltswaren", "Elektronik", "Saisonales", "Schreibwaren", "Werkzeug", "Spielzeug", "Dekoration"]
-    static let hardware  = ["Werkzeug", "Baumaterial", "Garten", "Farbe & Lack", "Sanitär"]
+    static let hardware  = ["Werkzeug", "Eisenwaren", "Baumaterial", "Holz", "Boden & Fliesen", "Garten", "Pflanzen",
+                            "Farbe & Lack", "Sanitär"]
     static let sports    = ["Sport & Outdoor", "Fitness", "Fahrrad", "Camping", "Schwimmen", "Bekleidung"]
 }
 

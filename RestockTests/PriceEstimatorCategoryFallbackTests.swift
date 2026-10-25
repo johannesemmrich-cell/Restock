@@ -8,18 +8,18 @@ import XCTest
 /// (PO-Entscheidung 2026-09-25, Alternative 1: nur das Symptom beheben).
 final class PriceEstimatorCategoryFallbackTests: XCTestCase {
 
-    // MARK: - AC-1: Alle 26 Kategorie-Pauschalpreise sind paarweise verschieden
+    // MARK: - AC-1: Alle Kategorie-Pauschalpreise (26, seit Issue #221 35) sind paarweise verschieden
 
     func testAllCategoryFallbackPricesAreDistinct() {
         let prices = AssignmentService.categoryOrder.map {
             PriceEstimator.estimate(for: "artikel ohne keyword-treffer", category: $0, unit: "", quantityAmount: 1)
         }
 
-        XCTAssertEqual(AssignmentService.categoryOrder.count, 26, "Erwartet genau 26 Kategorien in categoryOrder")
-        XCTAssertTrue(prices.allSatisfy { $0 != nil }, "Jede der 26 Kategorien muss einen Pauschalpreis liefern")
+        XCTAssertEqual(AssignmentService.categoryOrder.count, 35, "Erwartet genau 35 Kategorien in categoryOrder (26 + neun aus Issue #221)")
+        XCTAssertTrue(prices.allSatisfy { $0 != nil }, "Jede der 35 Kategorien muss einen Pauschalpreis liefern")
 
         let uniquePrices = Set(prices.compactMap { $0 })
-        XCTAssertEqual(uniquePrices.count, prices.count, "Alle 26 Kategorie-Pauschalpreise müssen paarweise verschieden sein — aktuell kollidieren mehrere (z. B. 'Obst & Gemüse' und 'Lebensmittel' bei 2,50€)")
+        XCTAssertEqual(uniquePrices.count, prices.count, "Alle 35 Kategorie-Pauschalpreise müssen paarweise verschieden sein — aktuell kollidieren mehrere (z. B. 'Obst & Gemüse' und 'Lebensmittel' bei 2,50€)")
     }
 
     // MARK: - AC-2: Das im Ticket genannte Symptom (Obst & Gemüse == Lebensmittel)

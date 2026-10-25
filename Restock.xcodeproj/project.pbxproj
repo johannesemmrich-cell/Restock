@@ -82,6 +82,10 @@
 		5C7508E97A69CBA21B6DE5C5 /* CheckOffItemIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EA668475A6DE0784E49FA3 /* CheckOffItemIntent.swift */; };
 		66061099219273F5BD83F273 /* AssignmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4084283388CDEF7C7D514BF7 /* AssignmentService.swift */; };
 		8D7A8C2AF327DD52D72635D3 /* AssignmentService+Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24448321D03F83A4CFD19BFD /* AssignmentService+Category.swift */; };
+		C0DE1221000000000000D002 /* AssignmentService+NonFoodCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1221000000000000D001 /* AssignmentService+NonFoodCategories.swift */; };
+		C0DE1221000000000000D003 /* AssignmentService+NonFoodCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1221000000000000D001 /* AssignmentService+NonFoodCategories.swift */; };
+		C0DE1221000000000000D004 /* AssignmentService+NonFoodCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1221000000000000D001 /* AssignmentService+NonFoodCategories.swift */; };
+		C0DE1221000000000000D006 /* NonFoodCategoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1221000000000000D005 /* NonFoodCategoryTests.swift */; };
 		7522ED5098B3DCB24841F0A7 /* StoreAssignmentOverrideService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD783E672BFB6E63873F2F47 /* StoreAssignmentOverrideService.swift */; };
 		6A8BB1A057222174ABCEEA9E /* ShoppingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859546BD22AB55E21A80A96 /* ShoppingActivityAttributes.swift */; };
 		6BA9AE00008A24FF621597EE /* ClashDisplay-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 984CA66C3B260EF487FA4218 /* ClashDisplay-Semibold.ttf */; };
@@ -336,6 +340,8 @@
 		3CCF8959E358A9E9DEBD5A80 /* SmartCartWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCartWidgetsBundle.swift; sourceTree = "<group>"; };
 		4084283388CDEF7C7D514BF7 /* AssignmentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentService.swift; sourceTree = "<group>"; };
 		24448321D03F83A4CFD19BFD /* AssignmentService+Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AssignmentService+Category.swift"; sourceTree = "<group>"; };
+		C0DE1221000000000000D001 /* AssignmentService+NonFoodCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AssignmentService+NonFoodCategories.swift"; sourceTree = "<group>"; };
+		C0DE1221000000000000D005 /* NonFoodCategoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonFoodCategoryTests.swift; sourceTree = "<group>"; };
 		BD783E672BFB6E63873F2F47 /* StoreAssignmentOverrideService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreAssignmentOverrideService.swift; sourceTree = "<group>"; };
 		413B97577F2E4B603EC6E01F /* SmartCart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartCart.entitlements; sourceTree = "<group>"; };
 		418D17DD19B7E69AA8260DEB /* SeasonalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonalService.swift; sourceTree = "<group>"; };
@@ -748,6 +754,7 @@
 			children = (
 				4084283388CDEF7C7D514BF7 /* AssignmentService.swift */,
 				24448321D03F83A4CFD19BFD /* AssignmentService+Category.swift */,
+				C0DE1221000000000000D001 /* AssignmentService+NonFoodCategories.swift */,
 				236336393E480FD30FC90DC7 /* CloudPreferencesSync.swift */,
 				C6B1060B802DB6BB5B27C69F /* HabitService.swift */,
 				58860961F63EEDA68162492D /* ReplenishmentDigest.swift */,
@@ -823,6 +830,7 @@
 				C0DE1660000000000000F005 /* OpenPricesContributionTests.swift */,
 				C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */,
 				C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */,
+				C0DE1221000000000000D005 /* NonFoodCategoryTests.swift */,
 				C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */,
 				C0DE17500000000000000001 /* PrivacyManifestTests.swift */,
 				C0DE1630000000000000B007 /* CommunityPriceTests.swift */,
@@ -1072,6 +1080,7 @@
 			files = (
 				A98D8C01000000000000000A /* CheckoffQueue.swift in Sources */,
 				DC22CEE4B196C9605354F44E /* AssignmentService+Category.swift in Sources */,
+				C0DE1221000000000000D002 /* AssignmentService+NonFoodCategories.swift in Sources */,
 				215CD8EF08D0891F2BEDDE16 /* CheckOffItemIntent.swift in Sources */,
 				D728A505E8E8989ABDA4F8F2 /* Color+Hex.swift in Sources */,
 				B4EE666767BE579CC746C856 /* FeedbackItem.swift in Sources */,
@@ -1109,6 +1118,7 @@
 				66061099219273F5BD83F273 /* AssignmentService.swift in Sources */,
 				7522ED5098B3DCB24841F0A7 /* StoreAssignmentOverrideService.swift in Sources */,
 				8D7A8C2AF327DD52D72635D3 /* AssignmentService+Category.swift in Sources */,
+				C0DE1221000000000000D003 /* AssignmentService+NonFoodCategories.swift in Sources */,
 				2B5FBA79ED7DCD9F3014F33C /* BarcodeScannerView.swift in Sources */,
 				79405378A9C9AEC3323E5E20 /* BrowseStoresView.swift in Sources */,
 				0A78A28FBF5674A858A985C2 /* CGImagePropertyOrientation+UIImage.swift in Sources */,
@@ -1208,6 +1218,7 @@
 				12DCF82BA93F86AEAF162959 /* AssignmentService.swift in Sources */,
 				32D6E391AFE2A606E4E8C123 /* StoreAssignmentOverrideService.swift in Sources */,
 				42462DCAA905E9A45030CFDE /* AssignmentService+Category.swift in Sources */,
+				C0DE1221000000000000D004 /* AssignmentService+NonFoodCategories.swift in Sources */,
 				ACD11C0BBEDC0BDB5F301210 /* CGImagePropertyOrientation+UIImage.swift in Sources */,
 				7E06970AC7613715F6D3FD83 /* Store.swift in Sources */,
 				6C1891FCA6E5BE6A3963C2D6 /* StoreCategories.swift in Sources */,
@@ -1258,6 +1269,7 @@
 				C0DE1660000000000000F006 /* OpenPricesContributionTests.swift in Sources */,
 				C0DE1650000000000000E006 /* AIPriceEvaluationTests.swift in Sources */,
 				C0DE1622000000000000A002 /* PriceCatalogExpansionTests.swift in Sources */,
+				C0DE1221000000000000D006 /* NonFoodCategoryTests.swift in Sources */,
 				C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */,
 				C0DE17500000000000000002 /* PrivacyManifestTests.swift in Sources */,
 				C0DE1630000000000000B008 /* CommunityPriceTests.swift in Sources */,
