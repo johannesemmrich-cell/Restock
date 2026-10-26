@@ -1,0 +1,111 @@
+FF......EEEEEF.........F...........F................F.............
+======================================================================
+ERROR: test_error_suffix_invalid_input_is_empty (scripts.test_asc_scripts.AscScripts.test_error_suffix_invalid_input_is_empty)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 311, in test_error_suffix_invalid_input_is_empty
+    self.assertEqual(asc_lib.apple_error_suffix(raw), "", raw)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'asc_lib' has no attribute 'apple_error_suffix'
+
+======================================================================
+ERROR: test_error_suffix_max_three_errors (scripts.test_asc_scripts.AscScripts.test_error_suffix_max_three_errors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 315, in test_error_suffix_max_three_errors
+    out = asc_lib.apple_error_suffix(raw)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'asc_lib' has no attribute 'apple_error_suffix'
+
+======================================================================
+ERROR: test_error_suffix_never_contains_detail_id_source (scripts.test_asc_scripts.AscScripts.test_error_suffix_never_contains_detail_id_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 332, in test_error_suffix_never_contains_detail_id_source
+    out = asc_lib.apple_error_suffix(raw)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'asc_lib' has no attribute 'apple_error_suffix'
+
+======================================================================
+ERROR: test_error_suffix_reads_code_and_title (scripts.test_asc_scripts.AscScripts.test_error_suffix_reads_code_and_title)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 304, in test_error_suffix_reads_code_and_title
+    self.assertEqual(asc_lib.apple_error_suffix(one), " — A: B")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'asc_lib' has no attribute 'apple_error_suffix'
+
+======================================================================
+ERROR: test_error_suffix_truncates_and_strips_control_chars (scripts.test_asc_scripts.AscScripts.test_error_suffix_truncates_and_strips_control_chars)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 320, in test_error_suffix_truncates_and_strips_control_chars
+    out = asc_lib.apple_error_suffix(self._errs({"code": "X" * 200, "title": "a\r\nb\tc\x1b[31md"}))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'asc_lib' has no attribute 'apple_error_suffix'
+
+======================================================================
+FAIL: test_api_error_message_includes_apple_code_and_title (scripts.test_asc_scripts.AscScripts.test_api_error_message_includes_apple_code_and_title)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 343, in test_api_error_message_includes_apple_code_and_title
+    self.assertIn("STATE_ERROR: Zustand falsch", msg)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'STATE_ERROR: Zustand falsch' not found in 'HTTP 409 bei POST /v1/appStoreVersionLocalizations'
+
+======================================================================
+FAIL: test_api_error_without_json_keeps_old_message (scripts.test_asc_scripts.AscScripts.test_api_error_without_json_keeps_old_message)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 354, in test_api_error_without_json_keeps_old_message
+    self.assertIn("R: Umgeleitet", str(e.exception))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'R: Umgeleitet' not found in 'HTTP 302 bei GET /v1/apps/APP-7f3/appInfos'
+
+======================================================================
+FAIL: test_error_with_secret_like_detail_never_leaks (scripts.test_asc_scripts.AscScripts.test_error_with_secret_like_detail_never_leaks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 388, in test_error_with_secret_like_detail_never_leaks
+    self.assertIn("FORBIDDEN: Nein", str(e.exception))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'FORBIDDEN: Nein' not found in 'HTTP 403 bei GET /v1/apps/APP-7f3/appInfos'
+
+======================================================================
+FAIL: test_urllib_send_returns_error_body_capped (scripts.test_asc_scripts.AscScripts.test_urllib_send_returns_error_body_capped)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 374, in test_urllib_send_returns_error_body_capped
+    self.assertEqual((status, raw), (409, H._small))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (409, b'') != (409, b'{"errors":[{"code":"A","title":"B"}]}')
+
+First differing element 1:
+b''
+b'{"errors":[{"code":"A","title":"B"}]}'
+
+- (409, b'')
++ (409, b'{"errors":[{"code":"A","title":"B"}]}')
+
+======================================================================
+FAIL: test_error_with_secret_like_detail_never_leaks_in_check (scripts.test_asc_check.AscCheck.test_error_with_secret_like_detail_never_leaks_in_check)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 674, in test_error_with_secret_like_detail_never_leaks_in_check
+    self.assertIn("FORBIDDEN: Nein", out)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'FORBIDDEN: Nein' not found in 'asc_check 2026-10-25T12:00:00Z Commit abc1234def\n== metadata\nFehler metadata: HTTP 403 bei GET /v1/apps\n'
+
+======================================================================
+FAIL: test_reader_get_error_includes_apple_code_and_title (scripts.test_asc_check.AscCheck.test_reader_get_error_includes_apple_code_and_title)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_check.py", line 654, in test_reader_get_error_includes_apple_code_and_title
+    self.assertIn("NOT_FOUND: Nicht da", msg)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'NOT_FOUND: Nicht da' not found in 'HTTP 409 bei GET /v1/apps'
+
+----------------------------------------------------------------------
+Ran 66 tests in 1.167s
+
+FAILED (failures=6, errors=5)

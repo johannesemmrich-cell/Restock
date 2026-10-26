@@ -642,6 +642,39 @@ class AscCheck(unittest.TestCase):
         _, out = run(FakeASC(), "--all", commit=lambda: None)
         self.assertIn("unbekannt", out.splitlines()[0])
 
+    def test_reader_get_error_includes_apple_code_and_title(self):  # AC-9 (Issue #227)
+        raw = json.dumps({"errors": [{"code": "NOT_FOUND", "title": "Nicht da", "detail": "GEHEIMDETAIL"}]}).encode()
+        reader = asc_check.Reader("GEHEIMTOKEN", send=lambda *a: (409, raw), today=TODAY)
+        with self.assertRaises(asc_check.HttpError) as e:
+            reader.get("/v1/apps?filter[bundleId]=com.johannesemmrich.Restock")
+        self.assertEqual(e.exception.status, 409)
+        msg = str(e.exception)
+        self.assertTrue(msg.startswith("HTTP 409 bei GET /v1/apps"), msg)
+        self.assertNotIn("filter", msg)
+        self.assertIn("NOT_FOUND: Nicht da", msg)
+        self.assertNotIn("GEHEIM", msg)
+        plain = asc_check.Reader("T", send=lambda *a: (500, b""), today=TODAY)
+        with self.assertRaises(asc_check.HttpError) as e:
+            plain.get("/v1/apps?filter[bundleId]=com.johannesemmrich.Restock")
+        self.assertEqual(str(e.exception), "HTTP 500 bei GET /v1/apps")
+
+    def test_fetch_privacy_ignores_error_body(self):  # AC-10 (Issue #227)
+        body = json.dumps({"errors": [{"code": "PRIV_CODE", "title": "PRIV_TITEL"}]}).encode()
+        code, out = run(FakeASC(), "--section", "privacy-url", page=FakePage(status=404, body=body))
+        self.assertNotEqual(code, 0)
+        self.assertIn("404", out)
+        self.assertNotIn("PRIV_CODE", out)
+        self.assertNotIn("PRIV_TITEL", out)
+
+    def test_error_with_secret_like_detail_never_leaks_in_check(self):  # AC-11 (Issue #227)
+        leak = lambda m, u, h, d: (403, json.dumps({"errors": [{"code": "FORBIDDEN", "title": "Nein",
+                                                                  "detail": h["Authorization"]}]}).encode())
+        code, out = run(leak, "--section", "metadata")
+        self.assertNotEqual(code, 0)
+        self.assertIn("FORBIDDEN: Nein", out)
+        self.assertNotIn("Bearer", out)
+        self.assertNotIn(ENV["ASC_KEY_PATH"], out)
+
 
 if __name__ == "__main__":
     unittest.main()

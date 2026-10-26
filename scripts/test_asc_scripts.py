@@ -294,6 +294,107 @@ class AscScripts(unittest.TestCase):
         self.assertIn("302", str(e.exception))
         self.assertNotIn("GEHEIM", str(e.exception))
 
+    # --- Issue #227: Apples code und title bei HTTP-Fehlern ---
+    @staticmethod
+    def _errs(*items):
+        return json.dumps({"errors": list(items)}).encode()
+
+    def test_error_suffix_reads_code_and_title(self):  # AC-1
+        one = self._errs({"code": "A", "title": "B"})
+        self.assertEqual(asc_lib.apple_error_suffix(one), " — A: B")
+        two = self._errs({"code": "A", "title": "B"}, {"code": "C", "title": "D"})
+        self.assertEqual(asc_lib.apple_error_suffix(two), " — A: B; C: D")
+
+    def test_error_suffix_invalid_input_is_empty(self):  # AC-2
+        for raw in (b"", None, b"kein json", b"[]", b"{}", b'{"errors": "x"}', b'{"errors": {"a": 1}}',
+                    b'{"errors": [1, "x", null]}', b"\xff\xfe"):
+            self.assertEqual(asc_lib.apple_error_suffix(raw), "", raw)
+
+    def test_error_suffix_max_three_errors(self):  # AC-3
+        raw = self._errs(*({"code": f"C{i}", "title": f"T{i}"} for i in range(4)))
+        out = asc_lib.apple_error_suffix(raw)
+        self.assertIn("C2: T2", out)
+        self.assertNotIn("C3", out)
+
+    def test_error_suffix_truncates_and_strips_control_chars(self):  # AC-4
+        out = asc_lib.apple_error_suffix(self._errs({"code": "X" * 200, "title": "a\r\nb\tc\x1b[31md"}))
+        self.assertNotIn("X" * 81, out)
+        self.assertIn("X" * 80, out)
+        self.assertFalse(re.search(r"[\x00-\x1f\x7f]", out), repr(out))
+        self.assertEqual(asc_lib.apple_error_suffix(self._errs({"title": "nur Titel"})), " — nur Titel")
+        self.assertEqual(asc_lib.apple_error_suffix(self._errs({"code": "NUR_CODE"})), " — NUR_CODE")
+        for bad in ({"code": 5, "title": ["x"]}, {}, {"detail": "d"}):
+            self.assertEqual(asc_lib.apple_error_suffix(self._errs(bad)), "", bad)
+
+    def test_error_suffix_never_contains_detail_id_source(self):  # AC-5
+        raw = self._errs({"code": "A", "title": "B", "detail": "GEHEIMDETAIL /geheim/AuthKey_TEST.p8",
+                          "id": "GEHEIMID", "source": {"pointer": "/data/GEHEIMQUELLE"}})
+        out = asc_lib.apple_error_suffix(raw)
+        for word in ("GEHEIM", "AuthKey", "pointer"):
+            self.assertNotIn(word, out)
+
+    def test_error_suffix_strips_surrogates_and_format_chars(self):  # AC-4, Adversary F001
+        raw = b'{"errors": [{"code": "A\\ud800B\\u2028C", "title": "x\\u2029y\\u202ez\\u200b\\ufeff\\u2066w"}]}'
+        out = asc_lib.apple_error_suffix(raw)
+        for ch in ("\ud800", " ", " ", "‮", "​", "﻿", "⁦"):
+            self.assertNotIn(ch, out)
+        out.encode("utf-8")
+        self.assertEqual(out, " — ABC: xyzw")
+
+    def test_api_error_message_includes_apple_code_and_title(self):  # AC-6
+        raw = self._errs({"code": "STATE_ERROR", "title": "Zustand falsch", "detail": "GEHEIMDETAIL"})
+        with self.assertRaises(RuntimeError) as e:
+            asc_lib.api("POST", "/v1/appStoreVersionLocalizations", token="GEHEIMTOKEN", send=lambda *a: (409, raw),
+                        body={"data": {}})
+        msg = str(e.exception)
+        self.assertTrue(msg.startswith("HTTP 409 bei POST /v1/appStoreVersionLocalizations"), msg)
+        self.assertIn("STATE_ERROR: Zustand falsch", msg)
+        self.assertNotIn("GEHEIM", msg)
+
+    def test_api_error_without_json_keeps_old_message(self):  # AC-7
+        for status, raw in ((409, b"<html>"), (500, b""), (302, b"")):
+            with self.assertRaises(RuntimeError) as e:
+                asc_lib.api("GET", f"/v1/apps/{APP}/appInfos", token="T", send=lambda *a: (status, raw))
+            self.assertEqual(str(e.exception), f"HTTP {status} bei GET /v1/apps/{APP}/appInfos")
+        with self.assertRaises(RuntimeError) as e:
+            asc_lib.api("GET", f"/v1/apps/{APP}/appInfos", token="T",
+                        send=lambda *a: (302, self._errs({"code": "R", "title": "Umgeleitet"})))
+        self.assertIn("R: Umgeleitet", str(e.exception))
+
+    def test_urllib_send_returns_error_body_capped(self):  # AC-8
+        import http.server, threading
+        big = b"x" * (200 * 1024)
+
+        class H(http.server.BaseHTTPRequestHandler):
+            _small = b'{"errors":[{"code":"A","title":"B"}]}'
+
+            def do_GET(self):
+                body = big if self.path == "/big" else self._small
+                self.send_response(409), self.send_header("Content-Length", str(len(body)))
+                self.end_headers(), self.wfile.write(body)
+            log_message = lambda *a: None
+
+        srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), H)
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        try:
+            base = f"http://127.0.0.1:{srv.server_port}"
+            status, raw = asc_lib.urllib_send("GET", base + "/small", {}, None)
+            self.assertEqual((status, raw), (409, H._small))
+            status, raw = asc_lib.urllib_send("GET", base + "/big", {}, None)
+            self.assertEqual(status, 409)
+            self.assertTrue(0 < len(raw) <= 65536, len(raw))
+        finally:
+            srv.shutdown(), srv.server_close()
+
+    def test_error_with_secret_like_detail_never_leaks(self):  # AC-11
+        raw = self._errs({"code": "FORBIDDEN", "title": "Nein", "detail": "Bearer GEHEIMTOKEN /geheim/AuthKey_TEST.p8",
+                          "id": "GEHEIMTOKEN"})
+        with self.assertRaises(RuntimeError) as e:
+            asc_lib.api("GET", f"/v1/apps/{APP}/appInfos", token="GEHEIMTOKEN", send=lambda *a: (403, raw))
+        for secret in ("GEHEIMTOKEN", "AuthKey", "Bearer"):
+            self.assertNotIn(secret, str(e.exception))
+        self.assertIn("FORBIDDEN: Nein", str(e.exception))
+
 
 if __name__ == "__main__":
     unittest.main()
