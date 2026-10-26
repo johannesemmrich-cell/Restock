@@ -2,7 +2,7 @@
 entity_id: app-store-auftritt
 type: feature
 created: 2026-10-23
-updated: 2026-10-25
+updated: 2026-10-26
 status: draft
 version: "1.0"
 workflow: feat-175-app-store-auftritt
@@ -335,8 +335,35 @@ läuft einzeln auf Hennings ausdrückliches Wort:
 6. Build 37 per `testflight.yml` (`build_number=37`), Zuordnung zu Version 1.0.
 7. Schlusslauf `asc_check --all`, Ausgabe als `asc-readback.txt`.
 
+**Fortschreibung B3 (2026-10-26, nach Lesetrockenlauf 4):** Lauf 4 (Commit f3db445, nur GET, Protokoll
+`docs/artifacts/feat-175-b3-eintragen/asc-check-lauf-4-2026-10-25.txt`) bestätigt den Befund von Lauf 3: Vier Prüfpunkte sind „ok“ (`name (de-DE)`, HTTP-Status der Datenschutz-URL, `appPriceSchedule` als Ressource,
+`appVersionState` = `PREPARE_FOR_SUBMISSION`); der Inhalt der Datenschutzseite weicht ab (alter Text), das Basisland ist falsch belegt (Soll `DEU`, Ist `USA`),
+App-Preis und Verfügbarkeit sind nicht eingerichtet, alles Übrige ist leer oder fehlt. Damit ist Schritt 1 erledigt. Verbindliche
+Regeln für den Betrieb:
+
+- **Reihenfolge:** 2 → 3 → Browser-Eintragungen ohne Kauf (Basisland DEU, App-Preis 0, Verfügbarkeit, Kategorien SHOPPING + PRODUCTIVITY,
+  Altersfreigabe, Content Rights, Review-Kontakt, App Privacy) → Screenshots → **Käufe zuletzt**, weil ihre Kennungen unumkehrbar sind →
+  Build 37 → Schlusslauf. Abweichung von der Zählung oben ist zulässig; die Kaufkennungen werden unmittelbar vor dem Anlegen noch einmal
+  gegen `PremiumService.swift:124-126` und `Restock.storekit` gelesen (das dort noch stehende Produkt `sharedlists` entfällt laut AC-15 und wird ignoriert; am 2026-10-26 gleich: monthly 1,99 / yearly 8,99 / lifetime 14,99,
+  Gruppe „Restock Pro“).
+- **Wort je Schritt:** Vor jedem außenwirksamen Schritt (3, jeder Browser-Block, Screenshot-Upload, Käufe, Build 37) nennt Claude per
+  Auswahlfrage genau, was geschrieben wird; ausgeführt wird erst nach Hennings ausdrücklichem Wort für diesen Schritt, und das Wort ist eine von ihm getippte Zeile (ein Klick in der Auswahlfrage genügt nicht). Ein Wort gilt nie
+  für den nächsten Schritt. Einreichen („Submit for Review“) ist nicht Teil von B3.
+- **Nach jedem Schritt:** `asc_check --section <passend>` als Beleg mit Zeitstempel und Commit unter `docs/artifacts/feat-175-b3-eintragen/`
+  (vorher committen, dann Echtlauf). Weicht der Ist-Zustand vom Soll ab, wird gestoppt und berichtet; das Werkzeug wird nicht im Betrieb
+  geändert (Korrektur = eigener kleiner Durchgang mit Test).
+- **Ungewiss bis zum echten Lauf:** ob Name und Untertitel im Entwurf per `--apply` änderbar sind; ein Abbruch mitten in `--apply` hinterlässt
+  einen Mischstand, der erneute Lauf ist idempotent.
+- **Belegorte:** Lesebelege nach jedem Schritt und der Trockenlauf-Plan liegen unter `docs/artifacts/feat-175-b3-eintragen/`; alles, was ein AC oder
+  Schritt 7 ausdrücklich nennt, bleibt dort, wo es steht: `asc-readback.txt`, die Beleg-Screenshots des Browserwegs (AC-14) und die
+  Store-Screenshots (AC-16) unter `docs/artifacts/feat-175-app-store-auftritt/`. Die ACs ändern sich dadurch nicht.
+- **Offene Eingaben von Henning:** Review-Kontakt (Name, Telefon, E-Mail); Zeitpunkt der Datenschutzseite durch den Dritten.
+- **Abschluss von B3** gilt nach AC-19 und Definition of Done unverändert: erst bei `asc_check --all` mit Exit 0 (alle API-Abschnitte „ok“) und vorliegendem Beleg-Screenshot zu AC-14 ist B3
+  abgeschlossen und darf das Ticket #175 geschlossen werden; bis dahin bleibt B3 offen. Neben den Betriebsschritten selbst (Kategorien, Altersfreigabe, Käufe, Screenshots usw.) sind drei bekannte Hindernisse bis dahin zu erwarten und
+  keine Fehler des Betriebs: Datenschutzseite (Dritter), Build 37 und Review-Kontakt (wartet auf Hennings Eingabe).
+
 Blocker: Die Datenschutzseite pflegt ein Dritter (PO 2026-10-25); Claude bereitet den Text de/en zum Weitergeben vor, AC-12 und AC-19
-warten darauf. Build 37 ist nicht hochgeladen (AC-17). Die Paywall ohne Rechtslinks (#215) ist ein Ablehnungsrisiko, nicht Teil von B3.
+warten darauf. Build 37 ist nicht hochgeladen (AC-17). Der Review-Kontakt fehlt, bis Henning die Daten nennt (AC-17a). Die Paywall ohne Rechtslinks (#215) ist ein Ablehnungsrisiko, nicht Teil von B3.
 Käufe anlegen ist unumkehrbar (Produktkennungen); deshalb vorher Schritt 1 und die Kennungen gegen den Code prüfen. Texte für die
 Datenschutzseite und der Privacy-Fragebogen folgen der Tabelle oben.
 
@@ -996,3 +1023,4 @@ Simulator-Screenshots). #175 blockiert Release 1.0.
 - 2026-10-25: Nach dem ersten PO-Briefing: Abschnitt `review` mit AC-17a (Review-Kontakt aus `appStoreReviewDetail`, Werte nie im Klartext) und Export-Compliance im Abschnitt `build` (`usesNonExemptEncryption` false, eigener Test) ergänzt; vorher von AC-17/AC-19 verlangt, aber ohne Prüfung.
 - 2026-10-25: Durchgang B3b ergänzt (Gegenleser-Korrekturen nach dem ersten echten Lauf: eigener User-Agent für die Datenschutzseite, Altersfreigabe nur mit beantworteten Pflichtfeldern, Preisplan der App mit Basisland und Betrag 0 als benannte Annahme, 404 nur an `appAvailabilityV2` als Abweichung); AC-23 bis AC-23e; Leseliste um `baseTerritory`/`manualPrices` der App erweitert; AC-13 präzisiert; Reihenfolge A1 bis B3a, B3b, B3; Alternativen 17–18; Offene Grenzen.
 - 2026-10-25: B3b-Nachtrag nach dem zweiten Leselauf (PO-Wort): 404 an `manualPrices` des App-Preisplans ist die Abweichung „App-Preis (DEU): Soll 0, Ist nicht eingerichtet“ statt eines Fehlers (F2b, Nachweis-Absatz B3b, Implementation Details B3b, AC-23-Nachweis, AC-23c, AC-23d, Testplan, Offene Grenzen); Nachweis ist der dritte Leselauf.
+- 2026-10-26: Durchgang B3 fortgeschrieben (Lesetrockenlauf 4 als Stand, Käufe zuletzt, Wort je Schritt, Beleg nach jedem Schritt, Abschlusskriterium); keine neuen ACs, AC-11 bis AC-19 gelten unverändert.
