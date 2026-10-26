@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Gemeinsame Bausteine der ASC-Skripte (Issue #175, B2a): Textdateien lesen, ES256-Token, eingehegter API-Aufruf.
-Der Schlüssel wird nie von Python gelesen, sein Pfad geht nur als Argument an openssl. Fehler nennen nur Status und Pfad."""
-import base64, json, re, subprocess, time, urllib.error, urllib.request
+Der Schlüssel wird nie von Python gelesen, sein Pfad geht nur als Argument an openssl. Fehler nennen Status, Pfad und Apples code/title (nie detail/id/source)."""
+import base64, json, re, subprocess, time, unicodedata, urllib.error, urllib.request
 from pathlib import Path
 
 HOST = "https://api.appstoreconnect.apple.com"
@@ -74,8 +74,34 @@ def urllib_send(method, url, headers, data, opener=OPENER):
         with opener.open(req, timeout=60) as resp:
             return resp.status, resp.read()
     except urllib.error.HTTPError as e:
-        e.close()
-        return e.code, b""
+        try:  # Fehlerkörper höchstens 64 KiB, Lesefehler = leer (Issue #227, AC-8)
+            raw = e.read(65536) or b""
+        except Exception:
+            raw = b""
+        finally:
+            e.close()
+        return e.code, raw
+
+
+_STRIP = {"Cc", "Cf", "Cs", "Zl", "Zp"}  # Steuer-, Format-/Bidi-, Surrogat- und Zeilen-/Absatztrenner (F001)
+
+
+def apple_error_suffix(raw):
+    """Zusatz aus Apples JSON:API-Fehlern: nur code und title, je 80 Zeichen, ohne Steuerzeichen, höchstens 3 Fehler.
+    Nie detail, id oder source; ungültige Eingabe ergibt "" und nie eine Ausnahme (Issue #227, AC-1 bis AC-5)."""
+    try:
+        errors = json.loads(raw).get("errors")
+    except Exception:
+        return ""
+    parts = []
+    for err in errors[:3] if isinstance(errors, list) else []:
+        if not isinstance(err, dict):
+            continue
+        code, title = ("".join(c for c in v if unicodedata.category(c) not in _STRIP)[:80] if isinstance(v, str) else ""
+                       for v in (err.get("code"), err.get("title")))
+        if code or title:
+            parts.append(": ".join(x for x in (code, title) if x))
+    return " — " + "; ".join(parts) if parts else ""
 
 
 def check_path(method, path):
@@ -101,5 +127,5 @@ def api(method, path, token, send=urllib_send, body=None):
         data = json.dumps(body).encode()
     status, raw = send(method, HOST + path, headers, data)
     if not 200 <= status < 300:  # auch 3xx: Weiterleitungen werden nie verfolgt
-        raise RuntimeError(f"HTTP {status} bei {method} {path.partition('?')[0]}")
+        raise RuntimeError(f"HTTP {status} bei {method} {path.partition('?')[0]}{apple_error_suffix(raw)}")
     return json.loads(raw) if raw else {}

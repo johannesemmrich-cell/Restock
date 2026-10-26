@@ -333,6 +333,14 @@ class AscScripts(unittest.TestCase):
         for word in ("GEHEIM", "AuthKey", "pointer"):
             self.assertNotIn(word, out)
 
+    def test_error_suffix_strips_surrogates_and_format_chars(self):  # AC-4, Adversary F001
+        raw = b'{"errors": [{"code": "A\\ud800B\\u2028C", "title": "x\\u2029y\\u202ez\\u200b\\ufeff\\u2066w"}]}'
+        out = asc_lib.apple_error_suffix(raw)
+        for ch in ("\ud800", " ", " ", "‮", "​", "﻿", "⁦"):
+            self.assertNotIn(ch, out)
+        out.encode("utf-8")
+        self.assertEqual(out, " — ABC: xyzw")
+
     def test_api_error_message_includes_apple_code_and_title(self):  # AC-6
         raw = self._errs({"code": "STATE_ERROR", "title": "Zustand falsch", "detail": "GEHEIMDETAIL"})
         with self.assertRaises(RuntimeError) as e:

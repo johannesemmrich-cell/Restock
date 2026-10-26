@@ -10,7 +10,7 @@ B3b: Datenschutzseite mit eigenem User-Agent, Altersfreigabe nur mit beantwortet
 import datetime, html, json, os, re, subprocess, sys
 from decimal import Decimal
 from pathlib import Path
-from asc_lib import BUNDLE, HOST, VERSION_QUERY, make_token, openssl_sign, parse_texts, urllib_send
+from asc_lib import BUNDLE, HOST, VERSION_QUERY, apple_error_suffix, make_token, openssl_sign, parse_texts, urllib_send
 
 R = Path(__file__).resolve().parent.parent
 PRIVACY_URL = "https://emmrich-business.com/datenschutz"
@@ -70,10 +70,10 @@ def check_read(method, path, ids):
 
 
 class HttpError(RuntimeError):
-    """HTTP-Fehler mit Status; Meldung nur Status und Pfad (AC-20e), Status für den 404 an appAvailabilityV2 (AC-23d)."""
+    """HTTP-Fehler mit Status; Meldung Status, Pfad (AC-20e) und Apples code/title (#227), Status für den 404 (AC-23d)."""
 
-    def __init__(self, status, path):
-        super().__init__(f"HTTP {status} bei GET {path}")
+    def __init__(self, status, path, suffix=""):
+        super().__init__(f"HTTP {status} bei GET {path}{suffix}")
         self.status = status
 
 
@@ -85,8 +85,8 @@ class Reader:
     def get(self, path):
         check_read("GET", path, self.ids)
         status, raw = self.send("GET", HOST + path, {"Authorization": f"Bearer {self.token}"}, None)
-        if not 200 <= status < 300:  # nur Status und Pfad, nie Antworttext oder Token
-            raise HttpError(status, path.partition('?')[0])
+        if not 200 <= status < 300:  # Status, Pfad und nur Apples code/title, nie detail oder Token (#227)
+            raise HttpError(status, path.partition('?')[0], apple_error_suffix(raw))
         doc = json.loads(raw) if raw else {}
         items = doc.get("data")
         for x in (items if isinstance(items, list) else [items] if items else []) + doc.get("included", []):
