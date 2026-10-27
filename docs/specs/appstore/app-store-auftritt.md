@@ -515,7 +515,7 @@ Gezählt mit `python3` (`len(s)`, `len(s.encode('utf-8'))`); Beschreibung ist de
 
 | Feld | Grenze | Deutsch | English |
 |------|--------|---------|---------|
-| `name` | 2–30 Zeichen | 7 | 7 |
+| `name` | 2–30 Zeichen | 7 | 21 |
 | `subtitle` | ≤ 30 Zeichen | 27 | 28 |
 | `keywords` | ≤ 100 **Bytes** | 93 Bytes (91 Zeichen) | 87 Bytes (87 Zeichen) |
 | `promotional_text` | ≤ 170 Zeichen | 104 | 109 |
