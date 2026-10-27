@@ -53,10 +53,11 @@ def plan_for(get, kind, parent_path, fields, rel, rel_type, parent_id, texts):
 
 
 def build_plan(get, ver_id, info_id, texts):
-    return (plan_for(get, "appStoreVersionLocalizations", f"/v1/appStoreVersions/{ver_id}/appStoreVersionLocalizations",
-                     VERSION_FIELDS, "appStoreVersion", "appStoreVersions", ver_id, texts)
-            + plan_for(get, "appInfoLocalizations", f"/v1/appInfos/{info_id}/appInfoLocalizations",
-                       INFO_FIELDS, "appInfo", "appInfos", info_id, texts))
+    # App-Angaben (Name) vor den Produktseiten, sonst lehnt Apple neue Sprachen mit DUPLICATE_NAME ab (#229).
+    return (plan_for(get, "appInfoLocalizations", f"/v1/appInfos/{info_id}/appInfoLocalizations",
+                     INFO_FIELDS, "appInfo", "appInfos", info_id, texts)
+            + plan_for(get, "appStoreVersionLocalizations", f"/v1/appStoreVersions/{ver_id}/appStoreVersionLocalizations",
+                       VERSION_FIELDS, "appStoreVersion", "appStoreVersions", ver_id, texts))
 
 
 def short(value, n=60):
