@@ -1,0 +1,33 @@
+.......F.........F.....F....
+======================================================================
+FAIL: test_dry_run_lists_info_before_version (__main__.AscScripts.test_dry_run_lists_info_before_version)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 193, in test_dry_run_lists_info_before_version
+    self.assertLess(text.rindex(" appInfoLocalizations "), text.index(" appStoreVersionLocalizations "))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1352 not less than 4
+
+======================================================================
+FAIL: test_info_localizations_written_before_version_localizations (__main__.AscScripts.test_info_localizations_written_before_version_localizations)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 187, in test_info_localizations_written_before_version_localizations
+    self.assertLess(last_info, first_version, kinds)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 not less than 0 : ['appStoreVersionLocalizations', 'appStoreVersionLocalizations', 'appInfoLocalizations', 'appInfoLocalizations']
+
+======================================================================
+FAIL: test_second_run_after_version_failure_writes_only_rest (__main__.AscScripts.test_second_run_after_version_failure_writes_only_rest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/scripts/test_asc_scripts.py", line 207, in test_second_run_after_version_failure_writes_only_rest
+    self.assertEqual(set(self._kinds(fake.writes)[:-1]), {"appInfoLocalizations"})  # nur der letzte Aufruf ist der gescheiterte
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Items in the second set but not the first:
+'appInfoLocalizations'
+
+----------------------------------------------------------------------
+Ran 28 tests in 1.066s
+
+FAILED (failures=3)

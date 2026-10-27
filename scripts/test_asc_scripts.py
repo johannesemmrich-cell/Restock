@@ -171,6 +171,46 @@ class AscScripts(unittest.TestCase):
                 self.assertEqual(rel["appStoreVersion"]["data"], {"type": "appStoreVersions", "id": "VER-1"})
             self.assertNotIn("whats" + "New", json.dumps(body))
 
+    def _kinds(self, writes):
+        return [unquote(urlsplit(u).path).split("/")[2] for _, u, _, _ in writes]
+
+    def test_info_localizations_written_before_version_localizations(self):  # #229 AC-1, AC-2
+        for fake in (FakeASC(vlocs=[], ilocs=[]),
+                     FakeASC(vlocs=[loc("appStoreVersionLocalizations", "de-DE", VERSION_FIELDS, description="alt")],
+                             ilocs=[loc("appInfoLocalizations", "de-DE", INFO_FIELDS, subtitle="alt")])):
+            self.assertEqual(run(fake, "--apply")[0], 0)
+            kinds = self._kinds(fake.writes)
+            self.assertIn("appInfoLocalizations", kinds)
+            self.assertIn("appStoreVersionLocalizations", kinds)
+            last_info = max(i for i, k in enumerate(kinds) if k == "appInfoLocalizations")
+            first_version = min(i for i, k in enumerate(kinds) if k == "appStoreVersionLocalizations")
+            self.assertLess(last_info, first_version, kinds)
+
+    def test_dry_run_lists_info_before_version(self):  # #229 AC-3
+        fake = FakeASC(vlocs=[], ilocs=[])
+        code, text = run(fake)
+        self.assertEqual((code, fake.writes), (0, []))
+        self.assertLess(text.rindex(" appInfoLocalizations "), text.index(" appStoreVersionLocalizations "))
+
+    def test_second_run_after_version_failure_writes_only_rest(self):  # #229 AC-4
+        class FailsOnVersion(FakeASC):
+            fail = True
+
+            def __call__(self, method, url, headers, data):
+                if self.fail and method != "GET" and "appStoreVersionLocalizations" in url:
+                    self.calls.append((method, url, headers, json.loads(data)))
+                    return 409, b"{}"
+                return super().__call__(method, url, headers, data)
+
+        fake = FailsOnVersion(vlocs=[], ilocs=[])
+        self.assertEqual(run(fake, "--apply")[0], 1)
+        self.assertEqual(set(self._kinds(fake.writes)[:-1]), {"appInfoLocalizations"})  # nur der letzte Aufruf ist der gescheiterte
+        self.assertEqual(len(fake.ilocs), len(TEXTS))
+        fake.fail = False
+        before = len(fake.writes)
+        self.assertEqual(run(fake, "--apply")[0], 0)
+        self.assertEqual(self._kinds(fake.writes[before:]), ["appStoreVersionLocalizations"] * len(TEXTS))
+
     def test_idempotent(self):  # AC-10f
         fake = FakeASC()
         self.assertEqual((run(fake, "--apply")[0], fake.writes), (0, []))
