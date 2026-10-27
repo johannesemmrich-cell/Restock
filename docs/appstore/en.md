@@ -1,6 +1,6 @@
 ## name
 
-Restock
+Restock Shopping List
 
 ## subtitle
 

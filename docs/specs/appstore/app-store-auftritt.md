@@ -468,7 +468,7 @@ Nutzungsbedingungen (Apples Standard-Lizenzvereinbarung): https://www.apple.com/
 
 ### English
 
-- **Name (≤ 30):** `Restock` (7)
+- **Name (≤ 30):** `Restock Shopping List` (21) — PO 2026-10-27: „Restock“ ist in en-US bei einem anderen Konto belegt (`DUPLICATE_NAME.DIFFERENT_ACCOUNT`, `docs/artifacts/feat-175-b3-eintragen/asc-publish-apply-2.txt`); deutsch bleibt `Restock`.
 - **Subtitle (≤ 30):** `Smart shopping list by store` (28)
 - **Keywords (≤ 100 Bytes):** `grocery,receipt,scanner,prices,supermarket,meal plan,barcode,spending,household,recipes` (87 Zeichen, 87 Bytes; „stores“ entfällt, weil „store“ im Untertitel steht)
 - **Promotional text (≤ 170):** `Jot down what's missing. Restock files it under the right store and learns your path through the supermarket.`
