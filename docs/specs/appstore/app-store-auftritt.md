@@ -468,7 +468,7 @@ Nutzungsbedingungen (Apples Standard-Lizenzvereinbarung): https://www.apple.com/
 
 ### English
 
-- **Name (≤ 30):** `Restock` (7)
+- **Name (≤ 30):** `Restock Shopping List` (21) — PO 2026-10-27: „Restock“ ist in en-US bei einem anderen Konto belegt (`DUPLICATE_NAME.DIFFERENT_ACCOUNT`, `docs/artifacts/feat-175-b3-eintragen/asc-publish-apply-2.txt`); deutsch bleibt `Restock`.
 - **Subtitle (≤ 30):** `Smart shopping list by store` (28)
 - **Keywords (≤ 100 Bytes):** `grocery,receipt,scanner,prices,supermarket,meal plan,barcode,spending,household,recipes` (87 Zeichen, 87 Bytes; „stores“ entfällt, weil „store“ im Untertitel steht)
 - **Promotional text (≤ 170):** `Jot down what's missing. Restock files it under the right store and learns your path through the supermarket.`
@@ -515,7 +515,7 @@ Gezählt mit `python3` (`len(s)`, `len(s.encode('utf-8'))`); Beschreibung ist de
 
 | Feld | Grenze | Deutsch | English |
 |------|--------|---------|---------|
-| `name` | 2–30 Zeichen | 7 | 7 |
+| `name` | 2–30 Zeichen | 7 | 21 |
 | `subtitle` | ≤ 30 Zeichen | 27 | 28 |
 | `keywords` | ≤ 100 **Bytes** | 93 Bytes (91 Zeichen) | 87 Bytes (87 Zeichen) |
 | `promotional_text` | ≤ 170 Zeichen | 104 | 109 |
@@ -1024,3 +1024,4 @@ Simulator-Screenshots). #175 blockiert Release 1.0.
 - 2026-10-25: Durchgang B3b ergänzt (Gegenleser-Korrekturen nach dem ersten echten Lauf: eigener User-Agent für die Datenschutzseite, Altersfreigabe nur mit beantworteten Pflichtfeldern, Preisplan der App mit Basisland und Betrag 0 als benannte Annahme, 404 nur an `appAvailabilityV2` als Abweichung); AC-23 bis AC-23e; Leseliste um `baseTerritory`/`manualPrices` der App erweitert; AC-13 präzisiert; Reihenfolge A1 bis B3a, B3b, B3; Alternativen 17–18; Offene Grenzen.
 - 2026-10-25: B3b-Nachtrag nach dem zweiten Leselauf (PO-Wort): 404 an `manualPrices` des App-Preisplans ist die Abweichung „App-Preis (DEU): Soll 0, Ist nicht eingerichtet“ statt eines Fehlers (F2b, Nachweis-Absatz B3b, Implementation Details B3b, AC-23-Nachweis, AC-23c, AC-23d, Testplan, Offene Grenzen); Nachweis ist der dritte Leselauf.
 - 2026-10-26: Durchgang B3 fortgeschrieben (Lesetrockenlauf 4 als Stand, Käufe zuletzt, Wort je Schritt, Beleg nach jedem Schritt, Abschlusskriterium); keine neuen ACs, AC-11 bis AC-19 gelten unverändert.
+- 2026-10-27: B2a-Ablauf Punkt 3 ergänzt um die Reihenfolge: App-Angaben (`appInfoLocalizations`) vor Produktseiten (`appStoreVersionLocalizations`), im Trockenlauf wie mit `--apply`; festgelegt in `docs/specs/appstore/asc-publish-reihenfolge.md` (Issue #229). Der Fließtext von Punkt 3 bleibt unverändert, weil die Freigabe-Sperre ihn schützt.
