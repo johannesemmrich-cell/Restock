@@ -13,6 +13,7 @@ final class PrivacyManifestTests: XCTestCase {
         ("NSPrivacyCollectedDataTypePurchaseHistory", true),
         ("NSPrivacyCollectedDataTypeUserID", true),
         ("NSPrivacyCollectedDataTypeDeviceID", false),
+        ("NSPrivacyCollectedDataTypeCoarseLocation", true),
     ]
 
     private func manifest() throws -> [String: Any] {
@@ -99,6 +100,19 @@ final class PrivacyManifestTests: XCTestCase {
         XCTAssertFalse(source.contains("Kassenbon-Scan und Preiserfassung (Premium)"), "Bon-Scan ist kostenlos")
         XCTAssertTrue(source.contains("Ausgaben-Analyse (Premium)"))
         XCTAssertTrue(source.contains("- Menüplanung (Premium)"), "Rezeptplan gehört zu Pro")
+    }
+
+    // AC-3, AC-4 (Issue #175, Standort): Die Filiale der Open-Prices-Beiträge lässt den Aufenthaltsort erkennen.
+    func testOpenPricesParagraphNamesApproximateLocation() throws {
+        let source = try legalSource()
+        let openPrices = try XCTUnwrap(source.components(separatedBy: "**Open Prices").dropFirst().first?
+            .components(separatedBy: "\n\n").first, "Abschnitt „Open Prices“ fehlt")
+        XCTAssertTrue(openPrices.contains("ungefähren Aufenthaltsort"), "Standort-Satz fehlt (de)")
+        XCTAssertTrue(source.contains("ohne Filiale oder Standort"), "Community-Preise bleiben ohne Standort")
+        XCTAssertTrue(source.contains("**Datenschutzerklärung**\nStand: Oktober 2026"))
+        let page = try String(contentsOf: repoFile("docs/appstore/datenschutz.md"), encoding: .utf8)
+        let english = try XCTUnwrap(page.components(separatedBy: "## English").dropFirst().first)
+        XCTAssertTrue(english.contains("approximate whereabouts"), "Standort-Satz fehlt (en)")
     }
 
     // MARK: - Durchgang A2

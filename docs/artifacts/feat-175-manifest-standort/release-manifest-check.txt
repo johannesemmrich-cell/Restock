@@ -1,0 +1,75 @@
+# Release-Nachweis Manifest (AC-5), 2026-10-28
+# Befehl: plutil -p build/dd-standort-rel/Build/Products/Release-iphonesimulator/Restock.app/PrivacyInfo.xcprivacy
+# Bau: xcodebuild build -scheme Restock -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd-standort-rel (BUILD SUCCEEDED)
+# Stand: Arbeitsordner feat/175-b3-eintragen, Basis a9071bf plus Änderungen dieses Workflows
+{
+  "NSPrivacyAccessedAPITypes" => [
+    0 => {
+      "NSPrivacyAccessedAPIType" => "NSPrivacyAccessedAPICategoryUserDefaults"
+      "NSPrivacyAccessedAPITypeReasons" => [
+        0 => "1C8F.1"
+      ]
+    }
+  ]
+  "NSPrivacyCollectedDataTypes" => [
+    0 => {
+      "NSPrivacyCollectedDataType" => "NSPrivacyCollectedDataTypeName"
+      "NSPrivacyCollectedDataTypeLinked" => true
+      "NSPrivacyCollectedDataTypePurposes" => [
+        0 => "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ]
+      "NSPrivacyCollectedDataTypeTracking" => false
+    }
+    1 => {
+      "NSPrivacyCollectedDataType" => "NSPrivacyCollectedDataTypeOtherUserContent"
+      "NSPrivacyCollectedDataTypeLinked" => true
+      "NSPrivacyCollectedDataTypePurposes" => [
+        0 => "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ]
+      "NSPrivacyCollectedDataTypeTracking" => false
+    }
+    2 => {
+      "NSPrivacyCollectedDataType" => "NSPrivacyCollectedDataTypePhotosorVideos"
+      "NSPrivacyCollectedDataTypeLinked" => true
+      "NSPrivacyCollectedDataTypePurposes" => [
+        0 => "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ]
+      "NSPrivacyCollectedDataTypeTracking" => false
+    }
+    3 => {
+      "NSPrivacyCollectedDataType" => "NSPrivacyCollectedDataTypePurchaseHistory"
+      "NSPrivacyCollectedDataTypeLinked" => true
+      "NSPrivacyCollectedDataTypePurposes" => [
+        0 => "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ]
+      "NSPrivacyCollectedDataTypeTracking" => false
+    }
+    4 => {
+      "NSPrivacyCollectedDataType" => "NSPrivacyCollectedDataTypeUserID"
+      "NSPrivacyCollectedDataTypeLinked" => true
+      "NSPrivacyCollectedDataTypePurposes" => [
+        0 => "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ]
+      "NSPrivacyCollectedDataTypeTracking" => false
+    }
+    5 => {
+      "NSPrivacyCollectedDataType" => "NSPrivacyCollectedDataTypeDeviceID"
+      "NSPrivacyCollectedDataTypeLinked" => false
+      "NSPrivacyCollectedDataTypePurposes" => [
+        0 => "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ]
+      "NSPrivacyCollectedDataTypeTracking" => false
+    }
+    6 => {
+      "NSPrivacyCollectedDataType" => "NSPrivacyCollectedDataTypeCoarseLocation"
+      "NSPrivacyCollectedDataTypeLinked" => true
+      "NSPrivacyCollectedDataTypePurposes" => [
+        0 => "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ]
+      "NSPrivacyCollectedDataTypeTracking" => false
+    }
+  ]
+  "NSPrivacyTracking" => false
+  "NSPrivacyTrackingDomains" => [
+  ]
+}
