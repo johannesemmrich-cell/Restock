@@ -136,4 +136,6 @@ fehlen. Dann Manifest und Text, danach grün. Release-Nachweis wie in A1.
 
 ## Changelog
 
+- 2026-10-28 (Umsetzung): AC-6 gilt für die Haupt-Spec nur als Changelog-Zeile. Deren Freigabe-Sperre (`edit_gate`, Workflow feat-175-a2-berechtigungstexte, phase8_complete) lässt Tabelle, Absatz „Standort“ und die „sechs“ in AC-1/AC-3/AC-14 nur mit neuer Freigabe ändern. Der Changelog-Eintrag in `app-store-auftritt.md` nennt die Entscheidung; maßgeblich für die sieben Datentypen ist diese Spec. Die Grep-Probe für `CLAUDE.md` lautet „sieben erhobene Datenarten“.
+
 - 2026-10-28: Erstfassung, Fortschreibung von #175 Durchgang A1.
