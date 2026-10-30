@@ -16,9 +16,9 @@ final class PaywallUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    private func launchLocked() -> XCUIApplication {
+    private func launchLocked(extraArguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-developerMode", "NO"]
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-developerMode", "NO"] + extraArguments
         UITestLaunch.start(app, expecting: app.buttons["fork.knife"], description: "Menüplan-Knopf fork.knife")
         return app
     }
@@ -61,6 +61,91 @@ final class PaywallUITests: XCTestCase {
             app.swipeUp()
             swipes += 1
         }
+    }
+
+    /// Wischt bis das Element existiert, dann in kurzen Zügen bis es antippbar ist (Abschrift aus
+    /// `DynamicTypeUITests`): Inhalt unter dem Rand steht schon im Baum, ist aber noch nicht antippbar.
+    private func scrollUntilHittable(_ app: XCUIApplication, _ target: XCUIElement, description: String,
+                                     maxSwipes: Int = 12, file: StaticString = #filePath, line: UInt = #line) {
+        _ = target.waitForExistence(timeout: 3)
+        var swipes = 0
+        while !target.exists && swipes < maxSwipes {
+            app.swipeUp()
+            swipes += 1
+        }
+        XCTAssertTrue(target.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "\(description) fehlt auch nach \(swipes) Wischern.", file: file, line: line)
+        var nudges = 0
+        var ready = target.waitUntilHittable(timeout: 3)
+        while !ready.matched && nudges < 4 {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
+                .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
+            nudges += 1
+            ready = target.waitUntilHittable(timeout: 3)
+        }
+        XCTAssertTrue(ready.matched,
+                      "\(description) nicht antippbar nach \(swipes) Wischern und \(nudges) Zügen — zuletzt: \(ready.last)",
+                      file: file, line: line)
+    }
+
+    /// SwiftUI-`Link` erscheint im Zugänglichkeitsbaum auf iOS 27 als Link, auf iOS 26.5 als Button
+    /// (belegt im CI-Lauf auf iOS 26.5, Issue #215); gesucht wird daher nach Beschriftung und beiden Typen.
+    private func legalLink(_ app: XCUIApplication, _ label: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(NSPredicate(
+            format: "label == %@ AND (elementType == %d OR elementType == %d)",
+            label, XCUIElement.ElementType.link.rawValue, XCUIElement.ElementType.button.rawValue
+        )).firstMatch
+    }
+
+    /// Öffnet die Paywall über fork.knife und prüft beide Rechtslinks: vorhanden, im Fenster, antippbar,
+    /// ohne zu tippen (kein Browseraufruf). Liefert die Links zurück.
+    @discardableResult
+    private func assertLegalLinks(_ app: XCUIApplication) -> (privacy: XCUIElement, terms: XCUIElement) {
+        tapWhenHittable(app.buttons["fork.knife"], "fork.knife")
+        assertPaywall(app, feature: "den Rezeptplan")
+        let privacy = legalLink(app, "Datenschutz")
+        let terms = legalLink(app, "Nutzungsbedingungen (EULA)")
+        scrollUntilHittable(app, privacy, description: "Link „Datenschutz“")
+        scrollUntilHittable(app, terms, description: "Link „Nutzungsbedingungen (EULA)“")
+        let window = app.windows.firstMatch.frame
+        for (name, link) in [("Datenschutz", privacy), ("Nutzungsbedingungen (EULA)", terms)] {
+            XCTAssertTrue(window.contains(link.frame), "Link „\(name)“ liegt nicht im Fenster: \(link.frame) in \(window)")
+        }
+        return (privacy, terms)
+    }
+
+    // MARK: - Issue #215: Rechtslinks (AC-1, AC-2, AC-6, AC-7)
+
+    func testLegalLinksReachableOnPaywall() {
+        let app = launchLocked()
+        let links = assertLegalLinks(app)
+
+        // Gegenprobe: „Käufe wiederherstellen“ steht vor dem Rechtsblock.
+        let restore = app.buttons["Käufe wiederherstellen"]
+        XCTAssertTrue(restore.exists, "„Käufe wiederherstellen“ fehlt")
+        XCTAssertLessThanOrEqual(restore.frame.maxY, links.privacy.frame.minY,
+                                 "„Käufe wiederherstellen“ liegt nicht oberhalb der Links")
+
+        // Abo-Text-Anfang und Link-Zeile liegen zugleich im Fenster; sonst einmal kurz zurückwischen.
+        let notice = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Restock Pro – Jährlich")).firstMatch
+        let window = app.windows.firstMatch.frame
+        if !(notice.exists && window.contains(notice.frame)) { app.swipeDown() }
+        XCTAssertTrue(notice.waitForExistence(timeout: UITestWait.defaultTimeout), "Abo-Text „Restock Pro – Jährlich …“ fehlt")
+        XCTAssertTrue(window.contains(notice.frame), "Anfang des Abo-Texts liegt nicht im Fenster: \(notice.frame)")
+        XCTAssertTrue(window.contains(links.terms.frame), "Link-Zeile liegt nach dem Zurückwischen nicht im Fenster")
+
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = "paywall-unten"
+        shot.lifetime = .keepAlways
+        add(shot)
+    }
+
+    func testLegalLinksReachableAtLargestTextSize() {
+        let app = launchLocked(extraArguments: ["-UIPreferredContentSizeCategoryName",
+                                                "UICTContentSizeCategoryAccessibilityXXXL"])
+        let links = assertLegalLinks(app)
+        XCTAssertFalse(links.privacy.frame.intersects(links.terms.frame),
+                       "Die Links überlappen sich: \(links.privacy.frame) und \(links.terms.frame)")
     }
 
     // MARK: - AC-5, AC-6

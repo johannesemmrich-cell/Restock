@@ -1,0 +1,181 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=9034BD4F-2D5F-49D5-B906-838326D51C95" "-only-testing:RestockUITests/PaywallUITests/testLegalLinksReachableOnPaywall" -derivedDataPath /private/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd -resultBundlePath /private/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dunkel.xcresult
+
+Writing result bundle at path:
+	/private/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dunkel.xcresult
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+
+PruneExplicitPrecompiledModules /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/SDKExplicitPrecompiledModules
+
+2026-10-30 17:32:22.722 xcodebuild[99690:34213615] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:23.961547+0100 RestockUITests-Runner[99693:34213869] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-30 17:32:26.352.
+Test Suite 'RestockUITests.xctest' started at 2026-10-30 17:32:26.355.
+Test Suite 'PaywallUITests' started at 2026-10-30 17:32:26.355.
+Test Case '-[RestockUITests.PaywallUITests testLegalLinksReachableOnPaywall]' started.
+    t =     0.01s Start Test at 2026-10-30 17:32:26.361
+    t =     0.05s Set Up
+    t =     0.05s Open com.johannesemmrich.Restock
+    t =     0.05s     Launch com.johannesemmrich.Restock
+2026-10-30 17:32:26.632 xcodebuild[99690:34213615] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-30 17:32:26.632 xcodebuild[99690:34213615] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[99693]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a82c398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10a920310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+2026-10-30 17:32:26.646 xcodebuild[99690:34213615] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     0.70s         Setting up automation session
+    t =     3.05s         Wait for com.johannesemmrich.Restock to idle
+    t =     5.48s Checking existence of `"fork.knife" Button`
+    t =     5.67s Find the "fork.knife" Button
+    t =     5.70s Find the "fork.knife" Button
+    t =     5.73s Checking existence of `"fork.knife" Button`
+    t =     5.75s Find the "fork.knife" Button
+    t =     5.76s Find the "fork.knife" Button
+    t =     5.78s Tap "fork.knife" Button
+    t =     5.78s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.79s     Find the "fork.knife" Button
+    t =     5.80s     Check for interrupting elements affecting "fork.knife" Button
+    t =     5.85s     Synthesize event
+    t =     6.16s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.23s Waiting 20.0s for "Restock Pro" StaticText to exist
+    t =     7.29s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock Pro" StaticText`
+    t =     7.29s         Checking existence of `"Restock Pro" StaticText`
+    t =     7.37s Waiting 5.0s for Any (First Match) to exist
+    t =     8.42s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     8.43s         Checking existence of `Any (First Match)`
+    t =     8.48s Waiting 5.0s for Any (First Match) to exist
+    t =     9.55s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     9.55s         Checking existence of `Any (First Match)`
+    t =     9.61s Checking existence of `"Käufe wiederherstellen" Button`
+    t =     9.64s Checking existence of `Button (First Match)`
+    t =     9.67s Waiting 3.0s for "Datenschutz" Link to exist
+    t =    10.72s     Checking `Expect predicate `existsNoRetry == 1` for object "Datenschutz" Link`
+    t =    10.73s         Checking existence of `"Datenschutz" Link`
+    t =    10.77s Checking existence of `"Datenschutz" Link`
+    t =    10.80s Waiting 20.0s for "Datenschutz" Link to exist
+    t =    11.86s     Checking `Expect predicate `existsNoRetry == 1` for object "Datenschutz" Link`
+    t =    11.86s         Checking existence of `"Datenschutz" Link`
+    t =    11.91s Checking existence of `"Datenschutz" Link`
+    t =    11.94s Find the "Datenschutz" Link
+    t =    11.97s Find the "Datenschutz" Link
+    t =    12.27s Checking existence of `"Datenschutz" Link`
+    t =    12.32s Find the "Datenschutz" Link
+    t =    12.35s Find the "Datenschutz" Link
+    t =    12.65s Checking existence of `"Datenschutz" Link`
+    t =    12.68s Find the "Datenschutz" Link
+    t =    12.72s Find the "Datenschutz" Link
+    t =    13.01s Checking existence of `"Datenschutz" Link`
+    t =    13.05s Find the "Datenschutz" Link
+    t =    13.07s Find the "Datenschutz" Link
+    t =    13.37s Checking existence of `"Datenschutz" Link`
+    t =    13.39s Find the "Datenschutz" Link
+    t =    13.42s Find the "Datenschutz" Link
+    t =    13.71s Checking existence of `"Datenschutz" Link`
+    t =    13.76s Find the "Datenschutz" Link
+    t =    13.79s Find the "Datenschutz" Link
+    t =    14.09s Checking existence of `"Datenschutz" Link`
+    t =    14.14s Find the "Datenschutz" Link
+    t =    14.17s Find the "Datenschutz" Link
+    t =    14.47s Checking existence of `"Datenschutz" Link`
+    t =    14.52s Find the "Datenschutz" Link
+    t =    14.55s Find the "Datenschutz" Link
+    t =    14.85s Checking existence of `"Datenschutz" Link`
+    t =    14.89s Find the "Datenschutz" Link
+    t =    14.92s Find the "Datenschutz" Link
+    t =    14.96s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.75] for 0.1 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.45] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    14.96s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.96s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    14.97s     Check for interrupting elements affecting "Restock" Application
+    t =    15.00s     Synthesize event
+    t =    15.00s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    15.01s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    15.03s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    15.05s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    15.06s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    15.90s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.28s Checking existence of `"Datenschutz" Link`
+    t =    16.34s Find the "Datenschutz" Link
+    t =    16.37s Find the "Datenschutz" Link
+    t =    16.40s Waiting 3.0s for "Nutzungsbedingungen (EULA)" Link to exist
+    t =    17.46s     Checking `Expect predicate `existsNoRetry == 1` for object "Nutzungsbedingungen (EULA)" Link`
+    t =    17.46s         Checking existence of `"Nutzungsbedingungen (EULA)" Link`
+    t =    17.51s Checking existence of `"Nutzungsbedingungen (EULA)" Link`
+    t =    17.54s Waiting 20.0s for "Nutzungsbedingungen (EULA)" Link to exist
+    t =    18.61s     Checking `Expect predicate `existsNoRetry == 1` for object "Nutzungsbedingungen (EULA)" Link`
+    t =    18.61s         Checking existence of `"Nutzungsbedingungen (EULA)" Link`
+    t =    18.66s Checking existence of `"Nutzungsbedingungen (EULA)" Link`
+    t =    18.69s Find the "Nutzungsbedingungen (EULA)" Link
+    t =    18.72s Find the "Nutzungsbedingungen (EULA)" Link
+    t =    18.75s Find the Window (First Match)
+    t =    18.75s Find the "Datenschutz" Link
+    t =    18.78s Find the "Nutzungsbedingungen (EULA)" Link
+    t =    18.80s Checking existence of `"Käufe wiederherstellen" Button`
+    t =    18.83s Find the "Käufe wiederherstellen" Button
+    t =    18.85s Find the "Datenschutz" Link
+    t =    18.88s Find the Window (First Match)
+    t =    18.88s Checking existence of `StaticText (First Match)`
+    t =    18.91s Find the StaticText (First Match)
+    t =    18.94s Waiting 20.0s for "Restock Pro – Jährlich: 1 Jahr, 8,99 €/Jahr. Restock Pro – Monatlich: 1 Monat, 1,99 €/Monat. Die Abos verlängern sich automatisch um die gleiche Laufzeit, wenn du sie nicht mindestens 24 Stunden vor Ablauf des laufenden Zeitraums in den Einstellungen deiner Apple-ID kündigst. Die Zahlung wird über deine Apple-ID abgewickelt. Der Einmalkauf ist kein Abo und verlängert sich nicht." StaticText to exist
+    t =    20.01s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock Pro – Jährlich: 1 Jahr, 8,99 €/Jahr. Restock Pro – Monatlich: 1 Monat, 1,99 €/Monat. Die Abos verlängern sich automatisch um die gleiche Laufzeit, wenn du sie nicht mindestens 24 Stunden vor Ablauf des laufenden Zeitraums in den Einstellungen deiner Apple-ID kündigst. Die Zahlung wird über deine Apple-ID abgewickelt. Der Einmalkauf ist kein Abo und verlängert sich nicht." StaticText`
+    t =    20.01s         Checking existence of `"Restock Pro – Jährlich: 1 Jahr, 8,99 €/Jahr. Restock Pro – Monatlich: 1 Monat, 1,99 €/Monat. Die Abos verlängern sich automatisch um die gleiche Laufzeit, wenn du sie nicht mindestens 24 Stunden vor Ablauf des laufenden Zeitraums in den Einstellungen deiner Apple-ID kündigst. Die Zahlung wird über deine Apple-ID abgewickelt. Der Einmalkauf ist kein Abo und verlängert sich nicht." StaticText`
+    t =    20.06s Find the "Restock Pro – Jährlich: 1 Jahr, 8,99 €/Jahr. Restock Pro – Monatlich: 1 Monat, 1,99 €/Monat. Die Abos verlängern sich automatisch um die gleiche Laufzeit, wenn du sie nicht mindestens 24 Stunden vor Ablauf des laufenden Zeitraums in den Einstellungen deiner Apple-ID kündigst. Die Zahlung wird über deine Apple-ID abgewickelt. Der Einmalkauf ist kein Abo und verlängert sich nicht." StaticText
+    t =    20.10s Find the "Nutzungsbedingungen (EULA)" Link
+    t =    20.12s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    20.26s Added attachment named 'paywall-unten'
+    t =    20.26s Tear Down
+Test Case '-[RestockUITests.PaywallUITests testLegalLinksReachableOnPaywall]' passed (20.549 seconds).
+Test Suite 'PaywallUITests' passed at 2026-10-30 17:32:46.910.
+	 Executed 1 test, with 0 failures (0 unexpected) in 20.549 (20.554) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-30 17:32:46.911.
+	 Executed 1 test, with 0 failures (0 unexpected) in 20.549 (20.556) seconds
+Test Suite 'Selected tests' passed at 2026-10-30 17:32:46.912.
+	 Executed 1 test, with 0 failures (0 unexpected) in 20.549 (20.559) seconds
+2026-10-30 17:32:46.941 xcodebuild[99690:34213615] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:46.941 xcodebuild[99690:34213615] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:46.944 xcodebuild[99690:34213615] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:46.954 xcodebuild[99690:34213615] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:46.954 xcodebuild[99690:34213615] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:46.955 xcodebuild[99690:34213615] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:47.216 xcodebuild[99690:34213615] [MT] IDETestOperationsObserverDebug: 24.539 elapsed -- Testing started completed.
+2026-10-30 17:32:47.216 xcodebuild[99690:34213615] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-30 17:32:47.216 xcodebuild[99690:34213615] [MT] IDETestOperationsObserverDebug: 24.539 sec, +24.539 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dunkel.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

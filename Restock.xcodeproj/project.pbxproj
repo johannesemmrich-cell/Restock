@@ -61,6 +61,7 @@
 		C0DE1650000000000000E006 /* AIPriceEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */; };
 		C0DE1622000000000000A002 /* PriceCatalogExpansionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */; };
 		C0DE17500000000000000002 /* PrivacyManifestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE17500000000000000001 /* PrivacyManifestTests.swift */; };
+		C0DE17600000000000000002 /* PaywallLegalLinksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE17600000000000000001 /* PaywallLegalLinksTests.swift */; };
 		C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */; };
 		C0DE1630000000000000B002 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
 		C0DE1630000000000000B003 /* CommunityPriceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE1630000000000000B001 /* CommunityPriceCache.swift */; };
@@ -317,6 +318,7 @@
 		C0DE1660000000000000F005 /* OpenPricesContributionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenPricesContributionTests.swift; sourceTree = "<group>"; };
 		C0DE1650000000000000E005 /* AIPriceEvaluationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPriceEvaluationTests.swift; sourceTree = "<group>"; };
 		C0DE1622000000000000A001 /* PriceCatalogExpansionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCatalogExpansionTests.swift; sourceTree = "<group>"; };
+		C0DE17600000000000000001 /* PaywallLegalLinksTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallLegalLinksTests.swift; sourceTree = "<group>"; };
 		C0DE17500000000000000001 /* PrivacyManifestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyManifestTests.swift; sourceTree = "<group>"; };
 		C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationKeyParityTests.swift; sourceTree = "<group>"; };
 		C0DE1630000000000000B001 /* CommunityPriceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPriceCache.swift; sourceTree = "<group>"; };
@@ -837,6 +839,7 @@
 				C0DE1221000000000000D005 /* NonFoodCategoryTests.swift */,
 				C0DE1620000000000000B001 /* LocalizationKeyParityTests.swift */,
 				C0DE17500000000000000001 /* PrivacyManifestTests.swift */,
+				C0DE17600000000000000001 /* PaywallLegalLinksTests.swift */,
 				C0DE1630000000000000B007 /* CommunityPriceTests.swift */,
 				C0DE14540000000000000D02 /* PremiumServiceTests.swift */,
 				7784928A73C7D6A4CDAC53AF /* ReceiptParserDecathlonTests.swift */,
@@ -1278,6 +1281,7 @@
 				C0DE1221000000000000D006 /* NonFoodCategoryTests.swift in Sources */,
 				C0DE1620000000000000B002 /* LocalizationKeyParityTests.swift in Sources */,
 				C0DE17500000000000000002 /* PrivacyManifestTests.swift in Sources */,
+				C0DE17600000000000000002 /* PaywallLegalLinksTests.swift in Sources */,
 				C0DE1630000000000000B008 /* CommunityPriceTests.swift in Sources */,
 				C0DE14540000000000000D01 /* PremiumServiceTests.swift in Sources */,
 				34277AF8A6B1159ABC3C3893 /* ReceiptParserDecathlonTests.swift in Sources */,

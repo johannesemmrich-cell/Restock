@@ -271,7 +271,7 @@ final class PurchaseUITests: XCTestCase {
         tapRestore(app)
         let hint = notice(Notice.restoreNone, in: app)
         XCTAssertTrue(hint.waitForExistence(timeout: UITestWait.defaultTimeout), "Hinweis erscheint nicht")
-        let legal = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Abonnements verlängern sich")).firstMatch
+        let legal = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Restock Pro – Jährlich")).firstMatch
         XCTAssertTrue(legal.exists, "Rechtstext fehlt")
         let restoreFrame = restoreButton(app).frame
         XCTAssertGreaterThanOrEqual(hint.frame.minY, restoreFrame.maxY,

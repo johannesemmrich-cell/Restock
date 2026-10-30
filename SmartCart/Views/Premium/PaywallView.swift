@@ -1,6 +1,22 @@
 import SwiftUI
 import StoreKit
 
+// MARK: - PaywallLegalLinks
+
+/// Ziele der Rechtslinks und Abo-Text der Paywall (Issue #215). Quelle der Wahrheit für die URLs sind
+/// `docs/appstore/{de,en}.md`; `PaywallLegalLinksTests` hält beide gleich.
+enum PaywallLegalLinks {
+    static let privacyURL = URL(string: "https://emmrich-business.com/datenschutz")!
+    static let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+
+    static func subscriptionNotice(yearlyPrice: String, monthlyPrice: String) -> String {
+        "Restock Pro – Jährlich: 1 Jahr, \(yearlyPrice)/Jahr. Restock Pro – Monatlich: 1 Monat, \(monthlyPrice)/Monat. "
+            + "Die Abos verlängern sich automatisch um die gleiche Laufzeit, wenn du sie nicht mindestens 24 Stunden "
+            + "vor Ablauf des laufenden Zeitraums in den Einstellungen deiner Apple-ID kündigst. Die Zahlung wird "
+            + "über deine Apple-ID abgewickelt. Der Einmalkauf ist kein Abo und verlängert sich nicht."
+    }
+}
+
 // MARK: - PaywallView
 
 /// Restock Pro schaltet seit der Abo-Umstellung nur noch zwei Features frei: die
@@ -340,11 +356,43 @@ struct PaywallView: View {
         .disabled(isRestoring)
     }
 
+    /// Abo-Angaben und Rechtslinks am Kaufpunkt (Review-Richtlinie 3.1.2, Issue #215, Entwurf A).
     private var legalText: some View {
-        Text("Abonnements verlängern sich automatisch. Kündigung jederzeit in den iPhone-Einstellungen möglich.")
-            .font(.system(size: 11))
+        VStack(spacing: 8) {
+            Text(PaywallLegalLinks.subscriptionNotice(
+                yearlyPrice: productPrice(for: PremiumService.yearlyID),
+                monthlyPrice: productPrice(for: PremiumService.monthlyID)
+            ))
             .foregroundStyle(.tertiary)
-            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+
+            // Bei großer Schrift untereinander statt abgeschnitten; jeder Link bleibt für sich antippbar.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 4) {
+                    privacyLink
+                    Text("·").foregroundStyle(.tertiary)
+                    termsLink
+                }
+                VStack(spacing: 6) {
+                    privacyLink
+                    termsLink
+                }
+            }
+        }
+        .font(.system(size: 11))
+        .multilineTextAlignment(.center)
+    }
+
+    private var privacyLink: some View {
+        Link("Datenschutz", destination: PaywallLegalLinks.privacyURL)
+            .foregroundStyle(.secondary)
+            .underline()
+    }
+
+    private var termsLink: some View {
+        Link("Nutzungsbedingungen (EULA)", destination: PaywallLegalLinks.termsURL)
+            .foregroundStyle(.secondary)
+            .underline()
     }
 
     // MARK: - Hinweis
