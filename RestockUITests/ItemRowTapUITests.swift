@@ -152,7 +152,9 @@ final class ItemRowTapUITests: XCTestCase {
     // AC-6: „Preis?“ öffnet den Dialog und hakt nicht ab
     func testPricePromptOpensEditorWithoutChecking() {
         let app = openedStore(unpricedItem: true)
-        let prompt = app.buttons["Preis?"].firstMatch
+        // Sichtbar steht „Preis?“; für Bedienhilfen trägt der Knopf seit #160 das Label
+        // „Preis unbekannt, antippen zum Eintragen“ (`price.prompt.accessibility`).
+        let prompt = app.buttons["Preis unbekannt, antippen zum Eintragen"].firstMatch
         XCTAssertTrue(prompt.waitForExistence(timeout: UITestWait.defaultTimeout),
                       "„Preis?“ muss ein eigener Knopf in der Zeile sein")
         prompt.tap()

@@ -3,6 +3,9 @@ import SwiftUI
 struct ItemRow: View {
     let item: ShoppingItem
     var onToggle: () -> Void
+    /// Öffnet den Bearbeiten-Dialog. Nicht mehr per Tipp auf die Zeile (die hakt ab), sondern
+    /// über Wischen/Lang drücken in der Liste und den „Preis?“-Knopf.
+    var onEdit: (() -> Void)? = nil
 
     @State private var isAnimating = false
 
@@ -42,10 +45,7 @@ struct ItemRow: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            Button(action: {
-                onToggle()
-                if !item.isCompleted { isAnimating = true }
-            }) {
+            Button(action: performToggle) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 6)
                         .fill(item.isCompleted ? Color.accent : Color.clear)
@@ -155,7 +155,7 @@ struct ItemRow: View {
                                                   isAutoDerived: item.estimatedPriceIsAutoDerived) {
                     // Issue #160: Eine Kategorie-Pauschale ist kein Artikelpreis — statt „ca. 2,00 €"
                     // fünfmal untereinander steht hier die Einladung, den Preis einzutragen (Tipp auf
-                    // die Zeile öffnet den Bearbeiten-Dialog mit dem Preisfeld).
+                    // „Preis?“ öffnet den Bearbeiten-Dialog mit dem Preisfeld).
                     pricePrompt
                 } else if let price = item.estimatedLineTotal {
                     priceCell(amount: price.formatted(.currency(code: currencyCode)))
@@ -168,7 +168,16 @@ struct ItemRow: View {
         }
         .padding(.vertical, 5)
         .contentShape(Rectangle())
+        // Beim Einkaufen hakt ein Tipp irgendwo auf der Zeile ab, nicht nur auf das Kästchen —
+        // ein knapp verfehltes Kästchen öffnete vorher den Bearbeiten-Dialog.
+        .onTapGesture(perform: performToggle)
+        .accessibilityAction(named: Text(String(localized: "action.edit"))) { onEdit?() }
         .animation(.easeInOut(duration: 0.25), value: item.isCompleted)
+    }
+
+    private func performToggle() {
+        onToggle()
+        if !item.isCompleted { isAnimating = true }
     }
 
     private var currencyCode: String { Locale.current.currency?.identifier ?? "EUR" }
@@ -193,7 +202,17 @@ struct ItemRow: View {
     }
 
     /// „Preis?" in der Warnfarbe statt eines Pauschalbetrags (Issue #160).
+    @ViewBuilder
     private var pricePrompt: some View {
+        if let onEdit {
+            Button(action: onEdit) { pricePromptLabel }
+                .buttonStyle(.plain)
+        } else {
+            pricePromptLabel
+        }
+    }
+
+    private var pricePromptLabel: some View {
         Text(String(localized: "price.prompt"))
             .font(.system(size: 12, weight: .medium))
             .foregroundStyle(Color.amber)
