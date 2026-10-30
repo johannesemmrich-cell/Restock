@@ -1,0 +1,45 @@
+asc_check 2026-10-27T09:58:37Z Commit cd9b5f72657e3440e4de8b6f9ac2c67ec197dd37
+== metadata
+ok   metadata: description (de-DE)
+ok   metadata: keywords (de-DE)
+ok   metadata: promotionalText (de-DE)
+ok   metadata: supportUrl (de-DE)
+ok   metadata: description (en-US)
+ok   metadata: keywords (en-US)
+ok   metadata: promotionalText (en-US)
+ok   metadata: supportUrl (en-US)
+ok   metadata: name (de-DE)
+ok   metadata: subtitle (de-DE)
+ok   metadata: privacyPolicyUrl (de-DE)
+ok   metadata: name (en-US)
+ok   metadata: subtitle (en-US)
+ok   metadata: privacyPolicyUrl (en-US)
+== privacy-url
+ok   privacy-url: HTTP-Status
+Abweichung privacy-url: Abschnitt Deutsch (42 Zeilen): Soll alle Zeilen aus docs/appstore/datenschutz.md, Ist 38 fehlen, z. B. Stand: Oktober 2026
+Abweichung privacy-url: Abschnitt English (43 Zeilen): Soll alle Zeilen aus docs/appstore/datenschutz.md, Ist 41 fehlen, z. B. This is a translation for convenience. In case of any discrepancy, the German ve
+== appinfo
+Abweichung appinfo: contentRightsDeclaration: Soll gesetzt, Ist leer
+Abweichung appinfo: primaryCategory: Soll gesetzt, Ist leer
+Abweichung appinfo: secondaryCategory: Soll gesetzt, Ist leer
+Abweichung appinfo: Kategorien: Soll {'PRODUCTIVITY', 'SHOPPING'}, Ist set()
+Abweichung appinfo: ageRatingDeclaration: Soll alle Angaben gesetzt, Ist leer: advertising, alcoholTobaccoOrDrugUseOrReferences, contests, gambling, gamblingSimulated, gunsOrOtherWeapons, healthOrWellnessTopics, lootBox, medicalOrTreatmentInformation, messagingAndChat, parentalControls, profanityOrCrudeHumor, ageAssurance, sexualContentGraphicAndNudity, sexualContentOrNudity, socialMedia, socialMediaAgeRestricted, horrorOrFearThemes, matureOrSuggestiveThemes, unrestrictedWebAccess, userGeneratedContent, violenceCartoonOrFantasy, violenceRealisticProlongedGraphicOrSadistic, violenceRealistic
+ok   appinfo: appPriceSchedule
+Abweichung appinfo: Basisland: Soll DEU, Ist USA
+Abweichung appinfo: App-Preis (DEU): Soll 0, Ist nicht eingerichtet
+Abweichung appinfo: appAvailabilityV2: Soll eingerichtet, Ist nicht eingerichtet
+== iap
+Abweichung iap: Abo-Gruppe „Restock Pro“: Soll 1, Ist 0
+Abweichung iap: lifetime vorhanden (IAP): Soll IAP, Ist fehlt
+Abweichung iap: monthly vorhanden (SUB): Soll SUB, Ist fehlt
+Abweichung iap: yearly vorhanden (SUB): Soll SUB, Ist fehlt
+== screenshots
+Abweichung screenshots: Anzahl (de-DE): Soll 3 bis 10, Ist 0
+Abweichung screenshots: Anzahl (en-US): Soll 3 bis 10, Ist 0
+== build
+Abweichung build: build zugeordnet: Soll zugeordnet, Ist keiner
+== review
+Abweichung review: appStoreReviewDetail: Soll gesetzt, Ist leer
+== status
+ok   status: appVersionState
+offen AC-14 App-Privacy-Fragebogen: per API nicht lesbar, manuell belegen (Beleg-Screenshot)
