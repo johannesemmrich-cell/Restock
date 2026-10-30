@@ -1,0 +1,95 @@
+<title>Paywall-Rechtslinks</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: ruhiges Arbeitsblatt, Reihe "Heute | Entwurf A | Alternative B"; Telefone in den echten App-Farben (RC-Token), unabhängig vom Seitenthema */
+:root { --bg:#f3f1ea; --fg:#23201a; --muted:#6b6658; --rule:rgba(35,32,26,.14); --mark:#666f38; --card:#fbf9f3;
+  --f-body:"Source Sans 3",-apple-system,system-ui,sans-serif; --f-head:"Fraunces",Georgia,serif; }
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#16150f;--fg:#ebe7da;--muted:#a39e8f;--rule:rgba(235,231,218,.14);--mark:#a7ae6b;--card:#1e1d16;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#16150f;--fg:#ebe7da;--muted:#a39e8f;--rule:rgba(235,231,218,.14);--mark:#a7ae6b;--card:#1e1d16;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:40px}
+h1{font-family:var(--f-head);font-weight:600;font-size:2rem;margin:0;text-wrap:balance}
+h2{font-family:var(--f-head);font-weight:600;font-size:1.3rem;margin:0 0 4px;text-wrap:balance}
+.lead{color:var(--muted);max-width:68ch;margin:6px 0 0}
+.tag{display:inline-block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--mark)}
+section{display:grid;gap:14px}
+.row{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
+figure{margin:0;display:grid;gap:8px;justify-items:center;min-width:0}
+figcaption{font-size:.85rem;color:var(--muted);text-align:center;max-width:260px}
+.shot{width:260px;max-width:100%;border-radius:30px;border:1px solid var(--rule)}
+.note{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;max-width:75ch}
+.note p{margin:0}.note p+p{margin-top:6px}
+ul.facts{margin:0;padding-left:1.1rem;max-width:75ch}
+.ph{--canvas:#f5f2e9;--surface:#fdfbf4;--ink:#201d16;--sec:rgba(32,29,22,.6);--ter:rgba(32,29,22,.5);--hair:rgba(32,29,22,.13);--accent:#666f38;--btn:#201d16;--onBtn:#f5f2e9;
+ width:260px;max-width:100%;background:var(--canvas);color:var(--ink);border-radius:30px;border:1px solid var(--rule);font-family:-apple-system,"SF Pro Text",system-ui,sans-serif;overflow:hidden}
+.ph.dark{--canvas:#141310;--surface:#1d1c16;--ink:#ebe7da;--sec:rgba(235,231,218,.6);--ter:rgba(235,231,218,.5);--hair:rgba(235,231,218,.13);--accent:#a7ae6b;--btn:#e8e4d6;--onBtn:#201d16}
+.ph .body{padding:16px 16px 20px;display:grid;gap:9px}
+.plan{display:flex;align-items:center;gap:9px;padding:10px;border-radius:14px;background:var(--surface);border:2px solid var(--accent);font-size:11px;justify-content:space-between}
+.plan b{font-size:12px}.plan .p{color:var(--accent);font-weight:600;font-size:12px}
+.cta{background:var(--btn);color:var(--onBtn);border-radius:13px;text-align:center;font-weight:700;font-size:12px;padding:15px 6px;margin-top:6px}
+.restore{text-align:center;font-size:11px;color:var(--sec);margin-top:4px}
+.links{text-align:center;font-size:11px;color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.links span{color:var(--ter);text-decoration:none;font-weight:400;margin:0 5px}
+.legal{text-align:center;font-size:9.5px;line-height:1.35;color:var(--ter)}
+.mark{outline:2px dashed var(--accent);outline-offset:3px;border-radius:6px}
+</style>
+<div class="wrap">
+<header>
+  <span class="tag">Entwurf vor der Spec · Ticket #215</span>
+  <h1>Paywall: Links zu Datenschutz und Nutzungsbedingungen</h1>
+  <p class="lead">Apple verlangt bei automatisch verlängernden Abos in der App selbst zwei funktionierende Links. Heute fehlen sie. Gezeigt ist das untere Ende der Paywall, so wie es nach dem Hochscrollen aussieht.</p>
+</header>
+
+<section>
+  <h2>Heute und zwei Entwürfe</h2>
+  <div class="row">
+    <figure>
+      <img class="shot" src="__HEUTE_HELL__" alt="Heutige Paywall, hell, endet mit Käufe wiederherstellen">
+      <figcaption><b>Heute.</b> Die Rechtszeile steht unterhalb des sichtbaren Bereichs und enthält keinen Link.</figcaption>
+    </figure>
+    <figure>
+      <div class="ph"><div class="body">
+        <div class="plan"><span><b>Jährlich</b><br>= 0,75 €/Monat</span><span class="p">8,99 €/Jahr</span></div>
+        <div class="cta">Jetzt freischalten — 8,99 €/Jahr</div>
+        <div class="restore">Käufe wiederherstellen</div>
+        <div class="links mark">Datenschutz<span>·</span>Nutzungsbedingungen (EULA)</div>
+        <div class="legal">Restock Pro Jährlich: 8,99 €/Jahr, Restock Pro Monatlich: 1,99 €/Monat. Abos verlängern sich automatisch um die gewählte Laufzeit, wenn du nicht mindestens 24 Stunden vor Ablauf in den iPhone-Einstellungen kündigst. Die Zahlung läuft über deine Apple-ID.</div>
+      </div></div>
+      <figcaption><b>Entwurf A (Empfehlung), hell.</b> Links in einer Zeile direkt unter „Käufe wiederherstellen“, Abo-Text darunter.</figcaption>
+    </figure>
+    <figure>
+      <div class="ph dark"><div class="body">
+        <div class="plan"><span><b>Jährlich</b><br>= 0,75 €/Monat</span><span class="p">8,99 €/Jahr</span></div>
+        <div class="cta">Jetzt freischalten — 8,99 €/Jahr</div>
+        <div class="restore">Käufe wiederherstellen</div>
+        <div class="links mark">Datenschutz<span>·</span>Nutzungsbedingungen (EULA)</div>
+        <div class="legal">Restock Pro Jährlich: 8,99 €/Jahr, Restock Pro Monatlich: 1,99 €/Monat. Abos verlängern sich automatisch um die gewählte Laufzeit, wenn du nicht mindestens 24 Stunden vor Ablauf in den iPhone-Einstellungen kündigst. Die Zahlung läuft über deine Apple-ID.</div>
+      </div></div>
+      <figcaption><b>Entwurf A, dunkel.</b> Gleiche Anordnung, Linkfarbe wie die Akzentfarbe der App.</figcaption>
+    </figure>
+    <figure>
+      <div class="ph"><div class="body">
+        <div class="plan"><span><b>Jährlich</b><br>= 0,75 €/Monat</span><span class="p">8,99 €/Jahr</span></div>
+        <div class="cta">Jetzt freischalten — 8,99 €/Jahr</div>
+        <div class="legal">Abo verlängert sich automatisch, jederzeit kündbar. Mit dem Kauf stimmst du zu:</div>
+        <div class="links mark">Datenschutz<span>·</span>Nutzungsbedingungen (EULA)</div>
+        <div class="restore">Käufe wiederherstellen</div>
+      </div></div>
+      <figcaption><b>Alternative B, hell.</b> Links direkt unter dem Kaufknopf, vor „Käufe wiederherstellen“. Näher am Kauf, aber Wiederherstellen rutscht tiefer.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2>Was sich für dich ändert</h2>
+  <ul class="facts">
+    <li>Beide Links öffnen eine Webseite im Browser: Nutzungsbedingungen = Apples Standardvertrag, Datenschutz = die Seite, die auch im App Store steht.</li>
+    <li>Die Abo-Zeile nennt jetzt Name, Laufzeit und Preis je Abo und folgt Apples Vorgabe zur Kündigung.</li>
+    <li>Im Einmalkauf ändert sich nichts; die Zeile gilt nur für Monat und Jahr.</li>
+  </ul>
+  <div class="note">
+    <p><b>Alternative C (nicht gezeichnet):</b> die Texte in der App selbst öffnen (die vorhandenen Seiten aus den Einstellungen). Kein Netz nötig, aber die App hätte dann eigene Nutzungsbedingungen neben Apples Standardvertrag im Store, und beide würden sich widersprechen.</p>
+  </div>
+</section>
+</div>
