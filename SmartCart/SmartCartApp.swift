@@ -370,6 +370,10 @@ struct SmartCartApp: App {
             item.addedDate = start.addingTimeInterval(Double(index) * 60)
             context.insert(item)
         }
+        // Issue #233: Artikel ohne Katalogpreis, damit die Zeile „Preis?“ zeigt (`ItemRowTapUITests`).
+        if ProcessInfo.processInfo.arguments.contains("-shoppingRouteUnpricedItemForUITests") {
+            context.insert(ShoppingItem(name: "Wunderkraut", store: store))
+        }
         var model = ShoppingRouteModel()
         // Issue #98: ohne gelerntes Modell starten, gelernt wird dann nur durch die Haken im Test.
         let learned = !ProcessInfo.processInfo.arguments.contains("-shoppingRouteNoLearnedModelForUITests")
