@@ -1,0 +1,311 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -scheme Restock -project Restock.xcodeproj -destination id=79AEBC11-62EF-4559-84DE-5BD5D0DE6015 -derivedDataPath build/dd-shots "-only-testing:RestockUITests/StoreScreenshotCaptureUITests/testCaptureGerman" -testLanguage de -testRegion DE -resultBundlePath build/shots-de-20261029-111052-v2.xcresult -collect-test-diagnostics never
+
+Writing result bundle at path:
+	/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/shots-de-20261029-111052-v2.xcresult
+
+2026-10-29 11:25:44.043 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:26:48.838968+0100 RestockUITests-Runner[12826:30622389] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-29 11:27:29.916.
+Test Suite 'RestockUITests.xctest' started at 2026-10-29 11:27:29.921.
+Test Suite 'StoreScreenshotCaptureUITests' started at 2026-10-29 11:27:29.921.
+Test Case '-[RestockUITests.StoreScreenshotCaptureUITests testCaptureGerman]' started.
+    t =     0.01s Start Test at 2026-10-29 11:27:29.929
+objc[12826]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x102740398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105c28310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     0.75s Set Up
+    t =     0.80s Open com.johannesemmrich.Restock
+    t =     0.80s     Launch com.johannesemmrich.Restock
+2026-10-29 11:27:31.651 xcodebuild[12629:30620229] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-29 11:27:31.651 xcodebuild[12629:30620229] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-29 11:27:31.858 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    36.79s         Setting up automation session
+    t =    46.65s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreScreenshotCaptureUITests testCaptureGerman] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    51.33s Checking existence of `Button (First Match)`
+    t =    51.86s Find the Button (First Match)
+    t =    52.16s Find the "Lidl, 2x pro Woche, Liste ist leer" Button
+    t =    52.75s Checking existence of `TextField (Element at index 0)`
+    t =    53.13s Find the TextField (Element at index 0)
+    t =    53.63s Find the "Schnell hinzufügen…" TextField
+    t =    53.84s Tap "Schnell hinzufügen…" TextField
+    t =    53.84s     Wait for com.johannesemmrich.Restock to idle
+    t =    54.05s     Find the "Schnell hinzufügen…" TextField
+    t =    54.22s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    54.66s     Synthesize event
+    t =    55.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    59.13s Type 'Milch' into "Schnell hinzufügen…" TextField
+    t =    59.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    59.45s     Find the "Schnell hinzufügen…" TextField
+    t =    59.55s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    59.63s     Synthesize event
+    t =    59.95s     Wait for com.johannesemmrich.Restock to idle
+    t =    60.06s Find the "Schnell hinzufügen…" TextField
+    t =    60.13s Waiting 10.0s for "quickAdd.targetCard" Any to exist
+    t =    61.23s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =    61.23s         Checking existence of `"quickAdd.targetCard" Any`
+    t =    61.47s Type '
+' into "Schnell hinzufügen…" TextField
+    t =    61.47s     Wait for com.johannesemmrich.Restock to idle
+    t =    61.48s     Find the "Schnell hinzufügen…" TextField
+    t =    61.55s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    61.62s     Synthesize event
+    t =    61.85s     Wait for com.johannesemmrich.Restock to idle
+    t =    63.34s Checking existence of `"quickAdd.targetCard" Any`
+    t =    64.04s Type '1 kg Bananen' into "Schnell hinzufügen…" TextField
+    t =    64.04s     Wait for com.johannesemmrich.Restock to idle
+    t =    64.11s     Find the "Schnell hinzufügen…" TextField
+    t =    64.27s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    64.36s     Synthesize event
+    t =    64.82s     Wait for com.johannesemmrich.Restock to idle
+    t =    64.83s Find the "Schnell hinzufügen…" TextField
+    t =    64.90s Waiting 10.0s for "quickAdd.targetCard" Any to exist
+    t =    65.96s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =    65.96s         Checking existence of `"quickAdd.targetCard" Any`
+    t =    66.15s Type '
+' into "Schnell hinzufügen…" TextField
+    t =    66.15s     Wait for com.johannesemmrich.Restock to idle
+    t =    66.17s     Find the "Schnell hinzufügen…" TextField
+    t =    66.23s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    66.29s     Synthesize event
+    t =    66.53s     Wait for com.johannesemmrich.Restock to idle
+    t =    67.02s Checking existence of `"quickAdd.targetCard" Any`
+    t =    67.27s Type 'Nudeln' into "Schnell hinzufügen…" TextField
+    t =    67.28s     Wait for com.johannesemmrich.Restock to idle
+    t =    67.28s     Find the "Schnell hinzufügen…" TextField
+    t =    67.33s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    67.39s     Synthesize event
+    t =    67.70s     Wait for com.johannesemmrich.Restock to idle
+    t =    67.75s Find the "Schnell hinzufügen…" TextField
+    t =    67.81s Waiting 10.0s for "quickAdd.targetCard" Any to exist
+    t =    68.89s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =    68.89s         Checking existence of `"quickAdd.targetCard" Any`
+    t =    69.07s Type '
+' into "Schnell hinzufügen…" TextField
+    t =    69.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    69.09s     Find the "Schnell hinzufügen…" TextField
+    t =    69.14s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    69.20s     Synthesize event
+    t =    69.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    69.98s Checking existence of `"quickAdd.targetCard" Any`
+    t =    70.30s Type 'Brot' into "Schnell hinzufügen…" TextField
+    t =    70.30s     Wait for com.johannesemmrich.Restock to idle
+    t =    70.30s     Find the "Schnell hinzufügen…" TextField
+    t =    70.45s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    70.58s     Synthesize event
+    t =    70.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    70.88s Find the "Schnell hinzufügen…" TextField
+    t =    70.94s Waiting 10.0s for "quickAdd.targetCard" Any to exist
+    t =    71.94s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =    71.94s         Checking existence of `"quickAdd.targetCard" Any`
+    t =    72.09s Type '
+' into "Schnell hinzufügen…" TextField
+    t =    72.10s     Wait for com.johannesemmrich.Restock to idle
+    t =    72.10s     Find the "Schnell hinzufügen…" TextField
+    t =    72.17s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    72.22s     Synthesize event
+    t =    72.45s     Wait for com.johannesemmrich.Restock to idle
+    t =    72.99s Checking existence of `"quickAdd.targetCard" Any`
+    t =    73.24s Type 'Eier' into "Schnell hinzufügen…" TextField
+    t =    73.24s     Wait for com.johannesemmrich.Restock to idle
+    t =    73.25s     Find the "Schnell hinzufügen…" TextField
+    t =    73.30s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    73.38s     Synthesize event
+    t =    73.71s     Wait for com.johannesemmrich.Restock to idle
+    t =    73.72s Find the "Schnell hinzufügen…" TextField
+    t =    73.77s Waiting 10.0s for "quickAdd.targetCard" Any to exist
+    t =    74.81s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =    74.81s         Checking existence of `"quickAdd.targetCard" Any`
+    t =    74.97s Type '
+' into "Schnell hinzufügen…" TextField
+    t =    74.97s     Wait for com.johannesemmrich.Restock to idle
+    t =    74.98s     Find the "Schnell hinzufügen…" TextField
+    t =    75.03s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    75.09s     Synthesize event
+    t =    75.33s     Wait for com.johannesemmrich.Restock to idle
+    t =    75.89s Checking existence of `"quickAdd.targetCard" Any`
+    t =    76.14s Type 'Zahnpasta' into "Schnell hinzufügen…" TextField
+    t =    76.14s     Wait for com.johannesemmrich.Restock to idle
+    t =    76.15s     Find the "Schnell hinzufügen…" TextField
+    t =    76.20s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    76.29s     Synthesize event
+    t =    76.65s     Wait for com.johannesemmrich.Restock to idle
+    t =    76.66s Find the "Schnell hinzufügen…" TextField
+    t =    76.73s Waiting 10.0s for "quickAdd.targetCard" Any to exist
+    t =    77.76s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =    77.76s         Checking existence of `"quickAdd.targetCard" Any`
+    t =    77.92s Type '
+' into "Schnell hinzufügen…" TextField
+    t =    77.92s     Wait for com.johannesemmrich.Restock to idle
+    t =    77.93s     Find the "Schnell hinzufügen…" TextField
+    t =    77.98s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    78.05s     Synthesize event
+    t =    78.28s     Wait for com.johannesemmrich.Restock to idle
+    t =    78.85s Checking existence of `"quickAdd.targetCard" Any`
+    t =    79.17s Type 'Shampoo' into "Schnell hinzufügen…" TextField
+    t =    79.17s     Wait for com.johannesemmrich.Restock to idle
+    t =    79.20s     Find the "Schnell hinzufügen…" TextField
+    t =    79.30s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    79.36s     Synthesize event
+    t =    79.69s     Wait for com.johannesemmrich.Restock to idle
+    t =    79.72s Find the "Schnell hinzufügen…" TextField
+    t =    79.87s Waiting 10.0s for "quickAdd.targetCard" Any to exist
+    t =    80.90s     Checking `Expect predicate `existsNoRetry == 1` for object "quickAdd.targetCard" Any`
+    t =    80.90s         Checking existence of `"quickAdd.targetCard" Any`
+    t =    81.07s Type '
+' into "Schnell hinzufügen…" TextField
+    t =    81.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    81.07s     Find the "Schnell hinzufügen…" TextField
+    t =    81.14s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    81.20s     Synthesize event
+    t =    81.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    81.72s Checking existence of `"quickAdd.targetCard" Any`
+    t =    82.00s Checking existence of `Keyboard (First Match)`
+    t =    82.02s Type '
+' into TextField (Element at index 0)
+    t =    82.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    82.04s     Find the TextField (Element at index 0)
+    t =    82.09s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    82.15s     Synthesize event
+    t =    82.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    82.68s Checking existence of `Keyboard (First Match)`
+    t =    82.75s Checking existence of `"quickAdd.toast" Any`
+    t =    84.40s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    84.65s Added attachment named 'de-01-start'
+    t =    84.65s Checking existence of `Button (First Match)`
+    t =    84.70s Find the Button (First Match)
+    t =    84.75s Find the "Lidl, · 5, 2x pro Woche, Bananen, Brot…" Button
+    t =    84.83s Tap "Lidl, · 5, 2x pro Woche, Bananen, Brot…" Button
+    t =    84.83s     Wait for com.johannesemmrich.Restock to idle
+    t =    84.84s     Find the "Lidl, · 5, 2x pro Woche, Bananen, Brot…" Button
+    t =    84.89s     Check for interrupting elements affecting "Lidl, · 5, 2x pro Woche, Bananen, Brot…" Button
+    t =    84.94s     Synthesize event
+    t =    85.26s     Wait for com.johannesemmrich.Restock to idle
+    t =    86.06s Waiting 20.0s for Cell (First Match) to exist
+    t =    87.09s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    87.09s         Checking existence of `Cell (First Match)`
+    t =    88.66s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    88.99s Added attachment named 'de-02-liste'
+    t =    88.99s Checking existence of `Button (First Match)`
+    t =    89.01s Find the Button (First Match)
+    t =    89.11s Find the "BackButton" Button
+    t =    89.18s Tap "BackButton" Button
+    t =    89.18s     Wait for com.johannesemmrich.Restock to idle
+    t =    89.19s     Find the "BackButton" Button
+    t =    89.22s     Check for interrupting elements affecting "BackButton" Button
+    t =    89.30s     Synthesize event
+    t =    89.64s     Wait for com.johannesemmrich.Restock to idle
+    t =    90.04s Checking existence of `TextField (Element at index 0)`
+    t =    90.15s Find the TextField (Element at index 0)
+    t =    90.96s Find the "Schnell hinzufügen…" TextField
+    t =    91.07s Tap "Schnell hinzufügen…" TextField
+    t =    91.08s     Wait for com.johannesemmrich.Restock to idle
+    t =    91.09s     Find the "Schnell hinzufügen…" TextField
+    t =    91.12s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    91.17s     Synthesize event
+    t =    91.50s     Wait for com.johannesemmrich.Restock to idle
+    t =    91.86s Type 'Duschgel' into "Schnell hinzufügen…" TextField
+    t =    91.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    92.23s     Find the "Schnell hinzufügen…" TextField
+    t =    92.29s     Check for interrupting elements affecting "Schnell hinzufügen…" TextField
+    t =    92.34s     Synthesize event
+    t =    92.72s     Wait for com.johannesemmrich.Restock to idle
+    t =    92.80s Find the "Schnell hinzufügen…" TextField
+    t =    92.86s Checking existence of `"quickAdd.target" Any`
+    t =    93.06s Find the "quickAdd.target" Any
+    t =    94.75s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    94.99s Added attachment named 'de-03-schnell-hinzufuegen'
+    t =    94.99s Terminate com.johannesemmrich.Restock:13232
+2026-10-29 11:29:05.012 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:05.022 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:05.037 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    96.09s Open com.johannesemmrich.Restock
+    t =    96.10s     Launch com.johannesemmrich.Restock
+2026-10-29 11:29:06.037 xcodebuild[12629:30620229] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-29 11:29:06.038 xcodebuild[12629:30620229] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-29 11:29:06.081 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    96.34s         Setting up automation session
+    t =   101.34s         Wait for com.johannesemmrich.Restock to idle
+    t =   106.53s Waiting 30.0s for "receiptReview.saveButton" Button to exist
+    t =   107.55s     Checking `Expect predicate `existsNoRetry == 1` for object "receiptReview.saveButton" Button`
+    t =   107.55s         Checking existence of `"receiptReview.saveButton" Button`
+    t =   109.36s Find the Target Application 'com.johannesemmrich.Restock'
+    t =   109.59s Added attachment named 'de-04-bon-pruefung'
+    t =   109.59s Terminate com.johannesemmrich.Restock:13482
+2026-10-29 11:29:19.589 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:19.597 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:19.609 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =   110.63s Open com.johannesemmrich.Restock
+    t =   110.63s     Launch com.johannesemmrich.Restock
+2026-10-29 11:29:20.587 xcodebuild[12629:30620229] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-29 11:29:20.587 xcodebuild[12629:30620229] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-29 11:29:20.644 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =   110.89s         Setting up automation session
+    t =   117.20s         Wait for com.johannesemmrich.Restock to idle
+    t =   124.44s Checking existence of `"gearshape" Button`
+    t =   124.68s Find the "gearshape" Button
+    t =   124.72s Find the "gearshape" Button
+    t =   124.76s Tap "gearshape" Button
+    t =   124.77s     Wait for com.johannesemmrich.Restock to idle
+    t =   124.77s     Find the "gearshape" Button
+    t =   124.79s     Check for interrupting elements affecting "gearshape" Button
+    t =   124.86s     Synthesize event
+    t =   125.19s     Wait for com.johannesemmrich.Restock to idle
+    t =   125.81s Checking existence of `Button (First Match)`
+    t =   126.00s Swipe up Target Application 'com.johannesemmrich.Restock'
+    t =   126.00s     Wait for com.johannesemmrich.Restock to idle
+    t =   126.31s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =   126.35s     Check for interrupting elements affecting "Restock" Application
+    t =   126.39s     Synthesize event
+    t =   126.82s     Wait for com.johannesemmrich.Restock to idle
+    t =   128.91s Checking existence of `Button (First Match)`
+    t =   129.00s Checking existence of `Button (First Match)`
+    t =   129.10s Find the Button (First Match)
+    t =   129.19s Find the "Restock Pro freischalten, Ausgaben-Analyse & Rezeptplan" Button
+    t =   129.31s Tap "Restock Pro freischalten, Ausgaben-Analyse & Rezeptplan" Button
+    t =   129.31s     Wait for com.johannesemmrich.Restock to idle
+    t =   129.32s     Find the "Restock Pro freischalten, Ausgaben-Analyse & Rezeptplan" Button
+    t =   129.44s     Check for interrupting elements affecting "Restock Pro freischalten, Ausgaben-Analyse & Rezeptplan" Button
+    t =   129.51s     Synthesize event
+    t =   129.81s     Wait for com.johannesemmrich.Restock to idle
+    t =   130.30s Waiting 20.0s for "Restock Pro" StaticText to exist
+    t =   131.31s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock Pro" StaticText`
+    t =   131.31s         Checking existence of `"Restock Pro" StaticText`
+    t =   133.47s Find the Target Application 'com.johannesemmrich.Restock'
+    t =   133.69s Added attachment named 'de-05-pro'
+    t =   133.69s Terminate com.johannesemmrich.Restock:13534
+2026-10-29 11:29:43.671 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:43.678 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:43.692 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =   134.76s Tear Down
+    t =   134.76s     Open com.johannesemmrich.Restock
+    t =   134.76s         Launch com.johannesemmrich.Restock
+2026-10-29 11:29:44.702 xcodebuild[12629:30620229] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-29 11:29:44.702 xcodebuild[12629:30620229] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-29 11:29:44.741 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =   134.99s             Setting up automation session
+    t =   137.98s             Wait for com.johannesemmrich.Restock to idle
+    t =   140.63s     Terminate com.johannesemmrich.Restock:13609
+2026-10-29 11:29:50.564 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:50.564 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:50.565 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.StoreScreenshotCaptureUITests testCaptureGerman]' passed (142.068 seconds).
+Test Suite 'StoreScreenshotCaptureUITests' passed at 2026-10-29 11:29:51.997.
+	 Executed 1 test, with 0 failures (0 unexpected) in 142.068 (142.076) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-29 11:29:52.000.
+	 Executed 1 test, with 0 failures (0 unexpected) in 142.068 (142.080) seconds
+Test Suite 'Selected tests' passed at 2026-10-29 11:29:52.001.
+	 Executed 1 test, with 0 failures (0 unexpected) in 142.068 (142.084) seconds
+2026-10-29 11:29:52.087 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:52.088 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:52.090 xcodebuild[12629:30620229] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 11:29:52.356 xcodebuild[12629:30620229] [MT] IDETestOperationsObserverDebug: 254.156 elapsed -- Testing started completed.
+2026-10-29 11:29:52.356 xcodebuild[12629:30620229] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-29 11:29:52.356 xcodebuild[12629:30620229] [MT] IDETestOperationsObserverDebug: 254.156 sec, +254.156 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/shots-de-20261029-111052-v2.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

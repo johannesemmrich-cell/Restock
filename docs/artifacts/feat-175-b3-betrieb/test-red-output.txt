@@ -1,0 +1,52 @@
+asc_check 2026-10-28T20:29:08Z Commit 5524fb4003681786abb7808409008b374638436c
+== metadata
+ok   metadata: description (de-DE)
+ok   metadata: keywords (de-DE)
+ok   metadata: promotionalText (de-DE)
+ok   metadata: supportUrl (de-DE)
+ok   metadata: description (en-US)
+ok   metadata: keywords (en-US)
+ok   metadata: promotionalText (en-US)
+ok   metadata: supportUrl (en-US)
+ok   metadata: name (de-DE)
+ok   metadata: subtitle (de-DE)
+ok   metadata: privacyPolicyUrl (de-DE)
+ok   metadata: name (en-US)
+ok   metadata: subtitle (en-US)
+ok   metadata: privacyPolicyUrl (en-US)
+== privacy-url
+ok   privacy-url: HTTP-Status
+Abweichung privacy-url: Abschnitt Deutsch (42 Zeilen): Soll alle Zeilen aus docs/appstore/datenschutz.md, Ist 38 fehlen, z. B. Stand: Oktober 2026
+Abweichung privacy-url: Abschnitt English (43 Zeilen): Soll alle Zeilen aus docs/appstore/datenschutz.md, Ist 41 fehlen, z. B. This is a translation for convenience. In case of any discrepancy, the German ve
+== appinfo
+ok   appinfo: contentRightsDeclaration
+ok   appinfo: primaryCategory
+ok   appinfo: secondaryCategory
+ok   appinfo: Kategorien
+ok   appinfo: ageRatingDeclaration
+ok   appinfo: appPriceSchedule
+ok   appinfo: Basisland
+ok   appinfo: App-Preis (DEU)
+ok   appinfo: appAvailabilityV2
+== iap
+Abweichung iap: Abo-Gruppe „Restock Pro“: Soll 1, Ist 0
+Abweichung iap: lifetime vorhanden (IAP): Soll IAP, Ist fehlt
+Abweichung iap: monthly vorhanden (SUB): Soll SUB, Ist fehlt
+Abweichung iap: yearly vorhanden (SUB): Soll SUB, Ist fehlt
+== screenshots
+Abweichung screenshots: Anzahl (de-DE): Soll 3 bis 10, Ist 0
+Abweichung screenshots: Anzahl (en-US): Soll 3 bis 10, Ist 0
+== build
+Abweichung build: build zugeordnet: Soll zugeordnet, Ist keiner
+== review
+ok   review: appStoreReviewDetail
+ok   review: contactFirstName
+ok   review: contactLastName
+ok   review: contactEmail
+ok   review: contactPhone
+ok   review: demoAccountRequired
+== status
+ok   status: appVersionState
+offen AC-14 App-Privacy-Fragebogen: per API nicht lesbar, manuell belegen (Beleg-Screenshot)
+
+FAILED: asc_check --all endete mit Exit-Code 1 (ERROR-Status des Gegenlesers; Abweichungen in iap, screenshots, build, privacy-url) am 2026-10-28.

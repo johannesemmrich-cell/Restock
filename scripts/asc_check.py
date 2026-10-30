@@ -8,6 +8,7 @@ B3b: Datenschutzseite mit eigenem User-Agent, Altersfreigabe nur mit beantwortet
 (Basisland DEU, Betrag 0), 404 nur an manualPrices des App-Preisplans und an appAvailabilityV2 als Abweichung
 „nicht eingerichtet“."""
 import datetime, html, json, os, re, subprocess, sys
+from collections import Counter
 from decimal import Decimal
 from pathlib import Path
 from asc_lib import BUNDLE, HOST, VERSION_QUERY, apple_error_suffix, make_token, openssl_sign, parse_texts, urllib_send
@@ -329,14 +330,38 @@ def sec_screenshots(rd, ctx, rep, page_send):
         if loc not in locs:
             rep.check("screenshots", f"Lokalisierung ({loc})", False, "vorhanden", "fehlt")
             continue
-        shots = [s for st in rd.data(f"/v1/appStoreVersionLocalizations/{locs[loc]['id']}/appScreenshotSets") or []
-                 for s in rd.data(f"/v1/appScreenshotSets/{st['id']}/appScreenshots") or []]
-        for s in shots:  # Maße aus den Attributen, nicht aus dem Enum-Namen des Display-Typs (AC-16)
-            asset = s["attributes"].get("imageAsset") or {}
-            size = f"{asset.get('width')}×{asset.get('height')}"
-            if size != "1320×2868":
-                rep.check("screenshots", f"Bildmaß ({loc}, {s['id']})", False, "1320×2868", size)
-        rep.check("screenshots", f"Anzahl ({loc})", 3 <= len(shots) <= 10, "3 bis 10", len(shots))
+        sets = rd.data(f"/v1/appStoreVersionLocalizations/{locs[loc]['id']}/appScreenshotSets") or []
+        good = sum(check_shot_set(rd, rep, loc, st) for st in sets)
+        rep.check("screenshots", f"Sets ({loc})", good >= 1, "mindestens ein gültiges Set", f"{len(sets)} Sets, {good} gültig")
+
+
+SHOT_SIZES = ("1320×2868", "1206×2622")  # 6,9″ oder 6,3″ (Pflicht-Platz in ASC), Changelog 2026-10-29
+
+
+def tally(values):
+    return ", ".join(f"{v} ×{n}" for v, n in sorted(Counter(values).items())) or "keine"
+
+
+def check_shot_set(rd, rep, loc, st):
+    """Ein Set: 3 bis 10 Bilder, alle mit derselben gültigen Größe und Zustand COMPLETE. Maße aus den Attributen, der Enum-Name des
+    Display-Typs wird nur angezeigt (AC-16)."""
+    shots = rd.data(f"/v1/appScreenshotSets/{st['id']}/appScreenshots") or []
+    sizes, states = [], []
+    for s in shots:
+        a = s.get("attributes") or {}
+        asset, state = a.get("imageAsset") or {}, (a.get("assetDeliveryState") or {}).get("state") or "unbekannt"
+        size = f"{asset.get('width')}×{asset.get('height')}" if asset else "kein imageAsset"
+        sizes.append(size)
+        states.append(state)
+        if size not in SHOT_SIZES:
+            rep.check("screenshots", f"Bildmaß ({loc}, {st['id']}, {s['id']})", False, " oder ".join(SHOT_SIZES),
+                      f"{size} (Zustand {state})")
+    kind = (st.get("attributes") or {}).get("screenshotDisplayType") or "unbekannt"
+    ok = 3 <= len(shots) <= 10 and len(set(sizes)) == 1 and sizes[0] in SHOT_SIZES and set(states) == {"COMPLETE"}
+    summary = f"{len(shots)} Bilder, {tally(sizes)}, Zustand {tally(states)}"
+    rep.check("screenshots", f"Set {kind} ({loc}, {st['id']}): {summary}", ok,
+              f"3 bis 10 Bilder, einheitlich {' oder '.join(SHOT_SIZES)}, Zustand COMPLETE", summary)
+    return ok
 
 
 def sec_build(rd, ctx, rep, page_send):

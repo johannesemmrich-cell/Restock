@@ -1,0 +1,22 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -scheme Restock -project Restock.xcodeproj -destination id=49E5FE0B-C1FF-4542-AA2D-A4DCD82B4B08 -derivedDataPath build/dd-shots "-only-testing:RestockUITests/StoreScreenshotCaptureUITests/testCaptureEnglish" -testLanguage en -testRegion DE -resultBundlePath build/shots-en-20261029-064044-v1.xcresult -collect-test-diagnostics never
+
+Writing result bundle at path:
+	/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/shots-en-20261029-064044-v1.xcresult
+
+2026-10-29 07:06:52.088 xcodebuild[55572:30002085] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 07:15:08.901202+0100 RestockUITests-Runner[56978:30021601] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+objc[56978]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x1065a8398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x106f10310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+Test Suite 'Selected tests' started at 2026-10-29 07:16:11.473.
+Test Suite 'RestockUITests.xctest' started at 2026-10-29 07:16:11.489.
+Test Suite 'StoreScreenshotCaptureUITests' started at 2026-10-29 07:16:11.490.
+Test Case '-[RestockUITests.StoreScreenshotCaptureUITests testCaptureEnglish]' started.
+    t =     0.21s Start Test at 2026-10-29 07:16:11.700
+    t =     6.50s Set Up
+    t =     7.60s Open com.johannesemmrich.Restock
+    t =     7.70s     Launch com.johannesemmrich.Restock
+2026-10-29 07:16:20.985 xcodebuild[55572:30002085] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-29 07:16:20.986 xcodebuild[55572:30002085] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-29 07:16:21.479 xcodebuild[55572:30002085] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+** BUILD INTERRUPTED **

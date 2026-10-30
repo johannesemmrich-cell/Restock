@@ -1,0 +1,13 @@
+Fehler: HTTP 409 bei POST /v1/appStoreVersionLocalizations — ENTITY_ERROR.ATTRIBUTE.INVALID.DUPLICATE: The provided entity includes an attribute with a value that has already been use
+PATCH appInfoLocalizations de-DE subtitle: (leer) -> Einkaufsliste mit Ladenwahl
+PATCH appInfoLocalizations de-DE privacyPolicyUrl: (leer) -> https://emmrich-business.com/datenschutz
+POST appInfoLocalizations en-US name: (leer) -> Restock Shopping List
+POST appInfoLocalizations en-US subtitle: (leer) -> Smart shopping list by store
+POST appInfoLocalizations en-US privacyPolicyUrl: (leer) -> https://emmrich-business.com/datenschutz
+POST appStoreVersionLocalizations en-US description: (leer) -> Restock is a shopping list that knows where things belong. ⏎…
+POST appStoreVersionLocalizations en-US keywords: (leer) -> grocery,receipt,scanner,prices,supermarket,meal plan,barcode…
+POST appStoreVersionLocalizations en-US promotionalText: (leer) -> Jot down what's missing. Restock files it under the right st…
+POST appStoreVersionLocalizations en-US supportUrl: (leer) -> https://emmrich-business.com/support.html
+3 Schreibaufrufe geplant.
+ok PATCH /v1/appInfoLocalizations/97128a98-f2eb-491c-b246-e34510d02528
+ok POST /v1/appInfoLocalizations

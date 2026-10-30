@@ -1,0 +1,27 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -scheme Restock -project Restock.xcodeproj -destination id=EB8DE736-531A-4940-B381-F76F10D80AFA -derivedDataPath build/dd-shots "-only-testing:RestockUITests/StoreScreenshotCaptureUITests/testCaptureGerman" -testLanguage de -testRegion DE -resultBundlePath build/shots-de-20261028-215429.xcresult -collect-test-diagnostics never
+
+Writing result bundle at path:
+	/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/shots-de-20261028-215429.xcresult
+
+2026-10-28 21:57:35.821 xcodebuild[49402:28981688] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+
+
+*** If you believe this error represents a bug, please attach the result bundle at /Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/shots-de-20261028-215429.xcresult
+
+2026-10-28 23:36:32.167 xcodebuild[49402:28981688] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 23:36:32.227 xcodebuild[49402:28981688] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 23:36:32.269 xcodebuild[49402:28981688] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 23:36:32.756 xcodebuild[49402:28981688] [MT] IDETestOperationsObserverDebug: 5990.261 elapsed -- Testing started completed.
+2026-10-28 23:36:32.756 xcodebuild[49402:28981688] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-28 23:36:32.756 xcodebuild[49402:28981688] [MT] IDETestOperationsObserverDebug: 5990.261 sec, +5990.261 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/shots-de-20261028-215429.xcresult
+
+Testing failed:
+	RestockUITests-Runner (63094) encountered an error (The test runner hung before establishing connection.)
+
+** TEST EXECUTE FAILED **
+
+Testing started
