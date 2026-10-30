@@ -124,7 +124,7 @@ final class AddItemQuantitySuggestionUITests: XCTestCase {
             "Vorbedingung: die Menge muss zunächst als Annahme markiert sein"
         )
 
-        app.staticTexts["Bio Käse"].firstMatch.tap()
+        UITestItemEditor.open("Bio Käse", in: app)
 
         let incrementButton = app.buttons["plus.circle.fill"].firstMatch
         XCTAssertTrue(incrementButton.waitForExistence(timeout: 5), "Mengen-Stepper '+' in EditItemView nicht gefunden")

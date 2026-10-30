@@ -111,14 +111,14 @@ final class LegacyLearnedPriceResetUITests: XCTestCase {
 
     }
 
-    /// Öffnet den Bearbeiten-Dialog von „Laugenbrötchen groß“ (Tipp auf die Zeile, wie
+    /// Öffnet den Bearbeiten-Dialog von „Laugenbrötchen groß“ (Lang drücken → „Bearbeiten“, wie
     /// `AddItemQuantitySuggestionUITests`) und wartet auf „Speichern“ als Beleg, dass er offen ist.
     private func openEditor(_ name: String, in app: XCUIApplication) {
         let row = listRow(name, in: app)
         XCTAssertTrue(row.waitForExistence(timeout: UITestWait.defaultTimeout), "Zeile „\(name)“ nicht gefunden")
         let ready = row.waitUntilHittable()
         XCTAssertTrue(ready.matched, "Zeile „\(name)“ nicht antippbar — zuletzt: \(ready.last)")
-        app.staticTexts[name].firstMatch.tap()
+        UITestItemEditor.open(name, in: app)
         XCTAssertTrue(app.buttons["Speichern"].waitForExistence(timeout: UITestWait.defaultTimeout),
                       "Bearbeiten-Dialog für „\(name)“ nicht geöffnet")
     }

@@ -124,7 +124,7 @@ final class ShoppingRouteUITests: XCTestCase {
 
     func testCreatingCustomCategoryFromItemDialog() {
         let app = openedStore()
-        app.staticTexts["Gouda"].firstMatch.tap()
+        UITestItemEditor.open("Gouda", in: app)
 
         let categoryRow = app.descendants(matching: .any)["item.categoryRow"].firstMatch
         XCTAssertTrue(categoryRow.waitForExistence(timeout: UITestWait.defaultTimeout), "Zeile „Kategorie“ im Bearbeiten-Dialog fehlt")

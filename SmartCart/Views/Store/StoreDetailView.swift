@@ -458,15 +458,14 @@ struct StoreDetailView: View {
         if !store.completedItems.isEmpty {
             Section {
                 ForEach(store.completedItems) { item in
-                    ItemRow(item: item) { toggle(item: item) }
-                        .contentShape(Rectangle())
-                        .onTapGesture { editingItem = item }
+                    ItemRow(item: item, onToggle: { toggle(item: item) }, onEdit: { editingItem = item })
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
                                 withAnimation { deleteItem(item) }
                             } label: {
                                 Label(String(localized: "action.delete"), systemImage: "trash")
                             }
+                            editButton(for: item)
                         }
                         .swipeActions(edge: .leading) {
                             Button {
@@ -477,6 +476,7 @@ struct StoreDetailView: View {
                             .tint(.orange)
                         }
                         .contextMenu {
+                            editButton(for: item)
                             if store.shareID != nil {
                                 assignMenuItems(for: item)
                             }
@@ -864,15 +864,14 @@ struct StoreDetailView: View {
 
     @ViewBuilder
     private func pendingRow(_ item: ShoppingItem) -> some View {
-        ItemRow(item: item) { toggle(item: item) }
-            .contentShape(Rectangle())
-            .onTapGesture { editingItem = item }
+        ItemRow(item: item, onToggle: { toggle(item: item) }, onEdit: { editingItem = item })
             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                 Button(role: .destructive) {
                     withAnimation { deleteItem(item) }
                 } label: {
                     Label(String(localized: "action.delete"), systemImage: "trash")
                 }
+                editButton(for: item)
                 Button {
                     withAnimation { item.isUrgent.toggle() }
                     item.lastModified = Date()
@@ -902,10 +901,22 @@ struct StoreDetailView: View {
                 .tint(.indigo)
             }
             .contextMenu {
+                editButton(for: item)
                 if store.shareID != nil {
                     assignMenuItems(for: item)
                 }
             }
+    }
+
+    /// „Bearbeiten“ für Wischen nach links und Lang drücken. Ein Tipp auf die Zeile hakt ab.
+    private func editButton(for item: ShoppingItem) -> some View {
+        Button {
+            editingItem = item
+        } label: {
+            Label(String(localized: "action.edit"), systemImage: "pencil")
+        }
+        .tint(.blue)
+        .accessibilityIdentifier("item.action.edit")
     }
 
     /// Shared context-menu content for assigning `item` to any member of `store` (not just

@@ -60,6 +60,23 @@ extension XCUIElement {
     }
 }
 
+// Bearbeiten-Dialog eines Artikels in der Ladenliste öffnen. Ein Tipp auf die Zeile hakt ab
+// (Abhaken beim Einkaufen); bearbeitet wird über Lang drücken → „Bearbeiten“.
+enum UITestItemEditor {
+    static func open(_ name: String, in app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
+        let text = app.staticTexts[name].firstMatch
+        let ready = text.waitUntilHittable()
+        XCTAssertTrue(ready.matched, "Zeile „\(name)“ nicht antippbar — zuletzt: \(ready.last)", file: file, line: line)
+        text.press(forDuration: 1.0)
+        let edit = app.buttons.matching(
+            NSPredicate(format: "identifier == %@ OR label == %@", "item.action.edit", "Bearbeiten")).firstMatch
+        let editReady = edit.waitUntilHittable()
+        XCTAssertTrue(editReady.matched, "„Bearbeiten“ im Menü von „\(name)“ fehlt — zuletzt: \(editReady.last)",
+                      file: file, line: line)
+        edit.tap()
+    }
+}
+
 // Start-Helfer für gesäte UI-Tests (Issue #105 / #128, Durchgang 1).
 // Gemessen (#98, #128, App-Protokoll): Der Testläufer startet die App gelegentlich, im vollen Lauf
 // auf Restock-Validate beim ersten Start fast immer, ganz ohne Launch-Argumente; ohne Seed fehlt die
