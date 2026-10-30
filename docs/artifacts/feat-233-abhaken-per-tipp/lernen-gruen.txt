@@ -1,0 +1,269 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=9034BD4F-2D5F-49D5-B906-838326D51C95" "-only-testing:RestockUITests/ItemRowTapUITests/testRouteIsLearnedFromRowTaps" -derivedDataPath /private/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+
+SwiftDriver RestockUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockUITests -Onone @/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache -output-file-map /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/ModuleCache.noindex -sdk-module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-generated-files.hmap -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-own-target-headers.hmap -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-project-headers.hmap -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources/arm64 -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ ItemRowTapUITests.swift /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/RestockUITests/ItemRowTapUITests.swift (in target 'RestockUITests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/RestockUITests/ItemRowTapUITests.swift (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-SwiftPerFileCompile ItemRowTapUITests.swift
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockUITests (in target 'RestockUITests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for RestockUITests (in target 'RestockUITests' from project 'Restock')
+
+SwiftDriver\ Compilation\ Requirements RestockUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockUITests -Onone @/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache -output-file-map /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/ModuleCache.noindex -sdk-module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-generated-files.hmap -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-own-target-headers.hmap -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-project-headers.hmap -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources/arm64 -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest -experimental-emit-module-separately -disable-cmo
+
+Copy /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftsourceinfo (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftsourceinfo /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+Copy /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/arm64-apple-ios-simulator.abi.json /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.abi.json (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.abi.json /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+SwiftDriverJobDiscovery normal arm64 Compiling ItemRowTapUITests.swift (in target 'RestockUITests' from project 'Restock')
+
+SwiftDriver\ Compilation RestockUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockUITests -Onone @/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache -output-file-map /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/ModuleCache.noindex -sdk-module-cache-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-generated-files.hmap -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-own-target-headers.hmap -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-project-headers.hmap -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources/arm64 -Xcc -I/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest -experimental-emit-module-separately -disable-cmo
+
+Ld /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests normal (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk/Developer/Library/Frameworks -filelist /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.xctest-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.xctest-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests
+
+ExtractAppIntentsMetadata (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name RestockUITests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk --xcode-version 27A9275 --platform-family iOS --deployment-target 18.0 --bundle-identifier com.johannesemmrich.Restock.RestockUITests --output /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest --target-triple arm64-apple-ios18.0-simulator --binary-file /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --dependency-file /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_dependency_info.dat --stringsdata-file /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList --metadata-file-list /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.DependencyMetadataFileList --static-metadata-file-list /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-10-30 15:33:30.010 appintentsmetadataprocessor[68347:33937382] Starting appintentsmetadataprocessor export
+2026-10-30 15:33:30.015 appintentsmetadataprocessor[68347:33937382] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CopySwiftLibs /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/PlugIns --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/SystemExtensions --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest
+
+CodeSign /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app
+/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app: replacing existing signature
+
+PruneExplicitPrecompiledModules /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-10-30 15:33:30.158 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:33:33.878237+0100 RestockUITests-Runner[68413:33937741] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-30 15:33:37.391.
+Test Suite 'RestockUITests.xctest' started at 2026-10-30 15:33:37.393.
+Test Suite 'ItemRowTapUITests' started at 2026-10-30 15:33:37.393.
+Test Case '-[RestockUITests.ItemRowTapUITests testRouteIsLearnedFromRowTaps]' started.
+    t =     0.00s Start Test at 2026-10-30 15:33:37.397
+    t =     0.08s Set Up
+    t =     0.09s Open com.johannesemmrich.Restock
+    t =     0.09s     Launch com.johannesemmrich.Restock
+2026-10-30 15:33:37.808 xcodebuild[68306:33936942] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-30 15:33:37.808 xcodebuild[68306:33936942] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[68413]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x106480398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x106574310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+2026-10-30 15:33:37.854 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.18s         Setting up automation session
+    t =     3.99s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.ItemRowTapUITests testRouteIsLearnedFromRowTaps] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.56s Checking existence of `Button (First Match)`
+    t =     6.73s Find the Button (First Match)
+    t =     6.77s Find the "Wegeladen, · 3, 1x pro Woche, Apfel, Brot…" Button
+    t =     6.86s Tap "Wegeladen, · 3, 1x pro Woche, Apfel, Brot…" Button
+    t =     6.86s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.86s     Find the "Wegeladen, · 3, 1x pro Woche, Apfel, Brot…" Button
+    t =     6.88s     Check for interrupting elements affecting "Wegeladen, · 3, 1x pro Woche, Apfel, Brot…" Button
+    t =     6.93s     Synthesize event
+    t =     7.25s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.61s Waiting 20.0s for "Apfel" StaticText to exist
+    t =     8.63s     Checking `Expect predicate `existsNoRetry == 1` for object "Apfel" StaticText`
+    t =     8.63s         Checking existence of `"Apfel" StaticText`
+    t =     8.75s Find the "Brot" StaticText
+    t =     8.79s Find the "Apfel" StaticText
+    t =     8.83s Find the "Gouda" StaticText
+    t =     8.88s Checking existence of `"Gouda" StaticText`
+    t =     8.93s Find the "Gouda" StaticText
+    t =     8.98s Find the "Gouda" StaticText
+    t =     9.03s Tap "Gouda" StaticText
+    t =     9.03s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.04s     Find the "Gouda" StaticText
+    t =     9.08s     Check for interrupting elements affecting "Gouda" StaticText
+    t =     9.11s     Synthesize event
+    t =     9.40s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.45s Waiting 20.0s for "checkmark" Button to exist
+    t =    10.48s     Checking `Expect predicate `existsNoRetry == 1` for object "checkmark" Button`
+    t =    10.48s         Checking existence of `"checkmark" Button`
+    t =    10.59s Checking existence of `"Brot" StaticText`
+    t =    10.64s Find the "Brot" StaticText
+    t =    10.71s Find the "Brot" StaticText
+    t =    10.76s Tap "Brot" StaticText
+    t =    10.76s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.76s     Find the "Brot" StaticText
+    t =    10.81s     Check for interrupting elements affecting "Brot" StaticText
+    t =    10.85s     Synthesize event
+    t =    11.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.49s Waiting 20.0s for "checkmark" Button to exist
+    t =    12.52s     Checking `Expect predicate `existsNoRetry == 1` for object "checkmark" Button`
+    t =    12.53s         Checking existence of `"checkmark" Button`
+    t =    12.59s Checking existence of `"Apfel" StaticText`
+    t =    12.64s Find the "Apfel" StaticText
+    t =    12.69s Find the "Apfel" StaticText
+    t =    12.74s Tap "Apfel" StaticText
+    t =    12.74s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.74s     Find the "Apfel" StaticText
+    t =    12.79s     Check for interrupting elements affecting "Apfel" StaticText
+    t =    12.81s     Synthesize event
+    t =    13.10s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.45s Waiting 20.0s for "checkmark" Button to exist
+    t =    14.48s     Checking `Expect predicate `existsNoRetry == 1` for object "checkmark" Button`
+    t =    14.48s         Checking existence of `"checkmark" Button`
+    t =    14.53s Terminate com.johannesemmrich.Restock:68446
+2026-10-30 15:33:51.968 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:33:51.972 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:33:51.980 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    15.61s Open com.johannesemmrich.Restock
+    t =    15.62s     Launch com.johannesemmrich.Restock
+2026-10-30 15:33:53.020 xcodebuild[68306:33936942] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-30 15:33:53.021 xcodebuild[68306:33936942] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-30 15:33:53.054 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    15.84s         Setting up automation session
+    t =    18.91s         Wait for com.johannesemmrich.Restock to idle
+    t =    21.40s Checking existence of `Button (First Match)`
+    t =    21.54s Find the Button (First Match)
+    t =    21.62s Find the "Wegeladen, 1x pro Woche, Liste ist leer" Button
+    t =    21.65s Tap "Wegeladen, 1x pro Woche, Liste ist leer" Button
+    t =    21.65s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.65s     Find the "Wegeladen, 1x pro Woche, Liste ist leer" Button
+    t =    21.67s     Check for interrupting elements affecting "Wegeladen, 1x pro Woche, Liste ist leer" Button
+    t =    21.73s     Synthesize event
+    t =    22.03s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.54s Waiting 20.0s for "Apfel" StaticText to exist
+    t =    23.57s     Checking `Expect predicate `existsNoRetry == 1` for object "Apfel" StaticText`
+    t =    23.57s         Checking existence of `"Apfel" StaticText`
+    t =    23.72s Checking existence of `"Brot" StaticText`
+    t =    23.76s Find the "Brot" StaticText
+    t =    23.80s Find the "Brot" StaticText
+    t =    23.85s Tap "Brot" StaticText
+    t =    23.85s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.85s     Find the "Brot" StaticText
+    t =    23.89s     Check for interrupting elements affecting "Brot" StaticText
+    t =    23.92s     Synthesize event
+    t =    24.21s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.26s Checking `Expect predicate `exists == 0` for object "checkmark" Button`
+    t =    25.26s     Checking existence of `"checkmark" Button`
+    t =    25.38s Checking existence of `"Apfel" StaticText`
+    t =    25.42s Find the "Apfel" StaticText
+    t =    25.47s Find the "Apfel" StaticText
+    t =    25.53s Tap "Apfel" StaticText
+    t =    25.53s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.53s     Find the "Apfel" StaticText
+    t =    25.57s     Check for interrupting elements affecting "Apfel" StaticText
+    t =    25.60s     Synthesize event
+    t =    25.89s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.25s Checking `Expect predicate `exists == 0` for object "checkmark" Button`
+    t =    27.25s     Checking existence of `"checkmark" Button`
+    t =    27.33s Checking existence of `"Gouda" StaticText`
+    t =    27.38s Find the "Gouda" StaticText
+    t =    27.43s Find the "Gouda" StaticText
+    t =    27.49s Tap "Gouda" StaticText
+    t =    27.49s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.49s     Find the "Gouda" StaticText
+    t =    27.55s     Check for interrupting elements affecting "Gouda" StaticText
+    t =    27.57s     Synthesize event
+    t =    27.87s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.28s Checking `Expect predicate `exists == 0` for object "checkmark" Button`
+    t =    29.28s     Checking existence of `"checkmark" Button`
+    t =    29.36s Find the "Brot" StaticText
+    t =    29.41s Find the "Apfel" StaticText
+    t =    29.46s Find the "Gouda" StaticText
+    t =    29.51s Tear Down
+    t =    29.51s     Open com.johannesemmrich.Restock
+    t =    29.51s         Launch com.johannesemmrich.Restock
+    t =    29.51s             Terminate com.johannesemmrich.Restock:68493
+2026-10-30 15:34:06.915 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:34:06.916 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:34:06.918 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:34:07.946 xcodebuild[68306:33936942] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-30 15:34:07.946 xcodebuild[68306:33936942] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-30 15:34:07.974 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    30.76s             Setting up automation session
+    t =    32.64s             Wait for com.johannesemmrich.Restock to idle
+    t =    34.22s     Terminate com.johannesemmrich.Restock:68525
+2026-10-30 15:34:11.642 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:34:11.643 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:34:11.644 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.ItemRowTapUITests testRouteIsLearnedFromRowTaps]' passed (35.766 seconds).
+Test Suite 'ItemRowTapUITests' passed at 2026-10-30 15:34:13.163.
+	 Executed 1 test, with 0 failures (0 unexpected) in 35.766 (35.770) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-30 15:34:13.167.
+	 Executed 1 test, with 0 failures (0 unexpected) in 35.766 (35.774) seconds
+Test Suite 'Selected tests' passed at 2026-10-30 15:34:13.168.
+	 Executed 1 test, with 0 failures (0 unexpected) in 35.766 (35.777) seconds
+2026-10-30 15:34:13.237 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:34:13.237 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:34:13.240 xcodebuild[68306:33936942] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 15:34:33.707 xcodebuild[68306:33936942] [MT] IDETestOperationsObserverDebug: 63.641 elapsed -- Testing started completed.
+2026-10-30 15:34:33.708 xcodebuild[68306:33936942] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-30 15:34:33.708 xcodebuild[68306:33936942] [MT] IDETestOperationsObserverDebug: 63.641 sec, +63.641 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/claude-501/-Users-hem-Developer-Restock/45e4c90b-bfb5-4d6d-a228-aaf15eb00035/scratchpad/dd/Logs/Test/Test-Restock-2026.10.30_15-33-27-+0100.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started
