@@ -1,0 +1,28 @@
+Issue #215 – Paywall-Rechtslinks, Testnachweis nach Implementierung
+Stand: Basis-Commit 44c7e31 + ungestagte Änderungen:
+  - SmartCart/Views/Premium/PaywallView.swift (+51/−3)
+  - RestockUITests/PurchaseUITests.swift (+1/−1, Zeile 274, Entscheidung Orchestrator zu AC-9):
+    -  "label BEGINSWITH %@", "Abonnements verlängern sich"
+    +  "label BEGINSWITH %@", "Restock Pro – Jährlich"
+    Grund: Die Spec ersetzt den alten Rechtstext bewusst; der Test prüft nur die Lage
+    (Hinweis zwischen „Käufe wiederherstellen“ und Rechtsblock), nicht den Wortlaut.
+Gerät: Simulator Restock-Validate-27 (9034BD4F-2D5F-49D5-B906-838326D51C95), iOS 27
+Xcode: /Applications/Xcode.app/Contents/Developer, ohne CODE_SIGNING_ALLOWED=NO
+
+== Maßgeblicher Lauf (2026-10-30 ab 16:05 CET), ein xcodebuild mit allen drei Klassen ==
+Roh-Log: test-green-ui-purchase.txt
+  RestockTests/PaywallLegalLinksTests   Executed 3 tests, with 0 failures
+  RestockUITests/PaywallUITests         Executed 7 tests, with 0 failures
+                                        (inkl. testLegalLinksReachableOnPaywall,
+                                         testLegalLinksReachableAtLargestTextSize)
+  RestockUITests/PurchaseUITests        Executed 13 tests, with 0 failures
+                                        (inkl. testNoticeIsDirectlyBelowRestoreButton)
+  UI gesamt: Executed 20 tests, with 0 failures
+  ** TEST SUCCEEDED **, keine Abbrüche, keine Testläufer-Neustarts
+
+== Vorläufe (15:52–16:00 CET, vor der Testzeilen-Änderung) ==
+  test-green-unit.txt: PaywallLegalLinksTests 3/0, TEST SUCCEEDED
+  test-green-ui.txt:   PaywallUITests 7/0, TEST SUCCEEDED
+  PurchaseUITests damals 13 Tests / 1 Fehlschlag (testNoticeIsDirectlyBelowRestoreButton,
+  PurchaseUITests.swift:275 „Rechtstext fehlt“, suchte den alten Wortlaut). Roh-Log
+  durch den maßgeblichen Lauf überschrieben.

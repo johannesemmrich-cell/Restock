@@ -1,0 +1,213 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=9034BD4F-2D5F-49D5-B906-838326D51C95" "-only-testing:RestockUITests/PaywallUITests/testLegalLinksReachableOnPaywall" -derivedDataPath /private/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd -resultBundlePath /private/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/hell.xcresult
+
+Writing result bundle at path:
+	/private/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/hell.xcresult
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/SDKStatCaches.noindex/iphonesimulator27.1-24A94232-35d3147121984ba087c28d913653d626.sdkstatcache
+
+ProcessInfoPlistFile /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan/SmartCartWidgets/Info.plist (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan/SmartCartWidgets/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist
+
+ProcessInfoPlistFile /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan/RestockShareExtension/Info.plist (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan/RestockShareExtension/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist
+
+ProcessInfoPlistFile /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+CopySwiftLibs /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan
+    builtin-infoPlistUtility /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -o /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist
+
+CopySwiftLibs /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/PlugIns --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/SystemExtensions --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan
+    builtin-infoPlistUtility /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/ProductTypeInfoPlistAdditions.plist -o /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist
+
+CopySwiftLibs /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/twinkly-exploring-swan
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/PlugIns --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/SystemExtensions --scan-folder /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+PruneExplicitPrecompiledModules /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/dd/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-10-30 17:31:44.142 xcodebuild[99461:34211176] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:31:47.650824+0100 RestockUITests-Runner[99503:34211885] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-30 17:31:51.328.
+Test Suite 'RestockUITests.xctest' started at 2026-10-30 17:31:51.331.
+Test Suite 'PaywallUITests' started at 2026-10-30 17:31:51.332.
+Test Case '-[RestockUITests.PaywallUITests testLegalLinksReachableOnPaywall]' started.
+    t =     0.00s Start Test at 2026-10-30 17:31:51.333
+    t =     0.22s Set Up
+    t =     0.23s Open com.johannesemmrich.Restock
+    t =     0.23s     Launch com.johannesemmrich.Restock
+2026-10-30 17:31:51.987 xcodebuild[99461:34211176] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-30 17:31:51.987 xcodebuild[99461:34211176] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[99503]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x109c5c398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x109d50310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+2026-10-30 17:31:52.056 xcodebuild[99461:34211176] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.44s         Setting up automation session
+    t =     4.25s         Wait for com.johannesemmrich.Restock to idle
+    t =     6.56s Checking existence of `"fork.knife" Button`
+    t =     6.71s Find the "fork.knife" Button
+    t =     6.74s Find the "fork.knife" Button
+    t =     6.79s Checking existence of `"fork.knife" Button`
+    t =     6.81s Find the "fork.knife" Button
+    t =     6.82s Find the "fork.knife" Button
+    t =     6.85s Tap "fork.knife" Button
+    t =     6.85s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.85s     Find the "fork.knife" Button
+    t =     6.87s     Check for interrupting elements affecting "fork.knife" Button
+    t =     6.89s     Synthesize event
+    t =     7.20s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.23s Waiting 20.0s for "Restock Pro" StaticText to exist
+    t =     8.28s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock Pro" StaticText`
+    t =     8.28s         Checking existence of `"Restock Pro" StaticText`
+    t =     8.35s Waiting 5.0s for Any (First Match) to exist
+    t =     9.40s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     9.41s         Checking existence of `Any (First Match)`
+    t =     9.46s Waiting 5.0s for Any (First Match) to exist
+    t =    10.51s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    10.51s         Checking existence of `Any (First Match)`
+    t =    10.57s Checking existence of `"Käufe wiederherstellen" Button`
+    t =    10.60s Checking existence of `Button (First Match)`
+    t =    10.63s Waiting 3.0s for "Datenschutz" Link to exist
+    t =    11.68s     Checking `Expect predicate `existsNoRetry == 1` for object "Datenschutz" Link`
+    t =    11.68s         Checking existence of `"Datenschutz" Link`
+    t =    11.74s Checking existence of `"Datenschutz" Link`
+    t =    11.76s Waiting 20.0s for "Datenschutz" Link to exist
+    t =    12.80s     Checking `Expect predicate `existsNoRetry == 1` for object "Datenschutz" Link`
+    t =    12.80s         Checking existence of `"Datenschutz" Link`
+    t =    12.86s Checking existence of `"Datenschutz" Link`
+    t =    12.89s Find the "Datenschutz" Link
+    t =    12.92s Find the "Datenschutz" Link
+    t =    13.22s Checking existence of `"Datenschutz" Link`
+    t =    13.26s Find the "Datenschutz" Link
+    t =    13.29s Find the "Datenschutz" Link
+    t =    13.59s Checking existence of `"Datenschutz" Link`
+    t =    13.63s Find the "Datenschutz" Link
+    t =    13.66s Find the "Datenschutz" Link
+    t =    13.96s Checking existence of `"Datenschutz" Link`
+    t =    14.01s Find the "Datenschutz" Link
+    t =    14.04s Find the "Datenschutz" Link
+    t =    14.33s Checking existence of `"Datenschutz" Link`
+    t =    14.38s Find the "Datenschutz" Link
+    t =    14.42s Find the "Datenschutz" Link
+    t =    14.71s Checking existence of `"Datenschutz" Link`
+    t =    14.76s Find the "Datenschutz" Link
+    t =    14.79s Find the "Datenschutz" Link
+    t =    15.10s Checking existence of `"Datenschutz" Link`
+    t =    15.14s Find the "Datenschutz" Link
+    t =    15.17s Find the "Datenschutz" Link
+    t =    15.47s Checking existence of `"Datenschutz" Link`
+    t =    15.52s Find the "Datenschutz" Link
+    t =    15.55s Find the "Datenschutz" Link
+    t =    15.85s Checking existence of `"Datenschutz" Link`
+    t =    15.90s Find the "Datenschutz" Link
+    t =    15.93s Find the "Datenschutz" Link
+    t =    15.96s Press Target Application 'com.johannesemmrich.Restock'[0.50, 0.75] for 0.1 seconds, then drag to Target Application 'com.johannesemmrich.Restock'[0.50, 0.45] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    15.96s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.96s     Find the Target Application 'com.johannesemmrich.Restock'
+    t =    15.98s     Check for interrupting elements affecting "Restock" Application
+    t =    16.00s     Synthesize event
+    t =    16.01s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    16.02s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    16.04s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    16.06s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    16.08s         Find the Target Application 'com.johannesemmrich.Restock'
+    t =    16.91s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.29s Checking existence of `"Datenschutz" Link`
+    t =    17.33s Find the "Datenschutz" Link
+    t =    17.36s Find the "Datenschutz" Link
+    t =    17.39s Waiting 3.0s for "Nutzungsbedingungen (EULA)" Link to exist
+    t =    18.45s     Checking `Expect predicate `existsNoRetry == 1` for object "Nutzungsbedingungen (EULA)" Link`
+    t =    18.45s         Checking existence of `"Nutzungsbedingungen (EULA)" Link`
+    t =    18.50s Checking existence of `"Nutzungsbedingungen (EULA)" Link`
+    t =    18.53s Waiting 20.0s for "Nutzungsbedingungen (EULA)" Link to exist
+    t =    19.60s     Checking `Expect predicate `existsNoRetry == 1` for object "Nutzungsbedingungen (EULA)" Link`
+    t =    19.60s         Checking existence of `"Nutzungsbedingungen (EULA)" Link`
+    t =    19.64s Checking existence of `"Nutzungsbedingungen (EULA)" Link`
+    t =    19.67s Find the "Nutzungsbedingungen (EULA)" Link
+    t =    19.70s Find the "Nutzungsbedingungen (EULA)" Link
+    t =    19.73s Find the Window (First Match)
+    t =    19.74s Find the "Datenschutz" Link
+    t =    19.76s Find the "Nutzungsbedingungen (EULA)" Link
+    t =    19.79s Checking existence of `"Käufe wiederherstellen" Button`
+    t =    19.81s Find the "Käufe wiederherstellen" Button
+    t =    19.84s Find the "Datenschutz" Link
+    t =    19.87s Find the Window (First Match)
+    t =    19.87s Checking existence of `StaticText (First Match)`
+    t =    19.90s Find the StaticText (First Match)
+    t =    19.93s Waiting 20.0s for "Restock Pro – Jährlich: 1 Jahr, 8,99 €/Jahr. Restock Pro – Monatlich: 1 Monat, 1,99 €/Monat. Die Abos verlängern sich automatisch um die gleiche Laufzeit, wenn du sie nicht mindestens 24 Stunden vor Ablauf des laufenden Zeitraums in den Einstellungen deiner Apple-ID kündigst. Die Zahlung wird über deine Apple-ID abgewickelt. Der Einmalkauf ist kein Abo und verlängert sich nicht." StaticText to exist
+    t =    20.99s     Checking `Expect predicate `existsNoRetry == 1` for object "Restock Pro – Jährlich: 1 Jahr, 8,99 €/Jahr. Restock Pro – Monatlich: 1 Monat, 1,99 €/Monat. Die Abos verlängern sich automatisch um die gleiche Laufzeit, wenn du sie nicht mindestens 24 Stunden vor Ablauf des laufenden Zeitraums in den Einstellungen deiner Apple-ID kündigst. Die Zahlung wird über deine Apple-ID abgewickelt. Der Einmalkauf ist kein Abo und verlängert sich nicht." StaticText`
+    t =    21.00s         Checking existence of `"Restock Pro – Jährlich: 1 Jahr, 8,99 €/Jahr. Restock Pro – Monatlich: 1 Monat, 1,99 €/Monat. Die Abos verlängern sich automatisch um die gleiche Laufzeit, wenn du sie nicht mindestens 24 Stunden vor Ablauf des laufenden Zeitraums in den Einstellungen deiner Apple-ID kündigst. Die Zahlung wird über deine Apple-ID abgewickelt. Der Einmalkauf ist kein Abo und verlängert sich nicht." StaticText`
+    t =    21.05s Find the "Restock Pro – Jährlich: 1 Jahr, 8,99 €/Jahr. Restock Pro – Monatlich: 1 Monat, 1,99 €/Monat. Die Abos verlängern sich automatisch um die gleiche Laufzeit, wenn du sie nicht mindestens 24 Stunden vor Ablauf des laufenden Zeitraums in den Einstellungen deiner Apple-ID kündigst. Die Zahlung wird über deine Apple-ID abgewickelt. Der Einmalkauf ist kein Abo und verlängert sich nicht." StaticText
+    t =    21.08s Find the "Nutzungsbedingungen (EULA)" Link
+    t =    21.11s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    21.24s Added attachment named 'paywall-unten'
+    t =    21.24s Tear Down
+Test Case '-[RestockUITests.PaywallUITests testLegalLinksReachableOnPaywall]' passed (21.525 seconds).
+Test Suite 'PaywallUITests' passed at 2026-10-30 17:32:12.859.
+	 Executed 1 test, with 0 failures (0 unexpected) in 21.525 (21.527) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-30 17:32:12.861.
+	 Executed 1 test, with 0 failures (0 unexpected) in 21.525 (21.530) seconds
+Test Suite 'Selected tests' passed at 2026-10-30 17:32:12.862.
+	 Executed 1 test, with 0 failures (0 unexpected) in 21.525 (21.534) seconds
+2026-10-30 17:32:12.916 xcodebuild[99461:34211176] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:12.917 xcodebuild[99461:34211176] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:12.919 xcodebuild[99461:34211176] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:12.931 xcodebuild[99461:34211176] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:12.931 xcodebuild[99461:34211176] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:12.932 xcodebuild[99461:34211176] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-30 17:32:13.201 xcodebuild[99461:34211176] [MT] IDETestOperationsObserverDebug: 29.188 elapsed -- Testing started completed.
+2026-10-30 17:32:13.201 xcodebuild[99461:34211176] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-30 17:32:13.201 xcodebuild[99461:34211176] [MT] IDETestOperationsObserverDebug: 29.188 sec, +29.188 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/claude-501/-Users-hem-Developer-Restock--claude-worktrees-twinkly-exploring-swan/a2558f9f-5f8f-43da-8650-383b88c18d19/scratchpad/hell.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

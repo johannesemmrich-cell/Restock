@@ -1,7 +1,7 @@
 ---
 spec_file: docs/specs/views/paywall-rechtslinks.md
-spec_sha256: 8940317edb05ba8acbb7be716c80eef8d5aad3ccb6b3359f3c168994fe566b06
-spec_frozen_sha256: cbecfd89d7b60d3cc3fc5171658c6b36bc2b67f647199d144c4f186b4c60d947
+spec_sha256: 064b72633e3df8f8c7d57a276a91822fa96e0c9208d4c3c1bb0f869b16fd48b9
+spec_frozen_sha256: eacf70032c6c46599a59b64540eb98ed73fb60d998e72b3be656f354443636eb
 ---
 
 # PO-Briefing: fix-215-paywall-rechtslinks
@@ -26,7 +26,6 @@ Tests prüfen Sichtbarkeit, Lage und Link-Adressen; ob der Browser sich öffnet 
 
 - Die Datenschutzseite gehört einem Dritten und beschreibt Funktionen noch falsch; der Link besteht nur formal.
 - Apples genauer Wortlaut (Schedule 2) ist nicht belegt; Ablehnung bleibt möglich.
-- Der Abo-Text geht über die geforderten Links hinaus, steht aber im freigegebenen Entwurf A.
 
 ## Freigabe-Frage
 
