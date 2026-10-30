@@ -148,6 +148,7 @@ Bildmaßtest per `sips` und der Schlusslauf. Das Werkzeug ist durch `scripts/tes
 - Der Gegenleser ist gegen echte Antworten für Screenshots, Käufe und Build noch nicht gelaufen; Abweichungen führen zu Stopp und Bericht, nicht zu Korrektur im Betrieb.
 - Die Paywall ohne Rechtslinks (#215) bleibt ein Ablehnungsrisiko bei der Einreichung.
 - Die Bilder sind eine Aufnahme aus dem Simulator; wie sie auf Hennings Geräten wirken, ist nicht geprüft.
+- Der Screenshot-Prüfer erkennt weder Duplikate noch Reihenfolge noch falsche Bildsprache im Set; bekannte Sprachmängel stehen in `docs/artifacts/feat-175-b3-betrieb/screenshots-aufnahme.txt` (Paywall-Untertitel doppelt, Pfeil-Textfehler `\u{2192}`, en/03 mit deutscher Zielkarte).
 
 ## Architektur-Entscheidung (ADR)
 
@@ -157,3 +158,5 @@ Bildmaßtest per `sips` und der Schlusslauf. Das Werkzeug ist durch `scripts/tes
 ## Changelog
 
 - 2026-10-28: Erstfassung, Fortschreibung von #175 Durchgang B3 (Restschritte nach Browser-Block 1 und 2).
+- 2026-10-28 (PO-Wort, Auswahlfrage in Phase 6): Aufnahme der Store-Bilder per kleinem UI-Test `RestockUITests/StoreScreenshotCaptureUITests.swift` (Alternative 3), weil `simctl` nicht antippen kann und Einkaufsliste, Bon-Prüfung und Pro-Übersicht hinter Tipps liegen. Reiner Testcode, keine App-Änderung; der Test überspringt sich ohne `TEST_RUNNER_RESTOCK_STORE_SHOTS_DIR`, läuft also in CI nicht. Betrifft „Kein Quellcode“ im Scope und Schritt 1 der Implementation Details; AC-1 unverändert.
+- 2026-10-29: Der Prüfer `scripts/asc_check.py --section screenshots` akzeptiert für AC-3/AC-16 beide Bildgrößen, 1206×2622 und 1320×2868, und prüft je Screenshot-Set statt je Sprache: 3 bis 10 Bilder, alle in derselben gültigen Größe, und je Sprache mindestens ein gültiges Set. Je Set zeigt er Display-Typ (nur zur Anzeige), Anzahl, Größen und `assetDeliveryState` mit Zählern. Bei 0×0 oder fehlendem `imageAsset` nennt die Abweichung den Zustand, damit sich „wird verarbeitet“ von „defekt“ unterscheiden lässt. Grund: ASC verlangt im Pflicht-Platz „mittleres Display“ 1206×2622, die 1320×2868-Bilder liegen im optionalen 6,9″-Platz. Quelle: Bericht der Browser-Sitzung vom 2026-10-29. Die Recherche dazu ist uneindeutig (Blogs: 6,9″ genügt). Ein Set ist nur gültig, wenn jedes Bild den Zustand `COMPLETE` hat. Tests in `scripts/test_asc_check.py`, Beleg `docs/artifacts/feat-175-b3-betrieb/test-green-asc-check-screenshots.txt`. Die 1206×2622-Bilder liegen in `docs/artifacts/feat-175-app-store-auftritt/screenshots-6-3/{de,en}/`. Sie wurden aus den 1320×2868-Bildern mit `sips -z 2622 1206` skaliert, das Seitenverhältnis weicht um etwa 0,1 % ab (0,4603 zu 0,4599). Es sind dieselben 8 Bilder (de 01–05; en 01-start, 03-schnell-hinzufuegen, 06-artikel-hinzufuegen).

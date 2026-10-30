@@ -103,6 +103,7 @@ class FakeASC:
         self.sets = {l: [res("appScreenshotSets", f"SET-{l}", screenshotDisplayType="APP_IPHONE_67")] for l in TEXTS}
         self.shots = {l: [res("appScreenshots", f"SH-{l}-{i}", imageAsset={"width": 1320, "height": 2868},
                               assetDeliveryState={"state": "COMPLETE"}) for i in range(4)] for l in TEXTS}
+        self.set_shots = {}  # Set-ID → eigene Bilder; sonst gelten die Bilder der Sprache (self.shots)
         self.build = res("builds", "BUILD-37", version="37", processingState="VALID", usesNonExemptEncryption=False)
         self.review = res("appStoreReviewDetails", "REV-1", demoAccountRequired=False, **CONTACT)
         self.calls = []
@@ -125,7 +126,7 @@ class FakeASC:
             l = v["attributes"]["locale"]
             r[f"/v1/appStoreVersionLocalizations/{v['id']}/appScreenshotSets"] = self.sets.get(l, [])
             for s in self.sets.get(l, []):
-                r[f"/v1/appScreenshotSets/{s['id']}/appScreenshots"] = self.shots[l]
+                r[f"/v1/appScreenshotSets/{s['id']}/appScreenshots"] = self.set_shots.get(s["id"], self.shots[l])
         return r
 
     def __call__(self, method, url, headers, data):
@@ -270,6 +271,81 @@ class AscCheck(unittest.TestCase):
         self.assert_section("screenshots", lambda f: f.shots["de-DE"][0]["attributes"].update(
             imageAsset={"width": 1290, "height": 2796}), "de-DE")
         self.assert_section("screenshots", lambda f: f.shots.update({"en-US": f.shots["en-US"][:2]}), "en-US")
+
+    @staticmethod
+    def add_set(fake, loc, n, w=1206, h=2622, state="COMPLETE", kind="APP_IPHONE_61"):
+        sid = f"SET-{loc}-{kind}"
+        fake.sets[loc].append(res("appScreenshotSets", sid, screenshotDisplayType=kind))
+        fake.set_shots[sid] = [res("appScreenshots", f"{sid}-{i}", imageAsset={"width": w, "height": h},
+                                   assetDeliveryState={"state": state}) for i in range(n)]
+        return fake.set_shots[sid]
+
+    def test_screenshots_two_valid_sets_per_locale_ok(self):  # AC-3/AC-16: beide Größen, je Set
+        fake = FakeASC()
+        for loc in TEXTS:
+            self.add_set(fake, loc, 5)
+        code, out = run(fake, "--section", "screenshots")
+        self.assertEqual(code, 0, out)
+        line = next(l for l in out.splitlines() if "SET-de-DE-APP_IPHONE_61" in l)
+        self.assertRegex(line, r"^ok\b")
+        self.assertIn("APP_IPHONE_61", line)
+        self.assertIn("5 Bilder", line)
+        self.assertIn("1206×2622 ×5", line)
+        self.assertIn("COMPLETE ×5", line)
+        self.assertIn("1320×2868 ×4", next(l for l in out.splitlines() if "SET-en-US (" in l or "SET-en-US)" in l))
+
+    def test_screenshots_mixed_sizes_in_one_set_deviate(self):
+        fake = FakeASC()
+        self.add_set(fake, "de-DE", 4)[0]["attributes"]["imageAsset"] = {"width": 1320, "height": 2868}
+        code, out = run(fake, "--section", "screenshots")
+        self.assertNotEqual(code, 0)
+        line = next(l for l in out.splitlines() if "SET-de-DE-APP_IPHONE_61" in l)
+        self.assertIn("Abweichung", line)
+        self.assertIn("Soll", line)
+        self.assertIn("Ist", line)
+
+    def test_screenshots_zero_size_names_delivery_state(self):
+        for state in ("PROCESSING", "FAILED"):
+            fake = FakeASC()
+            fake.shots["de-DE"][1]["attributes"].update(imageAsset={"width": 0, "height": 0},
+                                                         assetDeliveryState={"state": state})
+            code, out = run(fake, "--section", "screenshots")
+            self.assertNotEqual(code, 0)
+            line = next(l for l in out.splitlines() if "SH-de-DE-1" in l)
+            self.assertIn("Abweichung", line)
+            self.assertIn("0×0", line)
+            self.assertIn(state, line)
+        fake = FakeASC()
+        fake.shots["en-US"][0]["attributes"].pop("imageAsset")
+        fake.shots["en-US"][0]["attributes"].pop("assetDeliveryState")
+        code, out = run(fake, "--section", "screenshots")
+        line = next(l for l in out.splitlines() if "SH-en-US-0" in l)
+        self.assertIn("Abweichung", line)
+        self.assertIn("unbekannt", line)
+
+    def test_screenshots_valid_size_needs_complete_state(self):  # F001
+        for state, ok in (("FAILED", False), ("UPLOAD_COMPLETE", False), ("COMPLETE", True)):
+            fake = FakeASC()
+            fake.shots["de-DE"][2]["attributes"]["assetDeliveryState"] = {"state": state}
+            code, out = run(fake, "--section", "screenshots")
+            line = next(l for l in out.splitlines() if "SET-de-DE)" in l)
+            self.assertEqual(code == 0, ok, out)
+            self.assertEqual(line.startswith("ok"), ok, line)
+            if not ok:
+                self.assertIn(f"{state} ×1", line)
+
+    def test_screenshots_count_per_set_and_locale_needs_set(self):
+        fake = FakeASC()
+        for loc in TEXTS:
+            self.add_set(fake, loc, 2)
+        code, out = run(fake, "--section", "screenshots")
+        self.assertNotEqual(code, 0, "2 Bilder in einem Set sind zu wenig, auch wenn die Sprache 6 hat")
+        self.assertIn("2 Bilder", next(l for l in out.splitlines() if "Abweichung" in l and "SET-de-DE-APP_IPHONE_61" in l))
+        fake = FakeASC()
+        fake.sets["en-US"] = []
+        code, out = run(fake, "--section", "screenshots")
+        self.assertNotEqual(code, 0)
+        self.assertIn("Sets (en-US)", next(l for l in out.splitlines() if "Abweichung" in l))
 
     def test_section_build_ok_and_deviation(self):  # AC-17
         self.assert_section("build", lambda f: f.build["attributes"].update(version="36"), "37")

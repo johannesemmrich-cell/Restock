@@ -1,0 +1,118 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -scheme Restock -project Restock.xcodeproj -destination id=538872FE-651E-4A0F-9798-0F7799260245 -derivedDataPath build/dd-shots "-only-testing:RestockUITests/StoreScreenshotCaptureUITests/testCaptureEnglishExtras" -testLanguage en -testRegion DE -resultBundlePath build/shots-en-20261029-124049-v1.xcresult -collect-test-diagnostics never
+
+Writing result bundle at path:
+	/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/shots-en-20261029-124049-v1.xcresult
+
+2026-10-29 12:46:25.858 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 12:52:23.300891+0100 RestockUITests-Runner[37605:30831108] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-29 12:52:57.725.
+Test Suite 'RestockUITests.xctest' started at 2026-10-29 12:52:57.732.
+Test Suite 'StoreScreenshotCaptureUITests' started at 2026-10-29 12:52:57.732.
+Test Case '-[RestockUITests.StoreScreenshotCaptureUITests testCaptureEnglishExtras]' started.
+    t =     0.02s Start Test at 2026-10-29 12:52:57.751
+    t =     0.69s Set Up
+    t =     0.73s Open com.johannesemmrich.Restock
+    t =     0.74s     Launch com.johannesemmrich.Restock
+2026-10-29 12:52:59.255 xcodebuild[35150:30807969] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-29 12:52:59.255 xcodebuild[35150:30807969] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[37605]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x107e7c398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x107f90310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+2026-10-29 12:52:59.526 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    12.48s         Setting up automation session
+    t =    20.19s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreScreenshotCaptureUITests testCaptureEnglishExtras] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    24.43s Checking existence of `Button (First Match)`
+    t =    26.25s Find the Button (First Match)
+    t =    27.17s Find the "Lidl, 2x / week, List is empty" Button
+    t =    27.42s Get all elements bound by index for: Elements matching predicate '"plus" IN identifiers'
+    t =    27.60s Checking existence of `"plus" Button`
+    t =    27.66s Find the "plus" Button
+    t =    28.23s Checking existence of `"plus" Button`
+    t =    28.29s Find the "plus" Button
+    t =    28.61s Find the "plus" Button
+    t =    29.77s Tap "plus" Button
+    t =    29.77s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.80s     Find the "plus" Button
+    t =    29.93s     Check for interrupting elements affecting "plus" Button
+    t =    30.26s     Synthesize event
+    t =    31.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    32.62s Checking existence of `"Item name" TextField`
+    t =    32.87s Find the "Item name" TextField
+    t =    33.00s Find the "Item name" TextField
+    t =    33.17s Tap "Item name" TextField
+    t =    33.17s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.18s     Find the "Item name" TextField
+    t =    33.26s     Check for interrupting elements affecting "Item name" TextField
+    t =    33.34s     Synthesize event
+    t =    33.71s     Wait for com.johannesemmrich.Restock to idle
+    t =    37.82s Type 'Toothpaste' into "Item name" TextField
+    t =    37.82s     Wait for com.johannesemmrich.Restock to idle
+    t =    37.87s     Find the "Item name" TextField
+    t =    38.06s     Check for interrupting elements affecting "Item name" TextField
+    t =    38.31s     Synthesize event
+    t =    38.76s     Wait for com.johannesemmrich.Restock to idle
+    t =    38.88s Find the "Item name" TextField
+    t =    40.52s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    40.83s Added attachment named 'en-06-artikel-hinzufuegen'
+    t =    40.85s Terminate com.johannesemmrich.Restock:38022
+2026-10-29 12:53:38.878 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 12:53:38.915 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 12:53:38.949 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    41.98s Open com.johannesemmrich.Restock
+    t =    41.99s     Launch com.johannesemmrich.Restock
+2026-10-29 12:53:39.752 xcodebuild[35150:30807969] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-29 12:53:39.753 xcodebuild[35150:30807969] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-29 12:53:39.824 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    44.12s         Setting up automation session
+    t =    49.60s         Wait for com.johannesemmrich.Restock to idle
+    t =    53.78s Checking existence of `"fork.knife" Button`
+    t =    54.43s Find the "fork.knife" Button
+    t =    54.49s Find the "fork.knife" Button
+    t =    54.68s Tap "fork.knife" Button
+    t =    54.68s     Wait for com.johannesemmrich.Restock to idle
+    t =    54.71s     Find the "fork.knife" Button
+    t =    54.78s     Check for interrupting elements affecting "fork.knife" Button
+    t =    54.93s     Synthesize event
+    t =    55.45s     Wait for com.johannesemmrich.Restock to idle
+    t =    56.56s Waiting 20.0s for "Add Day" Button to exist
+    t =    57.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Add Day" Button`
+    t =    57.66s         Checking existence of `"Add Day" Button`
+    t =    59.40s Find the Target Application 'com.johannesemmrich.Restock'
+    t =    59.81s Added attachment named 'en-07-menueplan'
+    t =    59.82s Terminate com.johannesemmrich.Restock:38227
+2026-10-29 12:53:57.642 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 12:53:57.651 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 12:53:57.666 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    60.96s Tear Down
+    t =    60.97s     Open com.johannesemmrich.Restock
+    t =    60.97s         Launch com.johannesemmrich.Restock
+2026-10-29 12:53:58.737 xcodebuild[35150:30807969] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-29 12:53:58.738 xcodebuild[35150:30807969] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-29 12:53:58.839 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    63.02s             Setting up automation session
+    t =    67.15s             Wait for com.johannesemmrich.Restock to idle
+    t =    69.51s     Terminate com.johannesemmrich.Restock:38369
+2026-10-29 12:54:07.286 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 12:54:07.292 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 12:54:07.298 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+Test Case '-[RestockUITests.StoreScreenshotCaptureUITests testCaptureEnglishExtras]' passed (70.831 seconds).
+Test Suite 'StoreScreenshotCaptureUITests' passed at 2026-10-29 12:54:08.582.
+	 Executed 1 test, with 0 failures (0 unexpected) in 70.831 (70.849) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-29 12:54:08.587.
+	 Executed 1 test, with 0 failures (0 unexpected) in 70.831 (70.855) seconds
+Test Suite 'Selected tests' passed at 2026-10-29 12:54:08.587.
+	 Executed 1 test, with 0 failures (0 unexpected) in 70.831 (70.862) seconds
+2026-10-29 12:54:08.667 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 12:54:08.667 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 12:54:08.670 xcodebuild[35150:30807969] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-29 12:54:08.943 xcodebuild[35150:30807969] [MT] IDETestOperationsObserverDebug: 604.140 elapsed -- Testing started completed.
+2026-10-29 12:54:08.943 xcodebuild[35150:30807969] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-29 12:54:08.943 xcodebuild[35150:30807969] [MT] IDETestOperationsObserverDebug: 604.140 sec, +604.140 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/nifty-wandering-charm/build/shots-en-20261029-124049-v1.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

@@ -1,0 +1,154 @@
+Aufnahme App-Store-Bilder (#175 B3, AC-1) — Lauf 1, 2026-10-28 21:54–23:39 (+0100), Commit b5e0bb1 (+ uncommittet: Test, pbxproj)
+STATUS: UNVOLLSTÄNDIG — de fehlt, en muss wiederholt werden (siehe unten).
+
+Werkzeug: Lauf-Skript (außerhalb des Repos, Scratchpad der Sitzung), Ablauf:
+  Sperren per mkdir: /tmp/heavy-build.lock, dann /tmp/loose-ends-testlauf.lock (owner-Datei), am Ende entfernt (geprüft: beide weg)
+  DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+  xcodebuild build-for-testing -scheme Restock -project Restock.xcodeproj -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd-shots   → 73 s, ok
+  xcrun simctl create Restock-Shots-20261028-215429 com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max com.apple.CoreSimulator.SimRuntime.iOS-27-0  → EB8DE736-531A-4940-B381-F76F10D80AFA
+  xcrun simctl status_bar <udid> override --time 9:41 --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3
+  je Sprache: TEST_RUNNER_RESTOCK_STORE_SHOTS_DIR=<repo>/docs/artifacts/feat-175-app-store-auftritt/screenshots xcodebuild test-without-building
+    -destination id=<udid> -derivedDataPath build/dd-shots -only-testing:RestockUITests/StoreScreenshotCaptureUITests/<test>
+    -testLanguage <de|en> -testRegion <DE|US> -resultBundlePath build/shots-<lang>-<stamp>.xcresult -collect-test-diagnostics never
+  Wegwerf-Simulator am Ende gelöscht (trap), Restock-Validate* unberührt, keine Geräte.
+Protokolle: docs/artifacts/feat-175-b3-betrieb/shots-lauf-20261028-215429/{build,test-de,test-en}.log
+
+Ergebnis:
+  de (testCaptureGerman): ROT, Status 65, 5996 s — „RestockUITests-Runner (63094) encountered an error (The test runner hung
+     before establishing connection.)“ — kein Test ausgeführt, keine Bilder. Umgebungs-Hänger (vgl. #63), kein Testfehler;
+     im Skript fehlte ein Hänger-Schutz, daher 100 min verloren.
+  en (testCaptureEnglish): Executed 1 test, with 0 failures, 185 s (Test 114 s). Fünf Bilder, alle 1320 x 2868 (sips):
+     en/01-start.png, en/02-liste.png, en/03-schnell-hinzufuegen.png, en/04-bon-pruefung.png, en/05-pro.png
+     Schreiben auf den Mac-Pfad aus dem Simulator funktionierte direkt (kein Umweg über xcresult nötig).
+  Gesamtdauer 6309 s (105 min), davon 100 min Hänger.
+
+Sichtprüfung en (alle fünf angesehen): Statusleiste 9:41, volle Balken, Akku voll; keine echten Namen/Fotos.
+  Mängel, die eine Wiederholung erfordern (Testseite, kein App-Code):
+   - 02-liste: Artikel „Bre“ statt „Bread“ — Return kam vor den letzten Tasten an. Korrektur vorbereitet (auf vollständigen
+     Feldinhalt warten), Edit vom post_implementation_gate blockiert.
+   - Preise in Dollar ($10.40, $8.73), weil Locale en_US; vorgesehen: -AppleLocale en_DE / -testRegion DE (Euro wie Paywall).
+  Bilder, die in en DEUTSCHE Texte zeigen (App-Stand, auf Anweisung unverändert aufgenommen):
+   - 02-liste: Kategorien „Obst & Gemüse“, „Milchprodukte“, „Konserven“ (Pasta!), „Lebensmittel“
+   - 03-schnell-hinzufuegen: Zielkarte „Kommt auf die Liste von“, „Dein einziger Laden für Drogerie.“, Chip „Ohne Laden“, Einheit „1 Stk.“
+   - 04-bon-pruefung: ganze Oberfläche deutsch („Abbrechen“, „Bon scannen — Lidl“, „Speichern“, „4 Positionen · 4 ausgewählt“,
+     „Ändern“, „je Stück“, „auf deiner Liste“), dazu der deutsche Seed-Bon
+   - 05-pro: ganze Paywall deutsch („Schließen“, „Schalte alle Pro-Features und alle weiteren Pro-Features frei.“, Tarife, Hinweise)
+     — der Satz „Schalte alle Pro-Features und alle weiteren Pro-Features frei“ ist auch deutsch doppelt.
+   - 01-start: vollständig englisch.
+
+Lauf 2, 2026-10-29 06:26–07:31 (+0100), Commit b5e0bb1 (+ uncommittet: Test mit Feld-Warten und en_DE, pbxproj)
+STATUS: ROT — keine Bilder.
+  Fremde Sperre /tmp/loose-ends-testlauf.lock (loose-ends, issue-145, sim.sh test-proof, pid 45523) bis 06:40 belegt;
+  gewartet (Sperre nie angefasst), Sperren 06:40:45 genommen, am Ende entfernt (geprüft).
+  build-for-testing (build/dd-shots, inkrementell) 4 s, TEST BUILD SUCCEEDED, neue Testdatei kompiliert.
+  Wegwerf-Simulator Restock-Shots-20261029-064044 (49E5FE0B-C1FF-4542-AA2D-A4DCD82B4B08), Statusleiste 9:41, am Ende gelöscht.
+  Hänger-Schutz 720 s je Versuch, bei Hänger Simulator-Neustart und genau ein zweiter Versuch:
+    de v1: Abbruch nach 720 s, kein Test gestartet   de v2: Abbruch nach 720 s, kein Test gestartet
+    en v1: Abbruch nach 720 s, kein Test gestartet   en v2: Abbruch nach 720 s, kein Test gestartet   (en jetzt -testRegion DE)
+  Protokolle: docs/artifacts/feat-175-b3-betrieb/shots-lauf-20261029-064044/ (build.log, test-{de,en}-v{1,2}.log: nur Kopf, dann BUILD INTERRUPTED)
+  Gesamtdauer 3051 s.
+  Rechnerzustand nach dem Lauf (07:32): Load average 62,7 / 63,5 / 72,8; diskimagesiod 99 % CPU seit 8 Tagen, zwei bfs-Prozesse
+  (43 % / 22 %, seit 1–2 Tagen), Chrome-Renderer 41 %. Wahrscheinliche Ursache der Hänger: überlasteter Rechner, nicht der Test
+  (Lauf 1 en lief in 185 s mit demselben Test).
+  Folge: Das Skript leert screenshots/{de,en} vor dem Lauf — die fünf en-Bilder aus Lauf 1 sind damit weg (waren ohnehin zu wiederholen).
+
+Lauf 3, 2026-10-29 07:34–07:59 (+0100), Commit b5e0bb1 (+ uncommittet wie Lauf 2)
+STATUS: ROT — keine Bilder; nach Vorgabe ohne weitere Versuche abgebrochen.
+  Last beim Start 07:34:06: 17,09 / 48,02 / 65,85 (1-min-Last unter 20, daher sofort gestartet); beide Sperren frei, genommen, am Ende entfernt.
+  Bau 4 s; Wegwerf-Simulator Restock-Shots-20261029-073406 (801E8C8E-37FF-4242-ABD6-DB57A04125D2), Statusleiste 9:41, gelöscht.
+  Last direkt vor de (nach Boot): 114,89 / 66,93 / 71,73.
+  de v1: Hänger, Abbruch nach 720 s; Simulator-Neustart; de v2: Hänger, Abbruch nach 720 s. en nicht mehr versucht.
+  Protokolle: docs/artifacts/feat-175-b3-betrieb/shots-lauf-20261029-073406/
+  Gesamtdauer 1546 s.
+  Zustand 08:00: Last 108,55 / 123,07 / 104,09; diskimagesiod 235 % + 59 % CPU (seit 8 Tagen); fremde gebootete Simulatoren:
+  iPhone 17 (3066F2CC…), Restock-Validate-27 (9034BD4F…), iPad Pro 11-inch (M5) (FB42E7CE…), Apple Watch Series 12 (46mm) (F68F99F3…)
+  — nicht von diesem Lauf, nicht angefasst. Kein Prozess beendet.
+
+Lauf 4, 2026-10-29 10:39–11:05 (+0100), Commit b5e0bb1 (+ uncommittet wie Lauf 2)
+STATUS: ROT, aber erstmals Bilder — de 01–03 aufgenommen, de 04 gescheitert, en nach Vorgabe nicht versucht.
+  Last beim Start 10:39:03: 2,99 / 3,55 / 3,95; Sperren frei, genommen, am Ende entfernt; Bau 3 s;
+  Wegwerf-Simulator Restock-Shots-20261029-103903 (DF0A86E7-1532-410D-A0F1-6A1204260F14), Statusleiste 9:41, gelöscht.
+  de v1: Test lief an. Bilder 01–03 in 148 s. Neustart der App für Bild 4: „Setting up automation session“ erst nach 87 s,
+    „idle“ nach weiteren 68 s; dann Fehler StoreScreenshotCaptureUITests.swift:132 „Failed to get matching snapshots: Error getting
+    main window kAXErrorServerNotFound“; der Aufräum-Start im tearDown hing danach bis zum Abbruch (720 s).
+  de v2 (nach Simulator-Neustart): Hänger, Abbruch nach 720 s. en nicht versucht.
+  Last im Minutentakt (docs/artifacts/feat-175-b3-betrieb/shots-lauf-20261029-103903/last-minutentakt.txt; booted = gebootete Simulatoren gesamt):
+    10:39:03 2,99/3,55/3,95 booted=4 | 10:40:04 91,01 booted=5 (unser Simulator gebootet) | 10:41:05 207,19 | 10:42:07 312,90
+    10:43:09 316,01 | 10:44:10 258,52 | 10:45:11 228,51 | 10:46:16 195,17 | 10:47:18 177,04 | 10:48:25 141,15 | 10:49:30 114,98
+    10:50:46 97,94 | 10:51:51 93,20 | 10:52:54 82,96 | 10:53:56 73,72 | 10:55:10 77,92 | 10:56:41 86,37 | 10:57:48 59,22
+    10:58:55 45,82 | 11:00:00 115,90 (Simulator-Neustart für v2) | 11:03:08 170,09
+  Befund: Die Last steigt binnen einer Minute nach dem Boot UNSERES Wegwerf-Simulators von 3 auf 90 und auf über 300 und bleibt
+  >45; der Rechner war vorher ruhig. Die vier fremden gebooteten Simulatoren liefen schon vorher (booted=4 bei Last 3).
+  Bilder (sips): de/01-start.png 1320x2868, de/02-liste.png 1320x2868, de/03-schnell-hinzufuegen.png 1320x2868.
+  Sichtprüfung de 01–03: Statusleiste 9:41, alles deutsch, Preise in €, keine Fremddaten; „Brot“ vollständig (Feld-Warten wirkt).
+    Auffällig: 02 „Nudeln · Konserven“ (Kategoriezuordnung der App); 03 zeigt die Tastatur (gewollt).
+
+Lauf 5, 2026-10-29 11:09–11:31 (+0100), Commit b5e0bb1 (+ uncommittet: Test, pbxproj)
+STATUS: GRÜN — alle zehn Bilder.
+  Vorher: de/01–03 aus Lauf 4 in den Scratchpad gesichert (backup-de/); Skript leert die Bildordner nicht mehr, der Test
+  überschreibt nur seine Dateien. Drei fremde Standard-Simulatoren hatte der Orchestrator vorher heruntergefahren; Restock-Validate-27 lief weiter.
+  Last-Warten: Fehler im Warte-Skript — die Bedingung „1-min-Last < 15“ verglich „116,06“ wegen des Dezimalkommas als Text und
+  ließ sofort durch; gestartet wurde daher bei Last 116,06 / 109,66 / 109,49 (11:09:32), nicht unter 15.
+  Fremde Sperre 80 s abgewartet, Sperren 11:10:52 genommen, am Ende entfernt (geprüft). Bau 6 s.
+  Wegwerf-Simulator Restock-Shots-20261029-111052 (79AEBC11-62EF-4559-84DE-5BD5D0DE6015), Statusleiste 9:41, gelöscht.
+  de v1: Hänger, Abbruch nach 720 s; Simulator-Neustart; de v2: Executed 1 test, with 0 failures (142 s Test, 1031 s inkl. v1).
+  en v1 (-testLanguage en -testRegion DE, -AppleLocale en_DE): Executed 1 test, with 0 failures (83 s Test, 96 s gesamt).
+  Gesamtdauer 1237 s. Ergebnisbündel build/shots-{de-…-v1,de-…-v2,en-…-v1}.xcresult; Logs shots-lauf-20261029-111052/.
+  Last im Minutentakt (shots-lauf-20261029-111052/last-minutentakt.txt): 11:10 136 (booted=2) | 11:11 167 (booted=3, unser Simulator)
+    | 11:12 329 | 11:13 299 | 11:14 167 | 11:16 101 | 11:17–11:25 78…49 | 11:26 235 (Neustart für v2) | 11:27 242 | 11:28 305
+    | 11:29 224 | 11:30 123 | 11:31 52.
+  Maße (sips), alle 1320 x 2868:
+    de/01-start.png de/02-liste.png de/03-schnell-hinzufuegen.png de/04-bon-pruefung.png de/05-pro.png
+    en/01-start.png en/02-liste.png en/03-schnell-hinzufuegen.png en/04-bon-pruefung.png en/05-pro.png
+  Pfad: docs/artifacts/feat-175-app-store-auftritt/screenshots/{de,en}/
+  Sichtprüfung (alle zehn angesehen): Statusleiste 9:41, volle Balken, Akku voll; keine echten Namen/Fotos; Preise überall in €.
+    de/01: in Ordnung.  de/02: in Ordnung; „Nudeln · Konserven“ (App-Zuordnung).  de/03: in Ordnung, Tastatur sichtbar (gewollt).
+    de/04: in Ordnung (fester Seed-Bon, 4 Positionen, 8,73 €).  de/05: Untertitel doppelt „Schalte alle Pro-Features und alle weiteren Pro-Features frei.“
+    en/01: vollständig englisch, in Ordnung.
+    en/02: „Bread“ vollständig; Kategorien deutsch („Obst & Gemüse“, „Backwaren“, „Milchprodukte“, „Konserven“, „Lebensmittel“);
+           Beträge im deutschen Format „ca. 10,00 €“.
+    en/03: Zielkarte deutsch („Kommt auf die Liste von“, „Dein einziger Laden für Drogerie.“, „Ohne Laden“), Chip „1 Stk.“.
+    en/04: Oberfläche ganz deutsch („Abbrechen“, „Bon scannen — Lidl“, „Speichern“, „4 Positionen · 4 ausgewählt“, „Ändern“,
+           „je Stück“, „auf deiner Liste“) und deutscher Seed-Bon.
+    en/05: Paywall ganz deutsch (inkl. doppeltem Untertitel).
+
+Lauf 6, 2026-10-29 12:37–12:54 (+0100), Commit b5e0bb1 (+ uncommittet: Test mit testCaptureEnglishExtras, pbxproj)
+Anlass: PO — en zählt nur en/01 als sauber; zwei weitere rein englische Bilder nötig (Minimum 3).
+STATUS: GRÜN — en/06 und en/07 aufgenommen; Bestandsbilder unverändert.
+  Auswahl (nur gelesen, App-Code unverändert): Skript prüft je Ansicht alle festen Texte gegen die Schlüssel in en.lproj.
+    AddItemView: 11 Schlüssel, alle vorhanden, Kategorie über displayCategory (en vorhanden); Bausteine ohne Lücke.
+    MenuPlanView: 53 Schlüssel, alle vorhanden. Ausgeschieden: Einstellungen (50 fehlend), Laden-Detail (17), Laden verwalten (10), Ausgaben (11).
+  Test: neue Methode testCaptureEnglishExtras (nur en), Bilder en/06-artikel-hinzufuegen (Seed -seedQuickAddAssignmentForUITests,
+    „+“ → „Toothpaste“) und en/07-menueplan (-premiumForScreenshots -clearMenuPlanForUITests, leerer Plan);
+    tearDown zusätzlich -clearMenuPlanForUITests. Deutsch bleibt bei fünf Bildern.
+  Vorher alle zehn Bilder gesichert (Scratchpad backup-lauf5/, md5); nachher md5 von de/01–05 und en/01–05 identisch.
+  Last-Warten mit korrigierter Zahlenprüfung (Komma → Punkt): 12:37:36 38,16 … 12:40:49 14,75 → Start (Last 14,75 / 24,01 / 19,02).
+  Sperren frei, genommen, am Ende entfernt (geprüft). Bau 16 s. Wegwerf-Simulator Restock-Shots-20261029-124049
+  (538872FE-651E-4A0F-9798-0F7799260245), Statusleiste 9:41, gelöscht. Last nach Simulator-Boot 171,20.
+  -only-testing:RestockUITests/StoreScreenshotCaptureUITests/testCaptureEnglishExtras -testLanguage en -testRegion DE:
+    Versuch 1: Executed 1 test, with 0 failures (71 s Test, 623 s inkl. Start). Kein Hänger, kein Neustart. Gesamtdauer 804 s.
+  Logs: docs/artifacts/feat-175-b3-betrieb/shots-lauf-20261029-124049/; Ergebnisbündel build/shots-en-20261029-124049-v1.xcresult
+  Maße (sips): en/06-artikel-hinzufuegen.png 1320 x 2868, en/07-menueplan.png 1320 x 2868 (alle übrigen zehn weiter 1320 x 2868).
+  Sichtprüfung:
+    en/06: rein englisch („Cancel“, „Add Item“, „Add“, „Toothpaste“, „Unit“, „Note (optional)“, „Category“, „Automatic: Dental Care“,
+           „Store“, „Auto-assigned by Restock“, „Lidl“); Tastatur sichtbar, verdeckt die Zeile „dm“.
+    en/07: englisch („Close“, „Meal Plan“, „Add All“, „This Week“, „No days planned yet.“, „Add Day“, „Swipe left to delete. …“,
+           „Saved Recipes“), ABER Fehler im Text: „Swipe a meal in the week plan to the right u{2192} "Save".“ — in
+           en.lproj/Localizable.strings:350 (und de:350) steht `\u{2192}`, das in .strings-Dateien kein gültiges Escape ist
+           (Swift-Syntax); angezeigt wird „u{2192}“ statt „→“. Auch die deutsche Fassung betroffen. App-Fehler, nicht korrigiert.
+
+== Auswahl für den Upload (PO-Entscheidungen 2026-10-29, Vorschau gesehen) ==
+de: 01-start, 02-liste, 03-schnell-hinzufuegen, 04-bon-pruefung, 05-pro (5 Bilder, 1320x2868)
+en: 01-start, 03-schnell-hinzufuegen, 06-artikel-hinzufuegen (3 Bilder, 1320x2868)
+Nicht verwendet: en/02, en/04, en/05 (viel Deutsch, App ohne englische Texte), en/07 (Textfehler "u{2192}", fast leer).
+Bekannte Grenzen: en/03 hat eine deutsche Zielkarte; Paywall-Untertitel doppelt (de); Textfehler Pfeil in de/en Localizable.strings Zeile 350 (App, nicht Teil von B3).
+6,3″-Satz (Pflicht-Platz in ASC, 1206x2622): dieselben 8 Bilder (de 01–05; en 01-start, 03-schnell-hinzufuegen, 06-artikel-hinzufuegen),
+  aus den 1320x2868-Bildern mit `sips -z 2622 1206` skaliert; Seitenverhältnis weicht um etwa 0,1 % ab (0,4603 zu 0,4599).
+  Pfad: docs/artifacts/feat-175-app-store-auftritt/screenshots-6-3/{de,en}/
+
+== Freigabe und Upload (AC-7) ==
+Freigabe: Wortlaut „Screenshots hochladen“, von Henning getippt am 2026-10-29 vor dem Upload, nach der Vorschau und den Entscheidungen.
+Ausführende Sitzung: Browser-Sitzung (Claude in Chrome, separate Sitzung).
+Upload-Zeitpunkt: nicht exakt belegt. Eingrenzung: nach Hennings Wort und vor der ersten Abfrage von asc_check, die schon Bilder fand (2026-10-29T15:07:16Z); die Beleg-Screenshots der Browser-Sitzung liegen nicht im Repo.
+Ergebnis: nichts eingereicht.
+Beleg: asc-readback-screenshots.txt (UTC 2026-10-29T16:45:02Z) — exakt belegt ist nur dieser Readback.

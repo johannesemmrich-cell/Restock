@@ -248,6 +248,7 @@
 		A145D3A145D3A145D3A145D1 /* AppIntentsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A145D3A145D3A145D3A145D2 /* AppIntentsUITests.swift */; };
 		A5D0A5D0A5D0A5D0A5D0A5D3 /* PaywallUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D0A5D0A5D0A5D0A5D0A5D4 /* PaywallUITests.swift */; };
 		C0DE14540000000000000D03 /* PurchaseUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE14540000000000000D04 /* PurchaseUITests.swift */; };
+		C0DE01755C0000000000A001 /* StoreScreenshotCaptureUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE01755C0000000000A002 /* StoreScreenshotCaptureUITests.swift */; };
 		6A1C2E4B8D3F4A5B9C7E1D31 /* QuickAddAssignmentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1C2E4B8D3F4A5B9C7E1D30 /* QuickAddAssignmentUITests.swift */; };
 		A98D8C010000000000000006 /* QuickAddControlUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D8C010000000000000007 /* QuickAddControlUITests.swift */; };
 /* End PBXBuildFile section */
@@ -507,6 +508,7 @@
 		A145D3A145D3A145D3A145D2 /* AppIntentsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntentsUITests.swift; sourceTree = "<group>"; };
 		A5D0A5D0A5D0A5D0A5D0A5D4 /* PaywallUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallUITests.swift; sourceTree = "<group>"; };
 		C0DE14540000000000000D04 /* PurchaseUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseUITests.swift; sourceTree = "<group>"; };
+		C0DE01755C0000000000A002 /* StoreScreenshotCaptureUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreScreenshotCaptureUITests.swift; sourceTree = "<group>"; };
 		6A1C2E4B8D3F4A5B9C7E1D30 /* QuickAddAssignmentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddAssignmentUITests.swift; sourceTree = "<group>"; };
 		A98D8C010000000000000007 /* QuickAddControlUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddControlUITests.swift; sourceTree = "<group>"; };
 		E2ECD600D24B6ACC3CB50C74 /* RestockUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RestockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -902,6 +904,7 @@
 				A145D3A145D3A145D3A145D2 /* AppIntentsUITests.swift */,
 				A5D0A5D0A5D0A5D0A5D0A5D4 /* PaywallUITests.swift */,
 				C0DE14540000000000000D04 /* PurchaseUITests.swift */,
+				C0DE01755C0000000000A002 /* StoreScreenshotCaptureUITests.swift */,
 			);
 			path = RestockUITests;
 			sourceTree = "<group>";
@@ -1341,6 +1344,7 @@
 				A145D3A145D3A145D3A145D1 /* AppIntentsUITests.swift in Sources */,
 				A5D0A5D0A5D0A5D0A5D0A5D3 /* PaywallUITests.swift in Sources */,
 				C0DE14540000000000000D03 /* PurchaseUITests.swift in Sources */,
+				C0DE01755C0000000000A001 /* StoreScreenshotCaptureUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
