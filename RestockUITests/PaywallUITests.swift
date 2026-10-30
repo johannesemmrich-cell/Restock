@@ -88,14 +88,23 @@ final class PaywallUITests: XCTestCase {
                       file: file, line: line)
     }
 
+    /// SwiftUI-`Link` erscheint im Zugänglichkeitsbaum auf iOS 27 als Link, auf iOS 26.5 als Button
+    /// (belegt im CI-Lauf auf iOS 26.5, Issue #215); gesucht wird daher nach Beschriftung und beiden Typen.
+    private func legalLink(_ app: XCUIApplication, _ label: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(NSPredicate(
+            format: "label == %@ AND (elementType == %d OR elementType == %d)",
+            label, XCUIElement.ElementType.link.rawValue, XCUIElement.ElementType.button.rawValue
+        )).firstMatch
+    }
+
     /// Öffnet die Paywall über fork.knife und prüft beide Rechtslinks: vorhanden, im Fenster, antippbar,
     /// ohne zu tippen (kein Browseraufruf). Liefert die Links zurück.
     @discardableResult
     private func assertLegalLinks(_ app: XCUIApplication) -> (privacy: XCUIElement, terms: XCUIElement) {
         tapWhenHittable(app.buttons["fork.knife"], "fork.knife")
         assertPaywall(app, feature: "den Rezeptplan")
-        let privacy = app.links["Datenschutz"]
-        let terms = app.links["Nutzungsbedingungen (EULA)"]
+        let privacy = legalLink(app, "Datenschutz")
+        let terms = legalLink(app, "Nutzungsbedingungen (EULA)")
         scrollUntilHittable(app, privacy, description: "Link „Datenschutz“")
         scrollUntilHittable(app, terms, description: "Link „Nutzungsbedingungen (EULA)“")
         let window = app.windows.firstMatch.frame
