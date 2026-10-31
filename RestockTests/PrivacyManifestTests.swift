@@ -163,8 +163,8 @@ final class PrivacyManifestTests: XCTestCase {
         }
     }
 
-    // AC-7
-    func testBuildNumberIs37InBothProjectFiles() throws {
+    // AC-7 (seit Build 38: eine gemeinsame Nummer ≥ 37 statt fest 37, sonst bricht jeder Upload den Test)
+    func testBuildNumberIsConsistentAndAtLeast37InBothProjectFiles() throws {
         let yml = try String(contentsOf: repoFile("project.yml"), encoding: .utf8)
         let pbx = try String(contentsOf: repoFile("Restock.xcodeproj/project.pbxproj"), encoding: .utf8)
         let ymlValues = yml.components(separatedBy: "\n")
@@ -175,8 +175,9 @@ final class PrivacyManifestTests: XCTestCase {
             .map { $0.components(separatedBy: "=").last!.trimmingCharacters(in: CharacterSet(charactersIn: "; \t")) }
         XCTAssertFalse(ymlValues.isEmpty)
         XCTAssertFalse(pbxValues.isEmpty)
-        XCTAssertEqual(Set(ymlValues), ["37"], "project.yml: \(ymlValues)")
-        XCTAssertEqual(Set(pbxValues), ["37"], "project.pbxproj: \(pbxValues)")
+        let values = Set(ymlValues + pbxValues)
+        XCTAssertEqual(values.count, 1, "project.yml: \(ymlValues), project.pbxproj: \(pbxValues)")
+        XCTAssertGreaterThanOrEqual(Int(values.first ?? "") ?? 0, 37, "Build-Nummer: \(values)")
         // Strings-Dateien müssen im App-Ziel registriert sein (Ressourcen-Phase).
         XCTAssertTrue(pbx.contains("InfoPlist.strings in Resources"), "InfoPlist.strings nicht in den Ressourcen")
     }
