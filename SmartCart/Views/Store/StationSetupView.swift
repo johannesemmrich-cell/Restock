@@ -249,6 +249,16 @@ struct StationSetupView: View {
         }
         Haptics.impact(.medium)
     }
+
+    /// Rückfrage zum Löschen; beim letzten Gang die von „Gänge entfernen“ (AC-11).
+    static func deleteDialog(for name: String, in store: Store) -> (title: String, message: String, button: String) {
+        if (store.stationConfig?.stations.count ?? 0) <= 1 {
+            return (String(localized: "station.remove.confirm.title"), String(localized: "station.remove.confirm.message"),
+                    String(localized: "station.setup.remove"))
+        }
+        return (String(format: String(localized: "station.setup.delete.title"), name),
+                String(localized: "station.setup.delete.message"), String(localized: "station.setup.detail.delete"))
+    }
 }
 
 /// Rückfragen der Übersicht: Vorlage wählen, Gänge entfernen, Gang löschen (Wischen).
@@ -287,18 +297,18 @@ private struct StationSetupDialogs: ViewModifier {
             }
             .confirmationDialog(deleteTitle, isPresented: deleteBinding, titleVisibility: .visible,
                                 presenting: pendingDelete) { name in
-                Button(String(localized: "station.setup.detail.delete"), role: .destructive) {
+                Button(StationSetupView.deleteDialog(for: name, in: store).button, role: .destructive) {
                     withAnimation(.smooth) { StationSetupView.delete(name, in: store) }
                     onChange()
                 }
                 .accessibilityIdentifier("stationSetup.confirmDelete")
-            } message: { _ in
-                Text(String(localized: "station.setup.delete.message"))
+            } message: { name in
+                Text(StationSetupView.deleteDialog(for: name, in: store).message)
             }
     }
 
     private var deleteTitle: String {
-        String(format: String(localized: "station.setup.delete.title"), pendingDelete ?? "")
+        StationSetupView.deleteDialog(for: pendingDelete ?? "", in: store).title
     }
 
     private var deleteBinding: Binding<Bool> {
@@ -375,9 +385,9 @@ struct StationDetailView: View {
         .background(Color.canvas)
         .navigationTitle(String(localized: "station.setup.detail.title"))
         .navigationBarTitleDisplayMode(.inline)
-        .confirmationDialog(String(format: String(localized: "station.setup.delete.title"), name),
+        .confirmationDialog(StationSetupView.deleteDialog(for: name, in: store).title,
                             isPresented: $confirmDelete, titleVisibility: .visible) {
-            Button(String(localized: "station.setup.detail.delete"), role: .destructive) {
+            Button(StationSetupView.deleteDialog(for: name, in: store).button, role: .destructive) {
                 deleted = true
                 StationSetupView.delete(name, in: store)
                 onChange()
@@ -385,7 +395,7 @@ struct StationDetailView: View {
             }
             .accessibilityIdentifier("stationSetup.confirmDelete")
         } message: {
-            Text(String(localized: "station.setup.delete.message"))
+            Text(StationSetupView.deleteDialog(for: name, in: store).message)
         }
         .onDisappear { commitName() }
     }

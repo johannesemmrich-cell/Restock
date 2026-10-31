@@ -783,6 +783,38 @@ final class StoreStationsUITests: XCTestCase {
         }
     }
 
+    // MARK: - V10: Letzten Gang löschen (AC-11, Validierung)
+
+    /// V10 / AC-11: GIVEN Laden mit genau einem Gang „Lager“ WHEN „Gang löschen“ im Gang-Detail THEN
+    /// fragt die App „Gänge entfernen?“ (nicht „Gang „Lager“ löschen?“); nach Bestätigung zeigt die
+    /// Übersicht nur „Vorlage wählen …“ und „Gang hinzufügen“.
+    func testDeletingLastStationAsksToRemoveStations() {
+        let app = openedStore()
+        openSetup(app)
+        tapAndConfirm("stationSetup.remove", confirmID: "stationSetup.confirmRemove", in: app)
+        tapRevealed("stationSetup.addStation", "Gang hinzufügen", in: app)
+        let field = app.alerts.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: UITestWait.defaultTimeout), "Eingabe „Name des Gangs“ fehlt")
+        field.typeText("Lager")
+        app.alerts.buttons["Hinzufügen"].firstMatch.tap()
+
+        openStation("Lager", in: app)
+        tapRevealed("stationSetup.detail.delete", "Gang löschen", in: app)
+        let removeTitle = app.staticTexts["Gänge entfernen?"].firstMatch
+        XCTAssertTrue(removeTitle.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Beim letzten Gang muss die Rückfrage „Gänge entfernen?“ lauten")
+        XCTAssertFalse(app.staticTexts["Gang „Lager“ löschen?"].exists, "Keine Rückfrage „Gang löschen“ beim letzten Gang")
+        let confirm = app.buttons.matching(identifier: "stationSetup.confirmDelete").firstMatch
+        XCTAssertTrue(confirm.waitUntilHittable().matched, "Bestätigung fehlt")
+        XCTAssertEqual(confirm.label, "Gänge entfernen", "Der Knopf der Rückfrage heißt wie die Rückfrage")
+        confirm.tap()
+
+        XCTAssertTrue(element("stationSetup.template", app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Nach dem Löschen zeigt die Übersicht „Vorlage wählen …“")
+        XCTAssertFalse(element("stationSetup.row.Lager", app).exists, "Keine Gang-Zeile mehr")
+        closeSetup(app)
+    }
+
     // MARK: - V9: Gang hinzufügen mit vorhandenem Namen (AC-5, Adversary F003)
 
     /// V9 / AC-5: GIVEN Seed WHEN „Gang hinzufügen“ mit „käse“ (vorhandener Gang, andere Schreibweise)

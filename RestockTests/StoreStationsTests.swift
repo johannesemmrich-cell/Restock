@@ -839,6 +839,26 @@ final class StoreStationsTests: XCTestCase {
         XCTAssertEqual(store.categoryAssignments["kiste"], "Lager", "Merkung bleibt")
     }
 
+    /// S8b / AC-11: GIVEN Laden mit genau einem Gang WHEN dessen Löschen erfragt wird THEN lautet die
+    /// Rückfrage „Gänge entfernen?“ mit deren Text und Knopf; GIVEN zwei Gänge THEN „Gang „Lager“ löschen?“.
+    func testDeletingLastStationAsksToRemoveStations() throws {
+        let store = makeStore(template: false)
+        let empty = store.stationConfig ?? StationConfig(stations: [], hidden: [], date: t0)
+        let one = try XCTUnwrap(StoreCategories.addingStation("Lager", emoji: "📦", to: empty))
+        store.updateStationConfig(one)
+
+        let last = StationSetupView.deleteDialog(for: "Lager", in: store)
+        XCTAssertEqual(last.title, String(localized: "station.remove.confirm.title"))
+        XCTAssertEqual(last.message, String(localized: "station.remove.confirm.message"))
+        XCTAssertEqual(last.button, String(localized: "station.setup.remove"))
+
+        store.updateStationConfig(try XCTUnwrap(StoreCategories.addingStation("Kasse", emoji: "💶", to: one)))
+        let other = StationSetupView.deleteDialog(for: "Lager", in: store)
+        XCTAssertEqual(other.title, String(format: String(localized: "station.setup.delete.title"), "Lager"))
+        XCTAssertEqual(other.message, String(localized: "station.setup.delete.message"))
+        XCTAssertEqual(other.button, String(localized: "station.setup.detail.delete"))
+    }
+
     // MARK: S9: Invarianten (AC-12)
 
     /// S9 / AC-12: GIVEN Vorlage WHEN 25 feste Operationen (auch abgelehnte) THEN nach jedem Schritt

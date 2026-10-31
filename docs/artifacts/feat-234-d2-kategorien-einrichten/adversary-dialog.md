@@ -209,6 +209,19 @@ Finding:
 
 **Implementierer:** F001 bis F005 bearbeitet.
 
+### Runde 6
+**Adversary:** Anlass: /60-validate fand AC-11 nur teilweise erfüllt (letzter Gang fragte „Gang „X“ löschen? Seine Kategorien werden offen.“, entfernte aber alle Gänge); Korrektur über `StationSetupView.deleteDialog`, Knopf im Durchlauf nachgezogen. Geprüft: Änderung seit 18f3255 (StationSetupView.swift, StoreStationsTests.swift, StoreStationsUITests.swift), Unit-Suite 793/0 (`** TEST SUCCEEDED **`), `testDeletingLastStationAsksToRemoveStations` grün.
+- Gleiche Bedingung: `deleteDialog` und `delete` verwenden beide `(store.stationConfig?.stations.count ?? 0) <= 1`; Dialog und Wirkung laufen nicht auseinander, auch bei nil-Konfiguration.
+- Texte bei 1 Gang: `station.remove.confirm.title`, `station.remove.confirm.message`, `station.setup.remove` (dieselben wie „Gänge entfernen“); bei ≥2 Gängen die bisherigen Gang-Schlüssel.
+- Beide Dialoge umgestellt (Übersicht: Titel, Knopf, Text über `pendingDelete`; Detail: Titel, Knopf, Text).
+- Randfall, kein Befund: Beim Bestätigen mit 2 Gängen könnte der ausblendende Dialog kurz auf „Gänge entfernen?“ umspringen (rein kosmetisch).
+- Lokalisierung: alle fünf Schlüssel in de und en, `LocalizationKeyParityTests` grün.
+- Nebenwirkungen: unterer Knopf „Gänge entfernen“ und Vorlage unverändert. Wischweg der Übersicht ohne eigenen UI-Test, durch denselben Code abgedeckt (Hinweis, kein Befund). UI: StoreStationsUITests 16/0 (test-green-validate-ui.txt), nach Knopf-Änderung 3/0 (test-green-validate-ui-r2.txt), Durchlauf `durchlauf/durchlauf.md`.
+
+Keine Befunde.
+
+**Implementierer:** AC-11 korrigiert, Tests S8b und V10 vor der Korrektur rot (test-red-validate-unit.txt, test-red-validate-ui.txt), danach grün.
+
 ## Herkunft der Vorbedingungen
 
 kein Sprachprofil konfiguriert (`precondition_origins.default_lang`)
@@ -217,7 +230,8 @@ kein Sprachprofil konfiguriert (`precondition_origins.default_lang`)
 
 VERDICT: VERIFIED
 
-Alle 15 ACs belegt. Unit 792/0, UI-Klasse StoreStationsUITests 15/0. F001 bis F005 behoben und mit Tests nachgewiesen, keine offenen Befunde. Code reference: SmartCart/Models/StoreCategories.swift:398 und SmartCart/Views/Store/StationSetupView.swift:244 und SmartCart/Views/Store/StoreDetailView.swift:630.
+Alle 15 ACs belegt, AC-11 nach Runde 6 vollständig. Unit 793/0, UI-Klasse StoreStationsUITests 16/0. F001 bis F005 behoben, Runde 6 ohne Befunde.
+Code reference: SmartCart/Views/Store/StationSetupView.swift:245 und SmartCart/Views/Store/StationSetupView.swift:255 und SmartCart/Models/StoreCategories.swift:398 und SmartCart/Views/Store/StoreDetailView.swift:630
 
 ## Geprüfte Dateien
 
@@ -232,4 +246,19 @@ Alle 15 ACs belegt. Unit 792/0, UI-Klasse StoreStationsUITests 15/0. F001 bis F0
 - blob:d5f693a5f836b8029856cc05a482c8e1ed52ad86  SmartCart/Models/Store.swift
 - blob:2b063f6d7f571e3a7dcd5947671fb28b98c01993  SmartCart/Models/StoreCategories.swift
 - blob:306f182a2e98b5e4d0a7bff514da2f2bdd028bec  SmartCart/Views/Store/StationSetupView.swift
+- blob:68dd3f3057195a5f877f9264276966c2c84fa745  SmartCart/Views/Store/StoreDetailView.swift
+
+## Geprüfte Dateien
+
+- sha256:d7b572d83e44b47caf556a15d629b0942ea60e32b0849a5d2640fc7b634ae5a9  SmartCart/Models/Store.swift
+- sha256:9c38f9417855a137b30a8aa3f8e5e32f1d98f0215b82b66c10353d76dc9e0ac9  SmartCart/Models/StoreCategories.swift
+- sha256:872c9542264dcd1f16719bd7d654ffea2d25c5c04d27851d070ad025f4afdd95  SmartCart/Views/Store/StationSetupView.swift
+- sha256:2c3acf15d65883902b18a3f6b9ebeab5e43159fddc97dd0d24210797795564af  SmartCart/Views/Store/StoreDetailView.swift
+
+## Prüfbasis
+
+- base: e0faa4e974730ac0d51d04409d41f5ffed0187cf
+- blob:d5f693a5f836b8029856cc05a482c8e1ed52ad86  SmartCart/Models/Store.swift
+- blob:2b063f6d7f571e3a7dcd5947671fb28b98c01993  SmartCart/Models/StoreCategories.swift
+- blob:be685e1490af1c7ddef96b2620f11c2ecdcd314f  SmartCart/Views/Store/StationSetupView.swift
 - blob:68dd3f3057195a5f877f9264276966c2c84fa745  SmartCart/Views/Store/StoreDetailView.swift
