@@ -130,6 +130,22 @@ final class StoreStationsUITests: XCTestCase {
                       "Gang-Detail „\(name)“ nicht geöffnet")
     }
 
+    /// Verschiebegriff der Gang-Zeile `name` im Modus „Sortieren“, gewählt über die Lage (gleiche Höhe
+    /// wie die Zeile): iOS 26.5 beschriftet ihn nur mit dem Emoji („🧀 neu anordnen“, run 41223938489),
+    /// iOS 27.2 mit dem Namen.
+    private func reorderHandle(forStation name: String, in app: XCUIApplication,
+                               file: StaticString = #filePath, line: UInt = #line) -> XCUIElement {
+        let row = element("stationSetup.row.\(name)", app)
+        XCTAssertTrue(row.waitForExistence(timeout: UITestWait.defaultTimeout), "Gang-Zeile „\(name)“ fehlt", file: file, line: line)
+        let handles = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "anordnen"))
+        let found = UITestWait.poll(timeout: UITestWait.defaultTimeout, read: { () -> XCUIElement? in
+            handles.allElementsBoundByIndex.first { abs($0.frame.midY - row.frame.midY) < row.frame.height / 2 }
+        }, done: { $0 != nil })
+        let handle = found.last ?? row
+        XCTAssertTrue(found.matched, "Verschiebegriff „\(name)“ fehlt", file: file, line: line)
+        return handle
+    }
+
     /// Zurück aus dem Gang-Detail in die Übersicht.
     private func backToOverview(_ app: XCUIApplication) {
         app.navigationBars.buttons.element(boundBy: 0).tap()
@@ -661,11 +677,8 @@ final class StoreStationsUITests: XCTestCase {
         let app = openedStore()
         openSetup(app)
         tapRevealed("stationSetup.sort", "Sortieren", in: app)
-        let handles = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "anordnen"))
-        let kaese = handles.matching(NSPredicate(format: "label CONTAINS %@ AND NOT (label CONTAINS %@)", "Käse", "Gemüse")).firstMatch
-        let obst = handles.matching(NSPredicate(format: "label CONTAINS %@", "Obst & Gemüse")).firstMatch
-        XCTAssertTrue(kaese.waitForExistence(timeout: UITestWait.defaultTimeout), "Verschiebegriff „Käse“ fehlt")
-        XCTAssertTrue(obst.exists, "Verschiebegriff „Obst & Gemüse“ fehlt")
+        let kaese = reorderHandle(forStation: "Käse", in: app)
+        let obst = reorderHandle(forStation: "Obst & Gemüse", in: app)
         let target = obst.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).withOffset(CGVector(dx: 0, dy: -20))
         kaese.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
             .press(forDuration: 0.8, thenDragTo: target, withVelocity: .slow, thenHoldForDuration: 0.5)
