@@ -308,3 +308,121 @@ extension StoreCategories {
         date: Date(timeIntervalSince1970: 0)
     )
 }
+
+// MARK: - Gänge einrichten (Issue #234, Durchgang 2a, `docs/specs/views/station-setup.md`)
+
+extension StoreCategories {
+    /// Zustand einer festen Kategorie in einem Laden mit Gängen. Kein viertes, stilles Feld:
+    /// zugeordnet (in `builtIns` eines Gangs oder Name eines Gangs), ausgeblendet, offen.
+    enum CategoryState: Equatable {
+        case assigned(String)
+        case hidden
+        case open
+    }
+
+    /// Zustand in derselben Reihenfolge wie `stationForCategory`: Gang gleichen Namens, `hidden`,
+    /// `builtIns`, sonst offen.
+    static func categoryState(_ category: String, in config: StationConfig) -> CategoryState {
+        if let bound = stationNamed(category, in: config) { return .assigned(bound) }
+        if config.hidden.contains(category) { return .hidden }
+        if let station = config.stations.first(where: { $0.builtIns.contains(category) }) { return .assigned(station.name) }
+        return .open
+    }
+
+    /// Feste Kategorie (Rohwert), deren Namen `name` trägt.
+    static func builtInCategory(named name: String) -> String? {
+        let key = compareKey(name)
+        return AssignmentService.categoryOrder.first { compareKey($0) == key }
+    }
+
+    /// Neuer Gang am Ende. `nil`, wenn der Name leer, die Marke, „Sonstiges“/„Other“ oder schon
+    /// ein Gang ist. Trägt er den Namen einer festen Kategorie, übernimmt er sie.
+    static func addingStation(_ input: String, emoji: String, to config: StationConfig) -> StationConfig? {
+        guard case .new(let name) = resolveStation(input, config: config) else { return nil }
+        var config = config
+        config.stations.append(Station(name: name, emoji: emoji, builtIns: [], keywords: []))
+        return adopting(builtInCategory(named: name), into: config.stations.count - 1, config)
+    }
+
+    /// Gang umbenennen und Emoji setzen. Erlaubt: neuer Name oder nur andere Schreibweise des
+    /// eigenen. `builtIns` und `keywords` bleiben; nie zusammengeführt.
+    static func renamingStation(_ old: String, to input: String, emoji: String, in config: StationConfig) -> StationConfig? {
+        guard let index = stationIndex(old, in: config) else { return nil }
+        let name: String
+        switch resolveStation(input, config: config) {
+        case .new(let new): name = new
+        case .existing(let same) where same == config.stations[index].name: name = normalizedName(input)
+        default: return nil
+        }
+        var config = config
+        config.stations[index].name = name
+        config.stations[index].emoji = emoji
+        return adopting(builtInCategory(named: name), into: index, config)
+    }
+
+    /// Gänge umordnen wie `Array.move(fromOffsets:toOffset:)` (ohne SwiftUI, Datei läuft auch im
+    /// Widget und in der Teilen-Erweiterung).
+    static func movingStations(from source: IndexSet, to destination: Int, in config: StationConfig) -> StationConfig {
+        var stations = config.stations
+        let offsets = source.filter { stations.indices.contains($0) }.sorted()
+        let moving = offsets.map { stations[$0] }
+        for offset in offsets.reversed() { stations.remove(at: offset) }
+        let target = min(max(destination - offsets.filter { $0 < destination }.count, 0), stations.count)
+        stations.insert(contentsOf: moving, at: target)
+        var config = config
+        config.stations = stations
+        return config
+    }
+
+    /// Feste Kategorie einem Gang zuordnen (aus anderen Gängen und `hidden` gelöst). Gesperrt,
+    /// wenn ein anderer Gang ihren Namen trägt.
+    static func assigning(_ category: String, toStation name: String, in config: StationConfig) -> StationConfig? {
+        guard AssignmentService.categoryOrder.contains(category), let index = stationIndex(name, in: config) else { return nil }
+        if let bound = stationNamed(category, in: config), bound != config.stations[index].name { return nil }
+        return adopting(category, into: index, config)
+    }
+
+    /// Feste Kategorie ausblenden (aus allen Gängen gelöst). Gesperrt bei Name-Bindung.
+    static func hiding(_ category: String, in config: StationConfig) -> StationConfig? {
+        guard var config = releasing(category, in: config) else { return nil }
+        config.hidden.append(category)
+        return config
+    }
+
+    /// Feste Kategorie offen machen (weder Gang noch `hidden`). Gesperrt bei Name-Bindung.
+    static func opening(_ category: String, in config: StationConfig) -> StationConfig? {
+        releasing(category, in: config)
+    }
+
+    /// Gang entfernen: seine festen Kategorien werden offen, Stichwörter fallen weg.
+    static func deletingStation(_ name: String, in config: StationConfig) -> StationConfig? {
+        guard let index = stationIndex(name, in: config) else { return nil }
+        var config = config
+        config.stations.remove(at: index)
+        return config
+    }
+
+    private static func stationIndex(_ name: String, in config: StationConfig) -> Int? {
+        let key = compareKey(name)
+        return config.stations.firstIndex { compareKey($0.name) == key }
+    }
+
+    /// Kategorie aus allen Gängen und `hidden` lösen; `nil` bei unbekannter oder name-gebundener.
+    private static func releasing(_ category: String, in config: StationConfig) -> StationConfig? {
+        guard AssignmentService.categoryOrder.contains(category), stationNamed(category, in: config) == nil else { return nil }
+        var config = config
+        for index in config.stations.indices { config.stations[index].builtIns.removeAll { $0 == category } }
+        config.hidden.removeAll { $0 == category }
+        return config
+    }
+
+    /// Kategorie in die `builtIns` des Gangs `index` übernehmen, ohne Doppelung.
+    private static func adopting(_ category: String?, into index: Int, _ config: StationConfig) -> StationConfig {
+        guard let category else { return config }
+        var config = config
+        for i in config.stations.indices { config.stations[i].builtIns.removeAll { $0 == category } }
+        config.hidden.removeAll { $0 == category }
+        config.stations[index].builtIns.append(category)
+        return config
+    }
+}

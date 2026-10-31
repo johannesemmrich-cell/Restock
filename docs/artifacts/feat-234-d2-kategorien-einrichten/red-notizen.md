@@ -36,6 +36,9 @@ Für `/50-implement`: Was die Tests als Vertrag festlegen, wo sie von der Spec a
    Die Spec nennt nur U6/U7 als geändert.
 3. **T18** (`testStationStringsExistInBothLanguages`) erwartete die laut Spec gestrichenen D1-Schlüssel; sie sind
    aus der Erwartung genommen. S13 prüft, dass sie fehlen.
+4. **V5** (`testHideCategoryRemovesItemFromStation`) prüfte zusätzlich eine Drogerie-Überschrift über Batterien, die
+   nach dem Ausblenden nicht existieren kann (leerer Gang ohne Überschrift, U1). In Phase 6 gestrichen (Zeile aus V4
+   kopiert), Spec unverändert: V5 verlangt nur „Batterien unter Sonstiges“.
 
 ## Umfang
 

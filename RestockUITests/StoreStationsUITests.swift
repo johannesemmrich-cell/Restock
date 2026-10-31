@@ -602,7 +602,6 @@ final class StoreStationsUITests: XCTestCase {
         let batterien = text("Batterien", app)
         XCTAssertTrue(reveal(batterien, in: app), "Batterien fehlt")
         XCTAssertNotNil(otherHeaderY(above: batterien, app), "Batterien muss unter „Sonstiges“ stehen")
-        assertAbove(header("Drogerie", emoji: "🧴", app), "Überschrift Drogerie", batterien, "Batterien", in: app)
         scrollToTop(app)
 
         openSetup(app)
@@ -782,5 +781,32 @@ final class StoreStationsUITests: XCTestCase {
             expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: row)
             waitForExpectations(timeout: UITestWait.defaultTimeout)
         }
+    }
+
+    // MARK: - V9: Gang hinzufügen mit vorhandenem Namen (AC-5, Adversary F003)
+
+    /// V9 / AC-5: GIVEN Seed WHEN „Gang hinzufügen“ mit „käse“ (vorhandener Gang, andere Schreibweise)
+    /// THEN der Hinweis „Diesen Namen gibt es schon …“ erscheint und es bleibt bei 12 Gängen.
+    func testAddStationWithExistingNameShowsHint() {
+        let app = openedStore()
+        openSetup(app)
+        tapRevealed("stationSetup.addStation", "Gang hinzufügen", in: app)
+        let field = app.alerts.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: UITestWait.defaultTimeout), "Eingabe „Name des Gangs“ fehlt")
+        field.typeText("käse")
+        app.alerts.buttons["Hinzufügen"].firstMatch.tap()
+
+        let hint = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Diesen Namen gibt es schon")).firstMatch
+        XCTAssertTrue(hint.waitForExistence(timeout: UITestWait.defaultTimeout), "Hinweis auf abgelehnten Namen fehlt")
+        let dismiss = app.alerts.buttons.firstMatch
+        XCTAssertTrue(dismiss.waitForExistence(timeout: UITestWait.defaultTimeout), "Knopf im Hinweis fehlt")
+        dismiss.tap()
+
+        let count = app.staticTexts.matching(NSPredicate(format: "label ==[c] %@", "Gänge · 12")).firstMatch
+        XCTAssertTrue(count.waitForExistence(timeout: UITestWait.defaultTimeout), "Es muss bei 12 Gängen bleiben")
+        XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "label ==[c] %@", "Gänge · 13")).firstMatch.exists,
+                       "Kein zweiter Gang „käse“")
+        XCTAssertFalse(element("stationSetup.row.käse", app).exists, "Kein Gang in anderer Schreibweise")
+        closeSetup(app)
     }
 }

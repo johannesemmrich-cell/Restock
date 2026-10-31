@@ -1002,4 +1002,84 @@ final class StoreStationsTests: XCTestCase {
             }
         }
     }
+
+    // MARK: S14/S15: Nachträge aus der Adversary-Prüfung (F001, F002)
+
+    /// S14 / AC-7, AC-9 (F001): GIVEN Gang-Name, der eine feste Kategorie nur in anderer Schreibweise
+    /// trägt („tierbedarf“, „Getranke“) WHEN angelegt oder umbenannt THEN keine eigene Kategorie
+    /// gleichen Namens, die feste Kategorie gehört zum Gang.
+    func testStationNamedLikeFixedCategoryCreatesNoCustomCategory() throws {
+        let store = makeStore()
+        let sameKey = { (name: String) in
+            store.customCategories.contains { StoreCategories.compareKey($0) == StoreCategories.compareKey(name) }
+        }
+
+        XCTAssertEqual(store.addStation("tierbedarf"), "tierbedarf")
+        XCTAssertFalse(sameKey("Tierbedarf"), "„tierbedarf“ ist die feste Kategorie Tierbedarf, keine eigene")
+        XCTAssertEqual(StoreCategories.categoryState("Tierbedarf", in: try XCTUnwrap(store.stationConfig)), .assigned("tierbedarf"))
+
+        store.deleteStation("Getränke")
+        XCTAssertEqual(store.renameStation("Käse", to: "Getranke", emoji: "🥤"), "Getranke")
+        XCTAssertFalse(sameKey("Getränke"), "„Getranke“ ist die feste Kategorie Getränke, keine eigene")
+        let config = try XCTUnwrap(store.stationConfig)
+        XCTAssertTrue(builtIns(of: "Getranke", in: config).contains("Getränke"))
+        XCTAssertEqual(StoreCategories.categoryState("Getränke", in: config), .assigned("Getranke"))
+        let cola = add("Cola", to: store)
+        XCTAssertEqual(store.stationName(of: cola), "Getranke")
+    }
+
+    /// S15 / AC-3 (F002): GIVEN Gang „Käse“ (eigene Kategorie, 🧀) WHEN nur das Emoji geändert THEN
+    /// Gang und eigene Kategorie tragen das neue Emoji.
+    func testEmojiChangeUpdatesCustomCategoryEmoji() {
+        let store = makeStore()
+        XCTAssertEqual(store.categoryEmoji("Käse"), "🧀", "Vorbedingung")
+
+        XCTAssertEqual(store.renameStation("Käse", to: "Käse", emoji: "🐭"), "Käse")
+
+        XCTAssertEqual(store.stationEmoji("Käse"), "🐭")
+        XCTAssertEqual(store.categoryEmoji("Käse"), "🐭", "Emoji der eigenen Kategorie zieht mit")
+        XCTAssertEqual(store.customCategoryEntries["Käse"]?.isDeleted, false)
+    }
+
+    /// S16 / AC-3, AC-9 (F004): GIVEN Gang „Getränke“ mit Handwahl-Artikel und Merkung WHEN umbenannt
+    /// auf „Trinken“ und dann auf „getränke“ (fest → eigen → fest, andere Schreibweise) THEN Artikel und
+    /// Merkung tragen den Rohwert „Getränke“, der Gang heißt wie getippt; nach „Gänge entfernen“ steht
+    /// die feste Kategorie im Artikel.
+    func testRenameBackToFixedNameStoresCanonicalCategory() throws {
+        let store = makeStore()
+        let cola = addManual("Cola", category: "Getränke", to: store)
+        store.rememberCategory("Getränke", forItemNamed: "Wasser")
+
+        XCTAssertEqual(store.renameStation("Getränke", to: "Trinken", emoji: "🥤"), "Trinken")
+        XCTAssertEqual(cola.category, "Trinken", "Vorbedingung: Handwahl zieht mit")
+        XCTAssertEqual(store.renameStation("Trinken", to: "getränke", emoji: "🥤"), "getränke")
+
+        XCTAssertEqual(names(store.stationConfig).last, "getränke", "Gang-Name bleibt wie getippt")
+        XCTAssertEqual(cola.category, "Getränke", "Artikel trägt den Rohwert der festen Kategorie")
+        XCTAssertTrue(cola.categoryManuallySet)
+        XCTAssertEqual(store.categoryAssignments["wasser"], "Getränke", "Merkung trägt den Rohwert")
+        XCTAssertEqual(store.stationName(of: cola), "getränke")
+        XCTAssertFalse(store.isCustomCategory("getränke"))
+
+        store.removeStations()
+        XCTAssertEqual(cola.category, "Getränke")
+        XCTAssertTrue(AssignmentService.categoryOrder.contains(cola.category), "Ohne Gänge eine gültige feste Kategorie")
+    }
+
+    /// S17 / AC-10 (F005): GIVEN Gang „getränke“ (fester Name, andere Schreibweise) mit Merkung auf
+    /// den Rohwert „Getränke“ WHEN `deleteStation("getränke")` THEN Merkung vergessen; ein später
+    /// angelegter Gang „Getränke“ erbt sie nicht.
+    func testDeleteStationWithVariantSpellingForgetsCanonicalAssignments() throws {
+        let store = makeStore()
+        XCTAssertEqual(store.renameStation("Getränke", to: "getränke", emoji: "🥤"), "getränke")
+        store.rememberCategory("Getränke", forItemNamed: "Wasser")
+        XCTAssertEqual(store.categoryAssignments["wasser"], "Getränke", "Vorbedingung: Merkung trägt den Rohwert")
+
+        store.deleteStation("getränke")
+
+        XCTAssertFalse(names(store.stationConfig).contains("getränke"))
+        XCTAssertNil(store.categoryAssignments["wasser"], "Merkung auf den festen Namen vergessen")
+        XCTAssertEqual(store.addStation("Getränke"), "Getränke")
+        XCTAssertNil(store.rememberedCategory(forItemNamed: "Wasser"), "Neuer Gang „Getränke“ erbt keine Merkung")
+    }
 }

@@ -411,9 +411,74 @@ class Store {
         }
     }
 
+    /// Einziger Schreibpunkt von „Kategorien einrichten“ (D2a): wie `applyStationConfig`
+    /// (Zeitstempel jetzt, Gang-Namen als eigene Kategorien, Weg-Version), auch im Laden ohne Gänge.
+    func updateStationConfig(_ config: StationConfig) {
+        applyStationConfig(config)
+    }
+
+    /// Gang umbenennen (D2a). Liefert den neuen Namen oder `nil` (abgelehnt, nichts geändert).
+    /// Eigene Kategorie, Merkungen, von Hand gesetzte Artikel-Kategorien, gelernter Weg und
+    /// laufende Abhak-Sitzung ziehen mit.
+    @discardableResult
+    func renameStation(_ old: String, to input: String, emoji: String) -> String? {
+        guard let current = stationConfig, let oldName = StoreCategories.stationNamed(old, in: current),
+              let index = current.stations.firstIndex(where: { $0.name == oldName }),
+              let config = StoreCategories.renamingStation(oldName, to: input, emoji: emoji, in: current) else { return nil }
+        let new = config.stations[index].name
+        let now = Date()
+        // Zuerst den alten Eintrag beenden, sonst verhinderte er bei reiner Schreibweise-Änderung
+        // („Käse“ → „käse“) das Anlegen des neuen.
+        if new != oldName, isCustomCategory(oldName) {
+            var entries = customCategoryEntries
+            entries[oldName] = CustomCategoryEntry(emoji: nil, date: now)
+            customCategoryEntries = entries
+        }
+        updateStationConfig(config)
+        if isCustomCategory(new), customCategoryEmojis[new] != emoji {
+            var entries = customCategoryEntries
+            entries[new] = CustomCategoryEntry(emoji: emoji, date: now)
+            customCategoryEntries = entries
+        }
+        guard new != oldName else { return new }
+        // Artikel und Merkungen tragen bei festem Namen den Rohwert („getränke“ → „Getränke“), damit
+        // sie auch ohne Gänge gültig bleiben. Weg und Sitzung tragen Gang-Namen und bleiben bei `new`.
+        let value = StoreCategories.builtInCategory(named: new) ?? new
+        let oldValues = Set([oldName, StoreCategories.builtInCategory(named: oldName)].compactMap { $0 })
+        for (key, stored) in categoryAssignments where oldValues.contains(stored) { setAssignment(value, forKey: key, at: now) }
+        for item in items ?? [] where item.categoryManuallySet && oldValues.contains(item.category) {
+            item.category = value
+            item.lastModified = now
+        }
+        routeModel = ShoppingRoute.renameCategory(oldName, to: new, in: routeModel)
+        var trip = currentTrip
+        for i in trip.entries.indices where trip.entries[i].category == oldName { trip.entries[i].category = new }
+        currentTrip = trip
+        Store.bumpRouteRevision()
+        return new
+    }
+
+    /// Gang löschen (D2a): feste Kategorien werden offen. Eigene Kategorie gleichen Namens wird
+    /// gelöscht (#85); bei festem Namen werden nur Merkungen auf ihn vergessen. Die laufende
+    /// Abhak-Sitzung bleibt unverändert.
+    func deleteStation(_ name: String) {
+        guard let current = stationConfig, let stored = StoreCategories.stationNamed(name, in: current),
+              let config = StoreCategories.deletingStation(stored, in: current) else { return }
+        updateStationConfig(config)
+        if isCustomCategory(stored) {
+            deleteCustomCategory(stored)
+        } else {
+            let now = Date()
+            // Gang-Name und Rohwert („getränke“/„Getränke“), wie in `renameStation`.
+            let names = Set([stored, StoreCategories.builtInCategory(named: stored)].compactMap { $0 })
+            for (key, value) in categoryAssignments where names.contains(value) { setAssignment(nil, forKey: key, at: now) }
+        }
+    }
+
     /// Legt `name` als eigene Kategorie an, außer er ist eine feste Kategorie oder existiert schon.
     private func ensureCustomCategory(_ name: String, emoji: String) {
-        guard !AssignmentService.categoryOrder.contains(name) else { return }
+        // Über `compareKey` wie `stationNamed`: „tierbedarf“ oder „Getranke“ meinen die feste Kategorie.
+        guard StoreCategories.builtInCategory(named: name) == nil else { return }
         let key = StoreCategories.compareKey(name)
         guard !customCategories.contains(where: { StoreCategories.compareKey($0) == key }) else { return }
         var entries = customCategoryEntries
