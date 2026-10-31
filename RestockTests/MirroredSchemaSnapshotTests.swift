@@ -20,6 +20,8 @@ final class MirroredSchemaSnapshotTests: XCTestCase {
             "countryCode", "isCustom", "itemOrderMap", "learnedPrices", "learnedPriceDates",
             "learnedPriceUnits", "learnedPriceOrigins", "customCategoryEmojis", "customCategoryDates",
             "categoryAssignments", "categoryAssignmentDates", "sortIndex",
+            // Issue #234 (T16, AC-16): Gang-Konfiguration des Ladens, additiv, Standard "".
+            "stationConfigJSON",
         ],
         "ShoppingItem": [
             "id", "name", "category", "categoryManuallySet", "quantity", "quantityAmount", "unit",
@@ -91,6 +93,19 @@ final class MirroredSchemaSnapshotTests: XCTestCase {
         // THEN ist es vorhanden
         XCTAssertNotNil(block.range(of: pattern, options: .regularExpression),
                         "\(Self.deployHint). CD_ShoppingItem.CD_photoData_ckAsset (ASSET) fehlt")
+    }
+
+    // MARK: - T16 (Issue #234, AC-16): Gang-Konfiguration steht als STRING im Schema
+
+    /// GIVEN der Development-Export im Repo WHEN streng nach `CD_stationConfigJSON` gesucht wird
+    /// THEN steht das Feld in `CD_Store` mit Typ `STRING` (fehlt es in Production, scheitert der
+    /// ganze Export der Spiegelung). T1 oben hält das Feld zusätzlich in der Feldliste fest.
+    func testStationConfigFieldIsListedAsString() throws {
+        let block = try XCTUnwrap(Self.recordTypeBlock("CD_Store", in: try Self.loadExport()),
+                                  "CD_Store fehlt in private-schema-aktuell.ckdb")
+        let pattern = "(?<![A-Za-z0-9_])\"?CD_stationConfigJSON\"?\\s+STRING(?![A-Za-z0-9_])"
+        XCTAssertNotNil(block.range(of: pattern, options: .regularExpression),
+                        "\(Self.deployHint). CD_Store.CD_stationConfigJSON (STRING) fehlt")
     }
 
     // MARK: - Hilfen

@@ -206,6 +206,7 @@
 		1A2B3C4D5E6F70819293A4B5 /* StorePresetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A39281706F5E4D3C2B1A0 /* StorePresetsTests.swift */; };
 		13F67D467B23DDA3BB3A1FA0 /* ShoppingRouteManualOrderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB9D0D5843AF9CA02B07834 /* ShoppingRouteManualOrderTests.swift */; };
 		69AADF61E72B2D751B41B938 /* StoreCategoriesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE794905325336625E09283A /* StoreCategoriesTests.swift */; };
+		D15893711DAFD8075BBA32A3 /* StoreStationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D3D35D7B3ABD37FBC69B97 /* StoreStationsTests.swift */; };
 		F3659939361099C47FDFC7FF /* ShoppingRouteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DEEE5B1826E6FE9E6A352F /* ShoppingRouteTests.swift */; };
 		2C3D4E5F60718293A4B5C6D7 /* AssignmentServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C5B4A39281706F5E4D3C2B1 /* AssignmentServiceTests.swift */; };
 		EF8C21EB5967679ED848C3D4 /* PurchaseRecordDeletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6606EC2F3B8BEC3DCCA21560 /* PurchaseRecordDeletionTests.swift */; };
@@ -237,6 +238,7 @@
 		54FBC057E3FD038294A3AEA0 /* AddItemQuantitySuggestionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */; };
 		A1C0DE110000000000000003 /* LegacyLearnedPriceResetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */; };
 		91DA57026009303F78C87BDB /* ShoppingRouteUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */; };
+		5170B2F00E3AA8E7FFCDEEDB /* StoreStationsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD3D85BD8E7643DF66EAF1F /* StoreStationsUITests.swift */; };
 		A98C0DE1A98C0DE1A98C0DE1 /* ShoppingRouteLearningUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98C0DE2A98C0DE2A98C0DE2 /* ShoppingRouteLearningUITests.swift */; };
 		B33C0DE1B33C0DE1B33C0DE1 /* ItemRowTapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33C0DE2B33C0DE2B33C0DE2 /* ItemRowTapUITests.swift */; };
 		A98C0DE3A98C0DE3A98C0DE3 /* ReplenishmentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98C0DE4A98C0DE4A98C0DE4 /* ReplenishmentUITests.swift */; };
@@ -469,6 +471,7 @@
 		5B4A39281706F5E4D3C2B1A0 /* StorePresetsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePresetsTests.swift; sourceTree = "<group>"; };
 		BCB9D0D5843AF9CA02B07834 /* ShoppingRouteManualOrderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRouteManualOrderTests.swift; sourceTree = "<group>"; };
 		CE794905325336625E09283A /* StoreCategoriesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCategoriesTests.swift; sourceTree = "<group>"; };
+		18D3D35D7B3ABD37FBC69B97 /* StoreStationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreStationsTests.swift; sourceTree = "<group>"; };
 		B5DEEE5B1826E6FE9E6A352F /* ShoppingRouteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRouteTests.swift; sourceTree = "<group>"; };
 		6C5B4A39281706F5E4D3C2B1 /* AssignmentServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentServiceTests.swift; sourceTree = "<group>"; };
 		6606EC2F3B8BEC3DCCA21560 /* PurchaseRecordDeletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseRecordDeletionTests.swift; sourceTree = "<group>"; };
@@ -499,6 +502,7 @@
 		3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemQuantitySuggestionUITests.swift; sourceTree = "<group>"; };
 		A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceResetUITests.swift; sourceTree = "<group>"; };
 		4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRouteUITests.swift; sourceTree = "<group>"; };
+		BCD3D85BD8E7643DF66EAF1F /* StoreStationsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreStationsUITests.swift; sourceTree = "<group>"; };
 		A98C0DE2A98C0DE2A98C0DE2 /* ShoppingRouteLearningUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRouteLearningUITests.swift; sourceTree = "<group>"; };
 		B33C0DE2B33C0DE2B33C0DE2 /* ItemRowTapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRowTapUITests.swift; sourceTree = "<group>"; };
 		A98C0DE4A98C0DE4A98C0DE4 /* ReplenishmentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentUITests.swift; sourceTree = "<group>"; };
@@ -858,6 +862,7 @@
 				5B4A39281706F5E4D3C2B1A0 /* StorePresetsTests.swift */,
 				BCB9D0D5843AF9CA02B07834 /* ShoppingRouteManualOrderTests.swift */,
 				CE794905325336625E09283A /* StoreCategoriesTests.swift */,
+				18D3D35D7B3ABD37FBC69B97 /* StoreStationsTests.swift */,
 				B5DEEE5B1826E6FE9E6A352F /* ShoppingRouteTests.swift */,
 				6C5B4A39281706F5E4D3C2B1 /* AssignmentServiceTests.swift */,
 				6606EC2F3B8BEC3DCCA21560 /* PurchaseRecordDeletionTests.swift */,
@@ -895,6 +900,7 @@
 				3BFD50C50A64D440AD88870F /* AddItemQuantitySuggestionUITests.swift */,
 				A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */,
 				4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */,
+				BCD3D85BD8E7643DF66EAF1F /* StoreStationsUITests.swift */,
 				A98C0DE2A98C0DE2A98C0DE2 /* ShoppingRouteLearningUITests.swift */,
 				B33C0DE2B33C0DE2B33C0DE2 /* ItemRowTapUITests.swift */,
 				A98C0DE4A98C0DE4A98C0DE4 /* ReplenishmentUITests.swift */,
@@ -1300,6 +1306,7 @@
 				1A2B3C4D5E6F70819293A4B5 /* StorePresetsTests.swift in Sources */,
 				13F67D467B23DDA3BB3A1FA0 /* ShoppingRouteManualOrderTests.swift in Sources */,
 				69AADF61E72B2D751B41B938 /* StoreCategoriesTests.swift in Sources */,
+				D15893711DAFD8075BBA32A3 /* StoreStationsTests.swift in Sources */,
 				F3659939361099C47FDFC7FF /* ShoppingRouteTests.swift in Sources */,
 				2C3D4E5F60718293A4B5C6D7 /* AssignmentServiceTests.swift in Sources */,
 				EF8C21EB5967679ED848C3D4 /* PurchaseRecordDeletionTests.swift in Sources */,
@@ -1337,6 +1344,7 @@
 				54FBC057E3FD038294A3AEA0 /* AddItemQuantitySuggestionUITests.swift in Sources */,
 				A1C0DE110000000000000003 /* LegacyLearnedPriceResetUITests.swift in Sources */,
 				91DA57026009303F78C87BDB /* ShoppingRouteUITests.swift in Sources */,
+				5170B2F00E3AA8E7FFCDEEDB /* StoreStationsUITests.swift in Sources */,
 				A98C0DE1A98C0DE1A98C0DE1 /* ShoppingRouteLearningUITests.swift in Sources */,
 				B33C0DE1B33C0DE1B33C0DE1 /* ItemRowTapUITests.swift in Sources */,
 				A98C0DE3A98C0DE3A98C0DE3 /* ReplenishmentUITests.swift in Sources */,
