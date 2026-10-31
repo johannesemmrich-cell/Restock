@@ -420,12 +420,42 @@
 "station.other" = "Other";
 "station.picker.section" = "Aisles at %@";
 "station.picker.create" = "Add “%@” as an aisle at %@";
-"station.menu.applyTemplate" = "Apply Lidl template";
 "station.menu.remove" = "Remove aisles";
-"station.template.confirm.title" = "Apply Lidl template?";
-"station.template.confirm.message" = "This store's list will then follow Lidl's aisles. Your own categories and remembered assignments are kept.";
 "station.remove.confirm.title" = "Remove aisles?";
 "station.remove.confirm.message" = "The list sorts by the standard categories again. Your own categories and remembered assignments are kept.";
+/* Kategorien einrichten (Issue #234, Durchgang 2a) */
+"station.setup.menu" = "Set up categories";
+"station.setup.title" = "Set up categories";
+"station.setup.done" = "Done";
+"station.setup.template" = "Choose template …";
+"station.setup.template.title" = "Choose template";
+"station.setup.template.message" = "Replaces this store's aisles. Remembered assignments and your own categories are kept.";
+"station.setup.template.lidl" = "Lidl";
+"station.setup.section.stations" = "Aisles · %d";
+"station.setup.section.open" = "Open · %d";
+"station.setup.section.open.footer" = "end up under “Other”";
+"station.setup.section.hidden" = "Hidden · %d";
+"station.setup.sort" = "Sort";
+"station.setup.add" = "Add aisle";
+"station.setup.add.prompt" = "Aisle name";
+"station.setup.assign" = "Assign …";
+"station.setup.hide" = "Hide";
+"station.setup.show" = "Show";
+"station.setup.remove" = "Remove aisles";
+"station.setup.shared" = "Aisles stay on this device until sync is available.";
+"station.setup.row.summary" = "%d categories · %d keywords";
+"station.setup.row.empty" = "empty";
+"station.setup.detail.title" = "Aisle";
+"station.setup.detail.categories" = "Categories in this aisle · %d";
+"station.setup.detail.in" = "currently in: %@";
+"station.setup.detail.bound" = "belongs to aisle %@";
+"station.setup.detail.keywords" = "Keywords (read only)";
+"station.setup.detail.delete" = "Delete aisle";
+"station.setup.delete.title" = "Delete aisle “%@”?";
+"station.setup.delete.message" = "Its categories become open.";
+"station.setup.name.rejected" = "This name is already in use or not allowed.";
+"station.setup.detail.open" = "open";
+"station.setup.detail.hidden" = "hidden";
 
 /* Price source (Issue #151) */
 "price.source.receipt" = "Receipt";

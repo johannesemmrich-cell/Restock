@@ -65,8 +65,7 @@ struct StoreDetailView: View {
     @State private var isReordering = false
     @State private var reorderTick = 0
     @State private var showResetRouteConfirm = false
-    @State private var showApplyTemplateConfirm = false
-    @State private var showRemoveStationsConfirm = false
+    @State private var showStationSetup = false
 
     private func total(for items: [ShoppingItem]) -> Double {
         items.compactMap { $0.estimatedLineTotal }.reduce(0, +)
@@ -112,7 +111,7 @@ struct StoreDetailView: View {
         // Sort + UserDefaults-Zugriff) an bis zu 6 Stellen in diesem body einzeln neu aufzurufen.
         let _ = reorderTick
         let pending = store.pendingItems
-        withAlsoDueObservers(withStationDialogs(decoratedList(pending: pending)))
+        withAlsoDueObservers(decoratedList(pending: pending))
         .task(id: store.id) {
             // Issue #163: Community-Preise der Kette holen und auf geschätzte Artikel anwenden.
             await CommunityPriceService.shared.refreshAndApply(store: store)
@@ -277,6 +276,9 @@ struct StoreDetailView: View {
         .sheet(isPresented: $showShareSheet) { StoreShareSheet(store: store) }
         .sheet(isPresented: $showReceiptScanner) { ReceiptScannerView(store: store) }
         .sheet(isPresented: $showActualPriceEntry) { ActualPriceEntryView(store: store) }
+        .sheet(isPresented: $showStationSetup, onDismiss: { reorderTick += 1 }) {
+            StationSetupView(store: store) { reorderTick += 1 }
+        }
         .sheet(item: $editingItem) { item in EditItemView(item: item) }
         .sheet(isPresented: $showTemplatePicker) {
             TemplatePickerSheet(service: templateService) { template in
@@ -622,47 +624,15 @@ struct StoreDetailView: View {
         }
     }
 
-    // MARK: - Gänge (Issue #234, Zwischenlösung D1)
+    // MARK: - Gänge (Issue #234, D2a)
 
-    /// „Lidl-Vorlage übernehmen“ nur ohne Gänge, „Gänge entfernen“ nur mit Gängen.
-    @ViewBuilder
+    /// „Kategorien einrichten“ in jedem Laden, auch ohne Gänge.
     private var stationMenuItem: some View {
-        if store.hasStations {
-            Button(String(localized: "station.menu.remove"), systemImage: "square.stack.3d.down.forward") {
-                showRemoveStationsConfirm = true
-            }
-            .accessibilityIdentifier("store.menu.removeStations")
-        } else {
-            Button(String(localized: "station.menu.applyTemplate"), systemImage: "square.stack.3d.up") {
-                showApplyTemplateConfirm = true
-            }
-            .accessibilityIdentifier("store.menu.applyStationTemplate")
+        Button(String(localized: "station.setup.menu"), systemImage: "square.stack.3d.up") {
+            showStationSetup = true
+            Haptics.impact(.light)
         }
-    }
-
-    /// Rückfragen zu den beiden Menüeinträgen.
-    private func withStationDialogs<Content: View>(_ content: Content) -> some View {
-        content
-            .confirmationDialog(String(localized: "station.template.confirm.title"),
-                                isPresented: $showApplyTemplateConfirm, titleVisibility: .visible) {
-                Button(String(localized: "station.menu.applyTemplate")) {
-                    withAnimation { store.applyStationConfig(StoreCategories.lidlTemplate); reorderTick += 1 }
-                    Haptics.impact(.medium)
-                }
-                .accessibilityIdentifier("store.stations.confirmApply")
-            } message: {
-                Text(String(localized: "station.template.confirm.message"))
-            }
-            .confirmationDialog(String(localized: "station.remove.confirm.title"),
-                                isPresented: $showRemoveStationsConfirm, titleVisibility: .visible) {
-                Button(String(localized: "station.menu.remove"), role: .destructive) {
-                    withAnimation { store.removeStations(); reorderTick += 1 }
-                    Haptics.impact(.medium)
-                }
-                .accessibilityIdentifier("store.stations.confirmRemove")
-            } message: {
-                Text(String(localized: "station.remove.confirm.message"))
-            }
+        .accessibilityIdentifier("store.menu.setupStations")
     }
 
     // MARK: - Reihenfolge anpassen (Issue #86)
