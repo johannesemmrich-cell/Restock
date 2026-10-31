@@ -169,3 +169,142 @@ enum StoreCategories {
         return merged
     }
 }
+
+// MARK: - Laden-Stationen („Gänge“, Issue #234)
+
+/// Ein Gang eines Ladens: Name (Identität), Emoji, zugeordnete feste Kategorien (Rohwerte aus
+/// `AssignmentService.categoryOrder`) und Stichwörter (einzelne Wörter, „gleich oder endet auf“).
+struct Station: Codable, Equatable {
+    var name: String
+    var emoji: String
+    var builtIns: [String]
+    var keywords: [String]
+}
+
+/// Geordnete Gänge eines Ladens. `hidden`: ausgeblendete feste Kategorien (treffen nie einen
+/// Gang). `date`: letzte Änderung (für den Abgleich geteilter Läden in D3).
+struct StationConfig: Codable, Equatable {
+    var stations: [Station]
+    var hidden: [String]
+    var date: Date
+}
+
+extension StoreCategories {
+    /// Gemerkte Wahl „Sonstiges“: Private-Use-Zeichen am Anfang, kein gültiger Name, steht nie in
+    /// `ShoppingItem.category`.
+    static let otherStationMarker = "\u{E000}other"
+
+    /// Namen, die „Sonstiges“ meinen und deshalb nie ein Gang werden.
+    private static let otherStationNames = ["Sonstiges", "Other"]
+
+    /// Gang eines Artikels (`nil` = Sonstiges). Erste zutreffende Stufe gewinnt: Merkung, von Hand
+    /// gesetzte Kategorie, Stichwort, automatische Kategorie aus dem Namen.
+    static func station(
+        forItemNamed name: String,
+        category: String,
+        manuallySet: Bool,
+        remembered: String?,
+        config: StationConfig
+    ) -> String? {
+        if let remembered {
+            if remembered == otherStationMarker { return nil }
+            if let match = stationNamed(remembered, in: config) { return match }
+        }
+        if manuallySet, let match = stationForCategory(category, in: config) { return match }
+        if let match = stationForKeywords(in: name, config: config) { return match }
+        return stationForCategory(AssignmentService.category(for: name), in: config)
+    }
+
+    /// Gang mit diesem Namen (Vergleich über `compareKey`), in der gespeicherten Schreibweise.
+    static func stationNamed(_ name: String, in config: StationConfig) -> String? {
+        let key = compareKey(name)
+        return config.stations.first { compareKey($0.name) == key }?.name
+    }
+
+    /// Gang für eine Kategorie: Gang gleichen Namens, sonst der Gang, dessen `builtIns` die
+    /// (nicht ausgeblendete) feste Kategorie enthalten.
+    private static func stationForCategory(_ category: String, in config: StationConfig) -> String? {
+        if let match = stationNamed(category, in: config) { return match }
+        guard !config.hidden.contains(category) else { return nil }
+        return config.stations.first { $0.builtIns.contains(category) }?.name
+    }
+
+    /// Längstes Stichwort, dem ein Wort des Namens gleicht oder auf das es endet; bei
+    /// Gleichstand der frühere Gang.
+    private static func stationForKeywords(in name: String, config: StationConfig) -> String? {
+        let words = compareKey(name).lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+        var best: (length: Int, station: String)?
+        for station in config.stations {
+            for keyword in station.keywords {
+                let key = compareKey(keyword).lowercased()
+                guard !key.isEmpty, words.contains(where: { $0.hasSuffix(key) }) else { continue }
+                if key.count > (best?.length ?? 0) { best = (key.count, station.name) }
+            }
+        }
+        return best?.station
+    }
+
+    enum StationResolution: Equatable {
+        /// Vorhandener Gang (gespeicherte Schreibweise).
+        case existing(String)
+        /// „Sonstiges“.
+        case other
+        /// Neu anzulegen, mit diesem Namen.
+        case new(String)
+        /// Leer oder die Marke.
+        case invalid
+    }
+
+    /// Was aus einer Eingabe im Suchfeld der Auswahl eines Ladens mit Gängen wird. Aufgelöst
+    /// wird nur gegen Gang-Namen, nicht gegen feste Kategorien.
+    static func resolveStation(_ input: String, config: StationConfig) -> StationResolution {
+        let name = normalizedName(input)
+        guard !name.isEmpty, !name.contains("\u{E000}") else { return .invalid }
+        let key = compareKey(name)
+        if otherStationNames.contains(where: { compareKey($0) == key }) { return .other }
+        if let match = stationNamed(name, in: config) { return .existing(match) }
+        return .new(name)
+    }
+}
+
+// MARK: - Lidl-Vorlage (Issue #234, Spec-Tabelle „Lidl-Vorlage“)
+
+extension StoreCategories {
+    /// Gänge eines Lidl-Markts in Laufreihenfolge. „Lebensmittel“ steht bewusst in keinem Gang
+    /// (Rückfall für Unerkanntes → Sonstiges). Längere Stichwörter („bratwurst“, „leberkäse“,
+    /// „hustensaft“, „eistee“) schlagen die kürzeren anderer Gänge.
+    static let lidlTemplate = StationConfig(
+        stations: [
+            Station(name: "Obst & Gemüse", emoji: "🥦", builtIns: ["Obst & Gemüse"], keywords: []),
+            Station(name: "Frische Säfte, Salate, gekühlte Getränke", emoji: "🥗", builtIns: [],
+                    keywords: ["saft", "smoothie", "eistee", "salatbox", "nudelsalat", "kartoffelsalat",
+                               "wurstsalat", "fleischsalat", "krautsalat", "eiersalat"]),
+            Station(name: "Nüsse, Süßigkeiten, Kaffee, Tee", emoji: "☕️", builtIns: ["Snacks"],
+                    keywords: ["kaffee", "tee", "espresso", "cappuccino", "nüsse", "mandeln", "schokolade"]),
+            Station(name: "Brot & Backwaren", emoji: "🥖", builtIns: ["Backwaren"], keywords: []),
+            Station(name: "Konserven & Gewürze", emoji: "🥫", builtIns: ["Konserven", "Gewürze & Backen"], keywords: []),
+            Station(name: "Frisches Fleisch & Fisch", emoji: "🥩", builtIns: ["Fleisch & Wurst"],
+                    keywords: ["fisch", "lachs", "forelle", "garnelen", "bratwurst", "hackfleisch",
+                               "hähnchen", "steak", "schnitzel"]),
+            Station(name: "Kühltheke Fertiges", emoji: "🧊", builtIns: [],
+                    keywords: ["wurst", "würstchen", "salami", "schinken", "aufschnitt", "leberkäse", "tofu",
+                               "hummus", "dip", "tzatziki", "matjes", "maultaschen"]),
+            Station(name: "Käse", emoji: "🧀", builtIns: [],
+                    keywords: ["käse", "gouda", "edamer", "emmentaler", "mozzarella", "feta", "parmesan",
+                               "camembert", "brie", "gorgonzola", "halloumi"]),
+            Station(name: "Milchprodukte", emoji: "🥛", builtIns: ["Milchprodukte"], keywords: ["eier", "margarine"]),
+            Station(name: "Tiefkühl", emoji: "❄️", builtIns: ["Tiefkühlkost"],
+                    keywords: ["fischstäbchen", "pommes", "pizza", "eiscreme", "speiseeis", "nuggets"]),
+            Station(name: "Drogerie", emoji: "🧴",
+                    builtIns: ["Körperpflege", "Haarpflege", "Zahnpflege", "Kosmetik", "Hygieneartikel",
+                               "Reinigung", "Medikamente", "Babybedarf"],
+                    keywords: ["hustensaft"]),
+            Station(name: "Getränke", emoji: "🥤", builtIns: ["Getränke"], keywords: []),
+        ],
+        hidden: ["Werkzeug", "Eisenwaren", "Garten", "Pflanzen", "Farbe & Lack", "Sanitär",
+                 "Boden & Fliesen", "Holz", "Baumaterial"],
+        date: Date(timeIntervalSince1970: 0)
+    )
+}

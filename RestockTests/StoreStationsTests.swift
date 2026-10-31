@@ -332,7 +332,7 @@ final class StoreStationsTests: XCTestCase {
         for (index, name) in ["Milch", "Feta", "Apfel", "Gouda"].enumerated() {
             store.recordCheckOff(try item(name, in: store), at: t0.addingTimeInterval(Double(index) * 30))
         }
-        store.finalizeStaleTrip(now: t0.addingTimeInterval(31 * 60))
+        store.finalizeStaleTrip(now: t0.addingTimeInterval(90 + 31 * 60))
         XCTAssertNotNil(store.routeModel.itemPositions["milch"], "Der Einkauf muss gelernt sein")
         XCTAssertLessThan(store.routeModel.itemPositions["milch"]!, store.routeModel.itemPositions["apfel"]!,
                           "Vorbedingung: Milch wurde vor Apfel abgehakt")

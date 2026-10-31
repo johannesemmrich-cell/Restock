@@ -66,7 +66,25 @@ struct AddItemView: View {
 
     private var effectiveCategory: String { chosenCategory ?? automaticCategory }
 
+    /// Issue #234: gewählter (`chosenCategory`) oder aufgelöster Gang; `nil` = Sonstiges.
+    private func currentStation(in store: Store) -> String? {
+        if let chosen = chosenCategory { return chosen == StoreCategories.otherStationMarker ? nil : chosen }
+        return store.stationName(forItemNamed: trimmedName, category: AssignmentService.category(for: trimmedName), manuallySet: false)
+    }
+
+    /// Auswahl-Wert: in Läden mit Gängen der Gang bzw. die Marke, sonst die Kategorie.
+    private var pickerSelection: Binding<String> {
+        Binding(get: {
+            guard let store = selectedStore, store.hasStations else { return effectiveCategory }
+            return currentStation(in: store) ?? StoreCategories.otherStationMarker
+        }, set: { chosenCategory = $0 })
+    }
+
     private var categoryLabel: String {
+        if let store = selectedStore, store.hasStations {
+            let title = currentStation(in: store).map { "\(store.stationEmoji($0)) \($0)" } ?? String(localized: "station.other")
+            return chosenCategory == nil ? "\(String(localized: "category.picker.automatic")): \(title)" : title
+        }
         let category = effectiveCategory
         let title: String
         if let store = selectedStore, store.isCustomCategory(category) {
@@ -127,7 +145,7 @@ struct AddItemView: View {
                     NavigationLink {
                         CategoryPickerView(
                             store: selectedStore,
-                            selection: Binding(get: { effectiveCategory }, set: { chosenCategory = $0 }),
+                            selection: pickerSelection,
                             automaticCategory: AssignmentService.category(for: trimmedName)
                         )
                     } label: {
@@ -224,6 +242,11 @@ struct AddItemView: View {
                selectedStore?.isCustomCategory(chosen) != true {
                 chosenCategory = nil
             }
+            // Issue #234: Eine Gang-Wahl gilt nur in einem Laden, der diesen Gang hat.
+            if let chosen = chosenCategory, let config = selectedStore?.stationConfig, selectedStore?.hasStations == true,
+               StoreCategories.stationNamed(chosen, in: config) == nil {
+                chosenCategory = nil
+            }
         }
         .devFeedback(context: "Artikel hinzufügen")
     }
@@ -276,7 +299,14 @@ struct AddItemView: View {
             quantitySource: quantitySource,
             otherStores: activeStores
         )
-        if let chosen = chosenCategory {
+        if let chosen = chosenCategory, let store = selectedStore, store.hasStations {
+            // Issue #234: Gang → als Kategorie, von Hand gesetzt; Sonstiges → automatische
+            // Kategorie, gemerkt wird die Marke (nie in `item.category`).
+            let isOther = chosen == StoreCategories.otherStationMarker
+            item.category = isOther ? category : chosen
+            item.categoryManuallySet = !isOther
+            store.rememberCategory(chosen, forItemNamed: trimmedName)
+        } else if let chosen = chosenCategory {
             item.category = chosen
             item.categoryManuallySet = chosen != category
             selectedStore?.rememberCategory(chosen, forItemNamed: trimmedName)

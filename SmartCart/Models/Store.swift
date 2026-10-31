@@ -68,6 +68,9 @@ class Store {
     /// (Löschvermerk) — nur fürs Abgleichen geteilter Läden (Issue #94), wie `customCategoryDates`.
     var categoryAssignmentDates: [String: Date] = [:]
     var sortIndex: Int = 0
+    /// Gang-Konfiguration (`StationConfig` als JSON, Issue #234). Leer, nicht dekodierbar oder
+    /// ohne Gänge = Laden ohne Gänge (Verhalten wie bisher). Additiv, CloudKit-tauglich.
+    var stationConfigJSON: String = ""
 
     // CloudKit verlangt für automatische Spiegelung, dass ALLE To-many-Relationships optional
     // sind — nicht nur einen Standardwert haben (anders als bei skalaren Eigenschaften). Live
@@ -250,9 +253,13 @@ class Store {
     /// Warteschlange nachgetragen (Reihenfolge stimmt, Zeitpunkt nicht).
     func recordCheckOff(_ item: ShoppingItem, batched: Bool = false, at date: Date = RouteClock.checkOffTime()) {
         let before = routeModel
+        // Issue #234: In Läden mit Gängen lernt der Haken unter dem Gang (Sonstiges: Marke).
+        let category = hasStations
+            ? (stationName(of: item) ?? StoreCategories.otherStationMarker)
+            : Store.displayCategory(of: item)
         let result = ShoppingRoute.recordCheckOff(
             key: ShoppingRoute.itemKey(item.name),
-            category: Store.displayCategory(of: item),
+            category: category,
             at: date,
             batched: batched,
             trip: currentTrip,
@@ -305,6 +312,113 @@ class Store {
             isUrgent: item.isUrgent,
             addedDate: item.addedDate
         )
+    }
+
+    // MARK: Gänge (Issue #234)
+
+    /// Dekodierte Gang-Konfiguration; `nil` bei leerem oder kaputtem Feld. Setzen mit `nil` leert es.
+    var stationConfig: StationConfig? {
+        get {
+            guard !stationConfigJSON.isEmpty, let data = stationConfigJSON.data(using: .utf8) else { return nil }
+            return try? JSONDecoder().decode(StationConfig.self, from: data)
+        }
+        set {
+            guard let newValue, let data = try? JSONEncoder().encode(newValue) else {
+                stationConfigJSON = ""
+                return
+            }
+            stationConfigJSON = String(data: data, encoding: .utf8) ?? ""
+        }
+    }
+
+    /// Konfiguration nur, wenn sie mindestens einen Gang hat. Läden ohne Gänge dekodieren nichts.
+    private var activeStationConfig: StationConfig? {
+        guard !stationConfigJSON.isEmpty, let config = stationConfig, !config.stations.isEmpty else { return nil }
+        return config
+    }
+
+    var hasStations: Bool { activeStationConfig != nil }
+
+    /// Gang des Artikels, `nil` = Sonstiges oder Laden ohne Gänge.
+    func stationName(of item: ShoppingItem) -> String? {
+        stationName(forItemNamed: item.name, category: item.category, manuallySet: item.categoryManuallySet)
+    }
+
+    /// Gang für Name und Kategorie (auch für Dialoge vor dem Speichern), mit der Merkung des Ladens.
+    func stationName(forItemNamed name: String, category: String, manuallySet: Bool) -> String? {
+        guard let config = activeStationConfig else { return nil }
+        return station(forItemNamed: name, category: category, manuallySet: manuallySet, config: config)
+    }
+
+    private func station(forItemNamed name: String, category: String, manuallySet: Bool, config: StationConfig) -> String? {
+        StoreCategories.station(forItemNamed: name, category: category, manuallySet: manuallySet,
+                                remembered: categoryAssignments[ShoppingRoute.itemKey(name)], config: config)
+    }
+
+    /// Index des Gangs, Sonstiges = Anzahl der Gänge; `nil` im Laden ohne Gänge.
+    func stationRank(of item: ShoppingItem) -> Int? {
+        activeStationConfig.map { stationRank(of: item, config: $0) }
+    }
+
+    private func stationRank(of item: ShoppingItem, config: StationConfig) -> Int {
+        let name = station(forItemNamed: item.name, category: item.category, manuallySet: item.categoryManuallySet, config: config)
+        return name.flatMap { n in config.stations.firstIndex { $0.name == n } } ?? config.stations.count
+    }
+
+    /// Emoji eines Gangs (leer für Sonstiges oder unbekannte Namen).
+    func stationEmoji(_ name: String) -> String {
+        activeStationConfig?.stations.first { $0.name == name }?.emoji ?? ""
+    }
+
+    /// Offene Artikel in einem Gang (`nil` = Sonstiges), für die Auswahl.
+    func pendingCount(inStation name: String?) -> Int {
+        (items ?? []).filter { !$0.isCompleted && stationName(of: $0) == name }.count
+    }
+
+    /// Gang-Konfiguration übernehmen (Zeitstempel jetzt). Gang-Namen, die keine festen Kategorien
+    /// sind, werden eigene Kategorien (vorhandene bleiben unverändert). Artikel bleiben unberührt.
+    func applyStationConfig(_ config: StationConfig) {
+        var config = config
+        config.date = Date()
+        stationConfig = config
+        config.stations.forEach { ensureCustomCategory($0.name, emoji: $0.emoji) }
+        Store.bumpRouteRevision()
+    }
+
+    /// Gänge entfernen: eigene Kategorien und Merkungen bleiben.
+    func removeStations() {
+        stationConfigJSON = ""
+        Store.bumpRouteRevision()
+    }
+
+    /// Eingabe aus der Auswahl: vorhandener Gang → dessen Name, „Sonstiges“ → Marke, ungültig →
+    /// `nil`; sonst neuer Gang am Ende (vor Sonstiges), zusätzlich als eigene Kategorie.
+    @discardableResult
+    func addStation(_ input: String) -> String? {
+        guard var config = activeStationConfig else { return nil }
+        switch StoreCategories.resolveStation(input, config: config) {
+        case .invalid: return nil
+        case .other: return StoreCategories.otherStationMarker
+        case .existing(let name): return name
+        case .new(let name):
+            let emoji = StoreCategories.suggestedEmoji(for: name)
+            config.stations.append(Station(name: name, emoji: emoji, builtIns: [], keywords: []))
+            config.date = Date()
+            stationConfig = config
+            ensureCustomCategory(name, emoji: emoji)
+            Store.bumpRouteRevision()
+            return name
+        }
+    }
+
+    /// Legt `name` als eigene Kategorie an, außer er ist eine feste Kategorie oder existiert schon.
+    private func ensureCustomCategory(_ name: String, emoji: String) {
+        guard !AssignmentService.categoryOrder.contains(name) else { return }
+        let key = StoreCategories.compareKey(name)
+        guard !customCategories.contains(where: { StoreCategories.compareKey($0) == key }) else { return }
+        var entries = customCategoryEntries
+        entries[name] = CustomCategoryEntry(emoji: emoji, date: Date())
+        customCategoryEntries = entries
     }
 
     // MARK: Von Hand verschieben (Issue #86)
@@ -464,10 +578,11 @@ class Store {
         Store.bumpRouteRevision()
     }
 
-    /// Zuordnung merken (eigene Kategorie) bzw. vergessen (feste Kategorie gewählt).
+    /// Zuordnung merken (eigene Kategorie; in Läden mit Gängen auch Gang-Namen und die
+    /// Sonstiges-Marke) bzw. vergessen (andere feste Kategorie gewählt).
     func rememberCategory(_ category: String, forItemNamed name: String) {
         let key = ShoppingRoute.itemKey(name)
-        if isCustomCategory(category) {
+        if isCustomCategory(category) || isStationChoice(category) {
             if categoryAssignments[key] != category { setAssignment(category, forKey: key, at: Date()) }
         } else if categoryAssignments[key] != nil {
             setAssignment(nil, forKey: key, at: Date())
@@ -499,10 +614,19 @@ class Store {
         }
     }
 
-    /// Gemerkte eigene Kategorie für einen Artikelnamen in diesem Laden, falls sie noch existiert.
+    /// Gang-Name oder Sonstiges-Marke in einem Laden mit Gängen.
+    func isStationChoice(_ category: String) -> Bool {
+        guard let config = activeStationConfig else { return false }
+        return category == StoreCategories.otherStationMarker || StoreCategories.stationNamed(category, in: config) != nil
+    }
+
+    /// Gemerkte eigene Kategorie oder noch vorhandener Gang für einen Artikelnamen in diesem
+    /// Laden; nie die Sonstiges-Marke.
     func rememberedCategory(forItemNamed name: String) -> String? {
-        guard let category = categoryAssignments[ShoppingRoute.itemKey(name)], isCustomCategory(category) else { return nil }
-        return category
+        guard let category = categoryAssignments[ShoppingRoute.itemKey(name)],
+              category != StoreCategories.otherStationMarker else { return nil }
+        if isCustomCategory(category) { return category }
+        return activeStationConfig.flatMap { StoreCategories.stationNamed(category, in: $0) }
     }
 
     /// Ein Artikel wechselt in diesen Laden: eine eigene Kategorie des alten Ladens, die es hier
@@ -521,7 +645,10 @@ class Store {
 
     var pendingItems: [ShoppingItem] {
         let pending = (items ?? []).filter { !$0.isCompleted }
-        let inputs = pending.map(Store.sortInput)
+        var inputs = pending.map(Store.sortInput)
+        if let config = activeStationConfig {
+            for index in inputs.indices { inputs[index].stationRank = stationRank(of: pending[index], config: config) }
+        }
         return ShoppingRoute.sortedIndices(
             inputs,
             mode: sortMode,

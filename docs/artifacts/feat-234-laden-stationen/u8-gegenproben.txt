@@ -1,0 +1,26 @@
+U8 testChoosingOtherNeverStoresMarkerAsCategory — Gegenproben (Issue #234, 2026-10-31)
+Gerät: Restock-Validate-272 (6728F5AB-712F-46E0-A1D1-2047A9771C8E, iPhone 17 Pro, iOS 27.2)
+Rohprotokolle: build/u8-gegenprobe1.txt, build/u8-gegenprobe2.txt, build/u8-gegenprobe3.txt
+
+Ausgangsstand (Produktcode richtig): U8 grün, 1 Test, 0 Fehler (build/u8-diagnose1.txt, 107,4 s)
+
+Gegenprobe 1 — EditItemView.applyCategory speichert die Marke, categoryManuallySet = true
+  Änderung: item.category = category / item.categoryManuallySet = true
+  Ergebnis: TEST FAILED, 1 Test, 1 Fehler (127,0 s)
+  StoreStationsUITests.swift:478: XCTAssertTrue failed - Salami: Kategorie im Dialog: Kategorie, 🏷️ other
+
+Gegenprobe 2 — EditItemView.applyCategory speichert die Marke, categoryManuallySet = !isOther (false)
+  Änderung: item.category = category (manuallySet-Zeile unverändert)
+  Ergebnis: TEST FAILED, 1 Test, 1 Fehler (122,7 s)
+  StoreStationsUITests.swift:478: XCTAssertTrue failed - Salami: Kategorie im Dialog: Kategorie, 🏷️ other
+
+Gegenprobe 3 — AddItemView.addItem speichert die Marke, categoryManuallySet = !isOther (false)
+  Änderung: item.category = chosen (manuallySet-Zeile unverändert)
+  Ergebnis: TEST FAILED, 1 Test, 1 Fehler (128,4 s)
+  StoreStationsUITests.swift:478: XCTAssertTrue failed - Schinken: Kategorie im Dialog: Kategorie, 🏷️ other
+
+Rücksetzen: beide Zeilen wortgleich von Hand zurückgesetzt, ohne Git.
+  git diff zeigt danach wieder:
+    AddItemView:  item.category = isOther ? category : chosen
+    EditItemView: item.category = isOther ? automaticCategory : category
+  git diff --shortstat vorher und nachher gleich: 14 files changed, 669 insertions(+), 86 deletions(-)

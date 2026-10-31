@@ -32,8 +32,12 @@ struct ItemRow: View {
     /// Mirrors the grouping logic in `HomeView`/`AllItemsView`: a manually-set category sticks,
     /// otherwise re-derive from the current name so this caption never shows a stale category
     /// left over from before a keyword-rule update.
+    /// In Läden mit Gängen (Issue #234) steht hier der Gang bzw. „Sonstiges“.
     private var displayCategory: String {
-        item.categoryManuallySet ? item.category : AssignmentService.category(for: item.name)
+        if let store = item.store, store.hasStations {
+            return store.stationName(of: item) ?? String(localized: "station.other")
+        }
+        return item.categoryManuallySet ? item.category : AssignmentService.category(for: item.name)
     }
 
     /// Rate pro 100 g für einen Artikel ohne belegte Menge (AC-15) — nur wenn kein Gesamtpreis

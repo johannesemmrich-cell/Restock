@@ -1,0 +1,198 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination id=6728F5AB-712F-46E0-A1D1-2047A9771C8E -derivedDataPath build/dd-234 "-only-testing:RestockTests/StoreStationsTests" "-only-testing:RestockTests/ShoppingRouteTests" "-only-testing:RestockTests/MirroredSchemaSnapshotTests" "-only-testing:RestockTests/LocalizationKeyParityTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-234/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk -o /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-234/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-234/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-234/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-234/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-10-31 08:21:45.296773+0100 Restock[23869:36736489] [Metadata] Failed to refresh AppShortcut parameters with error: Error Domain=LinkDaemon.ApplicationServiceInstance.Errors Code=5 "(null)"
+2026-10-31 08:21:45.404523+0100 Restock[23869:36736218] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-10-31 08:21:45.477250+0100 Restock[23869:36736487] [User Defaults] Could not resolve UID for user "mobile".
+2026-10-31 08:21:45.477660+0100 Restock[23869:36736487] [CK] Could not read account info validation counter. (This is a potential performance issue.)
+2026-10-31 08:21:45.611965+0100 Restock[23869:36736489] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1236): <NSCloudKitMirroringDelegate: 0x1052f82a0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x1052b8500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/6728F5AB-712F-46E0-A1D1-2047A9771C8E/data/Containers/Shared/AppGroup/D916025F-68BC-47D0-A42A-E249DAD6E46C/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-31 08:21:45.612098+0100 Restock[23869:36736489] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2310): <NSCloudKitMirroringDelegate: 0x1052f82a0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-10-31 08:21:45.612183+0100 Restock[23869:36736489] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2623): <NSCloudKitMirroringDelegate: 0x1052f82a0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-10-31 08:21:45.614856+0100 Restock[23869:36736489] [sync] mirror setup failed (NSCocoaErrorDomain 134400): Der Vorgang konnte nicht abgeschlossen werden. Unable to initialize without an iCloud account (CKAccountStatusNoAccount).
+2026-10-31 08:21:45.752642+0100 Restock[23869:36736218] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-10-31 08:21:46.514938+0100 Restock[23869:36736504] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+2026-10-31 08:21:47.476600+0100 Restock[23869:36736218] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+2026-10-31 08:21:47.478836+0100 Restock[23869:36736218] [API] cannot add handler to 0 from 0 - dropping
+2026-10-31 08:21:47.480926+0100 Restock[23869:36736218] [API] cannot add handler to 0 from 0 - dropping
+[AppDelegate] push registration succeeded, token length: 80
+Test Suite 'Selected tests' started at 2026-10-31 08:21:47.589.
+Test Suite 'RestockTests.xctest' started at 2026-10-31 08:21:47.590.
+Test Suite 'LocalizationKeyParityTests' started at 2026-10-31 08:21:47.590.
+Test Case '-[RestockTests.LocalizationKeyParityTests testBothTablesExistAndAreNotEmpty]' started.
+Test Case '-[RestockTests.LocalizationKeyParityTests testBothTablesExistAndAreNotEmpty]' passed (0.004 seconds).
+Test Case '-[RestockTests.LocalizationKeyParityTests testGermanAndEnglishHaveTheSameKeys]' started.
+Test Case '-[RestockTests.LocalizationKeyParityTests testGermanAndEnglishHaveTheSameKeys]' passed (0.003 seconds).
+Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholderExtraction]' started.
+Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholderExtraction]' passed (0.001 seconds).
+Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholdersMatchPerKey]' started.
+Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholdersMatchPerKey]' passed (0.006 seconds).
+Test Suite 'LocalizationKeyParityTests' passed at 2026-10-31 08:21:47.606.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.014 (0.016) seconds
+Test Suite 'MirroredSchemaSnapshotTests' started at 2026-10-31 08:21:47.608.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testPhotoDataAssetFieldIsListed]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testPhotoDataAssetFieldIsListed]' passed (0.005 seconds).
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testStationConfigFieldIsListedAsString]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testStationConfigFieldIsListedAsString]' passed (0.001 seconds).
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT1_mirroredModelsMatchFixedList]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT1_mirroredModelsMatchFixedList]' passed (0.001 seconds).
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT2_developmentExportContainsAllMirroredTypesAndFields]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT2_developmentExportContainsAllMirroredTypesAndFields]' passed (0.005 seconds).
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT3_optionalTodoNotesFieldIsInExport]' started.
+Test Case '-[RestockTests.MirroredSchemaSnapshotTests testT3_optionalTodoNotesFieldIsInExport]' passed (0.001 seconds).
+Test Suite 'MirroredSchemaSnapshotTests' passed at 2026-10-31 08:21:47.620.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.011 (0.012) seconds
+Test Suite 'ShoppingRouteTests' started at 2026-10-31 08:21:47.620.
+Test Case '-[RestockTests.ShoppingRouteTests testAddedModeUsesAddedDate]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testAddedModeUsesAddedDate]' passed (0.002 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testBatchedQueueEntriesDoNotCountAsBulk]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testBatchedQueueEntriesDoNotCountAsBulk]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testBulkCheckOffAtHomeIsNotLearned]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testBulkCheckOffAtHomeIsNotLearned]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testCategoryModeOrdersCategoriesByLearnedRouteThenStaticOrder]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testCategoryModeOrdersCategoriesByLearnedRouteThenStaticOrder]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testCheckOffAfterTripGapLearnsPreviousTripAndStartsNewOne]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testCheckOffAfterTripGapLearnsPreviousTripAndStartsNewOne]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testCheckOffsWithinTripGapContinueSameTrip]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testCheckOffsWithinTripGapContinueSameTrip]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testDuplicateCheckOffCountsOnlyOnce]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testDuplicateCheckOffCountsOnlyOnce]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testExplicitNilStationRankEqualsDefault]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testExplicitNilStationRankEqualsDefault]' passed (0.001 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testFinalizeIfStale]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testFinalizeIfStale]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testFirstTripSetsNormalizedPositions]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testFirstTripSetsNormalizedPositions]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testItemKeyIgnoresOnlyFormalDifferences]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testItemKeyIgnoresOnlyFormalDifferences]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testItemsWithoutAnyLearnedPositionGoLastInCategoryOrder]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testItemsWithoutAnyLearnedPositionGoLastInCategoryOrder]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testLaterTripMovesPositionByLearningRate]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testLaterTripMovesPositionByLearningRate]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testMigratedDefaultKeepsPreviousSettings]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testMigratedDefaultKeepsPreviousSettings]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testNormalizedPositionIndependentOfTripLength]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testNormalizedPositionIndependentOfTripLength]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testOrderedCategories]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testOrderedCategories]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testQueuedCheckOffAfterLongGapStartsNewTrip]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testQueuedCheckOffAfterLongGapStartsNewTrip]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testQueuedCheckOffsContinueTripInsteadOfStartingNewOne]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testQueuedCheckOffsContinueTripInsteadOfStartingNewOne]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testReplenishmentFormalKeyUsesSameKey]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testReplenishmentFormalKeyUsesSameKey]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testRouteClockWithoutOffsetIsRealTime]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testRouteClockWithoutOffsetIsRealTime]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeFollowsLearnedOrder]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeFollowsLearnedOrder]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeUrgentItemsFirst]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeUrgentItemsFirst]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeWithoutLearningFallsBackToCategoryOrder]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testRouteModeWithoutLearningFallsBackToCategoryOrder]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testSingleItemTripIsNotLearned]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testSingleItemTripIsNotLearned]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testSmallTripLearnsWithReducedWeight]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testSmallTripLearnsWithReducedWeight]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testSortWithoutStationRankKeepsFrozenOrders]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testSortWithoutStationRankKeepsFrozenOrders]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testTwoQuickNeighboursInStoreAreStillLearned]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testTwoQuickNeighboursInStoreAreStillLearned]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testUncheckAndRecheckMovesItemToNewPosition]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testUncheckAndRecheckMovesItemToNewPosition]' passed (0.000 seconds).
+Test Case '-[RestockTests.ShoppingRouteTests testUnknownItemIsPlacedByItsCategoryInThisStore]' started.
+Test Case '-[RestockTests.ShoppingRouteTests testUnknownItemIsPlacedByItsCategoryInThisStore]' passed (0.000 seconds).
+Test Suite 'ShoppingRouteTests' passed at 2026-10-31 08:21:47.637.
+	 Executed 29 tests, with 0 failures (0 unexpected) in 0.012 (0.017) seconds
+Test Suite 'StoreStationsTests' started at 2026-10-31 08:21:47.638.
+Test Case '-[RestockTests.StoreStationsTests testAddStationFromPicker]' started.
+Test Case '-[RestockTests.StoreStationsTests testAddStationFromPicker]' passed (0.030 seconds).
+Test Case '-[RestockTests.StoreStationsTests testApplyAndRemoveStations]' started.
+Test Case '-[RestockTests.StoreStationsTests testApplyAndRemoveStations]' passed (0.008 seconds).
+Test Case '-[RestockTests.StoreStationsTests testCheckOffLearnsOnlyWithinStation]' started.
+Test Case '-[RestockTests.StoreStationsTests testCheckOffLearnsOnlyWithinStation]' passed (0.031 seconds).
+Test Case '-[RestockTests.StoreStationsTests testConfigJSONRoundTrip]' started.
+Test Case '-[RestockTests.StoreStationsTests testConfigJSONRoundTrip]' passed (0.004 seconds).
+Test Case '-[RestockTests.StoreStationsTests testHiddenBuiltInNeverMapsToStation]' started.
+Test Case '-[RestockTests.StoreStationsTests testHiddenBuiltInNeverMapsToStation]' passed (0.008 seconds).
+Test Case '-[RestockTests.StoreStationsTests testKeywordMatchesWordEndingOnly]' started.
+Test Case '-[RestockTests.StoreStationsTests testKeywordMatchesWordEndingOnly]' passed (0.008 seconds).
+Test Case '-[RestockTests.StoreStationsTests testLongestKeywordWinsTieGoesToEarlierStation]' started.
+Test Case '-[RestockTests.StoreStationsTests testLongestKeywordWinsTieGoesToEarlierStation]' passed (0.007 seconds).
+Test Case '-[RestockTests.StoreStationsTests testPendingItemsFollowStationOrder]' started.
+Test Case '-[RestockTests.StoreStationsTests testPendingItemsFollowStationOrder]' passed (0.056 seconds).
+Test Case '-[RestockTests.StoreStationsTests testRecordCheckOffStoresStationName]' started.
+Test Case '-[RestockTests.StoreStationsTests testRecordCheckOffStoresStationName]' passed (0.015 seconds).
+Test Case '-[RestockTests.StoreStationsTests testRememberStationsAndMarker]' started.
+Test Case '-[RestockTests.StoreStationsTests testRememberStationsAndMarker]' passed (0.009 seconds).
+Test Case '-[RestockTests.StoreStationsTests testResolutionPriority]' started.
+Test Case '-[RestockTests.StoreStationsTests testResolutionPriority]' passed (0.006 seconds).
+Test Case '-[RestockTests.StoreStationsTests testSortedIndicesWithStationRank]' started.
+Test Case '-[RestockTests.StoreStationsTests testSortedIndicesWithStationRank]' passed (0.002 seconds).
+Test Case '-[RestockTests.StoreStationsTests testStationNameForTypicalItems]' started.
+Test Case '-[RestockTests.StoreStationsTests testStationNameForTypicalItems]' passed (0.017 seconds).
+Test Case '-[RestockTests.StoreStationsTests testStationRank]' started.
+Test Case '-[RestockTests.StoreStationsTests testStationRank]' passed (0.015 seconds).
+Test Case '-[RestockTests.StoreStationsTests testStationsDoNotChangeCategoryOrPrice]' started.
+Test Case '-[RestockTests.StoreStationsTests testStationsDoNotChangeCategoryOrPrice]' passed (0.026 seconds).
+Test Case '-[RestockTests.StoreStationsTests testStationStringsExistInBothLanguages]' started.
+Test Case '-[RestockTests.StoreStationsTests testStationStringsExistInBothLanguages]' passed (0.003 seconds).
+Test Case '-[RestockTests.StoreStationsTests testStoreWithoutUsableConfigBehavesAsBefore]' started.
+Test Case '-[RestockTests.StoreStationsTests testStoreWithoutUsableConfigBehavesAsBefore]' passed (0.076 seconds).
+Test Case '-[RestockTests.StoreStationsTests testTemplateIsConsistent]' started.
+Test Case '-[RestockTests.StoreStationsTests testTemplateIsConsistent]' passed (0.003 seconds).
+Test Case '-[RestockTests.StoreStationsTests testTemplateRoutesTypicalItems]' started.
+Test Case '-[RestockTests.StoreStationsTests testTemplateRoutesTypicalItems]' passed (0.015 seconds).
+Test Suite 'StoreStationsTests' passed at 2026-10-31 08:21:47.980.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.338 (0.343) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-10-31 08:21:47.980.
+	 Executed 57 tests, with 0 failures (0 unexpected) in 0.376 (0.391) seconds
+Test Suite 'Selected tests' passed at 2026-10-31 08:21:47.980.
+	 Executed 57 tests, with 0 failures (0 unexpected) in 0.376 (0.391) seconds
+2026-10-31 08:21:48.274 xcodebuild[23851:36735745] [MT] IDETestOperationsObserverDebug: 9.264 elapsed -- Testing started completed.
+2026-10-31 08:21:48.274 xcodebuild[23851:36735745] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-31 08:21:48.274 xcodebuild[23851:36735745] [MT] IDETestOperationsObserverDebug: 9.264 sec, +9.264 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-234/Logs/Test/Test-Restock-2026.10.31_08-21-38-+0100.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

@@ -65,6 +65,8 @@ struct StoreDetailView: View {
     @State private var isReordering = false
     @State private var reorderTick = 0
     @State private var showResetRouteConfirm = false
+    @State private var showApplyTemplateConfirm = false
+    @State private var showRemoveStationsConfirm = false
 
     private func total(for items: [ShoppingItem]) -> Double {
         items.compactMap { $0.estimatedLineTotal }.reduce(0, +)
@@ -110,7 +112,7 @@ struct StoreDetailView: View {
         // Sort + UserDefaults-Zugriff) an bis zu 6 Stellen in diesem body einzeln neu aufzurufen.
         let _ = reorderTick
         let pending = store.pendingItems
-        withAlsoDueObservers(decoratedList(pending: pending))
+        withAlsoDueObservers(withStationDialogs(decoratedList(pending: pending)))
         .task(id: store.id) {
             // Issue #163: Community-Preise der Kette holen und auf geschätzte Artikel anwenden.
             await CommunityPriceService.shared.refreshAndApply(store: store)
@@ -196,6 +198,15 @@ struct StoreDetailView: View {
     /// the items keep the exact `store.pendingItems` order. The sections themselves follow the
     /// category order learned for this store (Issue #79, `Store.orderedCategories`).
     private func groupedRegularItems(_ items: [ShoppingItem]) -> [(category: String, emoji: String, items: [ShoppingItem])] {
+        // Issue #234: In Läden mit Gängen ein Abschnitt je Gang in fester Reihenfolge, Sonstiges zuletzt.
+        if let config = store.stationConfig, store.hasStations {
+            let marker = StoreCategories.otherStationMarker
+            let grouped = Dictionary(grouping: items) { store.stationName(of: $0) ?? marker }
+            return (config.stations.map(\.name) + [marker]).compactMap { name in
+                guard let items = grouped[name], !items.isEmpty else { return nil }
+                return (category: name, emoji: store.stationEmoji(name), items: items)
+            }
+        }
         let grouped = Dictionary(grouping: items) { Store.displayCategory(of: $0) }
         return store.orderedCategories(Array(grouped.keys)).compactMap { cat in
             guard let items = grouped[cat], !items.isEmpty else { return nil }
@@ -439,7 +450,7 @@ struct StoreDetailView: View {
                             pendingRow(item)
                         }
                     } header: {
-                        Text("\(group.emoji) \(AssignmentService.displayCategory(group.category))")
+                        Text(sectionTitle(group.category, emoji: group.emoji))
                             .font(.system(size: 12, weight: .semibold))
                             .tracking(0.6)
                     }
@@ -550,15 +561,19 @@ struct StoreDetailView: View {
                     }
                     .pickerStyle(.menu)
                     if sortMode != .added {
-                        Button(String(localized: "store.reorder"), systemImage: "arrow.up.and.down.text.horizontal") {
-                            withAnimation { isReordering = true }
-                            Haptics.impact(.light)
+                        // Issue #234: Im Modus Kategorie ist die Gang-Reihenfolge fest.
+                        if !(sortMode == .category && store.hasStations) {
+                            Button(String(localized: "store.reorder"), systemImage: "arrow.up.and.down.text.horizontal") {
+                                withAnimation { isReordering = true }
+                                Haptics.impact(.light)
+                            }
+                            .disabled(pending.filter { !$0.isUrgent }.count < 2)
                         }
-                        .disabled(pending.filter { !$0.isUrgent }.count < 2)
                         Button(String(localized: "store.route.reset"), systemImage: "arrow.counterclockwise", role: .destructive) {
                             showResetRouteConfirm = true
                         }
                     }
+                    stationMenuItem
                     Divider()
                     if !store.completedItems.isEmpty {
                         Button("Kassenbon scannen", systemImage: "doc.text.viewfinder") {
@@ -605,6 +620,49 @@ struct StoreDetailView: View {
             .toolbarChip()
             }
         }
+    }
+
+    // MARK: - Gänge (Issue #234, Zwischenlösung D1)
+
+    /// „Lidl-Vorlage übernehmen“ nur ohne Gänge, „Gänge entfernen“ nur mit Gängen.
+    @ViewBuilder
+    private var stationMenuItem: some View {
+        if store.hasStations {
+            Button(String(localized: "station.menu.remove"), systemImage: "square.stack.3d.down.forward") {
+                showRemoveStationsConfirm = true
+            }
+            .accessibilityIdentifier("store.menu.removeStations")
+        } else {
+            Button(String(localized: "station.menu.applyTemplate"), systemImage: "square.stack.3d.up") {
+                showApplyTemplateConfirm = true
+            }
+            .accessibilityIdentifier("store.menu.applyStationTemplate")
+        }
+    }
+
+    /// Rückfragen zu den beiden Menüeinträgen.
+    private func withStationDialogs<Content: View>(_ content: Content) -> some View {
+        content
+            .confirmationDialog(String(localized: "station.template.confirm.title"),
+                                isPresented: $showApplyTemplateConfirm, titleVisibility: .visible) {
+                Button(String(localized: "station.menu.applyTemplate")) {
+                    withAnimation { store.applyStationConfig(StoreCategories.lidlTemplate); reorderTick += 1 }
+                    Haptics.impact(.medium)
+                }
+                .accessibilityIdentifier("store.stations.confirmApply")
+            } message: {
+                Text(String(localized: "station.template.confirm.message"))
+            }
+            .confirmationDialog(String(localized: "station.remove.confirm.title"),
+                                isPresented: $showRemoveStationsConfirm, titleVisibility: .visible) {
+                Button(String(localized: "station.menu.remove"), role: .destructive) {
+                    withAnimation { store.removeStations(); reorderTick += 1 }
+                    Haptics.impact(.medium)
+                }
+                .accessibilityIdentifier("store.stations.confirmRemove")
+            } message: {
+                Text(String(localized: "station.remove.confirm.message"))
+            }
     }
 
     // MARK: - Reihenfolge anpassen (Issue #86)
@@ -685,6 +743,12 @@ struct StoreDetailView: View {
                 Button(String(localized: "store.reorder.down")) { move(index, index + 2) }
             }
         }
+    }
+
+    /// Abschnittsüberschrift „<Emoji> <Name>“; „Sonstiges“ (Marke) ohne Emoji.
+    private func sectionTitle(_ category: String, emoji: String) -> String {
+        if category == StoreCategories.otherStationMarker { return String(localized: "station.other") }
+        return "\(emoji) \(AssignmentService.displayCategory(category))"
     }
 
     private func categoryTitle(_ category: String) -> String {

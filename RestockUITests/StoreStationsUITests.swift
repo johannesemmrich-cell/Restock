@@ -425,4 +425,60 @@ final class StoreStationsUITests: XCTestCase {
         assertAbove(header("Kühltheke Fertiges", emoji: "🧊", app), "Überschrift Kühltheke Fertiges",
                     text("Salami", app), "Salami", in: app)
     }
+
+    // MARK: - U8: Wahl „Sonstiges“ in Bearbeiten und Hinzufügen (AC-6, AC-13, Adversary F002)
+
+    /// U8 / AC-13: GIVEN Seed WHEN Salami (Bearbeiten) und ein neuer „Schinken“ (Hinzufügen) mit der
+    /// Wahl „Sonstiges“ gespeichert THEN beide stehen im Modus Kategorie unter „Sonstiges“, obwohl
+    /// ihr Stichwort zur Kühltheke führt; nach „Gänge entfernen“ stehen beide unter „Fleisch & Wurst“
+    /// und der Bearbeiten-Dialog zeigt diese feste Kategorie — die Marke steckt nicht in `item.category`.
+    func testChoosingOtherNeverStoresMarkerAsCategory() {
+        let app = openedStore()
+        let other = app.descendants(matching: .any)["categoryPicker.row.other"].firstMatch
+        openCategoryPicker(for: "Salami", in: app)
+        revealHittable(other, "Sonstiges in der Auswahl (Bearbeiten)", in: app)
+        other.tap()
+        saveEditor(app)
+
+        scrollToTop(app)
+        app.buttons.matching(NSPredicate(format: "identifier == 'plus'")).firstMatch.tap()
+        let nameField = app.textFields["Artikelname"]
+        XCTAssertTrue(nameField.waitForExistence(timeout: UITestWait.defaultTimeout), "Artikelname-Feld fehlt")
+        nameField.tap()
+        nameField.typeText("Schinken")
+        app.descendants(matching: .any)["item.categoryRow"].firstMatch.tap()
+        revealHittable(other, "Sonstiges in der Auswahl (Hinzufügen)", in: app)
+        other.tap()
+        app.navigationBars["Artikel hinzufügen"].buttons["Hinzufügen"].tap()
+
+        choose("Kategorie", in: app)
+        for item in ["Salami", "Schinken"] {
+            XCTAssertTrue(reveal(text(item, app), in: app), "\(item) fehlt")
+            XCTAssertNotNil(otherHeaderY(above: text(item, app), app), "\(item) muss unter „Sonstiges“ stehen")
+        }
+        scrollToTop(app)
+
+        confirmMenuAction("store.menu.removeStations", confirmID: "store.stations.confirmRemove", in: app)
+        let classic = app.staticTexts.matching(NSPredicate(
+            format: "label CONTAINS[c] %@ AND NOT (label ==[c] %@)", "Fleisch & Wurst", "Fleisch & Wurst")).firstMatch
+        assertAbove(classic, "Überschrift Fleisch & Wurst", text("Salami", app), "Salami", in: app)
+        assertAbove(classic, "Überschrift Fleisch & Wurst", text("Schinken", app), "Schinken", in: app)
+
+        // Der Dialog zeigt, was in `item.category` steht (Marke wäre „\u{E000}other“). Nötig, weil die
+        // Liste bei nicht von Hand gesetzter Kategorie ohnehin die automatische zeigt.
+        for item in ["Salami", "Schinken"] {
+            revealHittable(text(item, app), item, in: app)
+            // Eine am unteren Rand angeschnittene Zeile gilt als antippbar, das Lang-Drücken dort öffnet aber nichts.
+            if text(item, app).frame.maxY > app.windows.firstMatch.frame.maxY - 150 { dragUp(app) }
+            var previous = CGRect.null
+            _ = UITestWait.poll(timeout: 5, read: { text(item, app).frame }, done: { defer { previous = $0 }; return $0 == previous })
+            UITestItemEditor.open(item, in: app)
+            let row = app.descendants(matching: .any)["item.categoryRow"].firstMatch
+            let label = row.waitForLabel(contains: "Fleisch & Wurst")
+            XCTAssertTrue(label.matched, "\(item): Kategorie im Dialog: \(label.lastLabel)")
+            app.buttons["Abbrechen"].firstMatch.tap()
+            expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: row)
+            waitForExpectations(timeout: UITestWait.defaultTimeout)
+        }
+    }
 }
