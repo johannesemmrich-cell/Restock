@@ -1,0 +1,14 @@
+== Unit RED: build-for-testing Fr. 30 Okt. 2026 18:29:59 CET commit 1d5c0bc
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/RestockTests/StoreStationsTests.swift:18:42: error: type 'StoreCategories' has no member 'otherStationMarker'
+    |                                          `- error: type 'StoreCategories' has no member 'otherStationMarker'
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/RestockTests/StoreStationsTests.swift:68:23: error: cannot find type 'StationConfig' in scope
+    |                       `- error: cannot find type 'StationConfig' in scope
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/RestockTests/StoreStationsTests.swift:71:50: error: cannot find type 'StationConfig' in scope
+    |                                                  `- error: cannot find type 'StationConfig' in scope
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/RestockTests/StoreStationsTests.swift:76:95: error: cannot find type 'Station' in scope
+    |                                                                                               `- error: cannot find type 'Station' in scope
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/RestockTests/StoreStationsTests.swift:80:74: error: cannot find type 'StationConfig' in scope
+    |                                                                          `- error: cannot find type 'StationConfig' in scope
+/Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/RestockTests/StoreStationsTests.swift:80:38: error: cannot find type 'Station' in scope
+    |                                      `- error: cannot find type 'Station' in scope
+** TEST BUILD FAILED **
