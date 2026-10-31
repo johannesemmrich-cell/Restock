@@ -86,3 +86,88 @@ Zwischen-Menüeinträge aus D1 gehen darin auf.
 - **Geteilte Läden** bleiben bis D3 lokal; Hinweis in der Einrichtung ggf. nötig.
 - **CloudKit:** kein neues Feld in D2 (alles in `stationConfigJSON`), also kein Schema-Schritt – zu bestätigen.
 - Nichts auf Hennings Geräten ohne sein Wort.
+
+## Analysis
+
+Stand 2026-10-31 (3× Explore, 1× Plan; Entwurf https://claude.ai/artifact/XBzwq37We4oCYisq8otfvu,
+Datei `docs/artifacts/feat-234-d2-kategorien-einrichten/entwurfsvorschau.html`).
+
+### Type
+Feature
+
+### Befunde aus dem Code
+- `StationConfig.hidden` wirkt schon in der Auflösung (`StoreCategories.stationForCategory`, einzige
+  Lesestelle); gesetzt nur von `lidlTemplate`. Drei Zustände brauchen **kein neues Feld**:
+  zugeordnet = in `builtIns` eines Gangs, ausgeblendet = in `hidden`, offen = keins von beiden.
+  Alles in `stationConfigJSON` → **kein CloudKit-Schritt** in D2.
+- Lidl-Vorlage: 17 feste Kategorien zugeordnet, 9 ausgeblendet (Baumarkt), 9 offen (Lebensmittel,
+  Tierbedarf, Haushaltswaren, Küchenausstattung, Elektronik, Textilien, Schreibwaren, Spielzeug, Dekoration).
+- `ShoppingRouteModel` hat nur `itemPositions` und `itemCategories`; Umbenennen zieht nur
+  `itemCategories` (`ShoppingRoute.renameCategory`). Randfall: Eine laufende Abhak-Sitzung
+  (`ShoppingTrip.entries[].category`) trägt den alten Gang-Namen → beim Umbenennen mitziehen oder als
+  Grenze dokumentieren.
+- `updateCustomCategory` (Guard `isCustomCategory`) greift NICHT für Gänge mit festem Namen
+  („Obst & Gemüse“) → eigener Pfad `renameStation`.
+- `stationForCategory` prüft `stationNamed(category)` vor `hidden`/`builtIns`: Ein Gang, der wie eine
+  feste Kategorie heißt, fängt sie immer (stiller vierter Zustand).
+- Gang-Konfiguration reist bisher in keinem Abgleich (`SharedStoreService`/`SyncCoordinator` ohne
+  `stationConfigJSON`) → D3.
+- Widget-Ziel kompiliert `Store.swift`, `StoreCategories.swift`, `ShoppingRoute.swift`,
+  `AssignmentService+Category/+NonFood`, aber NICHT `AssignmentService.swift` → neue Logik darf nur
+  `categoryOrder`/`category(for:)` nutzen; Teilen-Erweiterung kompiliert alle.
+- D1-UI-Tests U6 (`testMenuEntriesInStoreWithStations`) und U7 (`testRemoveAndReapplyStations`) samt
+  Helfern `menuItem`/`confirmMenuAction` und Kennungen `store.menu.applyStationTemplate`,
+  `store.menu.removeStations`, `store.stations.confirmApply/confirmRemove` → bewusst anpassen, offenlegen.
+
+### Affected Files (with changes) — Teil 2a
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `SmartCart/Models/StoreCategories.swift` | MODIFY | reine Funktionen auf `StationConfig`: umbenennen (Kollision über `resolveStation`), verschieben, zuordnen (löst aus anderem Gang und `hidden`), ausblenden, offen setzen, löschen (Kategorien werden offen) |
+| `SmartCart/Models/Store.swift` | MODIFY | Hülle: `renameStation` (stations-Name, Merkungen mit Datum, `routeModel`, eigene Kategorie Tombstone, `item.category` bei Handwahl, Emoji), `deleteStation` (Muster `deleteCustomCategory`), ein Schreibpunkt `updateStationConfig` (`date`, `bumpRouteRevision`) |
+| `SmartCart/Views/Store/StationSetupView.swift` | CREATE | Übersicht (Gänge mit `onMove`+`save()`, Wischen löschen, „Gang hinzufügen“, Abschnitte „Offen“/„Ausgeblendet“, „Vorlage wählen“, „Gänge entfernen“) + Gang-Detail (Name, Emoji, 35 Häkchen, Stichwörter nur lesend) |
+| `SmartCart/Views/Store/StoreDetailView.swift` | MODIFY | `stationMenuItem`/`withStationDialogs` → ein Eintrag „Kategorien einrichten“ + Sheet |
+| `SmartCart/Resources/{de,en}.lproj/Localizable.strings` | MODIFY | neue `station.setup.*`-Schlüssel, D1-Menüschlüssel ersetzen |
+| `Restock.xcodeproj/project.pbxproj` | MODIFY | neue Ansicht im App-Ziel |
+| `RestockTests/StoreStationsTests.swift` | MODIFY | reine Funktionen, Umbenennen fester/eigener Gang-Name mit Merkungen und Weg, Löschen, Invariante T8 |
+| `RestockUITests/StoreStationsUITests.swift` | MODIFY | U6/U7 auf neue Ansicht, neue Abläufe (anlegen, umbenennen, ziehen, zuordnen, ausblenden) |
+
+Teil 2b (eigener Durchgang): 4 Mustervorlagen (Daten aus `docs/context/gaenge-recherche-maerkte.md`),
+Stichwörter bearbeiten, Wischaktionen in `CategoryPickerView` (Gang-Modus, braucht `renameStation`/
+`deleteStation` aus 2a), Überführung eigener #85-Kategorien.
+
+### Scope Assessment
+- Gesamt D2 (Gate-Zählweise, Additionen inkl. Tests): ca. 1.070 Zeilen.
+- Teil 2a: ca. 550–650 Zeilen, 8 Dateien. Teil 2b: ca. 400–450.
+- Risk Level: MEDIUM (Umbenennen/Löschen berühren Merkungen, gelernten Weg und Artikelkategorien; ein
+  Fehler lässt Artikel still nach „Sonstiges“ fallen).
+
+### Technical Approach
+Empfehlung: Muster aus D1 fortführen (reine Logik in `StoreCategories`, dünne Hülle in `Store`,
+Ansicht ruft nur die Hülle). Navigation: Übersicht der Gänge → Gang-Detail (Entwurf 1–4).
+Alternative: flache Liste aller 35 Kategorien mit Gang-Knopf je Zeile (Entwurf 2b): ~60 Zeilen
+weniger, aber Gang-Inhalt nicht zusammen sichtbar, für Stichwörter (2b) doch ein Detail nötig.
+
+Technisch festgelegt (ohne PO, im Entwurf offengelegt):
+- Umbenennen auf vorhandenen Gang-Namen, „Sonstiges“/„Other“ oder Marke → abgelehnt mit Hinweis
+  (kein Zusammenführen).
+- Gang mit Namen einer festen Kategorie (anlegen/umbenennen) → diese Kategorie wird automatisch in
+  seine `builtIns` übernommen (aus anderem Gang/`hidden` gelöst); macht den stillen vierten Zustand
+  sichtbar.
+- Gang löschen → seine festen Kategorien werden „offen“; Löschen des letzten Gangs = „Gänge entfernen“
+  mit Rückfrage.
+- Vorlage bei vorhandenen Gängen → ersetzen nach Rückfrage; Merkungen/eigene Kategorien bleiben.
+- Geteilte Läden: Hinweiszeile „Gänge bleiben bis zum Abgleich auf diesem Gerät“.
+- Nur aus ··· der Liste (Issue Punkt 4), nicht zusätzlich aus Einstellungen → Laden-Einrichtung.
+
+### Dependencies
+Upstream: `AssignmentService.categoryOrder`/`category(for:)`/`displayCategory`/`categoryEmoji`,
+`StoreCategories.normalizedName`/`compareKey`/`resolveStation`/`suggestedEmoji`, `ShoppingRoute.renameCategory`.
+Downstream: `StoreDetailView` (Abschnitte, Sortierung), `CategoryPickerView`, `AddItemView`/`EditItemView`,
+`ItemRow`, Widget/Live Activity über `pendingItems`; D3 liest `StationConfig` als Ganzstand.
+Rebase-Gate: Umsetzung erst nach Merge von PR #240 (D1) auf `main`.
+
+### Open Questions (PO)
+- [x] Entwurf: **Empfehlung 1–4 (Übersicht + Gang-Detail)** — PO 2026-10-31. Alternative 2b verworfen.
+- [x] Zuschnitt: **zwei Teile** — PO 2026-10-31. Dieser Workflow = Teil 2a (Ansicht mit Lidl-Vorlage,
+  ca. 550–650 Zeilen). Teil 2b (4 Mustervorlagen, Stichwörter bearbeiten, Wischaktionen in der Auswahl,
+  Überführung #85) als eigener Durchgang danach.
