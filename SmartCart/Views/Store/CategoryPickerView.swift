@@ -44,47 +44,102 @@ struct CategoryPickerView: View {
         return name
     }
 
+    /// Eigenes Suchfeld statt `.searchable`: das System-Suchfeld blockierte im Test das
+    /// Zurückgehen zum Artikel-Dialog nach dem Anlegen.
+    private var searchSection: some View {
+        Section {
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary)
+                TextField(
+                    store == nil ? String(localized: "category.picker.search.only") : String(localized: "category.picker.search"),
+                    text: $query
+                )
+                .textInputAutocapitalization(.sentences)
+                .autocorrectionDisabled()
+                .submitLabel(.done)
+                .accessibilityIdentifier("categoryPicker.search")
+            }
+        }
+        .listRowBackground(Color.surface)
+    }
+
     var body: some View {
         List {
-            // Eigenes Suchfeld statt `.searchable`: das System-Suchfeld blockierte im Test das
-            // Zurückgehen zum Artikel-Dialog nach dem Anlegen.
+            searchSection
+
+            if let store, let config = store.stationConfig, store.hasStations {
+                stationSections(store, config: config)
+            } else {
+                categorySections
+            }
+        }
+        .scrollContentBackground(.hidden)
+        .background(Color.canvas)
+        .navigationTitle(String(localized: "item.category.section"))
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $editingCategory) { target in
+            if let store {
+                CustomCategoryEditor(store: store, name: target.name) { newName in
+                    if selection == target.name { selection = newName }
+                }
+            }
+        }
+        .confirmationDialog(
+            String(format: String(localized: "category.picker.delete.confirm"), deletingCategory ?? ""),
+            isPresented: Binding(get: { deletingCategory != nil }, set: { if !$0 { deletingCategory = nil } }),
+            titleVisibility: .visible
+        ) {
+            Button(String(localized: "action.delete"), role: .destructive) {
+                guard let category = deletingCategory, let store else { return }
+                store.deleteCustomCategory(category)
+                if selection == category { selection = automaticCategory }
+                deletingCategory = nil
+                Haptics.impact(.medium)
+            }
+        } message: {
+            Text(String(localized: "category.picker.delete.message"))
+        }
+        .devFeedback(context: "Kategorie wählen")
+    }
+
+    /// Issue #234: Läden mit Gängen zeigen nur ihre Gänge in Laden-Reihenfolge und „Sonstiges“.
+    /// `selection` ist hier der Gang-Name bzw. die Sonstiges-Marke.
+    @ViewBuilder
+    private func stationSections(_ store: Store, config: StationConfig) -> some View {
+        if case .new(let name) = StoreCategories.resolveStation(query, config: config) {
             Section {
-                HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundStyle(.secondary)
-                    TextField(
-                        store == nil ? String(localized: "category.picker.search.only") : String(localized: "category.picker.search"),
-                        text: $query
-                    )
-                    .textInputAutocapitalization(.sentences)
-                    .autocorrectionDisabled()
-                    .submitLabel(.done)
-                    .accessibilityIdentifier("categoryPicker.search")
+                createButton(String(format: String(localized: "station.picker.create"), name, store.name), hint: nil) {
+                    if let created = store.addStation(name) { choose(created) }
                 }
             }
             .listRowBackground(Color.surface)
+        }
+        Section(String(format: String(localized: "station.picker.section"), store.name)) {
+            ForEach(config.stations.filter { StoreCategories.matches($0.name, query: query) }, id: \.name) { station in
+                row(station.name, emoji: station.emoji, title: station.name,
+                    subtitle: countText(store.pendingCount(inStation: station.name)))
+            }
+            let other = String(localized: "station.other")
+            if StoreCategories.matches(other, query: query) {
+                row(StoreCategories.otherStationMarker, emoji: "", title: other,
+                    subtitle: countText(store.pendingCount(inStation: nil)), identifier: "categoryPicker.row.other")
+            }
+        }
+        .listRowBackground(Color.surface)
+    }
 
+    @ViewBuilder
+    private var categorySections: some View {
             if let store, let name = creatableName {
                 Section {
-                    Button {
+                    createButton(String(format: String(localized: "category.picker.create"), name, store.name),
+                                 hint: String(format: String(localized: "category.picker.create.hint"),
+                                              StoreCategories.suggestedEmoji(for: name))) {
                         if let created = store.addCustomCategory(name) {
                             choose(created)
                         }
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "plus.circle.fill")
-                                .foregroundStyle(Color.accent)
-                                .font(.system(size: 20))
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(String(format: String(localized: "category.picker.create"), name, store.name))
-                                    .foregroundStyle(Color.accent)
-                                Text(String(format: String(localized: "category.picker.create.hint"), StoreCategories.suggestedEmoji(for: name)))
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
                     }
-                    .accessibilityIdentifier("categoryPicker.create")
                 }
                 .listRowBackground(Color.surface)
             }
@@ -121,37 +176,31 @@ struct CategoryPickerView: View {
                 }
                 .listRowBackground(Color.surface)
             }
-        }
-        .scrollContentBackground(.hidden)
-        .background(Color.canvas)
-        .navigationTitle(String(localized: "item.category.section"))
-        .navigationBarTitleDisplayMode(.inline)
-        .sheet(item: $editingCategory) { target in
-            if let store {
-                CustomCategoryEditor(store: store, name: target.name) { newName in
-                    if selection == target.name { selection = newName }
+    }
+
+    /// Erste Zeile „… anlegen“, wenn die Suche nichts genau trifft.
+    private func createButton(_ title: String, hint: String?, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundStyle(Color.accent)
+                    .font(.system(size: 20))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .foregroundStyle(Color.accent)
+                    if let hint {
+                        Text(hint)
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
         }
-        .confirmationDialog(
-            String(format: String(localized: "category.picker.delete.confirm"), deletingCategory ?? ""),
-            isPresented: Binding(get: { deletingCategory != nil }, set: { if !$0 { deletingCategory = nil } }),
-            titleVisibility: .visible
-        ) {
-            Button(String(localized: "action.delete"), role: .destructive) {
-                guard let category = deletingCategory, let store else { return }
-                store.deleteCustomCategory(category)
-                if selection == category { selection = automaticCategory }
-                deletingCategory = nil
-                Haptics.impact(.medium)
-            }
-        } message: {
-            Text(String(localized: "category.picker.delete.message"))
-        }
-        .devFeedback(context: "Kategorie wählen")
+        .accessibilityIdentifier("categoryPicker.create")
     }
 
-    private func row(_ category: String, emoji: String, title: String, subtitle: String?) -> some View {
+    private func row(_ category: String, emoji: String, title: String, subtitle: String?,
+                     identifier: String? = nil) -> some View {
         Button {
             choose(category)
         } label: {
@@ -174,7 +223,7 @@ struct CategoryPickerView: View {
             }
             .contentShape(Rectangle())
         }
-        .accessibilityIdentifier("categoryPicker.row.\(category)")
+        .accessibilityIdentifier(identifier ?? "categoryPicker.row.\(category)")
     }
 
     private func countText(_ count: Int) -> String? {

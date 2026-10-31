@@ -16,6 +16,8 @@ struct EditItemView: View {
     @State private var selectedStore: Store?
     @State private var assignedTo: String
     @State private var category: String
+    /// Issue #234: In dieser Sitzung in der Auswahl gewählt (nur dann wird ein Gang gemerkt).
+    @State private var categoryPicked = false
     @State private var showDeleteConfirm = false
 
     @State private var stagedPhotoData: Data?
@@ -38,7 +40,26 @@ struct EditItemView: View {
 
     /// Anzeige der gewählten Kategorie: eigene Kategorien des gewählten Ladens (Issue #85) mit
     /// ihrem Emoji und Namen, feste mit dem lokalisierten Namen.
+    /// Issue #234: gewählter oder aufgelöster Gang; `nil` = Sonstiges.
+    private func currentStation(in store: Store) -> String? {
+        if categoryPicked, store.isStationChoice(category) {
+            return category == StoreCategories.otherStationMarker ? nil : category
+        }
+        return store.stationName(forItemNamed: name, category: category, manuallySet: item.categoryManuallySet)
+    }
+
+    /// Auswahl-Wert: in Läden mit Gängen der Gang bzw. die Marke, sonst die Kategorie.
+    private var pickerSelection: Binding<String> {
+        Binding(get: {
+            guard let store = selectedStore, store.hasStations else { return category }
+            return currentStation(in: store) ?? StoreCategories.otherStationMarker
+        }, set: { category = $0; categoryPicked = true })
+    }
+
     private var categoryLabel: String {
+        if let store = selectedStore, store.hasStations {
+            return currentStation(in: store).map { "\(store.stationEmoji($0)) \($0)" } ?? String(localized: "station.other")
+        }
         if let store = selectedStore, store.isCustomCategory(category) {
             return "\(store.categoryEmoji(category)) \(category)"
         }
@@ -136,7 +157,7 @@ struct EditItemView: View {
                     NavigationLink {
                         CategoryPickerView(
                             store: selectedStore,
-                            selection: $category,
+                            selection: pickerSelection,
                             automaticCategory: AssignmentService.category(for: name)
                         )
                     } label: {
@@ -446,21 +467,20 @@ struct EditItemView: View {
         }
     }
 
-    private func save() {
-        item.name = name.trimmingCharacters(in: .whitespaces)
-        item.quantity = quantity.isEmpty ? "1" : quantity
-        let rawQty = Double(quantity.replacingOccurrences(of: ",", with: ".")) ?? 1
-        item.quantityAmount = (rawQty > 0 && !rawQty.isNaN) ? rawQty : 1
-        // Sobald der Nutzer die Menge über dieses Formular gespeichert hat, ist sie seine eigene:
-        // die „ca."-Markierung verschwindet und aus Rate und Menge wird wieder ein Gesamtpreis
-        // (Issue #10, `ShoppingItem.quantitySource`).
-        item.quantitySource = "user"
-        let oldUnit = item.unit
-        item.unit = unit
-        item.note = note
+    /// Kategorie aus dem Dialog übernehmen. Issue #234: In Läden mit Gängen wird eine Wahl aus der
+    /// Auswahl (Gang oder Sonstiges-Marke) gemerkt; die Marke steht nie in `item.category`.
+    private func applyCategory(automaticCategory: String) {
+        if categoryPicked, let store = selectedStore, store.isStationChoice(category) {
+            let isOther = category == StoreCategories.otherStationMarker
+            item.category = isOther ? automaticCategory : category
+            item.categoryManuallySet = !isOther
+            store.rememberCategory(category, forItemNamed: item.name)
+            return
+        }
+        // Marke aus einem Laden mit Gängen, Artikel wechselt in einen ohne: automatische Kategorie.
+        if category == StoreCategories.otherStationMarker { category = automaticCategory }
         // Eine eigene Kategorie gilt nur in ihrem Laden (Issue #85): wechselt der Artikel in einen
         // Laden ohne sie, bekommt er wieder die automatische Kategorie.
-        let automaticCategory = AssignmentService.category(for: item.name)
         if let oldStore = item.store, oldStore.isCustomCategory(category),
            selectedStore?.isCustomCategory(category) != true {
             category = selectedStore?.rememberedCategory(forItemNamed: item.name) ?? automaticCategory
@@ -474,6 +494,22 @@ struct EditItemView: View {
         if categoryChanged {
             selectedStore?.rememberCategory(category, forItemNamed: item.name)
         }
+    }
+
+    private func save() {
+        item.name = name.trimmingCharacters(in: .whitespaces)
+        item.quantity = quantity.isEmpty ? "1" : quantity
+        let rawQty = Double(quantity.replacingOccurrences(of: ",", with: ".")) ?? 1
+        item.quantityAmount = (rawQty > 0 && !rawQty.isNaN) ? rawQty : 1
+        // Sobald der Nutzer die Menge über dieses Formular gespeichert hat, ist sie seine eigene:
+        // die „ca."-Markierung verschwindet und aus Rate und Menge wird wieder ein Gesamtpreis
+        // (Issue #10, `ShoppingItem.quantitySource`).
+        item.quantitySource = "user"
+        let oldUnit = item.unit
+        item.unit = unit
+        item.note = note
+        let automaticCategory = AssignmentService.category(for: item.name)
+        applyCategory(automaticCategory: automaticCategory)
         let oldStore = item.store
         let itemID = item.id
         let movedToAnotherStore = oldStore?.id != selectedStore?.id

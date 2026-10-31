@@ -1,0 +1,205 @@
+<title>Lidl-Gänge Entwurf</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: Erklärtext links schmal, Telefon-Attrappen paarweise hell/dunkel; App-Farben aus Assets.xcassets */
+:root {
+  --page-bg: #efeadc;
+  --page-fg: #201d16;
+  --page-muted: #6f6a5b;
+  --page-card: #fdfbf4;
+  --page-line: rgba(32,29,22,.14);
+  --page-accent: #666f38;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Instrument Sans", -apple-system, "Segoe UI", sans-serif;
+  --font-app: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --page-bg: #0f0e0b; --page-fg: #ebe7da; --page-muted: #a29b8a; --page-card: #1d1c16;
+  --page-line: rgba(235,231,218,.14); --page-accent: #a7ae6b; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --page-bg: #0f0e0b; --page-fg: #ebe7da; --page-muted: #a29b8a; --page-card: #1d1c16;
+  --page-line: rgba(235,231,218,.14); --page-accent: #a7ae6b; color-scheme: dark }
+
+/* App-Tokens je Telefon (fest, damit hell und dunkel nebeneinander stehen) */
+.app-light { --canvas:#f5f2e9; --surface:#fdfbf4; --ink:#201d16; --sec:#6f6a5b; --accent:#666f38; --amber:#8b6826; --hero:#252b18; --herotext:#efebdd; --hair:rgba(32,29,22,.12); --chip:rgba(102,111,56,.12); }
+.app-dark  { --canvas:#141310; --surface:#1d1c16; --ink:#ebe7da; --sec:#a29b8a; --accent:#a7ae6b; --amber:#c89a4a; --hero:#222815; --herotext:#e9e6d8; --hair:rgba(235,231,218,.12); --chip:rgba(167,174,107,.16); }
+
+body { background: var(--page-bg); color: var(--page-fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 56px; }
+h1, h2 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: -.01em; }
+h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
+h2 { font-size: 26px; line-height: 1.2; }
+p { margin: 0; max-width: 64ch; }
+.lead { color: var(--page-muted); font-size: 17px; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--page-accent); font-weight: 600; }
+header { display: grid; gap: 14px; }
+section { display: grid; gap: 22px; }
+.sec-head { display: grid; gap: 8px; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 99px; border: 1px solid var(--page-line); color: var(--page-muted); }
+.tag.rec { color: var(--page-accent); border-color: var(--page-accent); }
+.row { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+figure { margin: 0; display: grid; gap: 10px; justify-items: center; }
+figcaption { font-size: 13px; color: var(--page-muted); text-align: center; max-width: 300px; }
+.shot { width: 300px; max-width: 100%; border-radius: 34px; border: 1px solid var(--page-line); }
+.notes { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; max-width: 70ch; }
+.notes li { padding-left: 18px; position: relative; }
+.notes li::before { content: ""; position: absolute; left: 0; top: .7em; width: 7px; height: 1.5px; background: var(--page-accent); }
+.decide { background: var(--page-card); border: 1px solid var(--page-line); border-radius: 16px; padding: 20px 22px; display: grid; gap: 10px; max-width: 760px; }
+
+/* Telefon-Attrappe */
+.phone { width: 300px; max-width: 100%; background: var(--canvas); color: var(--ink); border-radius: 34px; border: 1px solid var(--page-line); overflow: hidden; font-family: var(--font-app); font-size: 13px; padding: 14px 14px 18px; display: grid; gap: 12px; align-content: start; }
+.nav { display: flex; align-items: center; gap: 10px; }
+.back { width: 30px; height: 30px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-size: 15px; }
+.nav b { font-size: 17px; flex: 1; }
+.pill { background: var(--surface); border-radius: 12px; padding: 5px 10px; font-size: 13px; color: var(--ink); letter-spacing: 2px; }
+.mode { font-size: 11px; color: var(--sec); display: flex; align-items: center; gap: 6px; }
+.mode span { background: var(--chip); color: var(--accent); border-radius: 99px; padding: 2px 8px; font-weight: 600; letter-spacing: 0; }
+.group { display: grid; gap: 5px; }
+.ghead { display: flex; align-items: baseline; gap: 6px; font-size: 12px; color: var(--sec); font-weight: 600; padding-left: 4px; }
+.ghead .n { font-weight: 400; }
+.ghead.other { font-style: italic; }
+.card { background: var(--surface); border-radius: 16px; padding: 2px 12px; }
+.item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--hair); }
+.item:first-child { border-top: 0; }
+.box { width: 17px; height: 17px; border-radius: 5px; border: 1.5px solid var(--sec); opacity: .7; flex: none; }
+.it { flex: 1; min-width: 0; display: grid; }
+.it .nm { font-size: 14px; }
+.it .sub { font-size: 11px; color: var(--sec); }
+.pr { font-size: 12px; color: var(--amber); text-align: right; white-space: nowrap; }
+.search { background: var(--surface); border-radius: 12px; padding: 8px 10px; color: var(--sec); }
+.plist .item .em { width: 20px; text-align: center; }
+.check { color: var(--accent); font-weight: 700; }
+.hint { font-size: 11px; color: var(--sec); padding: 0 4px; }
+.create { color: var(--accent); }
+.seg { display: flex; gap: 4px; flex-wrap: wrap; }
+.seg span { font-size: 10px; padding: 2px 7px; border-radius: 99px; background: var(--chip); color: var(--accent); }
+.seg span.off { background: transparent; border: 1px dashed var(--sec); color: var(--sec); text-decoration: line-through; }
+.grip { color: var(--sec); letter-spacing: -1px; }
+.btn { text-align: center; background: var(--chip); color: var(--accent); border-radius: 12px; padding: 9px; font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Issue #234 · Entwurf vor der Spec</span>
+    <h1>Gänge im Laden: die Liste folgt dem Weg durch Lidl</h1>
+    <p class="lead">Ein Laden bekommt eine feste Reihe von Gängen. Die Liste ordnet sich danach. Das Abhaken lernt nur noch, in welcher Reihenfolge du die Artikel innerhalb eines Gangs nimmst. Läden ohne Gänge bleiben genau wie heute.</p>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <h2>Heute</h2>
+      <p>Die Liste lernt die Reihenfolge über den ganzen Laden. Unter jedem Artikel steht seine Standard-Kategorie.</p>
+    </div>
+    <div class="row">
+      <figure>
+        <img class="shot" src="heute-ladenliste.png" alt="Bildschirmfoto der heutigen Ladenliste: Gouda, Brot, Apfel untereinander, je mit Kategorie darunter">
+        <figcaption>Bildschirmfoto aus dem Simulator (Durchlauf zu #233, hell). Sortierung „Einkaufsweg“.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div><span class="tag rec">Entwurf · Empfehlung</span></div>
+      <h2>1 · Sortierung „Kategorie“: ein Abschnitt je Gang</h2>
+      <p>Die Abschnitte stehen in deiner Gang-Reihenfolge. Wurst und Hummus landen über die Stichwörter der Vorlage in der Kühltheke, Gouda beim Käse. Was keinem Gang zugeordnet ist, steht unter „Sonstiges“ ganz unten. Leere Gänge erscheinen nicht.</p>
+    </div>
+    <div class="row" data-screen="category"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div><span class="tag rec">Entwurf · Empfehlung</span></div>
+      <h2>2 · Sortierung „Einkaufsweg“: dieselbe Reihenfolge, ohne Überschriften</h2>
+      <p>Die Liste bleibt wie heute flach. Die Reihenfolge folgt aber den Gängen, und unter jedem Artikel steht sein Gang statt der Standard-Kategorie.</p>
+    </div>
+    <div class="row" data-screen="route"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div><span class="tag">Alternative</span></div>
+      <h2>2b · Einkaufsweg mit Gang-Überschriften</h2>
+      <p>Auch „Einkaufsweg“ zeigt die Gänge als Überschriften, mit einer laufenden Nummer. Damit sehen beide Sortierungen fast gleich aus. Der Unterschied liegt dann nur noch in der Reihenfolge innerhalb eines Gangs.</p>
+    </div>
+    <div class="row" data-screen="routeAlt"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div><span class="tag rec">Entwurf · Empfehlung</span></div>
+      <h2>3 · Kategorie wählen: nur die Gänge dieses Ladens</h2>
+      <p>Beim Hinzufügen und Bearbeiten zeigt die Auswahl bei Lidl nur seine Gänge in Laden-Reihenfolge, statt aller 35 Standard-Kategorien. Ein neuer Gang lässt sich direkt anlegen und landet vor „Sonstiges“. Die Wahl merkt sich der Laden je Artikel.</p>
+    </div>
+    <div class="row" data-screen="picker"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div><span class="tag">Ausblick · Durchgang 2</span></div>
+      <h2>4 · ··· → „Kategorien einrichten“</h2>
+      <p>Gänge ziehen, umbenennen, anlegen. Unter jedem Gang stehen seine Standard-Kategorien und Stichwörter. Ausgeblendete Kategorien (durchgestrichen) erscheinen weder in der Auswahl noch als Abschnitt. Ganz oben steht „Lidl-Vorlage übernehmen“. Gebaut wird das im zweiten Durchgang. Es steht hier, damit das Gesamtbild stimmt.</p>
+    </div>
+    <div class="row" data-screen="setup"></div>
+  </section>
+
+  <section class="decide">
+    <h2>Was du entscheidest</h2>
+    <ul class="notes">
+      <li>Entwurf 1 bis 3 so übernehmen, oder für „Einkaufsweg“ die Alternative 2b mit Gang-Überschriften.</li>
+      <li>Ob Wortlaut und Reihenfolge der Lidl-Gänge so stimmen. Sie stammen aus deinem Issue.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const gangs = [
+  { e: "🍎", n: "Obst & Gemüse", items: [["Bananen", "ca. 1,29 €"], ["Äpfel", "ca. 2,49 €"]] },
+  { e: "🥗", n: "Frische Säfte, Salate, gekühlte Getränke", items: [["Orangensaft", "ca. 1,99 €"]] },
+  { e: "☕️", n: "Nüsse, Süßigkeiten, Kaffee, Tee", items: [["Kaffee", "ca. 5,49 €"]] },
+  { e: "🥖", n: "Brot & Backwaren", items: [["Vollkornbrot", "ca. 1,79 €"]] },
+  { e: "🧊", n: "Kühltheke Fertiges", items: [["Salami", "ca. 1,69 €"], ["Hummus", "ca. 1,19 €"]] },
+  { e: "🧀", n: "Käse", items: [["Gouda", "ca. 3,79 €"]] },
+  { e: "🥛", n: "Milchprodukte", items: [["Joghurt", "ca. 0,89 €"]] },
+  { e: "❄️", n: "Tiefkühl", items: [["Rahmspinat", "ca. 1,49 €"]] },
+  { e: "🥤", n: "Getränke", items: [["Mineralwasser", "ca. 1,74 €"]] },
+];
+const other = { n: "Sonstiges", items: [["Batterien", "Preis?"]] };
+
+const nav = (title) => `<div class="nav"><div class="back">‹</div><b>${title}</b><div class="pill">···</div></div>`;
+const item = (name, sub, price) => `<div class="item"><div class="box"></div><div class="it"><span class="nm">${name}</span>${sub ? `<span class="sub">· ${sub}</span>` : ""}</div><div class="pr">${price}</div></div>`;
+const short = (n) => n.length > 22 ? n.slice(0, 20) + "…" : n;
+
+const screens = {
+  category: () => nav("Lidl") + `<div class="mode">Sortierung <span>Kategorie</span></div>` +
+    gangs.slice(0, 7).map(g => `<div class="group"><div class="ghead">${g.e} ${g.n} <span class="n">· ${g.items.length}</span></div><div class="card">${g.items.map(i => item(i[0], "", i[1])).join("")}</div></div>`).join("") +
+    `<div class="hint">… Tiefkühl, Getränke</div>` +
+    `<div class="group"><div class="ghead other">Sonstiges <span class="n">· 1</span></div><div class="card">${other.items.map(i => item(i[0], "", i[1])).join("")}</div></div>`,
+  route: () => nav("Lidl") + `<div class="mode">Sortierung <span>Einkaufsweg</span></div>` +
+    `<div class="card">${gangs.flatMap(g => g.items.map(i => item(i[0], short(g.n), i[1]))).slice(0, 10).join("")}${item("Batterien", "Sonstiges", "Preis?")}</div>`,
+  routeAlt: () => nav("Lidl") + `<div class="mode">Sortierung <span>Einkaufsweg</span></div>` +
+    gangs.slice(0, 6).map((g, k) => `<div class="group"><div class="ghead">${k + 1} · ${short(g.n)}</div><div class="card">${g.items.map(i => item(i[0], "", i[1])).join("")}</div></div>`).join("") +
+    `<div class="hint">… 7 Milchprodukte, 8 Tiefkühl, 9 Getränke, Sonstiges</div>`,
+  picker: () => `<div class="nav"><div class="back">‹</div><b>Kategorie</b></div><div class="search">🔍 Suchen oder neu anlegen</div>` +
+    `<div class="ghead">Gänge bei Lidl</div><div class="card plist">` +
+    gangs.map(g => `<div class="item"><span class="em">${g.e}</span><div class="it"><span class="nm">${short(g.n)}</span></div>${g.n === "Kühltheke Fertiges" ? `<span class="check">✓</span>` : ""}</div>`).join("") +
+    `<div class="item"><span class="em">·</span><div class="it"><span class="nm" style="color:var(--sec)">Sonstiges</span></div></div></div>` +
+    `<div class="hint">Artikel: Hummus. Gemerkt für Lidl.</div>`,
+  setup: () => `<div class="nav"><div class="back">‹</div><b>Kategorien einrichten</b></div><div class="btn">Lidl-Vorlage übernehmen</div>` +
+    `<div class="card">` +
+    [["🍎", "Obst & Gemüse", ["Obst & Gemüse"], []], ["🧊", "Kühltheke Fertiges", ["Wurst", "Tofu", "Dips", "Maultaschen"], []], ["🧀", "Käse", ["Käse", "Gouda"], []], ["🧴", "Drogerie", ["Körperpflege", "Zahnpflege"], ["Werkzeug", "Holz"]]]
+      .map(([e, n, on, off]) => `<div class="item"><span class="grip">⋮⋮</span><div class="it"><span class="nm">${e} ${n}</span><div class="seg">${on.map(x => `<span>${x}</span>`).join("")}${off.map(x => `<span class="off">${x}</span>`).join("")}</div></div><span style="color:var(--sec)">›</span></div>`).join("") +
+    `</div><div class="hint">+ Gang anlegen · Ziehen ändert die Reihenfolge</div>`,
+};
+
+document.querySelectorAll("[data-screen]").forEach(row => {
+  const build = screens[row.dataset.screen];
+  for (const [cls, label] of [["app-light", "Hell"], ["app-dark", "Dunkel"]]) {
+    const fig = document.createElement("figure");
+    fig.innerHTML = `<div class="phone ${cls}">${build()}</div><figcaption>${label}</figcaption>`;
+    row.appendChild(fig);
+  }
+});
+</script>

@@ -49,6 +49,8 @@ struct SmartCartApp: App {
             Self.seedQuantitySuggestionForUITestsIfNeeded(context: container.mainContext)
             Self.clearShoppingRouteSeedForUITestsIfNeeded(context: container.mainContext)
             Self.seedShoppingRouteForUITestsIfNeeded(context: container.mainContext)
+            Self.clearStationStoreForUITestsIfNeeded(context: container.mainContext)
+            Self.seedStationStoreForUITestsIfNeeded(context: container.mainContext)
             Self.clearLegacyLearnedPriceSeedForUITestsIfNeeded(context: container.mainContext)
             Self.seedLegacyLearnedPriceForUITestsIfNeeded(context: container.mainContext)
             Self.clearQuickAddAssignmentSeedForUITestsIfNeeded(context: container.mainContext)
@@ -392,6 +394,37 @@ struct SmartCartApp: App {
     /// mit diesem Argument. Only runs on `-clearShoppingRouteSeedForUITests`, DEBUG-only.
     private static func clearShoppingRouteSeedForUITestsIfNeeded(context: ModelContext) {
         guard ProcessInfo.processInfo.arguments.contains("-clearShoppingRouteSeedForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        try? context.save()
+    }
+
+    /// UI-Test-Seed für Laden-Stationen (Issue #234, `StoreStationsUITests`): Laden „Stationsladen“
+    /// mit Lidl-Vorlage, offene Artikel in der Hinzufüge-Reihenfolge Batterien, Milch, Gouda,
+    /// Salami, Apfel, Brot (nur Brot dringend), kein gelernter Weg, Modus Einkaufsweg. Löscht vorher
+    /// alle Läden und Artikel. Only runs on `-seedStationStoreForUITests`, DEBUG-only.
+    private static func seedStationStoreForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedStationStoreForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        let store = Store(name: "Stationsladen", emoji: "🛒", colorHex: "#0050AA")
+        context.insert(store)
+        store.applyStationConfig(StoreCategories.lidlTemplate)
+        let start = Date().addingTimeInterval(-3600)
+        for (index, name) in ["Batterien", "Milch", "Gouda", "Salami", "Apfel", "Brot"].enumerated() {
+            let item = ShoppingItem(name: name, category: AssignmentService.category(for: name), store: store)
+            item.addedDate = start.addingTimeInterval(Double(index) * 60)
+            item.isUrgent = name == "Brot"
+            context.insert(item)
+        }
+        store.routeModel = ShoppingRouteModel()
+        store.currentTrip = ShoppingTrip()
+        store.sortMode = .route
+        try? context.save()
+    }
+
+    /// Räumt den Seed oben weg (`StoreStationsUITests.tearDown()`). Only runs on
+    /// `-clearStationStoreForUITests`, DEBUG-only.
+    private static func clearStationStoreForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-clearStationStoreForUITests") else { return }
         deleteAllStoresAndItems(context: context)
         try? context.save()
     }

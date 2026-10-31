@@ -1,0 +1,56 @@
+Issue #234, Laden-Stationen Durchgang 1 – GREEN-Nachweis
+Stand: Arbeitsbaum auf Basis e52733c (uncommittet), 2026-10-30
+Simulator: Restock-Validate-27 (9034BD4F-2D5F-49D5-B906-838326D51C95), DerivedData build/dd-234
+Signatur unverändert (keine Overrides). Keine Wiederholungen nötig, kein Testrunner-Hänger (#63) beobachtet.
+
+1) Unit-Klassen (Rohprotokoll: test-green-unit-klassen.txt)
+   -only-testing: StoreStationsTests, ShoppingRouteTests, MirroredSchemaSnapshotTests, LocalizationKeyParityTests
+   StoreStationsTests            19 Tests, 0 Fehlschläge
+   ShoppingRouteTests            29 Tests, 0 Fehlschläge (inkl. T17)
+   MirroredSchemaSnapshotTests    5 Tests, 0 Fehlschläge (inkl. T16)
+   LocalizationKeyParityTests     4 Tests, 0 Fehlschläge
+   Gesamt: Executed 57 tests, with 0 failures, 0 übersprungen – ** TEST SUCCEEDED **
+
+2) StoreStationsUITests (Rohprotokoll: test-green-ui-stationen.txt)
+   testCategoryModeShowsStationSections                       passed (80.9 s)
+   testChosenStationIsRememberedForNewItem                    passed (75.6 s)
+   testCreatingStationFromPickerAppendsSection                passed (63.0 s)
+   testMenuEntriesInStoreWithStations                         passed (59.4 s)
+   testPickerShowsOnlyStationsAndOther                        passed (37.9 s)
+   testRemoveAndReapplyStations                               passed (90.0 s)
+   testRouteModeIsFlatInStationOrderWithStationSubtitles      passed (104.0 s)
+   Gesamt: Executed 7 tests, with 0 failures, 0 übersprungen – ** TEST SUCCEEDED ** (erster Lauf)
+
+3) UI-Regression (Rohprotokoll: test-green-ui-regression.txt)
+   ShoppingRouteUITests                 6 Tests, 0 Fehlschläge
+   ShoppingRouteLearningUITests         2 Tests, 0 Fehlschläge
+   AddItemQuantitySuggestionUITests     6 Tests, 0 Fehlschläge
+   LegacyLearnedPriceResetUITests       3 Tests, 0 Fehlschläge
+   ItemRowTapUITests                   12 Tests, 0 Fehlschläge
+   Gesamt: Executed 29 tests, with 0 failures, 0 übersprungen – ** TEST SUCCEEDED ** (erster Lauf)
+   Auswahl: alle UI-Testklassen mit categoryPicker / item.categoryRow / AddItemView / UITestItemEditor
+   (StoreScreenshotCaptureUITests überspringt sich ohne Umgebungsvariable, nicht gefahren).
+
+4) Volle Unit-Suite RestockTests (Rohprotokoll: test-green-unit-voll.txt)
+   Executed 772 tests, with 0 failures, 0 übersprungen – ** TEST SUCCEEDED **
+
+=== Nachlauf nach Adversary (F002 U8, F005 searchSection), 2026-10-31, iOS 27.2 ===
+Simulator: Restock-Validate-272 (6728F5AB-712F-46E0-A1D1-2047A9771C8E, iPhone 17 Pro, iOS 27.2)
+Grund: Restock-Validate-27 fiel aus (iOS-Runtime nicht mehr eingehängt); alle Läufe unten auf 27.2.
+Stand: Arbeitsbaum auf Basis e52733c (uncommittet), git diff --shortstat: 14 files, +669/−86.
+
+5) StoreStationsUITests, jetzt 8 Tests (Rohprotokoll: test-green-ui-stationen-272.txt)
+   die sieben von oben passed, neu testChoosingOtherNeverStoresMarkerAsCategory (U8) passed (104.3 s)
+   Gesamt: Executed 8 tests, with 0 failures, 0 übersprungen – ** TEST SUCCEEDED ** (erster Lauf)
+   U8-Gegenproben (drei Varianten, alle rot): u8-gegenproben.txt
+
+6) Unit-Klassen (Rohprotokoll: test-green-unit-klassen-272.txt)
+   Executed 57 tests, with 0 failures, 0 übersprungen – ** TEST SUCCEEDED **
+
+7) Volle Unit-Suite RestockTests (Rohprotokoll: adversary-test-output.txt)
+   Executed 772 tests, with 0 failures, 0 übersprungen – ** TEST SUCCEEDED **
+
+8) UI-Regression ohne ItemRowTapUITests (Rohprotokoll: test-green-ui-regression-272.txt)
+   ShoppingRouteUITests 6, ShoppingRouteLearningUITests 2, AddItemQuantitySuggestionUITests 6,
+   LegacyLearnedPriceResetUITests 3 – Executed 17 tests, with 0 failures – ** TEST SUCCEEDED ** (erster Lauf)
+   ItemRowTapUITests bewusst nicht gefahren (würde die Belegbilder von #233 überschreiben).

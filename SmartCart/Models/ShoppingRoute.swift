@@ -223,6 +223,9 @@ enum ShoppingRoute {
         var category: String
         var isUrgent: Bool
         var addedDate: Date
+        /// Index des Gangs in einem Laden mit Gängen (Issue #234), Sonstiges = Anzahl der Gänge.
+        /// `nil` (Läden ohne Gänge): unveränderter Sortierweg.
+        var stationRank: Int? = nil
     }
 
     /// Reihenfolge der offenen Artikel als Indizes in `items`. Dringende immer zuerst.
@@ -238,6 +241,9 @@ enum ShoppingRoute {
         model: ShoppingRouteModel,
         staticCategoryOrder: [String]
     ) -> [Int] {
+        if mode != .added, items.contains(where: { $0.stationRank != nil }) {
+            return stationSortedIndices(items, model: model)
+        }
         let learnedCategories = categoryPositions(model)
         let categoryRank: [String: Int] = Dictionary(
             uniqueKeysWithValues: orderedCategories(items.map(\.category), learned: learnedCategories, staticOrder: staticCategoryOrder)
@@ -275,6 +281,26 @@ enum ShoppingRoute {
                     let rb = categoryRank[b.category] ?? Int.max
                     if ra != rb { return ra < rb }
                 }
+            }
+            if a.addedDate != b.addedDate { return a.addedDate < b.addedDate }
+            return ia < ib
+        }
+    }
+
+    /// Läden mit Gängen (Issue #234), Modi Einkaufsweg und Kategorie: Dringende zuerst, dann
+    /// Gang-Rang, dann gelernte Artikelposition (bekannte vor unbekannten), dann Hinzufügedatum.
+    /// Kategorie-Mittel und gelernte Abschnittsreihenfolge spielen hier keine Rolle.
+    private static func stationSortedIndices(_ items: [SortInput], model: ShoppingRouteModel) -> [Int] {
+        items.indices.sorted { ia, ib in
+            let a = items[ia], b = items[ib]
+            if a.isUrgent != b.isUrgent { return a.isUrgent }
+            let ra = a.stationRank ?? Int.max, rb = b.stationRank ?? Int.max
+            if ra != rb { return ra < rb }
+            switch (model.itemPositions[a.key], model.itemPositions[b.key]) {
+            case let (x?, y?) where x != y: return x < y
+            case (.some, nil): return true
+            case (nil, .some): return false
+            default: break
             }
             if a.addedDate != b.addedDate { return a.addedDate < b.addedDate }
             return ia < ib

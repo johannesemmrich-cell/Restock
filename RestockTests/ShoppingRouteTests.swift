@@ -231,6 +231,63 @@ final class ShoppingRouteTests: XCTestCase {
         XCTAssertEqual(ordered, ["Käse", "Obst & Gemüse", "Milch", "Drogerie", "Unbekannt"])
     }
 
+    // MARK: Regression ohne Gänge (Issue #234, T17, AC-1)
+
+    /// Gelernt: gouda 0,1 (Käse), brot 0,5 (Brot), apfel 0,9 (Obst & Gemüse) — Kategorie-Mittel
+    /// Käse 0,1 < Brot 0,5 < Obst 0,9; Milch, Drogerie, „Unbekannt“ ungelernt.
+    private var frozenModel: ShoppingRouteModel {
+        var model = ShoppingRouteModel()
+        for (key, position, category) in [("gouda", 0.1, "Käse"), ("brot", 0.5, "Brot"), ("apfel", 0.9, "Obst & Gemüse")] {
+            model.itemPositions[key] = position
+            model.itemCategories[key] = category
+        }
+        return model
+    }
+
+    /// Feste Eingaben: Feta ungelernt (erbt im Einkaufsweg das Käse-Mittel), Milch/Duschgel/„x“
+    /// ohne Position und ohne gelernte Kategorie, Zahnbürste dringend, „x“ ohne feste Kategorie.
+    private var frozenInputs: [ShoppingRoute.SortInput] {
+        [
+            input("apfel", "Obst & Gemüse", added: 50),
+            input("brot", "Brot", added: 40),
+            input("gouda", "Käse", added: 30),
+            input("feta", "Käse", added: 5),
+            input("milch", "Milch", added: 20),
+            input("duschgel", "Drogerie", added: 10),
+            input("zahnbürste", "Drogerie", urgent: true, added: 60),
+            input("x", "Unbekannt", added: 0),
+        ]
+    }
+
+    /// T17 / AC-1: GIVEN `SortInput` ohne `stationRank` WHEN `sortedIndices` in allen drei Modi
+    /// THEN exakt die vor Issue #234 berechneten Reihenfolgen (festgeschrieben, aus dem Code von
+    /// `sortedIndices` hergeleitet: Dringende zuerst; Einkaufsweg nach Position bzw. Kategorie-
+    /// Mittel, Gleichstand nach Hinzufügedatum, ungelernte nach Kategorie-Rang; Kategorie nach
+    /// gelernter, dann fester Reihenfolge, darin bekannte Position vor unbekannter; Hinzugefügt
+    /// nach Datum).
+    func testSortWithoutStationRankKeepsFrozenOrders() {
+        let items = frozenInputs
+        XCTAssertTrue(items.allSatisfy { $0.stationRank == nil }, "Ohne Angabe ist der Gang-Rang nil")
+        XCTAssertEqual(sortedKeys(items, .route, frozenModel),
+                       ["zahnbürste", "feta", "gouda", "brot", "apfel", "milch", "duschgel", "x"])
+        XCTAssertEqual(sortedKeys(items, .category, frozenModel),
+                       ["zahnbürste", "gouda", "feta", "brot", "apfel", "milch", "duschgel", "x"])
+        XCTAssertEqual(sortedKeys(items, .added, frozenModel),
+                       ["zahnbürste", "x", "feta", "duschgel", "milch", "gouda", "brot", "apfel"])
+    }
+
+    /// T17 / AC-1: Ein ausdrücklich übergebenes `stationRank: nil` sortiert genau wie ohne Angabe.
+    func testExplicitNilStationRankEqualsDefault() {
+        let explicit = frozenInputs.map {
+            ShoppingRoute.SortInput(key: $0.key, category: $0.category, isUrgent: $0.isUrgent,
+                                    addedDate: $0.addedDate, stationRank: nil)
+        }
+        for mode in StoreSortMode.allCases {
+            XCTAssertEqual(sortedKeys(explicit, mode, frozenModel), sortedKeys(frozenInputs, mode, frozenModel),
+                           "Modus \(mode): nil-Rang muss den bisherigen Pfad nehmen")
+        }
+    }
+
     // MARK: Voreinstellung
 
     func testMigratedDefaultKeepsPreviousSettings() {

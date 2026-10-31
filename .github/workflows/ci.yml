@@ -158,7 +158,7 @@ jobs:
       matrix:
         half: [A, B]
     env:
-      HEAVY_CLASSES: "ReceiptReviewUITests ShoppingRouteUITests AddItemQuantitySuggestionUITests ReceiptResolutionStatsUITests DynamicTypeUITests"
+      HEAVY_CLASSES: "ReceiptReviewUITests ShoppingRouteUITests AddItemQuantitySuggestionUITests ReceiptResolutionStatsUITests DynamicTypeUITests StoreStationsUITests"
     steps:
       - uses: actions/checkout@v4
 
