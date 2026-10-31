@@ -129,3 +129,4 @@ Feature
 ### Open Questions
 - [x] Entwurfsvorschau: `docs/artifacts/feat-234-laden-stationen/entwurfsvorschau.html`, veröffentlicht https://claude.ai/artifact/BCbeKenFfDrWuq8YqyTfXB. **PO 2026-10-30: Entwurf 1–3 freigegeben** (Kategorie-Modus mit Gang-Abschnitten; Einkaufsweg flach in Gang-Reihenfolge, Untertitel = Gang; Auswahl nur Gänge + „Sonstiges“). Alternative 2b verworfen.
 - [ ] Entwurfsvorschau (Heute/Entwurf/Alternative, hell+dunkel) unter `docs/artifacts/feat-234-laden-stationen/` vor der Spec
+- [x] PO 2026-10-30 (nach Recherche `docs/context/gaenge-recherche-maerkte.md`): D2 liefert Lidl-Vorlage + je eine Mustervorlage Discounter, Vollsortimenter, Drogerie, Baumarkt, gekennzeichnet als „Vorschlag, bitte prüfen“.
