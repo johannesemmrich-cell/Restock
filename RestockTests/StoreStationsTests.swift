@@ -497,8 +497,8 @@ final class StoreStationsTests: XCTestCase {
     func testStationStringsExistInBothLanguages() throws {
         let expected: [String: Int] = [
             "station.other": 0, "station.picker.section": 1, "station.picker.create": 2,
-            "station.menu.applyTemplate": 0, "station.menu.remove": 0,
-            "station.template.confirm.title": 0, "station.template.confirm.message": 0,
+            // D2a: „station.menu.applyTemplate“ und „station.template.confirm.*“ sind gestrichen (S13).
+            "station.menu.remove": 0,
             "station.remove.confirm.title": 0, "station.remove.confirm.message": 0,
         ]
         for localization in ["de", "en"] {
@@ -541,5 +541,465 @@ final class StoreStationsTests: XCTestCase {
         XCTAssertEqual(withStations.stationName(of: try item("Salami", in: withStations)), "Kühltheke Fertiges")
         XCTAssertEqual(AssignmentService.category(for: "Salami"), "Fleisch & Wurst")
         XCTAssertNil(withStations.stationName(of: try item("Batterien", in: withStations)))
+    }
+
+    // MARK: - Durchgang 2a: Kategorien einrichten (Spec `docs/specs/views/station-setup.md`)
+
+    /// Alle Invarianten einer Konfiguration (S9, AC-12).
+    private func assertInvariants(_ config: StationConfig, _ step: String,
+                                  file: StaticString = #filePath, line: UInt = #line) {
+        let keys = config.stations.map { StoreCategories.compareKey($0.name) }
+        XCTAssertEqual(Set(keys).count, keys.count, "\(step): Gang-Namen nicht eindeutig", file: file, line: line)
+        for name in config.stations.map(\.name) {
+            XCTAssertFalse(["sonstiges", "other"].contains(StoreCategories.compareKey(name).lowercased()),
+                           "\(step): „\(name)“ meint Sonstiges", file: file, line: line)
+            XCTAssertFalse(name.contains("\u{E000}"), "\(step): Marke als Gang-Name", file: file, line: line)
+        }
+        let order = Set(AssignmentService.categoryOrder)
+        let allBuiltIns = config.stations.flatMap(\.builtIns)
+        for category in allBuiltIns + config.hidden {
+            XCTAssertTrue(order.contains(category), "\(step): „\(category)“ ist keine feste Kategorie", file: file, line: line)
+        }
+        XCTAssertEqual(Set(allBuiltIns).count, allBuiltIns.count, "\(step): Kategorie in zwei Gängen", file: file, line: line)
+        XCTAssertTrue(Set(allBuiltIns).isDisjoint(with: config.hidden), "\(step): hidden ∩ builtIns", file: file, line: line)
+        for station in config.stations {
+            guard let bound = AssignmentService.categoryOrder.first(where: {
+                StoreCategories.compareKey($0) == StoreCategories.compareKey(station.name) }) else { continue }
+            XCTAssertTrue(station.builtIns.contains(bound), "\(step): „\(bound)“ fehlt im gleichnamigen Gang", file: file, line: line)
+        }
+    }
+
+    private func names(_ config: StationConfig?) -> [String] { config?.stations.map(\.name) ?? [] }
+
+    private func builtIns(of name: String, in config: StationConfig?) -> [String] {
+        config?.stations.first { $0.name == name }?.builtIns ?? []
+    }
+
+    /// Artikel mit von Hand gesetzter Kategorie (wie aus Bearbeiten gespeichert).
+    @discardableResult
+    private func addManual(_ name: String, category: String, to store: Store) -> ShoppingItem {
+        let item = add(name, to: store)
+        item.category = category
+        item.categoryManuallySet = true
+        return item
+    }
+
+    // MARK: S1: Umbenennen zieht alles mit (AC-3, AC-4)
+
+    /// S1 / AC-3, AC-4: GIVEN Vorlage, Merkung gouda → Käse, Brie von Hand in Käse, gelernter Weg mit
+    /// Käse WHEN `renameStation("Käse", to: "Käse & Co")` THEN Gang an gleicher Stelle umbenannt,
+    /// Merkung, `item.category`, `itemCategories` und eigene Kategorie tragen den neuen Namen.
+    func testRenameStationMovesAssignmentsPathAndItems() throws {
+        let store = makeStore()
+        store.rememberCategory("Käse", forItemNamed: "Gouda")
+        let brie = addManual("Brie", category: "Käse", to: store)
+        let gouda = add("Gouda", to: store)
+        let apfel = add("Apfel", to: store)
+        var model = store.routeModel
+        model.itemPositions["gouda"] = 0.6
+        model.itemCategories["gouda"] = "Käse"
+        model.itemCategories["apfel"] = "Obst & Gemüse"
+        store.routeModel = model
+        let rankBefore = store.stationRank(of: brie)
+        store.sortMode = .route
+        let orderBefore = store.pendingItems.map(\.name)
+
+        let renamed = store.renameStation("Käse", to: "Käse & Co", emoji: "🧀")
+
+        XCTAssertEqual(renamed, "Käse & Co")
+        XCTAssertEqual(names(store.stationConfig).firstIndex(of: "Käse & Co"), 7, "Gang bleibt an seiner Stelle")
+        XCTAssertFalse(names(store.stationConfig).contains("Käse"))
+        XCTAssertEqual(store.categoryAssignments["gouda"], "Käse & Co", "Merkung zieht mit")
+        XCTAssertNotNil(store.categoryAssignmentDates["gouda"], "Merkung mit Datum (Abgleich)")
+        XCTAssertEqual(brie.category, "Käse & Co", "Von Hand gesetzte Kategorie zieht mit")
+        XCTAssertTrue(brie.categoryManuallySet)
+        XCTAssertEqual(apfel.category, "Obst & Gemüse", "Automatische Kategorien bleiben unberührt")
+        XCTAssertEqual(store.routeModel.itemCategories["gouda"], "Käse & Co", "Gelernter Weg zieht mit")
+        XCTAssertEqual(store.routeModel.itemPositions["gouda"], 0.6, "Gelernte Position bleibt")
+        XCTAssertEqual(store.customCategoryEntries["Käse"]?.isDeleted, true, "Alte eigene Kategorie mit Löschvermerk")
+        XCTAssertEqual(store.customCategoryEntries["Käse & Co"]?.emoji, "🧀", "Neue eigene Kategorie lebt, Emoji aus dem Gang")
+        XCTAssertEqual(store.stationName(of: gouda), "Käse & Co")
+        XCTAssertEqual(store.stationName(of: brie), "Käse & Co")
+        XCTAssertEqual(store.stationRank(of: brie), rankBefore, "Rang unverändert, nichts rutscht nach Sonstiges")
+        XCTAssertEqual(store.pendingItems.map(\.name), orderBefore)
+    }
+
+    // MARK: S2: Kollisionen werden abgelehnt (AC-5)
+
+    /// S2 / AC-5: GIVEN Vorlage WHEN Umbenennen von „Käse“ auf einen anderen Gang, Sonstiges/Other,
+    /// die Marke oder leer THEN `nil`, nichts geändert; nur Schreibweise und neuer Name sind erlaubt.
+    func testRenameRejectsCollisions() throws {
+        let store = makeStore()
+        store.rememberCategory("Käse", forItemNamed: "Gouda")
+        var model = store.routeModel
+        model.itemCategories["gouda"] = "Käse"
+        store.routeModel = model
+        let jsonBefore = store.stationConfigJSON
+        let modelBefore = store.routeModel
+
+        for input in ["Milchprodukte", " milchprodukte ", "sonstiges", "Other", marker, "  "] {
+            XCTAssertNil(StoreCategories.renamingStation("Käse", to: input, emoji: "🧀", in: lidl),
+                         "„\(input)“ muss abgelehnt werden")
+            XCTAssertNil(store.renameStation("Käse", to: input, emoji: "🧀"), "Hülle: „\(input)“ abgelehnt")
+            XCTAssertEqual(store.stationConfigJSON, jsonBefore, "„\(input)“: Konfiguration unverändert")
+            XCTAssertEqual(store.routeModel, modelBefore, "„\(input)“: Weg unverändert")
+            XCTAssertEqual(store.categoryAssignments["gouda"], "Käse", "„\(input)“: Merkung unverändert")
+        }
+        XCTAssertNil(StoreCategories.renamingStation("Gibt es nicht", to: "Neu", emoji: "🏷️", in: lidl),
+                     "Unbekannter Gang wird nicht umbenannt")
+
+        let recased = try XCTUnwrap(StoreCategories.renamingStation("Käse", to: "käse", emoji: "🐭", in: lidl),
+                                    "Nur Schreibweise ändern ist erlaubt")
+        XCTAssertEqual(names(recased)[7], "käse")
+        XCTAssertEqual(recased.stations[7].emoji, "🐭")
+        XCTAssertEqual(recased.stations[7].keywords, lidl.stations[7].keywords, "Stichwörter bleiben")
+        let theke = try XCTUnwrap(StoreCategories.renamingStation("Käse", to: "Käsetheke", emoji: "🧀", in: lidl))
+        XCTAssertEqual(names(theke)[7], "Käsetheke")
+        XCTAssertEqual(names(theke).count, 12, "Umbenennen führt nie zusammen")
+    }
+
+    // MARK: S3: Name einer festen Kategorie übernimmt sie (AC-5, AC-9)
+
+    /// S3 / AC-5, AC-9: GIVEN offene, ausgeblendete oder anderswo zugeordnete feste Kategorie WHEN ein
+    /// Gang ihres Namens angelegt oder umbenannt THEN sie steht in dessen `builtIns`, nirgends sonst.
+    func testRenameToFixedCategoryNameAdoptsCategory() throws {
+        let base = config([station("Drogerie", builtIns: ["Körperpflege"]), station("Käse", keywords: ["gouda"])])
+        let tier = try XCTUnwrap(StoreCategories.addingStation("Tierbedarf", emoji: "🐾", to: base))
+        XCTAssertEqual(names(tier), ["Drogerie", "Käse", "Tierbedarf"], "Am Ende angehängt")
+        XCTAssertEqual(builtIns(of: "Tierbedarf", in: tier), ["Tierbedarf"])
+        XCTAssertEqual(tier.stations.last?.keywords, [])
+
+        let store = makeStore(template: false)
+        store.updateStationConfig(tier)
+        XCTAssertFalse(store.isCustomCategory("Tierbedarf"), "Feste Kategorie wird keine eigene")
+        XCTAssertTrue(store.isCustomCategory("Käse"), "Gang ohne festen Namen wird eigene Kategorie")
+
+        let hiddenDrinks = config([station("Drogerie")], hidden: ["Getränke", "Werkzeug"])
+        let drinks = try XCTUnwrap(StoreCategories.addingStation("getränke", emoji: "🥤", to: hiddenDrinks))
+        XCTAssertEqual(drinks.stations.last?.builtIns, ["Getränke"], "Rohwert übernommen")
+        XCTAssertEqual(drinks.hidden, ["Werkzeug"], "Aus hidden gelöst")
+
+        let elsewhere = config([station("Trinken", builtIns: ["Getränke", "Snacks"])])
+        let moved = try XCTUnwrap(StoreCategories.addingStation("Getränke", emoji: "🥤", to: elsewhere))
+        XCTAssertEqual(builtIns(of: "Trinken", in: moved), ["Snacks"], "Aus dem anderen Gang gelöst")
+        XCTAssertEqual(builtIns(of: "Getränke", in: moved), ["Getränke"])
+
+        let renamed = try XCTUnwrap(StoreCategories.renamingStation("Käse", to: "Tierbedarf", emoji: "🐾", in: base))
+        XCTAssertEqual(names(renamed), ["Drogerie", "Tierbedarf"])
+        XCTAssertTrue(builtIns(of: "Tierbedarf", in: renamed).contains("Tierbedarf"))
+        XCTAssertEqual(renamed.stations[1].keywords, ["gouda"], "Stichwörter bleiben beim Umbenennen")
+
+        XCTAssertNil(StoreCategories.addingStation("Drogerie", emoji: "🧴", to: base), "Vorhandener Gang")
+        XCTAssertNil(StoreCategories.addingStation("Sonstiges", emoji: "🏷️", to: base))
+        XCTAssertNil(StoreCategories.addingStation(marker, emoji: "🏷️", to: base))
+        XCTAssertNil(StoreCategories.addingStation("   ", emoji: "🏷️", to: base))
+    }
+
+    // MARK: S4: Zuordnen (AC-8)
+
+    /// S4 / AC-8: GIVEN Vorlage WHEN `assigning` THEN Kategorie genau in einem Gang, nicht in hidden,
+    /// keine Doppelung.
+    func testAssignMovesBetweenStationsAndClearsHidden() throws {
+        let elektronik = try XCTUnwrap(StoreCategories.assigning("Elektronik", toStation: "Drogerie", in: lidl))
+        XCTAssertEqual(builtIns(of: "Drogerie", in: elektronik).last, "Elektronik")
+        XCTAssertEqual(elektronik.stations.filter { $0.builtIns.contains("Elektronik") }.count, 1)
+        XCTAssertFalse(elektronik.hidden.contains("Elektronik"))
+
+        let werkzeug = try XCTUnwrap(StoreCategories.assigning("Werkzeug", toStation: "Drogerie", in: elektronik))
+        XCTAssertFalse(werkzeug.hidden.contains("Werkzeug"), "Aus hidden gelöst")
+        XCTAssertTrue(builtIns(of: "Drogerie", in: werkzeug).contains("Werkzeug"))
+
+        let again = try XCTUnwrap(StoreCategories.assigning("Werkzeug", toStation: "Drogerie", in: werkzeug))
+        XCTAssertEqual(builtIns(of: "Drogerie", in: again).filter { $0 == "Werkzeug" }.count, 1, "Keine Doppelung")
+
+        let pflege = try XCTUnwrap(StoreCategories.assigning("Körperpflege", toStation: "Käse", in: lidl))
+        XCTAssertFalse(builtIns(of: "Drogerie", in: pflege).contains("Körperpflege"), "Aus dem anderen Gang gelöst")
+        XCTAssertEqual(builtIns(of: "Käse", in: pflege), ["Körperpflege"])
+        XCTAssertNil(StoreCategories.assigning("Körperpflege", toStation: "Gibt es nicht", in: lidl))
+    }
+
+    // MARK: S5: Drei Zustände (AC-8, AC-9)
+
+    /// S5 / AC-8, AC-9: GIVEN Vorlage WHEN `categoryState`, `hiding`, `opening` THEN zugeordnet,
+    /// ausgeblendet, offen; die Liste folgt (Hammer erst nach dem Zuordnen im Gang).
+    func testStatesAssignedHiddenOpen() throws {
+        XCTAssertEqual(StoreCategories.categoryState("Backwaren", in: lidl), .assigned("Brot & Backwaren"))
+        XCTAssertEqual(StoreCategories.categoryState("Werkzeug", in: lidl), .hidden)
+        XCTAssertEqual(StoreCategories.categoryState("Tierbedarf", in: lidl), .open)
+        XCTAssertEqual(StoreCategories.categoryState("Getränke", in: lidl), .assigned("Getränke"))
+
+        let hidden = try XCTUnwrap(StoreCategories.hiding("Backwaren", in: lidl))
+        XCTAssertEqual(StoreCategories.categoryState("Backwaren", in: hidden), .hidden)
+        XCTAssertEqual(builtIns(of: "Brot & Backwaren", in: hidden), [])
+        let opened = try XCTUnwrap(StoreCategories.opening("Werkzeug", in: lidl))
+        XCTAssertEqual(StoreCategories.categoryState("Werkzeug", in: opened), .open)
+        XCTAssertFalse(opened.hidden.contains("Werkzeug"))
+
+        let store = makeStore()
+        let hammer = add("Hammer", to: store)
+        XCTAssertEqual(hammer.category, "Werkzeug", "Vorbedingung")
+        XCTAssertNil(store.stationName(of: hammer), "Werkzeug ist ausgeblendet → Sonstiges")
+        store.updateStationConfig(try XCTUnwrap(StoreCategories.assigning("Werkzeug", toStation: "Drogerie", in: lidl)))
+        XCTAssertEqual(store.stationName(of: hammer), "Drogerie")
+        store.updateStationConfig(try XCTUnwrap(StoreCategories.hiding("Werkzeug", in: try XCTUnwrap(store.stationConfig))))
+        XCTAssertNil(store.stationName(of: hammer), "Wieder ausgeblendet → Sonstiges")
+    }
+
+    // MARK: S6: Gang löschen (AC-10)
+
+    /// S6 / AC-10: GIVEN Vorlage, eigene Kategorie „Käse“ mit Merkung und Handwahl-Artikel WHEN
+    /// `deleteStation("Käse")` THEN Gang, Stichwörter, Merkung, Handwahl und Wegzuordnung weg; ein
+    /// fester Gang-Name lässt Artikel bei ihrer Kategorie und vergisst nur Merkungen.
+    /// Abweichung von der Spec-Zeile „Gouda → Sonstiges“: Gouda hat die automatische Kategorie
+    /// Milchprodukte und landet ohne das Stichwort folgerichtig in diesem Gang.
+    func testDeleteStationOpensCategoriesAndCleansUp() throws {
+        let store = makeStore()
+        store.rememberCategory("Käse", forItemNamed: "Feta")
+        let brie = addManual("Brie", category: "Käse", to: store)
+        let gouda = add("Gouda", to: store)
+        var model = store.routeModel
+        model.itemCategories["gouda"] = "Käse"
+        store.routeModel = model
+        XCTAssertEqual(store.stationName(of: gouda), "Käse", "Vorbedingung: Stichwort")
+
+        store.deleteStation("Käse")
+
+        XCTAssertFalse(names(store.stationConfig).contains("Käse"))
+        XCTAssertEqual(names(store.stationConfig).count, 11)
+        XCTAssertEqual(store.stationName(of: gouda), "Milchprodukte", "Stichwort „gouda“ greift nicht mehr")
+        XCTAssertNil(store.categoryAssignments["feta"], "Merkung weg")
+        XCTAssertEqual(brie.category, AssignmentService.category(for: "Brie"), "Zurück auf die automatische Kategorie")
+        XCTAssertFalse(brie.categoryManuallySet)
+        XCTAssertEqual(store.customCategoryEntries["Käse"]?.isDeleted, true, "Eigene Kategorie mit Löschvermerk")
+        XCTAssertFalse(store.routeModel.itemCategories.values.contains("Käse"))
+
+        store.rememberCategory("Getränke", forItemNamed: "Salami")
+        let cola = add("Cola", to: store)
+        XCTAssertEqual(cola.category, "Getränke", "Vorbedingung")
+        store.deleteStation("Getränke")
+        let config = try XCTUnwrap(store.stationConfig)
+        XCTAssertEqual(StoreCategories.categoryState("Getränke", in: config), .open)
+        XCTAssertEqual(cola.category, "Getränke", "Feste Kategorie bleibt")
+        XCTAssertNil(store.categoryAssignments["salami"], "Merkung auf festen Gang-Namen vergessen")
+        XCTAssertNil(store.stationName(of: cola), "Offen → Sonstiges")
+
+        XCTAssertNil(StoreCategories.deletingStation("Gibt es nicht", in: lidl))
+        let deleted = try XCTUnwrap(StoreCategories.deletingStation("Drogerie", in: lidl))
+        XCTAssertEqual(StoreCategories.categoryState("Körperpflege", in: deleted), .open, "builtIns werden offen")
+        XCTAssertFalse(deleted.hidden.contains("Körperpflege"))
+    }
+
+    // MARK: S7: Verschieben (AC-6)
+
+    /// S7 / AC-6: GIVEN Vorlage WHEN „Käse“ vor „Obst & Gemüse“ verschoben THEN Reihenfolge, Rang
+    /// und `pendingItems` folgen, Inhalt der Gänge unberührt.
+    func testMovingStationsChangesOrderAndRank() throws {
+        let moved = StoreCategories.movingStations(from: IndexSet(integer: 7), to: 0, in: lidl)
+        XCTAssertEqual(names(moved), ["Käse"] + templateNames.filter { $0 != "Käse" })
+        for station in lidl.stations {
+            let after = try XCTUnwrap(moved.stations.first { $0.name == station.name })
+            XCTAssertEqual(after.builtIns, station.builtIns, station.name)
+            XCTAssertEqual(after.keywords, station.keywords, station.name)
+        }
+        XCTAssertEqual(moved.hidden, lidl.hidden)
+
+        let store = makeStore()
+        let gouda = add("Gouda", to: store, added: 0)
+        add("Apfel", to: store, added: 10)
+        store.sortMode = .route
+        XCTAssertEqual(store.pendingItems.map(\.name), ["Apfel", "Gouda"], "Vorher")
+        store.updateStationConfig(moved)
+        XCTAssertEqual(store.stationRank(of: gouda), 0)
+        XCTAssertEqual(store.pendingItems.map(\.name), ["Gouda", "Apfel"])
+        store.sortMode = .category
+        XCTAssertEqual(store.pendingItems.map(\.name), ["Gouda", "Apfel"], "Auch im Modus Kategorie")
+    }
+
+    // MARK: S8: Laden ohne Gänge (AC-7, AC-11)
+
+    /// S8 / AC-7, AC-11: GIVEN Laden ohne Gänge WHEN erster Gang angelegt THEN Laden mit Gängen, Gang
+    /// als eigene Kategorie, Zeitstempel jetzt; WHEN Gänge entfernt THEN Kategorien und Merkungen bleiben.
+    func testSetupOnStoreWithoutStations() throws {
+        let store = makeStore(template: false)
+        XCTAssertFalse(store.hasStations)
+        let empty = store.stationConfig ?? StationConfig(stations: [], hidden: [], date: t0)
+        let start = Date()
+        store.updateStationConfig(try XCTUnwrap(StoreCategories.addingStation("Lager", emoji: "📦", to: empty)))
+
+        XCTAssertTrue(store.hasStations)
+        XCTAssertEqual(names(store.stationConfig), ["Lager"])
+        XCTAssertTrue(store.isCustomCategory("Lager"))
+        XCTAssertEqual(store.categoryEmoji("Lager"), "📦")
+        XCTAssertGreaterThanOrEqual(try XCTUnwrap(store.stationConfig?.date), start.addingTimeInterval(-1), "Zeitstempel jetzt")
+
+        store.rememberCategory("Lager", forItemNamed: "Kiste")
+        store.removeStations()
+        XCTAssertFalse(store.hasStations)
+        XCTAssertTrue(store.isCustomCategory("Lager"), "Eigene Kategorie bleibt")
+        XCTAssertEqual(store.categoryAssignments["kiste"], "Lager", "Merkung bleibt")
+    }
+
+    // MARK: S9: Invarianten (AC-12)
+
+    /// S9 / AC-12: GIVEN Vorlage WHEN 25 feste Operationen (auch abgelehnte) THEN nach jedem Schritt
+    /// alle Invarianten.
+    func testInvariantsHoldAfterOperationSequence() {
+        let marker = self.marker
+        let ops: [(String, (StationConfig) -> StationConfig?)] = [
+            ("anlegen Lager", { StoreCategories.addingStation("Lager", emoji: "📦", to: $0) }),
+            ("anlegen lager (doppelt)", { StoreCategories.addingStation("lager", emoji: "📦", to: $0) }),
+            ("anlegen Werkzeug", { StoreCategories.addingStation("Werkzeug", emoji: "🔧", to: $0) }),
+            ("zuordnen Werkzeug → Drogerie (gesperrt)", { StoreCategories.assigning("Werkzeug", toStation: "Drogerie", in: $0) }),
+            ("ausblenden Werkzeug (gesperrt)", { StoreCategories.hiding("Werkzeug", in: $0) }),
+            ("zuordnen Elektronik → Lager", { StoreCategories.assigning("Elektronik", toStation: "Lager", in: $0) }),
+            ("zuordnen Elektronik → Käse", { StoreCategories.assigning("Elektronik", toStation: "Käse", in: $0) }),
+            ("ausblenden Elektronik", { StoreCategories.hiding("Elektronik", in: $0) }),
+            ("öffnen Elektronik", { StoreCategories.opening("Elektronik", in: $0) }),
+            ("umbenennen Käse → Milchprodukte (Kollision)",
+             { StoreCategories.renamingStation("Käse", to: "Milchprodukte", emoji: "🧀", in: $0) }),
+            ("umbenennen Käse → Sonstiges", { StoreCategories.renamingStation("Käse", to: "Sonstiges", emoji: "🧀", in: $0) }),
+            ("umbenennen Käse → Tierbedarf", { StoreCategories.renamingStation("Käse", to: "Tierbedarf", emoji: "🐾", in: $0) }),
+            ("umbenennen Werkzeug → Basteln", { StoreCategories.renamingStation("Werkzeug", to: "Basteln", emoji: "🔧", in: $0) }),
+            ("ausblenden Werkzeug", { StoreCategories.hiding("Werkzeug", in: $0) }),
+            ("zuordnen Getränke → Lager (gesperrt)", { StoreCategories.assigning("Getränke", toStation: "Lager", in: $0) }),
+            ("löschen Getränke", { StoreCategories.deletingStation("Getränke", in: $0) }),
+            ("zuordnen Getränke → Lager", { StoreCategories.assigning("Getränke", toStation: "Lager", in: $0) }),
+            ("anlegen Getränke", { StoreCategories.addingStation("Getränke", emoji: "🥤", to: $0) }),
+            ("verschieben letzter → vorn",
+             { StoreCategories.movingStations(from: IndexSet(integer: $0.stations.count - 1), to: 0, in: $0) }),
+            ("verschieben erster → hinten",
+             { StoreCategories.movingStations(from: IndexSet(integer: 0), to: $0.stations.count, in: $0) }),
+            ("umbenennen Lager → lager", { StoreCategories.renamingStation("Lager", to: "lager", emoji: "📦", in: $0) }),
+            ("anlegen leer", { StoreCategories.addingStation(" ", emoji: "🏷️", to: $0) }),
+            ("anlegen Marke", { StoreCategories.addingStation(marker, emoji: "🏷️", to: $0) }),
+            ("löschen Drogerie", { StoreCategories.deletingStation("Drogerie", in: $0) }),
+            ("öffnen Körperpflege", { StoreCategories.opening("Körperpflege", in: $0) }),
+        ]
+        XCTAssertEqual(ops.count, 25)
+        var current = lidl
+        assertInvariants(current, "Start")
+        var applied = 0
+        for (step, op) in ops {
+            if let next = op(current) { current = next; applied += 1 }
+            assertInvariants(current, step)
+        }
+        XCTAssertGreaterThanOrEqual(applied, 15, "Die Folge muss überwiegend wirksame Schritte enthalten")
+        XCTAssertEqual(StoreCategories.categoryState("Getränke", in: current), .assigned("Getränke"))
+        XCTAssertEqual(StoreCategories.categoryState("Werkzeug", in: current), .hidden)
+        XCTAssertEqual(StoreCategories.categoryState("Körperpflege", in: current), .open)
+    }
+
+    // MARK: S10: Name-gebundene Kategorie (AC-9)
+
+    /// S10 / AC-9: GIVEN Gang „Getränke“ und „Drogerie“ WHEN „Getränke“ wegbewegen, ausblenden oder
+    /// öffnen THEN abgelehnt; nach Umbenennen des Gangs frei.
+    func testNameBoundCategoryCannotBeMovedAway() throws {
+        let base = config([station("Getränke", builtIns: ["Getränke"]), station("Drogerie", builtIns: ["Körperpflege"])])
+        XCTAssertNil(StoreCategories.assigning("Getränke", toStation: "Drogerie", in: base))
+        XCTAssertNil(StoreCategories.hiding("Getränke", in: base))
+        XCTAssertNil(StoreCategories.opening("Getränke", in: base))
+        XCTAssertEqual(StoreCategories.categoryState("Getränke", in: base), .assigned("Getränke"))
+
+        let renamed = try XCTUnwrap(StoreCategories.renamingStation("Getränke", to: "Trinken", emoji: "🥤", in: base))
+        XCTAssertEqual(builtIns(of: "Trinken", in: renamed), ["Getränke"], "Kategorie bleibt nach Umbenennen im Gang")
+        let freed = try XCTUnwrap(StoreCategories.assigning("Getränke", toStation: "Drogerie", in: renamed))
+        XCTAssertEqual(StoreCategories.categoryState("Getränke", in: freed), .assigned("Drogerie"))
+        XCTAssertNotNil(StoreCategories.hiding("Getränke", in: renamed))
+    }
+
+    // MARK: S11: Laufende Abhak-Sitzung (AC-4)
+
+    /// S11 / AC-4: GIVEN laufende Sitzung mit zwei Einträgen in „Käse“ WHEN umbenannt THEN die
+    /// Einträge tragen den neuen Namen, der Abschluss lernt nur ihn; Löschen lässt die Sitzung stehen.
+    func testRenameUpdatesRunningTrip() throws {
+        let store = makeStore()
+        add("Gouda", to: store)
+        add("Feta", to: store)
+        store.recordCheckOff(try item("Gouda", in: store), at: t0)
+        store.recordCheckOff(try item("Feta", in: store), at: t0.addingTimeInterval(40))
+        XCTAssertEqual(store.currentTrip.entries.map(\.category), ["Käse", "Käse"], "Vorbedingung")
+
+        XCTAssertEqual(store.renameStation("Käse", to: "Käse & Co", emoji: "🧀"), "Käse & Co")
+        XCTAssertEqual(store.currentTrip.entries.map(\.category), ["Käse & Co", "Käse & Co"])
+
+        store.finalizeStaleTrip(now: t0.addingTimeInterval(40 + 31 * 60))
+        XCTAssertEqual(store.routeModel.itemCategories["gouda"], "Käse & Co", "Abschluss lernt den neuen Namen")
+        XCTAssertEqual(store.routeModel.itemCategories["feta"], "Käse & Co")
+        XCTAssertFalse(store.routeModel.itemCategories.values.contains("Käse"), "Nie den alten Namen")
+
+        let other = makeStore("UT-Löschladen")
+        add("Gouda", to: other)
+        add("Feta", to: other)
+        other.recordCheckOff(try item("Gouda", in: other), at: t0)
+        other.recordCheckOff(try item("Feta", in: other), at: t0.addingTimeInterval(40))
+        let tripBefore = other.currentTrip
+        other.deleteStation("Käse")
+        XCTAssertEqual(other.currentTrip, tripBefore, "Löschen verändert die Sitzung nicht")
+    }
+
+    // MARK: S12: Vorlage wählen (AC-13)
+
+    /// S12 / AC-13: GIVEN Laden mit eigenem Gang „Lager“ und Merkung WHEN Lidl-Vorlage übernommen THEN
+    /// genau die 12 Gänge, Merkung und eigene Kategorie „Lager“ bleiben.
+    func testApplyTemplateReplacesStationsKeepsAssignments() throws {
+        let store = makeStore(template: false)
+        let empty = StationConfig(stations: [], hidden: [], date: t0)
+        store.updateStationConfig(try XCTUnwrap(StoreCategories.addingStation("Lager", emoji: "📦", to: empty)))
+        store.rememberCategory("Lager", forItemNamed: "Kiste")
+        XCTAssertEqual(store.categoryAssignments["kiste"], "Lager", "Vorbedingung")
+        let salami = add("Salami", to: store)
+        let before = (salami.category, salami.categoryManuallySet)
+
+        store.applyStationConfig(lidl)
+
+        XCTAssertEqual(names(store.stationConfig), templateNames)
+        XCTAssertEqual(store.categoryAssignments["kiste"], "Lager", "Merkung bleibt")
+        XCTAssertTrue(store.isCustomCategory("Lager"), "Eigene Kategorie bleibt")
+        XCTAssertNil(store.stationName(forItemNamed: "Kiste", category: "Lager", manuallySet: true),
+                     "Ohne Gang „Lager“ wirkt die Merkung nicht")
+        XCTAssertEqual(salami.category, before.0)
+        XCTAssertEqual(salami.categoryManuallySet, before.1)
+    }
+
+    // MARK: S13: Texte (AC-14)
+
+    /// S13 / AC-14: Alle `station.setup.*`-Schlüssel stehen in beiden Tabellen, nicht leer, mit der
+    /// erwarteten Platzhalterzahl; die gestrichenen D1-Schlüssel fehlen.
+    func testSetupStringsExistInBothLanguages() throws {
+        let expected: [String: Int] = [
+            "station.setup.menu": 0, "station.setup.title": 0, "station.setup.done": 0,
+            "station.setup.template": 0, "station.setup.template.title": 0, "station.setup.template.message": 0,
+            "station.setup.template.lidl": 0, "station.setup.section.stations": 1, "station.setup.section.open": 1,
+            "station.setup.section.open.footer": 0, "station.setup.section.hidden": 1, "station.setup.sort": 0,
+            "station.setup.add": 0, "station.setup.add.prompt": 0, "station.setup.assign": 0,
+            "station.setup.hide": 0, "station.setup.show": 0, "station.setup.remove": 0, "station.setup.shared": 0,
+            "station.setup.row.summary": 2, "station.setup.row.empty": 0, "station.setup.detail.title": 0,
+            "station.setup.detail.categories": 1, "station.setup.detail.in": 1, "station.setup.detail.bound": 1,
+            "station.setup.detail.keywords": 0, "station.setup.detail.delete": 0, "station.setup.delete.title": 1,
+            "station.setup.delete.message": 0, "station.setup.name.rejected": 0,
+        ]
+        let removed = ["station.menu.applyTemplate", "station.template.confirm.title", "station.template.confirm.message"]
+        for localization in ["de", "en"] {
+            let url = try XCTUnwrap(Bundle.main.url(forResource: "Localizable", withExtension: "strings",
+                                                    subdirectory: nil, localization: localization))
+            let table = try XCTUnwrap(NSDictionary(contentsOf: url) as? [String: String])
+            for (key, count) in expected {
+                let value = try XCTUnwrap(table[key], "\(localization): Schlüssel \(key) fehlt")
+                XCTAssertFalse(value.trimmingCharacters(in: .whitespaces).isEmpty, "\(localization): \(key) ist leer")
+                XCTAssertEqual(LocalizationKeyParityTests.placeholders(in: value).count, count,
+                               "\(localization): \(key) hat falsche Platzhalterzahl")
+            }
+            for key in removed {
+                XCTAssertNil(table[key], "\(localization): \(key) wird nicht mehr benutzt und ist zu streichen")
+            }
+            if localization == "de" {
+                // Diese Texte prüfen die UI-Tests V1–V8 wörtlich.
+                XCTAssertEqual(table["station.setup.menu"], "Kategorien einrichten")
+                XCTAssertEqual(table["station.setup.add"], "Gang hinzufügen")
+                XCTAssertEqual(table["station.setup.template"], "Vorlage wählen …")
+                XCTAssertEqual(table["station.setup.name.rejected"], "Diesen Namen gibt es schon oder er ist nicht erlaubt.")
+                XCTAssertEqual(table["station.setup.shared"], "Gänge bleiben bis zum Abgleich auf diesem Gerät.")
+            }
+        }
     }
 }
