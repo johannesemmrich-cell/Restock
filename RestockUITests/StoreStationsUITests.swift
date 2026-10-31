@@ -471,7 +471,7 @@ final class StoreStationsUITests: XCTestCase {
             // Eine am unteren Rand angeschnittene Zeile gilt als antippbar, das Lang-Drücken dort öffnet aber nichts.
             if text(item, app).frame.maxY > app.windows.firstMatch.frame.maxY - 150 { dragUp(app) }
             var previous = CGRect.null
-            _ = UITestWait.poll(timeout: 5, read: { text(item, app).frame }, done: { defer { previous = $0 }; return $0 == previous })
+            _ = UITestWait.poll(timeout: 5, read: { text(item, app).frame }, done: { frame in defer { previous = frame }; return frame == previous })
             UITestItemEditor.open(item, in: app)
             let row = app.descendants(matching: .any)["item.categoryRow"].firstMatch
             let label = row.waitForLabel(contains: "Fleisch & Wurst")
