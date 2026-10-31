@@ -79,18 +79,95 @@ final class StoreStationsUITests: XCTestCase {
         app.buttons["Reihenfolge anpassen"].firstMatch
     }
 
-    /// Tippt einen Menüeintrag mit Rückfrage an und bestätigt sie.
-    private func confirmMenuAction(_ menuID: String, confirmID: String, in app: XCUIApplication) {
+    // MARK: - „Kategorien einrichten“ (Durchgang 2a, `docs/specs/views/station-setup.md`)
+
+    private func element(_ identifier: String, _ app: XCUIApplication) -> XCUIElement {
+        app.descendants(matching: .any)[identifier].firstMatch
+    }
+
+    /// ··· → „Kategorien einrichten“; wartet auf die Übersicht.
+    private func openSetup(_ app: XCUIApplication) {
         openMenu(app)
-        let entry = menuItem(menuID, in: app)
+        let entry = menuItem("store.menu.setupStations", in: app)
         let ready = entry.waitUntilHittable()
-        XCTAssertTrue(ready.matched, "Menüeintrag \(menuID) fehlt — zuletzt: \(ready.last)")
+        XCTAssertTrue(ready.matched, "„Kategorien einrichten“ fehlt im Menü — zuletzt: \(ready.last)")
         entry.tap()
-        let confirm = app.buttons.matching(identifier: confirmID).firstMatch
-        let confirmReady = confirm.waitUntilHittable()
-        XCTAssertTrue(confirmReady.matched, "Bestätigung \(confirmID) fehlt — zuletzt: \(confirmReady.last)")
-        confirm.tap()
+        XCTAssertTrue(element("stationSetup.addStation", app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Übersicht „Kategorien einrichten“ nicht geöffnet")
+    }
+
+    /// „Fertig“ schließt die Ansicht.
+    private func closeSetup(_ app: XCUIApplication) {
+        let done = element("stationSetup.done", app)
+        let ready = done.waitUntilHittable()
+        XCTAssertTrue(ready.matched, "„Fertig“ fehlt — zuletzt: \(ready.last)")
+        done.tap()
+        expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: element("stationSetup.addStation", app))
+        waitForExpectations(timeout: UITestWait.defaultTimeout)
         scrollToTop(app)
+    }
+
+    private func tapRevealed(_ identifier: String, _ what: String, in app: XCUIApplication,
+                             file: StaticString = #filePath, line: UInt = #line) {
+        let target = element(identifier, app)
+        revealHittable(target, what, in: app, file: file, line: line)
+        target.tap()
+    }
+
+    /// Tippt `identifier` an und bestätigt die Rückfrage `confirmID`.
+    private func tapAndConfirm(_ identifier: String, confirmID: String, in app: XCUIApplication) {
+        tapRevealed(identifier, identifier, in: app)
+        let confirm = app.buttons.matching(identifier: confirmID).firstMatch
+        let ready = confirm.waitUntilHittable()
+        XCTAssertTrue(ready.matched, "Bestätigung \(confirmID) fehlt — zuletzt: \(ready.last)")
+        confirm.tap()
+    }
+
+    /// Gang-Detail aus der Übersicht öffnen.
+    private func openStation(_ name: String, in app: XCUIApplication) {
+        tapRevealed("stationSetup.row.\(name)", "Gang-Zeile \(name)", in: app)
+        XCTAssertTrue(app.textFields["stationSetup.detail.name"].firstMatch.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Gang-Detail „\(name)“ nicht geöffnet")
+    }
+
+    /// Zurück aus dem Gang-Detail in die Übersicht.
+    private func backToOverview(_ app: XCUIApplication) {
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(element("stationSetup.addStation", app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Zurück in die Übersicht fehlgeschlagen")
+    }
+
+    /// Ersetzt den Namen im Gang-Detail und bestätigt mit Return (`onSubmit`).
+    private func renameStation(to name: String, in app: XCUIApplication) {
+        let field = app.textFields["stationSetup.detail.name"].firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: UITestWait.defaultTimeout), "Namensfeld fehlt")
+        field.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
+        let current = field.value as? String ?? ""
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count + 2))
+        field.typeText(name + "\n")
+    }
+
+    /// ··· → „Kategorien einrichten“ → „Gänge entfernen“ (Rückfrage) → Fertig.
+    private func removeStationsViaSetup(_ app: XCUIApplication) {
+        openSetup(app)
+        tapAndConfirm("stationSetup.remove", confirmID: "stationSetup.confirmRemove", in: app)
+        closeSetup(app)
+    }
+
+    /// Prüft oben und unten, dass keine „Sonstiges“-Überschrift (bzw. kein Untertitel) erscheint.
+    private func assertNoOther(_ app: XCUIApplication, _ reason: String,
+                               file: StaticString = #filePath, line: UInt = #line) {
+        for position in ["unten", "oben"] {
+            if position == "oben" { scrollToTop(app) } else { scrollToBottom(app) }
+            XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "label ==[c] %@", "Sonstiges")).firstMatch.exists,
+                           "\(reason) (\(position))", file: file, line: line)
+        }
+        scrollToTop(app)
+    }
+
+    /// Abschnittsüberschrift mit genau diesem Namen hinter dem Emoji (schließt „Käsetheke“ für „Käse“ aus).
+    private func exactHeader(_ name: String, emoji: String, _ app: XCUIApplication) -> XCUIElement {
+        app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@ AND label ENDSWITH[c] %@", emoji, " \(name)")).firstMatch
     }
 
     // MARK: - Rollen und Reihenfolge
@@ -371,42 +448,259 @@ final class StoreStationsUITests: XCTestCase {
         assertAbove(text("Milch", app), "Milch", header("Drogerie", emoji: "🧴", app), "Überschrift Drogerie", in: app)
     }
 
-    // MARK: - U6: Menü (AC-15)
+    // MARK: - V1: Einstieg „Kategorien einrichten“ (ersetzt U6; Spec D2a AC-1, AC-2)
 
-    /// U6 / AC-15: GIVEN Seed WHEN ···-Menü im Modus „Einkaufsweg“ THEN „Reihenfolge anpassen“ und
-    /// „Gänge entfernen“ da, „Lidl-Vorlage übernehmen“ nicht; im Modus „Kategorie“ fehlt „Reihenfolge
-    /// anpassen“.
-    func testMenuEntriesInStoreWithStations() {
+    /// V1 / AC-1, AC-2: GIVEN Seed WHEN ···-Menü THEN „Kategorien einrichten“ da, „Lidl-Vorlage
+    /// übernehmen“ und „Gänge entfernen“ fehlen; „Reihenfolge anpassen“ nur im Einkaufsweg. WHEN
+    /// geöffnet THEN Übersicht mit Vorlage, Gängen, Offen (9), Ausgeblendet (9), Gänge entfernen;
+    /// „Fertig“ schließt sie.
+    func testSetupEntryReplacesTemplateEntries() {
         let app = openedStore()
         choose("Einkaufsweg", in: app)
 
         openMenu(app)
-        XCTAssertTrue(menuItem("store.menu.removeStations", in: app).waitForExistence(timeout: UITestWait.defaultTimeout),
-                      "„Gänge entfernen“ fehlt im Menü")
+        XCTAssertTrue(menuItem("store.menu.setupStations", in: app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "„Kategorien einrichten“ fehlt im Menü")
+        XCTAssertFalse(menuItem("store.menu.applyStationTemplate", in: app).exists, "„Lidl-Vorlage übernehmen“ ist entfallen")
+        XCTAssertFalse(menuItem("store.menu.removeStations", in: app).exists, "„Gänge entfernen“ steht nicht mehr im Menü")
         XCTAssertTrue(reorderItem(app).exists, "Im Einkaufsweg bleibt „Reihenfolge anpassen“")
-        XCTAssertFalse(menuItem("store.menu.applyStationTemplate", in: app).exists, "Vorlage nur für Läden ohne Gänge")
         pickSort("Kategorie", in: app)
 
         openMenu(app)
-        XCTAssertTrue(menuItem("store.menu.removeStations", in: app).waitForExistence(timeout: UITestWait.defaultTimeout),
-                      "„Gänge entfernen“ fehlt im Menü (Kategorie)")
+        XCTAssertTrue(menuItem("store.menu.setupStations", in: app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "„Kategorien einrichten“ fehlt im Menü (Kategorie)")
         XCTAssertFalse(reorderItem(app).exists, "Im Modus Kategorie eines Ladens mit Gängen ist die Reihenfolge fest")
-        XCTAssertFalse(menuItem("store.menu.applyStationTemplate", in: app).exists)
         pickSort("Kategorie", in: app)
+
+        openSetup(app)
+        XCTAssertTrue(element("stationSetup.template", app).exists, "„Vorlage wählen …“ fehlt")
+        for label in ["Gänge · 12", "Offen · 9", "Ausgeblendet · 9"] {
+            let header = app.staticTexts.matching(NSPredicate(format: "label ==[c] %@", label)).firstMatch
+            XCTAssertTrue(reveal(header, in: app), "Abschnitt „\(label)“ fehlt")
+        }
+        XCTAssertTrue(reveal(element("stationSetup.open.Elektronik", app), in: app), "„Elektronik“ fehlt unter „Offen“")
+        XCTAssertTrue(reveal(element("stationSetup.hidden.Werkzeug", app), in: app), "„Werkzeug“ fehlt unter „Ausgeblendet“")
+        XCTAssertTrue(reveal(element("stationSetup.remove", app), in: app), "„Gänge entfernen“ fehlt in der Ansicht")
+        closeSetup(app)
+        XCTAssertTrue(text("Salami", app).waitForExistence(timeout: UITestWait.defaultTimeout), "Nach „Fertig“ wieder die Liste")
     }
 
-    // MARK: - U7: Gänge entfernen und wieder übernehmen (AC-14)
+    // MARK: - V2: Umbenennen (AC-3, AC-4)
 
-    /// U7 / AC-14: GIVEN Seed WHEN „Gänge entfernen“ bestätigt THEN klassische Abschnitte (Salami
-    /// unter „Fleisch & Wurst“), „Reihenfolge anpassen“ und „Lidl-Vorlage übernehmen“ wieder da;
-    /// WHEN Vorlage erneut übernommen THEN wieder Gang-Abschnitte.
-    func testRemoveAndReapplyStations() {
+    /// V2 / AC-3: GIVEN Seed, Modus Kategorie WHEN Gang „Käse“ in „Käsetheke“ umbenannt THEN Abschnitt
+    /// „Käsetheke“ mit Gouda, kein Abschnitt „Käse“; die Gang-Zeile heißt danach „Käsetheke“.
+    func testRenameStationMovesItemsToRenamedSection() {
+        let app = openedStore()
+        choose("Kategorie", in: app)
+
+        openSetup(app)
+        openStation("Käse", in: app)
+        renameStation(to: "Käsetheke", in: app)
+        backToOverview(app)
+        closeSetup(app)
+
+        assertAbove(exactHeader("Käsetheke", emoji: "🧀", app), "Überschrift 🧀 Käsetheke", text("Gouda", app), "Gouda", in: app)
+        assertAbove(text("Gouda", app), "Gouda", header("Milchprodukte", emoji: "🥛", app), "Überschrift Milchprodukte", in: app)
+        scrollToTop(app)
+        for position in ["oben", "unten"] {
+            if position == "unten" { scrollToBottom(app) }
+            XCTAssertFalse(exactHeader("Käse", emoji: "🧀", app).exists, "Abschnitt „Käse“ darf es nicht mehr geben (\(position))")
+        }
+        scrollToTop(app)
+
+        openSetup(app)
+        XCTAssertTrue(reveal(element("stationSetup.row.Käsetheke", app), in: app), "Gang-Zeile „Käsetheke“ fehlt")
+        XCTAssertFalse(element("stationSetup.row.Käse", app).exists, "Gang-Zeile „Käse“ darf es nicht mehr geben")
+        closeSetup(app)
+    }
+
+    // MARK: - V3: Kollision (AC-5)
+
+    /// V3 / AC-5: GIVEN Seed WHEN „Käse“ auf „Milchprodukte“ umbenannt THEN Hinweis sichtbar, nichts
+    /// zusammengeführt: Gouda bleibt unter „Käse“, Milch unter „Milchprodukte“.
+    func testRenameCollisionIsRejected() {
+        let app = openedStore()
+        choose("Kategorie", in: app)
+
+        openSetup(app)
+        openStation("Käse", in: app)
+        renameStation(to: "Milchprodukte", in: app)
+        let hint = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Diesen Namen gibt es schon")).firstMatch
+        XCTAssertTrue(hint.waitForExistence(timeout: UITestWait.defaultTimeout), "Hinweis auf abgelehnten Namen fehlt")
+        backToOverview(app)
+        XCTAssertTrue(reveal(element("stationSetup.row.Käse", app), in: app), "Gang „Käse“ muss erhalten bleiben")
+        closeSetup(app)
+
+        let chain: [(XCUIElement, String)] = [
+            (exactHeader("Käse", emoji: "🧀", app), "Überschrift 🧀 Käse"), (text("Gouda", app), "Gouda"),
+            (header("Milchprodukte", emoji: "🥛", app), "Überschrift 🥛 Milchprodukte"), (text("Milch", app), "Milch"),
+        ]
+        for (upper, lower) in zip(chain, chain.dropFirst()) {
+            assertAbove(upper.0, upper.1, lower.0, lower.1, in: app)
+        }
+    }
+
+    // MARK: - V4: Offene Kategorie im Gang-Detail zuordnen (AC-8)
+
+    /// V4 / AC-8: GIVEN Seed WHEN Gang „Drogerie“ → „Elektronik“ angetippt THEN Zeile ausgewählt; die
+    /// Liste zeigt Batterien unter „Drogerie“, „Sonstiges“ erscheint nicht mehr.
+    func testAssignOpenCategoryMovesItemToStation() {
+        let app = openedStore()
+        choose("Kategorie", in: app)
+
+        openSetup(app)
+        openStation("Drogerie", in: app)
+        let row = element("stationSetup.detail.category.Elektronik", app)
+        revealHittable(row, "Kategorie Elektronik im Gang-Detail", in: app)
+        XCTAssertFalse(row.isSelected, "Vorbedingung: Elektronik ist offen, nicht in Drogerie")
+        row.tap()
+        let selected = UITestWait.poll(timeout: UITestWait.defaultTimeout, read: { row.isSelected }, done: { $0 })
+        XCTAssertTrue(selected.matched, "Elektronik muss nach dem Tipp als zugeordnet markiert sein")
+        backToOverview(app)
+        XCTAssertFalse(element("stationSetup.open.Elektronik", app).exists, "Elektronik steht nicht mehr unter „Offen“")
+        closeSetup(app)
+
+        assertAbove(header("Drogerie", emoji: "🧴", app), "Überschrift Drogerie", text("Batterien", app), "Batterien", in: app)
+        assertNoOther(app, "„Sonstiges“ darf ohne Artikel nicht erscheinen")
+    }
+
+    // MARK: - V5: Zuordnen über „Offen“, Ausblenden, Einblenden (AC-8, AC-9)
+
+    /// V5 / AC-8: GIVEN Seed WHEN „Elektronik“ über „Zuordnen …“ → Drogerie, im Detail wieder offen,
+    /// dann „Ausblenden“ THEN Abschnitt „Ausgeblendet“ enthält sie, Batterien steht unter „Sonstiges“;
+    /// „Einblenden“ → wieder offen.
+    func testHideCategoryRemovesItemFromStation() {
+        let app = openedStore()
+        openSetup(app)
+
+        tapRevealed("stationSetup.open.Elektronik", "Zuordnen … für Elektronik", in: app)
+        let drogerie = app.buttons["Drogerie"].firstMatch
+        XCTAssertTrue(drogerie.waitForExistence(timeout: UITestWait.defaultTimeout), "Gang „Drogerie“ im Zuordnen-Menü fehlt")
+        drogerie.tap()
+        expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: element("stationSetup.open.Elektronik", app))
+        waitForExpectations(timeout: UITestWait.defaultTimeout)
+
+        scrollToTop(app)
+        openStation("Drogerie", in: app)
+        let row = element("stationSetup.detail.category.Elektronik", app)
+        revealHittable(row, "Kategorie Elektronik im Gang-Detail", in: app)
+        XCTAssertTrue(row.isSelected, "Elektronik muss nach „Zuordnen …“ in Drogerie stehen")
+        row.tap()
+        let opened = UITestWait.poll(timeout: UITestWait.defaultTimeout, read: { row.isSelected }, done: { !$0 })
+        XCTAssertTrue(opened.matched, "Tipp auf die markierte Zeile macht Elektronik wieder offen")
+        backToOverview(app)
+
+        tapRevealed("stationSetup.open.Elektronik", "Zuordnen … für Elektronik (wieder offen)", in: app)
+        let hide = app.buttons["Ausblenden"].firstMatch
+        XCTAssertTrue(hide.waitForExistence(timeout: UITestWait.defaultTimeout), "„Ausblenden“ im Zuordnen-Menü fehlt")
+        hide.tap()
+        XCTAssertTrue(reveal(element("stationSetup.hidden.Elektronik", app), in: app), "Elektronik fehlt unter „Ausgeblendet“")
+        XCTAssertFalse(element("stationSetup.open.Elektronik", app).exists, "Elektronik steht nicht mehr unter „Offen“")
+        closeSetup(app)
+
+        choose("Kategorie", in: app)
+        let batterien = text("Batterien", app)
+        XCTAssertTrue(reveal(batterien, in: app), "Batterien fehlt")
+        XCTAssertNotNil(otherHeaderY(above: batterien, app), "Batterien muss unter „Sonstiges“ stehen")
+        scrollToTop(app)
+
+        openSetup(app)
+        tapRevealed("stationSetup.hidden.Elektronik", "Einblenden für Elektronik", in: app)
+        XCTAssertTrue(reveal(element("stationSetup.open.Elektronik", app), in: app), "Elektronik nach „Einblenden“ wieder offen")
+        XCTAssertFalse(element("stationSetup.hidden.Elektronik", app).exists, "Elektronik nicht mehr ausgeblendet")
+        closeSetup(app)
+    }
+
+    // MARK: - V6: Gang anlegen und löschen (AC-7, AC-10)
+
+    /// V6 / AC-7, AC-10: GIVEN Seed WHEN „Gang hinzufügen“ → „Lager“, Batterien in der Auswahl dorthin,
+    /// dann „Gang löschen“ bestätigt THEN „Lager“ erscheint und verschwindet wieder, Batterien steht
+    /// danach in „Sonstiges“.
+    func testAddAndDeleteStationFromSetup() {
+        let app = openedStore()
+        openSetup(app)
+        tapRevealed("stationSetup.addStation", "Gang hinzufügen", in: app)
+        let field = app.alerts.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: UITestWait.defaultTimeout), "Eingabe „Name des Gangs“ fehlt")
+        field.typeText("Lager")
+        app.alerts.buttons["Hinzufügen"].firstMatch.tap()
+        XCTAssertTrue(reveal(element("stationSetup.row.Lager", app), in: app), "Gang „Lager“ fehlt in der Übersicht")
+        closeSetup(app)
+
+        openCategoryPicker(for: "Batterien", in: app)
+        let lager = element("categoryPicker.row.Lager", app)
+        revealHittable(lager, "Gang Lager in der Auswahl", in: app)
+        lager.tap()
+        saveEditor(app)
+
+        choose("Kategorie", in: app)
+        let lagerHeader = app.staticTexts.matching(NSPredicate(
+            format: "label ENDSWITH[c] %@ AND NOT (label ==[c] %@)", " Lager", "Lager")).firstMatch
+        assertAbove(lagerHeader, "Überschrift Lager", text("Batterien", app), "Batterien", in: app)
+        scrollToTop(app)
+
+        openSetup(app)
+        openStation("Lager", in: app)
+        tapAndConfirm("stationSetup.detail.delete", confirmID: "stationSetup.confirmDelete", in: app)
+        XCTAssertTrue(element("stationSetup.addStation", app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Nach dem Löschen zurück in der Übersicht")
+        XCTAssertFalse(element("stationSetup.row.Lager", app).exists, "Gang „Lager“ muss verschwunden sein")
+        closeSetup(app)
+
+        let batterien = text("Batterien", app)
+        XCTAssertTrue(reveal(batterien, in: app), "Batterien fehlt")
+        XCTAssertNotNil(otherHeaderY(above: batterien, app), "Batterien muss nach dem Löschen unter „Sonstiges“ stehen")
+        XCTAssertFalse(lagerHeader.exists, "Kein Abschnitt „Lager“ mehr")
+    }
+
+    // MARK: - V7: Sortieren (AC-6)
+
+    /// V7 / AC-6: GIVEN Seed WHEN „Sortieren“ und „Käse“ vor „Obst & Gemüse“ gezogen THEN die Übersicht
+    /// und die Liste im Modus Kategorie folgen (Gouda über Apfel).
+    func testSortModeReordersStations() {
+        let app = openedStore()
+        openSetup(app)
+        tapRevealed("stationSetup.sort", "Sortieren", in: app)
+        let handles = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "anordnen"))
+        let kaese = handles.matching(NSPredicate(format: "label CONTAINS %@ AND NOT (label CONTAINS %@)", "Käse", "Gemüse")).firstMatch
+        let obst = handles.matching(NSPredicate(format: "label CONTAINS %@", "Obst & Gemüse")).firstMatch
+        XCTAssertTrue(kaese.waitForExistence(timeout: UITestWait.defaultTimeout), "Verschiebegriff „Käse“ fehlt")
+        XCTAssertTrue(obst.exists, "Verschiebegriff „Obst & Gemüse“ fehlt")
+        let target = obst.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).withOffset(CGVector(dx: 0, dy: -20))
+        kaese.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+            .press(forDuration: 0.8, thenDragTo: target, withVelocity: .slow, thenHoldForDuration: 0.5)
+        element("stationSetup.sort", app).tap()
+
+        assertAbove(element("stationSetup.row.Käse", app), "Gang-Zeile Käse",
+                    element("stationSetup.row.Obst & Gemüse", app), "Gang-Zeile Obst & Gemüse", in: app)
+        closeSetup(app)
+
+        choose("Kategorie", in: app)
+        assertAbove(exactHeader("Käse", emoji: "🧀", app), "Überschrift Käse", header("Obst & Gemüse", emoji: "🥦", app),
+                    "Überschrift Obst & Gemüse", in: app)
+        assertAbove(text("Gouda", app), "Gouda", text("Apfel", app), "Apfel", in: app)
+    }
+
+    // MARK: - V8: Gänge entfernen und Vorlage wählen (ersetzt U7; AC-1, AC-11, AC-13)
+
+    /// V8 / AC-11, AC-13: GIVEN Seed WHEN „Gänge entfernen“ bestätigt THEN klassische Abschnitte
+    /// (Salami unter „Fleisch & Wurst“), die Ansicht zeigt nur „Vorlage wählen …“ und „Gang
+    /// hinzufügen“; der Menüeintrag bleibt; WHEN „Vorlage wählen …“ → „Lidl“ THEN wieder Gänge.
+    func testRemoveStationsAndApplyTemplate() {
         let app = openedStore()
         choose("Kategorie", in: app)
         XCTAssertTrue(reveal(header("Kühltheke Fertiges", emoji: "🧊", app), in: app), "Ausgangslage: Gang-Abschnitt")
         scrollToTop(app)
 
-        confirmMenuAction("store.menu.removeStations", confirmID: "store.stations.confirmRemove", in: app)
+        openSetup(app)
+        tapAndConfirm("stationSetup.remove", confirmID: "stationSetup.confirmRemove", in: app)
+        XCTAssertTrue(element("stationSetup.template", app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Nach dem Entfernen bleibt die Ansicht offen und zeigt „Vorlage wählen …“")
+        XCTAssertTrue(element("stationSetup.addStation", app).exists, "„Gang hinzufügen“ fehlt im leeren Zustand")
+        XCTAssertFalse(element("stationSetup.row.Käse", app).exists, "Keine Gang-Zeilen mehr")
+        XCTAssertFalse(element("stationSetup.remove", app).exists, "„Gänge entfernen“ nur mit Gängen")
+        XCTAssertFalse(element("stationSetup.open.Elektronik", app).exists, "Ohne Gänge kein Abschnitt „Offen“")
+        closeSetup(app)
 
         let classic = app.staticTexts.matching(NSPredicate(
             format: "label CONTAINS[c] %@ AND NOT (label ==[c] %@)", "Fleisch & Wurst", "Fleisch & Wurst")).firstMatch
@@ -415,13 +709,19 @@ final class StoreStationsUITests: XCTestCase {
         XCTAssertFalse(header("Kühltheke Fertiges", emoji: "🧊", app).exists, "Nach dem Entfernen keine Gang-Abschnitte")
 
         openMenu(app)
-        XCTAssertTrue(menuItem("store.menu.applyStationTemplate", in: app).waitForExistence(timeout: UITestWait.defaultTimeout),
-                      "„Lidl-Vorlage übernehmen“ fehlt nach dem Entfernen")
+        XCTAssertTrue(menuItem("store.menu.setupStations", in: app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "„Kategorien einrichten“ steht auch im Laden ohne Gänge")
         XCTAssertTrue(reorderItem(app).exists, "„Reihenfolge anpassen“ wieder da")
-        XCTAssertFalse(menuItem("store.menu.removeStations", in: app).exists, "„Gänge entfernen“ nur mit Gängen")
         pickSort("Kategorie", in: app)
 
-        confirmMenuAction("store.menu.applyStationTemplate", confirmID: "store.stations.confirmApply", in: app)
+        openSetup(app)
+        tapRevealed("stationSetup.template", "Vorlage wählen …", in: app)
+        let lidl = app.buttons.matching(identifier: "stationSetup.templateLidl").firstMatch
+        let ready = lidl.waitUntilHittable()
+        XCTAssertTrue(ready.matched, "Eintrag „Lidl“ im Vorlagen-Dialog fehlt — zuletzt: \(ready.last)")
+        lidl.tap()
+        XCTAssertTrue(reveal(element("stationSetup.row.Käse", app), in: app), "Nach der Vorlage wieder Gang-Zeilen")
+        closeSetup(app)
         assertAbove(header("Kühltheke Fertiges", emoji: "🧊", app), "Überschrift Kühltheke Fertiges",
                     text("Salami", app), "Salami", in: app)
     }
@@ -458,7 +758,8 @@ final class StoreStationsUITests: XCTestCase {
         }
         scrollToTop(app)
 
-        confirmMenuAction("store.menu.removeStations", confirmID: "store.stations.confirmRemove", in: app)
+        // D2a: Gänge entfernen geht nur noch über „Kategorien einrichten“ (Menüeintrag entfallen).
+        removeStationsViaSetup(app)
         let classic = app.staticTexts.matching(NSPredicate(
             format: "label CONTAINS[c] %@ AND NOT (label ==[c] %@)", "Fleisch & Wurst", "Fleisch & Wurst")).firstMatch
         assertAbove(classic, "Überschrift Fleisch & Wurst", text("Salami", app), "Salami", in: app)
@@ -480,5 +781,64 @@ final class StoreStationsUITests: XCTestCase {
             expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: row)
             waitForExpectations(timeout: UITestWait.defaultTimeout)
         }
+    }
+
+    // MARK: - V10: Letzten Gang löschen (AC-11, Validierung)
+
+    /// V10 / AC-11: GIVEN Laden mit genau einem Gang „Lager“ WHEN „Gang löschen“ im Gang-Detail THEN
+    /// fragt die App „Gänge entfernen?“ (nicht „Gang „Lager“ löschen?“); nach Bestätigung zeigt die
+    /// Übersicht nur „Vorlage wählen …“ und „Gang hinzufügen“.
+    func testDeletingLastStationAsksToRemoveStations() {
+        let app = openedStore()
+        openSetup(app)
+        tapAndConfirm("stationSetup.remove", confirmID: "stationSetup.confirmRemove", in: app)
+        tapRevealed("stationSetup.addStation", "Gang hinzufügen", in: app)
+        let field = app.alerts.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: UITestWait.defaultTimeout), "Eingabe „Name des Gangs“ fehlt")
+        field.typeText("Lager")
+        app.alerts.buttons["Hinzufügen"].firstMatch.tap()
+
+        openStation("Lager", in: app)
+        tapRevealed("stationSetup.detail.delete", "Gang löschen", in: app)
+        let removeTitle = app.staticTexts["Gänge entfernen?"].firstMatch
+        XCTAssertTrue(removeTitle.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Beim letzten Gang muss die Rückfrage „Gänge entfernen?“ lauten")
+        XCTAssertFalse(app.staticTexts["Gang „Lager“ löschen?"].exists, "Keine Rückfrage „Gang löschen“ beim letzten Gang")
+        let confirm = app.buttons.matching(identifier: "stationSetup.confirmDelete").firstMatch
+        XCTAssertTrue(confirm.waitUntilHittable().matched, "Bestätigung fehlt")
+        XCTAssertEqual(confirm.label, "Gänge entfernen", "Der Knopf der Rückfrage heißt wie die Rückfrage")
+        confirm.tap()
+
+        XCTAssertTrue(element("stationSetup.template", app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Nach dem Löschen zeigt die Übersicht „Vorlage wählen …“")
+        XCTAssertFalse(element("stationSetup.row.Lager", app).exists, "Keine Gang-Zeile mehr")
+        closeSetup(app)
+    }
+
+    // MARK: - V9: Gang hinzufügen mit vorhandenem Namen (AC-5, Adversary F003)
+
+    /// V9 / AC-5: GIVEN Seed WHEN „Gang hinzufügen“ mit „käse“ (vorhandener Gang, andere Schreibweise)
+    /// THEN der Hinweis „Diesen Namen gibt es schon …“ erscheint und es bleibt bei 12 Gängen.
+    func testAddStationWithExistingNameShowsHint() {
+        let app = openedStore()
+        openSetup(app)
+        tapRevealed("stationSetup.addStation", "Gang hinzufügen", in: app)
+        let field = app.alerts.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: UITestWait.defaultTimeout), "Eingabe „Name des Gangs“ fehlt")
+        field.typeText("käse")
+        app.alerts.buttons["Hinzufügen"].firstMatch.tap()
+
+        let hint = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Diesen Namen gibt es schon")).firstMatch
+        XCTAssertTrue(hint.waitForExistence(timeout: UITestWait.defaultTimeout), "Hinweis auf abgelehnten Namen fehlt")
+        let dismiss = app.alerts.buttons.firstMatch
+        XCTAssertTrue(dismiss.waitForExistence(timeout: UITestWait.defaultTimeout), "Knopf im Hinweis fehlt")
+        dismiss.tap()
+
+        let count = app.staticTexts.matching(NSPredicate(format: "label ==[c] %@", "Gänge · 12")).firstMatch
+        XCTAssertTrue(count.waitForExistence(timeout: UITestWait.defaultTimeout), "Es muss bei 12 Gängen bleiben")
+        XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "label ==[c] %@", "Gänge · 13")).firstMatch.exists,
+                       "Kein zweiter Gang „käse“")
+        XCTAssertFalse(element("stationSetup.row.käse", app).exists, "Kein Gang in anderer Schreibweise")
+        closeSetup(app)
     }
 }

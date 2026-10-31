@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gänge einrichten Entwurf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: Erklärtext oben je Abschnitt, Telefon-Attrappen paarweise hell/dunkel; App-Farben aus Assets.xcassets (wie Entwurf D1) */
+:root {
+  --page-bg: #efeadc;
+  --page-fg: #201d16;
+  --page-muted: #6f6a5b;
+  --page-card: #fdfbf4;
+  --page-line: rgba(32,29,22,.14);
+  --page-accent: #666f38;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Instrument Sans", -apple-system, "Segoe UI", sans-serif;
+  --font-app: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --page-bg: #0f0e0b; --page-fg: #ebe7da; --page-muted: #a29b8a; --page-card: #1d1c16;
+  --page-line: rgba(235,231,218,.14); --page-accent: #a7ae6b; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --page-bg: #0f0e0b; --page-fg: #ebe7da; --page-muted: #a29b8a; --page-card: #1d1c16;
+  --page-line: rgba(235,231,218,.14); --page-accent: #a7ae6b; color-scheme: dark }
+
+.app-light { --canvas:#f5f2e9; --surface:#fdfbf4; --ink:#201d16; --sec:#6f6a5b; --accent:#666f38; --amber:#8b6826; --red:#c0392b; --hair:rgba(32,29,22,.12); --chip:rgba(102,111,56,.12); }
+.app-dark  { --canvas:#141310; --surface:#1d1c16; --ink:#ebe7da; --sec:#a29b8a; --accent:#a7ae6b; --amber:#c89a4a; --red:#e2645a; --hair:rgba(235,231,218,.12); --chip:rgba(167,174,107,.16); }
+
+body { margin: 0; background: var(--page-bg); color: var(--page-fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 56px; }
+h1, h2 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: -.01em; }
+h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
+h2 { font-size: 26px; line-height: 1.2; }
+p { margin: 0; max-width: 66ch; }
+.lead { color: var(--page-muted); font-size: 17px; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--page-accent); font-weight: 600; }
+header, section { display: grid; gap: 18px; }
+.sec-head { display: grid; gap: 8px; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 99px; border: 1px solid var(--page-line); color: var(--page-muted); }
+.tag.rec { color: var(--page-accent); border-color: var(--page-accent); }
+.row { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+figure { margin: 0; display: grid; gap: 10px; justify-items: center; }
+figcaption { font-size: 13px; color: var(--page-muted); text-align: center; max-width: 300px; }
+.shot { width: 300px; max-width: 100%; border-radius: 34px; border: 1px solid var(--page-line); }
+.notes { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; max-width: 72ch; }
+.notes li { padding-left: 18px; position: relative; }
+.notes li::before { content: ""; position: absolute; left: 0; top: .7em; width: 7px; height: 1.5px; background: var(--page-accent); }
+.decide { background: var(--page-card); border: 1px solid var(--page-line); border-radius: 16px; padding: 20px 22px; display: grid; gap: 12px; max-width: 820px; }
+table { border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 6px 14px 6px 0; border-bottom: 1px solid var(--page-line); vertical-align: top; }
+th { color: var(--page-muted); font-weight: 600; }
+.tblwrap { overflow-x: auto; }
+
+.phone { width: 300px; max-width: 100%; box-sizing: border-box; background: var(--canvas); color: var(--ink); border-radius: 34px; border: 1px solid var(--page-line); overflow: hidden; font-family: var(--font-app); font-size: 13px; padding: 14px 14px 18px; display: grid; gap: 10px; align-content: start; }
+.nav { display: flex; align-items: center; gap: 10px; }
+.nav b { font-size: 16px; flex: 1; text-align: center; }
+.nav .l, .nav .r { font-size: 13px; color: var(--accent); min-width: 54px; }
+.nav .r { text-align: right; font-weight: 600; }
+.lbl { font-size: 11px; color: var(--sec); text-transform: uppercase; letter-spacing: .04em; padding: 4px 4px 0; display: flex; justify-content: space-between; }
+.card { background: var(--surface); border-radius: 14px; padding: 0 12px; }
+.item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--hair); min-height: 22px; }
+.item:first-child { border-top: 0; }
+.it { flex: 1; min-width: 0; display: grid; }
+.it .nm { font-size: 14px; }
+.it .sub { font-size: 11px; color: var(--sec); }
+.em { width: 20px; text-align: center; flex: none; }
+.grip { color: var(--sec); letter-spacing: -1px; flex: none; }
+.chev { color: var(--sec); flex: none; }
+.check { color: var(--accent); font-weight: 700; flex: none; }
+.act { color: var(--accent); font-size: 12px; font-weight: 600; flex: none; }
+.add { color: var(--accent); }
+.muted { color: var(--sec); }
+.strike { color: var(--sec); text-decoration: line-through; }
+.hint { font-size: 11px; color: var(--sec); padding: 0 4px; }
+.btn { text-align: center; background: var(--chip); color: var(--accent); border-radius: 12px; padding: 9px; font-weight: 600; }
+.badge { font-size: 10px; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--amber); color: var(--amber); white-space: nowrap; flex: none; }
+.pick { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--chip); color: var(--accent); white-space: nowrap; flex: none; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+.pick.off { background: transparent; border: 1px dashed var(--sec); color: var(--sec); }
+.pick.open { background: transparent; border: 1px solid var(--hair); color: var(--sec); }
+.field { background: var(--surface); border-radius: 12px; padding: 9px 12px; display: flex; gap: 10px; align-items: center; }
+.menu { background: var(--surface); border-radius: 16px; padding: 2px 14px; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+.menu .item { font-size: 14px; }
+.menu .new { font-weight: 600; color: var(--accent); }
+.dim { opacity: .45; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Issue #234 · Durchgang 2 · Entwurf vor der Spec</span>
+    <h1>Gänge selbst einrichten</h1>
+    <p class="lead">Bisher bekommt ein Laden seine Gänge nur über die Lidl-Vorlage. Jetzt richtest du sie selbst ein: Gänge anlegen, umbenennen, verschieben, löschen. Du legst fest, welche Standard-Kategorien in welchen Gang gehören und welche du ganz ausblendest. Alles liegt hinter einem einzigen Menüeintrag, „Kategorien einrichten“.</p>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <h2>Heute</h2>
+      <p>Im ···-Menü der Liste gibt es nur „Lidl-Vorlage übernehmen“ und, wenn Gänge da sind, „Gänge entfernen“. Ändern lässt sich an den Gängen nichts.</p>
+    </div>
+    <div class="row">
+      <figure>
+        <img class="shot" src="heute-menue.png" alt="Bildschirmfoto: ···-Menü der Lidl-Liste mit Sortieren, Reihenfolge anpassen, Gelernte Reihenfolge zurücksetzen und Lidl-Vorlage übernehmen">
+        <figcaption>Simulator, Durchlauf zu Durchgang 1, hell.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div><span class="tag rec">Entwurf · Empfehlung</span></div>
+      <h2>1 · Ein Menüeintrag statt zwei</h2>
+      <p>„Lidl-Vorlage übernehmen“ und „Gänge entfernen“ verschwinden aus dem Menü. An ihre Stelle tritt „Kategorien einrichten“. Den Eintrag gibt es in jedem Laden, auch ohne Gänge.</p>
+    </div>
+    <div class="row" data-screen="menu"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div><span class="tag rec">Entwurf · Empfehlung</span></div>
+      <h2>2 · Übersicht: Gänge oben, dann „Offen“ und „Ausgeblendet“</h2>
+      <p>Oben stehen die Gänge in Laufreihenfolge. Ziehen am Griff ändert die Reihenfolge, Wischen löscht einen Gang. Jede Standard-Kategorie hat genau einen von drei Zuständen: in einem Gang, offen oder ausgeblendet. Offene Kategorien landen in der Liste unter „Sonstiges“. Ausgeblendete erscheinen auch nicht in der Auswahl. Ein Tipp auf eine offene Kategorie schiebt sie in einen Gang oder blendet sie aus.</p>
+    </div>
+    <div class="row" data-screen="root"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div><span class="tag rec">Entwurf · Empfehlung</span></div>
+      <h2>3 · Ein Gang im Detail</h2>
+      <p>Name und Emoji lassen sich ändern. Darunter stehen alle 35 Standard-Kategorien. Ein Häkchen legt eine Kategorie in diesen Gang. Steckt sie schon in einem anderen Gang, steht dessen Name darunter, und das Häkchen holt sie herüber. Die Stichwörter (z. B. „Gouda“ → Käse) zeigt der Gang nur an. Bearbeiten kommt im zweiten Teil, siehe unten.</p>
+    </div>
+    <div class="row" data-screen="detail"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div><span class="tag rec">Entwurf · Empfehlung</span></div>
+      <h2>4 · Vorlage wählen</h2>
+      <p>Ganz oben in der Übersicht steht „Vorlage wählen“. Hat der Laden schon Gänge, fragt die App vorher nach, weil die Vorlage sie ersetzt. Gemerkte Zuordnungen und eigene Kategorien bleiben erhalten. Die vier Mustervorlagen tragen den Hinweis „Vorschlag, bitte prüfen“, weil die Recherche nur das Grobe belegt. Ganz unten steht „Gänge entfernen“: Damit wird der Laden wieder einer ohne Gänge.</p>
+    </div>
+    <div class="row" data-screen="templates"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div><span class="tag">Alternative</span></div>
+      <h2>2b · Eine flache Liste aller Kategorien statt Gang-Detail</h2>
+      <p>Statt in einen Gang hineinzugehen, siehst du alle 35 Standard-Kategorien untereinander. Rechts steht bei jeder ein Knopf mit ihrem Gang, „Offen“ oder „Ausgeblendet“. Ein Tipp öffnet die Auswahl. Name, Emoji und Reihenfolge der Gänge bearbeitest du oben in einer eigenen, kurzen Liste. Vorteil: weniger Bildschirme, alle Zustände auf einen Blick. Nachteil: Was in einem Gang steckt, siehst du nicht zusammen. Für die Stichwörter (zweiter Teil) bräuchte es den Gang-Bildschirm trotzdem.</p>
+    </div>
+    <div class="row" data-screen="flat"></div>
+  </section>
+
+  <section class="decide">
+    <h2>Was du entscheidest</h2>
+    <ul class="notes">
+      <li>Empfehlung 1 bis 4 (Übersicht mit Gang-Detail) oder die Alternative 2b (eine flache Liste).</li>
+      <li>Den Zuschnitt. Durchgang 2 komplett wären rund 1.070 Zeilen, dreimal so viel wie deine 250 bis 350. Mein Vorschlag sind zwei Teile, die jeder für sich etwas bringen:</li>
+    </ul>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Teil</th><th>Inhalt</th><th>Zeilen (geschätzt)</th></tr></thead>
+        <tbody>
+          <tr><td>2a</td><td>Diese Ansicht: Gänge anlegen, umbenennen, verschieben, löschen; Kategorien zuordnen, offen lassen, ausblenden; Vorlage wählen (Lidl), „Gänge entfernen“; ersetzt die zwei Menüeinträge</td><td>ca. 550–650</td></tr>
+          <tr><td>2b</td><td>Vier Mustervorlagen (Discounter, Vollsortimenter, Drogerie, Baumarkt); Stichwörter je Gang bearbeiten; Bearbeiten und Löschen per Wischen in der Kategorie-Auswahl; eigene Kategorien von früher als Gänge übernehmen</td><td>ca. 400–450</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Gezählt wie das Prüfwerkzeug: alle neuen Zeilen, auch Tests. Die Mustervorlagen rücken in Teil 2b. Sie sind reine Daten mit dünnem Beleg, und du willst sie ohnehin einzeln prüfen.</p>
+    <h2 style="font-size:20px">Schon festgelegt, damit nichts verloren geht</h2>
+    <ul class="notes">
+      <li>Wird ein Gang umbenannt, ziehen gemerkte Zuordnungen und gelernte Reihenfolge mit. Kein Artikel rutscht dabei nach „Sonstiges“.</li>
+      <li>Ein Name, den schon ein anderer Gang trägt, oder „Sonstiges“ wird abgelehnt, mit Hinweis.</li>
+      <li>Heißt ein Gang wie eine Standard-Kategorie (z. B. „Getränke“), bekommt er sie automatisch, sichtbar als Häkchen.</li>
+      <li>Wird ein Gang gelöscht, werden seine Kategorien „offen“. Löschen des letzten Gangs heißt „Gänge entfernen“, mit Rückfrage.</li>
+      <li>Geteilte Läden: Gänge bleiben bis Durchgang 3 auf deinem Gerät. Die Ansicht sagt das in einer Zeile.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const lidl = [
+  ["🥦", "Obst & Gemüse", 1, 0], ["🥗", "Frische Säfte, Salate …", 0, 10], ["☕️", "Nüsse, Süßigkeiten, Kaffee …", 1, 7],
+  ["🥖", "Brot & Backwaren", 1, 0], ["🥫", "Konserven & Gewürze", 2, 0], ["🥩", "Frisches Fleisch & Fisch", 1, 9],
+  ["🧊", "Kühltheke Fertiges", 0, 12], ["🧀", "Käse", 0, 11], ["🥛", "Milchprodukte", 1, 2],
+  ["❄️", "Tiefkühl", 1, 6], ["🧴", "Drogerie", 8, 1], ["🥤", "Getränke", 1, 0],
+];
+const sub = (b, k) => [b ? `${b} Kategorie${b > 1 ? "n" : ""}` : "", k ? `${k} Stichwörter` : ""].filter(Boolean).join(" · ") || "noch leer";
+const offen = ["Tierbedarf", "Haushaltswaren", "Küchenausstattung", "Elektronik", "Textilien", "Schreibwaren", "Spielzeug", "Dekoration", "Lebensmittel"];
+const hidden = ["Werkzeug", "Eisenwaren", "Garten", "Pflanzen", "Farbe & Lack", "Sanitär", "Boden & Fliesen", "Holz", "Baumaterial"];
+const nav = (l, t, r) => `<div class="nav"><span class="l">${l}</span><b>${t}</b><span class="r">${r}</span></div>`;
+
+const screens = {
+  menu: () => nav("‹", "Lidl", "···") +
+    `<div class="menu">` +
+    `<div class="item"><span class="em">⇅</span><div class="it"><span class="nm">Sortieren: Kategorie</span></div><span class="chev">›</span></div>` +
+    `<div class="item"><span class="em">↺</span><div class="it"><span class="nm" style="color:var(--red)">Gelernte Reihenfolge zurücksetzen</span></div></div>` +
+    `<div class="item new"><span class="em">▤</span><div class="it"><span class="nm">Kategorien einrichten</span></div></div>` +
+    `<div class="item dim"><span class="em">▭</span><div class="it"><span class="nm">Als Vorlage speichern</span></div></div>` +
+    `</div><div class="hint">„Lidl-Vorlage übernehmen“ und „Gänge entfernen“ entfallen hier.</div>`,
+  root: () => nav("", "Kategorien einrichten", "Fertig") +
+    `<div class="btn">Vorlage wählen …</div>` +
+    `<div class="lbl"><span>Gänge · 12</span><span>ziehen zum Ordnen</span></div><div class="card">` +
+    lidl.slice(0, 7).map(([e, n, b, k]) => `<div class="item"><span class="grip">⋮⋮</span><span class="em">${e}</span><div class="it"><span class="nm">${n}</span><span class="sub">${sub(b, k)}</span></div><span class="chev">›</span></div>`).join("") +
+    `<div class="item"><span class="grip"> </span><div class="it"><span class="sub">… Käse, Milchprodukte, Tiefkühl, Drogerie, Getränke</span></div></div>` +
+    `<div class="item add"><span class="em">＋</span><div class="it"><span class="nm">Gang hinzufügen</span></div></div></div>` +
+    `<div class="lbl"><span>Offen · 9</span><span>landen unter „Sonstiges“</span></div><div class="card">` +
+    offen.slice(0, 3).map(n => `<div class="item"><div class="it"><span class="nm">${n}</span></div><span class="act">Zuordnen …</span></div>`).join("") +
+    `<div class="item"><div class="it"><span class="sub">+ 6 weitere</span></div></div></div>` +
+    `<div class="lbl"><span>Ausgeblendet · 9</span><span></span></div><div class="card">` +
+    hidden.slice(0, 2).map(n => `<div class="item"><div class="it"><span class="nm strike">${n}</span></div><span class="act">Einblenden</span></div>`).join("") +
+    `<div class="item"><div class="it"><span class="sub">+ 7 weitere</span></div></div></div>`,
+  detail: () => nav("‹ Zurück", "Gang", "") +
+    `<div class="field"><span class="em">🧴</span><span>Drogerie</span></div>` +
+    `<div class="lbl"><span>Kategorien in diesem Gang</span><span>8</span></div><div class="card">` +
+    [["Körperpflege", "", true], ["Haarpflege", "", true], ["Zahnpflege", "", true], ["Reinigung", "", true],
+     ["Tierbedarf", "offen", false], ["Getränke", "jetzt in: Getränke", false], ["Werkzeug", "ausgeblendet", false]]
+      .map(([n, s, on]) => `<div class="item"><div class="it"><span class="nm">${n}</span>${s ? `<span class="sub">${s}</span>` : ""}</div>${on ? `<span class="check">✓</span>` : ""}</div>`).join("") +
+    `<div class="item"><div class="it"><span class="sub">… alle 35 Standard-Kategorien</span></div></div></div>` +
+    `<div class="lbl"><span>Stichwörter</span><span>Teil 2b: bearbeiten</span></div><div class="card"><div class="item"><div class="it"><span class="nm muted">hustensaft</span></div></div></div>` +
+    `<div class="btn" style="color:var(--red);background:transparent;border:1px solid var(--hair)">Gang löschen</div>`,
+  templates: () => nav("Abbrechen", "Vorlage wählen", "") +
+    `<div class="card">` +
+    `<div class="item"><span class="em">🛒</span><div class="it"><span class="nm">Lidl</span><span class="sub">12 Gänge · aus deiner Reihenfolge</span></div></div>` +
+    [["🏷️", "Discounter"], ["🏬", "Vollsortimenter"], ["🧴", "Drogerie"], ["🔨", "Baumarkt"]]
+      .map(([e, n]) => `<div class="item"><span class="em">${e}</span><div class="it"><span class="nm">${n}</span><span class="sub">Muster · Teil 2b</span></div><span class="badge">Vorschlag, bitte prüfen</span></div>`).join("") +
+    `</div><div class="hint">Ersetzt die Gänge dieses Ladens. Gemerkte Zuordnungen bleiben.</div>` +
+    `<div class="card"><div class="item"><div class="it"><span class="nm" style="color:var(--red)">Gänge entfernen</span><span class="sub">Laden wieder ohne Gänge</span></div></div></div>`,
+  flat: () => nav("", "Kategorien einrichten", "Fertig") +
+    `<div class="lbl"><span>Gänge</span><span>ziehen · umbenennen</span></div><div class="card">` +
+    lidl.slice(0, 3).map(([e, n]) => `<div class="item"><span class="grip">⋮⋮</span><span class="em">${e}</span><div class="it"><span class="nm">${n}</span></div></div>`).join("") +
+    `<div class="item"><div class="it"><span class="sub">… 9 weitere · ＋ Gang hinzufügen</span></div></div></div>` +
+    `<div class="lbl"><span>Standard-Kategorien · 35</span><span></span></div><div class="card">` +
+    [["Obst & Gemüse", "Obst & Gemüse", ""], ["Backwaren", "Brot & Backwaren", ""], ["Fleisch & Wurst", "Frisches Fleisch …", ""],
+     ["Snacks", "Nüsse, Süßigk…", ""], ["Tierbedarf", "Offen", "open"], ["Spielzeug", "Offen", "open"], ["Werkzeug", "Ausgeblendet", "off"], ["Holz", "Ausgeblendet", "off"]]
+      .map(([n, p, c]) => `<div class="item"><div class="it"><span class="nm">${n}</span></div><span class="pick ${c}">${p} ▾</span></div>`).join("") +
+    `<div class="item"><div class="it"><span class="sub">… 27 weitere</span></div></div></div>`,
+};
+
+document.querySelectorAll("[data-screen]").forEach(row => {
+  const build = screens[row.dataset.screen];
+  for (const [cls, label] of [["app-light", "Hell"], ["app-dark", "Dunkel"]]) {
+    const fig = document.createElement("figure");
+    fig.innerHTML = `<div class="phone ${cls}">${build()}</div><figcaption>${label}</figcaption>`;
+    row.appendChild(fig);
+  }
+});
+</script>
+</body>
+</html>

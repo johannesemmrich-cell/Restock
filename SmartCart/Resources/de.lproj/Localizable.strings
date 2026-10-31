@@ -420,12 +420,42 @@
 "station.other" = "Sonstiges";
 "station.picker.section" = "Gänge bei %@";
 "station.picker.create" = "„%@“ als Gang bei %@ anlegen";
-"station.menu.applyTemplate" = "Lidl-Vorlage übernehmen";
 "station.menu.remove" = "Gänge entfernen";
-"station.template.confirm.title" = "Lidl-Vorlage übernehmen?";
-"station.template.confirm.message" = "Die Liste dieses Ladens folgt dann den Gängen von Lidl. Deine eigenen Kategorien und gemerkten Zuordnungen bleiben erhalten.";
 "station.remove.confirm.title" = "Gänge entfernen?";
 "station.remove.confirm.message" = "Die Liste sortiert wieder nach den Standard-Kategorien. Eigene Kategorien und gemerkte Zuordnungen bleiben erhalten.";
+/* Kategorien einrichten (Issue #234, Durchgang 2a) */
+"station.setup.menu" = "Kategorien einrichten";
+"station.setup.title" = "Kategorien einrichten";
+"station.setup.done" = "Fertig";
+"station.setup.template" = "Vorlage wählen …";
+"station.setup.template.title" = "Vorlage wählen";
+"station.setup.template.message" = "Ersetzt die Gänge dieses Ladens. Gemerkte Zuordnungen und eigene Kategorien bleiben.";
+"station.setup.template.lidl" = "Lidl";
+"station.setup.section.stations" = "Gänge · %d";
+"station.setup.section.open" = "Offen · %d";
+"station.setup.section.open.footer" = "landen unter „Sonstiges“";
+"station.setup.section.hidden" = "Ausgeblendet · %d";
+"station.setup.sort" = "Sortieren";
+"station.setup.add" = "Gang hinzufügen";
+"station.setup.add.prompt" = "Name des Gangs";
+"station.setup.assign" = "Zuordnen …";
+"station.setup.hide" = "Ausblenden";
+"station.setup.show" = "Einblenden";
+"station.setup.remove" = "Gänge entfernen";
+"station.setup.shared" = "Gänge bleiben bis zum Abgleich auf diesem Gerät.";
+"station.setup.row.summary" = "%d Kategorien · %d Stichwörter";
+"station.setup.row.empty" = "noch leer";
+"station.setup.detail.title" = "Gang";
+"station.setup.detail.categories" = "Kategorien in diesem Gang · %d";
+"station.setup.detail.in" = "jetzt in: %@";
+"station.setup.detail.bound" = "gehört zu Gang %@";
+"station.setup.detail.keywords" = "Stichwörter (nur Anzeige)";
+"station.setup.detail.delete" = "Gang löschen";
+"station.setup.delete.title" = "Gang „%@“ löschen?";
+"station.setup.delete.message" = "Seine Kategorien werden offen.";
+"station.setup.name.rejected" = "Diesen Namen gibt es schon oder er ist nicht erlaubt.";
+"station.setup.detail.open" = "offen";
+"station.setup.detail.hidden" = "ausgeblendet";
 
 /* Preisquelle (Issue #151) */
 "price.source.receipt" = "Bon";

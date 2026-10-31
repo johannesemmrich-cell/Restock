@@ -1,0 +1,1137 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination id=6728F5AB-712F-46E0-A1D1-2047A9771C8E -derivedDataPath build/dd-d2a "-only-testing:RestockUITests/StoreStationsUITests/testDeletingLastStationAsksToRemoveStations" "-only-testing:RestockUITests/StoreStationsUITests/testAddAndDeleteStationFromSetup" "-only-testing:RestockUITests/StoreStationsUITests/testRemoveStationsAndApplyTemplate"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d2a/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk -o /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d2a/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d2a/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d2a/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d2a/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-10-31 17:02:30.846989+0100 RestockUITests-Runner[37918:38722234] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-31 17:02:34.178.
+Test Suite 'RestockUITests.xctest' started at 2026-10-31 17:02:34.179.
+Test Suite 'StoreStationsUITests' started at 2026-10-31 17:02:34.179.
+Test Case '-[RestockUITests.StoreStationsUITests testAddAndDeleteStationFromSetup]' started.
+    t =     0.00s Start Test at 2026-10-31 17:02:34.181
+    t =     0.10s Set Up
+    t =     0.11s Open com.johannesemmrich.Restock
+    t =     0.11s     Launch com.johannesemmrich.Restock
+2026-10-31 17:02:34.584 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-31 17:02:34.584 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[37918]: Class UIAccessibilityLoaderWebShared is implemented in both /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.2.8117.0.hi1oAm/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.2.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x1063c8310) and /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.2.8117.0.hi1oAm/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.2.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10682c398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     1.25s         Setting up automation session
+    t =     3.54s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreStationsUITests testAddAndDeleteStationFromSetup] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     6.48s Checking existence of `Button (First Match)`
+    t =     6.67s Find the Button (First Match)
+    t =     6.73s Find the "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     6.78s Tap "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     6.78s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.78s     Find the "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     6.80s     Check for interrupting elements affecting "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     6.84s     Synthesize event
+    t =     7.15s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.72s Waiting 20.0s for "Salami" StaticText to exist
+    t =     8.75s     Checking `Expect predicate `existsNoRetry == 1` for object "Salami" StaticText`
+    t =     8.75s         Checking existence of `"Salami" StaticText`
+    t =     8.91s Checking existence of `"storeDetail.moreMenu" Any`
+    t =     8.93s Find the "storeDetail.moreMenu" Any
+    t =     8.95s Find the "storeDetail.moreMenu" Button
+    t =     8.97s Tap "storeDetail.moreMenu" Button
+    t =     8.97s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.98s     Find the "storeDetail.moreMenu" Button
+    t =     8.99s     Check for interrupting elements affecting "storeDetail.moreMenu" Button
+    t =     9.03s     Synthesize event
+    t =     9.32s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.48s Checking existence of `"store.menu.setupStations" Button`
+    t =     9.52s Find the "store.menu.setupStations" Button
+    t =     9.55s Find the "store.menu.setupStations" Button
+    t =     9.58s Tap "store.menu.setupStations" Button
+    t =     9.58s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.72s     Find the "store.menu.setupStations" Button
+    t =    10.75s     Check for interrupting elements affecting "store.menu.setupStations" Button
+    t =    10.79s     Synthesize event
+    t =    11.08s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.57s Waiting 20.0s for "stationSetup.addStation" Any to exist
+    t =    13.60s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.addStation" Any`
+    t =    13.60s         Checking existence of `"stationSetup.addStation" Any`
+    t =    13.69s Checking existence of `"stationSetup.addStation" Any`
+    t =    13.74s Find the "stationSetup.addStation" Any
+    t =    13.80s Find the "stationSetup.addStation" Button
+    t =    13.86s Tap "stationSetup.addStation" Button
+    t =    13.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.86s     Find the "stationSetup.addStation" Button
+    t =    13.92s     Check for interrupting elements affecting "stationSetup.addStation" Button
+    t =    13.99s     Synthesize event
+    t =    14.28s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.78s Waiting 20.0s for TextField (First Match) to exist
+    t =    15.79s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =    15.79s         Checking existence of `TextField (First Match)`
+    t =    15.84s Type 'Lager' into TextField (First Match)
+    t =    15.84s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.85s     Find the TextField (First Match)
+    t =    15.87s     Check for interrupting elements affecting "Name des Gangs" TextField
+    t =    15.95s     Synthesize event
+    t =    16.26s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.27s Tap "Hinzufügen" Button
+    t =    16.27s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.28s     Find the "Hinzufügen" Button
+    t =    16.30s     Check for interrupting elements affecting "Hinzufügen" Button
+    t =    16.37s     Synthesize event
+    t =    16.66s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.37s Waiting 2.0s for "stationSetup.row.Lager" Any to exist
+    t =    18.42s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.row.Lager" Any`
+    t =    18.42s         Checking existence of `"stationSetup.row.Lager" Any`
+    t =    18.70s         Capturing element debug description
+    t =    19.37s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.row.Lager" Any`
+    t =    19.37s         Checking existence of `"stationSetup.row.Lager" Any`
+    t =    19.65s         Capturing element debug description
+    t =    19.65s     Checking existence of `"stationSetup.row.Lager" Any`
+    t =    19.91s Collecting debug information to assist test failure triage
+    t =    19.91s     Requesting snapshot of accessibility hierarchy for app with pid 37951
+    t =    20.02s Press Window (First Match)[0.50, 0.75] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.55] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    20.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.02s     Find the Window (First Match)
+    t =    20.03s     Check for interrupting elements affecting Window
+    t =    20.08s     Synthesize event
+    t =    20.09s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.10s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.11s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.11s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.12s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.76s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.45s Waiting 2.0s for "stationSetup.row.Lager" Any to exist
+    t =    23.48s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.row.Lager" Any`
+    t =    23.49s         Checking existence of `"stationSetup.row.Lager" Any`
+    t =    23.74s Checking existence of `"stationSetup.done" Any`
+    t =    23.77s Find the "stationSetup.done" Any
+    t =    23.81s Find the "stationSetup.done" Button
+    t =    23.86s Tap "stationSetup.done" Button
+    t =    23.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.86s     Find the "stationSetup.done" Button
+    t =    23.90s     Check for interrupting elements affecting "stationSetup.done" Button
+    t =    23.96s     Synthesize event
+    t =    24.27s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.74s Checking `Expect predicate `exists == 0` for object "stationSetup.addStation" Any`
+    t =    25.74s     Checking existence of `"stationSetup.addStation" Any`
+    t =    25.89s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    25.89s     Wait for com.johannesemmrich.Restock to idle
+    t =    25.90s     Find the Window (First Match)
+    t =    25.90s     Check for interrupting elements affecting Window
+    t =    25.93s     Synthesize event
+    t =    25.95s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    25.95s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    25.96s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    25.97s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    25.98s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.24s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.69s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    27.69s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.70s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.71s     Check for interrupting elements affecting Window
+    t =    27.75s     Synthesize event
+    t =    27.76s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.77s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.77s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.78s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.79s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.05s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.51s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    29.51s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.51s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.52s     Check for interrupting elements affecting Window
+    t =    29.56s     Synthesize event
+    t =    29.58s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.58s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.59s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.60s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.60s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.32s Checking existence of `"Batterien" StaticText`
+    t =    31.69s Checking existence of `"Batterien" StaticText`
+    t =    32.05s Checking existence of `"Batterien" StaticText`
+    t =    32.38s Checking existence of `"Batterien" StaticText`
+    t =    32.74s Checking existence of `"Batterien" StaticText`
+    t =    33.10s Checking existence of `"Batterien" StaticText`
+    t =    33.47s Checking existence of `"Batterien" StaticText`
+    t =    33.58s Press Window (First Match)[0.50, 0.75] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.55] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    33.58s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.58s     Find the Window (First Match)
+    t =    33.58s     Check for interrupting elements affecting Window
+    t =    33.61s     Synthesize event
+    t =    33.63s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.63s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.64s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.65s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.65s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    34.29s     Wait for com.johannesemmrich.Restock to idle
+    t =    34.75s Checking existence of `"Batterien" StaticText`
+    t =    34.85s Find the "Batterien" StaticText
+    t =    34.92s Find the "Batterien" StaticText
+    t =    34.99s Checking existence of `"Batterien" StaticText`
+    t =    35.06s Find the "Batterien" StaticText
+    t =    35.13s Find the "Batterien" StaticText
+    t =    35.20s Press "Batterien" StaticText for 1.0 seconds
+    t =    35.20s     Wait for com.johannesemmrich.Restock to idle
+    t =    35.20s     Find the "Batterien" StaticText
+    t =    35.27s     Check for interrupting elements affecting "Batterien" StaticText
+    t =    35.30s     Synthesize event
+    t =    36.54s     Wait for com.johannesemmrich.Restock to idle
+    t =    37.10s Checking existence of `Button (First Match)`
+    t =    37.14s Find the Button (First Match)
+    t =    37.17s Find the "item.action.edit" Button
+    t =    37.19s Tap "item.action.edit" Button
+    t =    37.19s     Wait for com.johannesemmrich.Restock to idle
+    t =    37.19s     Find the "item.action.edit" Button
+    t =    37.21s     Check for interrupting elements affecting "item.action.edit" Button
+    t =    37.25s     Synthesize event
+    t =    37.55s     Wait for com.johannesemmrich.Restock to idle
+    t =    38.42s Waiting 20.0s for "item.categoryRow" Any to exist
+    t =    39.44s     Checking `Expect predicate `existsNoRetry == 1` for object "item.categoryRow" Any`
+    t =    39.44s         Checking existence of `"item.categoryRow" Any`
+    t =    39.71s Tap "item.categoryRow" Any
+    t =    39.71s     Wait for com.johannesemmrich.Restock to idle
+    t =    39.71s     Find the "item.categoryRow" Any
+    t =    39.93s     Check for interrupting elements affecting "item.categoryRow" Button
+    t =    40.00s     Synthesize event
+    t =    40.30s     Wait for com.johannesemmrich.Restock to idle
+    t =    40.42s Waiting 20.0s for "categoryPicker.search" TextField to exist
+    t =    41.45s     Checking `Expect predicate `existsNoRetry == 1` for object "categoryPicker.search" TextField`
+    t =    41.45s         Checking existence of `"categoryPicker.search" TextField`
+    t =    41.59s Checking existence of `"categoryPicker.row.Lager" Any`
+    t =    42.11s Checking existence of `"categoryPicker.row.Lager" Any`
+    t =    42.63s Checking existence of `"categoryPicker.row.Lager" Any`
+    t =    43.16s Checking existence of `"categoryPicker.row.Lager" Any`
+    t =    43.69s Checking existence of `"categoryPicker.row.Lager" Any`
+    t =    43.96s Press Window (First Match)[0.50, 0.75] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.55] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    43.96s     Wait for com.johannesemmrich.Restock to idle
+    t =    43.97s     Find the Window (First Match)
+    t =    43.97s     Check for interrupting elements affecting Window
+    t =    44.02s     Synthesize event
+    t =    44.04s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    44.04s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    44.05s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    44.06s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    44.06s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    44.70s     Wait for com.johannesemmrich.Restock to idle
+    t =    45.48s Checking existence of `"categoryPicker.row.Lager" Any`
+    t =    45.75s Find the "categoryPicker.row.Lager" Any
+    t =    46.00s Find the "categoryPicker.row.Lager" Button
+    t =    46.28s Tap "categoryPicker.row.Lager" Button
+    t =    46.28s     Wait for com.johannesemmrich.Restock to idle
+    t =    46.28s     Find the "categoryPicker.row.Lager" Button
+    t =    46.52s     Check for interrupting elements affecting "categoryPicker.row.Lager" Button
+    t =    46.59s     Synthesize event
+    t =    46.90s     Wait for com.johannesemmrich.Restock to idle
+    t =    47.22s Checking existence of `"Speichern" Button`
+    t =    47.27s Find the "Speichern" Button
+    t =    47.31s Find the "Speichern" Button
+    t =    47.35s Tap "Speichern" Button
+    t =    47.35s     Wait for com.johannesemmrich.Restock to idle
+    t =    47.35s     Find the "Speichern" Button
+    t =    47.38s     Check for interrupting elements affecting "Speichern" Button
+    t =    47.44s     Synthesize event
+    t =    47.74s     Wait for com.johannesemmrich.Restock to idle
+    t =    49.25s Checking `Expect predicate `exists == 0` for object "Speichern" Button`
+    t =    49.25s     Checking existence of `"Speichern" Button`
+    t =    49.36s Checking existence of `"storeDetail.moreMenu" Any`
+    t =    49.38s Find the "storeDetail.moreMenu" Any
+    t =    49.40s Find the "storeDetail.moreMenu" Button
+    t =    49.43s Tap "storeDetail.moreMenu" Button
+    t =    49.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    49.43s     Find the "storeDetail.moreMenu" Button
+    t =    49.45s     Check for interrupting elements affecting "storeDetail.moreMenu" Button
+    t =    49.49s     Synthesize event
+    t =    49.85s     Wait for com.johannesemmrich.Restock to idle
+    t =    50.93s Waiting 20.0s for Any (First Match) to exist
+    t =    51.96s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    51.96s         Checking existence of `Any (First Match)`
+    t =    52.02s Tap Any (First Match)
+    t =    52.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    52.02s     Find the Any (First Match)
+    t =    52.04s     Check for interrupting elements affecting "arrow.up.arrow.down" Button
+    t =    52.10s     Synthesize event
+    t =    52.42s     Wait for com.johannesemmrich.Restock to idle
+    t =    53.57s Waiting 5.0s for "Kategorie" Button to exist
+    t =    54.59s     Checking `Expect predicate `existsNoRetry == 1` for object "Kategorie" Button`
+    t =    54.59s         Checking existence of `"Kategorie" Button`
+    t =    54.63s Waiting 20.0s for "Kategorie" Button to exist
+    t =    55.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Kategorie" Button`
+    t =    55.66s         Checking existence of `"Kategorie" Button`
+    t =    55.70s Tap "Kategorie" Button
+    t =    55.70s     Wait for com.johannesemmrich.Restock to idle
+    t =    55.71s     Find the "Kategorie" Button
+    t =    55.73s     Check for interrupting elements affecting "Kategorie" Button
+    t =    55.76s     Synthesize event
+    t =    56.06s     Wait for com.johannesemmrich.Restock to idle
+    t =    57.58s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    57.58s     Wait for com.johannesemmrich.Restock to idle
+    t =    57.59s     Find the Window (First Match)
+    t =    57.59s     Check for interrupting elements affecting Window
+    t =    57.65s     Synthesize event
+    t =    57.66s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    57.67s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    57.67s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    57.68s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    57.69s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    58.95s     Wait for com.johannesemmrich.Restock to idle
+    t =    59.37s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    59.37s     Wait for com.johannesemmrich.Restock to idle
+    t =    59.37s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    59.39s     Check for interrupting elements affecting Window
+    t =    59.42s     Synthesize event
+    t =    59.44s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    59.44s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    59.45s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    59.45s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    59.46s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    60.72s     Wait for com.johannesemmrich.Restock to idle
+    t =    61.18s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    61.18s     Wait for com.johannesemmrich.Restock to idle
+    t =    61.18s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    61.19s     Check for interrupting elements affecting Window
+    t =    61.23s     Synthesize event
+    t =    61.24s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    61.25s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    61.25s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    61.26s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    61.27s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    62.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    62.98s Waiting 2.0s for StaticText (First Match) to exist
+    t =    63.99s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    63.99s         Checking existence of `StaticText (First Match)`
+    t =    64.09s         Capturing element debug description
+    t =    64.98s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    64.98s         Checking existence of `StaticText (First Match)`
+    t =    65.07s         Capturing element debug description
+    t =    65.07s     Checking existence of `StaticText (First Match)`
+    t =    65.13s Collecting debug information to assist test failure triage
+    t =    65.13s     Requesting snapshot of accessibility hierarchy for app with pid 37951
+    t =    65.19s Press Window (First Match)[0.50, 0.75] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.55] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    65.19s     Wait for com.johannesemmrich.Restock to idle
+    t =    65.19s     Find the Window (First Match)
+    t =    65.20s     Check for interrupting elements affecting Window
+    t =    65.22s     Synthesize event
+    t =    65.23s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    65.24s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    65.25s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    65.25s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    65.26s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    65.90s     Wait for com.johannesemmrich.Restock to idle
+    t =    67.55s Waiting 2.0s for StaticText (First Match) to exist
+    t =    68.57s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    68.57s         Checking existence of `StaticText (First Match)`
+    t =    68.65s Waiting 2.0s for "Batterien" StaticText to exist
+    t =    69.67s     Checking `Expect predicate `existsNoRetry == 1` for object "Batterien" StaticText`
+    t =    69.68s         Checking existence of `"Batterien" StaticText`
+    t =    69.77s Checking existence of `StaticText (First Match)`
+    t =    69.83s Find the StaticText (First Match)
+    t =    69.89s Find the "Batterien" StaticText
+    t =    69.96s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    69.96s     Wait for com.johannesemmrich.Restock to idle
+    t =    69.97s     Find the Window (First Match)
+    t =    69.97s     Check for interrupting elements affecting Window
+    t =    70.00s     Synthesize event
+    t =    70.01s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    70.02s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    70.02s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    70.03s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    70.04s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    71.30s     Wait for com.johannesemmrich.Restock to idle
+    t =    71.69s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    71.69s     Wait for com.johannesemmrich.Restock to idle
+    t =    71.70s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    71.71s     Check for interrupting elements affecting Window
+    t =    71.74s     Synthesize event
+    t =    71.75s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    71.76s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    71.77s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    71.77s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    71.78s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    73.04s     Wait for com.johannesemmrich.Restock to idle
+    t =    73.51s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    73.51s     Wait for com.johannesemmrich.Restock to idle
+    t =    73.51s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    73.52s     Check for interrupting elements affecting Window
+    t =    73.56s     Synthesize event
+    t =    73.57s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    73.58s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    73.59s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    73.59s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    73.60s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    74.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    75.32s Checking existence of `"storeDetail.moreMenu" Any`
+    t =    75.35s Find the "storeDetail.moreMenu" Any
+    t =    75.38s Find the "storeDetail.moreMenu" Button
+    t =    75.41s Tap "storeDetail.moreMenu" Button
+    t =    75.41s     Wait for com.johannesemmrich.Restock to idle
+    t =    75.41s     Find the "storeDetail.moreMenu" Button
+    t =    75.43s     Check for interrupting elements affecting "storeDetail.moreMenu" Button
+    t =    75.46s     Synthesize event
+    t =    75.76s     Wait for com.johannesemmrich.Restock to idle
+    t =    76.87s Checking existence of `"store.menu.setupStations" Button`
+    t =    76.91s Find the "store.menu.setupStations" Button
+    t =    76.93s Find the "store.menu.setupStations" Button
+    t =    76.96s Tap "store.menu.setupStations" Button
+    t =    76.96s     Wait for com.johannesemmrich.Restock to idle
+    t =    76.96s     Find the "store.menu.setupStations" Button
+    t =    76.98s     Check for interrupting elements affecting "store.menu.setupStations" Button
+    t =    77.01s     Synthesize event
+    t =    77.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    78.73s Waiting 20.0s for "stationSetup.addStation" Any to exist
+    t =    79.76s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.addStation" Any`
+    t =    79.76s         Checking existence of `"stationSetup.addStation" Any`
+    t =    79.86s Checking existence of `"stationSetup.row.Lager" Any`
+    t =    80.39s Checking existence of `"stationSetup.row.Lager" Any`
+    t =    80.90s Checking existence of `"stationSetup.row.Lager" Any`
+    t =    81.43s Checking existence of `"stationSetup.row.Lager" Any`
+    t =    82.00s Checking existence of `"stationSetup.row.Lager" Any`
+    t =    82.25s Press Window (First Match)[0.50, 0.75] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.55] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    82.25s     Wait for com.johannesemmrich.Restock to idle
+    t =    82.25s     Find the Window (First Match)
+    t =    82.26s     Check for interrupting elements affecting Window
+    t =    82.32s     Synthesize event
+    t =    82.33s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    82.33s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    82.34s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    82.34s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    82.35s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    82.99s     Wait for com.johannesemmrich.Restock to idle
+    t =    84.65s Checking existence of `"stationSetup.row.Lager" Any`
+    t =    84.88s Find the "stationSetup.row.Lager" Any
+    t =    85.10s Find the "stationSetup.row.Lager" Button
+    t =    85.31s Tap "stationSetup.row.Lager" Button
+    t =    85.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    85.31s     Find the "stationSetup.row.Lager" Button
+    t =    85.52s     Check for interrupting elements affecting "stationSetup.row.Lager" Button
+    t =    85.58s     Synthesize event
+    t =    85.88s     Wait for com.johannesemmrich.Restock to idle
+    t =    86.29s Waiting 20.0s for "stationSetup.detail.name" TextField to exist
+    t =    87.34s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.detail.name" TextField`
+    t =    87.34s         Checking existence of `"stationSetup.detail.name" TextField`
+    t =    87.46s Checking existence of `"stationSetup.detail.delete" Any`
+    t =    87.51s Find the "stationSetup.detail.delete" Any
+    t =    87.56s Find the "stationSetup.detail.delete" Button
+    t =    87.61s Tap "stationSetup.detail.delete" Button
+    t =    87.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    87.61s     Find the "stationSetup.detail.delete" Button
+    t =    87.66s     Check for interrupting elements affecting "stationSetup.detail.delete" Button
+    t =    87.72s     Synthesize event
+    t =    88.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    88.18s Checking existence of `"stationSetup.confirmDelete" Button`
+    t =    88.34s Find the "stationSetup.confirmDelete" Button
+    t =    88.52s Find the "stationSetup.confirmDelete" Button
+    t =    88.66s Tap "stationSetup.confirmDelete" Button
+    t =    88.66s     Wait for com.johannesemmrich.Restock to idle
+    t =    88.67s     Find the "stationSetup.confirmDelete" Button
+    t =    88.80s     Check for interrupting elements affecting "stationSetup.confirmDelete" Button
+    t =    88.86s     Synthesize event
+    t =    89.15s     Wait for com.johannesemmrich.Restock to idle
+    t =    89.35s Waiting 20.0s for "stationSetup.addStation" Any to exist
+    t =    90.38s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.addStation" Any`
+    t =    90.38s         Checking existence of `"stationSetup.addStation" Any`
+    t =    90.45s Checking existence of `"stationSetup.row.Lager" Any`
+    t =    90.71s Checking existence of `"stationSetup.done" Any`
+    t =    90.75s Find the "stationSetup.done" Any
+    t =    90.79s Find the "stationSetup.done" Button
+    t =    90.84s Tap "stationSetup.done" Button
+    t =    90.84s     Wait for com.johannesemmrich.Restock to idle
+    t =    90.84s     Find the "stationSetup.done" Button
+    t =    90.88s     Check for interrupting elements affecting "stationSetup.done" Button
+    t =    90.94s     Synthesize event
+    t =    91.23s     Wait for com.johannesemmrich.Restock to idle
+    t =    92.75s Checking `Expect predicate `exists == 0` for object "stationSetup.addStation" Any`
+    t =    92.75s     Checking existence of `"stationSetup.addStation" Any`
+    t =    92.88s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    92.88s     Wait for com.johannesemmrich.Restock to idle
+    t =    92.89s     Find the Window (First Match)
+    t =    92.89s     Check for interrupting elements affecting Window
+    t =    92.92s     Synthesize event
+    t =    92.93s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    92.94s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    92.94s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    92.95s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    92.96s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    94.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    94.68s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    94.68s     Wait for com.johannesemmrich.Restock to idle
+    t =    94.68s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    94.69s     Check for interrupting elements affecting Window
+    t =    94.73s     Synthesize event
+    t =    94.74s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    94.75s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    94.75s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    94.76s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    94.76s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    96.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    96.49s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    96.49s     Wait for com.johannesemmrich.Restock to idle
+    t =    96.50s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    96.51s     Check for interrupting elements affecting Window
+    t =    96.54s     Synthesize event
+    t =    96.55s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    96.56s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    96.56s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    96.57s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    96.58s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    97.84s     Wait for com.johannesemmrich.Restock to idle
+    t =    98.30s Waiting 2.0s for "Batterien" StaticText to exist
+    t =    99.35s     Checking `Expect predicate `existsNoRetry == 1` for object "Batterien" StaticText`
+    t =    99.35s         Checking existence of `"Batterien" StaticText`
+    t =    99.42s         Capturing element debug description
+    t =   100.30s     Checking `Expect predicate `existsNoRetry == 1` for object "Batterien" StaticText`
+    t =   100.30s         Checking existence of `"Batterien" StaticText`
+    t =   100.40s         Capturing element debug description
+    t =   100.40s     Checking existence of `"Batterien" StaticText`
+    t =   100.47s Collecting debug information to assist test failure triage
+    t =   100.47s     Requesting snapshot of accessibility hierarchy for app with pid 37951
+    t =   100.52s Press Window (First Match)[0.50, 0.75] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.55] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =   100.52s     Wait for com.johannesemmrich.Restock to idle
+    t =   100.52s     Find the Window (First Match)
+    t =   100.52s     Check for interrupting elements affecting Window
+    t =   100.55s     Synthesize event
+    t =   100.56s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   100.57s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   100.57s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   100.58s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   100.59s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   101.23s     Wait for com.johannesemmrich.Restock to idle
+    t =   102.88s Waiting 2.0s for "Batterien" StaticText to exist
+    t =   103.93s     Checking `Expect predicate `existsNoRetry == 1` for object "Batterien" StaticText`
+    t =   103.93s         Checking existence of `"Batterien" StaticText`
+    t =   104.00s Find the "Batterien" StaticText
+    t =   104.07s Get all elements bound by index for: Elements matching predicate 'label ==[c] "Sonstiges"'
+    t =   104.11s Checking existence of `StaticText (Element at index 0)`
+    t =   104.14s Checking existence of `StaticText (Element at index 1)`
+    t =   104.18s Find the StaticText (Element at index 0)
+    t =   104.21s Find the StaticText (Element at index 1)
+    t =   104.28s Checking existence of `"🏷️ Lager" StaticText`
+    t =   104.36s Tear Down
+    t =   104.36s     Open com.johannesemmrich.Restock
+    t =   104.36s         Launch com.johannesemmrich.Restock
+    t =   104.36s             Terminate com.johannesemmrich.Restock:37951
+2026-10-31 17:04:19.646 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-31 17:04:19.646 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =   105.68s             Setting up automation session
+    t =   109.35s             Wait for com.johannesemmrich.Restock to idle
+    t =   111.54s     Terminate com.johannesemmrich.Restock:38492
+Test Case '-[RestockUITests.StoreStationsUITests testAddAndDeleteStationFromSetup]' passed (113.147 seconds).
+Test Case '-[RestockUITests.StoreStationsUITests testDeletingLastStationAsksToRemoveStations]' started.
+    t =     0.00s Start Test at 2026-10-31 17:04:27.330
+    t =     0.05s Set Up
+    t =     0.05s Open com.johannesemmrich.Restock
+    t =     0.05s     Launch com.johannesemmrich.Restock
+2026-10-31 17:04:27.380 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-31 17:04:27.380 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.26s         Setting up automation session
+    t =     2.12s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreStationsUITests testDeletingLastStationAsksToRemoveStations] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.92s Checking existence of `Button (First Match)`
+    t =     4.06s Find the Button (First Match)
+    t =     4.12s Find the "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     4.15s Tap "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     4.15s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.15s     Find the "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     4.17s     Check for interrupting elements affecting "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     4.19s     Synthesize event
+    t =     4.48s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.91s Waiting 20.0s for "Salami" StaticText to exist
+    t =     5.96s     Checking `Expect predicate `existsNoRetry == 1` for object "Salami" StaticText`
+    t =     5.96s         Checking existence of `"Salami" StaticText`
+    t =     6.06s Checking existence of `"storeDetail.moreMenu" Any`
+    t =     6.08s Find the "storeDetail.moreMenu" Any
+    t =     6.10s Find the "storeDetail.moreMenu" Button
+    t =     6.13s Tap "storeDetail.moreMenu" Button
+    t =     6.13s     Wait for com.johannesemmrich.Restock to idle
+    t =     6.13s     Find the "storeDetail.moreMenu" Button
+    t =     6.15s     Check for interrupting elements affecting "storeDetail.moreMenu" Button
+    t =     6.18s     Synthesize event
+    t =     6.48s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.68s Checking existence of `"store.menu.setupStations" Button`
+    t =     7.72s Find the "store.menu.setupStations" Button
+    t =     7.74s Find the "store.menu.setupStations" Button
+    t =     7.77s Tap "store.menu.setupStations" Button
+    t =     7.77s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.77s     Find the "store.menu.setupStations" Button
+    t =     7.79s     Check for interrupting elements affecting "store.menu.setupStations" Button
+    t =     7.83s     Synthesize event
+    t =     8.12s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.60s Waiting 20.0s for "stationSetup.addStation" Any to exist
+    t =    10.62s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.addStation" Any`
+    t =    10.62s         Checking existence of `"stationSetup.addStation" Any`
+    t =    10.71s Checking existence of `"stationSetup.remove" Any`
+    t =    10.77s Find the "stationSetup.remove" Any
+    t =    10.83s Find the "stationSetup.remove" Button
+    t =    10.90s Tap "stationSetup.remove" Button
+    t =    10.90s     Wait for com.johannesemmrich.Restock to idle
+    t =    10.90s     Find the "stationSetup.remove" Button
+    t =    10.96s     Check for interrupting elements affecting "stationSetup.remove" Button
+    t =    11.03s     Synthesize event
+    t =    11.32s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.46s Checking existence of `"stationSetup.confirmRemove" Button`
+    t =    11.69s Find the "stationSetup.confirmRemove" Button
+    t =    11.85s Find the "stationSetup.confirmRemove" Button
+    t =    12.00s Tap "stationSetup.confirmRemove" Button
+    t =    12.00s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.00s     Find the "stationSetup.confirmRemove" Button
+    t =    12.15s     Check for interrupting elements affecting "stationSetup.confirmRemove" Button
+    t =    12.21s     Synthesize event
+    t =    12.50s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.80s Checking existence of `"stationSetup.addStation" Any`
+    t =    12.90s Find the "stationSetup.addStation" Any
+    t =    13.09s Find the "stationSetup.addStation" Button
+    t =    13.29s Tap "stationSetup.addStation" Button
+    t =    13.29s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.55s     Find the "stationSetup.addStation" Button
+    t =    13.60s     Check for interrupting elements affecting "stationSetup.addStation" Button
+    t =    13.67s     Synthesize event
+    t =    13.95s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.16s Waiting 20.0s for TextField (First Match) to exist
+    t =    15.21s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =    15.21s         Checking existence of `TextField (First Match)`
+    t =    15.25s Type 'Lager' into TextField (First Match)
+    t =    15.25s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.25s     Find the TextField (First Match)
+    t =    15.28s     Check for interrupting elements affecting "Name des Gangs" TextField
+    t =    15.34s     Synthesize event
+    t =    15.63s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.63s Tap "Hinzufügen" Button
+    t =    15.63s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.64s     Find the "Hinzufügen" Button
+    t =    15.67s     Check for interrupting elements affecting "Hinzufügen" Button
+    t =    15.73s     Synthesize event
+    t =    16.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.72s Checking existence of `"stationSetup.row.Lager" Any`
+    t =    17.02s Find the "stationSetup.row.Lager" Any
+    t =    17.33s Find the "stationSetup.row.Lager" Button
+    t =    17.72s Tap "stationSetup.row.Lager" Button
+    t =    17.72s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.73s     Find the "stationSetup.row.Lager" Button
+    t =    17.94s     Check for interrupting elements affecting "stationSetup.row.Lager" Button
+    t =    18.02s     Synthesize event
+    t =    18.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    18.70s Waiting 20.0s for "stationSetup.detail.name" TextField to exist
+    t =    19.76s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.detail.name" TextField`
+    t =    19.76s         Checking existence of `"stationSetup.detail.name" TextField`
+    t =    19.89s Checking existence of `"stationSetup.detail.delete" Any`
+    t =    19.95s Find the "stationSetup.detail.delete" Any
+    t =    20.00s Find the "stationSetup.detail.delete" Button
+    t =    20.06s Tap "stationSetup.detail.delete" Button
+    t =    20.06s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.06s     Find the "stationSetup.detail.delete" Button
+    t =    20.11s     Check for interrupting elements affecting "stationSetup.detail.delete" Button
+    t =    20.17s     Synthesize event
+    t =    20.46s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.53s Waiting 20.0s for "Gänge entfernen?" StaticText to exist
+    t =    21.56s     Checking `Expect predicate `existsNoRetry == 1` for object "Gänge entfernen?" StaticText`
+    t =    21.56s         Checking existence of `"Gänge entfernen?" StaticText`
+    t =    21.74s Checking existence of `"Gang „Lager“ löschen?" StaticText`
+    t =    21.80s Checking existence of `"stationSetup.confirmDelete" Button`
+    t =    21.95s Find the "stationSetup.confirmDelete" Button
+    t =    22.09s Find the "stationSetup.confirmDelete" Button
+    t =    22.24s Find the "stationSetup.confirmDelete" Button
+    t =    22.38s Tap "stationSetup.confirmDelete" Button
+    t =    22.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.38s     Find the "stationSetup.confirmDelete" Button
+    t =    22.53s     Check for interrupting elements affecting "stationSetup.confirmDelete" Button
+    t =    22.58s     Synthesize event
+    t =    22.88s     Wait for com.johannesemmrich.Restock to idle
+    t =    23.06s Waiting 20.0s for "stationSetup.template" Any to exist
+    t =    24.12s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.template" Any`
+    t =    24.12s         Checking existence of `"stationSetup.template" Any`
+    t =    24.30s Checking existence of `"stationSetup.row.Lager" Any`
+    t =    24.45s Checking existence of `"stationSetup.done" Any`
+    t =    24.49s Find the "stationSetup.done" Any
+    t =    24.53s Find the "stationSetup.done" Button
+    t =    24.57s Tap "stationSetup.done" Button
+    t =    24.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.57s     Find the "stationSetup.done" Button
+    t =    24.60s     Check for interrupting elements affecting "stationSetup.done" Button
+    t =    24.65s     Synthesize event
+    t =    24.95s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.42s Checking `Expect predicate `exists == 0` for object "stationSetup.addStation" Any`
+    t =    26.42s     Checking existence of `"stationSetup.addStation" Any`
+    t =    26.58s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    26.58s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.59s     Find the Window (First Match)
+    t =    26.59s     Check for interrupting elements affecting Window
+    t =    26.62s     Synthesize event
+    t =    26.62s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    26.63s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    26.64s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    26.64s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    26.76s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    28.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    28.50s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    28.50s     Wait for com.johannesemmrich.Restock to idle
+    t =    28.50s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    28.51s     Check for interrupting elements affecting Window
+    t =    28.55s     Synthesize event
+    t =    28.55s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    28.56s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    28.57s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    28.57s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    28.58s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.84s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.31s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    30.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.32s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.33s     Check for interrupting elements affecting Window
+    t =    30.37s     Synthesize event
+    t =    30.37s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.37s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.38s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.39s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.39s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    31.65s     Wait for com.johannesemmrich.Restock to idle
+    t =    32.12s Tear Down
+    t =    32.12s     Open com.johannesemmrich.Restock
+    t =    32.12s         Launch com.johannesemmrich.Restock
+    t =    32.12s             Terminate com.johannesemmrich.Restock:38527
+2026-10-31 17:05:00.485 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-31 17:05:00.486 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    33.37s             Setting up automation session
+    t =    37.03s             Wait for com.johannesemmrich.Restock to idle
+    t =    39.25s     Terminate com.johannesemmrich.Restock:38684
+Test Case '-[RestockUITests.StoreStationsUITests testDeletingLastStationAsksToRemoveStations]' passed (40.468 seconds).
+Test Case '-[RestockUITests.StoreStationsUITests testRemoveStationsAndApplyTemplate]' started.
+    t =     0.00s Start Test at 2026-10-31 17:05:07.799
+    t =     0.01s Set Up
+    t =     0.01s Open com.johannesemmrich.Restock
+    t =     0.02s     Launch com.johannesemmrich.Restock
+2026-10-31 17:05:07.814 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-31 17:05:07.814 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.23s         Setting up automation session
+    t =     2.06s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StoreStationsUITests testRemoveStationsAndApplyTemplate] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =     3.85s Checking existence of `Button (First Match)`
+    t =     3.96s Find the Button (First Match)
+    t =     3.99s Find the "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     4.02s Tap "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     4.02s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.02s     Find the "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     4.04s     Check for interrupting elements affecting "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =     4.06s     Synthesize event
+    t =     4.34s     Wait for com.johannesemmrich.Restock to idle
+    t =     4.52s Waiting 20.0s for "Salami" StaticText to exist
+    t =     5.55s     Checking `Expect predicate `existsNoRetry == 1` for object "Salami" StaticText`
+    t =     5.55s         Checking existence of `"Salami" StaticText`
+    t =     5.65s Checking existence of `"storeDetail.moreMenu" Any`
+    t =     5.66s Find the "storeDetail.moreMenu" Any
+    t =     5.68s Find the "storeDetail.moreMenu" Button
+    t =     5.71s Tap "storeDetail.moreMenu" Button
+    t =     5.71s     Wait for com.johannesemmrich.Restock to idle
+    t =     5.71s     Find the "storeDetail.moreMenu" Button
+    t =     5.73s     Check for interrupting elements affecting "storeDetail.moreMenu" Button
+    t =     5.77s     Synthesize event
+    t =     6.06s     Wait for com.johannesemmrich.Restock to idle
+    t =     7.26s Waiting 20.0s for Any (First Match) to exist
+    t =     8.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     8.30s         Checking existence of `Any (First Match)`
+    t =     8.35s Tap Any (First Match)
+    t =     8.35s     Wait for com.johannesemmrich.Restock to idle
+    t =     8.35s     Find the Any (First Match)
+    t =     8.37s     Check for interrupting elements affecting "arrow.up.arrow.down" Button
+    t =     8.42s     Synthesize event
+    t =     8.71s     Wait for com.johannesemmrich.Restock to idle
+    t =     9.87s Waiting 5.0s for "Kategorie" Button to exist
+    t =    10.91s     Checking `Expect predicate `existsNoRetry == 1` for object "Kategorie" Button`
+    t =    10.91s         Checking existence of `"Kategorie" Button`
+    t =    10.96s Waiting 20.0s for "Kategorie" Button to exist
+    t =    11.98s     Checking `Expect predicate `existsNoRetry == 1` for object "Kategorie" Button`
+    t =    11.98s         Checking existence of `"Kategorie" Button`
+    t =    12.02s Tap "Kategorie" Button
+    t =    12.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    12.02s     Find the "Kategorie" Button
+    t =    12.04s     Check for interrupting elements affecting "Kategorie" Button
+    t =    12.08s     Synthesize event
+    t =    12.36s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.95s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    13.95s     Wait for com.johannesemmrich.Restock to idle
+    t =    13.96s     Find the Window (First Match)
+    t =    13.97s     Check for interrupting elements affecting Window
+    t =    14.01s     Synthesize event
+    t =    14.02s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    14.02s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    14.03s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    14.04s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    14.05s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    15.30s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.80s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    15.80s     Wait for com.johannesemmrich.Restock to idle
+    t =    15.80s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    15.81s     Check for interrupting elements affecting Window
+    t =    15.85s     Synthesize event
+    t =    15.85s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    15.86s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    15.86s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    15.87s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    15.88s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    17.13s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.61s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    17.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    17.61s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    17.62s     Check for interrupting elements affecting Window
+    t =    17.66s     Synthesize event
+    t =    17.66s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    17.67s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    17.68s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    17.68s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    17.69s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    18.94s     Wait for com.johannesemmrich.Restock to idle
+    t =    19.40s Waiting 2.0s for StaticText (First Match) to exist
+    t =    20.44s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    20.44s         Checking existence of `StaticText (First Match)`
+    t =    20.52s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    20.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    20.64s     Find the Window (First Match)
+    t =    20.65s     Check for interrupting elements affecting Window
+    t =    20.69s     Synthesize event
+    t =    20.69s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.70s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.70s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.71s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.72s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    21.97s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.44s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    22.44s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.45s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    22.45s     Check for interrupting elements affecting Window
+    t =    22.49s     Synthesize event
+    t =    22.49s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    22.50s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    22.50s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    22.51s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    22.52s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    23.78s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.24s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    24.24s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.25s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    24.26s     Check for interrupting elements affecting Window
+    t =    24.29s     Synthesize event
+    t =    24.29s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    24.30s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    24.31s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    24.32s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    24.32s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    25.58s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.03s Checking existence of `"storeDetail.moreMenu" Any`
+    t =    26.09s Find the "storeDetail.moreMenu" Any
+    t =    26.11s Find the "storeDetail.moreMenu" Button
+    t =    26.15s Tap "storeDetail.moreMenu" Button
+    t =    26.15s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.16s     Find the "storeDetail.moreMenu" Button
+    t =    26.17s     Check for interrupting elements affecting "storeDetail.moreMenu" Button
+    t =    26.21s     Synthesize event
+    t =    26.53s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.72s Checking existence of `"store.menu.setupStations" Button`
+    t =    26.76s Find the "store.menu.setupStations" Button
+    t =    26.79s Find the "store.menu.setupStations" Button
+    t =    26.83s Tap "store.menu.setupStations" Button
+    t =    26.83s     Wait for com.johannesemmrich.Restock to idle
+    t =    27.96s     Find the "store.menu.setupStations" Button
+    t =    27.99s     Check for interrupting elements affecting "store.menu.setupStations" Button
+    t =    28.03s     Synthesize event
+    t =    28.32s     Wait for com.johannesemmrich.Restock to idle
+    t =    30.22s Waiting 20.0s for "stationSetup.addStation" Any to exist
+    t =    31.26s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.addStation" Any`
+    t =    31.26s         Checking existence of `"stationSetup.addStation" Any`
+    t =    31.40s Checking existence of `"stationSetup.remove" Any`
+    t =    31.46s Find the "stationSetup.remove" Any
+    t =    31.52s Find the "stationSetup.remove" Button
+    t =    31.58s Tap "stationSetup.remove" Button
+    t =    31.58s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.58s     Find the "stationSetup.remove" Button
+    t =    31.64s     Check for interrupting elements affecting "stationSetup.remove" Button
+    t =    31.71s     Synthesize event
+    t =    32.00s     Wait for com.johannesemmrich.Restock to idle
+    t =    32.29s Checking existence of `"stationSetup.confirmRemove" Button`
+    t =    32.46s Find the "stationSetup.confirmRemove" Button
+    t =    32.61s Find the "stationSetup.confirmRemove" Button
+    t =    32.76s Tap "stationSetup.confirmRemove" Button
+    t =    32.76s     Wait for com.johannesemmrich.Restock to idle
+    t =    32.76s     Find the "stationSetup.confirmRemove" Button
+    t =    32.90s     Check for interrupting elements affecting "stationSetup.confirmRemove" Button
+    t =    33.14s     Synthesize event
+    t =    33.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.91s Waiting 20.0s for "stationSetup.template" Any to exist
+    t =    34.95s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.template" Any`
+    t =    34.95s         Checking existence of `"stationSetup.template" Any`
+    t =    35.13s Checking existence of `"stationSetup.addStation" Any`
+    t =    35.19s Checking existence of `"stationSetup.row.Käse" Any`
+    t =    35.33s Checking existence of `"stationSetup.remove" Any`
+    t =    35.48s Checking existence of `"stationSetup.open.Elektronik" Any`
+    t =    35.62s Checking existence of `"stationSetup.done" Any`
+    t =    35.66s Find the "stationSetup.done" Any
+    t =    35.69s Find the "stationSetup.done" Button
+    t =    35.73s Tap "stationSetup.done" Button
+    t =    35.73s     Wait for com.johannesemmrich.Restock to idle
+    t =    35.74s     Find the "stationSetup.done" Button
+    t =    35.77s     Check for interrupting elements affecting "stationSetup.done" Button
+    t =    35.82s     Synthesize event
+    t =    36.11s     Wait for com.johannesemmrich.Restock to idle
+    t =    37.57s Checking `Expect predicate `exists == 0` for object "stationSetup.addStation" Any`
+    t =    37.57s     Checking existence of `"stationSetup.addStation" Any`
+    t =    37.69s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    37.69s     Wait for com.johannesemmrich.Restock to idle
+    t =    37.69s     Find the Window (First Match)
+    t =    37.70s     Check for interrupting elements affecting Window
+    t =    37.73s     Synthesize event
+    t =    37.73s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    37.73s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    37.74s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    37.74s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    37.75s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    39.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    39.49s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    39.49s     Wait for com.johannesemmrich.Restock to idle
+    t =    39.49s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    39.50s     Check for interrupting elements affecting Window
+    t =    39.53s     Synthesize event
+    t =    39.53s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    39.54s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    39.55s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    39.55s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    39.56s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    40.81s     Wait for com.johannesemmrich.Restock to idle
+    t =    41.29s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    41.29s     Wait for com.johannesemmrich.Restock to idle
+    t =    41.30s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    41.31s     Check for interrupting elements affecting Window
+    t =    41.34s     Synthesize event
+    t =    41.34s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    41.35s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    41.36s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    41.36s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    41.37s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    42.63s     Wait for com.johannesemmrich.Restock to idle
+    t =    43.08s Waiting 2.0s for StaticText (First Match) to exist
+    t =    44.16s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    44.16s         Checking existence of `StaticText (First Match)`
+    t =    44.24s Waiting 2.0s for "Salami" StaticText to exist
+    t =    45.28s     Checking `Expect predicate `existsNoRetry == 1` for object "Salami" StaticText`
+    t =    45.28s         Checking existence of `"Salami" StaticText`
+    t =    45.37s Checking existence of `StaticText (First Match)`
+    t =    45.41s Find the StaticText (First Match)
+    t =    45.46s Find the "Salami" StaticText
+    t =    45.52s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    45.52s     Wait for com.johannesemmrich.Restock to idle
+    t =    45.52s     Find the Window (First Match)
+    t =    45.53s     Check for interrupting elements affecting Window
+    t =    45.55s     Synthesize event
+    t =    45.56s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    45.56s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    45.57s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    45.58s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    45.58s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    46.84s     Wait for com.johannesemmrich.Restock to idle
+    t =    47.31s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    47.31s     Wait for com.johannesemmrich.Restock to idle
+    t =    47.31s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    47.32s     Check for interrupting elements affecting Window
+    t =    47.36s     Synthesize event
+    t =    47.36s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    47.37s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    47.37s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    47.38s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    47.38s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    48.64s     Wait for com.johannesemmrich.Restock to idle
+    t =    49.11s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    49.11s     Wait for com.johannesemmrich.Restock to idle
+    t =    49.11s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    49.12s     Check for interrupting elements affecting Window
+    t =    49.16s     Synthesize event
+    t =    49.17s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    49.18s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    49.19s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    49.19s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    49.20s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    50.46s     Wait for com.johannesemmrich.Restock to idle
+    t =    50.92s Checking existence of `StaticText (First Match)`
+    t =    51.00s Checking existence of `"storeDetail.moreMenu" Any`
+    t =    51.03s Find the "storeDetail.moreMenu" Any
+    t =    51.05s Find the "storeDetail.moreMenu" Button
+    t =    51.08s Tap "storeDetail.moreMenu" Button
+    t =    51.08s     Wait for com.johannesemmrich.Restock to idle
+    t =    51.08s     Find the "storeDetail.moreMenu" Button
+    t =    51.10s     Check for interrupting elements affecting "storeDetail.moreMenu" Button
+    t =    51.14s     Synthesize event
+    t =    51.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    52.52s Waiting 20.0s for "store.menu.setupStations" Button to exist
+    t =    53.54s     Checking `Expect predicate `existsNoRetry == 1` for object "store.menu.setupStations" Button`
+    t =    53.54s         Checking existence of `"store.menu.setupStations" Button`
+    t =    53.58s Checking existence of `"Reihenfolge anpassen" Button`
+    t =    53.60s Waiting 20.0s for Any (First Match) to exist
+    t =    54.64s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    54.64s         Checking existence of `Any (First Match)`
+    t =    54.67s Tap Any (First Match)
+    t =    54.68s     Wait for com.johannesemmrich.Restock to idle
+    t =    54.68s     Find the Any (First Match)
+    t =    54.70s     Check for interrupting elements affecting "arrow.up.arrow.down" Button
+    t =    54.74s     Synthesize event
+    t =    55.03s     Wait for com.johannesemmrich.Restock to idle
+    t =    56.18s Waiting 5.0s for "Kategorie" Button to exist
+    t =    57.21s     Checking `Expect predicate `existsNoRetry == 1` for object "Kategorie" Button`
+    t =    57.21s         Checking existence of `"Kategorie" Button`
+    t =    57.25s Waiting 20.0s for "Kategorie" Button to exist
+    t =    58.32s     Checking `Expect predicate `existsNoRetry == 1` for object "Kategorie" Button`
+    t =    58.32s         Checking existence of `"Kategorie" Button`
+    t =    58.37s Tap "Kategorie" Button
+    t =    58.37s     Wait for com.johannesemmrich.Restock to idle
+    t =    58.37s     Find the "Kategorie" Button
+    t =    58.39s     Check for interrupting elements affecting "Kategorie" Button
+    t =    58.42s     Synthesize event
+    t =    58.71s     Wait for com.johannesemmrich.Restock to idle
+    t =    60.15s Checking existence of `"storeDetail.moreMenu" Any`
+    t =    60.18s Find the "storeDetail.moreMenu" Any
+    t =    60.20s Find the "storeDetail.moreMenu" Button
+    t =    60.25s Tap "storeDetail.moreMenu" Button
+    t =    60.25s     Wait for com.johannesemmrich.Restock to idle
+    t =    60.25s     Find the "storeDetail.moreMenu" Button
+    t =    60.27s     Check for interrupting elements affecting "storeDetail.moreMenu" Button
+    t =    60.30s     Synthesize event
+    t =    60.60s     Wait for com.johannesemmrich.Restock to idle
+    t =    61.72s Checking existence of `"store.menu.setupStations" Button`
+    t =    61.75s Find the "store.menu.setupStations" Button
+    t =    61.78s Find the "store.menu.setupStations" Button
+    t =    61.80s Tap "store.menu.setupStations" Button
+    t =    61.80s     Wait for com.johannesemmrich.Restock to idle
+    t =    61.80s     Find the "store.menu.setupStations" Button
+    t =    61.82s     Check for interrupting elements affecting "store.menu.setupStations" Button
+    t =    61.85s     Synthesize event
+    t =    62.14s     Wait for com.johannesemmrich.Restock to idle
+    t =    63.66s Waiting 20.0s for "stationSetup.addStation" Any to exist
+    t =    64.72s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.addStation" Any`
+    t =    64.72s         Checking existence of `"stationSetup.addStation" Any`
+    t =    64.80s Checking existence of `"stationSetup.template" Any`
+    t =    64.96s Find the "stationSetup.template" Any
+    t =    65.10s Find the "stationSetup.template" Button
+    t =    65.26s Tap "stationSetup.template" Button
+    t =    65.26s     Wait for com.johannesemmrich.Restock to idle
+    t =    65.26s     Find the "stationSetup.template" Button
+    t =    65.40s     Check for interrupting elements affecting "stationSetup.template" Button
+    t =    65.45s     Synthesize event
+    t =    65.74s     Wait for com.johannesemmrich.Restock to idle
+    t =    65.85s Checking existence of `"stationSetup.templateLidl" Button`
+    t =    65.95s Find the "stationSetup.templateLidl" Button
+    t =    66.04s Find the "stationSetup.templateLidl" Button
+    t =    66.14s Tap "stationSetup.templateLidl" Button
+    t =    66.14s     Wait for com.johannesemmrich.Restock to idle
+    t =    66.14s     Find the "stationSetup.templateLidl" Button
+    t =    66.23s     Check for interrupting elements affecting "stationSetup.templateLidl" Button
+    t =    66.27s     Synthesize event
+    t =    66.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    67.04s Waiting 2.0s for "stationSetup.row.Käse" Any to exist
+    t =    68.09s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.row.Käse" Any`
+    t =    68.09s         Checking existence of `"stationSetup.row.Käse" Any`
+    t =    68.31s Checking existence of `"stationSetup.done" Any`
+    t =    68.34s Find the "stationSetup.done" Any
+    t =    68.39s Find the "stationSetup.done" Button
+    t =    68.44s Tap "stationSetup.done" Button
+    t =    68.44s     Wait for com.johannesemmrich.Restock to idle
+    t =    68.44s     Find the "stationSetup.done" Button
+    t =    68.48s     Check for interrupting elements affecting "stationSetup.done" Button
+    t =    68.54s     Synthesize event
+    t =    68.83s     Wait for com.johannesemmrich.Restock to idle
+    t =    70.31s Checking `Expect predicate `exists == 0` for object "stationSetup.addStation" Any`
+    t =    70.31s     Checking existence of `"stationSetup.addStation" Any`
+    t =    70.44s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    70.44s     Wait for com.johannesemmrich.Restock to idle
+    t =    70.44s     Find the Window (First Match)
+    t =    70.45s     Check for interrupting elements affecting Window
+    t =    70.47s     Synthesize event
+    t =    70.47s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    70.48s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    70.49s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    70.49s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    70.50s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    71.75s     Wait for com.johannesemmrich.Restock to idle
+    t =    72.22s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    72.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    72.23s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    72.23s     Check for interrupting elements affecting Window
+    t =    72.27s     Synthesize event
+    t =    72.27s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    72.28s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    72.28s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    72.29s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    72.30s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    73.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    74.01s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    74.01s     Wait for com.johannesemmrich.Restock to idle
+    t =    74.01s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    74.01s     Check for interrupting elements affecting Window
+    t =    74.04s     Synthesize event
+    t =    74.05s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    74.05s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    74.06s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    74.07s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    74.07s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    75.34s     Wait for com.johannesemmrich.Restock to idle
+    t =    75.80s Waiting 2.0s for StaticText (First Match) to exist
+    t =    76.84s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    76.84s         Checking existence of `StaticText (First Match)`
+    t =    76.93s Waiting 2.0s for "Salami" StaticText to exist
+    t =    77.96s     Checking `Expect predicate `existsNoRetry == 1` for object "Salami" StaticText`
+    t =    77.96s         Checking existence of `"Salami" StaticText`
+    t =    78.04s Checking existence of `StaticText (First Match)`
+    t =    78.09s Find the StaticText (First Match)
+    t =    78.14s Find the "Salami" StaticText
+    t =    78.20s Tear Down
+    t =    78.20s     Open com.johannesemmrich.Restock
+    t =    78.20s         Launch com.johannesemmrich.Restock
+    t =    78.20s             Terminate com.johannesemmrich.Restock:38742
+2026-10-31 17:06:27.032 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-31 17:06:27.032 xcodebuild[37903:38721903] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    79.64s             Setting up automation session
+    t =    83.31s             Wait for com.johannesemmrich.Restock to idle
+    t =    85.87s     Terminate com.johannesemmrich.Restock:39143
+Test Case '-[RestockUITests.StoreStationsUITests testRemoveStationsAndApplyTemplate]' passed (87.197 seconds).
+Test Suite 'StoreStationsUITests' passed at 2026-10-31 17:06:34.998.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 240.813 (240.819) seconds
+Test Suite 'RestockUITests.xctest' passed at 2026-10-31 17:06:34.999.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 240.813 (240.820) seconds
+Test Suite 'Selected tests' passed at 2026-10-31 17:06:35.000.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 240.813 (240.822) seconds
+2026-10-31 17:06:53.629 xcodebuild[37903:38721903] [MT] IDETestOperationsObserverDebug: 265.659 elapsed -- Testing started completed.
+2026-10-31 17:06:53.629 xcodebuild[37903:38721903] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-31 17:06:53.629 xcodebuild[37903:38721903] [MT] IDETestOperationsObserverDebug: 265.659 sec, +265.659 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d2a/Logs/Test/Test-Restock-2026.10.31_17-02-27-+0100.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started
