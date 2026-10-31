@@ -151,14 +151,17 @@ jobs:
     # Die UI-Suite läuft in zwei Hälften parallel (Issue #136): A führt die schweren Klassen aus
     # HEAVY_CLASSES aus, B den gesamten Rest, auch künftige Klassen. Grund: Start (1,5–5,4 min),
     # Bau und Testzeit (Schwankung Faktor 1,44 bei gleichem Code) brachten den ungeteilten Job
-    # über das Limit. Das Limit gilt je Hälfte.
+    # über das Limit. Das Limit gilt je Hälfte. Dritter Teil C (Issue #234, D2a): SOLO_CLASSES allein,
+    # weil StoreStationsUITests mit 16 Tests (~30 min auf dem Runner) A über 60 min trieb
+    # (run 41218440534: 53 Tests grün, Abbruch am Limit); A und B überspringen sie.
     timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
-        half: [A, B]
+        half: [A, B, C]
     env:
-      HEAVY_CLASSES: "ReceiptReviewUITests ShoppingRouteUITests AddItemQuantitySuggestionUITests ReceiptResolutionStatsUITests DynamicTypeUITests StoreStationsUITests"
+      HEAVY_CLASSES: "ReceiptReviewUITests ShoppingRouteUITests AddItemQuantitySuggestionUITests ReceiptResolutionStatsUITests DynamicTypeUITests"
+      SOLO_CLASSES: "StoreStationsUITests"
     steps:
       - uses: actions/checkout@v4
 
@@ -217,10 +220,14 @@ jobs:
             for CLASS in $HEAVY_CLASSES; do
               SELECTION+=("-only-testing:RestockUITests/$CLASS")
             done
+          elif [ "${{ matrix.half }}" = "C" ]; then
+            for CLASS in $SOLO_CLASSES; do
+              SELECTION+=("-only-testing:RestockUITests/$CLASS")
+            done
           else
             export TEST_RUNNER_RESTOCK_NOTIF_DECISION=deny
             SELECTION+=("-only-testing:RestockUITests")
-            for CLASS in $HEAVY_CLASSES; do
+            for CLASS in $HEAVY_CLASSES $SOLO_CLASSES; do
               SELECTION+=("-skip-testing:RestockUITests/$CLASS")
             done
           fi
