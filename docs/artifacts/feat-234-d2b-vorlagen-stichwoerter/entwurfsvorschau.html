@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kategorien einrichten Teil 2b Entwurf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: Erklärtext oben je Abschnitt, Telefon-Attrappen paarweise hell/dunkel; App-Farben aus Assets.xcassets (wie Entwurf D1) */
+:root {
+  --page-bg: #efeadc;
+  --page-fg: #201d16;
+  --page-muted: #6f6a5b;
+  --page-card: #fdfbf4;
+  --page-line: rgba(32,29,22,.14);
+  --page-accent: #666f38;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Instrument Sans", -apple-system, "Segoe UI", sans-serif;
+  --font-app: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --page-bg: #0f0e0b; --page-fg: #ebe7da; --page-muted: #a29b8a; --page-card: #1d1c16;
+  --page-line: rgba(235,231,218,.14); --page-accent: #a7ae6b; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --page-bg: #0f0e0b; --page-fg: #ebe7da; --page-muted: #a29b8a; --page-card: #1d1c16;
+  --page-line: rgba(235,231,218,.14); --page-accent: #a7ae6b; color-scheme: dark }
+
+.app-light { --canvas:#f5f2e9; --surface:#fdfbf4; --ink:#201d16; --sec:#6f6a5b; --accent:#666f38; --amber:#8b6826; --red:#c0392b; --hair:rgba(32,29,22,.12); --chip:rgba(102,111,56,.12); }
+.app-dark  { --canvas:#141310; --surface:#1d1c16; --ink:#ebe7da; --sec:#a29b8a; --accent:#a7ae6b; --amber:#c89a4a; --red:#e2645a; --hair:rgba(235,231,218,.12); --chip:rgba(167,174,107,.16); }
+
+body { margin: 0; background: var(--page-bg); color: var(--page-fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 56px; }
+h1, h2 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: -.01em; }
+h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
+h2 { font-size: 26px; line-height: 1.2; }
+p { margin: 0; max-width: 66ch; }
+.lead { color: var(--page-muted); font-size: 17px; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--page-accent); font-weight: 600; }
+header, section { display: grid; gap: 18px; }
+.sec-head { display: grid; gap: 8px; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 99px; border: 1px solid var(--page-line); color: var(--page-muted); }
+.tag.rec { color: var(--page-accent); border-color: var(--page-accent); }
+.row { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+figure { margin: 0; display: grid; gap: 10px; justify-items: center; }
+figcaption { font-size: 13px; color: var(--page-muted); text-align: center; max-width: 300px; }
+.shot { width: 300px; max-width: 100%; border-radius: 34px; border: 1px solid var(--page-line); }
+.notes { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; max-width: 72ch; }
+.notes li { padding-left: 18px; position: relative; }
+.notes li::before { content: ""; position: absolute; left: 0; top: .7em; width: 7px; height: 1.5px; background: var(--page-accent); }
+.decide { background: var(--page-card); border: 1px solid var(--page-line); border-radius: 16px; padding: 20px 22px; display: grid; gap: 12px; max-width: 820px; }
+table { border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 6px 14px 6px 0; border-bottom: 1px solid var(--page-line); vertical-align: top; }
+th { color: var(--page-muted); font-weight: 600; }
+.tblwrap { overflow-x: auto; }
+
+.phone { width: 300px; max-width: 100%; box-sizing: border-box; background: var(--canvas); color: var(--ink); border-radius: 34px; border: 1px solid var(--page-line); overflow: hidden; font-family: var(--font-app); font-size: 13px; padding: 14px 14px 18px; display: grid; gap: 10px; align-content: start; }
+.nav { display: flex; align-items: center; gap: 10px; }
+.nav b { font-size: 16px; flex: 1; text-align: center; }
+.nav .l, .nav .r { font-size: 13px; color: var(--accent); min-width: 54px; }
+.nav .r { text-align: right; font-weight: 600; }
+.lbl { font-size: 11px; color: var(--sec); text-transform: uppercase; letter-spacing: .04em; padding: 4px 4px 0; display: flex; justify-content: space-between; }
+.card { background: var(--surface); border-radius: 14px; padding: 0 12px; }
+.item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--hair); min-height: 22px; }
+.item:first-child { border-top: 0; }
+.it { flex: 1; min-width: 0; display: grid; }
+.it .nm { font-size: 14px; }
+.it .sub { font-size: 11px; color: var(--sec); }
+.em { width: 20px; text-align: center; flex: none; }
+.grip { color: var(--sec); letter-spacing: -1px; flex: none; }
+.chev { color: var(--sec); flex: none; }
+.check { color: var(--accent); font-weight: 700; flex: none; }
+.act { color: var(--accent); font-size: 12px; font-weight: 600; flex: none; }
+.add { color: var(--accent); }
+.muted { color: var(--sec); }
+.strike { color: var(--sec); text-decoration: line-through; }
+.hint { font-size: 11px; color: var(--sec); padding: 0 4px; }
+.btn { text-align: center; background: var(--chip); color: var(--accent); border-radius: 12px; padding: 9px; font-weight: 600; }
+.badge { font-size: 10px; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--amber); color: var(--amber); white-space: nowrap; flex: none; }
+.pick { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--chip); color: var(--accent); white-space: nowrap; flex: none; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+.pick.off { background: transparent; border: 1px dashed var(--sec); color: var(--sec); }
+.pick.open { background: transparent; border: 1px solid var(--hair); color: var(--sec); }
+.field { background: var(--surface); border-radius: 12px; padding: 9px 12px; display: flex; gap: 10px; align-items: center; }
+.menu { background: var(--surface); border-radius: 16px; padding: 2px 14px; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+.menu .item { font-size: 14px; }
+.menu .new { font-weight: 600; color: var(--accent); }
+.dim { opacity: .45; }
+</style>
+<style>
+.swipe { display:flex; align-items:stretch; margin: 0 -12px; border-top: 1px solid var(--hair); }
+.swipe .it2 { flex:1; display:flex; gap:10px; align-items:center; padding:8px 12px; transform: translateX(-8px); }
+.swipe .sw { color:#fff; font-size:11px; font-weight:600; display:flex; align-items:center; justify-content:center; width:62px; }
+.sw.ed { background:#7a7f8a; } .sw.del { background: var(--red); }
+.chip { display:inline-flex; gap:6px; align-items:center; font-size:12px; padding:3px 9px; border-radius:99px; background:var(--chip); color:var(--accent); margin:3px 4px 3px 0; }
+.chips { padding: 8px 0; }
+.alert { background: var(--surface); border-radius: 14px; padding: 14px; text-align:center; display:grid; gap:6px; box-shadow: 0 6px 24px rgba(0,0,0,.18); }
+.alert b { font-size: 14px; } .alert p { font-size: 12px; color: var(--sec); max-width:none; }
+.alert .a { border-top:1px solid var(--hair); padding-top:8px; font-size:14px; color: var(--accent); }
+.alert .a.red { color: var(--red); font-weight:600; }
+.warn { font-size: 11px; color: var(--amber); padding: 0 4px; }
+.sheet { background: var(--surface); border-radius: 14px; padding: 4px 12px; display:grid; }
+.sheet .t { font-size:12px; color: var(--sec); text-align:center; padding:8px 0; }
+.sheet .o { font-size:15px; color: var(--accent); text-align:center; padding:9px 0; border-top:1px solid var(--hair); }
+td.g { font-size: 13px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Issue #234 · Durchgang 2b · Entwurf vor der Spec</span>
+    <h1>Kategorien einrichten, zweiter Teil</h1>
+    <p class="lead">Der erste Teil ist in der App: Gänge anlegen, umbenennen, ordnen, Kategorien zuordnen, Lidl-Vorlage. Der zweite Teil bringt vier weitere Vorlagen, eigene Stichwörter je Gang, Umbenennen und Löschen direkt aus der Kategorie-Auswahl beim Artikel und die Übernahme deiner früheren eigenen Kategorien. Alles unten ist ein Entwurf in den Farben der App, je hell und dunkel, mit einer Alternative.</p>
+  </header>
+
+  <section>
+    <div class="sec-head"><span class="tag rec">Empfehlung</span><h2>1 · Vorlage wählen: eigenes Blatt mit Hinweis</h2>
+      <p>Heute öffnet „Vorlage wählen …“ ein Systemmenü mit nur einem Eintrag, „Lidl“. Neu ist ein eigenes Blatt mit fünf Vorlagen. Die vier Muster tragen „Vorschlag, bitte prüfen“, weil die Recherche nur die grobe Reihenfolge belegt. So war es im freigegebenen Entwurf von Teil 1 schon gezeigt. Wer eine Vorlage wählt, ersetzt die Gänge des Ladens. Sind schon Gänge da, fragt die App vorher nach, wie heute.</p></div>
+    <div class="row">
+      <figure><img class="shot" src="heute-vorlage.png" alt="Heute: Kategorien einrichten im Laden ohne Gänge"><figcaption>Heute: „Vorlage wählen …“ führt zu einem Systemmenü, nur mit „Lidl“</figcaption></figure>
+      <div class="row" data-screen="templates"></div>
+    </div>
+    <div class="sec-head"><span class="tag">Alternative</span><p>Systemmenü wie heute, mit fünf Einträgen. Der Hinweis steht als Text hinter dem Namen, weil das Menü keine Markierungen kennt. Kleiner im Bau, aber der Hinweis geht leicht unter.</p></div>
+    <div class="row" data-screen="templatesAlt"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="tag rec">Zum Prüfen</span><h2>2 · Was in den vier Vorlagen steht</h2>
+      <p>Die Gänge folgen der Recherche (Aldi Süd, Edeka/Kaufland, dm, Hornbach). Standard-Kategorien stehen in Klammern, Stichwörter kursiv. Baumarkt-Kategorien sind in den drei Lebensmittel-Vorlagen ausgeblendet, wie bei Lidl. Was keinem Gang zugeordnet ist, landet unter „Sonstiges“.</p></div>
+    <div class="tblwrap"><table>
+      <tr><th>Discounter 🏷️</th><th>Vollsortimenter 🏬</th><th>Drogerie 🧴</th><th>Baumarkt 🔨</th></tr>
+      <tr>
+        <td class="g">1 🥦 Obst &amp; Gemüse<br>2 🥩 Fleisch &amp; Fisch <i>fisch, lachs, hähnchen, bratwurst …</i><br>3 🥖 Backstation (Backwaren)<br>4 🧀 Wurst, Käse &amp; Molkerei (Milchprodukte) <i>käse, wurst, schinken, eier …</i><br>5 🧊 Kühlregal Fertiges <i>tofu, hummus, salatbox …</i><br>6 🥫 Trockensortiment (Konserven, Gewürze &amp; Backen, Snacks) <i>kaffee, tee, nudeln, reis</i><br>7 ❄️ Tiefkühl<br>8 🥤 Getränke<br>9 🧴 Drogerie &amp; Baby (8 Drogerie-Kategorien, Tierbedarf)<br>10 🛒 Aktionsware (Haushalt, Elektronik, Textilien …)</td>
+        <td class="g">1 🥦 Obst &amp; Gemüse<br>2 🥖 Backwaren<br>3 🥩 Fleisch, Wurst &amp; Fisch <i>fisch, lachs …</i><br>4 🧀 Käse <i>käse, gouda, feta …</i><br>5 🥛 Molkerei &amp; Kühlung <i>eier, margarine, tofu</i><br>6 🥫 Konserven &amp; Nährmittel <i>nudeln, reis, mehl, müsli</i><br>7 🍫 Süßwaren &amp; Snacks <i>kaffee, tee, schokolade</i><br>8 ❄️ Tiefkühl<br>9 🧴 Drogerie &amp; Haushalt<br>10 🐾 Tierbedarf<br>11 🛒 Non-Food<br>12 🥤 Getränke</td>
+        <td class="g">1 💄 Kosmetik<br>2 💇 Haarpflege<br>3 🧴 Körperpflege<br>4 🦷 Zahnpflege<br>5 💊 Gesundheit (Medikamente)<br>6 🧻 Hygiene<br>7 👶 Baby<br>8 🧼 Haushalt &amp; Reinigung<br>9 🐾 Tierbedarf<br>10 🌿 Lebensmittel (Snacks, Getränke, Konserven …)<br>11 🛒 Kasse &amp; Geschenke (Schreibwaren, Spielzeug, Deko)</td>
+        <td class="g">1 🌷 Garten &amp; Pflanzen<br>2 💡 Deko &amp; Leuchten<br>3 🚿 Bad &amp; Sanitär<br>4 🧱 Fliesen &amp; Boden<br>5 🎨 Farben &amp; Tapeten <i>tapete, pinsel</i><br>6 🔧 Werkzeug &amp; Maschinen<br>7 🔩 Eisenwaren &amp; Befestigung <i>dübel</i><br>8 🪵 Holz &amp; Baustoffe</td>
+      </tr>
+    </table></div>
+    <p style="font-size:13px;color:var(--page-muted)">Belegt sind nur die groben Abfolgen bei Aldi Süd, Kaufland und Hornbach. Drogerie ist aus Beschreibungen abgeleitet, daher der Hinweis „Vorschlag, bitte prüfen“.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="tag rec">Empfehlung</span><h2>3 · Stichwörter im Gang bearbeiten</h2>
+      <p>Heute zeigt der Gang seine Stichwörter nur an. Neu: eine Zeile je Stichwort, Löschen per Wischen, darunter ein Feld „Stichwort hinzufügen“. Ein Stichwort trifft jedes Wort, das so endet: „käse“ trifft „Bergkäse“. Erlaubt sind einzelne Wörter ab drei Buchstaben. Steht dasselbe Stichwort schon in einem anderen Gang, nimmt die App es trotzdem an und sagt in einer Zeile, welcher Gang gewinnt.</p></div>
+    <div class="row">
+      <figure><img class="shot" src="heute-gang-detail.png" alt="Heute: Gang-Detail"><figcaption>Heute: Name, Emoji, Kategorien; Stichwörter weiter unten nur als Anzeige</figcaption></figure>
+      <div class="row" data-screen="keywords"></div>
+    </div>
+    <div class="sec-head"><span class="tag">Alternative</span><p>Stichwörter als Wortwolke mit ✕ an jedem Wort. Kompakter bei vielen Wörtern, aber kleine Tippziele.</p></div>
+    <div class="row" data-screen="keywordsAlt"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="tag rec">Empfehlung</span><h2>4 · In der Kategorie-Auswahl: Wischen zum Bearbeiten und Löschen</h2>
+      <p>Beim Anlegen oder Bearbeiten eines Artikels zeigt die Auswahl die Gänge des Ladens. Neu: Nach links wischen zeigt „Bearbeiten“ (Name und Emoji) und „Löschen“. Löschen fragt vorher nach, weil die Artikel dieses Gangs danach unter „Sonstiges“ stehen. Beim letzten Gang heißt die Frage „Gänge entfernen?“, wie in der Einrichtung. So funktionieren eigene Kategorien in Läden ohne Gänge schon heute.</p></div>
+    <div class="row">
+      <figure><img class="shot" src="heute-auswahl.png" alt="Heute: Kategorie-Auswahl mit Gängen"><figcaption>Heute: Gänge nur zum Antippen, kein Wischen</figcaption></figure>
+      <div class="row" data-screen="picker"></div>
+    </div>
+    <div class="sec-head"><span class="tag">Alternative</span><p>Kein Wischen, stattdessen unten ein Eintrag „Gänge bearbeiten …“, der die Einrichtung öffnet. Ein Weg weniger, aber man verlässt den Artikel.</p></div>
+    <div class="row" data-screen="pickerAlt"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="tag rec">Empfehlung</span><h2>5 · Frühere eigene Kategorien als Gang übernehmen</h2>
+      <p>Wer vor den Gängen eigene Kategorien angelegt hat (z. B. „Asia-Regal“), sieht sie im Laden mit Gängen heute nicht mehr. Neu steht in der Einrichtung ein Abschnitt „Eigene Kategorien von früher“, nur wenn es welche gibt. Ein Tipp auf „Übernehmen“ macht daraus einen Gang am Ende der Liste. Die Artikel, die du dieser Kategorie zugeordnet hattest, stehen danach sofort in diesem Gang. „Alle übernehmen“ macht das für alle auf einmal. Dazu steht in der Gang-Zeile jetzt „1 Kategorie“ statt „1 Kategorien“.</p></div>
+    <div class="row">
+      <figure><img class="shot" src="heute-uebersicht.png" alt="Heute: Übersicht Kategorien einrichten"><figcaption>Heute: frühere eigene Kategorien kommen nicht vor; „1 Kategorien“ ohne Einzahl</figcaption></figure>
+      <div class="row" data-screen="takeover"></div>
+    </div>
+    <div class="sec-head"><span class="tag">Alternative</span><p>Beim Wählen einer Vorlage fragt die App einmal: „Eigene Kategorien anhängen?“. Kein eigener Abschnitt, aber nur ein Zeitpunkt und keine Auswahl einzelner Kategorien.</p></div>
+    <div class="row" data-screen="takeoverAlt"></div>
+  </section>
+
+  <section class="decide">
+    <h2>Was du entscheidest</h2>
+    <ul class="notes">
+      <li>Ob die Entwürfe 1, 3, 4 und 5 so passen oder welche Alternative.</li>
+      <li>Ob die Vorlagen-Inhalte aus Abschnitt 2 als Vorschlag reichen.</li>
+      <li>Den Zuschnitt. Teil 2b ist mit Tests rund 1.000 Zeilen, mehr als doppelt so viel wie die geschätzten 400–450. Mein Vorschlag sind zwei Durchgänge:</li>
+    </ul>
+    <div class="tblwrap"><table>
+      <tr><th>Teil</th><th>Inhalt</th><th>Zeilen</th></tr>
+      <tr><td>2b-1</td><td>Vier Vorlagen mit eigenem Blatt, Stichwörter bearbeiten, „1 Kategorie“ in der Einzahl</td><td>ca. 540</td></tr>
+      <tr><td>2b-2</td><td>Wischen in der Kategorie-Auswahl, frühere eigene Kategorien übernehmen, die vier vorgemerkten Oberflächentests aus Teil 1</td><td>ca. 480</td></tr>
+    </table></div>
+    <p>Kein neues Datenfeld, kein iCloud-Schritt. Geteilte Läden bleiben Durchgang 3.</p>
+  </section>
+</div>
+
+<script>
+const nav = (l, t, r) => `<div class="nav"><span class="l">${l}</span><b>${t}</b><span class="r">${r}</span></div>`;
+const row = (e, n, s, right = "") => `<div class="item">${e ? `<span class="em">${e}</span>` : ""}<div class="it"><span class="nm">${n}</span>${s ? `<span class="sub">${s}</span>` : ""}</div>${right}</div>`;
+const tpl = [["🏷️", "Discounter", "10 Gänge"], ["🏬", "Vollsortimenter", "12 Gänge"], ["🧴", "Drogerie", "11 Gänge"], ["🔨", "Baumarkt", "8 Gänge"]];
+const screens = {
+  templates: () => nav("Abbrechen", "Vorlage wählen", "") +
+    `<div class="card">` + row("🛒", "Lidl", "12 Gänge") +
+    tpl.map(([e, n, s]) => row(e, n, s, `<span class="badge">Vorschlag, bitte prüfen</span>`)).join("") + `</div>` +
+    `<div class="hint">Ersetzt die Gänge dieses Ladens. Gemerkte Zuordnungen bleiben.</div>`,
+  templatesAlt: () => nav("", "Kategorien einrichten", "Fertig") +
+    `<div style="height:120px"></div><div class="sheet"><div class="t">Vorlage wählen</div>` +
+    ["Lidl", "Discounter · Vorschlag", "Vollsortimenter · Vorschlag", "Drogerie · Vorschlag", "Baumarkt · Vorschlag"].map(t => `<div class="o">${t}</div>`).join("") +
+    `</div><div class="sheet"><div class="o" style="border:0;font-weight:600">Abbrechen</div></div>`,
+  keywords: () => nav("‹", "Gang", "") +
+    `<div class="lbl"><span>Name</span></div><div class="card">${row("", "Käse", "")}${row("", "Emoji", "", `<span>🧀 ›</span>`)}</div>` +
+    `<div class="lbl"><span>Kategorien in diesem Gang · 0</span></div><div class="card">${row("🥛", "Milchprodukte", "gehört zu Gang Milchprodukte")}<div class="item"><div class="it"><span class="sub">… alle 35</span></div></div></div>` +
+    `<div class="lbl"><span>Stichwörter · 11</span><span>wischen zum Löschen</span></div><div class="card">` +
+    ["käse", "gouda", "mozzarella"].map(k => row("", k, "")).join("") +
+    `<div class="swipe"><div class="it2"><span class="nm">feta</span></div><span class="sw del">Löschen</span></div>` +
+    `<div class="item"><div class="it"><span class="sub">… 7 weitere</span></div></div>` +
+    `<div class="item add"><span class="em">＋</span><div class="it"><span class="nm">bergkäse</span></div><span class="act">Hinzufügen</span></div></div>` +
+    `<div class="warn">„bergkäse“ steht auch in „Kühltheke Fertiges“. Der Gang weiter oben in der Liste gewinnt.</div>` +
+    `<div class="hint">Trifft jedes Wort, das so endet: „käse“ trifft „Bergkäse“. Ein Wort, ab 3 Buchstaben.</div>`,
+  keywordsAlt: () => nav("‹", "Gang", "") +
+    `<div class="lbl"><span>Stichwörter · 11</span></div><div class="card"><div class="chips">` +
+    ["käse", "gouda", "edamer", "emmentaler", "mozzarella", "feta", "parmesan", "camembert", "brie", "gorgonzola", "halloumi"].map(k => `<span class="chip">${k} ✕</span>`).join("") +
+    `</div><div class="item add"><span class="em">＋</span><div class="it"><span class="nm muted">Stichwort hinzufügen</span></div></div></div>`,
+  picker: () => nav("‹", "Kategorie", "") +
+    `<div class="field"><span class="muted">⌕ Suchen oder neu anlegen</span></div>` +
+    `<div class="lbl"><span>Gänge bei Lidl</span></div><div class="card">` +
+    row("🥦", "Obst & Gemüse", "1 offen") + row("🥖", "Brot & Backwaren", "") +
+    `<div class="swipe"><div class="it2"><span class="em">🧊</span><div class="it"><span class="nm">Kühltheke Fertiges</span><span class="sub">1 offen</span></div></div><span class="sw ed">Bearbeiten</span><span class="sw del">Löschen</span></div>` +
+    row("🧀", "Käse", "1 offen") + `</div>` +
+    `<div class="alert"><b>Gang „Kühltheke Fertiges“ löschen?</b><p>Seine Artikel stehen danach unter „Sonstiges“.</p><div class="a red">Löschen</div><div class="a">Abbrechen</div></div>`,
+  pickerAlt: () => nav("‹", "Kategorie", "") +
+    `<div class="lbl"><span>Gänge bei Lidl</span></div><div class="card">` +
+    row("🥦", "Obst & Gemüse", "") + row("🥖", "Brot & Backwaren", "") + row("🧀", "Käse", "") +
+    `<div class="item"><div class="it"><span class="sub">…</span></div></div>` + row("", "Sonstiges", "") + `</div>` +
+    `<div class="card">${row("⚙︎", "Gänge bearbeiten …", "öffnet „Kategorien einrichten“", `<span class="chev">›</span>`)}</div>`,
+  takeover: () => nav("", "Kategorien einrichten", "Fertig") +
+    `<div class="btn">Vorlage wählen …</div>` +
+    `<div class="lbl"><span>Gänge · 12</span></div><div class="card">` +
+    row("🥦", "Obst & Gemüse", "1 Kategorie", `<span class="chev">›</span>`) + row("🥗", "Frische Säfte, Salate …", "10 Stichwörter", `<span class="chev">›</span>`) + row("🥫", "Konserven & Gewürze", "2 Kategorien", `<span class="chev">›</span>`) +
+    `<div class="item"><div class="it"><span class="sub">… 9 weitere</span></div></div></div>` +
+    `<div class="lbl"><span>Eigene Kategorien von früher · 3</span><span>Alle übernehmen</span></div><div class="card">` +
+    row("🍜", "Asia-Regal", "", `<span class="act">Übernehmen</span>`) + row("🍷", "Wein", "", `<span class="act">Übernehmen</span>`) + row("🏷️", "Aktion", "", `<span class="act">Übernehmen</span>`) + `</div>` +
+    `<div class="hint">Übernehmen legt einen Gang am Ende an. Artikel, die du der Kategorie zugeordnet hattest, stehen dann darin.</div>`,
+  takeoverAlt: () => nav("", "Kategorien einrichten", "Fertig") + `<div style="height:110px"></div>` +
+    `<div class="alert"><b>Eigene Kategorien anhängen?</b><p>Asia-Regal, Wein und Aktion kommen als Gänge hinter die Vorlage.</p><div class="a" style="font-weight:600">Anhängen</div><div class="a">Nur Vorlage</div></div>`,
+};
+document.querySelectorAll("[data-screen]").forEach(r => {
+  const build = screens[r.dataset.screen];
+  for (const [cls, label] of [["app-light", "Entwurf hell"], ["app-dark", "Entwurf dunkel"]]) {
+    const fig = document.createElement("figure");
+    fig.innerHTML = `<div class="phone ${cls}">${build()}</div><figcaption>${label}</figcaption>`;
+    r.appendChild(fig);
+  }
+});
+</script>
+</body>
+</html>
