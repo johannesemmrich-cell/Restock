@@ -74,6 +74,12 @@ Xcode does **not** auto-discover files on disk. Every new `.swift` file must be 
 
 Use 24-character hex UUIDs that don't conflict with existing ones. Use the `general-purpose` agent to do this reliably (it can read and edit pbxproj without external tools).
 
+## BACKLOG.md und GitHub Issues
+
+Beide werden parallel genutzt, mit unterschiedlicher Rolle: **GitHub Issues** (`gh issue list`) sind granulare, nummerierte Einzelposten (Bugs, Fragen, Feature-Ideen), die der Nutzer anlegt. **BACKLOG.md** ist das laufende Session-Journal — was wurde gemacht, warum, welche Verify-Runden, welche Nebenfunde.
+
+**Pflicht, nicht optional:** Vor jedem neuen BACKLOG.md-Eintrag `gh issue list --state open` (und bei Bedarf `--state closed`) nach Überschneidung mit dem Thema prüfen. Bei Treffer: Issue-Nummer im BACKLOG-Eintrag verlinken (Format wie bestehend: `(Issue #9, 2026-09-22)`) und nach Abschluss der Arbeit dem Nutzer vorschlagen, das Issue per Kommentar zu beantworten/zu schließen. Ohne diesen Check entsteht Doppel-Tracking derselben Frage in beiden Systemen (ist bereits passiert: Issue #30 vs. eigenständiger BACKLOG-Eintrag zum selben Nachkauf-Thema, 2026-09-24).
+
 ## Architecture
 
 **iOS 18+, Swift 5.9, SwiftUI + SwiftData. No third-party dependencies.**
