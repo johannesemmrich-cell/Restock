@@ -939,6 +939,9 @@ struct SmartCartApp: App {
                     AbbreviatedNameCleanup.runIfNeeded(context: container.mainContext)
                     CatalogEstimateRefresh.runIfNeeded(context: container.mainContext)
                     await SyncCoordinator.shared.resubscribeAll()
+                    // Promo-Code-Freischaltung gegen einen zwischenzeitlichen Entzug prüfen
+                    // (aus Dresslyst übernommen; best-effort, nur der eigene Record).
+                    await PromoCodeService.shared.revalidateLocalRedemption()
                 }
                 // App-wide pull for ALL shared stores: immediately on every (re)activation and
                 // then every 15s while active. Without this, remote changes only arrived via
