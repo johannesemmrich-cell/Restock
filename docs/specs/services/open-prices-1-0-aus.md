@@ -190,3 +190,4 @@ ansehen; dann mit vorher gesetztem Schalter `openPricesContributionEnabled=true`
 ## Changelog
 
 - 2026-11-01: Initial spec created
+- 2026-11-01: Umsetzung validiert. AC-9 mit PO-Ausnahme (Auswahl „Ausnahme, weiter“): drei Fremdfehler, die mit dem Produktcode von main identisch auftreten (`ConsumptionPatternTests` ×2 → #231, `testAddStoreAndQuickAddItemShowsPriceWithoutCrash` → #17). Adversary AMBIGUOUS mit PO-OK; offene Grenze F002: `contribute(_ plan:)` prüft `available` nicht selbst, produktiv nur über `contribute(lines:)` erreichbar.
