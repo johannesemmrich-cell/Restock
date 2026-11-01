@@ -598,7 +598,8 @@ final class StationSetupExtrasUITests: XCTestCase {
         XCTAssertTrue(label("Gang „Käse“ löschen?", app).exists, "Titel der Rückfrage fehlt")
         attach("Y2 Rückfrage", app)
         cancelConfirmation(app, confirm)
-        XCTAssertTrue(pickerRow("Käse", app).exists, "Abbrechen muss den Gang stehen lassen")
+        XCTAssertTrue(pickerRow("Käse", app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Abbrechen muss den Gang stehen lassen")
 
         swipeStation("Käse", "delete", in: app)
         XCTAssertTrue(confirm.waitUntilHittable().matched, "„Gang löschen“ fehlt")
@@ -673,7 +674,11 @@ final class StationSetupExtrasUITests: XCTestCase {
                 waitForGone(row, "Zeile „\(name)“ nach dem Löschen noch da")
             } else {
                 cancelConfirmation(app, confirm)
-                XCTAssertTrue(row.exists, "Abbrechen muss „\(name)“ stehen lassen")
+                attach("Y4 nach Abbrechen", app)
+                // Die Liste springt nach dem Abbrechen nach oben; Rollen direkt danach öffnete im RED-Lauf
+                // einen Gang (Wisch als Tipp gewertet). Die Zählung im Kopf ist der robuste Beleg.
+                XCTAssertTrue(label("Gänge · 12", app).waitForExistence(timeout: UITestWait.defaultTimeout),
+                              "Abbrechen muss „\(name)“ stehen lassen")
             }
         }
         scrollToTop(app)
