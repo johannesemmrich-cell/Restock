@@ -133,6 +133,15 @@ final class PremiumService: ObservableObject {
 
     @AppStorage("developerMode") private var developerMode = false
 
+    /// Freischaltung über einen eingelösten `PromoCodeService`-Code (Freunde/Familie/Live-Tester,
+    /// aus Dresslyst übernommen). Wird von `PromoCodeService` nach Einlösen/Entzugs-Recheck gesetzt.
+    @Published private(set) var hasValidPromoCode: Bool = UserDefaults.standard.bool(forKey: "promoCode.isValid")
+
+    func setHasValidPromoCode(_ value: Bool) {
+        hasValidPromoCode = value
+        UserDefaults.standard.set(value, forKey: "promoCode.isValid")
+    }
+
     /// Restock Pro schaltet nur noch die Ausgaben-Statistik und den Rezeptplan frei — alle
     /// anderen früheren Pro-Features (Kassenbon-Scan, manuelles Eintragen von Preisen, Vorlagen,
     /// geteilte Listen, saisonale Vorschläge) sind seit der Abo-Umstellung im Free-Plan
@@ -144,7 +153,7 @@ final class PremiumService: ObservableObject {
             return true
         }
         #endif
-        return developerMode || hasPurchasedAccess
+        return developerMode || hasPurchasedAccess || hasValidPromoCode
     }
 
     /// Zugang allein aus Käufen, ohne Dev-Modus — Grundlage für „Kauf gefunden“ beim Wiederherstellen.

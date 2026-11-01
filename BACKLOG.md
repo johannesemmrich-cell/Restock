@@ -2,6 +2,26 @@
 
 ## Implementiert
 
+### Promo-Code-Freischaltung aus Dresslyst portiert (2026-11-01)
+Das Promo-Code-Feature der Schwester-App Dresslyst 1:1 nach Restock übernommen (kein offenes GitHub-Issue dazu — `gh issue list` ohne Treffer, dies ist ein eigenständiger Nutzerauftrag). Im Developer-Mode erzeugt/listet/entzieht der Entwickler Codes (Format `XXXX-XXXX`, Alphabet ohne 0/O/1/I — byteidentisch zu Dresslyst), ein normaler Nutzer löst einen Code in den Einstellungen (Pro-/„Daten"-Abschnitt) ein und schaltet damit Restock Pro frei (Ausgaben-Analyse + Rezeptplan).
+
+**Dateien:**
+- Neu `SmartCart/Services/PromoCodeService.swift` — öffentliche CloudKit-DB (Container `iCloud.com.johannesemmrich.SmartCart`, Record-Typ `PromoCode`, Record-Name == Code). Einlösen per direktem ID-Fetch (keine Query), `revalidateLocalRedemption()` beim App-Start erkennt Entzug; Entzug/Reaktivierung über `isRevoked`. Gegenüber Dresslyst idiomatisch angepasst: Protokoll-Naht `PromoCodeDatabase` (Muster `CommunityPriceDatabase`) für Offline-Unit-Tests, Freischaltung injiziert über `onUnlockChange`-Closure statt direktem Singleton-Zugriff.
+- Neu `SmartCart/Views/Settings/PromoCodeAdminView.swift` — Dev-Mode-Verwaltung (deutsche Literale wie der übrige Dev-Bereich).
+- Neu `RestockTests/PromoCodeServiceTests.swift` — 13 Tests über In-Memory-Fake-DB + UnlockSpy, eigene UserDefaults-Suite je Test.
+- `SmartCart/Services/PremiumService.swift` — additiv `hasValidPromoCode` (UserDefaults `promoCode.isValid`) fließt in `hasPremiumAccess` ein (`developerMode || hasPurchasedAccess || hasValidPromoCode`).
+- `SmartCart/SmartCartApp.swift` — `revalidateLocalRedemption()` im App-Start-`.task`.
+- `SmartCart/Views/Settings/SettingsView.swift` — Einlöse-Feld (nur sichtbar solange nicht Pro) + Dev-Link „Promo-Codes".
+- `SmartCart/Resources/{de,en}.lproj/Localizable.strings` — 7 neue Keys je Sprache (Parität).
+- `Restock.xcodeproj/project.pbxproj` — die 3 neuen Dateien von Hand registriert (App-Target bzw. RestockTests), **kein `xcodegen`** (project.yml ist veraltet, CI baut das committete .xcodeproj).
+
+**Verifiziert:** Build grün. `xcodebuild test -only-testing:RestockTests` = **806 Tests, 0 Fehler** (die CloudKit/CoreData-Fehlerzeilen im Log sind Laufzeit-os_log ohne iCloud-Konto im Simulator, keine Testfehler). Unabhängige Verify-Runde (`verify-changes`, 18 Agenten, echter Build+Testlauf, 4 Dimensionen, adversariell gegengeprüft): 16 Befunde bestätigt ok (CloudKit-Nutzung, Premium-Gating lückenlos = genau Ausgaben-Analyse+Rezeptplan, @MainActor/Sendable-Korrektheit, Port-Treue inkl. Reinstall-Grenze, keine Regression der 15 PremiumServiceTests). Zwei Befunde überlebten die Gegenprüfung (beide medium):
+
+1. **CloudKit-Schreibrolle fehlt (BLOCKER fürs Live-Gehen, nicht im Code behebbar):** `redeem` ist ein *Fremdschreiben* (Tester ändert einen vom Entwickler erzeugten Record). Die Default-Rolle der öffentlichen DB gibt `_icloud` kein WRITE auf fremde Records → `CKError.permissionFailure` bei jeder Einlösung außer der des Entwicklers selbst. **Muss im CloudKit-Dashboard** für den Typ `PromoCode` (Development UND Production) die Rolle `_icloud` → WRITE bekommen, genau wie `SharedStore`/`SharedItemPhoto` (nachgewiesen im Repo-Schema: nur diese Fremdschreib-Typen tragen `GRANT CREATE, WRITE TO "_icloud"`). Einzeltest auf dem eigenen Account verdeckt den Fehler (creator == self hat WRITE). Deploy-Kommentar in `PromoCodeSchema` entsprechend korrigiert (nannte fälschlich nur „wie CommunityPrice/SharedStore"). **Erledigt 2026-11-01:** `PromoCode` mit `GRANT CREATE, WRITE TO "_icloud"` in `docs/cloudkit/private-schema-aktuell.ckdb` aufgenommen, per `cktool import-schema` nach Development eingespielt und im Dashboard nach Production deployt; Re-Export belegt Production == Development == Repo-Datei (10 Record-Typen).
+2. **Datenschutz-Offenlegung (Entscheidung des Nutzers nötig, bewusst nicht geändert):** Beim Einlösen wird die anonyme Installations-UUID + `redeemedAt` in die öffentliche DB geschrieben. Kein harter App-Store-/Manifest-Verstoß (Datentyp „Geräte-ID" ist in `PrivacyInfo.xcprivacy` bereits deklariert, deckt die Kennung ab), aber Restocks eigener Offenlegungsstandard listet jeden Off-Device-Fluss einzeln auf (inkl. der analogen Community-Preise-Kennung in `LegalView`/`docs/appstore/datenschutz.md`). Nach diesem Standard sollte ein kurzer Promo-Code-Absatz ergänzt werden. **Nicht eigenmächtig gemacht**, weil außenwirksam und weil `datenschutz.md` wortgleich mit der soeben online gestellten Website-Seite `emmrich-business.com/datenschutz` sein muss (dann beide + `LegalView` gemeinsam ändern). Dresslyst selbst legt es ebenfalls nicht offen — der Port ist insofern treu.
+
+**Offen vor Produktivnutzung:** Punkt 1 ist erledigt (Schema in Development und Production). Fremd-Einlösung auf echtem Gerät mit zweitem Account noch nicht getestet. Punkt 2 ist eine Datenschutz-Textentscheidung. Dev-Mode-Passwort: unverändert (nur als SHA256-Hash im Code), für die Nutzung des Generators nötig.
+
 ### Mengen-Vorbelegung beim Artikel-Anlegen (Issue #57, 2026-09-30)
 
 Legte ein Nutzer einen Artikel ohne Menge an, blieb `quantitySource` bisher immer `"user"` und die Menge stumm `1` — die aus Issue #10 gebaute Rate-Fallback-Logik (`ShoppingItem.learnedRateUsage`) griff dadurch in ihrer `.rateOnly`-Stufe praktisch nie.

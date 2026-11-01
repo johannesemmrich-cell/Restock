@@ -149,6 +149,23 @@ DEFINE SCHEMA
         GRANT READ TO "_world"
     );
 
+    RECORD TYPE PromoCode (
+        "___createTime"          TIMESTAMP,
+        "___createdBy"           REFERENCE,
+        "___etag"                STRING,
+        "___modTime"             TIMESTAMP,
+        "___modifiedBy"          REFERENCE,
+        "___recordID"            REFERENCE,
+        createdAt                TIMESTAMP QUERYABLE SORTABLE,
+        isRevoked                INT64 QUERYABLE SORTABLE,
+        label                    STRING QUERYABLE SEARCHABLE SORTABLE,
+        redeemedAt               TIMESTAMP QUERYABLE SORTABLE,
+        redeemedByInstallationID STRING QUERYABLE SEARCHABLE SORTABLE,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE, WRITE TO "_icloud",
+        GRANT READ TO "_world"
+    );
+
     RECORD TYPE SharedItemPhoto (
         "___createTime" TIMESTAMP,
         "___createdBy"  REFERENCE,
