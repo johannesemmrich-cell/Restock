@@ -1,0 +1,164 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination id=9034BD4F-2D5F-49D5-B906-838326D51C95 -derivedDataPath build/dd-244 "-only-testing:RestockTests/OpenPricesContributionTests"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/SmartCart/Assets.xcassets /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/SmartCart/Preview Content/Preview Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+Build description signature: 299f8465602bc61d3629ad11e57dbdb2
+Build description path: /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/XCBuildData/299f8465602bc61d3629ad11e57dbdb2.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk -o /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/RestockShareExtension/Info.plist (in target 'RestockShareExtension' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/RestockShareExtension/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockShareExtension.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/SmartCartWidgets/Info.plist (in target 'SmartCartWidgets' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/SmartCartWidgets/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/SmartCartWidgets.appex/Info.plist
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/SmartCart/Generated-Info.plist (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/SmartCart/Generated-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockShareExtension.appex -scanforprivacyfile /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/SmartCartWidgets.appex -o /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/Info.plist
+
+CopySwiftLibs /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app (in target 'Restock' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/Restock.debug.dylib --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/SystemExtensions --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/Restock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/empty-RestockTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -o /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Info.plist
+
+CopySwiftLibs /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest (in target 'RestockTests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/RestockTests --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/PlugIns --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/SystemExtensions --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/Restock.app/PlugIns/RestockTests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-infoPlistUtility /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/empty-RestockUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/ProductTypeInfoPlistAdditions.plist -o /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Info.plist
+
+CopySwiftLibs /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/PlugIns --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/SystemExtensions --scan-folder /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+2026-11-01 11:07:54.166455+0100 Restock[24070:41208375] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-11-01 11:07:54.221413+0100 Restock[24070:41208808] [User Defaults] Could not resolve UID for user "mobile".
+2026-11-01 11:07:54.223167+0100 Restock[24070:41208808] [CK] Could not read account info validation counter. (This is a potential performance issue.)
+2026-11-01 11:07:54.280613+0100 Restock[24070:41208755] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1236): <NSCloudKitMirroringDelegate: 0x1046ec0e0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x10468c500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/9034BD4F-2D5F-49D5-B906-838326D51C95/data/Containers/Shared/AppGroup/E04B5C94-F3D6-46A6-A422-A84485563DA2/Library/Application%20Support/default.store)
+Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-11-01 11:07:54.281990+0100 Restock[24070:41208755] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2310): <NSCloudKitMirroringDelegate: 0x1046ec0e0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-11-01 11:07:54.282168+0100 Restock[24070:41208755] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2623): <NSCloudKitMirroringDelegate: 0x1046ec0e0> - Failed to recover from error: NSCocoaErrorDomain:134400
+Recovery encountered the following error: (null):0
+2026-11-01 11:07:54.286146+0100 Restock[24070:41208755] [sync] mirror setup failed (NSCocoaErrorDomain 134400): Der Vorgang konnte nicht abgeschlossen werden. (Cocoa-Fehler 134400.)
+2026-11-01 11:07:54.414960+0100 Restock[24070:41208375] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-11-01 11:07:55.017237+0100 Restock[24070:41208808] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+2026-11-01 11:07:56.136989+0100 Restock[24070:41208375] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+2026-11-01 11:07:56.138869+0100 Restock[24070:41208375] [API] cannot add handler to 0 from 0 - dropping
+2026-11-01 11:07:56.140542+0100 Restock[24070:41208375] [API] cannot add handler to 0 from 0 - dropping
+[AppDelegate] push registration succeeded, token length: 80
+Test Suite 'Selected tests' started at 2026-11-01 11:07:56.506.
+Test Suite 'RestockTests.xctest' started at 2026-11-01 11:07:56.507.
+Test Suite 'OpenPricesContributionTests' started at 2026-11-01 11:07:56.508.
+Test Case '-[RestockTests.OpenPricesContributionTests testCatalogCarriesOffCategoriesForFoodOnly]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testCatalogCarriesOffCategoriesForFoodOnly]' passed (0.015 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testContributeUploadsProofThenPrices]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testContributeUploadsProofThenPrices]' passed (0.021 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testDateString]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testDateString]' passed (0.002 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testDisabledOrLoggedOutSendsNothing]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testDisabledOrLoggedOutSendsNothing]' passed (0.011 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testFormBody]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testFormBody]' passed (0.001 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testLocalizationKeysAreRegistered]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testLocalizationKeysAreRegistered]' passed (0.004 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testLocationStoreRoundTrip]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testLocationStoreRoundTrip]' passed (0.004 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testLoginStoresTokenAndLogoutClears]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testLoginStoresTokenAndLogoutClears]' passed (0.004 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testMultipartBody]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testMultipartBody]' passed (0.001 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testNominatimParse]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testNominatimParse]' passed (0.002 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testOpenPricesIsUnavailableInRelease1_0]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testOpenPricesIsUnavailableInRelease1_0]' passed (0.002 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testPlanIsNilWithoutContributableLine]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testPlanIsNilWithoutContributableLine]' passed (0.003 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testPlanMapsCategoriesAndPricePer]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testPlanMapsCategoriesAndPricePer]' passed (0.006 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testPriceBodyFieldNames]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testPriceBodyFieldNames]' passed (0.001 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testPriceFailureIsCountedAndOthersContinue]' started.
+2026-11-01 11:07:56.600114+0100 Restock[24070:41208750] [openprices] Open Prices: Preis nicht gespeichert: badStatus(400, "invalid")
+Test Case '-[RestockTests.OpenPricesContributionTests testPriceFailureIsCountedAndOthersContinue]' passed (0.014 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testPricePer]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testPricePer]' passed (0.001 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testProofFailureSendsNoPrices]' started.
+2026-11-01 11:07:56.606489+0100 Restock[24070:41208971] [openprices] Open Prices: Nachweis nicht hochgeladen: badStatus(401, "Not authenticated")
+Test Case '-[RestockTests.OpenPricesContributionTests testProofFailureSendsNoPrices]' passed (0.005 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testReadinessIsDisabledWhenUnavailable]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testReadinessIsDisabledWhenUnavailable]' passed (0.003 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testReadinessOrder]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testReadinessOrder]' passed (0.001 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testSharedServiceIsUnavailable]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testSharedServiceIsUnavailable]' passed (0.019 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testUnavailableServiceNeverSends]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testUnavailableServiceNeverSends]' passed (0.004 seconds).
+Test Case '-[RestockTests.OpenPricesContributionTests testURLsCarryAppName]' started.
+Test Case '-[RestockTests.OpenPricesContributionTests testURLsCarryAppName]' passed (0.001 seconds).
+Test Suite 'OpenPricesContributionTests' passed at 2026-11-01 11:07:56.636.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.121 (0.128) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-11-01 11:07:56.637.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.121 (0.129) seconds
+Test Suite 'Selected tests' passed at 2026-11-01 11:07:56.637.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.121 (0.131) seconds
+2026-11-01 11:07:56.970 xcodebuild[23965:41207538] [MT] IDETestOperationsObserverDebug: 13.315 elapsed -- Testing started completed.
+2026-11-01 11:07:56.971 xcodebuild[23965:41207538] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-01 11:07:56.971 xcodebuild[23965:41207538] [MT] IDETestOperationsObserverDebug: 13.315 sec, +13.315 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Developer/Restock/.claude/worktrees/cheerful-sleeping-rivest/build/dd-244/Logs/Test/Test-Restock-2026.11.01_11-07-41-+0100.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

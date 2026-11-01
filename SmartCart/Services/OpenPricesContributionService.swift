@@ -312,6 +312,9 @@ enum OpenPricesContribution {
     static let appName = "Restock"
     /// Bis der Nachweis gegen Pre-Production vorliegt, geht nichts nach Production.
     static let environment: OpenPricesEnvironment = .preProduction
+    /// Issue #244: in 1.0 ausgeblendet (App Review 2.1/1.2). Sperrt Einstieg und Sendeweg,
+    /// auch bei früher eingeschaltetem Schalter.
+    static let isAvailable = false
     static let currency = "EUR"
 
     static func isEnabled(in defaults: UserDefaults) -> Bool {
@@ -420,14 +423,16 @@ actor OpenPricesContributionService {
     let defaults: UserDefaults
     let locations: OpenPricesLocationStore
     let now: () -> Date
+    let available: Bool
 
     init(api: OpenPricesAPI, tokens: OpenPricesTokenStore, defaults: UserDefaults, locations: OpenPricesLocationStore,
-         now: @escaping () -> Date = Date.init) {
+         now: @escaping () -> Date = Date.init, available: Bool = OpenPricesContribution.isAvailable) {
         self.api = api
         self.tokens = tokens
         self.defaults = defaults
         self.locations = locations
         self.now = now
+        self.available = available
     }
 
     var isEnabled: Bool { OpenPricesContribution.isEnabled(in: defaults) }
@@ -435,7 +440,7 @@ actor OpenPricesContributionService {
     var username: String? { defaults.string(forKey: OpenPricesContribution.usernameKey) }
 
     func readiness(for storeID: UUID, hasImage: Bool) -> OpenPricesContribution.Readiness {
-        OpenPricesContribution.readiness(enabled: isEnabled, loggedIn: isLoggedIn,
+        OpenPricesContribution.readiness(enabled: available && isEnabled, loggedIn: isLoggedIn,
                                          location: locations.location(for: storeID), hasImage: hasImage)
     }
 
