@@ -51,6 +51,7 @@ struct SmartCartApp: App {
             Self.seedShoppingRouteForUITestsIfNeeded(context: container.mainContext)
             Self.clearStationStoreForUITestsIfNeeded(context: container.mainContext)
             Self.seedStationStoreForUITestsIfNeeded(context: container.mainContext)
+            Self.seedLegacyCustomCategoriesForUITestsIfNeeded(context: container.mainContext)
             Self.clearLegacyLearnedPriceSeedForUITestsIfNeeded(context: container.mainContext)
             Self.seedLegacyLearnedPriceForUITestsIfNeeded(context: container.mainContext)
             Self.clearQuickAddAssignmentSeedForUITestsIfNeeded(context: container.mainContext)
@@ -402,11 +403,15 @@ struct SmartCartApp: App {
     /// mit Lidl-Vorlage, offene Artikel in der Hinzufüge-Reihenfolge Batterien, Milch, Gouda,
     /// Salami, Apfel, Brot (nur Brot dringend), kein gelernter Weg, Modus Einkaufsweg. Löscht vorher
     /// alle Läden und Artikel. Only runs on `-seedStationStoreForUITests`, DEBUG-only.
+    /// `-seedStationStoreSharedForUITests` (#234, 2b-2): derselbe Laden mit `shareID` „UITEST-NOSHARE“.
     private static func seedStationStoreForUITestsIfNeeded(context: ModelContext) {
-        guard ProcessInfo.processInfo.arguments.contains("-seedStationStoreForUITests") else { return }
+        let arguments = ProcessInfo.processInfo.arguments
+        let shared = arguments.contains("-seedStationStoreSharedForUITests")
+        guard shared || arguments.contains("-seedStationStoreForUITests") else { return }
         deleteAllStoresAndItems(context: context)
         let store = Store(name: "Stationsladen", emoji: "🛒", colorHex: "#0050AA")
         context.insert(store)
+        if shared { store.shareID = "UITEST-NOSHARE" }
         store.applyStationConfig(StoreCategories.lidlTemplate)
         let start = Date().addingTimeInterval(-3600)
         for (index, name) in ["Batterien", "Milch", "Gouda", "Salami", "Apfel", "Brot"].enumerated() {
@@ -421,10 +426,42 @@ struct SmartCartApp: App {
         try? context.save()
     }
 
+    /// UI-Test-Seed „Altladen“ (#234, 2b-2, `StationSetupExtrasUITests`): Gänge Obst & Gemüse und
+    /// Getränke, eigene Kategorien Asia-Regal (Nudeln von Hand), Wein, Backstation (Baguette von Hand),
+    /// Aktionsware; Apfel automatisch; Modus Kategorie. Löscht vorher alle Läden und Artikel.
+    /// Aufräumer `-clearStationStoreForUITests`. Only runs on `-seedLegacyCustomCategoriesForUITests`, DEBUG-only.
+    private static func seedLegacyCustomCategoriesForUITestsIfNeeded(context: ModelContext) {
+        guard ProcessInfo.processInfo.arguments.contains("-seedLegacyCustomCategoriesForUITests") else { return }
+        deleteAllStoresAndItems(context: context)
+        let store = Store(name: "Altladen", emoji: "🛒", colorHex: "#0050AA")
+        context.insert(store)
+        store.applyStationConfig(StationConfig(stations: [
+            Station(name: "Obst & Gemüse", emoji: "🥦", builtIns: ["Obst & Gemüse"], keywords: []),
+            Station(name: "Getränke", emoji: "🥤", builtIns: ["Getränke"], keywords: []),
+        ], hidden: [], date: Date()))
+        for (name, emoji) in [("Asia-Regal", "🍜"), ("Wein", "🍷"), ("Backstation", "🥖"), ("Aktionsware", "🛒")] {
+            store.addCustomCategory(name, emoji: emoji)
+        }
+        let start = Date().addingTimeInterval(-3600)
+        let entries: [(name: String, category: String?)] = [("Apfel", nil), ("Nudeln", "Asia-Regal"), ("Baguette", "Backstation")]
+        for (index, (name, category)) in entries.enumerated() {
+            let item = ShoppingItem(name: name, category: category ?? AssignmentService.category(for: name), store: store)
+            item.categoryManuallySet = category != nil
+            item.addedDate = start.addingTimeInterval(Double(index) * 60)
+            context.insert(item)
+        }
+        store.routeModel = ShoppingRouteModel()
+        store.currentTrip = ShoppingTrip()
+        store.sortMode = .category
+        try? context.save()
+    }
+
     /// Räumt den Seed oben weg (`StoreStationsUITests.tearDown()`). Only runs on
     /// `-clearStationStoreForUITests`, DEBUG-only.
     private static func clearStationStoreForUITestsIfNeeded(context: ModelContext) {
         guard ProcessInfo.processInfo.arguments.contains("-clearStationStoreForUITests") else { return }
+        // `shareID_<UUID>` aus `-seedStationStoreSharedForUITests` liegt in UserDefaults, nicht im Laden.
+        (try? context.fetch(FetchDescriptor<Store>()))?.forEach { $0.shareID = nil }
         deleteAllStoresAndItems(context: context)
         try? context.save()
     }

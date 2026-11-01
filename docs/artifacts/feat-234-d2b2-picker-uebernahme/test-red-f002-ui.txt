@@ -1,0 +1,869 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project Restock.xcodeproj -scheme Restock -destination "platform=iOS Simulator,name=Restock-Validate-272" "-only-testing:RestockUITests/StationSetupExtrasUITests/testPickerDeleteWithoutChoiceKeepsAutomatic"
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'RestockUITests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'RestockTests' in project 'Restock'
+        ➜ Explicit dependency on target 'Restock' in project 'Restock'
+    Target 'Restock' in project 'Restock'
+        ➜ Explicit dependency on target 'SmartCartWidgets' in project 'Restock'
+        ➜ Explicit dependency on target 'RestockShareExtension' in project 'Restock'
+    Target 'RestockShareExtension' in project 'Restock' (no dependencies)
+    Target 'SmartCartWidgets' in project 'Restock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/Restock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk -o /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache
+
+SwiftDriver RestockUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockUITests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ StationSetupExtrasUITests.swift /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/RestockUITests/StationSetupExtrasUITests.swift (in target 'RestockUITests' from project 'Restock')
+
+SwiftCompile normal arm64 /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/RestockUITests/StationSetupExtrasUITests.swift (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    builtin-SwiftPerFileCompile StationSetupExtrasUITests.swift
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ RestockUITests (in target 'RestockUITests' from project 'Restock')
+
+SwiftCompile normal arm64 (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for RestockUITests (in target 'RestockUITests' from project 'Restock')
+
+SwiftDriver\ Compilation\ Requirements RestockUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockUITests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost -experimental-emit-module-separately -disable-cmo
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftsourceinfo (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftsourceinfo /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/arm64-apple-ios-simulator.swiftdoc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftdoc (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftdoc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.abi.json (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.abi.json /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+SwiftDriverJobDiscovery normal arm64 Compiling StationSetupExtrasUITests.swift (in target 'RestockUITests' from project 'Restock')
+
+SwiftDriver\ Compilation RestockUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RestockUITests -Onone @/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator27.2-24B8118-cc78df9d8a9de6526dea716b1c70fd8e.sdkstatcache -output-file-map /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/hem/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-generated-files.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-own-target-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests-project-headers.hmap -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources/arm64 -Xcc -I/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests-Swift.h -working-directory /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests normal (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk/Developer/Library/Frameworks -filelist /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.swiftmodule -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.xctest-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.xctest-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests
+
+CopySwiftLibs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/PlugIns --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/SystemExtensions --scan-folder /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ExtractAppIntentsMetadata (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name RestockUITests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk --xcode-version 27B52 --platform-family iOS --deployment-target 18.0 --bundle-identifier com.johannesemmrich.Restock.RestockUITests --output /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest --target-triple arm64-apple-ios18.0-simulator --binary-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest/RestockUITests --dependency-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests_dependency_info.dat --stringsdata-file /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftFileList --metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.DependencyMetadataFileList --static-metadata-file-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/RestockUITests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/Restock.build/Debug-iphonesimulator/RestockUITests.build/Objects-normal/arm64/RestockUITests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-11-01 19:54:31.611 appintentsmetadataprocessor[99340:42992826] Starting App Intents metadata extraction
+2026-11-01 19:54:31.619 appintentsmetadataprocessor[99340:42992826] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der --strip-disallowed-xattrs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app/PlugIns/RestockUITests.xctest
+
+CodeSign /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app (in target 'RestockUITests' from project 'Restock')
+    cd /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der --strip-disallowed-xattrs /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app
+/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Products/Debug-iphonesimulator/RestockUITests-Runner.app: replacing existing signature
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-11-01 19:54:37.264476+0100 RestockUITests-Runner[99383:42993320] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-01 19:54:42.070.
+Test Suite 'RestockUITests.xctest' started at 2026-11-01 19:54:42.072.
+Test Suite 'StationSetupExtrasUITests' started at 2026-11-01 19:54:42.073.
+Test Case '-[RestockUITests.StationSetupExtrasUITests testPickerDeleteWithoutChoiceKeepsAutomatic]' started.
+    t =     0.01s Start Test at 2026-11-01 19:54:42.080
+    t =     0.09s Set Up
+    t =     0.11s Open com.johannesemmrich.Restock
+    t =     0.11s     Launch com.johannesemmrich.Restock
+2026-11-01 19:54:42.613 xcodebuild[99304:42992354] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-11-01 19:54:42.614 xcodebuild[99304:42992354] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[99383]: Class UIAccessibilityLoaderWebShared is implemented in both /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.2.8117.0.hi1oAm/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.2.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x109738310) and /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.2.8117.0.hi1oAm/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.2.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10976c398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     1.77s         Setting up automation session
+    t =     5.87s         Wait for com.johannesemmrich.Restock to idle
+<unknown>:0: warning: -[RestockUITests.StationSetupExtrasUITests testPickerDeleteWithoutChoiceKeepsAutomatic] : Type "com.johannesemmrich.restock.storeReorder" was expected to be declared and exported in the Info.plist of Restock.app, but it was not found.
+    t =    10.93s Checking existence of `Button (First Match)`
+    t =    11.36s Find the Button (First Match)
+    t =    11.53s Find the "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =    11.81s Tap "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =    11.81s     Wait for com.johannesemmrich.Restock to idle
+    t =    11.82s     Find the "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =    11.86s     Check for interrupting elements affecting "Stationsladen, · 6, 1x pro Woche, Brot, Apfel…" Button
+    t =    11.99s     Synthesize event
+    t =    12.34s     Wait for com.johannesemmrich.Restock to idle
+    t =    14.22s Waiting 20.0s for "Salami" StaticText to exist
+    t =    15.28s     Checking `Expect predicate `existsNoRetry == 1` for object "Salami" StaticText`
+    t =    15.30s         Checking existence of `"Salami" StaticText`
+    t =    16.14s Checking existence of `"storeDetail.moreMenu" Any`
+    t =    16.18s Find the "storeDetail.moreMenu" Any
+    t =    16.23s Find the "storeDetail.moreMenu" Button
+    t =    16.30s Tap "storeDetail.moreMenu" Button
+    t =    16.30s     Wait for com.johannesemmrich.Restock to idle
+    t =    16.31s     Find the "storeDetail.moreMenu" Button
+    t =    16.34s     Check for interrupting elements affecting "storeDetail.moreMenu" Button
+    t =    16.51s     Synthesize event
+    t =    16.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    21.23s Waiting 20.0s for Any (First Match) to exist
+    t =    22.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    22.30s         Checking existence of `Any (First Match)`
+    t =    22.39s Tap Any (First Match)
+    t =    22.39s     Wait for com.johannesemmrich.Restock to idle
+    t =    22.39s     Find the Any (First Match)
+    t =    22.42s     Check for interrupting elements affecting "arrow.up.arrow.down" Button
+    t =    22.57s     Synthesize event
+    t =    22.89s     Wait for com.johannesemmrich.Restock to idle
+    t =    24.09s Waiting 5.0s for "Kategorie" Button to exist
+    t =    25.14s     Checking `Expect predicate `existsNoRetry == 1` for object "Kategorie" Button`
+    t =    25.14s         Checking existence of `"Kategorie" Button`
+    t =    25.21s Waiting 20.0s for "Kategorie" Button to exist
+    t =    26.28s     Checking `Expect predicate `existsNoRetry == 1` for object "Kategorie" Button`
+    t =    26.28s         Checking existence of `"Kategorie" Button`
+    t =    26.32s Tap "Kategorie" Button
+    t =    26.32s     Wait for com.johannesemmrich.Restock to idle
+    t =    26.32s     Find the "Kategorie" Button
+    t =    26.34s     Check for interrupting elements affecting "Kategorie" Button
+    t =    26.42s     Synthesize event
+    t =    26.75s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.56s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    29.56s     Wait for com.johannesemmrich.Restock to idle
+    t =    29.56s     Find the Window (First Match)
+    t =    29.58s     Check for interrupting elements affecting Window
+    t =    29.69s     Synthesize event
+    t =    29.69s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.69s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.70s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.71s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.72s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.98s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.45s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    31.45s     Wait for com.johannesemmrich.Restock to idle
+    t =    31.45s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    31.46s     Check for interrupting elements affecting Window
+    t =    31.50s     Synthesize event
+    t =    31.50s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    31.50s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    31.51s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    31.52s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    31.53s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    32.78s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.24s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    33.24s     Wait for com.johannesemmrich.Restock to idle
+    t =    33.24s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.25s     Check for interrupting elements affecting Window
+    t =    33.29s     Synthesize event
+    t =    33.29s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.30s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.31s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.32s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.33s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    34.59s     Wait for com.johannesemmrich.Restock to idle
+    t =    35.03s Checking existence of `"Gouda" StaticText`
+    t =    35.39s Checking existence of `"Gouda" StaticText`
+    t =    35.73s Checking existence of `"Gouda" StaticText`
+    t =    36.09s Checking existence of `"Gouda" StaticText`
+    t =    36.45s Checking existence of `"Gouda" StaticText`
+    t =    36.80s Checking existence of `"Gouda" StaticText`
+    t =    37.15s Checking existence of `"Gouda" StaticText`
+    t =    37.23s Press Window (First Match)[0.50, 0.75] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.55] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    37.23s     Wait for com.johannesemmrich.Restock to idle
+    t =    37.23s     Find the Window (First Match)
+    t =    37.24s     Check for interrupting elements affecting Window
+    t =    37.27s     Synthesize event
+    t =    37.27s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    37.27s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    37.28s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    37.29s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    37.30s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    37.94s     Wait for com.johannesemmrich.Restock to idle
+    t =    39.38s Checking existence of `"Gouda" StaticText`
+    t =    39.51s Find the "Gouda" StaticText
+    t =    39.58s Find the "Gouda" StaticText
+    t =    39.67s Checking existence of `"Gouda" StaticText`
+    t =    39.73s Find the "Gouda" StaticText
+    t =    39.80s Find the "Gouda" StaticText
+    t =    39.86s Press "Gouda" StaticText for 1.0 seconds
+    t =    39.86s     Wait for com.johannesemmrich.Restock to idle
+    t =    39.86s     Find the "Gouda" StaticText
+    t =    39.92s     Check for interrupting elements affecting "Gouda" StaticText
+    t =    39.96s     Synthesize event
+    t =    41.18s     Wait for com.johannesemmrich.Restock to idle
+    t =    43.07s Checking existence of `Button (First Match)`
+    t =    43.12s Find the Button (First Match)
+    t =    43.16s Find the "item.action.edit" Button
+    t =    43.19s Tap "item.action.edit" Button
+    t =    43.19s     Wait for com.johannesemmrich.Restock to idle
+    t =    43.19s     Find the "item.action.edit" Button
+    t =    43.21s     Check for interrupting elements affecting "item.action.edit" Button
+    t =    43.25s     Synthesize event
+    t =    43.54s     Wait for com.johannesemmrich.Restock to idle
+    t =    44.93s Checking existence of `"item.categoryRow" Any`
+    t =    45.21s Find the "item.categoryRow" Any
+    t =    45.45s Find the "item.categoryRow" Button
+    t =    45.68s Tap "item.categoryRow" Button
+    t =    45.68s     Wait for com.johannesemmrich.Restock to idle
+    t =    45.68s     Find the "item.categoryRow" Button
+    t =    45.93s     Check for interrupting elements affecting "item.categoryRow" Button
+    t =    46.00s     Synthesize event
+    t =    46.29s     Wait for com.johannesemmrich.Restock to idle
+    t =    46.57s Waiting 20.0s for "categoryPicker.search" TextField to exist
+    t =    47.61s     Checking `Expect predicate `existsNoRetry == 1` for object "categoryPicker.search" TextField`
+    t =    47.61s         Checking existence of `"categoryPicker.search" TextField`
+    t =    47.77s Checking existence of `"categoryPicker.row.Käse" Any`
+    t =    48.00s Find the "categoryPicker.row.Käse" Any
+    t =    48.23s Find the "categoryPicker.row.Käse" Button
+    t =    48.47s Swipe left "categoryPicker.row.Käse" Button
+    t =    48.47s     Wait for com.johannesemmrich.Restock to idle
+    t =    48.47s     Find the "categoryPicker.row.Käse" Button
+    t =    48.69s     Check for interrupting elements affecting "categoryPicker.row.Käse" Button
+    t =    48.76s     Synthesize event
+    t =    49.21s     Wait for com.johannesemmrich.Restock to idle
+    t =    49.85s Checking existence of `"categoryPicker.station.delete.Käse" Any`
+    t =    50.08s Find the "categoryPicker.station.delete.Käse" Any
+    t =    50.31s Find the "categoryPicker.station.delete.Käse" Button
+    t =    50.55s Tap "categoryPicker.station.delete.Käse" Button
+    t =    50.55s     Wait for com.johannesemmrich.Restock to idle
+    t =    50.55s     Find the "categoryPicker.station.delete.Käse" Button
+    t =    50.80s     Check for interrupting elements affecting "categoryPicker.station.delete.Käse" Button
+    t =    50.87s     Synthesize event
+    t =    51.16s     Wait for com.johannesemmrich.Restock to idle
+    t =    51.33s Checking existence of `Button (First Match)`
+    t =    51.50s Find the Button (First Match)
+    t =    51.66s Find the "Gang löschen" Button
+    t =    51.80s Tap "Gang löschen" Button
+    t =    51.80s     Wait for com.johannesemmrich.Restock to idle
+    t =    51.81s     Find the "Gang löschen" Button
+    t =    52.07s     Check for interrupting elements affecting "Gang löschen" Button
+    t =    52.13s     Synthesize event
+    t =    52.42s     Wait for com.johannesemmrich.Restock to idle
+    t =    52.66s Checking existence of `"categoryPicker.row.Käse" Any`
+    t =    53.51s Tap Button (Element at index 0)
+    t =    53.51s     Wait for com.johannesemmrich.Restock to idle
+    t =    53.65s     Find the Button (Element at index 0)
+    t =    53.86s     Check for interrupting elements affecting "BackButton" Button
+    t =    53.92s     Synthesize event
+    t =    53.95s         Scroll element to visible
+    t =    54.00s         Find the "BackButton" Button
+    t =    54.08s         Computed hit point {-1, -1} after scrolling to visible
+    t =    54.37s     Wait for com.johannesemmrich.Restock to idle
+    t =    54.67s Waiting 20.0s for "item.categoryRow" Any to exist
+    t =    55.73s     Checking `Expect predicate `existsNoRetry == 1` for object "item.categoryRow" Any`
+    t =    55.74s         Checking existence of `"item.categoryRow" Any`
+    t =    56.01s Checking existence of `"Speichern" Button`
+    t =    56.04s Find the "Speichern" Button
+    t =    56.06s Find the "Speichern" Button
+    t =    56.10s Tap "Speichern" Button
+    t =    56.10s     Wait for com.johannesemmrich.Restock to idle
+    t =    56.10s     Find the "Speichern" Button
+    t =    56.13s     Check for interrupting elements affecting "Speichern" Button
+    t =    56.18s     Synthesize event
+    t =    56.47s     Wait for com.johannesemmrich.Restock to idle
+    t =    56.98s Checking existence of `"Speichern" Button`
+    t =    57.07s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    57.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    57.07s     Find the Window (First Match)
+    t =    57.07s     Check for interrupting elements affecting Window
+    t =    57.11s     Synthesize event
+    t =    57.11s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    57.12s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    57.13s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    57.14s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    57.15s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    58.41s     Wait for com.johannesemmrich.Restock to idle
+    t =    58.81s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    58.81s     Wait for com.johannesemmrich.Restock to idle
+    t =    58.81s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    58.82s     Check for interrupting elements affecting Window
+    t =    58.86s     Synthesize event
+    t =    58.86s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    58.86s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    58.87s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    58.88s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    58.88s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    60.14s     Wait for com.johannesemmrich.Restock to idle
+    t =    60.61s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    60.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    60.61s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    60.62s     Check for interrupting elements affecting Window
+    t =    60.66s     Synthesize event
+    t =    60.66s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    60.67s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    60.69s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    60.69s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    60.81s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    62.06s     Wait for com.johannesemmrich.Restock to idle
+    t =    62.52s Waiting 2.0s for StaticText (First Match) to exist
+    t =    63.57s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    63.57s         Checking existence of `StaticText (First Match)`
+    t =    63.64s Waiting 2.0s for "Gouda" StaticText to exist
+    t =    64.71s     Checking `Expect predicate `existsNoRetry == 1` for object "Gouda" StaticText`
+    t =    64.71s         Checking existence of `"Gouda" StaticText`
+    t =    64.79s         Capturing element debug description
+    t =    65.65s     Checking `Expect predicate `existsNoRetry == 1` for object "Gouda" StaticText`
+    t =    65.66s         Checking existence of `"Gouda" StaticText`
+    t =    65.79s         Capturing element debug description
+    t =    65.80s     Checking existence of `"Gouda" StaticText`
+    t =    65.92s Collecting debug information to assist test failure triage
+    t =    65.92s     Requesting snapshot of accessibility hierarchy for app with pid 99447
+    t =    66.02s Press Window (First Match)[0.50, 0.75] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.55] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    66.02s     Wait for com.johannesemmrich.Restock to idle
+    t =    66.03s     Find the Window (First Match)
+    t =    66.03s     Check for interrupting elements affecting Window
+    t =    66.07s     Synthesize event
+    t =    66.07s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    66.08s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    66.09s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    66.10s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    66.11s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    66.75s     Wait for com.johannesemmrich.Restock to idle
+    t =    68.25s Waiting 2.0s for "Gouda" StaticText to exist
+    t =    69.32s     Checking `Expect predicate `existsNoRetry == 1` for object "Gouda" StaticText`
+    t =    69.32s         Checking existence of `"Gouda" StaticText`
+    t =    69.42s Find the StaticText (First Match)
+    t =    69.48s Find the "Gouda" StaticText
+    t =    69.55s Find the "Gouda" StaticText
+    t =    69.62s Find the "🥛 Milchprodukte" StaticText
+    t =    69.67s Get all elements bound by index for: Descendants matching type StaticText
+    t =    69.72s Checking existence of `StaticText (Element at index 0)`
+    t =    69.75s Find the StaticText (Element at index 0)
+    t =    69.78s Checking existence of `StaticText (Element at index 1)`
+    t =    69.81s Find the StaticText (Element at index 1)
+    t =    69.84s Checking existence of `StaticText (Element at index 2)`
+    t =    69.88s Find the StaticText (Element at index 2)
+    t =    69.91s Checking existence of `StaticText (Element at index 3)`
+    t =    69.94s Find the StaticText (Element at index 3)
+    t =    69.98s Checking existence of `StaticText (Element at index 4)`
+    t =    70.01s Find the StaticText (Element at index 4)
+    t =    70.04s Checking existence of `StaticText (Element at index 5)`
+    t =    70.07s Find the StaticText (Element at index 5)
+    t =    70.10s Checking existence of `StaticText (Element at index 6)`
+    t =    70.13s Find the StaticText (Element at index 6)
+    t =    70.16s Checking existence of `StaticText (Element at index 7)`
+    t =    70.20s Find the StaticText (Element at index 7)
+    t =    70.23s Checking existence of `StaticText (Element at index 8)`
+    t =    70.26s Find the StaticText (Element at index 8)
+    t =    70.29s Checking existence of `StaticText (Element at index 9)`
+    t =    70.32s Find the StaticText (Element at index 9)
+    t =    70.36s Checking existence of `StaticText (Element at index 10)`
+    t =    70.39s Find the StaticText (Element at index 10)
+    t =    70.43s Checking existence of `StaticText (Element at index 11)`
+    t =    70.46s Find the StaticText (Element at index 11)
+    t =    70.49s Checking existence of `StaticText (Element at index 12)`
+    t =    70.53s Find the StaticText (Element at index 12)
+    t =    70.56s Checking existence of `StaticText (Element at index 13)`
+    t =    70.59s Find the StaticText (Element at index 13)
+    t =    70.62s Checking existence of `StaticText (Element at index 14)`
+    t =    70.66s Find the StaticText (Element at index 14)
+    t =    70.69s Checking existence of `StaticText (Element at index 15)`
+    t =    70.72s Find the StaticText (Element at index 15)
+    t =    70.75s Checking existence of `StaticText (Element at index 16)`
+    t =    70.79s Find the StaticText (Element at index 16)
+    t =    70.82s Checking existence of `StaticText (Element at index 17)`
+    t =    70.85s Find the StaticText (Element at index 17)
+    t =    70.89s Checking existence of `StaticText (Element at index 18)`
+    t =    70.92s Find the StaticText (Element at index 18)
+    t =    70.95s Checking existence of `StaticText (Element at index 19)`
+    t =    70.99s Find the StaticText (Element at index 19)
+    t =    71.02s Checking existence of `StaticText (Element at index 20)`
+    t =    71.05s Find the StaticText (Element at index 20)
+    t =    71.09s Checking existence of `StaticText (Element at index 21)`
+    t =    71.13s Find the StaticText (Element at index 21)
+    t =    71.17s Find the "Milch" StaticText
+    t =    71.20s Find the "Milch" StaticText
+    t =    71.24s Find the "Milch" StaticText
+    t =    71.28s Checking existence of `StaticText (Element at index 22)`
+    t =    71.31s Find the StaticText (Element at index 22)
+    t =    71.35s Find the "ca. 1,20 €, Schätzung" StaticText
+    t =    71.38s Find the "ca. 1,20 €, Schätzung" StaticText
+    t =    71.42s Find the "ca. 1,20 €, Schätzung" StaticText
+    t =    71.45s Checking existence of `StaticText (Element at index 23)`
+    t =    71.49s Find the StaticText (Element at index 23)
+    t =    71.52s Find the "·" StaticText
+    t =    71.56s Find the "·" StaticText
+    t =    71.60s Find the "·" StaticText
+    t =    71.63s Checking existence of `StaticText (Element at index 24)`
+    t =    71.66s Find the StaticText (Element at index 24)
+    t =    71.70s Find the "Milchprodukte" StaticText
+    t =    71.74s Find the "Milchprodukte" StaticText
+    t =    71.78s Find the "Milchprodukte" StaticText
+    t =    71.82s Checking existence of `StaticText (Element at index 25)`
+    t =    71.86s Find the StaticText (Element at index 25)
+    t =    71.91s Find the "Gouda" StaticText
+    t =    71.95s Checking existence of `StaticText (Element at index 26)`
+    t =    71.98s Find the StaticText (Element at index 26)
+    t =    72.03s Find the "ca. 3,79 €, Schätzung" StaticText
+    t =    72.07s Checking existence of `StaticText (Element at index 27)`
+    t =    72.11s Find the StaticText (Element at index 27)
+    t =    72.15s Find the "·" StaticText
+    t =    72.21s Checking existence of `StaticText (Element at index 28)`
+    t =    72.25s Find the StaticText (Element at index 28)
+    t =    72.29s Find the "Milchprodukte" StaticText
+    t =    72.33s Checking existence of `StaticText (Element at index 29)`
+    t =    72.37s Find the StaticText (Element at index 29)
+    t =    72.42s Find the "Sonstiges" StaticText
+    t =    72.46s Checking existence of `StaticText (Element at index 30)`
+    t =    72.50s Find the StaticText (Element at index 30)
+    t =    72.54s Find the "Batterien" StaticText
+    t =    72.58s Checking existence of `StaticText (Element at index 31)`
+    t =    72.62s Find the StaticText (Element at index 31)
+    t =    72.66s Find the "ca. 4,99 €, Schätzung" StaticText
+    t =    72.70s Checking existence of `StaticText (Element at index 32)`
+    t =    72.74s Find the StaticText (Element at index 32)
+    t =    72.78s Find the "·" StaticText
+    t =    72.82s Checking existence of `StaticText (Element at index 33)`
+    t =    72.85s Find the StaticText (Element at index 33)
+    t =    72.89s Find the "Sonstiges" StaticText
+    t =    72.93s Checking existence of `StaticText (Element at index 34)`
+    t =    72.97s Find the StaticText (Element at index 34)
+    t =    73.01s Checking existence of `StaticText (Element at index 35)`
+    t =    73.04s Find the StaticText (Element at index 35)
+    t =    73.08s Checking existence of `StaticText (Element at index 36)`
+    t =    73.12s Find the StaticText (Element at index 36)
+    t =    73.16s Checking existence of `StaticText (Element at index 37)`
+    t =    73.20s Find the StaticText (Element at index 37)
+    t =    73.23s Checking existence of `StaticText (Element at index 38)`
+    t =    73.28s Find the StaticText (Element at index 38)
+    t =    73.32s Checking existence of `StaticText (Element at index 39)`
+    t =    73.35s Find the StaticText (Element at index 39)
+    t =    73.39s Checking existence of `StaticText (Element at index 40)`
+    t =    73.43s Find the StaticText (Element at index 40)
+    t =    73.48s Find the "ca. 1,20 €" StaticText
+    t =    73.52s Find the "ca. 1,20 €" StaticText
+    t =    73.56s Find the "ca. 1,20 €" StaticText
+    t =    73.60s Checking existence of `StaticText (Element at index 41)`
+    t =    73.64s Find the StaticText (Element at index 41)
+    t =    73.68s Find the "Schätzung" StaticText
+    t =    73.72s Find the "Schätzung" StaticText
+    t =    73.76s Find the "Schätzung" StaticText
+    t =    73.80s Checking existence of `StaticText (Element at index 42)`
+    t =    73.83s Find the StaticText (Element at index 42)
+    t =    73.87s Find the "ca. 3,79 €" StaticText
+    t =    73.91s Checking existence of `StaticText (Element at index 43)`
+    t =    73.95s Find the StaticText (Element at index 43)
+    t =    73.99s Find the "Schätzung" StaticText
+    t =    74.03s Checking existence of `StaticText (Element at index 44)`
+    t =    74.07s Find the StaticText (Element at index 44)
+    t =    74.11s Find the "ca. 4,99 €" StaticText
+    t =    74.15s Checking existence of `StaticText (Element at index 45)`
+    t =    74.19s Find the StaticText (Element at index 45)
+    t =    74.23s Find the "Schätzung" StaticText
+    t =    74.27s Checking existence of `StaticText (Element at index 46)`
+    t =    74.31s Find the StaticText (Element at index 46)
+    t =    74.36s Checking existence of `"storeDetail.moreMenu" Any`
+    t =    74.38s Find the "storeDetail.moreMenu" Any
+    t =    74.40s Find the "storeDetail.moreMenu" Button
+    t =    74.43s Tap "storeDetail.moreMenu" Button
+    t =    74.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    74.43s     Find the "storeDetail.moreMenu" Button
+    t =    74.45s     Check for interrupting elements affecting "storeDetail.moreMenu" Button
+    t =    74.49s     Synthesize event
+    t =    74.79s     Wait for com.johannesemmrich.Restock to idle
+    t =    76.00s Checking existence of `"store.menu.setupStations" Button`
+    t =    76.02s Find the "store.menu.setupStations" Button
+    t =    76.04s Find the "store.menu.setupStations" Button
+    t =    76.07s Tap "store.menu.setupStations" Button
+    t =    76.07s     Wait for com.johannesemmrich.Restock to idle
+    t =    76.07s     Find the "store.menu.setupStations" Button
+    t =    76.09s     Check for interrupting elements affecting "store.menu.setupStations" Button
+    t =    76.13s     Synthesize event
+    t =    76.43s     Wait for com.johannesemmrich.Restock to idle
+    t =    77.88s Waiting 20.0s for "stationSetup.addStation" Any to exist
+    t =    78.91s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.addStation" Any`
+    t =    78.91s         Checking existence of `"stationSetup.addStation" Any`
+    t =    79.01s Checking existence of `"stationSetup.row.Kühltheke Fertiges" Any`
+    t =    79.27s Find the "stationSetup.row.Kühltheke Fertiges" Any
+    t =    79.51s Find the "stationSetup.row.Kühltheke Fertiges" Button
+    t =    79.74s Tap "stationSetup.row.Kühltheke Fertiges" Button
+    t =    79.74s     Wait for com.johannesemmrich.Restock to idle
+    t =    79.74s     Find the "stationSetup.row.Kühltheke Fertiges" Button
+    t =    79.97s     Check for interrupting elements affecting "stationSetup.row.Kühltheke Fertiges" Button
+    t =    80.04s     Synthesize event
+    t =    80.35s     Wait for com.johannesemmrich.Restock to idle
+    t =    80.80s Waiting 20.0s for "stationSetup.detail.name" TextField to exist
+    t =    81.83s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.detail.name" TextField`
+    t =    81.83s         Checking existence of `"stationSetup.detail.name" TextField`
+    t =    81.96s Checking existence of `"stationSetup.keyword.field" TextField`
+    t =    82.34s Checking existence of `"stationSetup.keyword.field" TextField`
+    t =    82.74s Checking existence of `"stationSetup.keyword.field" TextField`
+    t =    83.12s Checking existence of `"stationSetup.keyword.field" TextField`
+    t =    83.52s Checking existence of `"stationSetup.keyword.field" TextField`
+    t =    83.91s Checking existence of `"stationSetup.keyword.field" TextField`
+    t =    84.05s Press Window (First Match)[0.50, 0.75] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.55] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    84.05s     Wait for com.johannesemmrich.Restock to idle
+    t =    84.05s     Find the Window (First Match)
+    t =    84.06s     Check for interrupting elements affecting Window
+    t =    84.11s     Synthesize event
+    t =    84.11s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    84.12s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    84.13s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    84.13s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    84.14s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    84.77s     Wait for com.johannesemmrich.Restock to idle
+    t =    86.46s Checking existence of `"stationSetup.keyword.field" TextField`
+    t =    86.59s Find the "stationSetup.keyword.field" TextField
+    t =    86.72s Find the "stationSetup.keyword.field" TextField
+    t =    86.87s Tap "stationSetup.keyword.field" TextField
+    t =    86.87s     Wait for com.johannesemmrich.Restock to idle
+    t =    86.87s     Find the "stationSetup.keyword.field" TextField
+    t =    86.98s     Check for interrupting elements affecting "stationSetup.keyword.field" TextField
+    t =    87.04s     Synthesize event
+    t =    87.34s     Wait for com.johannesemmrich.Restock to idle
+    t =    89.15s Type 'gouda' into "stationSetup.keyword.field" TextField
+    t =    89.15s     Wait for com.johannesemmrich.Restock to idle
+    t =    89.53s     Find the "stationSetup.keyword.field" TextField
+    t =    89.71s     Check for interrupting elements affecting "stationSetup.keyword.field" TextField
+    t =    89.77s     Synthesize event
+    t =    90.09s     Wait for com.johannesemmrich.Restock to idle
+    t =    90.09s Checking existence of `"stationSetup.keyword.add" Any`
+    t =    90.40s Find the "stationSetup.keyword.add" Any
+    t =    90.68s Find the "stationSetup.keyword.add" Button
+    t =    90.98s Tap "stationSetup.keyword.add" Button
+    t =    90.98s     Wait for com.johannesemmrich.Restock to idle
+    t =    90.98s     Find the "stationSetup.keyword.add" Button
+    t =    91.25s     Check for interrupting elements affecting "stationSetup.keyword.add" Button
+    t =    91.32s     Synthesize event
+    t =    91.61s     Wait for com.johannesemmrich.Restock to idle
+    t =    92.04s Waiting 2.0s for "stationSetup.keyword.row.gouda" Any to exist
+    t =    93.09s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.keyword.row.gouda" Any`
+    t =    93.09s         Checking existence of `"stationSetup.keyword.row.gouda" Any`
+    t =    93.38s Tap Button (Element at index 0)
+    t =    93.38s     Wait for com.johannesemmrich.Restock to idle
+    t =    93.38s     Find the Button (Element at index 0)
+    t =    93.43s     Check for interrupting elements affecting "BackButton" Button
+    t =    93.50s     Synthesize event
+    t =    93.53s         Scroll element to visible
+    t =    93.53s         Find the "BackButton" Button
+    t =    93.60s         Computed hit point {-1, -1} after scrolling to visible
+    t =    93.89s     Wait for com.johannesemmrich.Restock to idle
+    t =    94.43s Waiting 20.0s for "stationSetup.addStation" Any to exist
+    t =    95.47s     Checking `Expect predicate `existsNoRetry == 1` for object "stationSetup.addStation" Any`
+    t =    95.47s         Checking existence of `"stationSetup.addStation" Any`
+    t =    95.57s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    95.57s     Wait for com.johannesemmrich.Restock to idle
+    t =    95.57s     Find the Window (First Match)
+    t =    95.58s     Check for interrupting elements affecting Window
+    t =    95.64s     Synthesize event
+    t =    95.65s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    95.65s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    95.66s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    95.66s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    95.78s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    97.05s     Wait for com.johannesemmrich.Restock to idle
+    t =    97.37s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    97.37s     Wait for com.johannesemmrich.Restock to idle
+    t =    97.37s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    97.49s     Check for interrupting elements affecting Window
+    t =    97.58s     Synthesize event
+    t =    97.59s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    97.59s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    97.60s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    97.61s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    97.62s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    98.87s     Wait for com.johannesemmrich.Restock to idle
+    t =    99.22s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    99.22s     Wait for com.johannesemmrich.Restock to idle
+    t =    99.23s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    99.25s     Check for interrupting elements affecting Window
+    t =    99.33s     Synthesize event
+    t =    99.34s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    99.35s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    99.36s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    99.36s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    99.38s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   100.64s     Wait for com.johannesemmrich.Restock to idle
+    t =   100.94s Checking existence of `"stationSetup.done" Any`
+    t =   101.10s Find the "stationSetup.done" Any
+    t =   101.16s Find the "stationSetup.done" Button
+    t =   101.22s Tap "stationSetup.done" Button
+    t =   101.22s     Wait for com.johannesemmrich.Restock to idle
+    t =   101.22s     Find the "stationSetup.done" Button
+    t =   101.26s     Check for interrupting elements affecting "stationSetup.done" Button
+    t =   101.33s     Synthesize event
+    t =   101.63s     Wait for com.johannesemmrich.Restock to idle
+    t =   102.71s Checking existence of `"stationSetup.addStation" Any`
+    t =   102.95s Press Window (First Match)[0.50, 0.35] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =   102.95s     Wait for com.johannesemmrich.Restock to idle
+    t =   103.12s     Find the Window (First Match)
+    t =   103.13s     Check for interrupting elements affecting Window
+    t =   103.17s     Synthesize event
+    t =   103.17s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   103.18s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   103.19s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   103.19s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   103.20s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   104.46s     Wait for com.johannesemmrich.Restock to idle
+    t =   104.85s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =   104.85s     Wait for com.johannesemmrich.Restock to idle
+    t =   104.85s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   104.86s     Check for interrupting elements affecting Window
+    t =   104.93s     Synthesize event
+    t =   104.94s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   104.95s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   104.96s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   104.97s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   104.98s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   106.23s     Wait for com.johannesemmrich.Restock to idle
+    t =   106.69s Press Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.35] for 0.1 seconds, then drag to Window at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.90] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =   106.69s     Wait for com.johannesemmrich.Restock to idle
+    t =   106.69s     Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   106.69s     Check for interrupting elements affecting Window
+    t =   106.73s     Synthesize event
+    t =   106.74s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   106.75s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   106.77s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   106.78s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   106.79s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   108.04s     Wait for com.johannesemmrich.Restock to idle
+    t =   108.51s Waiting 2.0s for StaticText (First Match) to exist
+    t =   109.54s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =   109.54s         Checking existence of `StaticText (First Match)`
+    t =   109.62s Waiting 2.0s for "Gouda" StaticText to exist
+    t =   110.64s     Checking `Expect predicate `existsNoRetry == 1` for object "Gouda" StaticText`
+    t =   110.64s         Checking existence of `"Gouda" StaticText`
+    t =   110.74s         Capturing element debug description
+    t =   111.63s     Checking `Expect predicate `existsNoRetry == 1` for object "Gouda" StaticText`
+    t =   111.63s         Checking existence of `"Gouda" StaticText`
+    t =   111.73s         Capturing element debug description
+    t =   111.73s     Checking existence of `"Gouda" StaticText`
+    t =   111.80s Collecting debug information to assist test failure triage
+    t =   111.81s     Requesting snapshot of accessibility hierarchy for app with pid 99447
+    t =   111.92s Press Window (First Match)[0.50, 0.75] for 0.1 seconds, then drag to Window (First Match)[0.50, 0.55] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =   111.92s     Wait for com.johannesemmrich.Restock to idle
+    t =   111.92s     Find the Window (First Match)
+    t =   111.92s     Check for interrupting elements affecting Window
+    t =   111.95s     Synthesize event
+    t =   111.96s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   111.97s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   111.97s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   111.98s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   111.99s         Find the Window at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   112.63s     Wait for com.johannesemmrich.Restock to idle
+    t =   114.13s Waiting 2.0s for "Gouda" StaticText to exist
+    t =   115.16s     Checking `Expect predicate `existsNoRetry == 1` for object "Gouda" StaticText`
+    t =   115.16s         Checking existence of `"Gouda" StaticText`
+    t =   115.25s Find the StaticText (First Match)
+    t =   115.31s Find the "Gouda" StaticText
+    t =   115.38s Find the "Gouda" StaticText
+    t =   115.45s Find the "🧊 Kühltheke Fertiges" StaticText
+    t =   115.50s Get all elements bound by index for: Descendants matching type StaticText
+    t =   115.54s Checking existence of `StaticText (Element at index 0)`
+    t =   115.57s Find the StaticText (Element at index 0)
+    t =   115.61s Checking existence of `StaticText (Element at index 1)`
+    t =   115.63s Find the StaticText (Element at index 1)
+    t =   115.67s Checking existence of `StaticText (Element at index 2)`
+    t =   115.70s Find the StaticText (Element at index 2)
+    t =   115.74s Checking existence of `StaticText (Element at index 3)`
+    t =   115.76s Find the StaticText (Element at index 3)
+    t =   115.80s Checking existence of `StaticText (Element at index 4)`
+    t =   115.83s Find the StaticText (Element at index 4)
+    t =   115.86s Checking existence of `StaticText (Element at index 5)`
+    t =   115.90s Find the StaticText (Element at index 5)
+    t =   115.93s Checking existence of `StaticText (Element at index 6)`
+    t =   115.96s Find the StaticText (Element at index 6)
+    t =   115.99s Checking existence of `StaticText (Element at index 7)`
+    t =   116.03s Find the StaticText (Element at index 7)
+    t =   116.06s Checking existence of `StaticText (Element at index 8)`
+    t =   116.09s Find the StaticText (Element at index 8)
+    t =   116.12s Checking existence of `StaticText (Element at index 9)`
+    t =   116.16s Find the StaticText (Element at index 9)
+    t =   116.19s Checking existence of `StaticText (Element at index 10)`
+    t =   116.22s Find the StaticText (Element at index 10)
+    t =   116.26s Checking existence of `StaticText (Element at index 11)`
+    t =   116.29s Find the StaticText (Element at index 11)
+    t =   116.33s Checking existence of `StaticText (Element at index 12)`
+    t =   116.36s Find the StaticText (Element at index 12)
+    t =   116.41s Checking existence of `StaticText (Element at index 13)`
+    t =   116.44s Find the StaticText (Element at index 13)
+    t =   116.47s Checking existence of `StaticText (Element at index 14)`
+    t =   116.51s Find the StaticText (Element at index 14)
+    t =   116.55s Checking existence of `StaticText (Element at index 15)`
+    t =   116.58s Find the StaticText (Element at index 15)
+    t =   116.61s Checking existence of `StaticText (Element at index 16)`
+    t =   116.65s Find the StaticText (Element at index 16)
+    t =   116.69s Find the "Salami" StaticText
+    t =   116.72s Find the "Salami" StaticText
+    t =   116.76s Find the "Salami" StaticText
+    t =   116.79s Checking existence of `StaticText (Element at index 17)`
+    t =   116.83s Find the StaticText (Element at index 17)
+    t =   116.86s Find the "ca. 1,79 €, Schätzung" StaticText
+    t =   116.91s Find the "ca. 1,79 €, Schätzung" StaticText
+    t =   116.95s Find the "ca. 1,79 €, Schätzung" StaticText
+    t =   116.98s Checking existence of `StaticText (Element at index 18)`
+    t =   117.02s Find the StaticText (Element at index 18)
+    t =   117.05s Find the "·" StaticText
+    t =   117.09s Find the "·" StaticText
+    t =   117.13s Find the "·" StaticText
+    t =   117.17s Checking existence of `StaticText (Element at index 19)`
+    t =   117.20s Find the StaticText (Element at index 19)
+    t =   117.24s Find the "Kühltheke Fertiges" StaticText
+    t =   117.28s Find the "Kühltheke Fertiges" StaticText
+    t =   117.31s Find the "Kühltheke Fertiges" StaticText
+    t =   117.35s Checking existence of `StaticText (Element at index 20)`
+    t =   117.38s Find the StaticText (Element at index 20)
+    t =   117.42s Find the "🥛 Milchprodukte" StaticText
+    t =   117.46s Find the "🥛 Milchprodukte" StaticText
+    t =   117.49s Find the "🥛 Milchprodukte" StaticText
+    t =   117.53s Checking existence of `StaticText (Element at index 21)`
+    t =   117.57s Find the StaticText (Element at index 21)
+    t =   117.61s Find the "Milch" StaticText
+    t =   117.64s Find the "Milch" StaticText
+    t =   117.68s Find the "Milch" StaticText
+    t =   117.72s Checking existence of `StaticText (Element at index 22)`
+    t =   117.76s Find the StaticText (Element at index 22)
+    t =   117.79s Find the "ca. 1,20 €, Schätzung" StaticText
+    t =   117.86s Find the "ca. 1,20 €, Schätzung" StaticText
+    t =   117.91s Find the "ca. 1,20 €, Schätzung" StaticText
+    t =   117.95s Checking existence of `StaticText (Element at index 23)`
+    t =   117.98s Find the StaticText (Element at index 23)
+    t =   118.02s Find the "·" StaticText
+    t =   118.06s Find the "·" StaticText
+    t =   118.09s Find the "·" StaticText
+    t =   118.13s Checking existence of `StaticText (Element at index 24)`
+    t =   118.16s Find the StaticText (Element at index 24)
+    t =   118.20s Find the "Milchprodukte" StaticText
+    t =   118.24s Find the "Milchprodukte" StaticText
+    t =   118.27s Find the "Milchprodukte" StaticText
+    t =   118.31s Checking existence of `StaticText (Element at index 25)`
+    t =   118.35s Find the StaticText (Element at index 25)
+    t =   118.39s Find the "Gouda" StaticText
+    t =   118.42s Checking existence of `StaticText (Element at index 26)`
+    t =   118.46s Find the StaticText (Element at index 26)
+    t =   118.50s Find the "ca. 3,79 €, Schätzung" StaticText
+    t =   118.54s Checking existence of `StaticText (Element at index 27)`
+    t =   118.57s Find the StaticText (Element at index 27)
+    t =   118.61s Find the "·" StaticText
+    t =   118.67s Checking existence of `StaticText (Element at index 28)`
+    t =   118.70s Find the StaticText (Element at index 28)
+    t =   118.74s Find the "Milchprodukte" StaticText
+    t =   118.77s Checking existence of `StaticText (Element at index 29)`
+    t =   118.81s Find the StaticText (Element at index 29)
+    t =   118.85s Find the "Sonstiges" StaticText
+    t =   118.89s Checking existence of `StaticText (Element at index 30)`
+    t =   118.92s Find the StaticText (Element at index 30)
+    t =   118.97s Find the "Batterien" StaticText
+    t =   119.01s Checking existence of `StaticText (Element at index 31)`
+    t =   119.04s Find the StaticText (Element at index 31)
+    t =   119.09s Find the "ca. 4,99 €, Schätzung" StaticText
+    t =   119.14s Checking existence of `StaticText (Element at index 32)`
+    t =   119.18s Find the StaticText (Element at index 32)
+    t =   119.22s Find the "·" StaticText
+    t =   119.25s Checking existence of `StaticText (Element at index 33)`
+    t =   119.29s Find the StaticText (Element at index 33)
+    t =   119.33s Find the "Sonstiges" StaticText
+    t =   119.37s Checking existence of `StaticText (Element at index 34)`
+    t =   119.40s Find the StaticText (Element at index 34)
+    t =   119.44s Checking existence of `StaticText (Element at index 35)`
+    t =   119.48s Find the StaticText (Element at index 35)
+    t =   119.52s Checking existence of `StaticText (Element at index 36)`
+    t =   119.55s Find the StaticText (Element at index 36)
+    t =   119.59s Checking existence of `StaticText (Element at index 37)`
+    t =   119.63s Find the StaticText (Element at index 37)
+    t =   119.67s Checking existence of `StaticText (Element at index 38)`
+    t =   119.71s Find the StaticText (Element at index 38)
+    t =   119.75s Find the "ca. 1,79 €" StaticText
+    t =   119.80s Find the "ca. 1,79 €" StaticText
+    t =   119.83s Find the "ca. 1,79 €" StaticText
+    t =   119.87s Checking existence of `StaticText (Element at index 39)`
+    t =   119.91s Find the StaticText (Element at index 39)
+    t =   119.95s Find the "Schätzung" StaticText
+    t =   119.99s Find the "Schätzung" StaticText
+    t =   120.03s Find the "Schätzung" StaticText
+    t =   120.08s Checking existence of `StaticText (Element at index 40)`
+    t =   120.11s Find the StaticText (Element at index 40)
+    t =   120.16s Find the "ca. 1,20 €" StaticText
+    t =   120.20s Find the "ca. 1,20 €" StaticText
+    t =   120.24s Find the "ca. 1,20 €" StaticText
+    t =   120.28s Checking existence of `StaticText (Element at index 41)`
+    t =   120.31s Find the StaticText (Element at index 41)
+    t =   120.35s Find the "Schätzung" StaticText
+    t =   120.40s Find the "Schätzung" StaticText
+    t =   120.44s Find the "Schätzung" StaticText
+    t =   120.48s Checking existence of `StaticText (Element at index 42)`
+    t =   120.52s Find the StaticText (Element at index 42)
+    t =   120.56s Find the "ca. 3,79 €" StaticText
+    t =   120.60s Checking existence of `StaticText (Element at index 43)`
+    t =   120.63s Find the StaticText (Element at index 43)
+    t =   120.68s Find the "Schätzung" StaticText
+    t =   120.72s Checking existence of `StaticText (Element at index 44)`
+    t =   120.76s Find the StaticText (Element at index 44)
+    t =   120.80s Find the "ca. 4,99 €" StaticText
+    t =   120.84s Checking existence of `StaticText (Element at index 45)`
+    t =   120.88s Find the StaticText (Element at index 45)
+    t =   120.93s Find the "Schätzung" StaticText
+    t =   120.97s Checking existence of `StaticText (Element at index 46)`
+    t =   121.01s Find the StaticText (Element at index 46)
+    t =   121.09s Find the "🥛 Milchprodukte" StaticText
+/Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/RestockUITests/StationSetupExtrasUITests.swift:841: error: -[RestockUITests.StationSetupExtrasUITests testPickerDeleteWithoutChoiceKeepsAutomatic] : XCTAssertTrue failed - Zwischen „Kühltheke Fertiges“ und „Gouda“ steht eine andere Überschrift: ["🥛 Milchprodukte"]
+    t =   123.20s Tear Down
+    t =   123.20s     Open com.johannesemmrich.Restock
+    t =   123.20s         Launch com.johannesemmrich.Restock
+    t =   123.20s             Terminate com.johannesemmrich.Restock:99447
+2026-11-01 19:56:46.345 xcodebuild[99304:42992354] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-11-01 19:56:46.345 xcodebuild[99304:42992354] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =   124.90s             Setting up automation session
+    t =   133.12s             Wait for com.johannesemmrich.Restock to idle
+    t =   141.74s     Terminate com.johannesemmrich.Restock:1507
+Test Case '-[RestockUITests.StationSetupExtrasUITests testPickerDeleteWithoutChoiceKeepsAutomatic]' failed (143.488 seconds).
+Test Suite 'StationSetupExtrasUITests' failed at 2026-11-01 19:57:05.568.
+	 Executed 1 test, with 1 failure (0 unexpected) in 143.488 (143.496) seconds
+Test Suite 'RestockUITests.xctest' failed at 2026-11-01 19:57:05.571.
+	 Executed 1 test, with 1 failure (0 unexpected) in 143.488 (143.499) seconds
+Test Suite 'Selected tests' failed at 2026-11-01 19:57:05.571.
+	 Executed 1 test, with 1 failure (0 unexpected) in 143.488 (143.501) seconds
+2026-11-01 19:57:28.139 xcodebuild[99304:42992354] [MT] IDETestOperationsObserverDebug: 176.453 elapsed -- Testing started completed.
+2026-11-01 19:57:28.140 xcodebuild[99304:42992354] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-01 19:57:28.140 xcodebuild[99304:42992354] [MT] IDETestOperationsObserverDebug: 176.454 sec, +176.454 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/hem/Library/Developer/Xcode/DerivedData/Restock-gtpwnsbvywrpcbcwdvoamdwogbzf/Logs/Test/Test-Restock-2026.11.01_19-54-28-+0100.xcresult
+
+Failing tests:
+	StationSetupExtrasUITests.testPickerDeleteWithoutChoiceKeepsAutomatic()
+
+** TEST FAILED **
+
+Testing started

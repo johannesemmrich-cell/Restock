@@ -161,7 +161,11 @@ struct StoreDetailView: View {
             // Zurück zum Hauptbildschirm beendet die Live Activity (PO 2026-10-22, zweiter Beschluss).
             // Geht die App nur in den Hintergrund, feuert `onDisappear` nicht – dort bleibt sie.
             LiveActivityService.shared.handle(.listClosed, for: store)
-            if store.shareID != nil {
+            var skipPush = false
+            #if DEBUG
+            skipPush = ProcessInfo.processInfo.arguments.contains("-skipCloudKitForScreenshots")  // wie der Pull oben
+            #endif
+            if store.shareID != nil && !skipPush {
                 let generation = nextSyncGeneration()
                 Task {
                     let ok = await SyncCoordinator.shared.push(store: store)

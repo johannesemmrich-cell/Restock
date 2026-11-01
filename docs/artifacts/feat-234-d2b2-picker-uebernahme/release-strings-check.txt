@@ -1,0 +1,9 @@
+Release-Strings-Nachweis #234 D2b-2, 2026-11-01T20:53:24, Basis 031510d + Arbeitsstand (nach Adversary-Fix F001–F003)
+Build: xcodebuild build -configuration Release -destination 'generic/platform=iOS Simulator' -> BUILD SUCCEEDED
+Binary: Release-iphonesimulator/Restock.app/Restock
+seedLegacyCustomCategoriesForUITests: 0 Treffer (erwartet 0)
+seedStationStoreSharedForUITests: 0 Treffer (erwartet 0)
+UITEST-NOSHARE: 0 Treffer (erwartet 0)
+seedStationStoreForUITests: 0 Treffer (erwartet 0)
+clearStationStoreForUITests: 0 Treffer (erwartet 0)
+Gegenprobe stationSetup.adopt.section: 2 Treffer (erwartet > 0)
