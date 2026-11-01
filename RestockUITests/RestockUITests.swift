@@ -328,4 +328,55 @@ final class RestockUITests: XCTestCase {
         attachment.lifetime = .keepAlways
         add(attachment)
     }
+
+    // MARK: - Open Prices in 1.0 ausgeblendet (Issue #244)
+
+    /// T6: Einstellungen → Funktionen zeigt keinen Eintrag „Open Prices“.
+    func testSettingsHideOpenPrices() {
+        assertSettingsWithoutOpenPrices(extraArguments: [])
+    }
+
+    /// T7: Auch der Entwicklermodus bringt den Eintrag nicht zurück (Argument wird nur gelesen).
+    func testSettingsHideOpenPricesInDeveloperMode() {
+        assertSettingsWithoutOpenPrices(extraArguments: ["-developerMode", "YES"])
+    }
+
+    private func assertSettingsWithoutOpenPrices(extraArguments: [String],
+                                                 file: StaticString = #filePath, line: UInt = #line) {
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES"] + extraArguments
+        UITestLaunch.start(app, expecting: app.buttons["gearshape"], description: "Zahnrad")
+        let gear = app.buttons["gearshape"]
+        XCTAssertTrue(gear.waitUntilHittable().matched, "Zahnrad nicht antippbar", file: file, line: line)
+        gear.tap()
+
+        // Gegenprobe: Der Abschnitt „Funktionen“ ist geladen und sichtbar. Die Form stellt nur sichtbare
+        // Zeilen in den Baum; „Open Prices“ stand direkt unter „Standard-Läden“, darum danach einmal weiter.
+        let defaultStores = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Standard-Läden")).firstMatch
+        var swipes = 0
+        while !defaultStores.waitForExistence(timeout: 3) && swipes < 8 {
+            app.swipeUp()
+            swipes += 1
+        }
+        XCTAssertTrue(defaultStores.waitUntilHittable().matched,
+                      "„Standard-Läden“ nicht sichtbar nach \(swipes) Wischern", file: file, line: line)
+
+        // Geprüft wird zweimal: mit „Standard-Läden“ im Bild und nach kurzem Nachziehen, damit die Zeile
+        // direkt darunter sicher im Baum stünde, falls es sie gäbe.
+        let openPrices = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label BEGINSWITH %@", "Open Prices")).firstMatch
+        attachScreenshot(named: "Einstellungen-Funktionen-ohne-OpenPrices")
+        XCTAssertFalse(openPrices.exists, "Eintrag „Open Prices“ ist in den Einstellungen sichtbar", file: file, line: line)
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
+            .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.55)))
+        attachScreenshot(named: "Einstellungen-Funktionen-nachgezogen")
+        XCTAssertFalse(openPrices.exists, "Eintrag „Open Prices“ nach dem Nachziehen sichtbar", file: file, line: line)
+    }
+
+    private func attachScreenshot(named name: String) {
+        let attachment = XCTAttachment(screenshot: XCUIApplication().screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
 }

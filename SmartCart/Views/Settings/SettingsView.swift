@@ -137,10 +137,13 @@ struct SettingsView: View {
                         Text("Standard-Läden")
                     }
                     // Issue #184: Beitrag an Open Prices (Opt-in, eigenes Konto, Bonfoto öffentlich).
-                    NavigationLink {
-                        OpenPricesSettingsView()
-                    } label: {
-                        Text(String(localized: "settings.openprices.title"))
+                    // #244: in 1.0 ausgeblendet.
+                    if OpenPricesContribution.isAvailable {
+                        NavigationLink {
+                            OpenPricesSettingsView()
+                        } label: {
+                            Text(String(localized: "settings.openprices.title"))
+                        }
                     }
                 } header: {
                     settingsHeader("Funktionen")

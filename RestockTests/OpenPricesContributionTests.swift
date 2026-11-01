@@ -28,10 +28,12 @@ final class OpenPricesContributionTests: XCTestCase {
         .init(name: name, price: price, quantity: quantity, weightBasis: weight)
     }
 
-    private func service(_ api: FakeOpenPricesAPI, tokens: InMemoryTokenStore, enabled: Bool) -> OpenPricesContributionService {
+    private func service(_ api: FakeOpenPricesAPI, tokens: InMemoryTokenStore, enabled: Bool,
+                         available: Bool = true) -> OpenPricesContributionService {
         defaults.set(enabled, forKey: OpenPricesContribution.enabledKey)
         return OpenPricesContributionService(api: api, tokens: tokens, defaults: defaults,
-                                             locations: OpenPricesLocationStore(defaults: defaults), now: { self.fixedNow })
+                                             locations: OpenPricesLocationStore(defaults: defaults), now: { self.fixedNow },
+                                             available: available)
     }
 
     // MARK: - Plan
@@ -187,6 +189,47 @@ final class OpenPricesContributionTests: XCTestCase {
         let sent = await svc.contribute(lines: [line("Milch", 1.19)], imageData: image, storeID: storeID, date: fixedNow)
         XCTAssertEqual(sent?.sent, 1)
         XCTAssertEqual(api.events, ["proof", "price"])
+    }
+
+    // MARK: - In 1.0 ausgeblendet (Issue #244)
+
+    /// T1: Für 1.0 ist Open Prices nicht verfügbar.
+    func testOpenPricesIsUnavailableInRelease1_0() {
+        XCTAssertFalse(OpenPricesContribution.isAvailable)
+    }
+
+    /// T2: Ohne Verfügbarkeit wird nie gesendet, auch wenn Schalter, Anmeldung, Filiale und Foto bereit sind.
+    func testUnavailableServiceNeverSends() async {
+        let api = FakeOpenPricesAPI()
+        let svc = service(api, tokens: InMemoryTokenStore("t"), enabled: true, available: false)
+        let storeID = UUID()
+        OpenPricesLocationStore(defaults: defaults).set(rewe, for: storeID)
+        let result = await svc.contribute(lines: [line("Milch", 1.19)], imageData: image, storeID: storeID, date: fixedNow)
+        XCTAssertNil(result)
+        XCTAssertEqual(api.events, [], "kein Foto-Upload, kein Preis")
+        XCTAssertEqual(api.authCalls, [])
+        let last = await svc.lastResult()
+        XCTAssertNil(last)
+    }
+
+    /// T3: Bereitschaft ist ohne Verfügbarkeit `.disabled`, mit Verfügbarkeit bei gleichen Eingaben `.ready`.
+    func testReadinessIsDisabledWhenUnavailable() async {
+        let storeID = UUID()
+        OpenPricesLocationStore(defaults: defaults).set(rewe, for: storeID)
+        let locked = service(FakeOpenPricesAPI(), tokens: InMemoryTokenStore("t"), enabled: true, available: false)
+        let lockedReadiness = await locked.readiness(for: storeID, hasImage: true)
+        XCTAssertEqual(lockedReadiness, .disabled)
+        let open = service(FakeOpenPricesAPI(), tokens: InMemoryTokenStore("t"), enabled: true, available: true)
+        let openReadiness = await open.readiness(for: storeID, hasImage: true)
+        XCTAssertEqual(openReadiness, .ready)
+    }
+
+    /// T4: Der Dienst der App ist gesperrt, unabhängig vom gespeicherten Schalter.
+    func testSharedServiceIsUnavailable() async {
+        let readiness = await OpenPricesContributionService.shared.readiness(for: UUID(), hasImage: true)
+        XCTAssertEqual(readiness, .disabled)
+        let available = await OpenPricesContributionService.shared.available
+        XCTAssertFalse(available)
     }
 
     // MARK: - Client-Körper
