@@ -223,36 +223,66 @@ final class StoreStationsTests: XCTestCase {
                                                remembered: "Werkstatt", config: cfg), "Werkstatt", "Merkung wirkt weiter")
     }
 
-    // MARK: - T8: Vorlage (AC-3)
+    // MARK: - T8 → K8: Vorlagen (D1 AC-3, D2b-1 AC-1, AC-3)
 
-    /// T8 / AC-3: GIVEN Lidl-Vorlage WHEN geprüft THEN 12 Gänge in Tabellen-Reihenfolge, eindeutige
-    /// Namen, gültige feste Kategorien, keine doppelt, `hidden` ohne Überschneidung, Stichwörter
-    /// 3…15 je Gang; „Lebensmittel“ (Rückfall für Unerkanntes) in keinem Gang.
-    func testTemplateIsConsistent() {
-        let stations = lidl.stations
-        XCTAssertEqual(stations.map(\.name), templateNames)
-        XCTAssertEqual(stations.map(\.emoji), templateEmojis)
-        XCTAssertEqual(Set(stations.map { StoreCategories.compareKey($0.name) }).count, 12, "Namen eindeutig")
-
-        let builtIns = stations.flatMap(\.builtIns)
-        let known = Set(AssignmentService.categoryOrder)
-        XCTAssertEqual(builtIns.filter { !known.contains($0) }, [], "Unbekannte feste Kategorie")
-        XCTAssertEqual(builtIns.count, Set(builtIns).count, "Feste Kategorie in zwei Gängen")
-        XCTAssertFalse(builtIns.contains("Lebensmittel"), "Lebensmittel gehört in keinen Gang (Sonstiges)")
-        XCTAssertEqual(lidl.hidden.filter { !known.contains($0) }, [], "Unbekannte ausgeblendete Kategorie")
-        XCTAssertEqual(Set(lidl.hidden), ["Werkzeug", "Eisenwaren", "Garten", "Pflanzen", "Farbe & Lack",
-                                          "Sanitär", "Boden & Fliesen", "Holz", "Baumaterial"])
-        XCTAssertTrue(Set(lidl.hidden).isDisjoint(with: builtIns), "hidden überschneidet builtIns")
-        for station in stations {
-            XCTAssertLessThanOrEqual(station.keywords.count, 15, "\(station.name): zu viele Stichwörter")
-            for keyword in station.keywords {
-                XCTAssertGreaterThanOrEqual(keyword.count, 3, "\(station.name): Stichwort „\(keyword)“ zu kurz")
-                XCTAssertFalse(keyword.contains(" "), "\(station.name): „\(keyword)“ ist kein einzelnes Wort")
+    /// K8 / AC-1, AC-3 (verallgemeinert T8): GIVEN `allTemplates` (Lidl, Discounter, Vollsortimenter,
+    /// Drogerie, Baumarkt) WHEN je Vorlage geprüft THEN Gang-Zahl 12/10/12/11/8, Namen eindeutig und nie
+    /// „Sonstiges“, gültige feste Kategorien, keine doppelt, `hidden` ohne Überschneidung, „Lebensmittel“
+    /// (Rückfall für Unerkanntes) weder in einem Gang noch ausgeblendet, Name-gebundene Kategorien im
+    /// eigenen Gang, Baumarkt-9 nur in den Lebensmittel-Vorlagen ausgeblendet, Emoji aus der Auswahl,
+    /// höchstens 15 Stichwörter je Gang, jedes normalisiert und im Gang eindeutig.
+    func testAllTemplatesSatisfyInvariants() {
+        let templates = StoreCategories.allTemplates
+        XCTAssertEqual(templates.map { $0.id }, ["lidl", "discounter", "fullRange", "drugstore", "hardware"])
+        XCTAssertEqual(templates.first?.template, lidl, "Lidl bleibt die D1-Vorlage")
+        let expectedCounts = ["lidl": 12, "discounter": 10, "fullRange": 12, "drugstore": 11, "hardware": 8]
+        let hardware9: Set = ["Werkzeug", "Eisenwaren", "Garten", "Pflanzen", "Farbe & Lack", "Sanitär",
+                              "Boden & Fliesen", "Holz", "Baumaterial"]
+        let expectedHidden: [String: Set<String>] = ["lidl": hardware9, "discounter": hardware9, "fullRange": hardware9,
+                                                     "drugstore": [], "hardware": []]
+        for (id, template) in templates {
+            let stations = template.stations
+            XCTAssertEqual(stations.count, expectedCounts[id], "\(id): Gang-Zahl")
+            assertInvariants(template, id)
+            XCTAssertEqual(Set(template.hidden), expectedHidden[id], "\(id): ausgeblendete Kategorien")
+            XCTAssertEqual(template.hidden.count, Set(template.hidden).count, "\(id): hidden doppelt")
+            XCTAssertFalse(stations.flatMap(\.builtIns).contains("Lebensmittel"), "\(id): Lebensmittel gehört in keinen Gang")
+            XCTAssertFalse(template.hidden.contains("Lebensmittel"), "\(id): Lebensmittel ist nie ausgeblendet")
+            XCTAssertEqual(template.date, Date(timeIntervalSince1970: 0), "\(id): Zeitstempel setzt erst applyStationConfig")
+            for station in stations {
+                XCTAssertTrue(StoreCategories.emojiChoices.contains(station.emoji),
+                              "\(id)/\(station.name): Emoji \(station.emoji) nicht in der Auswahl")
+                XCTAssertLessThanOrEqual(station.keywords.count, 15, "\(id)/\(station.name): zu viele Stichwörter")
+                for keyword in station.keywords {
+                    XCTAssertEqual(StoreCategories.normalizedKeyword(keyword), keyword,
+                                   "\(id)/\(station.name): Stichwort „\(keyword)“ nicht normalisiert")
+                }
+                let keys = station.keywords.map { StoreCategories.compareKey($0) }
+                XCTAssertEqual(Set(keys).count, keys.count, "\(id)/\(station.name): Stichwort doppelt")
             }
         }
-        XCTAssertEqual(stations[10].builtIns.sorted(), ["Babybedarf", "Haarpflege", "Hygieneartikel", "Körperpflege",
-                                                        "Kosmetik", "Medikamente", "Reinigung", "Zahnpflege"].sorted())
-        XCTAssertEqual(stations[4].builtIns.sorted(), ["Gewürze & Backen", "Konserven"])
+
+        // Lidl wie in D1 (Tabellen-Reihenfolge, Emojis, Drogerie- und Konserven-Gang).
+        XCTAssertEqual(lidl.stations.map(\.name), templateNames)
+        XCTAssertEqual(lidl.stations.map(\.emoji), templateEmojis)
+        XCTAssertEqual(lidl.stations[10].builtIns.sorted(), ["Babybedarf", "Haarpflege", "Hygieneartikel", "Körperpflege",
+                                                             "Kosmetik", "Medikamente", "Reinigung", "Zahnpflege"].sorted())
+        XCTAssertEqual(lidl.stations[4].builtIns.sorted(), ["Gewürze & Backen", "Konserven"])
+
+        // Gang-Folgen der vier Muster (Spec, Abschnitt „Inhalte der vier Vorlagen“).
+        XCTAssertEqual(StoreCategories.discounterTemplate.stations.map(\.name), [
+            "Obst & Gemüse", "Fleisch & Fisch", "Backstation", "Wurst, Käse & Molkerei", "Kühlregal Fertiges",
+            "Trockensortiment", "Tiefkühl", "Getränke", "Drogerie & Baby", "Aktionsware"])
+        XCTAssertEqual(StoreCategories.fullRangeTemplate.stations.map(\.name), [
+            "Obst & Gemüse", "Backwaren", "Fleisch, Wurst & Fisch", "Käse", "Molkerei & Kühlung",
+            "Konserven & Nährmittel", "Süßwaren & Snacks", "Tiefkühl", "Drogerie & Haushalt", "Tierbedarf",
+            "Non-Food", "Getränke"])
+        XCTAssertEqual(StoreCategories.drugstoreTemplate.stations.map(\.name), [
+            "Kosmetik", "Haarpflege", "Körperpflege", "Zahnpflege", "Gesundheit", "Hygiene", "Baby",
+            "Haushalt & Reinigung", "Tierbedarf", "Essen & Trinken", "Kasse & Geschenke"])
+        XCTAssertEqual(StoreCategories.hardwareTemplate.stations.map(\.name), [
+            "Garten & Pflanzen", "Deko & Leuchten", "Bad & Sanitär", "Fliesen & Boden", "Farben & Tapeten",
+            "Werkzeug & Maschinen", "Eisenwaren & Befestigung", "Holz & Baustoffe"])
     }
 
     // MARK: - T9/T10: Sortierung mit Gang-Rang (AC-2, AC-7, AC-8, AC-9)
@@ -993,12 +1023,22 @@ final class StoreStationsTests: XCTestCase {
             "station.setup.section.open.footer": 0, "station.setup.section.hidden": 1, "station.setup.sort": 0,
             "station.setup.add": 0, "station.setup.add.prompt": 0, "station.setup.assign": 0,
             "station.setup.hide": 0, "station.setup.show": 0, "station.setup.remove": 0, "station.setup.shared": 0,
-            "station.setup.row.summary": 2, "station.setup.row.empty": 0, "station.setup.detail.title": 0,
+            "station.setup.row.empty": 0, "station.setup.detail.title": 0,
             "station.setup.detail.categories": 1, "station.setup.detail.in": 1, "station.setup.detail.bound": 1,
-            "station.setup.detail.keywords": 0, "station.setup.detail.delete": 0, "station.setup.delete.title": 1,
+            "station.setup.detail.keywords": 1, "station.setup.detail.delete": 0, "station.setup.delete.title": 1,
             "station.setup.delete.message": 0, "station.setup.name.rejected": 0,
+            // D2b-1 (`docs/specs/views/station-templates-keywords.md`, AC-13)
+            "station.setup.template.discounter": 0, "station.setup.template.fullrange": 0,
+            "station.setup.template.drugstore": 0, "station.setup.template.hardware": 0,
+            "station.setup.template.count": 1, "station.setup.template.hint": 0, "station.setup.template.cancel": 0,
+            "station.setup.template.replace.title": 0, "station.setup.template.replace.confirm": 0,
+            "station.setup.keyword.placeholder": 0, "station.setup.keyword.add": 0, "station.setup.keyword.delete": 0,
+            "station.setup.keyword.notice": 2, "station.setup.keyword.duplicate": 1, "station.setup.keyword.invalid": 0,
+            "station.setup.row.categories.one": 0, "station.setup.row.categories.other": 1,
+            "station.setup.row.keywords.one": 0, "station.setup.row.keywords.other": 1,
         ]
-        let removed = ["station.menu.applyTemplate", "station.template.confirm.title", "station.template.confirm.message"]
+        let removed = ["station.menu.applyTemplate", "station.template.confirm.title", "station.template.confirm.message",
+                       "station.setup.row.summary"]
         for localization in ["de", "en"] {
             let url = try XCTUnwrap(Bundle.main.url(forResource: "Localizable", withExtension: "strings",
                                                     subdirectory: nil, localization: localization))
@@ -1019,6 +1059,19 @@ final class StoreStationsTests: XCTestCase {
                 XCTAssertEqual(table["station.setup.template"], "Vorlage wählen …")
                 XCTAssertEqual(table["station.setup.name.rejected"], "Diesen Namen gibt es schon oder er ist nicht erlaubt.")
                 XCTAssertEqual(table["station.setup.shared"], "Gänge bleiben bis zum Abgleich auf diesem Gerät.")
+                // … und X1–X3 (D2b-1).
+                XCTAssertEqual(table["station.setup.template.hint"], "Vorschlag, bitte prüfen")
+                XCTAssertEqual(table["station.setup.template.discounter"], "Discounter")
+                XCTAssertEqual(table["station.setup.template.replace.title"], "Vorhandene Gänge ersetzen?")
+                XCTAssertEqual(table["station.setup.keyword.duplicate"], "„%@“ steht hier schon.")
+                XCTAssertEqual(table["station.setup.keyword.notice"],
+                               "„%@“ steht auch in „%@“. Der Gang weiter oben in der Liste gewinnt.")
+                XCTAssertEqual(table["station.setup.keyword.invalid"],
+                               "Ein Stichwort ist ein einzelnes Wort mit mindestens 3 Buchstaben.")
+            }
+            if localization == "en" {
+                XCTAssertEqual(table["station.setup.row.categories.one"], "1 category")
+                XCTAssertEqual(table["station.setup.row.keywords.other"], "%d keywords")
             }
         }
     }
@@ -1101,5 +1154,213 @@ final class StoreStationsTests: XCTestCase {
         XCTAssertNil(store.categoryAssignments["wasser"], "Merkung auf den festen Namen vergessen")
         XCTAssertEqual(store.addStation("Getränke"), "Getränke")
         XCTAssertNil(store.rememberedCategory(forItemNamed: "Wasser"), "Neuer Gang „Getränke“ erbt keine Merkung")
+    }
+
+    // MARK: - Durchgang 2b-1: Vorlagen, Stichwörter, Einzahl (Spec `docs/specs/views/station-templates-keywords.md`)
+
+    private func keywords(of name: String, in config: StationConfig?) -> [String] {
+        config?.stations.first { $0.name == name }?.keywords ?? []
+    }
+
+    // MARK: K1: Stichwort normalisieren (AC-6)
+
+    /// K1 / AC-6: GIVEN Eingaben WHEN `normalizedKeyword` THEN getrimmt und klein; leer, kürzer als 3,
+    /// mit Leerzeichen oder mit Trennzeichen → `nil`; Ziffern erlaubt.
+    func testNormalizedKeyword() {
+        XCTAssertEqual(StoreCategories.normalizedKeyword("  Käse \n"), "käse")
+        XCTAssertEqual(StoreCategories.normalizedKeyword("GOUDA"), "gouda")
+        XCTAssertEqual(StoreCategories.normalizedKeyword("käse2"), "käse2")
+        XCTAssertEqual(StoreCategories.normalizedKeyword("tee"), "tee", "Genau 3 Zeichen reichen")
+        XCTAssertNil(StoreCategories.normalizedKeyword("ab"), "Kürzer als 3")
+        XCTAssertNil(StoreCategories.normalizedKeyword(" ab "), "Kürzer als 3 nach dem Trimmen")
+        XCTAssertNil(StoreCategories.normalizedKeyword("kein käse"), "Leerzeichen innen")
+        XCTAssertNil(StoreCategories.normalizedKeyword("bio-käse"), "Bindestrich")
+        XCTAssertNil(StoreCategories.normalizedKeyword("käse."), "Punkt")
+        XCTAssertNil(StoreCategories.normalizedKeyword("käse\u{E000}"), "Marke")
+        XCTAssertNil(StoreCategories.normalizedKeyword(""))
+        XCTAssertNil(StoreCategories.normalizedKeyword("   "))
+    }
+
+    // MARK: K2: Stichwort anhängen (AC-7)
+
+    /// K2 / AC-7: GIVEN Lidl-Vorlage WHEN „ BERGKÄSE “ zum Gang „Käse“ THEN normalisiert am Ende angehängt,
+    /// alles andere unverändert.
+    func testAddingKeywordAppendsNormalized() throws {
+        let added = try XCTUnwrap(StoreCategories.addingKeyword(" BERGKÄSE ", toStation: "Käse", in: lidl))
+        XCTAssertEqual(keywords(of: "Käse", in: added), keywords(of: "Käse", in: lidl) + ["bergkäse"])
+        XCTAssertEqual(added.hidden, lidl.hidden)
+        XCTAssertEqual(added.date, lidl.date, "Den Zeitstempel setzt erst Store.updateStationConfig")
+        for (new, old) in zip(added.stations, lidl.stations) {
+            XCTAssertEqual(new.name, old.name)
+            XCTAssertEqual(new.emoji, old.emoji)
+            XCTAssertEqual(new.builtIns, old.builtIns, "\(old.name): builtIns unverändert")
+            if old.name != "Käse" { XCTAssertEqual(new.keywords, old.keywords, "\(old.name): Stichwörter unverändert") }
+        }
+        XCTAssertEqual(StoreCategories.addingKeyword("bergkäse", toStation: "käse", in: lidl).map { keywords(of: "Käse", in: $0) },
+                       keywords(of: "Käse", in: lidl) + ["bergkäse"], "Gang-Name ohne Groß-/Kleinschreibung")
+        XCTAssertNil(StoreCategories.addingKeyword("bergkäse", toStation: "Käsetheke", in: lidl), "Unbekannter Gang")
+    }
+
+    // MARK: K3: Doppelt im selben Gang, ungültig (AC-6, AC-8)
+
+    /// K3 / AC-6, AC-8: GIVEN Lidl-Vorlage WHEN „KÄSE“ oder „gouda “ zum Gang „Käse“ THEN abgelehnt
+    /// (`.duplicate`); „ab“ → `.invalid`; unbekannter Gang → `.invalid`.
+    func testDuplicateKeywordInSameStationRejected() {
+        for input in ["KÄSE", "gouda ", "Gouda"] {
+            XCTAssertEqual(StoreCategories.checkKeyword(input, inStation: "Käse", config: lidl), .duplicate, input)
+            XCTAssertNil(StoreCategories.addingKeyword(input, toStation: "Käse", in: lidl), input)
+        }
+        XCTAssertEqual(StoreCategories.checkKeyword("ab", inStation: "Käse", config: lidl), .invalid)
+        XCTAssertNil(StoreCategories.addingKeyword("ab", toStation: "Käse", in: lidl))
+        XCTAssertEqual(StoreCategories.checkKeyword("bergkäse", inStation: "Käsetheke", config: lidl), .invalid)
+        XCTAssertEqual(StoreCategories.checkKeyword("bergkäse", inStation: "Käse", config: lidl), .accepted(others: []))
+    }
+
+    // MARK: K4: Gleiches Wort in anderem Gang (AC-9)
+
+    /// K4 / AC-9: GIVEN Lidl-Vorlage WHEN „wurst“ zum Gang „Käse“ THEN angenommen mit Hinweis auf
+    /// „Kühltheke Fertiges“; „Wurst“ bleibt im früheren Gang, „Bratwurst“ beim längeren Stichwort;
+    /// nach Tausch der Gänge gewinnt der nun frühere.
+    func testSameKeywordInOtherStationAcceptedWithHint() throws {
+        XCTAssertEqual(StoreCategories.checkKeyword("wurst", inStation: "Käse", config: lidl),
+                       .accepted(others: ["Kühltheke Fertiges"]))
+        let added = try XCTUnwrap(StoreCategories.addingKeyword("wurst", toStation: "Käse", in: lidl))
+        XCTAssertEqual(keywords(of: "Käse", in: added).last, "wurst")
+        XCTAssertEqual(resolve("Wurst", config: added), "Kühltheke Fertiges", "Gleichstand: der frühere Gang gewinnt")
+        XCTAssertEqual(resolve("Bratwurst", config: added), "Frisches Fleisch & Fisch", "Längeres Stichwort gewinnt")
+
+        let two = config([station("A", keywords: ["wurst"]), station("B"), station("C", keywords: ["wurst"])])
+        XCTAssertEqual(StoreCategories.checkKeyword("Wurst", inStation: "B", config: two), .accepted(others: ["A", "C"]),
+                       "Andere Gänge in Gang-Reihenfolge")
+        let both = try XCTUnwrap(StoreCategories.addingKeyword("wurst", toStation: "B", in: two))
+        XCTAssertEqual(resolve("Wurst", config: both), "A")
+        let swapped = StoreCategories.movingStations(from: IndexSet(integer: 1), to: 0, in: both)
+        XCTAssertEqual(names(swapped), ["B", "A", "C"], "Vorbedingung: B steht vorn")
+        XCTAssertEqual(resolve("Wurst", config: swapped), "B", "Nach dem Tausch gewinnt der nun frühere Gang")
+    }
+
+    // MARK: K5: Stichwort entfernen (AC-10)
+
+    /// K5 / AC-10: GIVEN Lidl-Vorlage WHEN „GOUDA“ aus „Käse“ entfernt THEN fehlt, übrige Reihenfolge
+    /// bleibt; unbekanntes Stichwort oder unbekannter Gang → `nil`.
+    func testRemovingKeyword() throws {
+        let removed = try XCTUnwrap(StoreCategories.removingKeyword("GOUDA", fromStation: "Käse", in: lidl))
+        XCTAssertEqual(keywords(of: "Käse", in: removed), keywords(of: "Käse", in: lidl).filter { $0 != "gouda" })
+        XCTAssertEqual(removed.stations.filter { $0.name != "Käse" }, lidl.stations.filter { $0.name != "Käse" })
+        XCTAssertNil(StoreCategories.removingKeyword("bergkäse", fromStation: "Käse", in: lidl), "Unbekanntes Stichwort")
+        XCTAssertNil(StoreCategories.removingKeyword("gouda", fromStation: "Käsetheke", in: lidl), "Unbekannter Gang")
+        XCTAssertNil(StoreCategories.removingKeyword("gouda", fromStation: "Milchprodukte", in: lidl),
+                     "Stichwort steht in einem anderen Gang")
+    }
+
+    // MARK: K6: Stichwort verschiebt Artikel (AC-11)
+
+    /// K6 / AC-11: GIVEN Lidl-Vorlage, Batterien in Sonstiges WHEN „batterien“ zu „Drogerie“ THEN dort,
+    /// nach dem Entfernen wieder Sonstiges; eine Merkung auf „Käse“ und eine Handwahl gewinnen davor.
+    func testKeywordMovesItemBetweenStations() throws {
+        XCTAssertNil(resolve("Batterien"), "Vorbedingung: Batterien in Sonstiges")
+        let added = try XCTUnwrap(StoreCategories.addingKeyword("batterien", toStation: "Drogerie", in: lidl))
+        XCTAssertEqual(resolve("Batterien", config: added), "Drogerie")
+        let removed = try XCTUnwrap(StoreCategories.removingKeyword("batterien", fromStation: "Drogerie", in: added))
+        XCTAssertNil(resolve("Batterien", config: removed))
+
+        let category = AssignmentService.category(for: "Batterien")
+        XCTAssertEqual(StoreCategories.station(forItemNamed: "Batterien", category: category, manuallySet: false,
+                                               remembered: "Käse", config: added), "Käse", "Merkung gewinnt")
+        XCTAssertEqual(StoreCategories.station(forItemNamed: "Batterien", category: "Getränke", manuallySet: true,
+                                               remembered: nil, config: added), "Getränke", "Handwahl gewinnt")
+    }
+
+    // MARK: K7: Speichern über den Laden (AC-7, AC-11)
+
+    /// K7 / AC-7, AC-11: GIVEN Laden mit Lidl-Vorlage WHEN Stichwort über `addingKeyword` +
+    /// `updateStationConfig` THEN nach erneutem Dekodieren gespeichert, Zeitstempel jetzt, Weg-Version
+    /// erhöht, Gang-Rang des Artikels folgt dem neuen Gang.
+    func testKeywordSaveUsesUpdateStationConfig() throws {
+        let store = makeStore()
+        let batterien = add("Batterien", to: store)
+        XCTAssertEqual(store.stationRank(of: batterien), 12, "Vorbedingung: Sonstiges")
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart"))
+        let revision = defaults.integer(forKey: Store.routeRevisionKey)
+        let before = Date()
+
+        let current = try XCTUnwrap(store.stationConfig)
+        store.updateStationConfig(try XCTUnwrap(StoreCategories.addingKeyword("Batterien", toStation: "Drogerie", in: current)))
+
+        let data = try XCTUnwrap(store.stationConfigJSON.data(using: .utf8))
+        let decoded = try JSONDecoder().decode(StationConfig.self, from: data)
+        XCTAssertEqual(keywords(of: "Drogerie", in: decoded).last, "batterien")
+        XCTAssertGreaterThanOrEqual(decoded.date.timeIntervalSince1970, before.timeIntervalSince1970 - 1, "Zeitstempel jetzt")
+        XCTAssertGreaterThan(defaults.integer(forKey: Store.routeRevisionKey), revision, "Weg-Version erhöht")
+        XCTAssertEqual(store.stationRank(of: batterien), 10, "Batterien steht jetzt im Gang Drogerie")
+        XCTAssertEqual(store.stationName(of: batterien), "Drogerie")
+    }
+
+    // MARK: K9: Beispielartikel der Muster (AC-4)
+
+    /// K9 / AC-4: GIVEN die vier Muster WHEN Beispielartikel ohne Merkung und Handwahl THEN erwarteter Gang.
+    func testTemplateSamples() {
+        let cases: [(StationConfig, String, String)] = [
+            (StoreCategories.discounterTemplate, "Salami", "Wurst, Käse & Molkerei"),
+            (StoreCategories.discounterTemplate, "Bratwurst", "Fleisch & Fisch"),
+            (StoreCategories.discounterTemplate, "Zahnpasta", "Drogerie & Baby"),
+            (StoreCategories.fullRangeTemplate, "Gouda", "Käse"),
+            (StoreCategories.fullRangeTemplate, "Zahnpasta", "Drogerie & Haushalt"),
+            (StoreCategories.drugstoreTemplate, "Zahnpasta", "Zahnpflege"),
+            (StoreCategories.hardwareTemplate, "Hammer", "Werkzeug & Maschinen"),
+            (StoreCategories.hardwareTemplate, "Tapete", "Farben & Tapeten"),
+        ]
+        for (template, item, expected) in cases {
+            XCTAssertEqual(resolve(item, config: template), expected, "„\(item)“")
+        }
+    }
+
+    // MARK: K10: Jede Vorlage anwenden (AC-5)
+
+    /// K10 / AC-5: GIVEN Laden mit eigenem Gang „Lager“, Merkung und eigener Kategorie WHEN jede der fünf
+    /// Vorlagen angewendet THEN genau ihre Gänge, Merkung und „Lager“ bleiben, Gang-Namen ohne feste
+    /// Kategorie sind eigene Kategorien, Zeitstempel jetzt.
+    func testApplyEveryTemplateKeepsAssignments() throws {
+        for (id, template) in StoreCategories.allTemplates {
+            let store = makeStore("UT-Vorlage-\(id)", template: false)
+            let empty = StationConfig(stations: [], hidden: [], date: t0)
+            store.updateStationConfig(try XCTUnwrap(StoreCategories.addingStation("Lager", emoji: "📦", to: empty)))
+            store.rememberCategory("Lager", forItemNamed: "Kiste")
+            let salami = add("Salami", to: store)
+            let before = (salami.category, salami.categoryManuallySet)
+            let start = Date()
+
+            store.applyStationConfig(template)
+
+            XCTAssertEqual(names(store.stationConfig), template.stations.map(\.name), "\(id): Gänge der Vorlage")
+            XCTAssertFalse(names(store.stationConfig).contains("Lager"), "\(id): eigener Gang ersetzt")
+            XCTAssertEqual(store.categoryAssignments["kiste"], "Lager", "\(id): Merkung bleibt")
+            XCTAssertTrue(store.isCustomCategory("Lager"), "\(id): eigene Kategorie bleibt")
+            for station in template.stations {
+                if StoreCategories.builtInCategory(named: station.name) == nil {
+                    XCTAssertTrue(store.isCustomCategory(station.name), "\(id): „\(station.name)“ fehlt als eigene Kategorie")
+                } else {
+                    XCTAssertFalse(store.isCustomCategory(station.name), "\(id): „\(station.name)“ ist eine feste Kategorie")
+                }
+            }
+            let date = try XCTUnwrap(store.stationConfig?.date)
+            XCTAssertGreaterThanOrEqual(date.timeIntervalSince1970, start.timeIntervalSince1970 - 1, "\(id): Zeitstempel jetzt")
+            XCTAssertEqual(salami.category, before.0, "\(id): Artikel unberührt")
+            XCTAssertEqual(salami.categoryManuallySet, before.1)
+        }
+    }
+
+    // MARK: K11: Einzahl in der Gang-Zeile (AC-12)
+
+    /// K11 / AC-12: GIVEN `StationSetupRow.summaryText` WHEN (1,1), (2,3), (1,0), (0,1), (0,0) THEN
+    /// Einzahl bei genau 1, sonst Mehrzahl, „noch leer“ bei 0 und 0 (deutsche Tabelle; das Schema
+    /// führt die Tests auf Deutsch aus).
+    func testSummaryTextUsesSingular() {
+        XCTAssertEqual(Bundle.main.preferredLocalizations.first, "de", "Vorbedingung: Testlauf auf Deutsch (Schema)")
+        XCTAssertEqual(StationSetupRow.summaryText(categories: 1, keywords: 1), "1 Kategorie · 1 Stichwort")
+        XCTAssertEqual(StationSetupRow.summaryText(categories: 2, keywords: 3), "2 Kategorien · 3 Stichwörter")
+        XCTAssertEqual(StationSetupRow.summaryText(categories: 1, keywords: 0), "1 Kategorie · 0 Stichwörter")
+        XCTAssertEqual(StationSetupRow.summaryText(categories: 0, keywords: 1), "0 Kategorien · 1 Stichwort")
+        XCTAssertEqual(StationSetupRow.summaryText(categories: 0, keywords: 0), "noch leer")
     }
 }
