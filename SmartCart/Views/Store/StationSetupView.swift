@@ -261,7 +261,7 @@ struct StationSetupView: View {
     }
 }
 
-/// Rückfragen der Übersicht: Vorlage wählen, Gänge entfernen, Gang löschen (Wischen).
+/// Rückfragen der Übersicht: Vorlagen-Blatt, Gänge entfernen, Gang löschen (Wischen).
 private struct StationSetupDialogs: ViewModifier {
     let store: Store
     @Binding var showTemplate: Bool
@@ -272,16 +272,8 @@ private struct StationSetupDialogs: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .confirmationDialog(String(localized: "station.setup.template.title"), isPresented: $showTemplate,
-                                titleVisibility: .visible) {
-                Button(String(localized: "station.setup.template.lidl")) {
-                    withAnimation(.smooth) { store.applyStationConfig(StoreCategories.lidlTemplate) }
-                    Haptics.impact(.medium)
-                    onChange()
-                }
-                .accessibilityIdentifier("stationSetup.templateLidl")
-            } message: {
-                Text(String(localized: "station.setup.template.message"))
+            .sheet(isPresented: $showTemplate) {
+                StationTemplateSheet(store: store, onChange: onChange)
             }
             .confirmationDialog(String(localized: "station.remove.confirm.title"), isPresented: $showRemove,
                                 titleVisibility: .visible) {
@@ -316,8 +308,99 @@ private struct StationSetupDialogs: ViewModifier {
     }
 }
 
+/// Blatt „Vorlage wählen“ (Durchgang 2b-1): fünf Vorlagen, die vier Muster mit Kennzeichen. Hat der
+/// Laden Gänge, fragt es vor dem Ersetzen nach.
+struct StationTemplateSheet: View {
+    let store: Store
+    let onChange: () -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var pending: String?
+
+    /// Blatt-Symbol, Name und Kennung je Vorlage (nur Anzeige).
+    private static let rows: [String: (symbol: String, key: String.LocalizationValue, identifier: String)] = [
+        "lidl": ("🏷️", "station.setup.template.lidl", "Lidl"),
+        "discounter": ("🏷️", "station.setup.template.discounter", "Discounter"),
+        "fullRange": ("🏬", "station.setup.template.fullrange", "FullRange"),
+        "drugstore": ("🧴", "station.setup.template.drugstore", "Drugstore"),
+        "hardware": ("🔨", "station.setup.template.hardware", "Hardware"),
+    ]
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    ForEach(StoreCategories.allTemplates, id: \.id) { entry in
+                        row(entry.id, template: entry.template)
+                    }
+                } header: {
+                    Text(String(localized: "station.setup.template.message")).textCase(nil)
+                }
+                .listRowBackground(Color.surface)
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.canvas)
+            .navigationTitle(String(localized: "station.setup.template.title"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(String(localized: "station.setup.template.cancel")) { dismiss() }
+                        .accessibilityIdentifier("stationSetup.template.cancel")
+                }
+            }
+            .confirmationDialog(String(localized: "station.setup.template.replace.title"), isPresented: replaceBinding,
+                                titleVisibility: .visible, presenting: pending) { id in
+                Button(String(localized: "station.setup.template.replace.confirm"), role: .destructive) { apply(id) }
+                    .accessibilityIdentifier("stationSetup.templateReplace")
+            } message: { _ in
+                Text(String(localized: "station.setup.template.message"))
+            }
+        }
+    }
+
+    private func row(_ id: String, template: StationConfig) -> some View {
+        let info = Self.rows[id] ?? ("🏷️", "station.setup.template.lidl", id)
+        let name = String(localized: info.key)
+        let count = String(format: String(localized: "station.setup.template.count"), template.stations.count)
+        let hint = id == "lidl" ? nil : String(localized: "station.setup.template.hint")
+        return Button {
+            if store.hasStations { pending = id } else { apply(id) }
+        } label: {
+            HStack(spacing: 12) {
+                Text(info.symbol).font(.title3)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(name).foregroundStyle(Color.ink)
+                    Text(count).font(.caption).foregroundStyle(.secondary)
+                }
+                Spacer()
+                if let hint {
+                    Text(hint)
+                        .font(.caption2)
+                        .foregroundStyle(Color.amber)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 2)
+                        .overlay(Capsule().stroke(Color.amber))
+                }
+            }
+        }
+        .accessibilityLabel([name, count, hint].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityIdentifier("stationSetup.template\(info.identifier)")
+    }
+
+    private var replaceBinding: Binding<Bool> {
+        Binding(get: { pending != nil }, set: { if !$0 { pending = nil } })
+    }
+
+    private func apply(_ id: String) {
+        guard let template = StoreCategories.allTemplates.first(where: { $0.id == id })?.template else { return }
+        withAnimation(.smooth) { store.applyStationConfig(template) }
+        Haptics.impact(.medium)
+        onChange()
+        dismiss()
+    }
+}
+
 /// Zeile eines Gangs in der Übersicht: Emoji, Name, Inhalt.
-private struct StationSetupRow: View {
+struct StationSetupRow: View {
     let station: Station
 
     var body: some View {
@@ -331,9 +414,19 @@ private struct StationSetupRow: View {
     }
 
     private var summary: String {
-        station.builtIns.isEmpty && station.keywords.isEmpty
-            ? String(localized: "station.setup.row.empty")
-            : String(format: String(localized: "station.setup.row.summary"), station.builtIns.count, station.keywords.count)
+        Self.summaryText(categories: station.builtIns.count, keywords: station.keywords.count)
+    }
+
+    /// „1 Kategorie · 3 Stichwörter“; Einzahl bei genau 1, „noch leer“ bei 0 und 0.
+    static func summaryText(categories: Int, keywords: Int) -> String {
+        guard categories > 0 || keywords > 0 else { return String(localized: "station.setup.row.empty") }
+        let categoryText = categories == 1
+            ? String(localized: "station.setup.row.categories.one")
+            : String(format: String(localized: "station.setup.row.categories.other"), categories)
+        let keywordText = keywords == 1
+            ? String(localized: "station.setup.row.keywords.one")
+            : String(format: String(localized: "station.setup.row.keywords.other"), keywords)
+        return "\(categoryText) · \(keywordText)"
     }
 }
 
@@ -401,20 +494,17 @@ struct StationDetailView: View {
     }
 
     private var detailList: some View {
-        List {
-            if let config, let station {
-                nameSection(station)
-                categorySection(config, station: station)
-                Section(String(localized: "station.setup.detail.keywords")) {
-                    Text(station.keywords.isEmpty
-                         ? String(localized: "station.setup.row.empty")
-                         : station.keywords.joined(separator: ", "))
-                        .foregroundStyle(.secondary)
+        ScrollViewReader { proxy in
+            List {
+                if let config, let station {
+                    nameSection(station)
+                    // Vor den 35 Kategorie-Zeilen, damit Feld und Stichwörter ohne langes Rollen erreichbar sind.
+                    StationKeywordSection(store: store, station: station, scroll: proxy, onChange: onChange)
+                    categorySection(config, station: station)
                 }
-                .listRowBackground(Color.surface)
             }
+            .scrollContentBackground(.hidden)
         }
-        .scrollContentBackground(.hidden)
     }
 
     private func nameSection(_ station: Station) -> some View {
@@ -528,6 +618,116 @@ struct StationDetailView: View {
         } else {
             rejected = true
         }
+    }
+}
+
+/// Stichwörter eines Gangs (Durchgang 2b-1): Zeilen mit Wischen zum Löschen, Feld zum Hinzufügen,
+/// Hinweiszeile. Speichern über `store.updateStationConfig`.
+private struct StationKeywordSection: View {
+    let store: Store
+    let station: Station
+    let scroll: ScrollViewProxy
+    let onChange: () -> Void
+
+    private enum Message: Equatable {
+        case notice(String)
+        case duplicate(String)
+        case invalid
+    }
+
+    @State private var draft = ""
+    @State private var message: Message?
+
+    var body: some View {
+        Section {
+            if station.keywords.isEmpty {
+                Text(String(localized: "station.setup.row.empty")).foregroundStyle(.secondary)
+            }
+            ForEach(station.keywords, id: \.self) { keyword in
+                Text(keyword)
+                    .foregroundStyle(Color.ink)
+                    .accessibilityIdentifier("stationSetup.keyword.row.\(keyword)")
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) { remove(keyword) } label: {
+                            Label(String(localized: "station.setup.keyword.delete"), systemImage: "trash")
+                        }
+                        .accessibilityIdentifier("stationSetup.keyword.delete.\(keyword)")
+                    }
+            }
+            HStack {
+                TextField(String(localized: "station.setup.keyword.placeholder"), text: draftBinding)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .submitLabel(.done)
+                    .onSubmit { add() }
+                    .accessibilityIdentifier("stationSetup.keyword.field")
+                Button(String(localized: "station.setup.keyword.add")) { add() }
+                    .buttonStyle(.borderless)
+                    .accessibilityIdentifier("stationSetup.keyword.add")
+            }
+            // Sonst richtet SwiftUI die Trennlinie am Knopftext aus (das Feld zählt nicht als Text).
+            .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
+            if let message { messageRow(message).id(Self.messageID) }
+        } header: {
+            Text(String(format: String(localized: "station.setup.detail.keywords"), station.keywords.count))
+        }
+        .listRowBackground(Color.surface)
+        // Bei offener Tastatur läge der Hinweis sonst unter dem sichtbaren Rand der Liste.
+        .onChange(of: message) { _, new in
+            guard new != nil else { return }
+            withAnimation(.smooth) { scroll.scrollTo(Self.messageID, anchor: .bottom) }
+        }
+    }
+
+    private static let messageID = "stationSetup.keyword.message"
+
+    /// Eingabe des Nutzers löscht den Hinweis; das Leeren nach dem Speichern nicht.
+    private var draftBinding: Binding<String> {
+        // SwiftUI ruft den Setter auch mit unverändertem Text (z. B. beim Tipp auf „Hinzufügen“).
+        Binding(get: { draft }, set: { if $0 != draft { message = nil }; draft = $0 })
+    }
+
+    @ViewBuilder
+    private func messageRow(_ message: Message) -> some View {
+        switch message {
+        case .notice(let text):
+            Text(text).font(.footnote).foregroundStyle(.secondary)
+                .accessibilityIdentifier("stationSetup.keyword.notice")
+        case .duplicate(let text):
+            Text(text).font(.footnote).foregroundStyle(Color.destructive)
+                .accessibilityIdentifier("stationSetup.keyword.duplicate")
+        case .invalid:
+            Text(String(localized: "station.setup.keyword.invalid")).font(.footnote).foregroundStyle(Color.destructive)
+                .accessibilityIdentifier("stationSetup.keyword.invalid")
+        }
+    }
+
+    private func add() {
+        guard let config = store.stationConfig else { return }
+        switch StoreCategories.checkKeyword(draft, inStation: station.name, config: config) {
+        case .invalid:
+            message = .invalid
+        case .duplicate:
+            let word = StoreCategories.normalizedKeyword(draft) ?? draft
+            message = .duplicate(String(format: String(localized: "station.setup.keyword.duplicate"), word))
+        case .accepted(let others):
+            guard let next = StoreCategories.addingKeyword(draft, toStation: station.name, in: config),
+                  let word = StoreCategories.normalizedKeyword(draft) else { return }
+            withAnimation(.smooth) { store.updateStationConfig(next) }
+            Haptics.impact(.light)
+            onChange()
+            draft = ""
+            message = others.isEmpty ? nil : .notice(String(format: String(localized: "station.setup.keyword.notice"),
+                                                            word, others.joined(separator: ", ")))
+        }
+    }
+
+    private func remove(_ keyword: String) {
+        guard let config = store.stationConfig,
+              let next = StoreCategories.removingKeyword(keyword, fromStation: station.name, in: config) else { return }
+        withAnimation(.smooth) { store.updateStationConfig(next) }
+        Haptics.impact(.light)
+        onChange()
     }
 }
 

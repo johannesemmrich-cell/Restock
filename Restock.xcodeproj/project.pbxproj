@@ -45,6 +45,7 @@
 		426FFE6DA2C0EFDE1E621225 /* ReceiptParserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54E0CCE44BCFCE3EB38E0F87 /* ReceiptParserService.swift */; };
 		47C167B4A1828C9F1D437D86 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1316E9EFE646ED0F0078332F /* Store.swift */; };
 		A0D490DE0D31D30BD9FEF341 /* StoreCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC82CB50C5D6C4FD0257599 /* StoreCategories.swift */; };
+		2B1D4E5A7C3F9B0E1A2C0001 /* StoreTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B1D4E5A7C3F9B0E1A2C0002 /* StoreTemplates.swift */; };
 		150BD40FD1E7284CB544C93F /* ShoppingRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EBBE9D9B16A5A1ADEE1D34 /* ShoppingRoute.swift */; };
 		B1C0DE110000000000000005 /* LegacyLearnedPriceReset.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */; };
 		D40FACEBDF38F80A4C02A358 /* AbbreviatedNameCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC66FDBE9289572AAAB96D7 /* AbbreviatedNameCleanup.swift */; };
@@ -240,6 +241,7 @@
 		A1C0DE110000000000000003 /* LegacyLearnedPriceResetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */; };
 		91DA57026009303F78C87BDB /* ShoppingRouteUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */; };
 		5170B2F00E3AA8E7FFCDEEDB /* StoreStationsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD3D85BD8E7643DF66EAF1F /* StoreStationsUITests.swift */; };
+		A234D2B10000000000000001 /* StationSetupExtrasUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A234D2B10000000000000002 /* StationSetupExtrasUITests.swift */; };
 		A98C0DE1A98C0DE1A98C0DE1 /* ShoppingRouteLearningUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98C0DE2A98C0DE2A98C0DE2 /* ShoppingRouteLearningUITests.swift */; };
 		B33C0DE1B33C0DE1B33C0DE1 /* ItemRowTapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33C0DE2B33C0DE2B33C0DE2 /* ItemRowTapUITests.swift */; };
 		A98C0DE3A98C0DE3A98C0DE3 /* ReplenishmentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98C0DE4A98C0DE4A98C0DE4 /* ReplenishmentUITests.swift */; };
@@ -310,6 +312,7 @@
 		0AC1BA745165F01898D190CD /* QuickActionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionState.swift; sourceTree = "<group>"; };
 		1316E9EFE646ED0F0078332F /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		2BC82CB50C5D6C4FD0257599 /* StoreCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCategories.swift; sourceTree = "<group>"; };
+		2B1D4E5A7C3F9B0E1A2C0002 /* StoreTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreTemplates.swift; sourceTree = "<group>"; };
 		05EBBE9D9B16A5A1ADEE1D34 /* ShoppingRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRoute.swift; sourceTree = "<group>"; };
 		B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceReset.swift; sourceTree = "<group>"; };
 		FEC66FDBE9289572AAAB96D7 /* AbbreviatedNameCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbbreviatedNameCleanup.swift; sourceTree = "<group>"; };
@@ -505,6 +508,7 @@
 		A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceResetUITests.swift; sourceTree = "<group>"; };
 		4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRouteUITests.swift; sourceTree = "<group>"; };
 		BCD3D85BD8E7643DF66EAF1F /* StoreStationsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreStationsUITests.swift; sourceTree = "<group>"; };
+		A234D2B10000000000000002 /* StationSetupExtrasUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSetupExtrasUITests.swift; sourceTree = "<group>"; };
 		A98C0DE2A98C0DE2A98C0DE2 /* ShoppingRouteLearningUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRouteLearningUITests.swift; sourceTree = "<group>"; };
 		B33C0DE2B33C0DE2B33C0DE2 /* ItemRowTapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRowTapUITests.swift; sourceTree = "<group>"; };
 		A98C0DE4A98C0DE4A98C0DE4 /* ReplenishmentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplenishmentUITests.swift; sourceTree = "<group>"; };
@@ -654,6 +658,7 @@
 				CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */,
 				1316E9EFE646ED0F0078332F /* Store.swift */,
 				2BC82CB50C5D6C4FD0257599 /* StoreCategories.swift */,
+				2B1D4E5A7C3F9B0E1A2C0002 /* StoreTemplates.swift */,
 				05EBBE9D9B16A5A1ADEE1D34 /* ShoppingRoute.swift */,
 				B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */,
 				FEC66FDBE9289572AAAB96D7 /* AbbreviatedNameCleanup.swift */,
@@ -904,6 +909,7 @@
 				A1C0DE110000000000000004 /* LegacyLearnedPriceResetUITests.swift */,
 				4B5AE91AE8BB0512384FAB14 /* ShoppingRouteUITests.swift */,
 				BCD3D85BD8E7643DF66EAF1F /* StoreStationsUITests.swift */,
+				A234D2B10000000000000002 /* StationSetupExtrasUITests.swift */,
 				A98C0DE2A98C0DE2A98C0DE2 /* ShoppingRouteLearningUITests.swift */,
 				B33C0DE2B33C0DE2B33C0DE2 /* ItemRowTapUITests.swift */,
 				A98C0DE4A98C0DE4A98C0DE4 /* ReplenishmentUITests.swift */,
@@ -1207,6 +1213,7 @@
 				83F7A018CC455374AA300D07 /* SmartCartApp.swift in Sources */,
 				47C167B4A1828C9F1D437D86 /* Store.swift in Sources */,
 				A0D490DE0D31D30BD9FEF341 /* StoreCategories.swift in Sources */,
+				2B1D4E5A7C3F9B0E1A2C0001 /* StoreTemplates.swift in Sources */,
 				150BD40FD1E7284CB544C93F /* ShoppingRoute.swift in Sources */,
 				B1C0DE110000000000000005 /* LegacyLearnedPriceReset.swift in Sources */,
 				D40FACEBDF38F80A4C02A358 /* AbbreviatedNameCleanup.swift in Sources */,
@@ -1349,6 +1356,7 @@
 				A1C0DE110000000000000003 /* LegacyLearnedPriceResetUITests.swift in Sources */,
 				91DA57026009303F78C87BDB /* ShoppingRouteUITests.swift in Sources */,
 				5170B2F00E3AA8E7FFCDEEDB /* StoreStationsUITests.swift in Sources */,
+				A234D2B10000000000000001 /* StationSetupExtrasUITests.swift in Sources */,
 				A98C0DE1A98C0DE1A98C0DE1 /* ShoppingRouteLearningUITests.swift in Sources */,
 				B33C0DE1B33C0DE1B33C0DE1 /* ItemRowTapUITests.swift in Sources */,
 				A98C0DE3A98C0DE3A98C0DE3 /* ReplenishmentUITests.swift in Sources */,

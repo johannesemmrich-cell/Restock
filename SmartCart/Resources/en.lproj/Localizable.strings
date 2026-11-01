@@ -443,19 +443,38 @@
 "station.setup.show" = "Show";
 "station.setup.remove" = "Remove aisles";
 "station.setup.shared" = "Aisles stay on this device until sync is available.";
-"station.setup.row.summary" = "%d categories · %d keywords";
 "station.setup.row.empty" = "empty";
 "station.setup.detail.title" = "Aisle";
 "station.setup.detail.categories" = "Categories in this aisle · %d";
 "station.setup.detail.in" = "currently in: %@";
 "station.setup.detail.bound" = "belongs to aisle %@";
-"station.setup.detail.keywords" = "Keywords (read only)";
+"station.setup.detail.keywords" = "Keywords · %d";
 "station.setup.detail.delete" = "Delete aisle";
 "station.setup.delete.title" = "Delete aisle “%@”?";
 "station.setup.delete.message" = "Its categories become open.";
 "station.setup.name.rejected" = "This name is already in use or not allowed.";
 "station.setup.detail.open" = "open";
 "station.setup.detail.hidden" = "hidden";
+/* Vorlagen und Stichwörter (Issue #234, Durchgang 2b-1) */
+"station.setup.template.discounter" = "Discounter";
+"station.setup.template.fullrange" = "Full-range supermarket";
+"station.setup.template.drugstore" = "Drugstore";
+"station.setup.template.hardware" = "Hardware store";
+"station.setup.template.count" = "%d aisles";
+"station.setup.template.hint" = "Suggestion, please review";
+"station.setup.template.cancel" = "Cancel";
+"station.setup.template.replace.title" = "Replace existing aisles?";
+"station.setup.template.replace.confirm" = "Replace";
+"station.setup.keyword.placeholder" = "Add keyword";
+"station.setup.keyword.add" = "Add";
+"station.setup.keyword.delete" = "Delete";
+"station.setup.keyword.notice" = "“%@” is also in “%@”. The aisle higher up in the list wins.";
+"station.setup.keyword.duplicate" = "“%@” is already here.";
+"station.setup.keyword.invalid" = "A keyword is a single word with at least 3 letters.";
+"station.setup.row.categories.one" = "1 category";
+"station.setup.row.categories.other" = "%d categories";
+"station.setup.row.keywords.one" = "1 keyword";
+"station.setup.row.keywords.other" = "%d keywords";
 
 /* Price source (Issue #151) */
 "price.source.receipt" = "Receipt";

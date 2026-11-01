@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stichwörter im Gang: Lage</title>
+<style>
+  :root { --canvas:#F5F2E9; --surface:#FDFBF4; --ink:#201D16; --sec:#6F6A5B; --accent:#666F38; --danger:#A44E3D; --line:rgba(32,29,22,.12); }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system, "SF Pro Text", system-ui, sans-serif; background:#EDEAE0; color:#201D16; line-height:1.5; }
+  main { max-width:1180px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:28px; margin:0 0 8px; }
+  h2 { font-size:21px; margin:40px 0 6px; }
+  p.lead { font-size:17px; max-width:760px; color:#3d3a31; }
+  .tag { display:inline-block; font-size:12px; font-weight:600; padding:2px 10px; border-radius:99px; background:#d9d4c4; margin-right:8px; vertical-align:middle; }
+  .tag.rec { background:#666F38; color:#fff; }
+  .tag.warn { background:#A44E3D; color:#fff; }
+  .row { display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start; margin-top:16px; }
+  figure { margin:0; width:260px; }
+  figcaption { font-size:14px; color:#4a463b; margin-top:8px; }
+  img.shot { width:260px; border-radius:28px; box-shadow:0 4px 18px rgba(0,0,0,.18); display:block; }
+  /* Mockup-Telefon */
+  .phone { width:260px; height:565px; border-radius:28px; overflow:hidden; background:var(--canvas); color:var(--ink); box-shadow:0 4px 18px rgba(0,0,0,.18); position:relative; font-size:13px; }
+  .phone.dark { --canvas:#141310; --surface:#1D1C16; --ink:#EBE7DA; --sec:#A29B8A; --accent:#A7AE6B; --danger:#C4705D; --line:rgba(235,231,218,.14); }
+  .nav { height:54px; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:15px; position:relative; }
+  .nav .back { position:absolute; left:12px; width:30px; height:30px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; }
+  .scroll { position:absolute; top:54px; bottom:58px; left:0; right:0; overflow:hidden; padding:0 12px; }
+  .lbl { color:var(--sec); font-size:12px; font-weight:600; margin:12px 6px 4px; display:flex; justify-content:space-between; }
+  .card { background:var(--surface); border-radius:14px; }
+  .it { padding:9px 12px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; }
+  .it:last-child { border-bottom:none; }
+  .it small { display:block; color:var(--sec); font-size:11px; }
+  .acc { color:var(--accent); }
+  .muted { color:var(--sec); }
+  .del { position:absolute; bottom:10px; left:12px; right:12px; height:38px; border-radius:20px; background:rgba(164,78,61,.18); color:var(--danger); display:flex; align-items:center; justify-content:center; }
+  .fade { position:absolute; left:0; right:0; bottom:58px; height:40px; background:linear-gradient(transparent, var(--canvas)); }
+  .note { background:#fff9e8; border-left:4px solid #b08a2e; padding:10px 14px; border-radius:6px; max-width:760px; font-size:15px; }
+  table { border-collapse:collapse; margin-top:12px; font-size:15px; max-width:900px; }
+  td, th { border-bottom:1px solid #d6d1c2; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#e4e0d3; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Stichwörter im Gang: oben oder unten?</h1>
+  <p class="lead">Im freigegebenen Entwurf stehen die Stichwörter eines Gangs <b>unter</b> der Kategorienliste. Gebaut wurden sie <b>darüber</b>, und zwar nicht aus Nutzersicht, sondern weil die automatischen Tests nicht weit genug rollten. Das war ein Fehler im Vorgehen. Die Frage ist jetzt eine reine Produktentscheidung: Wo sollen die Stichwörter stehen?</p>
+  <div class="note">Wichtig für die Entscheidung: Unter den Stichwörtern steht die Liste aller 35 Kategorien (zuordnen, offen, ausgeblendet). Wer bei „unten“ ein Stichwort pflegen will, rollt an allen 35 vorbei. Fotos aus dem Simulator, Stand dieser Änderung, iPhone 17 Pro, iOS 27.2.</div>
+
+  <h2><span class="tag warn">Heute gebaut</span>Stichwörter oben (Abweichung vom Entwurf)</h2>
+  <p>Name, Emoji, dann die Stichwörter mit Feld „Stichwort hinzufügen“, danach die 35 Kategorien. Bei offener Tastatur rollt die Liste zum Hinweis.</p>
+  <div class="row">
+    <figure><img class="shot" src="06-gang-detail-oben.png" alt="Gang-Detail oben"><figcaption>Gang öffnen: Stichwörter sofort sichtbar</figcaption></figure>
+    <figure><img class="shot" src="09-hinweis-mindestens-3-buchstaben.png" alt="Hinweis bei offener Tastatur"><figcaption>Hinweis bei offener Tastatur sichtbar. Unschön: kurze Trennlinie nur unter „Hinzufügen“</figcaption></figure>
+    <figure><img class="shot" src="07-gang-detail-unten.png" alt="Gang-Detail ganz unten"><figcaption>Ganz unten: Ende der 35 Kategorien. Hier stünden die Stichwörter laut Entwurf</figcaption></figure>
+  </div>
+
+  <h2><span class="tag">Entwurf, freigegeben</span>Stichwörter unten</h2>
+  <p>Wie in der Vorschau vom 01.11.: Kategorien zuerst, Stichwörter darunter. Nachgezeichnet in den echten App-Farben, hell und dunkel. Links der Blick beim Öffnen, rechts nach dem Rollen an allen Kategorien vorbei.</p>
+  <div class="row">
+    <div class="phone"><div class="nav"><span class="back">‹</span>Gang</div><div class="scroll">
+      <div class="lbl">Name</div><div class="card"><div class="it">Wurst, Käse &amp; Molkerei</div><div class="it">Emoji <span>🧀 ›</span></div></div>
+      <div class="lbl"><span>Kategorien in diesem Gang · 1</span></div><div class="card"><div class="it">🥛 Milchprodukte <span class="acc">✓</span></div></div>
+      <div class="lbl"><span>Alle Kategorien</span></div><div class="card">
+        <div class="it"><span>🥦 Obst &amp; Gemüse<small>jetzt in: Obst &amp; Gemüse</small></span></div>
+        <div class="it"><span>🥩 Fleisch &amp; Wurst<small>jetzt in: Fleisch &amp; Fisch</small></span></div>
+        <div class="it"><span>🥖 Backwaren<small>jetzt in: Backstation</small></span></div>
+        <div class="it"><span>🥫 Konserven<small>jetzt in: Trockensortiment</small></span></div>
+        <div class="it"><span>🧂 Gewürze &amp; Backen<small>jetzt in: Trockensortiment</small></span></div>
+        <div class="it"><span>… noch 29 weitere</span></div>
+      </div></div><div class="fade"></div><div class="del">Gang löschen</div></div>
+    <div class="phone dark"><div class="nav"><span class="back">‹</span>Gang</div><div class="scroll">
+      <div class="card"><div class="it"><span>🪵 Holz<small>ausgeblendet</small></span></div><div class="it"><span>🏗️ Baumaterial<small>ausgeblendet</small></span></div></div>
+      <div class="lbl"><span>Stichwörter · 10</span><span>wischen zum Löschen</span></div><div class="card">
+        <div class="it">käse</div><div class="it">wurst</div><div class="it">würstchen</div><div class="it">salami</div><div class="it">schinken</div><div class="it">aufschnitt</div><div class="it">gouda</div><div class="it">mozzarella</div><div class="it">eier</div><div class="it">margarine</div>
+        <div class="it"><span class="muted">Stichwort hinzufügen</span><span class="acc">Hinzufügen</span></div>
+      </div></div><div class="del">Gang löschen</div></div>
+  </div>
+  <p class="muted" style="font-size:14px">Zum Stichwort-Feld rollt man an rund 35 Zeilen vorbei (im Simulator etwa 2.000 Punkte, gut drei Bildschirmhöhen).</p>
+
+  <h2><span class="tag rec">Alternative</span>Kategorien eingeklappt, Stichwörter darunter</h2>
+  <p>Die Reihenfolge bleibt wie im Entwurf (Kategorien vor Stichwörtern), aber der Gang zeigt nur seine eigenen Kategorien. Die Liste aller 35 Kategorien öffnet sich über eine Zeile „Kategorien zuordnen ›“ auf einer eigenen Seite. Damit ist alles ohne langes Rollen erreichbar. Kostet etwas mehr Umbau (eine Seite mehr, Tests anpassen).</p>
+  <div class="row">
+    <div class="phone"><div class="nav"><span class="back">‹</span>Gang</div><div class="scroll">
+      <div class="lbl">Name</div><div class="card"><div class="it">Wurst, Käse &amp; Molkerei</div><div class="it">Emoji <span>🧀 ›</span></div></div>
+      <div class="lbl"><span>Kategorien in diesem Gang · 1</span></div><div class="card"><div class="it">🥛 Milchprodukte</div><div class="it"><span class="acc">Kategorien zuordnen</span><span class="muted">›</span></div></div>
+      <div class="lbl"><span>Stichwörter · 10</span><span>wischen zum Löschen</span></div><div class="card">
+        <div class="it">käse</div><div class="it">wurst</div><div class="it">würstchen</div><div class="it">salami</div><div class="it">schinken</div><div class="it">…</div>
+        <div class="it"><span class="muted">Stichwort hinzufügen</span><span class="acc">Hinzufügen</span></div>
+      </div></div><div class="del">Gang löschen</div></div>
+    <div class="phone dark"><div class="nav"><span class="back">‹</span>Gang</div><div class="scroll">
+      <div class="lbl">Name</div><div class="card"><div class="it">Wurst, Käse &amp; Molkerei</div><div class="it">Emoji <span>🧀 ›</span></div></div>
+      <div class="lbl"><span>Kategorien in diesem Gang · 1</span></div><div class="card"><div class="it">🥛 Milchprodukte</div><div class="it"><span class="acc">Kategorien zuordnen</span><span class="muted">›</span></div></div>
+      <div class="lbl"><span>Stichwörter · 10</span><span>wischen zum Löschen</span></div><div class="card">
+        <div class="it">käse</div><div class="it">wurst</div><div class="it">würstchen</div><div class="it">salami</div><div class="it">schinken</div><div class="it">…</div>
+        <div class="it"><span class="muted">Stichwort hinzufügen</span><span class="acc">Hinzufügen</span></div>
+      </div></div><div class="del">Gang löschen</div></div>
+  </div>
+
+  <h2>Vergleich</h2>
+  <table>
+    <tr><th></th><th>Oben (gebaut)</th><th>Unten (Entwurf)</th><th>Eingeklappt (Alternative)</th></tr>
+    <tr><td>Stichwort pflegen</td><td>sofort</td><td>an 35 Zeilen vorbei rollen</td><td>sofort</td></tr>
+    <tr><td>Kategorien zuordnen</td><td>unter den Stichwörtern, rollen</td><td>sofort</td><td>ein Tipp mehr</td></tr>
+    <tr><td>Umbau ab heute</td><td>keiner</td><td>klein, Tests anpassen</td><td>mittel, neue Seite</td></tr>
+    <tr><td>Entspricht Freigabe</td><td>nein</td><td>ja</td><td>nein</td></tr>
+  </table>
+
+  <h2>Weitere Befunde aus dem Durchlauf</h2>
+  <p>Unabhängig von der Lage, alle mit Foto belegt, werden behoben:</p>
+  <div class="row">
+    <figure><img class="shot" src="12a-batterien-wischen-loeschen-sichtbar.png" alt="Wischen zum Löschen"><figcaption>Beim Wischen verschwindet das Wort aus der Zeile. Man sieht nicht, was man löscht (wird geprüft, ob nur der Test zu weit wischte)</figcaption></figure>
+  </div>
+  <ul>
+    <li>Kurze Trennlinie nur unter „Hinzufügen“, wenn ein Hinweis darunter steht.</li>
+    <li>Das Feld sitzt ohne Tastatur leicht unter der Leiste „Gang löschen“.</li>
+    <li>Titel „Kategorien einrich…“ abgeschnitten (seit Teil 2a so, kein neuer Fehler).</li>
+  </ul>
+</main>
+</body>
+</html>

@@ -321,3 +321,12 @@ Folge: Klassen, die ihre Vorbedingung über Launch-Argumente herstellen, müssen
 Die übrigen gesäten Klassen mit nacktem `app.launch()` stehen in einem Folge-Issue; bis dahin kann ihre
 Wiederholung aus demselben Grund rot bleiben. Der erste Durchlauf von Hälfte A mit `DynamicTypeUITests` ist seit
 Lauf 39588635436 grün (43 Tests, 37 min).
+
+## Nachtrag 2026-11-01: Teile C und D (Issue #234)
+
+Die UI-Suite läuft inzwischen in **vier** parallelen Teilen, nicht mehr in zwei Hälften: `ui-test (A)` mit
+`HEAVY_CLASSES`, `ui-test (B)` mit dem Rest, `ui-test (C)` nur mit `SOLO_CLASSES` (`StoreStationsUITests`, #234 D2a)
+und seit #234 Durchgang 2b-1 `ui-test (D)` nur mit `EXTRA_CLASSES` (`StationSetupExtrasUITests`), weil C mit rund
+49 min sonst über das 60-min-Limit käme. B überspringt HEAVY, SOLO und EXTRA; A und C sind unverändert. Die
+Klassenlisten stehen genau einmal in `.github/workflows/ci.yml`. Offen: Ob `ui-test (D)` in der Branch-Regel von
+`main` als Pflichtprüfung eingetragen ist, liegt beim Repo-Inhaber (keine Admin-Rechte, Adversary F002).
