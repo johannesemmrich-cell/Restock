@@ -411,6 +411,13 @@ im Gang ein Stichwort hinzufügen (Duplikat, anderer Gang, zu kurz) und per Wisc
   Artikel) ist nicht gemessen.
 - Nichts auf Hennings Geräten geprüft; kein CloudKit-Test. Das Vorlagen-Blatt und der Stichwort-Abschnitt sind nur
   im Simulator mit Standardschrift geprüft, nicht in AccessibilityXXXL.
+- **Hinweistext „mindestens 3 Buchstaben“** ist ungenau: angenommen werden Buchstaben und Ziffern (`CharacterSet.alphanumerics`,
+  also auch „123“, Hochzahlen, Kombinationszeichen). Verhalten wie spezifiziert, nur der Text (Adversary F001, LOW).
+- **Die CI-Aufteilung in Teil D** ist nur durch Lesen von `ci.yml` und die Strukturtests belegt; ob D im echten Lauf
+  grün und B ohne `StationSetupExtrasUITests` läuft, zeigt erst der CI-Lauf des PR.
+- **Zwei rote Bestands-Unit-Tests** (`ConsumptionPatternTests.testAveragesRegularPurchaseInterval`,
+  `testDueSoonWhenEstimatedDateIsAboutTwoDaysOut`) sind datums- bzw. uhrzeitabhängig und am Basisstand 2805b15
+  identisch rot (Issue #231); nicht Teil dieses Durchgangs. Validierungslauf 2026-11-01: 807 Tests, 805 grün.
 
 ## Alternativen (verworfen oder offen)
 
@@ -444,3 +451,13 @@ Keine frühere Entscheidung wird gekippt; D1 und 2a bleiben bestehen.
 
 - 2026-11-01: Initial spec created (Issue #234, Durchgang 2b-1).
 - 2026-11-01: Drogerie-Gang 10 heißt „Essen & Trinken“ (PO-Entscheidung statt „Snacks & Getränke“).
+- 2026-11-01 (Umsetzung, PO): 🥗 in `StoreCategories.emojiChoices` aufgenommen (49 statt 48), weil die Lidl-Vorlage
+  (D1) es nutzt und K8/AC-3 sonst widersprachen; Lidl bleibt unverändert.
+- 2026-11-01 (Umsetzung, PO nach Vorschau `docs/artifacts/feat-234-d2b-vorlagen-stichwoerter/vorschau-lage/`): Der
+  Stichwort-Abschnitt steht **oben** im Gang-Detail, direkt unter Name/Emoji und vor den Kategorien — bewusste
+  Abweichung vom freigegebenen Entwurf (dort unten). Verworfen: unten wie Entwurf; Kategorien einklappen (Kandidat
+  für später).
+- 2026-11-01 (Umsetzung, PO): Umfang rund 1.170 neue Zeilen (Produktiv ~440, Tests ~720) statt ~600 geschätzt, in
+  einem Stück akzeptiert.
+- 2026-11-01: Validiert (Phase 7): 14/14 AC erfüllt, Unit-Suite 805/807 (2 Altfehler #231), UI `StoreStationsUITests`
+  16/16, `StationSetupExtrasUITests` 3/3, Prüfdialog VERIFIED (2 Runden, F001/F002 LOW).
