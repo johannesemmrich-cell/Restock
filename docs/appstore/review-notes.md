@@ -7,10 +7,10 @@ und als Antwort ins Resolution Center, zusammen mit der Bildschirmaufnahme vom i
 ## notes
 
 1. SCREEN RECORDING
-Attached to our reply in the Resolution Center: recorded on a physical iPhone running the latest iOS, starting with the app launch. It shows onboarding, adding items, automatic store assignment, checking items off, receipt scanning, barcode lookup, sharing a store, and unlocking Restock Pro via In-App Purchase (sandbox). Restock has no account registration or login, so there is no sign-up or account deletion flow.
+Attached to our reply: recorded on a physical iPhone (TestFlight build 1.0 (38)), starting with launching Restock from TestFlight. The one-time setup (country, stores) was already done on this device, so it opens on the home screen. It shows: quick-add with automatic store assignment ("Hackfleisch" to Lidl, "Zahnpasta" to dm); sharing a digital receipt from the Lidl Plus app to Restock, reviewing and saving it; a list with checked-off items; sharing a store (code, members); the Restock Pro paywall with prices, terms, Privacy/EULA links and "Restore Purchases" (the Apple Account prompt was cancelled, so the app shows its "restore not completed" notice). No purchase is completed; products are listed in section 3. Restock has no account registration or login, so there is no sign-up or account deletion flow.
 
 2. PURPOSE AND AUDIENCE
-Restock is a shopping list for households that shop at several stores (supermarket, drugstore, hardware store). You type what you need ("500 g minced meat", "toothpaste") and Restock puts each item on the list of the store where you usually buy it. While shopping it learns the order in which you check items off and sorts the list along your route through the store. Scanned receipts teach Restock real prices, so you see what a trip will roughly cost. Value: one list that splits itself by store, less forgetting, and an honest cost estimate. Target audience: adults and families organizing their weekly shopping.
+Restock is a shopping list for households that shop at several stores. You type what you need ("500 g minced meat", "toothpaste") and Restock puts each item on the list of the store where you usually buy it. It learns the order in which you check items off and sorts the list along your route. Scanned receipts teach Restock real prices, so you see what a trip will roughly cost. Target audience: adults and families organizing their weekly shopping.
 
 3. HOW TO USE / NO LOGIN
 No login or demo account is needed.
@@ -31,7 +31,7 @@ No login or demo account is needed.
 No ads, no analytics, no tracking, no third-party SDKs.
 
 5. REGIONAL DIFFERENCES
-The app works the same in all regions. Differences: store suggestions during onboarding are prepared for DE, AT, CH, BE, NL, FR, IT, ES, GB and US (custom stores can be added anywhere); the UI is in German and English; Apple Intelligence features appear only where Apple offers them, with a non-AI fallback everywhere.
+The app works the same in all regions. Differences: onboarding store suggestions are prepared for DE, AT, CH, BE, NL, FR, IT, ES, GB and US (custom stores work anywhere); the UI is German and English; Apple Intelligence features appear only where Apple offers them, with a fallback everywhere.
 
 6. REGULATED INDUSTRY / THIRD-PARTY MATERIAL
-Not applicable. Restock is not in a regulated industry. Store names appear only as editable list labels; no logos or trademarks of retailers are used. Price data comes from the user's own receipts, a hand-made catalog, and Open Food Facts data under the Open Database License.
+Not applicable; Restock is not in a regulated industry. Store names are only editable list labels; no retailer logos or trademarks are used. Price data comes from the user's own receipts, a hand-made catalog, and Open Food Facts data under the Open Database License.
