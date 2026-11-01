@@ -45,6 +45,7 @@
 		426FFE6DA2C0EFDE1E621225 /* ReceiptParserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54E0CCE44BCFCE3EB38E0F87 /* ReceiptParserService.swift */; };
 		47C167B4A1828C9F1D437D86 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1316E9EFE646ED0F0078332F /* Store.swift */; };
 		A0D490DE0D31D30BD9FEF341 /* StoreCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC82CB50C5D6C4FD0257599 /* StoreCategories.swift */; };
+		2B1D4E5A7C3F9B0E1A2C0001 /* StoreTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B1D4E5A7C3F9B0E1A2C0002 /* StoreTemplates.swift */; };
 		150BD40FD1E7284CB544C93F /* ShoppingRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EBBE9D9B16A5A1ADEE1D34 /* ShoppingRoute.swift */; };
 		B1C0DE110000000000000005 /* LegacyLearnedPriceReset.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */; };
 		D40FACEBDF38F80A4C02A358 /* AbbreviatedNameCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC66FDBE9289572AAAB96D7 /* AbbreviatedNameCleanup.swift */; };
@@ -311,6 +312,7 @@
 		0AC1BA745165F01898D190CD /* QuickActionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionState.swift; sourceTree = "<group>"; };
 		1316E9EFE646ED0F0078332F /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		2BC82CB50C5D6C4FD0257599 /* StoreCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCategories.swift; sourceTree = "<group>"; };
+		2B1D4E5A7C3F9B0E1A2C0002 /* StoreTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreTemplates.swift; sourceTree = "<group>"; };
 		05EBBE9D9B16A5A1ADEE1D34 /* ShoppingRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRoute.swift; sourceTree = "<group>"; };
 		B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLearnedPriceReset.swift; sourceTree = "<group>"; };
 		FEC66FDBE9289572AAAB96D7 /* AbbreviatedNameCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbbreviatedNameCleanup.swift; sourceTree = "<group>"; };
@@ -656,6 +658,7 @@
 				CA2730EA5F83449C914C7C9D /* ShoppingItem.swift */,
 				1316E9EFE646ED0F0078332F /* Store.swift */,
 				2BC82CB50C5D6C4FD0257599 /* StoreCategories.swift */,
+				2B1D4E5A7C3F9B0E1A2C0002 /* StoreTemplates.swift */,
 				05EBBE9D9B16A5A1ADEE1D34 /* ShoppingRoute.swift */,
 				B1C0DE110000000000000006 /* LegacyLearnedPriceReset.swift */,
 				FEC66FDBE9289572AAAB96D7 /* AbbreviatedNameCleanup.swift */,
@@ -1210,6 +1213,7 @@
 				83F7A018CC455374AA300D07 /* SmartCartApp.swift in Sources */,
 				47C167B4A1828C9F1D437D86 /* Store.swift in Sources */,
 				A0D490DE0D31D30BD9FEF341 /* StoreCategories.swift in Sources */,
+				2B1D4E5A7C3F9B0E1A2C0001 /* StoreTemplates.swift in Sources */,
 				150BD40FD1E7284CB544C93F /* ShoppingRoute.swift in Sources */,
 				B1C0DE110000000000000005 /* LegacyLearnedPriceReset.swift in Sources */,
 				D40FACEBDF38F80A4C02A358 /* AbbreviatedNameCleanup.swift in Sources */,

@@ -443,19 +443,38 @@
 "station.setup.show" = "Einblenden";
 "station.setup.remove" = "Gänge entfernen";
 "station.setup.shared" = "Gänge bleiben bis zum Abgleich auf diesem Gerät.";
-"station.setup.row.summary" = "%d Kategorien · %d Stichwörter";
 "station.setup.row.empty" = "noch leer";
 "station.setup.detail.title" = "Gang";
 "station.setup.detail.categories" = "Kategorien in diesem Gang · %d";
 "station.setup.detail.in" = "jetzt in: %@";
 "station.setup.detail.bound" = "gehört zu Gang %@";
-"station.setup.detail.keywords" = "Stichwörter (nur Anzeige)";
+"station.setup.detail.keywords" = "Stichwörter · %d";
 "station.setup.detail.delete" = "Gang löschen";
 "station.setup.delete.title" = "Gang „%@“ löschen?";
 "station.setup.delete.message" = "Seine Kategorien werden offen.";
 "station.setup.name.rejected" = "Diesen Namen gibt es schon oder er ist nicht erlaubt.";
 "station.setup.detail.open" = "offen";
 "station.setup.detail.hidden" = "ausgeblendet";
+/* Vorlagen und Stichwörter (Issue #234, Durchgang 2b-1) */
+"station.setup.template.discounter" = "Discounter";
+"station.setup.template.fullrange" = "Vollsortimenter";
+"station.setup.template.drugstore" = "Drogerie";
+"station.setup.template.hardware" = "Baumarkt";
+"station.setup.template.count" = "%d Gänge";
+"station.setup.template.hint" = "Vorschlag, bitte prüfen";
+"station.setup.template.cancel" = "Abbrechen";
+"station.setup.template.replace.title" = "Vorhandene Gänge ersetzen?";
+"station.setup.template.replace.confirm" = "Ersetzen";
+"station.setup.keyword.placeholder" = "Stichwort hinzufügen";
+"station.setup.keyword.add" = "Hinzufügen";
+"station.setup.keyword.delete" = "Löschen";
+"station.setup.keyword.notice" = "„%@“ steht auch in „%@“. Der Gang weiter oben in der Liste gewinnt.";
+"station.setup.keyword.duplicate" = "„%@“ steht hier schon.";
+"station.setup.keyword.invalid" = "Ein Stichwort ist ein einzelnes Wort mit mindestens 3 Buchstaben.";
+"station.setup.row.categories.one" = "1 Kategorie";
+"station.setup.row.categories.other" = "%d Kategorien";
+"station.setup.row.keywords.one" = "1 Stichwort";
+"station.setup.row.keywords.other" = "%d Stichwörter";
 
 /* Preisquelle (Issue #151) */
 "price.source.receipt" = "Bon";

@@ -156,14 +156,17 @@ jobs:
     # (run 41218440534: 53 Tests grün, Abbruch am Limit); A und B überspringen sie. Danach lag B mit
     # 111 Tests bei 48,5 min Testzeit und brach beim Abschluss ab (run 41223938489), A bei 23 min:
     # ItemRowTapUITests (7,7 min) und QuickAddAssignmentUITests (6,9 min) zogen nach A.
+    # Vierter Teil D (Issue #234, 2b-1): EXTRA_CLASSES allein, damit C (~49 min) nicht über das
+    # Limit wächst; B überspringt sie, A und C unverändert.
     timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
-        half: [A, B, C]
+        half: [A, B, C, D]
     env:
       HEAVY_CLASSES: "ReceiptReviewUITests ShoppingRouteUITests AddItemQuantitySuggestionUITests ReceiptResolutionStatsUITests DynamicTypeUITests ItemRowTapUITests QuickAddAssignmentUITests"
       SOLO_CLASSES: "StoreStationsUITests"
+      EXTRA_CLASSES: "StationSetupExtrasUITests"
     steps:
       - uses: actions/checkout@v4
 
@@ -226,10 +229,14 @@ jobs:
             for CLASS in $SOLO_CLASSES; do
               SELECTION+=("-only-testing:RestockUITests/$CLASS")
             done
+          elif [ "${{ matrix.half }}" = "D" ]; then
+            for CLASS in $EXTRA_CLASSES; do
+              SELECTION+=("-only-testing:RestockUITests/$CLASS")
+            done
           else
             export TEST_RUNNER_RESTOCK_NOTIF_DECISION=deny
             SELECTION+=("-only-testing:RestockUITests")
-            for CLASS in $HEAVY_CLASSES $SOLO_CLASSES; do
+            for CLASS in $HEAVY_CLASSES $SOLO_CLASSES $EXTRA_CLASSES; do
               SELECTION+=("-skip-testing:RestockUITests/$CLASS")
             done
           fi

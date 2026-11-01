@@ -33,6 +33,8 @@ enum StoreCategories {
         "🥦", "🍎", "🍌", "🥕", "🌿", "🍝", "🥫", "🫙", "🧂", "🍫", "🍪", "🍷",
         "🍺", "🥤", "☕️", "🧃", "🧴", "🧼", "🧻", "💊", "👶", "🐾", "🌸", "🛒",
         "💇", "🦷", "💄", "🔧", "🔩", "🪵", "🧱", "🎨", "🚿", "💡", "🌷", "🌱",
+        // Emoji des Lidl-Gangs „Frische Säfte, Salate …“ (jede Vorlage nutzt nur Emojis der Auswahl).
+        "🥗",
     ]
 
     /// Stichwörter → Emoji-Vorschlag für einen neuen Namen. Erste Übereinstimmung gewinnt.
@@ -400,6 +402,60 @@ extension StoreCategories {
         var config = config
         config.stations.remove(at: index)
         return config
+    }
+
+    // MARK: Stichwörter (Durchgang 2b-1, `docs/specs/views/station-templates-keywords.md`)
+
+    /// Ergebnis der Prüfung eines neuen Stichworts.
+    enum KeywordCheck: Equatable {
+        /// Annehmen; `others` = andere Gänge (in Gang-Reihenfolge) mit demselben Stichwort.
+        case accepted(others: [String])
+        /// Steht im selben Gang schon.
+        case duplicate
+        /// Kein einzelnes Wort aus Buchstaben/Ziffern mit mindestens 3 Zeichen, oder Gang unbekannt.
+        case invalid
+    }
+
+    /// Getrimmt und klein; `nil`, wenn leer, kürzer als 3 Zeichen oder mit einem Zeichen, das kein
+    /// Buchstabe und keine Ziffer ist (Leerzeichen, Bindestrich, Punkt, Marke).
+    static func normalizedKeyword(_ input: String) -> String? {
+        let keyword = input.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard keyword.count >= 3,
+              keyword.unicodeScalars.allSatisfy({ CharacterSet.alphanumerics.contains($0) }) else { return nil }
+        return keyword
+    }
+
+    static func checkKeyword(_ input: String, inStation name: String, config: StationConfig) -> KeywordCheck {
+        guard let keyword = normalizedKeyword(input), let index = stationIndex(name, in: config) else { return .invalid }
+        let key = keywordKey(keyword)
+        let hits = { (station: Station) in station.keywords.contains { keywordKey($0) == key } }
+        if hits(config.stations[index]) { return .duplicate }
+        let others = config.stations.enumerated().filter { $0.offset != index && hits($0.element) }.map(\.element.name)
+        return .accepted(others: others)
+    }
+
+    /// Stichwort normalisiert am Ende anhängen; `nil` bei ungültig oder doppelt im selben Gang.
+    static func addingKeyword(_ input: String, toStation name: String, in config: StationConfig) -> StationConfig? {
+        guard case .accepted = checkKeyword(input, inStation: name, config: config),
+              let keyword = normalizedKeyword(input), let index = stationIndex(name, in: config) else { return nil }
+        var config = config
+        config.stations[index].keywords.append(keyword)
+        return config
+    }
+
+    /// Genau dieses Stichwort aus dem Gang entfernen; `nil`, wenn Gang oder Stichwort fehlt.
+    static func removingKeyword(_ keyword: String, fromStation name: String, in config: StationConfig) -> StationConfig? {
+        guard let index = stationIndex(name, in: config) else { return nil }
+        let key = keywordKey(keyword)
+        guard let position = config.stations[index].keywords.firstIndex(where: { keywordKey($0) == key }) else { return nil }
+        var config = config
+        config.stations[index].keywords.remove(at: position)
+        return config
+    }
+
+    /// Vergleich wie in `stationForKeywords`.
+    private static func keywordKey(_ keyword: String) -> String {
+        compareKey(keyword).lowercased()
     }
 
     private static func stationIndex(_ name: String, in config: StationConfig) -> Int? {
