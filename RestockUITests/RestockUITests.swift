@@ -360,17 +360,23 @@ final class RestockUITests: XCTestCase {
         }
         XCTAssertTrue(defaultStores.waitUntilHittable().matched,
                       "„Standard-Läden“ nicht sichtbar nach \(swipes) Wischern", file: file, line: line)
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
-            .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
-        XCTAssertTrue(defaultStores.waitForExistence(timeout: UITestWait.defaultTimeout),
-                      "„Standard-Läden“ nach dem Nachziehen nicht mehr im Baum", file: file, line: line)
 
+        // Geprüft wird zweimal: mit „Standard-Läden“ im Bild und nach kurzem Nachziehen, damit die Zeile
+        // direkt darunter sicher im Baum stünde, falls es sie gäbe.
         let openPrices = app.descendants(matching: .any)
             .matching(NSPredicate(format: "label BEGINSWITH %@", "Open Prices")).firstMatch
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "Einstellungen-Funktionen-ohne-OpenPrices"
+        attachScreenshot(named: "Einstellungen-Funktionen-ohne-OpenPrices")
+        XCTAssertFalse(openPrices.exists, "Eintrag „Open Prices“ ist in den Einstellungen sichtbar", file: file, line: line)
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
+            .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.55)))
+        attachScreenshot(named: "Einstellungen-Funktionen-nachgezogen")
+        XCTAssertFalse(openPrices.exists, "Eintrag „Open Prices“ nach dem Nachziehen sichtbar", file: file, line: line)
+    }
+
+    private func attachScreenshot(named name: String) {
+        let attachment = XCTAttachment(screenshot: XCUIApplication().screenshot())
+        attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
-        XCTAssertFalse(openPrices.exists, "Eintrag „Open Prices“ ist in den Einstellungen sichtbar", file: file, line: line)
     }
 }
