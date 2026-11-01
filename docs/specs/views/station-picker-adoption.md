@@ -339,8 +339,12 @@ beide Sortiermodi ansehen; (4) geteilter Laden mit Hinweis. Nichts auf Hennings 
   (R3 kann beides nicht trennen, nur ein neues Feld könnte es, Alternative C).
 - **Geteilte Läden:** `categoriesJSON` trägt eigene Kategorien, nicht die Gänge. Die Liste „von früher“ kann deshalb
   je Gerät abweichen, bis die Gänge synchronisiert werden (D3).
-- **Seed mit `shareID`** (`UITEST-NOSHARE`) ist nur aus dem Code begründet (kein Schreiben, höchstens Fehler-Banner);
-  ob `StoreDetailView` im Simulator beim Öffnen einen Netzzugriff versucht, ist nicht gemessen.
+- **Seed mit `shareID`** (`UITEST-NOSHARE`): Der Satz „kein Schreiben“ aus Abschnitt (c) stimmte nicht (Adversary
+  F001): `StoreDetailView.onDisappear` hätte auf einem Simulator mit iCloud-Konto einen Record in die öffentliche
+  Datenbank gepusht. Behoben, indem Y7 mit `-skipCloudKitForScreenshots` startet und der Push in `onDisappear` dieses
+  DEBUG-Argument wie der Pull beachtet. Offen (F006, LOW): `SyncCoordinator.resubscribeAll` legt beim Start auch für
+  den Seed eine Abfrage-Subskription an, `pushWidgetCheckoffsIfNeeded` kennt das Argument nicht; ohne iCloud-Konto
+  (Restock-Validate, CI) scheitern beide nur. Nicht gemessen, nur aus dem Code begründet.
 - **Emoji der übernommenen Kategorie** kann außerhalb von `emojiChoices` liegen (frei gewählt in #85); das Raster zeigt
   dann keinen markierten Eintrag, der Gang trägt das Emoji trotzdem.
 - **Auswahl nach Löschen** beruht auf der Auflösung ohne Merkung und ohne Handwahl; trägt der Artikel im Add-Dialog
@@ -385,3 +389,12 @@ Gekippt wird keine frühere Entscheidung; ADR-pflichtig ist nichts. Würde man C
 ## Changelog
 
 - 2026-11-01: Initial spec created (Issue #234, Durchgang 2b-2).
+- 2026-11-01 (Validierung): Abweichungen der Umsetzung von „Affected Files“: (1) `adoptableCategories`,
+  `adoptCategory`, `adoptAllCategories` und `templateStationNames` stehen als `Store`-Erweiterung in
+  `SmartCart/Models/StoreTemplates.swift` (+44) statt in `Store.swift`, weil `Store.swift` auch im Widget- und
+  Teilen-Ziel kompiliert wird und die Vorlagen nur im App-Ziel liegen; `Store.swift` bleibt unverändert.
+  (2) `StoreDetailView.swift` ist entgegen „Nicht berührt“ geändert (+5/−1, nur `#if DEBUG`): Push in `onDisappear`
+  beachtet `-skipCloudKitForScreenshots` (Adversary F001). (3) `StoreCategories.followedChoice(_:next:)` (+33) für die
+  Auswahl nach dem Löschen (Adversary F002). (4) `-clearStationStoreForUITests` setzt zusätzlich `shareID = nil`.
+  Umfang: Produktivcode +315/−12 in 12 Dateien, Testcode +711 (Schätzung ~525; vom PO ~940 akzeptiert, Mehr aus den
+  UI-Tests).
