@@ -56,6 +56,16 @@ struct EditItemView: View {
         }, set: { category = $0; categoryPicked = true })
     }
 
+    /// Nachziehen aus der Auswahl (F002): eine eigene Wahl folgt, sonst nur eine gespeicherte Handwahl,
+    /// die `renameStation` schon umgeschrieben hat; `categoryPicked` wird nie neu gesetzt.
+    private func followSelection(_ next: String) {
+        if let followed = StoreCategories.followedChoice(categoryPicked ? category : nil, next: next) {
+            category = followed
+        } else if item.categoryManuallySet {
+            category = item.category
+        }
+    }
+
     private var categoryLabel: String {
         if let store = selectedStore, store.hasStations {
             return currentStation(in: store).map { "\(store.stationEmoji($0)) \($0)" } ?? String(localized: "station.other")
@@ -158,7 +168,9 @@ struct EditItemView: View {
                         CategoryPickerView(
                             store: selectedStore,
                             selection: pickerSelection,
-                            automaticCategory: AssignmentService.category(for: name)
+                            automaticCategory: AssignmentService.category(for: name),
+                            itemName: name,
+                            onFollow: followSelection
                         )
                     } label: {
                         HStack {

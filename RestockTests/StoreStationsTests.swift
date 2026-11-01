@@ -1638,4 +1638,16 @@ final class StoreStationsTests: XCTestCase {
             }
         }
     }
+
+    // MARK: P5: Nachziehen ohne eigene Wahl (AC-4, Adversary F002)
+
+    /// P5 / AC-4: GIVEN keine eigene Wahl im Dialog (`nil`) WHEN die Auswahl nach Umbenennen/Löschen nachzieht
+    /// THEN bleibt es bei „keine Wahl“ (Artikel folgt der Automatik, kein Handwahl-Vermerk); GIVEN eine eigene
+    /// Wahl THEN wird sie durch die nachgezogene ersetzt, auch durch die Sonstiges-Marke.
+    func testFollowedChoiceKeepsAutomatic() {
+        XCTAssertNil(StoreCategories.followedChoice(nil, next: "Milchprodukte"))
+        XCTAssertNil(StoreCategories.followedChoice(nil, next: marker))
+        XCTAssertEqual(StoreCategories.followedChoice("Käse", next: "Käse & Co"), "Käse & Co")
+        XCTAssertEqual(StoreCategories.followedChoice("Käse", next: marker), marker)
+    }
 }

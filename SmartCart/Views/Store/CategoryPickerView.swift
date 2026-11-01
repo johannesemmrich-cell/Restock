@@ -11,14 +11,22 @@ struct CategoryPickerView: View {
     /// Kategorie, die der Artikel ohne eigene Wahl bekäme — Rückfall, wenn die gewählte eigene
     /// Kategorie hier gelöscht wird.
     let automaticCategory: String
+    /// Artikelname für die Auswahl nach dem Löschen eines Gangs (Durchgang 2b-2).
+    var itemName: String = ""
+    /// Nachziehen nach Umbenennen/Löschen eines Gangs, ohne die Wahl als Nutzerwahl zu markieren (F002).
+    var onFollow: ((String) -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
 
     @State private var query = ""
     @State private var editingCategory: EditTarget?
     @State private var deletingCategory: String?
+    @State private var editingStation: EditTarget?
+    @State private var deletingStation: String?
 
     private struct EditTarget: Identifiable {
         let name: String
+        /// Auswahl beim Öffnen (Gang-Modus), für `renamedSelection`.
+        var selected = ""
         var id: String { name }
     }
 
@@ -85,6 +93,15 @@ struct CategoryPickerView: View {
                 }
             }
         }
+        .sheet(item: $editingStation) { target in
+            if let store {
+                CustomCategoryEditor(store: store, name: target.name, isStation: true) { newName in
+                    let next = StoreCategories.renamedSelection(target.selected, from: target.name, to: newName)
+                    if next != target.selected { follow(next) }
+                }
+            }
+        }
+        .modifier(stationDeleteDialog)
         .confirmationDialog(
             String(format: String(localized: "category.picker.delete.confirm"), deletingCategory ?? ""),
             isPresented: Binding(get: { deletingCategory != nil }, set: { if !$0 { deletingCategory = nil } }),
@@ -119,6 +136,21 @@ struct CategoryPickerView: View {
             ForEach(config.stations.filter { StoreCategories.matches($0.name, query: query) }, id: \.name) { station in
                 row(station.name, emoji: station.emoji, title: station.name,
                     subtitle: countText(store.pendingCount(inStation: station.name)))
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            deletingStation = station.name
+                        } label: {
+                            Label(String(localized: "action.delete"), systemImage: "trash")
+                        }
+                        .accessibilityIdentifier("categoryPicker.station.delete.\(station.name)")
+                        Button {
+                            editingStation = EditTarget(name: station.name, selected: selection)
+                        } label: {
+                            Label(String(localized: "action.edit"), systemImage: "pencil")
+                        }
+                        .tint(.indigo)
+                        .accessibilityIdentifier("categoryPicker.station.edit.\(station.name)")
+                    }
             }
             let other = String(localized: "station.other")
             if StoreCategories.matches(other, query: query) {
@@ -226,6 +258,27 @@ struct CategoryPickerView: View {
         .accessibilityIdentifier(identifier ?? "categoryPicker.row.\(category)")
     }
 
+    /// Rückfrage und Wirkung wie in „Kategorien einrichten“ (`StationSetupView.deleteDialog`/`delete`).
+    private var stationDeleteDialog: StationPickerDeleteDialog {
+        StationPickerDeleteDialog(store: store, pending: $deletingStation) { name in
+            guard let store else { return }
+            let before = selection
+            let wasSelected = before != StoreCategories.otherStationMarker
+                && StoreCategories.compareKey(before) == StoreCategories.compareKey(name)
+            StationSetupView.delete(name, in: store)
+            let config = store.hasStations ? store.stationConfig : nil
+            // Ohne Gänge gilt auch die Marke nicht mehr: dann die automatische Kategorie.
+            guard wasSelected || (config == nil && before == StoreCategories.otherStationMarker) else { return }
+            follow(StoreCategories.selectionAfterDeleting(
+                itemName: itemName, automaticCategory: automaticCategory,
+                config: config ?? StationConfig(stations: [], hidden: [], date: Date())))
+        }
+    }
+
+    private func follow(_ next: String) {
+        if let onFollow { onFollow(next) } else { selection = next }
+    }
+
     private func countText(_ count: Int) -> String? {
         count > 0 ? String(format: String(localized: "category.picker.count"), count) : nil
     }
@@ -241,18 +294,22 @@ struct CategoryPickerView: View {
 struct CustomCategoryEditor: View {
     let store: Store
     let name: String
+    /// Gang-Modus (Durchgang 2b-2): speichert über `renameStation`, Ablehnung lässt den Editor offen.
+    let isStation: Bool
     let onSaved: (String) -> Void
     @Environment(\.dismiss) private var dismiss
 
     @State private var newName: String
     @State private var emoji: String
+    @State private var rejected = false
 
-    init(store: Store, name: String, onSaved: @escaping (String) -> Void) {
+    init(store: Store, name: String, isStation: Bool = false, onSaved: @escaping (String) -> Void) {
         self.store = store
         self.name = name
+        self.isStation = isStation
         self.onSaved = onSaved
         _newName = State(initialValue: name)
-        _emoji = State(initialValue: store.categoryEmoji(name))
+        _emoji = State(initialValue: isStation ? store.stationEmoji(name) : store.categoryEmoji(name))
     }
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 6)
@@ -263,6 +320,12 @@ struct CustomCategoryEditor: View {
                 Section(String(localized: "category.editor.name")) {
                     TextField(String(localized: "category.editor.name"), text: $newName)
                         .accessibilityIdentifier("categoryEditor.name")
+                        .onChange(of: newName) { rejected = false }
+                    if rejected {
+                        Text(String(localized: "station.setup.name.rejected"))
+                            .font(.footnote)
+                            .foregroundStyle(Color.destructive)
+                    }
                 }
                 .listRowBackground(Color.surface)
                 Section(String(localized: "category.editor.emoji")) {
@@ -298,16 +361,52 @@ struct CustomCategoryEditor: View {
                     Button(String(localized: "action.cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(String(localized: "action.save")) {
-                        let result = store.updateCustomCategory(name, name: newName, emoji: emoji)
-                        onSaved(result)
-                        Haptics.success()
-                        dismiss()
-                    }
+                    Button(String(localized: "action.save")) { save() }
                     .disabled(StoreCategories.normalizedName(newName).isEmpty)
                 }
             }
         }
         .devFeedback(context: "Kategorie bearbeiten")
+    }
+
+    private func save() {
+        let result: String
+        if isStation {
+            guard let renamed = store.renameStation(name, to: newName, emoji: emoji) else {
+                rejected = true
+                return
+            }
+            result = renamed
+        } else {
+            result = store.updateCustomCategory(name, name: newName, emoji: emoji)
+        }
+        onSaved(result)
+        Haptics.success()
+        dismiss()
+    }
+}
+
+/// Rückfrage „Gang löschen“ in der Auswahl; Titel, Meldung und Knopf aus `StationSetupView.deleteDialog`.
+private struct StationPickerDeleteDialog: ViewModifier {
+    let store: Store?
+    @Binding var pending: String?
+    let onConfirm: (String) -> Void
+
+    func body(content: Content) -> some View {
+        content.confirmationDialog(dialog(pending ?? "").title,
+                                   isPresented: Binding(get: { pending != nil }, set: { if !$0 { pending = nil } }),
+                                   titleVisibility: .visible, presenting: pending) { name in
+            Button(dialog(name).button, role: .destructive) {
+                onConfirm(name)
+                pending = nil
+            }
+        } message: { name in
+            Text(dialog(name).message)
+        }
+    }
+
+    private func dialog(_ name: String) -> (title: String, message: String, button: String) {
+        guard let store else { return ("", "", "") }
+        return StationSetupView.deleteDialog(for: name, in: store)
     }
 }

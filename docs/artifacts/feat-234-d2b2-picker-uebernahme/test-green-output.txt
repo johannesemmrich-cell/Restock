@@ -1,0 +1,29 @@
+Grün-Läufe #234 D2b-2, Simulator Restock-Validate-272 (iOS 27.2), 2026-11-01
+
+== test-green-unit.txt
+Executed 4 tests, with 0 failures (0 unexpected) in 0.026 (0.030) seconds
+Executed 61 tests, with 0 failures (0 unexpected) in 1.269 (1.292) seconds
+Executed 65 tests, with 0 failures (0 unexpected) in 1.296 (1.323) seconds
+Executed 65 tests, with 0 failures (0 unexpected) in 1.296 (1.325) seconds
+** TEST SUCCEEDED **
+
+== test-green-ui-extras.txt
+Executed 13 tests, with 0 failures (0 unexpected) in 1312.331 (1312.373) seconds
+Executed 13 tests, with 0 failures (0 unexpected) in 1312.331 (1312.381) seconds
+Executed 13 tests, with 0 failures (0 unexpected) in 1312.331 (1312.386) seconds
+** TEST SUCCEEDED **
+
+== test-green-ui-storestations.txt
+Executed 16 tests, with 0 failures (0 unexpected) in 1499.181 (1499.219) seconds
+Executed 16 tests, with 0 failures (0 unexpected) in 1499.181 (1499.227) seconds
+Executed 16 tests, with 0 failures (0 unexpected) in 1499.181 (1499.231) seconds
+** TEST SUCCEEDED **
+
+== test-green-unit-full.txt
+Executed 2 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Executed 60 tests, with 0 failures (0 unexpected) in 0.741 (0.753) seconds
+Executed 833 tests, with 2 failures (0 unexpected) in 22.341 (22.521) seconds
+Executed 833 tests, with 2 failures (0 unexpected) in 22.341 (22.523) seconds
+** TEST FAILED **
+
+Hinweis: test-green-unit-full.txt stammt aus dem Lauf vor dem Adversary-Fix F001–F003 (833 Tests, 2 Altfehler ConsumptionPatternTests, Issue #231); die übrigen Läufe sind nach dem Fix.

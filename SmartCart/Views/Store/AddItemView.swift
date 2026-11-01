@@ -146,7 +146,9 @@ struct AddItemView: View {
                         CategoryPickerView(
                             store: selectedStore,
                             selection: pickerSelection,
-                            automaticCategory: AssignmentService.category(for: trimmedName)
+                            automaticCategory: AssignmentService.category(for: trimmedName),
+                            itemName: trimmedName,
+                            onFollow: { chosenCategory = StoreCategories.followedChoice(chosenCategory, next: $0) }
                         )
                     } label: {
                         HStack {

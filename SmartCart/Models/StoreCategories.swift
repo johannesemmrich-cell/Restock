@@ -404,6 +404,39 @@ extension StoreCategories {
         return config
     }
 
+    // MARK: Auswahl und Übernahme (Durchgang 2b-2, `docs/specs/views/station-picker-adoption.md`)
+
+    /// Regel R3: eigene Kategorien, die kein aktueller Gang sind, als Gang annehmbar wären und
+    /// (in keiner Vorlage stehen oder genutzt sind). `used` und `templateNames` als `compareKey`s;
+    /// die Reihenfolge von `custom` bleibt.
+    static func adoptableCategories(custom: [String], config: StationConfig,
+                                    used: Set<String>, templateNames: Set<String>) -> [String] {
+        custom.filter { name in
+            guard case .new = resolveStation(name, config: config) else { return false }
+            let key = compareKey(name)
+            return !templateNames.contains(key) || used.contains(key)
+        }
+    }
+
+    /// Auswahl nach dem Umbenennen eines Gangs: war er gewählt, der neue Name, sonst unverändert.
+    static func renamedSelection(_ selection: String, from old: String, to new: String) -> String {
+        selection != otherStationMarker && compareKey(selection) == compareKey(old) ? new : selection
+    }
+
+    /// Eigene Wahl des Dialogs nach dem Nachziehen: ohne eigene Wahl (`nil`) bleibt es dabei, damit
+    /// der Artikel der Automatik folgt und nicht als Handwahl gespeichert wird.
+    static func followedChoice(_ chosen: String?, next: String) -> String? {
+        chosen == nil ? nil : next
+    }
+
+    /// Auswahl nach dem Löschen des gewählten Gangs (`config` danach): ohne Gänge die automatische
+    /// Kategorie, sonst der Gang der automatischen Auflösung oder die Sonstiges-Marke.
+    static func selectionAfterDeleting(itemName: String, automaticCategory: String, config: StationConfig) -> String {
+        guard !config.stations.isEmpty else { return automaticCategory }
+        return station(forItemNamed: itemName, category: automaticCategory, manuallySet: false,
+                       remembered: nil, config: config) ?? otherStationMarker
+    }
+
     // MARK: Stichwörter (Durchgang 2b-1, `docs/specs/views/station-templates-keywords.md`)
 
     /// Ergebnis der Prüfung eines neuen Stichworts.

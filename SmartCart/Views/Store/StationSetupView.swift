@@ -35,6 +35,8 @@ struct StationSetupView: View {
                     if config == nil { templateSection }
                     if let config {
                         stationSection(config)
+                        // Direkt unter den Gängen wie im freigegebenen Entwurf (2b-2).
+                        StationAdoptionSection(store: store, onChange: changed)
                         openSection(config)
                         hiddenSection(config)
                     }
@@ -754,6 +756,7 @@ private struct StationEmojiGrid: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(choice)
+                .accessibilityIdentifier("stationSetup.emoji.\(choice)")
                 .accessibilityAddTraits(selected == choice ? .isSelected : [])
             }
         }

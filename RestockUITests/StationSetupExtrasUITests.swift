@@ -568,16 +568,19 @@ final class StationSetupExtrasUITests: XCTestCase {
         XCTAssertFalse(pickerRow("Käse", app).exists, "Alter Name noch in der Auswahl")
         attach("Y1 umbenannt", app)
 
-        let other = element("categoryPicker.row.other", app)
-        revealHittable(other, "Sonstiges in der Auswahl", in: app)
-        other.swipeLeft()
-        let otherActions = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "categoryPicker.station."))
-        XCTAssertEqual(otherActions.count, 0, "„Sonstiges“ darf keine Wischaktionen haben")
-
         pickerBack(app)
         categoryRowLabel(contains: "Käse & Co", app)
         saveEditor(app)
         assertDirectlyUnder("Gouda", header: "Käse & Co", emoji: "🧀", in: app)
+
+        // Gegenprobe als letzter Schritt: Ein Wisch auf eine Button-Zeile ohne Wischaktionen wählt sie
+        // (Bestandsverhalten), daher danach keine weitere Navigation; tearDown räumt auf.
+        openPicker(for: "Gouda", in: app)
+        let other = element("categoryPicker.row.other", app)
+        revealHittable(other, "Sonstiges in der Auswahl", in: app)
+        other.swipeLeft()
+        XCTAssertFalse(element("categoryPicker.station.edit.Sonstiges", app).exists, "„Sonstiges“ darf kein „Bearbeiten“ haben")
+        XCTAssertFalse(element("categoryPicker.station.delete.Sonstiges", app).exists, "„Sonstiges“ darf kein „Löschen“ haben")
     }
 
     // MARK: - Y2: Gang in der Auswahl löschen (AC-1, AC-4)
@@ -739,7 +742,13 @@ final class StationSetupExtrasUITests: XCTestCase {
     /// Y7: GIVEN Laden mit `shareID` WHEN „Kategorien einrichten“ THEN steht der Hinweis da, die Gang-Zeilen
     /// lassen sich öffnen.
     func testSharedStoreShowsHint() {
-        let app = openedStore(seed: "-seedStationStoreSharedForUITests", name: storeName, item: "Salami")
+        // `-skipCloudKitForScreenshots` (Adversary F001): kein Pull/Push für die Kennung UITEST-NOSHARE.
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedStationStoreSharedForUITests", "-skipCloudKitForScreenshots"]
+        let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "\(storeName),")).firstMatch
+        UITestLaunch.start(app, expecting: tile, description: "Kachel „\(storeName)“")
+        tile.tap()
+        XCTAssertTrue(app.staticTexts["Salami"].waitForExistence(timeout: UITestWait.defaultTimeout), "Ladenliste nicht geöffnet")
         openSetup(app)
         let hint = element("stationSetup.sharedHint", app)
         XCTAssertTrue(reveal(hint, in: app), "Hinweis für geteilte Läden fehlt")
@@ -808,5 +817,33 @@ final class StationSetupExtrasUITests: XCTestCase {
 
         assertDirectlyUnder("Nudeln", header: "Asia-Regal", emoji: "🍜", in: app)
         assertDirectlyUnder("Baguette", header: "Backstation", emoji: "🥖", in: app)
+    }
+
+    // MARK: - Y10: Löschen ohne vorherige Wahl (AC-4, Adversary F002)
+
+    /// Y10: GIVEN Gouda automatisch in „Käse“ (Stichwort), Dialog ohne eigene Wahl WHEN „Käse“ in der Auswahl
+    /// gelöscht und gesichert THEN gilt Gouda nicht als Handwahl: Bekommt danach „Kühltheke Fertiges“ das
+    /// Stichwort „gouda“, wandert Gouda dorthin (eine Handwahl oder Merkung hielte es in „Milchprodukte“).
+    func testPickerDeleteWithoutChoiceKeepsAutomatic() {
+        let app = openedStore()
+        chooseCategoryMode(app)
+        openPicker(for: "Gouda", in: app)
+        swipeStation("Käse", "delete", in: app)
+        let confirm = confirmButton("Gang löschen", app)
+        XCTAssertTrue(confirm.waitUntilHittable().matched, "„Gang löschen“ fehlt")
+        confirm.tap()
+        waitForGone(pickerRow("Käse", app), "Zeile „Käse“ nach dem Löschen noch da")
+        pickerBack(app)
+        saveEditor(app)
+        assertDirectlyUnder("Gouda", header: "Milchprodukte", emoji: "🥛", in: app)
+
+        openSetup(app)
+        openStation("Kühltheke Fertiges", in: app)
+        addKeyword("gouda", in: app)
+        XCTAssertTrue(reveal(keywordRow("gouda", app), in: app), "Stichwort-Zeile „gouda“ fehlt")
+        backToOverview(app)
+        scrollToTop(app)
+        closeSetup(app)
+        assertDirectlyUnder("Gouda", header: "Kühltheke Fertiges", emoji: "🧊", in: app)
     }
 }

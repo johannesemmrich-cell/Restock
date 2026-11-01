@@ -111,4 +111,48 @@ extension StoreCategories {
         ("drugstore", drugstoreTemplate),
         ("hardware", hardwareTemplate),
     ]
+
+    /// `compareKey`s aller Gang-Namen aller Vorlagen (Regel R3, Durchgang 2b-2).
+    static let templateStationNames: Set<String> = Set(allTemplates.flatMap { $0.template.stations.map { compareKey($0.name) } })
+}
+
+// Übernahme früherer eigener Kategorien (Durchgang 2b-2). Hier statt in `Store.swift`, weil
+// `Store.swift` auch im Widget- und Teilen-Ziel läuft, die Vorlagen nur im App-Ziel.
+extension Store {
+    /// Gänge nur, wenn es mindestens einen gibt.
+    private var adoptionConfig: StationConfig? { hasStations ? stationConfig : nil }
+
+    /// Eigene Kategorien „von früher“ (Regel R3); im Laden ohne Gänge leer.
+    var adoptableCategories: [String] {
+        guard let config = adoptionConfig else { return [] }
+        let names = (items ?? []).map(\.category) + Array(categoryAssignments.values)
+        return StoreCategories.adoptableCategories(custom: customCategories, config: config,
+                                                   used: Set(names.map(StoreCategories.compareKey)),
+                                                   templateNames: StoreCategories.templateStationNames)
+    }
+
+    /// Eigene Kategorie als Gang am Ende übernehmen, mit ihrem Emoji. `nil` (nichts geändert), wenn
+    /// der Laden keine Gänge hat oder der Name nicht annehmbar ist.
+    @discardableResult
+    func adoptCategory(_ name: String) -> String? {
+        guard let config = adoptionConfig,
+              let next = StoreCategories.addingStation(name, emoji: categoryEmoji(name), to: config) else { return nil }
+        updateStationConfig(next)
+        return next.stations.last?.name
+    }
+
+    /// Alle Kategorien „von früher“ in Listenreihenfolge übernehmen, mit genau einem Schreibvorgang.
+    @discardableResult
+    func adoptAllCategories() -> [String] {
+        guard var config = adoptionConfig else { return [] }
+        var adopted: [String] = []
+        for name in adoptableCategories {
+            guard let next = StoreCategories.addingStation(name, emoji: categoryEmoji(name), to: config),
+                  let added = next.stations.last?.name else { continue }
+            config = next
+            adopted.append(added)
+        }
+        if !adopted.isEmpty { updateStationConfig(config) }
+        return adopted
+    }
 }
