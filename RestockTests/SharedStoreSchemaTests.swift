@@ -52,7 +52,7 @@ final class SharedStoreSchemaTests: XCTestCase {
         "storeName", "storeEmoji", "storeColorHex", "ownerDevice",
         "itemsJSON", "membersJSON", "deletedJSON", "pricesJSON",
     ]
-    static let extensionFields: Set<String> = ["categoriesJSON", "assignmentsJSON"]
+    static let extensionFields: Set<String> = ["categoriesJSON", "assignmentsJSON", "stationsJSON"]
     static let schemaRejectionText =
         "Cannot create or modify field 'categoriesJSON' in record 'SharedStore' in production schema"
     static let schemaIncompleteText =
@@ -232,6 +232,8 @@ final class SharedStoreSchemaTests: XCTestCase {
         let fake = FakeSharedStoreDatabase(allowedFields: Self.coreFields.union(Self.extensionFields))
         let service = SharedStoreService(database: fake)
         let store = makeSharedStore()
+        // D3 (#234): mit lokalen Gängen, sonst bleibt `stationsJSON` bewusst leer (M3).
+        store.applyStationConfig(StoreCategories.lidlTemplate)
 
         let result = try await service.push(store: store)
 
@@ -239,14 +241,14 @@ final class SharedStoreSchemaTests: XCTestCase {
         XCTAssertEqual(fake.saveAttempts, 1)
         let saved = try XCTUnwrap(fake.lastSaved)
         XCTAssertTrue(Self.extensionFields.isSubset(of: Set(saved.allKeys())),
-                      "categoriesJSON und assignmentsJSON werden geschrieben")
+                      "categoriesJSON, assignmentsJSON und stationsJSON werden geschrieben")
         XCTAssertTrue(fake.rejections.isEmpty)
     }
 
     // MARK: - T6: Erkennung der Ablehnung (Textregel)
 
     func testT6_productionSchemaRejectionDetection() {
-        XCTAssertEqual(SharedStoreSchema.optionalExtensionFields, ["categoriesJSON", "assignmentsJSON"])
+        XCTAssertEqual(SharedStoreSchema.optionalExtensionFields, ["categoriesJSON", "assignmentsJSON", "stationsJSON"])
 
         let otherCase = CKError(.serverRejectedRequest, userInfo: [
             "ServerErrorDescription": "Cannot create or modify field 'assignmentsJSON' in record 'SharedStore' in Production SCHEMA",
@@ -323,6 +325,8 @@ final class SharedStoreSchemaTests: XCTestCase {
 
     func testT8_sharedStoreFieldListMatchesPublishedSchema() async throws {
         let store = makeSharedStore()
+        // D3 (#234): `stationsJSON` wird nur mit Gängen geschrieben.
+        store.applyStationConfig(StoreCategories.lidlTemplate)
         let code = try XCTUnwrap(store.shareID)
         let record = CKRecord(recordType: "SharedStore", recordID: CKRecord.ID(recordName: code))
 
@@ -332,6 +336,37 @@ final class SharedStoreSchemaTests: XCTestCase {
             Set(record.allKeys()), Self.coreFields.union(Self.extensionFields),
             "Felder von SharedStore geändert: CloudKit-Schema vor dem TestFlight-Upload veröffentlichen (docs/testflight-setup.md)"
         )
+        // AC-1 (D3): dieselbe Feldliste steht im Typ `SharedStore` des Repo-Exports.
+        XCTAssertEqual(try Self.publishedSharedStoreFields(), Self.coreFields.union(Self.extensionFields),
+                       "docs/cloudkit/private-schema-aktuell.ckdb weicht von der Feldliste ab")
+    }
+
+    // MARK: - T17 (D3, #234): Fallback ohne `stationsJSON` bleibt alles oder nichts
+
+    /// GIVEN Produktion ohne `stationsJSON` und lokale Gänge WHEN Push THEN genau ein Fallback, der
+    /// gespeicherte Record trägt keines der drei Erweiterungsfelder, Kern gleicht ab.
+    func testT17_productionWithoutStationsFieldFallsBackWithoutAllExtensionFields() async throws {
+        let fake = FakeSharedStoreDatabase(allowedFields: Self.coreFields.union(["categoriesJSON", "assignmentsJSON"]))
+        let service = SharedStoreService(database: fake)
+        let store = makeSharedStore()
+        store.applyStationConfig(StoreCategories.lidlTemplate)
+        let item = makeItem(in: store, name: "Milch")
+
+        let result = try await service.push(store: store)
+
+        XCTAssertEqual(result?.usedSchemaFallback, true)
+        XCTAssertNotNil(result?.schemaRejection)
+        XCTAssertTrue(fake.rejections.contains {
+            (($0 as? CKError)?.userInfo["ServerErrorDescription"] as? String)?.contains("stationsJSON") == true
+        }, "Erstversuch scheitert an stationsJSON")
+        XCTAssertEqual(fake.saveAttempts, 2, "genau ein Fallback")
+        XCTAssertLessThanOrEqual(fake.saveAttempts, 3, "Grenze aus #121")
+        let saved = try XCTUnwrap(fake.lastSaved)
+        assertNoExtensionFields(in: saved)
+        let items = await service.decodeItems(saved["itemsJSON"] as? String ?? "[]")
+        XCTAssertEqual(items.map(\.id), [item.id])
+        let members = await service.decodeMembers(saved["membersJSON"] as? String ?? "[]")
+        XCTAssertTrue(members.contains(UserIdentity.displayName) || UserIdentity.displayName.isEmpty)
     }
 
     // MARK: - T13: Banner-Entscheidung
@@ -453,6 +488,21 @@ final class SharedStoreSchemaTests: XCTestCase {
                       "Erweiterungsfelder in allKeys(): \(record.allKeys())", file: file, line: line)
         XCTAssertTrue(Self.extensionFields.isDisjoint(with: record.changedKeys()),
                       "Erweiterungsfelder in changedKeys(): \(record.changedKeys())", file: file, line: line)
+    }
+
+    /// Feldnamen des Typs `SharedStore` im Repo-Export ohne Systemfelder (`___…`).
+    private static func publishedSharedStoreFields() throws -> Set<String> {
+        let url = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("docs/cloudkit/private-schema-aktuell.ckdb")
+        let ckdb = try String(contentsOf: url, encoding: .utf8)
+        guard let start = ckdb.range(of: "RECORD TYPE SharedStore (") else { return [] }
+        let rest = ckdb[start.upperBound...]
+        let block = rest[..<(rest.range(of: ");")?.lowerBound ?? rest.endIndex)]
+        return Set(block.split(separator: "\n").compactMap { line in
+            let name = line.trimmingCharacters(in: .whitespaces).split(separator: " ").first.map(String.init) ?? ""
+            return name.isEmpty || name.hasPrefix("\"") || name.hasPrefix("GRANT") ? nil : name
+        })
     }
 
     private func makeSharedStore() -> Store {
