@@ -465,6 +465,29 @@ final class SharedStoreMergeTests: XCTestCase {
         XCTAssertEqual(store.stationConfig?.date, t2)
     }
 
+    /// M8 / AC-8: GIVEN die Quelltexte aller Aufrufer von `apply(items:…)` (Abgleich, Push-Antwort,
+    /// Beitritt in `StoreShareSheet.join`) WHEN ein Aufruf `categories:` weiterreicht THEN reicht er
+    /// auch `stations:` weiter — sonst bekommt etwa ein neues Mitglied beim Beitritt keine Gänge,
+    /// obwohl `pull` sie liefert. Quelltextprüfung, weil `join` CloudKit braucht.
+    func testEveryApplyCallPassesStations() throws {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+        let files = ["SmartCart/Views/Store/StoreShareSheet.swift", "SmartCart/Services/SyncCoordinator.swift"]
+        var found = 0
+        for file in files {
+            let source = try String(contentsOf: root.appendingPathComponent(file), encoding: .utf8)
+            for (index, line) in source.components(separatedBy: "\n").enumerated()
+            where line.contains("apply(items:") && !line.contains("func apply(items") {
+                found += 1
+                if line.contains("categories:") {
+                    XCTAssertTrue(line.contains("stations:"),
+                                  "\(file):\(index + 1) ruft apply mit categories:, aber ohne stations: auf")
+                }
+            }
+        }
+        // Mindestzahl, sonst prüft der Test nach einer Umbenennung nichts mehr.
+        XCTAssertGreaterThanOrEqual(found, 3, "zu wenige apply(items:)-Aufrufe gefunden: \(found)")
+    }
+
     // MARK: - Gleichstand (Ist-Verhalten festgehalten, kein Beschluss)
 
     /// Bei identischem `lastModified` entscheiden Push-Merge (`>`: lokal gewinnt) und `apply`

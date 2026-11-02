@@ -398,3 +398,7 @@ Gekippt wird keine frühere Entscheidung; ADR-pflichtig ist nichts. Würde man C
   Auswahl nach dem Löschen (Adversary F002). (4) `-clearStationStoreForUITests` setzt zusätzlich `shareID = nil`.
   Umfang: Produktivcode +315/−12 in 12 Dateien, Testcode +711 (Schätzung ~525; vom PO ~940 akzeptiert, Mehr aus den
   UI-Tests).
+- 2026-11-02 (Issue #234, Durchgang 3): AC-12 und Y7 (Hinweistext im geteilten Laden) sind durch
+  `docs/specs/services/shared-store-stations-sync.md` (AC-10) abgelöst. Gänge geteilter Läden reisen seitdem über
+  `stationsJSON` mit, der Hinweis `station.setup.shared` lautet „Änderungen an den Gängen gelten für alle Mitglieder
+  dieses Ladens.“; Y7 prüft diesen Wortlaut.
