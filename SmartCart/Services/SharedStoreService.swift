@@ -54,10 +54,10 @@ actor SharedStoreService {
     }
 
     @discardableResult
-    func push(store: Store) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry], usedSchemaFallback: Bool, schemaRejection: Error?)? {
+    func push(store: Store) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry], stations: StationConfig?, usedSchemaFallback: Bool, schemaRejection: Error?)? {
         guard store.shareID != nil else { return nil }
         let (_, m, schemaRejection) = try await syncToCloud(store: store)
-        return (m.items, m.members, m.deletedIDs, m.prices, m.priceDates, m.priceUnits, m.categories, m.assignments, schemaRejection != nil, schemaRejection)
+        return (m.items, m.members, m.deletedIDs, m.prices, m.priceDates, m.priceUnits, m.categories, m.assignments, m.stations, schemaRejection != nil, schemaRejection)
     }
 
     /// Issue #121: Lehnt die CloudKit-Produktion das Speichern ab, weil ihr Schema ein Feld nicht
@@ -103,11 +103,11 @@ actor SharedStoreService {
         }
     }
 
-    typealias MergedState = (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry])
+    typealias MergedState = (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry], stations: StationConfig?)
 
     /// Merges local store state into `record` in place and returns the merged items/members/
     /// tombstones/prices. `includeExtensionFields == false` (Schema-Fallback, Issue #121) schreibt
-    /// `categoriesJSON`/`assignmentsJSON` nicht; der Merge selbst bleibt gleich.
+    /// `categoriesJSON`/`assignmentsJSON`/`stationsJSON` nicht; der Merge selbst bleibt gleich.
     func mergeIntoRecord(_ record: CKRecord, store: Store, code: String, isNewRecord: Bool, includeExtensionFields: Bool = true) -> MergedState {
         let remoteItems = decodeItems(record["itemsJSON"] as? String ?? "[]")
         let remoteMembers = decodeMembers(record["membersJSON"] as? String ?? "[]")
@@ -152,11 +152,23 @@ actor SharedStoreService {
         record["membersJSON"] = encodeMembers(mergedMembers) as CKRecordValue
         record["deletedJSON"] = encodeIDs(mergedDeletedIDs) as CKRecordValue
         record["pricesJSON"] = LearnedPriceSync.encode(mergedPriceState) as CKRecordValue
+        let mergedStations = mergeStations(into: record, store: store, write: includeExtensionFields)
         if includeExtensionFields {
             record["categoriesJSON"] = encodeCategories(mergedCategories) as CKRecordValue
             record["assignmentsJSON"] = encodeAssignments(mergedAssignments) as CKRecordValue
         }
-        return (mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates, mergedPriceUnits, mergedCategories, mergedAssignments)
+        return (mergedItems, mergedMembers, mergedDeletedIDs, mergedPrices, mergedPriceDates, mergedPriceUnits, mergedCategories, mergedAssignments, mergedStations)
+    }
+
+    /// Issue #234, D3: Gänge als Ganzstand gegen den Record mergen; geschrieben wird nur ein
+    /// nicht leeres Ergebnis und nur mit Erweiterungsfeldern (Schema-Fallback lässt das Feld unberührt).
+    private func mergeStations(into record: CKRecord, store: Store, write: Bool) -> StationConfig? {
+        let remote = StoreCategories.decodeStationConfig(record["stationsJSON"] as? String)
+        let merged = StoreCategories.mergeStationConfig(local: store.stationConfig, remote: remote)
+        if write, let merged {
+            record["stationsJSON"] = StoreCategories.encodeStationConfig(merged) as CKRecordValue
+        }
+        return merged
     }
 
     /// Per-item last-write-wins merge: an id present in both is resolved by the newer `lastModified`.
@@ -192,7 +204,7 @@ actor SharedStoreService {
 
     // MARK: - Pull (download remote items if newer)
 
-    func pull(shareID: String) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry], modifiedAt: Date)? {
+    func pull(shareID: String) async throws -> (items: [SharedItemData], members: [String], deletedIDs: Set<UUID>, prices: [String: Double], priceDates: [String: Date], priceUnits: [String: String], categories: [String: CustomCategoryEntry], assignments: [String: CategoryAssignmentEntry], stations: StationConfig?, modifiedAt: Date)? {
         let recordID = CKRecord.ID(recordName: shareID)
         let record = try await database.record(for: recordID)
         let remoteModified = record.modificationDate ?? .distantPast
@@ -212,11 +224,13 @@ actor SharedStoreService {
         let priceState = LearnedPriceSync.decode(record["pricesJSON"] as? String ?? "{}")
         let categories = decodeCategories(record["categoriesJSON"] as? String ?? "{}")
         let assignments = decodeAssignments(record["assignmentsJSON"] as? String ?? "{}")
+        // Gänge (#234, D3) als Rohwert; `SyncCoordinator.apply` mergt gegen den lokalen Stand.
+        let stations = StoreCategories.decodeStationConfig(record["stationsJSON"] as? String)
         pruneDeletions(shareID: shareID, stillPresent: Set(allRemoteItems.map(\.id)))
         // Not marked synced here: the caller (SyncCoordinator) only advances the watermark once
         // this result has actually been applied and saved into the local SwiftData store, so a
         // failed/interrupted apply doesn't permanently skip the merge that would have fixed it.
-        return (items, members, allTombstones, priceState.prices, priceState.dates, priceState.units, categories, assignments, remoteModified)
+        return (items, members, allTombstones, priceState.prices, priceState.dates, priceState.units, categories, assignments, stations, remoteModified)
     }
 
     // MARK: - Members
@@ -464,7 +478,7 @@ enum SharedStoreSchema {
         "itemsJSON", "membersJSON", "deletedJSON", "pricesJSON",
     ]
     /// Später hinzugekommene Felder, ohne die der Kern (Artikel, Preise, Mitglieder) abgleicht.
-    static let optionalExtensionFields: Set<String> = ["categoriesJSON", "assignmentsJSON"]
+    static let optionalExtensionFields: Set<String> = ["categoriesJSON", "assignmentsJSON", "stationsJSON"]
 
     /// Regel statt Feldabgleich: Der Fehlertext (`ServerErrorDescription`, sonst
     /// `localizedDescription`) enthält „production schema“, Groß-/Kleinschreibung egal. Bei

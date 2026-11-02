@@ -318,17 +318,8 @@ class Store {
 
     /// Dekodierte Gang-Konfiguration; `nil` bei leerem oder kaputtem Feld. Setzen mit `nil` leert es.
     var stationConfig: StationConfig? {
-        get {
-            guard !stationConfigJSON.isEmpty, let data = stationConfigJSON.data(using: .utf8) else { return nil }
-            return try? JSONDecoder().decode(StationConfig.self, from: data)
-        }
-        set {
-            guard let newValue, let data = try? JSONEncoder().encode(newValue) else {
-                stationConfigJSON = ""
-                return
-            }
-            stationConfigJSON = String(data: data, encoding: .utf8) ?? ""
-        }
+        get { StoreCategories.decodeStationConfig(stationConfigJSON) }
+        set { stationConfigJSON = newValue.map(StoreCategories.encodeStationConfig) ?? "" }
     }
 
     /// Konfiguration nur, wenn sie mindestens einen Gang hat. Läden ohne Gänge dekodieren nichts.
@@ -385,10 +376,22 @@ class Store {
         Store.bumpRouteRevision()
     }
 
-    /// Gänge entfernen: eigene Kategorien und Merkungen bleiben.
+    /// Gänge entfernen: Löschvermerk mit Datum (D3, reist als Ganzstand), ohne altes `hidden`.
+    /// Eigene Kategorien und Merkungen bleiben.
     func removeStations() {
-        stationConfigJSON = ""
+        stationConfig = StationConfig(stations: [], hidden: [], date: Date())
         Store.bumpRouteRevision()
+    }
+
+    /// Fremden Stand eines geteilten Ladens übernehmen: Datum des Absenders bleibt (kein Ping-Pong),
+    /// Gang-Namen werden eigene Kategorien, Weg-Version nur bei tatsächlicher Änderung.
+    func adoptRemoteStationConfig(_ config: StationConfig) {
+        let previous = stationConfigJSON
+        stationConfig = config
+        config.stations.forEach { ensureCustomCategory($0.name, emoji: $0.emoji) }
+        if stationConfigJSON != previous {
+            Store.bumpRouteRevision()
+        }
     }
 
     /// Eingabe aus der Auswahl: vorhandener Gang → dessen Name, „Sonstiges“ → Marke, ungültig →
