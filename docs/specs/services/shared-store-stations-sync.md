@@ -377,3 +377,15 @@ erreichbar (zweites Konto), er ist über M1–M7 und T17 geprüft. Nichts auf He
 ## Changelog
 
 - 2026-11-02: Initial spec created (Issue #234, Durchgang 3)
+- 2026-11-02 (Validierung): Die Validierung fand AC-8 verletzt: der Beitritt (`StoreShareSheet.join`) gab die Gänge
+  nicht an `SyncCoordinator.apply` weiter, ein neues Mitglied sah sie erst beim ersten Öffnen der Liste. Fix
+  `stations: result.stations` (`SmartCart/Views/Store/StoreShareSheet.swift`, 1 Zeile, zusätzliche Produktdatei außerhalb
+  von „Affected Files“), neuer Quelltext-Test M8 `SharedStoreMergeTests.testEveryApplyCallPassesStations` (jeder
+  `apply(items:)`-Aufruf mit `categories:` übergibt auch `stations:`), Prüfrunde 3. Weitere Abweichungen: (1) AC-4: der
+  Merge der Gänge läuft vor dem `includeExtensionFields`-Block, nur das Schreiben ist daran gebunden (gleiches
+  Verhalten). (2) `encodeStationConfig` nutzt `.sortedKeys` (Adversary F002; vorhandene Läden schreiben ihren
+  `stationConfigJSON` beim nächsten Speichern einmal in neuer Schlüsselreihenfolge). (3) `mergeIntoRecord` ist 51
+  Zeilen lang samt Signatur und Klammer (Rumpf 49), `SyncCoordinator.apply` war schon vorher über 50. Neue Grenzen:
+  Gleichstand der Zeitstempel bei verschiedenem Inhalt bleibt dauerhaft verschieden (F001); M8 prüft nur einzeilige
+  Aufrufe in zwei Dateien und erkennt `stations: nil` nicht (F003, LOW). Umfang: Produktcode +75/−27 in 5 Swift-Dateien
+  plus Strings-Paar, Testcode +339/−6.

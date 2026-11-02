@@ -1,0 +1,88 @@
+diff --git a/RestockUITests/StationSetupExtrasUITests.swift b/RestockUITests/StationSetupExtrasUITests.swift
+index da77508..e42dd4d 100644
+--- a/RestockUITests/StationSetupExtrasUITests.swift
++++ b/RestockUITests/StationSetupExtrasUITests.swift
+@@ -846,4 +846,83 @@ final class StationSetupExtrasUITests: XCTestCase {
+         closeSetup(app)
+         assertDirectlyUnder("Gouda", header: "Kühltheke Fertiges", emoji: "🧊", in: app)
+     }
++
++    // MARK: - Durchlauf D3 (vorübergehend, Belegbilder)
++
++    func testZZDurchlaufD3() {
++        // (1) Geteilter Laden: Liste mit Gängen, Hinweis in der Einrichtung.
++        let app = XCUIApplication()
++        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-seedStationStoreSharedForUITests", "-skipCloudKitForScreenshots"]
++        let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "\(storeName),")).firstMatch
++        UITestLaunch.start(app, expecting: tile, description: "Kachel „\(storeName)“")
++        tile.tap()
++        XCTAssertTrue(app.staticTexts["Salami"].waitForExistence(timeout: UITestWait.defaultTimeout), "Ladenliste nicht geöffnet")
++        chooseCategoryMode(app)
++        assertDirectlyUnder("Salami", header: "Kühltheke Fertiges", emoji: "🧊", in: app)
++        scrollToTop(app)
++        attach("1a Liste geteilter Laden mit Gängen", app)
++
++        openSetup(app)
++        let hint = element("stationSetup.sharedHint", app)
++        XCTAssertTrue(reveal(hint, in: app), "Hinweis für geteilte Läden fehlt")
++        XCTAssertTrue(hint.label.contains("Änderungen an den Gängen gelten für alle Mitglieder dieses Ladens."),
++                      "Hinweistext — Label: \(hint.label)")
++        attach("1b Hinweis geteilter Laden", app)
++
++        // (2) Gänge entfernen, Liste ohne Gänge, Vorlage wählen, Gänge wieder da.
++        tapRevealed("stationSetup.remove", "Gänge entfernen", in: app)
++        let confirmRemove = app.buttons.matching(identifier: "stationSetup.confirmRemove").firstMatch
++        let ready = confirmRemove.waitUntilHittable()
++        XCTAssertTrue(ready.matched, "Rückfrage „Gänge entfernen“ fehlt — zuletzt: \(ready.last)")
++        confirmRemove.tap()
++        XCTAssertTrue(element("stationSetup.template", app).waitForExistence(timeout: UITestWait.defaultTimeout),
++                      "Nach dem Entfernen fehlt „Vorlage wählen …“")
++        waitForGone(element("stationSetup.row.Käse", app), "Gang-Zeilen nach dem Entfernen noch da")
++        XCTAssertFalse(element("stationSetup.remove", app).exists, "„Gänge entfernen“ nur mit Gängen")
++        attach("2a nach Gänge entfernen", app)
++        closeSetup(app)
++
++        for position in ["oben", "unten"] {
++            if position == "unten" { scrollToBottom(app) }
++            XCTAssertFalse(header("Kühltheke Fertiges", emoji: "🧊", app).exists,
++                           "Abschnitt „Kühltheke Fertiges“ nach dem Entfernen (\(position))")
++        }
++        scrollToTop(app)
++        let classic = app.staticTexts.matching(NSPredicate(
++            format: "label CONTAINS[c] %@ AND NOT (label ==[c] %@)", "Fleisch & Wurst", "Fleisch & Wurst")).firstMatch
++        assertAbove(classic, "Überschrift Fleisch & Wurst", text("Salami", app), "Salami", in: app)
++        scrollToTop(app)
++        attach("2b Liste ohne Gänge", app)
++
++        openSetup(app)
++        XCTAssertFalse(element("stationSetup.row.Käse", app).exists, "Laden zeigt beim erneuten Öffnen keine Gänge")
++        openTemplateSheet(app)
++        XCTAssertTrue(templateRow("Lidl", app).waitUntilHittable().matched, "Vorlage Lidl nicht antippbar")
++        attach("2c Vorlagen-Auswahl", app)
++        templateRow("Lidl", app).tap()
++        waitForGone(templateRow("Lidl", app), "Vorlagen-Blatt bleibt nach der Wahl offen (ohne Gänge keine Rückfrage)")
++        XCTAssertFalse(app.buttons.matching(identifier: "stationSetup.templateReplace").firstMatch.exists,
++                       "Ohne Gänge darf keine Ersetzen-Rückfrage kommen")
++        XCTAssertTrue(label("Gänge · 12", app).waitForExistence(timeout: UITestWait.defaultTimeout), "Übersicht zeigt nicht „Gänge · 12“")
++        XCTAssertTrue(reveal(element("stationSetup.row.Käse", app), in: app), "Gang „Käse“ fehlt nach der Vorlage")
++        attach("2d Gänge wieder da", app)
++        scrollToTop(app)
++        closeSetup(app)
++
++        assertDirectlyUnder("Salami", header: "Kühltheke Fertiges", emoji: "🧊", in: app)
++        scrollToTop(app)
++        assertDirectlyUnder("Gouda", header: "Käse", emoji: "🧀", in: app)
++        scrollToTop(app)
++        attach("2e Liste mit Gängen", app)
++        app.terminate()
++
++        // (3) Laden ohne shareID: kein Hinweis, Gänge wie bisher.
++        let plain = openedStore()
++        openSetup(plain)
++        XCTAssertTrue(label("Gänge · 12", plain).waitForExistence(timeout: UITestWait.defaultTimeout), "Ungeteilter Laden: „Gänge · 12“")
++        XCTAssertTrue(reveal(element("stationSetup.row.Käse", plain), in: plain), "Gang-Zeilen im ungeteilten Laden fehlen")
++        scrollToTop(plain)
++        XCTAssertFalse(element("stationSetup.sharedHint", plain).exists, "Hinweis darf im ungeteilten Laden fehlen")
++        attach("3 Laden ohne Teilen, kein Hinweis", plain)
++    }
+ }
