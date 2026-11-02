@@ -1,5 +1,5 @@
 Command line invocation:
-    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project Restock.xcodeproj -scheme Restock -derivedDataPath build/dd-d3 -destination "platform=iOS Simulator,name=Restock-Validate-272" "-only-testing:RestockTests/StoreStationsTests" "-only-testing:RestockTests/SharedStoreMergeTests" "-only-testing:RestockTests/SharedStoreSchemaTests" "-only-testing:RestockTests/LocalizationKeyParityTests"
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project Restock.xcodeproj -scheme Restock -derivedDataPath build/dd-d3 -destination "platform=iOS Simulator,name=Restock-Validate-272" "-only-testing:RestockTests/SharedStoreMergeTests" "-only-testing:RestockTests/SharedStoreSchemaTests" "-only-testing:RestockTests/StoreStationsTests"
 
 ComputePackagePrebuildTargetDependencyGraph
 
@@ -34,165 +34,156 @@ ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefaul
 
 PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d3/Build/Intermediates.noindex/ExplicitPrecompiledModules
 
-PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d3/SDKExplicitPrecompiledModules
-
 PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d3/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
 
-2026-11-02 06:57:46.838637+0100 Restock[98186:44506135] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
-2026-11-02 06:57:46.928608+0100 Restock[98186:44506635] [User Defaults] Could not resolve UID for user "mobile".
-2026-11-02 06:57:46.929235+0100 Restock[98186:44506635] [CK] Could not read account info validation counter. (This is a potential performance issue.)
-2026-11-02 06:57:47.042411+0100 Restock[98186:44506634] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1236): <NSCloudKitMirroringDelegate: 0x108b101c0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x108aa4500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/6728F5AB-712F-46E0-A1D1-2047A9771C8E/data/Containers/Shared/AppGroup/D916025F-68BC-47D0-A42A-E249DAD6E46C/Library/Application%20Support/default.store)
+PruneExplicitPrecompiledModules /Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d3/SDKExplicitPrecompiledModules
+
+2026-11-02 07:23:42.644055+0100 Restock[48881:44666690] [NotificationListener] BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+2026-11-02 07:23:42.679917+0100 Restock[48881:44667440] [User Defaults] Could not resolve UID for user "mobile".
+2026-11-02 07:23:42.681652+0100 Restock[48881:44667440] [CK] Could not read account info validation counter. (This is a potential performance issue.)
+2026-11-02 07:23:42.744419+0100 Restock[48881:44667459] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _performSetupRequest:]_block_invoke(1236): <NSCloudKitMirroringDelegate: 0x1066f02a0>: Failed to set up CloudKit integration for store: <NSSQLCore: 0x10668c500> (URL: file:///Users/hem/Library/Developer/CoreSimulator/Devices/6728F5AB-712F-46E0-A1D1-2047A9771C8E/data/Containers/Shared/AppGroup/D916025F-68BC-47D0-A42A-E249DAD6E46C/Library/Application%20Support/default.store)
 Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
-2026-11-02 06:57:47.042564+0100 Restock[98186:44506634] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2310): <NSCloudKitMirroringDelegate: 0x108b101c0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
-2026-11-02 06:57:47.042673+0100 Restock[98186:44506634] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2623): <NSCloudKitMirroringDelegate: 0x108b101c0> - Failed to recover from error: NSCocoaErrorDomain:134400
+2026-11-02 07:23:42.744714+0100 Restock[48881:44667459] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate recoverFromError:](2310): <NSCloudKitMirroringDelegate: 0x1066f02a0> - Attempting recovery from error: Error Domain=NSCocoaErrorDomain Code=134400 "Unable to initialize without an iCloud account (CKAccountStatusNoAccount)." UserInfo={NSLocalizedFailureReason=Unable to initialize without an iCloud account (CKAccountStatusNoAccount).}
+2026-11-02 07:23:42.744813+0100 Restock[48881:44667459] [CloudKit] CoreData+CloudKit: -[NSCloudKitMirroringDelegate _recoverFromError:withZoneIDs:forStore:inMonitor:](2623): <NSCloudKitMirroringDelegate: 0x1066f02a0> - Failed to recover from error: NSCocoaErrorDomain:134400
 Recovery encountered the following error: (null):0
-2026-11-02 06:57:47.054909+0100 Restock[98186:44506634] [sync] mirror setup failed (NSCocoaErrorDomain 134400): Der Vorgang konnte nicht abgeschlossen werden. Unable to initialize without an iCloud account (CKAccountStatusNoAccount).
-2026-11-02 06:57:47.215480+0100 Restock[98186:44506135] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
-2026-11-02 06:57:47.927187+0100 Restock[98186:44506684] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
-2026-11-02 06:57:49.140511+0100 Restock[98186:44506135] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
-2026-11-02 06:57:49.142090+0100 Restock[98186:44506135] [API] cannot add handler to 0 from 0 - dropping
-2026-11-02 06:57:49.144321+0100 Restock[98186:44506135] [API] cannot add handler to 0 from 0 - dropping
+2026-11-02 07:23:42.748167+0100 Restock[48881:44667459] [sync] mirror setup failed (NSCocoaErrorDomain 134400): Der Vorgang konnte nicht abgeschlossen werden. Unable to initialize without an iCloud account (CKAccountStatusNoAccount).
+2026-11-02 07:23:43.049022+0100 Restock[48881:44666690] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+2026-11-02 07:23:43.805488+0100 Restock[48881:44667490] [Connection] Error synchronizing with cloud for store <(XK87E2B3VR.com.johannesemmrich.Restock)>: Error Domain=SyncedDefaults Code=8888 "No account" UserInfo={NSLocalizedDescription=No account}
+2026-11-02 07:23:44.903464+0100 Restock[48881:44666690] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
 [AppDelegate] push registration succeeded, token length: 80
-Test Suite 'Selected tests' started at 2026-11-02 06:57:49.504.
-Test Suite 'RestockTests.xctest' started at 2026-11-02 06:57:49.511.
-Test Suite 'LocalizationKeyParityTests' started at 2026-11-02 06:57:49.511.
-Test Case '-[RestockTests.LocalizationKeyParityTests testBothTablesExistAndAreNotEmpty]' started.
-Test Case '-[RestockTests.LocalizationKeyParityTests testBothTablesExistAndAreNotEmpty]' passed (0.008 seconds).
-Test Case '-[RestockTests.LocalizationKeyParityTests testGermanAndEnglishHaveTheSameKeys]' started.
-Test Case '-[RestockTests.LocalizationKeyParityTests testGermanAndEnglishHaveTheSameKeys]' passed (0.004 seconds).
-Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholderExtraction]' started.
-Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholderExtraction]' passed (0.004 seconds).
-Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholdersMatchPerKey]' started.
-Test Case '-[RestockTests.LocalizationKeyParityTests testPlaceholdersMatchPerKey]' passed (0.375 seconds).
-Test Suite 'LocalizationKeyParityTests' passed at 2026-11-02 06:57:49.924.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 0.391 (0.413) seconds
-Test Suite 'SharedStoreMergeTests' started at 2026-11-02 06:57:49.926.
+2026-11-02 07:23:45.063021+0100 Restock[48881:44666690] [API] cannot add handler to 0 from 0 - dropping
+2026-11-02 07:23:45.066864+0100 Restock[48881:44666690] [API] cannot add handler to 0 from 0 - dropping
+Test Suite 'Selected tests' started at 2026-11-02 07:23:45.323.
+Test Suite 'RestockTests.xctest' started at 2026-11-02 07:23:45.327.
+Test Suite 'SharedStoreMergeTests' started at 2026-11-02 07:23:45.327.
 Test Case '-[RestockTests.SharedStoreMergeTests testApplyAddsMembersWithoutDuplicates]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testApplyAddsMembersWithoutDuplicates]' passed (0.221 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyAddsMembersWithoutDuplicates]' passed (0.049 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testApplyAdvancesWatermarkOnlyAfterSaveAndWithModifiedAt]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testApplyAdvancesWatermarkOnlyAfterSaveAndWithModifiedAt]' passed (0.251 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyAdvancesWatermarkOnlyAfterSaveAndWithModifiedAt]' passed (0.048 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testApplyCreatesUnknownRemoteItemWithSenderCategory]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testApplyCreatesUnknownRemoteItemWithSenderCategory]' passed (0.014 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyCreatesUnknownRemoteItemWithSenderCategory]' passed (0.011 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testApplyDeletesOnlyTombstonedItems]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testApplyDeletesOnlyTombstonedItems]' passed (0.014 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyDeletesOnlyTombstonedItems]' passed (0.015 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testApplyLastWriteWinsPerItem]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testApplyLastWriteWinsPerItem]' passed (0.010 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyLastWriteWinsPerItem]' passed (0.014 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testApplyMergesCategoriesAssignmentsAndPrices]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testApplyMergesCategoriesAssignmentsAndPrices]' passed (0.007 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyMergesCategoriesAssignmentsAndPrices]' passed (0.009 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testApplySameStationsTwiceWritesOnce]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testApplySameStationsTwiceWritesOnce]' passed (0.180 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplySameStationsTwiceWritesOnce]' passed (0.017 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testApplyStationsOlderOrMissingKeepsLocal]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testApplyStationsOlderOrMissingKeepsLocal]' passed (0.007 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyStationsOlderOrMissingKeepsLocal]' passed (0.013 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testApplyStationsRemoteNewerAdoptsWithSenderDate]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testApplyStationsRemoteNewerAdoptsWithSenderDate]' passed (0.008 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyStationsRemoteNewerAdoptsWithSenderDate]' passed (0.010 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testApplyWithoutShareIDWritesNoWatermark]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testApplyWithoutShareIDWritesNoWatermark]' passed (0.006 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testApplyWithoutShareIDWritesNoWatermark]' passed (0.011 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testEveryApplyCallPassesStations]' started.
+Test Case '-[RestockTests.SharedStoreMergeTests testEveryApplyCallPassesStations]' passed (0.005 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeKeepsItemsFromBothSides]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeKeepsItemsFromBothSides]' passed (0.010 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeKeepsItemsFromBothSides]' passed (0.012 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeLastWriteWinsBothDirections]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeLastWriteWinsBothDirections]' passed (0.005 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeLastWriteWinsBothDirections]' passed (0.009 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeMembersIncludeOwnNameSortedUnique]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeMembersIncludeOwnNameSortedUnique]' passed (0.004 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeMembersIncludeOwnNameSortedUnique]' passed (0.010 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeOwnerOnlyForNewRecord]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeOwnerOnlyForNewRecord]' passed (0.003 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeOwnerOnlyForNewRecord]' passed (0.005 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeStationsAbsentOrWithoutExtensionFields]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeStationsAbsentOrWithoutExtensionFields]' passed (0.003 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeStationsAbsentOrWithoutExtensionFields]' passed (0.005 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeStationsLocalNewerWritesRecord]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeStationsLocalNewerWritesRecord]' passed (0.003 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeStationsLocalNewerWritesRecord]' passed (0.005 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeStationsRemoteNewerKeepsRecord]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeStationsRemoteNewerKeepsRecord]' passed (0.004 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeStationsRemoteNewerKeepsRecord]' passed (0.005 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeTombstonesOnlyGrowAndRemoveItems]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeTombstonesOnlyGrowAndRemoveItems]' passed (0.011 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeTombstonesOnlyGrowAndRemoveItems]' passed (0.008 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeWritesMetadataCategoriesAssignmentsPrices]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeWritesMetadataCategoriesAssignmentsPrices]' passed (0.007 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testPushMergeWritesMetadataCategoriesAssignmentsPrices]' passed (0.008 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testStationTombstoneWinsBothDirections]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testStationTombstoneWinsBothDirections]' passed (0.008 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testStationTombstoneWinsBothDirections]' passed (0.014 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testTearDownLeavesNoSyncKeys]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testTearDownLeavesNoSyncKeys]' passed (0.011 seconds).
+Test Case '-[RestockTests.SharedStoreMergeTests testTearDownLeavesNoSyncKeys]' passed (0.017 seconds).
 Test Case '-[RestockTests.SharedStoreMergeTests testTieOnLastModifiedPushLocalWinsApplyRemoteWins]' started.
-Test Case '-[RestockTests.SharedStoreMergeTests testTieOnLastModifiedPushLocalWinsApplyRemoteWins]' passed (0.008 seconds).
-Test Suite 'SharedStoreMergeTests' passed at 2026-11-02 06:57:50.727.
-	 Executed 22 tests, with 0 failures (0 unexpected) in 0.796 (0.801) seconds
-Test Suite 'SharedStoreSchemaTests' started at 2026-11-02 06:57:50.727.
+Test Case '-[RestockTests.SharedStoreMergeTests testTieOnLastModifiedPushLocalWinsApplyRemoteWins]' passed (0.011 seconds).
+Test Suite 'SharedStoreMergeTests' passed at 2026-11-02 07:23:45.647.
+	 Executed 23 tests, with 0 failures (0 unexpected) in 0.312 (0.320) seconds
+Test Suite 'SharedStoreSchemaTests' started at 2026-11-02 07:23:45.648.
 Test Case '-[RestockTests.SharedStoreSchemaTests testT13_bannerDecision]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT13_bannerDecision]' passed (0.003 seconds).
+Test Case '-[RestockTests.SharedStoreSchemaTests testT13_bannerDecision]' passed (0.004 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT14_logMessageHasDomainCodeTextAndNoPersonalData]' started.
 Test Case '-[RestockTests.SharedStoreSchemaTests testT14_logMessageHasDomainCodeTextAndNoPersonalData]' passed (0.002 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT15_defaultDatabaseIsPublicCloudDatabase]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT15_defaultDatabaseIsPublicCloudDatabase]' passed (0.006 seconds).
+Test Case '-[RestockTests.SharedStoreSchemaTests testT15_defaultDatabaseIsPublicCloudDatabase]' passed (0.005 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT16_fallbackAgainstExistingProductionRecordMergesServerAndLocalItems]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT16_fallbackAgainstExistingProductionRecordMergesServerAndLocalItems]' passed (0.008 seconds).
+Test Case '-[RestockTests.SharedStoreSchemaTests testT16_fallbackAgainstExistingProductionRecordMergesServerAndLocalItems]' passed (0.012 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT17_productionWithoutStationsFieldFallsBackWithoutAllExtensionFields]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT17_productionWithoutStationsFieldFallsBackWithoutAllExtensionFields]' passed (0.017 seconds).
+Test Case '-[RestockTests.SharedStoreSchemaTests testT17_productionWithoutStationsFieldFallsBackWithoutAllExtensionFields]' passed (0.022 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT1_pushAgainstProductionSchemaWithoutExtensionFieldsSucceeds]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT1_pushAgainstProductionSchemaWithoutExtensionFieldsSucceeds]' passed (0.005 seconds).
+Test Case '-[RestockTests.SharedStoreSchemaTests testT1_pushAgainstProductionSchemaWithoutExtensionFieldsSucceeds]' passed (0.006 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT2_fallbackSavesOnceMoreWithCoreFieldsOnly]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT2_fallbackSavesOnceMoreWithCoreFieldsOnly]' passed (0.006 seconds).
+Test Case '-[RestockTests.SharedStoreSchemaTests testT2_fallbackSavesOnceMoreWithCoreFieldsOnly]' passed (0.007 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT3_otherErrorsDoNotTriggerFallback]' started.
-2026-11-02 06:57:50.779264+0100 Restock[98186:44506135] [sync] push failed (CKErrorDomain 3): CKErrorDomain 3: Der Vorgang konnte nicht abgeschlossen werden. (CKErrorDomain-Fehler 3.)
-2026-11-02 06:57:50.780436+0100 Restock[98186:44506135] [sync] push failed (CKErrorDomain 10): CKErrorDomain 10: Der Vorgang konnte nicht abgeschlossen werden. (CKErrorDomain-Fehler 10.)
-2026-11-02 06:57:50.781552+0100 Restock[98186:44506135] [sync] push failed (CKErrorDomain 9): CKErrorDomain 9: Der Vorgang konnte nicht abgeschlossen werden. (CKErrorDomain-Fehler 9.)
-Test Case '-[RestockTests.SharedStoreSchemaTests testT3_otherErrorsDoNotTriggerFallback]' passed (0.008 seconds).
+2026-11-02 07:23:45.711737+0100 Restock[48881:44666690] [sync] push failed (CKErrorDomain 3): CKErrorDomain 3: Der Vorgang konnte nicht abgeschlossen werden. (CKErrorDomain-Fehler 3.)
+2026-11-02 07:23:45.713290+0100 Restock[48881:44666690] [sync] push failed (CKErrorDomain 10): CKErrorDomain 10: Der Vorgang konnte nicht abgeschlossen werden. (CKErrorDomain-Fehler 10.)
+2026-11-02 07:23:45.714549+0100 Restock[48881:44666690] [sync] push failed (CKErrorDomain 9): CKErrorDomain 9: Der Vorgang konnte nicht abgeschlossen werden. (CKErrorDomain-Fehler 9.)
+Test Case '-[RestockTests.SharedStoreSchemaTests testT3_otherErrorsDoNotTriggerFallback]' passed (0.010 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT4_fallbackFailingThrowsAfterTwoAttemptsAndKeepsWatermark]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT4_fallbackFailingThrowsAfterTwoAttemptsAndKeepsWatermark]' passed (0.003 seconds).
+Test Case '-[RestockTests.SharedStoreSchemaTests testT4_fallbackFailingThrowsAfterTwoAttemptsAndKeepsWatermark]' passed (0.004 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT4b_fallbackAndServerRecordChangedRetryStayBounded]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT4b_fallbackAndServerRecordChangedRetryStayBounded]' passed (0.005 seconds).
+Test Case '-[RestockTests.SharedStoreSchemaTests testT4b_fallbackAndServerRecordChangedRetryStayBounded]' passed (0.006 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT5_fullSchemaSavesOnceWithExtensionFields]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT5_fullSchemaSavesOnceWithExtensionFields]' passed (0.006 seconds).
+Test Case '-[RestockTests.SharedStoreSchemaTests testT5_fullSchemaSavesOnceWithExtensionFields]' passed (0.008 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT6_productionSchemaRejectionDetection]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT6_productionSchemaRejectionDetection]' passed (0.007 seconds).
+Test Case '-[RestockTests.SharedStoreSchemaTests testT6_productionSchemaRejectionDetection]' passed (0.008 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT7_coordinatorStateSetAndReset]' started.
-2026-11-02 06:57:50.810695+0100 Restock[98186:44506135] [sync] push (schema fallback) failed (CKErrorDomain 15): CKErrorDomain 15: Cannot create or modify field 'assignmentsJSON' in record 'SharedStore' in production schema
-2026-11-02 06:57:50.814663+0100 Restock[98186:44506135] [sync] pull failed (CKErrorDomain 11): CKErrorDomain 11: Der Vorgang konnte nicht abgeschlossen werden. (CKErrorDomain-Fehler 11.)
-2026-11-02 06:57:50.818668+0100 Restock[98186:44506135] [sync] push failed (CKErrorDomain 3): CKErrorDomain 3: Der Vorgang konnte nicht abgeschlossen werden. (CKErrorDomain-Fehler 3.)
-Test Case '-[RestockTests.SharedStoreSchemaTests testT7_coordinatorStateSetAndReset]' passed (0.015 seconds).
+2026-11-02 07:23:45.749744+0100 Restock[48881:44666690] [sync] push (schema fallback) failed (CKErrorDomain 15): CKErrorDomain 15: Cannot create or modify field 'assignmentsJSON' in record 'SharedStore' in production schema
+2026-11-02 07:23:45.753619+0100 Restock[48881:44666690] [sync] pull failed (CKErrorDomain 11): CKErrorDomain 11: Der Vorgang konnte nicht abgeschlossen werden. (CKErrorDomain-Fehler 11.)
+2026-11-02 07:23:45.759513+0100 Restock[48881:44666690] [sync] push failed (CKErrorDomain 3): CKErrorDomain 3: Der Vorgang konnte nicht abgeschlossen werden. (CKErrorDomain-Fehler 3.)
+Test Case '-[RestockTests.SharedStoreSchemaTests testT7_coordinatorStateSetAndReset]' passed (0.019 seconds).
 Test Case '-[RestockTests.SharedStoreSchemaTests testT8_sharedStoreFieldListMatchesPublishedSchema]' started.
-Test Case '-[RestockTests.SharedStoreSchemaTests testT8_sharedStoreFieldListMatchesPublishedSchema]' passed (0.006 seconds).
-Test Suite 'SharedStoreSchemaTests' passed at 2026-11-02 06:57:50.827.
-	 Executed 14 tests, with 0 failures (0 unexpected) in 0.098 (0.100) seconds
-Test Suite 'StoreStationsTests' started at 2026-11-02 06:57:50.827.
+Test Case '-[RestockTests.SharedStoreSchemaTests testT8_sharedStoreFieldListMatchesPublishedSchema]' passed (0.007 seconds).
+Test Suite 'SharedStoreSchemaTests' passed at 2026-11-02 07:23:45.770.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.118 (0.121) seconds
+Test Suite 'StoreStationsTests' started at 2026-11-02 07:23:45.770.
 Test Case '-[RestockTests.StoreStationsTests testAddingKeywordAppendsNormalized]' started.
-Test Case '-[RestockTests.StoreStationsTests testAddingKeywordAppendsNormalized]' passed (0.003 seconds).
+Test Case '-[RestockTests.StoreStationsTests testAddingKeywordAppendsNormalized]' passed (0.004 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAddStationFromPicker]' started.
-Test Case '-[RestockTests.StoreStationsTests testAddStationFromPicker]' passed (0.010 seconds).
+Test Case '-[RestockTests.StoreStationsTests testAddStationFromPicker]' passed (0.014 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAdoptableCategoriesCompareKeyAndReserved]' started.
-Test Case '-[RestockTests.StoreStationsTests testAdoptableCategoriesCompareKeyAndReserved]' passed (0.002 seconds).
+Test Case '-[RestockTests.StoreStationsTests testAdoptableCategoriesCompareKeyAndReserved]' passed (0.004 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAdoptableCategoriesRuleR3]' started.
-Test Case '-[RestockTests.StoreStationsTests testAdoptableCategoriesRuleR3]' passed (0.002 seconds).
+Test Case '-[RestockTests.StoreStationsTests testAdoptableCategoriesRuleR3]' passed (0.003 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAdoptAllWritesOnce]' started.
-Test Case '-[RestockTests.StoreStationsTests testAdoptAllWritesOnce]' passed (0.012 seconds).
+Test Case '-[RestockTests.StoreStationsTests testAdoptAllWritesOnce]' passed (0.015 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAdoptCategoryAppendsKeepsEmojiAndMovesItems]' started.
 Test Case '-[RestockTests.StoreStationsTests testAdoptCategoryAppendsKeepsEmojiAndMovesItems]' passed (0.013 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAdoptRemoteStationConfigKeepsSenderDate]' started.
-Test Case '-[RestockTests.StoreStationsTests testAdoptRemoteStationConfigKeepsSenderDate]' passed (0.004 seconds).
+Test Case '-[RestockTests.StoreStationsTests testAdoptRemoteStationConfigKeepsSenderDate]' passed (0.006 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAdoptRemoteStationConfigTwiceIsNoOp]' started.
-Test Case '-[RestockTests.StoreStationsTests testAdoptRemoteStationConfigTwiceIsNoOp]' passed (0.003 seconds).
+Test Case '-[RestockTests.StoreStationsTests testAdoptRemoteStationConfigTwiceIsNoOp]' passed (0.004 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAdoptRemoteTombstoneOnStoreWithoutStations]' started.
 Test Case '-[RestockTests.StoreStationsTests testAdoptRemoteTombstoneOnStoreWithoutStations]' passed (0.003 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAdoptWithoutStationsAndCollisions]' started.
-Test Case '-[RestockTests.StoreStationsTests testAdoptWithoutStationsAndCollisions]' passed (0.007 seconds).
+Test Case '-[RestockTests.StoreStationsTests testAdoptWithoutStationsAndCollisions]' passed (0.008 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAllTemplatesSatisfyInvariants]' started.
-Test Case '-[RestockTests.StoreStationsTests testAllTemplatesSatisfyInvariants]' passed (0.006 seconds).
+Test Case '-[RestockTests.StoreStationsTests testAllTemplatesSatisfyInvariants]' passed (0.007 seconds).
 Test Case '-[RestockTests.StoreStationsTests testApplyAndRemoveStations]' started.
-Test Case '-[RestockTests.StoreStationsTests testApplyAndRemoveStations]' passed (0.007 seconds).
+Test Case '-[RestockTests.StoreStationsTests testApplyAndRemoveStations]' passed (0.008 seconds).
 Test Case '-[RestockTests.StoreStationsTests testApplyEveryTemplateKeepsAssignments]' started.
-Test Case '-[RestockTests.StoreStationsTests testApplyEveryTemplateKeepsAssignments]' passed (0.027 seconds).
+Test Case '-[RestockTests.StoreStationsTests testApplyEveryTemplateKeepsAssignments]' passed (0.029 seconds).
 Test Case '-[RestockTests.StoreStationsTests testApplyTemplateReplacesStationsKeepsAssignments]' started.
-Test Case '-[RestockTests.StoreStationsTests testApplyTemplateReplacesStationsKeepsAssignments]' passed (0.010 seconds).
+Test Case '-[RestockTests.StoreStationsTests testApplyTemplateReplacesStationsKeepsAssignments]' passed (0.009 seconds).
 Test Case '-[RestockTests.StoreStationsTests testAssignMovesBetweenStationsAndClearsHidden]' started.
 Test Case '-[RestockTests.StoreStationsTests testAssignMovesBetweenStationsAndClearsHidden]' passed (0.003 seconds).
 Test Case '-[RestockTests.StoreStationsTests testCheckOffLearnsOnlyWithinStation]' started.
 Test Case '-[RestockTests.StoreStationsTests testCheckOffLearnsOnlyWithinStation]' passed (0.034 seconds).
 Test Case '-[RestockTests.StoreStationsTests testConfigJSONRoundTrip]' started.
-Test Case '-[RestockTests.StoreStationsTests testConfigJSONRoundTrip]' passed (0.005 seconds).
+Test Case '-[RestockTests.StoreStationsTests testConfigJSONRoundTrip]' passed (0.004 seconds).
 Test Case '-[RestockTests.StoreStationsTests testDecodeStationConfigRejectsBrokenAndRoundTrips]' started.
 Test Case '-[RestockTests.StoreStationsTests testDecodeStationConfigRejectsBrokenAndRoundTrips]' passed (0.002 seconds).
 Test Case '-[RestockTests.StoreStationsTests testDeleteStationOpensCategoriesAndCleansUp]' started.
-Test Case '-[RestockTests.StoreStationsTests testDeleteStationOpensCategoriesAndCleansUp]' passed (0.019 seconds).
+Test Case '-[RestockTests.StoreStationsTests testDeleteStationOpensCategoriesAndCleansUp]' passed (0.018 seconds).
 Test Case '-[RestockTests.StoreStationsTests testDeleteStationWithVariantSpellingForgetsCanonicalAssignments]' started.
 Test Case '-[RestockTests.StoreStationsTests testDeleteStationWithVariantSpellingForgetsCanonicalAssignments]' passed (0.011 seconds).
 Test Case '-[RestockTests.StoreStationsTests testDeletingAdoptedStationRemovesCustomCategory]' started.
-Test Case '-[RestockTests.StoreStationsTests testDeletingAdoptedStationRemovesCustomCategory]' passed (0.015 seconds).
+Test Case '-[RestockTests.StoreStationsTests testDeletingAdoptedStationRemovesCustomCategory]' passed (0.013 seconds).
 Test Case '-[RestockTests.StoreStationsTests testDeletingLastStationAsksToRemoveStations]' started.
 Test Case '-[RestockTests.StoreStationsTests testDeletingLastStationAsksToRemoveStations]' passed (0.006 seconds).
 Test Case '-[RestockTests.StoreStationsTests testDuplicateKeywordInSameStationRejected]' started.
@@ -204,13 +195,13 @@ Test Case '-[RestockTests.StoreStationsTests testFollowedChoiceKeepsAutomatic]' 
 Test Case '-[RestockTests.StoreStationsTests testHiddenBuiltInNeverMapsToStation]' started.
 Test Case '-[RestockTests.StoreStationsTests testHiddenBuiltInNeverMapsToStation]' passed (0.006 seconds).
 Test Case '-[RestockTests.StoreStationsTests testInvariantsHoldAfterOperationSequence]' started.
-Test Case '-[RestockTests.StoreStationsTests testInvariantsHoldAfterOperationSequence]' passed (0.032 seconds).
+Test Case '-[RestockTests.StoreStationsTests testInvariantsHoldAfterOperationSequence]' passed (0.034 seconds).
 Test Case '-[RestockTests.StoreStationsTests testKeywordMatchesWordEndingOnly]' started.
-Test Case '-[RestockTests.StoreStationsTests testKeywordMatchesWordEndingOnly]' passed (0.007 seconds).
+Test Case '-[RestockTests.StoreStationsTests testKeywordMatchesWordEndingOnly]' passed (0.008 seconds).
 Test Case '-[RestockTests.StoreStationsTests testKeywordMovesItemBetweenStations]' started.
 Test Case '-[RestockTests.StoreStationsTests testKeywordMovesItemBetweenStations]' passed (0.009 seconds).
 Test Case '-[RestockTests.StoreStationsTests testKeywordSaveUsesUpdateStationConfig]' started.
-Test Case '-[RestockTests.StoreStationsTests testKeywordSaveUsesUpdateStationConfig]' passed (0.009 seconds).
+Test Case '-[RestockTests.StoreStationsTests testKeywordSaveUsesUpdateStationConfig]' passed (0.010 seconds).
 Test Case '-[RestockTests.StoreStationsTests testLongestKeywordWinsTieGoesToEarlierStation]' started.
 Test Case '-[RestockTests.StoreStationsTests testLongestKeywordWinsTieGoesToEarlierStation]' passed (0.006 seconds).
 Test Case '-[RestockTests.StoreStationsTests testMergeStationConfigLaterDateWinsWhole]' started.
@@ -222,35 +213,35 @@ Test Case '-[RestockTests.StoreStationsTests testMergeStationConfigTieKeepsLocal
 Test Case '-[RestockTests.StoreStationsTests testMovingStationsChangesOrderAndRank]' started.
 Test Case '-[RestockTests.StoreStationsTests testMovingStationsChangesOrderAndRank]' passed (0.020 seconds).
 Test Case '-[RestockTests.StoreStationsTests testNameBoundCategoryCannotBeMovedAway]' started.
-Test Case '-[RestockTests.StoreStationsTests testNameBoundCategoryCannotBeMovedAway]' passed (0.006 seconds).
+Test Case '-[RestockTests.StoreStationsTests testNameBoundCategoryCannotBeMovedAway]' passed (0.005 seconds).
 Test Case '-[RestockTests.StoreStationsTests testNormalizedKeyword]' started.
 Test Case '-[RestockTests.StoreStationsTests testNormalizedKeyword]' passed (0.003 seconds).
 Test Case '-[RestockTests.StoreStationsTests testPendingItemsFollowStationOrder]' started.
-Test Case '-[RestockTests.StoreStationsTests testPendingItemsFollowStationOrder]' passed (0.055 seconds).
+Test Case '-[RestockTests.StoreStationsTests testPendingItemsFollowStationOrder]' passed (0.056 seconds).
 Test Case '-[RestockTests.StoreStationsTests testPickerAdoptionStringsExistInBothLanguages]' started.
-Test Case '-[RestockTests.StoreStationsTests testPickerAdoptionStringsExistInBothLanguages]' passed (0.003 seconds).
+Test Case '-[RestockTests.StoreStationsTests testPickerAdoptionStringsExistInBothLanguages]' passed (0.004 seconds).
 Test Case '-[RestockTests.StoreStationsTests testPickerRenameRejectedKeepsEverything]' started.
 Test Case '-[RestockTests.StoreStationsTests testPickerRenameRejectedKeepsEverything]' passed (0.010 seconds).
 Test Case '-[RestockTests.StoreStationsTests testRecordCheckOffStoresStationName]' started.
 Test Case '-[RestockTests.StoreStationsTests testRecordCheckOffStoresStationName]' passed (0.015 seconds).
 Test Case '-[RestockTests.StoreStationsTests testRememberStationsAndMarker]' started.
-Test Case '-[RestockTests.StoreStationsTests testRememberStationsAndMarker]' passed (0.009 seconds).
+Test Case '-[RestockTests.StoreStationsTests testRememberStationsAndMarker]' passed (0.008 seconds).
 Test Case '-[RestockTests.StoreStationsTests testRemoveStationsWritesTombstone]' started.
 Test Case '-[RestockTests.StoreStationsTests testRemoveStationsWritesTombstone]' passed (0.008 seconds).
 Test Case '-[RestockTests.StoreStationsTests testRemovingKeyword]' started.
 Test Case '-[RestockTests.StoreStationsTests testRemovingKeyword]' passed (0.002 seconds).
 Test Case '-[RestockTests.StoreStationsTests testRenameBackToFixedNameStoresCanonicalCategory]' started.
-Test Case '-[RestockTests.StoreStationsTests testRenameBackToFixedNameStoresCanonicalCategory]' passed (0.012 seconds).
+Test Case '-[RestockTests.StoreStationsTests testRenameBackToFixedNameStoresCanonicalCategory]' passed (0.013 seconds).
 Test Case '-[RestockTests.StoreStationsTests testRenamedSelectionFollowsRename]' started.
-Test Case '-[RestockTests.StoreStationsTests testRenamedSelectionFollowsRename]' passed (0.003 seconds).
+Test Case '-[RestockTests.StoreStationsTests testRenamedSelectionFollowsRename]' passed (0.002 seconds).
 Test Case '-[RestockTests.StoreStationsTests testRenameRejectsCollisions]' started.
 Test Case '-[RestockTests.StoreStationsTests testRenameRejectsCollisions]' passed (0.006 seconds).
 Test Case '-[RestockTests.StoreStationsTests testRenameStationMovesAssignmentsPathAndItems]' started.
-Test Case '-[RestockTests.StoreStationsTests testRenameStationMovesAssignmentsPathAndItems]' passed (0.020 seconds).
+Test Case '-[RestockTests.StoreStationsTests testRenameStationMovesAssignmentsPathAndItems]' passed (0.024 seconds).
 Test Case '-[RestockTests.StoreStationsTests testRenameToFixedCategoryNameAdoptsCategory]' started.
-Test Case '-[RestockTests.StoreStationsTests testRenameToFixedCategoryNameAdoptsCategory]' passed (0.005 seconds).
+Test Case '-[RestockTests.StoreStationsTests testRenameToFixedCategoryNameAdoptsCategory]' passed (0.004 seconds).
 Test Case '-[RestockTests.StoreStationsTests testRenameUpdatesRunningTrip]' started.
-Test Case '-[RestockTests.StoreStationsTests testRenameUpdatesRunningTrip]' passed (0.024 seconds).
+Test Case '-[RestockTests.StoreStationsTests testRenameUpdatesRunningTrip]' passed (0.025 seconds).
 Test Case '-[RestockTests.StoreStationsTests testResolutionPriority]' started.
 Test Case '-[RestockTests.StoreStationsTests testResolutionPriority]' passed (0.005 seconds).
 Test Case '-[RestockTests.StoreStationsTests testSameKeywordInOtherStationAcceptedWithHint]' started.
@@ -260,47 +251,47 @@ Test Case '-[RestockTests.StoreStationsTests testSelectionAfterDeleteFallsBackTo
 Test Case '-[RestockTests.StoreStationsTests testSelectionAfterDeletingLastStationIsAutomaticCategory]' started.
 Test Case '-[RestockTests.StoreStationsTests testSelectionAfterDeletingLastStationIsAutomaticCategory]' passed (0.007 seconds).
 Test Case '-[RestockTests.StoreStationsTests testSetupOnStoreWithoutStations]' started.
-Test Case '-[RestockTests.StoreStationsTests testSetupOnStoreWithoutStations]' passed (0.005 seconds).
+Test Case '-[RestockTests.StoreStationsTests testSetupOnStoreWithoutStations]' passed (0.004 seconds).
 Test Case '-[RestockTests.StoreStationsTests testSetupStringsExistInBothLanguages]' started.
-Test Case '-[RestockTests.StoreStationsTests testSetupStringsExistInBothLanguages]' passed (0.004 seconds).
+Test Case '-[RestockTests.StoreStationsTests testSetupStringsExistInBothLanguages]' passed (0.003 seconds).
 Test Case '-[RestockTests.StoreStationsTests testSortedIndicesWithStationRank]' started.
 Test Case '-[RestockTests.StoreStationsTests testSortedIndicesWithStationRank]' passed (0.002 seconds).
 Test Case '-[RestockTests.StoreStationsTests testStatesAssignedHiddenOpen]' started.
 Test Case '-[RestockTests.StoreStationsTests testStatesAssignedHiddenOpen]' passed (0.012 seconds).
 Test Case '-[RestockTests.StoreStationsTests testStationNamedLikeFixedCategoryCreatesNoCustomCategory]' started.
-Test Case '-[RestockTests.StoreStationsTests testStationNamedLikeFixedCategoryCreatesNoCustomCategory]' passed (0.013 seconds).
+Test Case '-[RestockTests.StoreStationsTests testStationNamedLikeFixedCategoryCreatesNoCustomCategory]' passed (0.014 seconds).
 Test Case '-[RestockTests.StoreStationsTests testStationNameForTypicalItems]' started.
 Test Case '-[RestockTests.StoreStationsTests testStationNameForTypicalItems]' passed (0.016 seconds).
 Test Case '-[RestockTests.StoreStationsTests testStationRank]' started.
 Test Case '-[RestockTests.StoreStationsTests testStationRank]' passed (0.014 seconds).
 Test Case '-[RestockTests.StoreStationsTests testStationsDoNotChangeCategoryOrPrice]' started.
-Test Case '-[RestockTests.StoreStationsTests testStationsDoNotChangeCategoryOrPrice]' passed (0.025 seconds).
+Test Case '-[RestockTests.StoreStationsTests testStationsDoNotChangeCategoryOrPrice]' passed (0.024 seconds).
 Test Case '-[RestockTests.StoreStationsTests testStationStringsExistInBothLanguages]' started.
 Test Case '-[RestockTests.StoreStationsTests testStationStringsExistInBothLanguages]' passed (0.003 seconds).
 Test Case '-[RestockTests.StoreStationsTests testStoreAdoptableCategoriesReadsUsage]' started.
-Test Case '-[RestockTests.StoreStationsTests testStoreAdoptableCategoriesReadsUsage]' passed (0.010 seconds).
+Test Case '-[RestockTests.StoreStationsTests testStoreAdoptableCategoriesReadsUsage]' passed (0.009 seconds).
 Test Case '-[RestockTests.StoreStationsTests testStoreWithoutUsableConfigBehavesAsBefore]' started.
-Test Case '-[RestockTests.StoreStationsTests testStoreWithoutUsableConfigBehavesAsBefore]' passed (0.082 seconds).
+Test Case '-[RestockTests.StoreStationsTests testStoreWithoutUsableConfigBehavesAsBefore]' passed (0.083 seconds).
 Test Case '-[RestockTests.StoreStationsTests testSummaryTextUsesSingular]' started.
-Test Case '-[RestockTests.StoreStationsTests testSummaryTextUsesSingular]' passed (0.003 seconds).
+Test Case '-[RestockTests.StoreStationsTests testSummaryTextUsesSingular]' passed (0.002 seconds).
 Test Case '-[RestockTests.StoreStationsTests testTemplateRoutesTypicalItems]' started.
 Test Case '-[RestockTests.StoreStationsTests testTemplateRoutesTypicalItems]' passed (0.015 seconds).
 Test Case '-[RestockTests.StoreStationsTests testTemplateSamples]' started.
 Test Case '-[RestockTests.StoreStationsTests testTemplateSamples]' passed (0.013 seconds).
 Test Case '-[RestockTests.StoreStationsTests testTemplateStationNamesCoverAllTemplates]' started.
 Test Case '-[RestockTests.StoreStationsTests testTemplateStationNamesCoverAllTemplates]' passed (0.002 seconds).
-Test Suite 'StoreStationsTests' passed at 2026-11-02 06:57:51.572.
-	 Executed 69 tests, with 0 failures (0 unexpected) in 0.731 (0.744) seconds
-Test Suite 'RestockTests.xctest' passed at 2026-11-02 06:57:51.572.
-	 Executed 109 tests, with 0 failures (0 unexpected) in 2.015 (2.061) seconds
-Test Suite 'Selected tests' passed at 2026-11-02 06:57:51.572.
-	 Executed 109 tests, with 0 failures (0 unexpected) in 2.015 (2.068) seconds
-2026-11-02 06:57:51.952 xcodebuild[98010:44504939] [MT] IDETestOperationsObserverDebug: 15.744 elapsed -- Testing started completed.
-2026-11-02 06:57:51.952 xcodebuild[98010:44504939] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2026-11-02 06:57:51.952 xcodebuild[98010:44504939] [MT] IDETestOperationsObserverDebug: 15.744 sec, +15.744 sec -- end
+Test Suite 'StoreStationsTests' passed at 2026-11-02 07:23:46.540.
+	 Executed 69 tests, with 0 failures (0 unexpected) in 0.756 (0.770) seconds
+Test Suite 'RestockTests.xctest' passed at 2026-11-02 07:23:46.540.
+	 Executed 106 tests, with 0 failures (0 unexpected) in 1.186 (1.213) seconds
+Test Suite 'Selected tests' passed at 2026-11-02 07:23:46.540.
+	 Executed 106 tests, with 0 failures (0 unexpected) in 1.186 (1.216) seconds
+2026-11-02 07:23:46.980 xcodebuild[48610:44664821] [MT] IDETestOperationsObserverDebug: 26.509 elapsed -- Testing started completed.
+2026-11-02 07:23:46.981 xcodebuild[48610:44664821] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-02 07:23:46.981 xcodebuild[48610:44664821] [MT] IDETestOperationsObserverDebug: 26.509 sec, +26.509 sec -- end
 
 Test session results, code coverage, and logs:
-	/Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d3/Logs/Test/Test-Restock-2026.11.02_06-57-34-+0100.xcresult
+	/Users/hem/Developer/Restock/.claude/worktrees/gentle-tumbling-frost/build/dd-d3/Logs/Test/Test-Restock-2026.11.02_07-23-18-+0100.xcresult
 
 ** TEST SUCCEEDED **
 
