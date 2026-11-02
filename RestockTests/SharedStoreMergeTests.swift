@@ -342,6 +342,152 @@ final class SharedStoreMergeTests: XCTestCase {
         XCTAssertEqual(prices.units, ["milch": "stk", "käse": "g", "butter": "stk", "quark": "g"])
     }
 
+    // MARK: - Teil C: Gänge (Issue #234, Durchgang 3, `docs/specs/services/shared-store-stations-sync.md`)
+
+    /// M1 / AC-4: GIVEN Server-Record mit Gängen (T3) und lokal älter (T1) WHEN `mergeIntoRecord`
+    /// THEN Feld unverändert, `MergedState.stations` ist der Remote-Stand.
+    func testPushMergeStationsRemoteNewerKeepsRecord() async {
+        let store = makeStore()
+        let code = register(shareID: "UT-\(UUID().uuidString)", for: store)
+        store.stationConfig = stations(["Kasse"], date: t1)
+        let remote = stations(["Weinregal", "Körbe"], date: t3)
+        let record = await makeRecord(code: code)
+        let remoteJSON = StoreCategories.encodeStationConfig(remote)
+        record["stationsJSON"] = remoteJSON as CKRecordValue
+
+        let result = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+
+        XCTAssertEqual(record["stationsJSON"] as? String, remoteJSON)
+        XCTAssertEqual(result.stations, remote)
+    }
+
+    /// M2 / AC-4: GIVEN Server-Record älter (T1) und lokal neuer (T3) THEN trägt der Record den lokalen Stand.
+    func testPushMergeStationsLocalNewerWritesRecord() async {
+        let store = makeStore()
+        let code = register(shareID: "UT-\(UUID().uuidString)", for: store)
+        let local = stations(["Kasse", "Weinregal"], date: t3)
+        store.stationConfig = local
+        let record = await makeRecord(code: code)
+        record["stationsJSON"] = StoreCategories.encodeStationConfig(stations(["Körbe"], date: t1)) as CKRecordValue
+
+        let result = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+
+        XCTAssertEqual(StoreCategories.decodeStationConfig(record["stationsJSON"] as? String), local)
+        XCTAssertEqual(result.stations, local)
+    }
+
+    /// M3 / AC-4, AC-9: GIVEN Record ohne Feld und lokal keine Gänge THEN Feld fehlt weiter, Ergebnis `nil`;
+    /// GIVEN `includeExtensionFields: false` THEN bleibt `stationsJSON` unberührt, auch mit lokalen Gängen.
+    func testPushMergeStationsAbsentOrWithoutExtensionFields() async {
+        let store = makeStore()
+        let code = register(shareID: "UT-\(UUID().uuidString)", for: store)
+        let empty = await makeRecord(code: code)
+
+        let result = await service.mergeIntoRecord(empty, store: store, code: code, isNewRecord: false)
+
+        XCTAssertNil(empty["stationsJSON"], "weder \"\" noch {} schreiben")
+        XCTAssertFalse(empty.allKeys().contains("stationsJSON"))
+        XCTAssertNil(result.stations)
+
+        store.stationConfig = stations(["Kasse"], date: t3)
+        let record = await makeRecord(code: code)
+        let remoteJSON = StoreCategories.encodeStationConfig(stations(["Körbe"], date: t1))
+        record["stationsJSON"] = remoteJSON as CKRecordValue
+        _ = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false,
+                                          includeExtensionFields: false)
+        XCTAssertEqual(record["stationsJSON"] as? String, remoteJSON, "Fallback fasst das Feld nicht an")
+        let bare = await makeRecord(code: code)
+        _ = await service.mergeIntoRecord(bare, store: store, code: code, isNewRecord: false,
+                                          includeExtensionFields: false)
+        XCTAssertNil(bare["stationsJSON"])
+    }
+
+    /// M4 / AC-5, AC-8: GIVEN lokal T1 WHEN `apply(stations:)` mit T2 THEN Remote-Stand mit Datum des Absenders.
+    func testApplyStationsRemoteNewerAdoptsWithSenderDate() async {
+        let store = makeStore()
+        store.stationConfig = stations(["Kasse"], date: t1)
+        let remote = stations(["Weinregal", "Körbe"], date: t2)
+
+        await SyncCoordinator.shared.apply(items: [], members: [], stations: remote, modifiedAt: nil, to: store)
+
+        XCTAssertEqual(store.stationConfig, remote)
+        XCTAssertEqual(store.stationConfig?.date, t2, "kein Stempel von „jetzt“")
+        XCTAssertTrue(store.isCustomCategory("Weinregal"), "Gang-Name als eigene Kategorie")
+    }
+
+    /// M5 / AC-3, AC-5: GIVEN lokal T3 WHEN `apply` mit T2 oder ohne Feld THEN bleibt der lokale Stand.
+    func testApplyStationsOlderOrMissingKeepsLocal() async {
+        let store = makeStore()
+        let local = stations(["Kasse"], date: t3)
+        store.stationConfig = local
+        let json = store.stationConfigJSON
+
+        await SyncCoordinator.shared.apply(items: [], members: [], stations: stations(["Körbe"], date: t2),
+                                           modifiedAt: nil, to: store)
+        XCTAssertEqual(store.stationConfig, local)
+        await SyncCoordinator.shared.apply(items: [], members: [], stations: nil, modifiedAt: nil, to: store)
+        XCTAssertEqual(store.stationConfigJSON, json)
+    }
+
+    /// M6 / AC-6: GIVEN lokaler Löschvermerk T3 und Remote-Gänge T2 THEN gewinnt der Vermerk in beide Richtungen.
+    func testStationTombstoneWinsBothDirections() async {
+        let store = makeStore()
+        let code = register(shareID: "UT-\(UUID().uuidString)", for: store)
+        let tombstone = StationConfig(stations: [], hidden: [], date: t3)
+        store.stationConfig = tombstone
+        let remote = stations(["Kasse", "Weinregal"], date: t2)
+
+        await SyncCoordinator.shared.apply(items: [], members: [], stations: remote, modifiedAt: nil, to: store)
+        XCTAssertEqual(store.stationConfig, tombstone, "Gänge des Partners kommen nicht zurück")
+        XCTAssertFalse(store.hasStations)
+
+        let record = await makeRecord(code: code)
+        record["stationsJSON"] = StoreCategories.encodeStationConfig(remote) as CKRecordValue
+        let result = await service.mergeIntoRecord(record, store: store, code: code, isNewRecord: false)
+        XCTAssertEqual(StoreCategories.decodeStationConfig(record["stationsJSON"] as? String), tombstone)
+        XCTAssertEqual(result.stations, tombstone)
+    }
+
+    /// M7 / AC-5, AC-7: GIVEN `apply` zweimal mit demselben Remote-Stand THEN schreibt der zweite nichts,
+    /// keine Weg-Version, Datum bleibt das des Absenders.
+    func testApplySameStationsTwiceWritesOnce() async {
+        let store = makeStore()
+        let remote = stations(["Kasse"], date: t2)
+        await SyncCoordinator.shared.apply(items: [], members: [], stations: remote, modifiedAt: nil, to: store)
+        XCTAssertEqual(store.stationConfig, remote, "Vorbedingung: erste Übernahme")
+        let json = store.stationConfigJSON
+        let revision = Self.routeRevision
+
+        await SyncCoordinator.shared.apply(items: [], members: [], stations: remote, modifiedAt: nil, to: store)
+
+        XCTAssertEqual(store.stationConfigJSON, json)
+        XCTAssertEqual(Self.routeRevision, revision, "keine zweite Weg-Version")
+        XCTAssertEqual(store.stationConfig?.date, t2)
+    }
+
+    /// M8 / AC-8: GIVEN die Quelltexte aller Aufrufer von `apply(items:…)` (Abgleich, Push-Antwort,
+    /// Beitritt in `StoreShareSheet.join`) WHEN ein Aufruf `categories:` weiterreicht THEN reicht er
+    /// auch `stations:` weiter — sonst bekommt etwa ein neues Mitglied beim Beitritt keine Gänge,
+    /// obwohl `pull` sie liefert. Quelltextprüfung, weil `join` CloudKit braucht.
+    func testEveryApplyCallPassesStations() throws {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+        let files = ["SmartCart/Views/Store/StoreShareSheet.swift", "SmartCart/Services/SyncCoordinator.swift"]
+        var found = 0
+        for file in files {
+            let source = try String(contentsOf: root.appendingPathComponent(file), encoding: .utf8)
+            for (index, line) in source.components(separatedBy: "\n").enumerated()
+            where line.contains("apply(items:") && !line.contains("func apply(items") {
+                found += 1
+                if line.contains("categories:") {
+                    XCTAssertTrue(line.contains("stations:"),
+                                  "\(file):\(index + 1) ruft apply mit categories:, aber ohne stations: auf")
+                }
+            }
+        }
+        // Mindestzahl, sonst prüft der Test nach einer Umbenennung nichts mehr.
+        XCTAssertGreaterThanOrEqual(found, 3, "zu wenige apply(items:)-Aufrufe gefunden: \(found)")
+    }
+
     // MARK: - Gleichstand (Ist-Verhalten festgehalten, kein Beschluss)
 
     /// Bei identischem `lastModified` entscheiden Push-Merge (`>`: lokal gewinnt) und `apply`
@@ -394,6 +540,15 @@ final class SharedStoreMergeTests: XCTestCase {
         shareIDs.append(shareID)
         if !storeIDs.contains(store.id) { storeIDs.append(store.id) }
         return shareID
+    }
+
+    private func stations(_ names: [String], date: Date) -> StationConfig {
+        StationConfig(stations: names.map { Station(name: $0, emoji: "🧾", builtIns: [], keywords: []) },
+                      hidden: [], date: date)
+    }
+
+    private static var routeRevision: Int {
+        UserDefaults(suiteName: "group.com.johannesemmrich.SmartCart")?.integer(forKey: Store.routeRevisionKey) ?? 0
     }
 
     private func makeItem(in store: Store, name: String) -> ShoppingItem {

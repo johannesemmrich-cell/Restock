@@ -420,7 +420,8 @@ final class StoreStationsTests: XCTestCase {
         store.rememberCategory(marker, forItemNamed: "Batterien")
         store.removeStations()
 
-        XCTAssertEqual(store.stationConfigJSON, "")
+        // D3 (`shared-store-stations-sync`, G5): Löschvermerk statt leerem Feld.
+        XCTAssertEqual(store.stationConfig?.stations, [])
         XCTAssertFalse(store.hasStations)
         XCTAssertTrue(store.customCategories.contains("Kühltheke Fertiges"), "Eigene Kategorien bleiben")
         XCTAssertEqual(store.categoryAssignments["gouda"], "Käse", "Merkungen bleiben")
@@ -1058,7 +1059,7 @@ final class StoreStationsTests: XCTestCase {
                 XCTAssertEqual(table["station.setup.add"], "Gang hinzufügen")
                 XCTAssertEqual(table["station.setup.template"], "Vorlage wählen …")
                 XCTAssertEqual(table["station.setup.name.rejected"], "Diesen Namen gibt es schon oder er ist nicht erlaubt.")
-                XCTAssertEqual(table["station.setup.shared"], "Gänge bleiben bis zum Abgleich auf diesem Gerät.")
+                XCTAssertEqual(table["station.setup.shared"], "Änderungen an den Gängen gelten für alle Mitglieder dieses Ladens.")
                 // … und X1–X3 (D2b-1).
                 XCTAssertEqual(table["station.setup.template.hint"], "Vorschlag, bitte prüfen")
                 XCTAssertEqual(table["station.setup.template.discounter"], "Discounter")
@@ -1070,6 +1071,7 @@ final class StoreStationsTests: XCTestCase {
                                "Ein Stichwort ist ein einzelnes Wort mit mindestens 3 Buchstaben.")
             }
             if localization == "en" {
+                XCTAssertEqual(table["station.setup.shared"], "Changes to the aisles apply to all members of this store.")
                 XCTAssertEqual(table["station.setup.row.categories.one"], "1 category")
                 XCTAssertEqual(table["station.setup.row.keywords.other"], "%d keywords")
             }
@@ -1649,5 +1651,131 @@ final class StoreStationsTests: XCTestCase {
         XCTAssertNil(StoreCategories.followedChoice(nil, next: marker))
         XCTAssertEqual(StoreCategories.followedChoice("Käse", next: "Käse & Co"), "Käse & Co")
         XCTAssertEqual(StoreCategories.followedChoice("Käse", next: marker), marker)
+    }
+
+    // MARK: - Durchgang 3: Gänge geteilter Läden (Spec `docs/specs/services/shared-store-stations-sync.md`)
+
+    private func sharedConfig(_ names: [String], date: Date, hidden: [String] = []) -> StationConfig {
+        StationConfig(stations: names.enumerated().map { index, name in
+            Station(name: name, emoji: ["🧾", "🍷", "🧺", "🪴"][index % 4], builtIns: [], keywords: ["\(name.lowercased())x"])
+        }, hidden: hidden, date: date)
+    }
+
+    /// G1 / AC-2: GIVEN lokal T und remote T+1 WHEN `mergeStationConfig` THEN genau der Remote-Stand
+    /// (Ganzstand, keine Mischung); remote T-1 THEN genau der lokale.
+    func testMergeStationConfigLaterDateWinsWhole() {
+        let local = sharedConfig(["Kasse", "Weinregal"], date: t0, hidden: ["Tierbedarf"])
+        let newer = sharedConfig(["Körbe"], date: t0.addingTimeInterval(1))
+        let older = sharedConfig(["Pflanzen", "Körbe", "Kasse"], date: t0.addingTimeInterval(-1))
+        XCTAssertEqual(StoreCategories.mergeStationConfig(local: local, remote: newer), newer)
+        XCTAssertEqual(StoreCategories.mergeStationConfig(local: local, remote: older), local)
+    }
+
+    /// G2 / AC-2: GIVEN gleiches `date`, verschiedener Inhalt THEN gewinnt lokal.
+    func testMergeStationConfigTieKeepsLocal() {
+        let local = sharedConfig(["Kasse"], date: t0)
+        let remote = sharedConfig(["Weinregal", "Körbe"], date: t0)
+        XCTAssertEqual(StoreCategories.mergeStationConfig(local: local, remote: remote), local)
+    }
+
+    /// G3 / AC-2, AC-8: `nil` zählt als `distantPast`; beide `nil` THEN `nil`.
+    func testMergeStationConfigNilSides() {
+        let config = sharedConfig(["Kasse"], date: t0)
+        XCTAssertEqual(StoreCategories.mergeStationConfig(local: nil, remote: config), config)
+        XCTAssertEqual(StoreCategories.mergeStationConfig(local: config, remote: nil), config)
+        XCTAssertNil(StoreCategories.mergeStationConfig(local: nil, remote: nil))
+    }
+
+    /// G4 / AC-3: Dekodieren liefert `nil` für `nil`, leer, kaputt und falsche Form; ein kaputter
+    /// Remote-Stand überschreibt den lokalen nie; Kodieren und Dekodieren ist verlustfrei.
+    func testDecodeStationConfigRejectsBrokenAndRoundTrips() {
+        XCTAssertNil(StoreCategories.decodeStationConfig(nil))
+        XCTAssertNil(StoreCategories.decodeStationConfig(""))
+        XCTAssertNil(StoreCategories.decodeStationConfig("{"))
+        XCTAssertNil(StoreCategories.decodeStationConfig("[]"))
+
+        let local = sharedConfig(["Kasse", "Weinregal"], date: t0, hidden: ["Tierbedarf"])
+        let broken = StoreCategories.decodeStationConfig("{\"stations\": 3}")
+        XCTAssertEqual(StoreCategories.mergeStationConfig(local: local, remote: broken), local)
+
+        let decoded = StoreCategories.decodeStationConfig(StoreCategories.encodeStationConfig(local))
+        XCTAssertEqual(decoded, local)
+        XCTAssertEqual(decoded?.date, t0)
+    }
+
+    /// G5 / AC-6: GIVEN Laden mit Gängen und `hidden` WHEN `removeStations()` THEN Löschvermerk
+    /// (`stations == []`, `hidden == []`, Datum jetzt), Laden ohne Gänge, Weg-Version erhöht.
+    func testRemoveStationsWritesTombstone() throws {
+        let store = makeStore()
+        var config = try XCTUnwrap(store.stationConfig)
+        config.hidden = ["Tierbedarf"]
+        store.updateStationConfig(config)
+        let salami = add("Salami", to: store)
+        let start = Date()
+        let revision = routeRevision
+
+        store.removeStations()
+
+        let tombstone = try XCTUnwrap(store.stationConfig, "Löschvermerk statt leerem Feld")
+        XCTAssertEqual(tombstone.stations, [])
+        XCTAssertEqual(tombstone.hidden, [])
+        XCTAssertGreaterThanOrEqual(tombstone.date, start.addingTimeInterval(-1), "Zeitstempel jetzt")
+        XCTAssertFalse(store.hasStations)
+        XCTAssertNil(store.stationName(of: salami))
+        XCTAssertNil(store.stationRank(of: salami))
+        XCTAssertGreaterThan(routeRevision, revision, "Weg-Version erhöht")
+    }
+
+    /// G6 / AC-7, AC-8: GIVEN Laden ohne Gänge WHEN `adoptRemoteStationConfig(c)` THEN genau `c` samt
+    /// Datum des Absenders, Gang-Namen als eigene Kategorien mit ihrem Emoji, `hasStations`.
+    func testAdoptRemoteStationConfigKeepsSenderDate() throws {
+        let store = makeStore(template: false)
+        let remote = sharedConfig(["Kasse", "Weinregal"], date: t0)
+
+        store.adoptRemoteStationConfig(remote)
+
+        XCTAssertEqual(store.stationConfig, remote)
+        XCTAssertEqual(store.stationConfig?.date, t0, "nicht neu gestempelt")
+        XCTAssertTrue(store.hasStations)
+        XCTAssertTrue(store.isCustomCategory("Kasse"))
+        XCTAssertTrue(store.isCustomCategory("Weinregal"))
+        XCTAssertEqual(store.categoryEmoji("Kasse"), "🧾")
+        XCTAssertEqual(store.categoryEmoji("Weinregal"), "🍷")
+    }
+
+    /// G7 / AC-7: GIVEN übernommener Stand WHEN erneut derselbe THEN kein neues Schreiben, keine
+    /// zweite Weg-Version; der Merge gegen den Absender bleibt beim selben Stand (kein Ping-Pong).
+    func testAdoptRemoteStationConfigTwiceIsNoOp() throws {
+        let store = makeStore(template: false)
+        let remote = sharedConfig(["Kasse"], date: t0)
+        let firstRevision = routeRevision
+        store.adoptRemoteStationConfig(remote)
+        XCTAssertGreaterThan(routeRevision, firstRevision, "erste Übernahme ändert den Laden")
+        let json = store.stationConfigJSON
+        let revision = routeRevision
+
+        store.adoptRemoteStationConfig(remote)
+
+        XCTAssertEqual(store.stationConfigJSON, json)
+        XCTAssertEqual(routeRevision, revision, "keine zweite Weg-Version")
+        XCTAssertEqual(StoreCategories.mergeStationConfig(local: store.stationConfig, remote: remote), remote)
+        XCTAssertEqual(store.stationConfig?.date, remote.date)
+    }
+
+    /// G8 / AC-6: GIVEN Mitglied ohne lokale Gänge und fremder Löschvermerk WHEN gemergt und übernommen
+    /// THEN Vermerk steht, Laden ohne Gänge (Übersicht zeigt Vorlagen), Basis für neuen Gang ohne `hidden`.
+    func testAdoptRemoteTombstoneOnStoreWithoutStations() throws {
+        let store = makeStore(template: false)
+        XCTAssertEqual(store.stationConfigJSON, "")
+        let tombstone = StationConfig(stations: [], hidden: [], date: t0)
+
+        let merged = StoreCategories.mergeStationConfig(local: store.stationConfig, remote: tombstone)
+        XCTAssertEqual(merged, tombstone)
+        store.adoptRemoteStationConfig(try XCTUnwrap(merged))
+
+        XCTAssertEqual(store.stationConfig, tombstone)
+        XCTAssertFalse(store.hasStations, "Übersicht zeigt die Vorlagen-Auswahl")
+        let base = store.stationConfig ?? StationConfig(stations: [], hidden: [], date: Date())
+        XCTAssertEqual(base.hidden, [], "neuer Gang startet ohne ausgeblendete Kategorien")
     }
 }

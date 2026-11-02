@@ -752,7 +752,7 @@ final class StationSetupExtrasUITests: XCTestCase {
         openSetup(app)
         let hint = element("stationSetup.sharedHint", app)
         XCTAssertTrue(reveal(hint, in: app), "Hinweis für geteilte Läden fehlt")
-        XCTAssertTrue(hint.label.contains("Gänge bleiben bis zum Abgleich auf diesem Gerät."), "Text — Label: \(hint.label)")
+        XCTAssertTrue(hint.label.contains("Änderungen an den Gängen gelten für alle Mitglieder dieses Ladens."), "Text — Label: \(hint.label)")
         attach("Y7 geteilter Laden", app)
         scrollToTop(app)
         openStation("Käse", in: app)

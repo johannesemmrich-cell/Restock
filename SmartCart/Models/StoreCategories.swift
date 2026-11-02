@@ -191,6 +191,32 @@ struct StationConfig: Codable, Equatable {
     var date: Date
 }
 
+// MARK: Gänge geteilter Läden (Issue #234, Durchgang 3)
+
+extension StoreCategories {
+    /// Ganzstand: das spätere `date` gewinnt, Gleichstand lokal, `nil` zählt als `distantPast`.
+    static func mergeStationConfig(local: StationConfig?, remote: StationConfig?) -> StationConfig? {
+        guard let remote else { return local }
+        guard let local else { return remote }
+        return remote.date > local.date ? remote : local
+    }
+
+    /// Eine Kodierung für `Store.stationConfigJSON` und `stationsJSON`. `.sortedKeys`, weil der
+    /// Standard-Encoder die Schlüsselfolge nicht festhält: gleiche Stände müssen gleich kodieren.
+    static func encodeStationConfig(_ config: StationConfig) -> String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        guard let data = try? encoder.encode(config) else { return "" }
+        return String(data: data, encoding: .utf8) ?? ""
+    }
+
+    /// `nil` für `nil`, leeren Text und kaputtes JSON.
+    static func decodeStationConfig(_ json: String?) -> StationConfig? {
+        guard let json, !json.isEmpty, let data = json.data(using: .utf8) else { return nil }
+        return try? JSONDecoder().decode(StationConfig.self, from: data)
+    }
+}
+
 extension StoreCategories {
     /// Gemerkte Wahl „Sonstiges“: Private-Use-Zeichen am Anfang, kein gültiger Name, steht nie in
     /// `ShoppingItem.category`.

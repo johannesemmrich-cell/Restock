@@ -102,7 +102,7 @@ final class SyncCoordinator {
                 clearFailure(keepingSchemaIncomplete: true)
                 return true
             }
-            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, priceUnits: result.priceUnits, categories: result.categories, assignments: result.assignments, modifiedAt: result.modifiedAt, to: store)
+            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, priceUnits: result.priceUnits, categories: result.categories, assignments: result.assignments, stations: result.stations, modifiedAt: result.modifiedAt, to: store)
             clearFailure(keepingSchemaIncomplete: true)
             return true
         } catch {
@@ -125,7 +125,7 @@ final class SyncCoordinator {
             guard let result = try await sharedStoreService.push(store: store) else { return true }
             // syncToCloud's save already advanced the watermark to the server's modificationDate
             // (see SharedStoreService.markSynced), so apply() shouldn't override it here.
-            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, priceUnits: result.priceUnits, categories: result.categories, assignments: result.assignments, modifiedAt: nil, to: store)
+            await apply(items: result.items, members: result.members, deletedIDs: result.deletedIDs, prices: result.prices, priceDates: result.priceDates, priceUnits: result.priceUnits, categories: result.categories, assignments: result.assignments, stations: result.stations, modifiedAt: nil, to: store)
             if let rejection = result.schemaRejection {
                 recordFailure(rejection, during: "push (schema fallback)")
                 lastFailureKind = .schemaIncomplete
@@ -269,7 +269,7 @@ final class SyncCoordinator {
     /// `modifiedAt` is the server's `modificationDate` for this remote state, used to advance the
     /// sync watermark to server time rather than this device's local clock. Pass `nil` when the
     /// caller (e.g. a push) already advanced the watermark itself via `SharedStoreService.markSynced`.
-    func apply(items remoteItems: [SharedItemData], members: [String], deletedIDs: Set<UUID> = [], prices: [String: Double] = [:], priceDates: [String: Date] = [:], priceUnits: [String: String] = [:], categories: [String: CustomCategoryEntry] = [:], assignments: [String: CategoryAssignmentEntry] = [:], modifiedAt: Date?, to store: Store) async {
+    func apply(items remoteItems: [SharedItemData], members: [String], deletedIDs: Set<UUID> = [], prices: [String: Double] = [:], priceDates: [String: Date] = [:], priceUnits: [String: String] = [:], categories: [String: CustomCategoryEntry] = [:], assignments: [String: CategoryAssignmentEntry] = [:], stations: StationConfig? = nil, modifiedAt: Date?, to store: Store) async {
         guard let context = modelContext ?? store.modelContext else { return }
 
         for name in members { store.addMember(name) }
@@ -284,6 +284,11 @@ final class SyncCoordinator {
         if !assignments.isEmpty {
             let merged = StoreCategories.mergeAssignments(local: store.categoryAssignmentEntries, remote: assignments)
             if merged != store.categoryAssignmentEntries { store.categoryAssignmentEntries = merged }
+        }
+        // Issue #234, D3: Gänge als Ganzstand, späteres Datum gewinnt; Übernahme ohne neuen Stempel.
+        if let merged = StoreCategories.mergeStationConfig(local: store.stationConfig, remote: stations),
+           merged != store.stationConfig {
+            store.adoptRemoteStationConfig(merged)
         }
 
         // Last-write-wins pro Preis-Schlüssel, exakt dasselbe Prinzip wie der Item-Merge direkt
