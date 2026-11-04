@@ -95,3 +95,17 @@ Container `iCloud.com.johannesemmrich.SmartCart`, Team `XK87E2B3VR`. Alle `cktoo
 - **Große Werte als `_ckAsset`.** Für große `Data`-/Blob-Werte legt die Spiegelung ein Zusatzfeld `CD_<Attribut>_ckAsset` an; `CD_photoData_ckAsset` (ASSET) ist seit Issue #156 im Schema; alle übrigen `_ckAsset`-Felder fehlen bewusst (PO-Entscheidung, praktisch nur das Foto erreichbar).
 
 Stand 2026-10-18: Alle fünf `CD_`-Typen (`CD_Store`, `CD_ShoppingItem`, `CD_PurchaseRecord`, `CD_FeedbackItem`, `CD_TodoItem`) liegen in Development und Production mit denselben Feldern (`docs/cloudkit/private-schema-aktuell.ckdb`; Production-Export ohne Unterschied, `docs/artifacts/fix-155-icloud-produktionsschema/`). Seit #156 zusätzlich `CD_ShoppingItem.CD_photoData_ckAsset` (ASSET).
+
+## Absturzberichte abholen
+
+Handlauf `.github/workflows/asc-crashes.yml` (Issue #242, Spec `docs/specs/appstore/asc-crashes.md`). Er holt die TestFlight-Absturzmeldungen und -berichte nur lesend über die App-Store-Connect-API ab (`scripts/asc_crashes.py`, dieselben Secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` wie der Upload), packt sie per `tar` und verschlüsselt sie mit `gpg` für den öffentlichen Schlüssel `.github/crash-recipient.asc` („Loose Ends Crash Intake“; der geheime Schlüssel liegt nur im GnuPG-Bund von Hennings Mac). Hochgeladen wird nur das Chiffrat `crashes.tar.gpg`.
+
+1. Auslösen: `gh workflow run asc-crashes.yml` (erst möglich, wenn die Datei auf `main` liegt; ein `workflow_dispatch`-Ablauf ist vorher nicht auslösbar).
+2. Ohne Meldungen endet der Lauf grün mit „keine Absturzmeldungen“, es gibt kein Artefakt.
+3. Sonst herunterladen in den Scratchpad, nie ins Repo: `gh run download <id> -n crashes`.
+4. Entschlüsseln und auspacken im Scratchpad: `gpg --decrypt crashes.tar.gpg | tar -x`. Je Meldung liegt dann `<id>.json` und, wenn Apple einen Bericht hat, `<id>.crash` vor.
+5. Selbsttest des Verschlüsselungswegs ohne Apple-Aufruf: `gh workflow run asc-crashes.yml -f selftest=true`. Der Lauf verschlüsselt eine im Runner erzeugte Zufallsdatei (Prüfsumme im Protokoll), das Artefakt heißt `crashes-selftest` und wird mit `gh run download <id> -n crashes-selftest` geholt.
+
+**Datenschutz:** Das Repo ist öffentlich. Lauf-Logs und Artefakte kann jeder mit GitHub-Konto lesen, das Chiffrat bleibt 7 Tage herunterladbar (ohne geheimen Schlüssel unlesbar). Der entschlüsselte Inhalt enthält Testerdaten (E-Mail, Kommentar, Gerät, Zeitzone): nie ins Repo, ins Log oder in den Chat schreiben, nur auswerten und danach löschen.
+
+**Rolle:** Antwortet Apple mit 403 oder einem anderen Rollenfehler, ist der Lauf rot und das Protokoll nennt nur Status, Pfad und Apples `code`/`title`. Die Rolle des API-Schlüssels in App Store Connect ist dann ein Thema für Henning.
