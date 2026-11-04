@@ -1,0 +1,77 @@
+name: TestFlight-Absturzberichte  # Issue #242, Spec docs/specs/appstore/asc-crashes.md, Abholen: docs/testflight-setup.md
+
+on:
+  workflow_dispatch:
+    inputs:
+      selftest:
+        description: "Selbsttest: Zufallsdatei statt Apple-Abruf verschlüsseln (Artefakt crashes-selftest)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: asc-crashes
+  cancel-in-progress: false
+
+jobs:
+  crashes:
+    runs-on: macos-26
+    timeout-minutes: 15
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      OUT: ${{ runner.temp }}/crashes
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: GnuPG bereitstellen
+        run: command -v gpg || brew install gnupg
+
+      # Abholen, Verschlüsseln und Aufräumen in einem Schritt, damit der trap Schlüssel,
+      # Klartextordner und Klartext-Tar sicher löscht. Im Log stehen nur Kennzeilen (asc_crashes.safe_field).
+      - name: Absturzmeldungen abholen und verschlüsseln
+        if: ${{ !inputs.selftest }}
+        run: |
+          umask 077
+          KEY="$RUNNER_TEMP/AuthKey.p8"
+          trap 'rm -rf "$KEY" "$OUT" "$RUNNER_TEMP/crashes.tar"' EXIT
+          # Der Schlüssel darf als eingefügter Text der .p8 oder als Base64 davon im Secret stehen (wie testflight.yml).
+          if grep -q 'BEGIN PRIVATE KEY' <<< "$ASC_KEY_P8"; then printf '%s\n' "$ASC_KEY_P8"; else base64 -d <<< "$ASC_KEY_P8"; fi > "$KEY"
+          chmod 600 "$KEY"
+          ASC_KEY_PATH="$KEY" python3 -I scripts/asc_crashes.py "$OUT"
+          if [ -z "$(ls -A "$OUT" 2>/dev/null)" ]; then echo "keine Absturzmeldungen, kein Artefakt"; exit 0; fi
+          tar -cf "$RUNNER_TEMP/crashes.tar" -C "$OUT" .
+          gpg --batch --trust-model always --recipient-file .github/crash-recipient.asc --encrypt \
+            --output crashes.tar.gpg "$RUNNER_TEMP/crashes.tar"
+
+      - name: Selbsttest-Datei erzeugen und verschlüsseln
+        if: ${{ inputs.selftest }}
+        run: |
+          umask 077
+          trap 'rm -rf "$OUT" "$RUNNER_TEMP/crashes.tar"' EXIT
+          mkdir -p "$OUT"
+          openssl rand -out "$OUT/selftest.bin" 4096
+          chmod 600 "$OUT/selftest.bin"
+          echo "Selbsttest, Prüfsumme: $(shasum -a 256 "$OUT/selftest.bin" | cut -d' ' -f1)"
+          tar -cf "$RUNNER_TEMP/crashes.tar" -C "$OUT" .
+          gpg --batch --trust-model always --recipient-file .github/crash-recipient.asc --encrypt \
+            --output crashes.tar.gpg "$RUNNER_TEMP/crashes.tar"
+
+      - name: Chiffrat hochladen
+        if: ${{ !inputs.selftest && hashFiles('crashes.tar.gpg') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: crashes
+          path: crashes.tar.gpg
+          retention-days: 7
+
+      - name: Selbsttest-Chiffrat hochladen
+        if: ${{ inputs.selftest && hashFiles('crashes.tar.gpg') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: crashes-selftest
+          path: crashes.tar.gpg
+          retention-days: 7

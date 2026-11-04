@@ -1,0 +1,74 @@
+test_ci_lists_workflow_test (__main__.Ci.test_ci_lists_workflow_test) ... FAIL
+test_recipient_is_public_key_and_docs_section_exists (__main__.KeyAndDocs.test_recipient_is_public_key_and_docs_section_exists) ... FAIL
+test_workflow_selftest_replaces_fetch_and_uses_separate_artifact (__main__.Workflow.test_workflow_selftest_replaces_fetch_and_uses_separate_artifact) ... FAIL
+test_workflow_skips_artifact_without_submissions (__main__.Workflow.test_workflow_skips_artifact_without_submissions) ... FAIL
+test_workflow_structure_dispatch_env_only_encrypted_upload (__main__.Workflow.test_workflow_structure_dispatch_env_only_encrypted_upload) ... FAIL
+test_workflow_unpacks_key_and_traps_cleanup (__main__.Workflow.test_workflow_unpacks_key_and_traps_cleanup) ... FAIL
+
+======================================================================
+FAIL: test_ci_lists_workflow_test (__main__.Ci.test_ci_lists_workflow_test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 100, in test_ci_lists_workflow_test
+    self.assertIn("scripts/test_asc_crashes_workflow.py", m.group(1))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'scripts/test_asc_crashes_workflow.py' not found in '          python3 -I scripts/build-price-catalog.py --check\n          for t in scripts/test_price_catalog_build.py \\\n                   scripts/test_open_prices_medians.py \\\n                   scripts/test_ui_tests_discard_community_prices.py \\\n                   scripts/test_inmemory_containers_no_cloudkit.py \\\n                   scripts/test_asc_texts.py \\\n                   scripts/test_asc_scripts.py \\\n                   scripts/test_asc_check.py \\\n                   scripts/test_asc_crashes.py; do\n            echo "== $t"; python3 -I "$t" || exit 1\n          done'
+
+======================================================================
+FAIL: test_recipient_is_public_key_and_docs_section_exists (__main__.KeyAndDocs.test_recipient_is_public_key_and_docs_section_exists)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 84, in test_recipient_is_public_key_and_docs_section_exists
+    k = read(KEY)
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 18, in read
+    raise AssertionError(f"{p.relative_to(R)} fehlt")
+AssertionError: .github/crash-recipient.asc fehlt
+
+======================================================================
+FAIL: test_workflow_selftest_replaces_fetch_and_uses_separate_artifact (__main__.Workflow.test_workflow_selftest_replaces_fetch_and_uses_separate_artifact)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 28, in setUp
+    self.text = read(WF)
+                ~~~~^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 18, in read
+    raise AssertionError(f"{p.relative_to(R)} fehlt")
+AssertionError: .github/workflows/asc-crashes.yml fehlt
+
+======================================================================
+FAIL: test_workflow_skips_artifact_without_submissions (__main__.Workflow.test_workflow_skips_artifact_without_submissions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 28, in setUp
+    self.text = read(WF)
+                ~~~~^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 18, in read
+    raise AssertionError(f"{p.relative_to(R)} fehlt")
+AssertionError: .github/workflows/asc-crashes.yml fehlt
+
+======================================================================
+FAIL: test_workflow_structure_dispatch_env_only_encrypted_upload (__main__.Workflow.test_workflow_structure_dispatch_env_only_encrypted_upload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 28, in setUp
+    self.text = read(WF)
+                ~~~~^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 18, in read
+    raise AssertionError(f"{p.relative_to(R)} fehlt")
+AssertionError: .github/workflows/asc-crashes.yml fehlt
+
+======================================================================
+FAIL: test_workflow_unpacks_key_and_traps_cleanup (__main__.Workflow.test_workflow_unpacks_key_and_traps_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 28, in setUp
+    self.text = read(WF)
+                ~~~~^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_asc_crashes_workflow.py", line 18, in read
+    raise AssertionError(f"{p.relative_to(R)} fehlt")
+AssertionError: .github/workflows/asc-crashes.yml fehlt
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.001s
+
+FAILED (failures=6)
