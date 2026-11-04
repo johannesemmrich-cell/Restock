@@ -23,7 +23,6 @@ jobs:
       ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
       ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
-      OUT: ${{ runner.temp }}/crashes
     steps:
       - uses: actions/checkout@v4
 
@@ -36,6 +35,7 @@ jobs:
         if: ${{ !inputs.selftest }}
         run: |
           umask 077
+          OUT="$RUNNER_TEMP/crashes"
           KEY="$RUNNER_TEMP/AuthKey.p8"
           trap 'rm -rf "$KEY" "$OUT" "$RUNNER_TEMP/crashes.tar"' EXIT
           # Der Schlüssel darf als eingefügter Text der .p8 oder als Base64 davon im Secret stehen (wie testflight.yml).
@@ -51,6 +51,7 @@ jobs:
         if: ${{ inputs.selftest }}
         run: |
           umask 077
+          OUT="$RUNNER_TEMP/crashes"
           trap 'rm -rf "$OUT" "$RUNNER_TEMP/crashes.tar"' EXIT
           mkdir -p "$OUT"
           openssl rand -out "$OUT/selftest.bin" 4096
