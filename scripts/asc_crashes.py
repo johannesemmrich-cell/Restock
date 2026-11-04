@@ -125,10 +125,18 @@ def run(target, env, send=urllib_send, sign=openssl_sign, sleep=time.sleep, out=
         sid, attrs = s["id"], s.get("attributes") or {}
         write_private(target / f"{sid}.json", json.dumps(attrs, ensure_ascii=False, indent=2))
         doc = rd.get(f"/v1/betaFeedbackCrashSubmissions/{sid}/crashLog", missing_ok=True)
-        log = (((doc or {}).get("data") or {}).get("attributes") or {}).get("logText")
+        data = (doc or {}).get("data")
+        log_attrs = (data.get("attributes") if isinstance(data, dict) else None) or {}
+        log = log_attrs.get("logText")
         if isinstance(log, str) and log:
             write_private(target / f"{sid}.crash", log)
-        print(f"Meldung {safe_field(sid)} {safe_field(attrs.get('devicePlatform'))} {safe_field(attrs.get('createdDate'))}",
+        if doc is None:
+            state = "Bericht HTTP 404"
+        elif isinstance(log, str) and log:
+            state = f"Bericht {len(log)} Zeichen"
+        else:  # Feldnamen (Apples Schlüssel, nie Werte) zeigen, ob logText anders heißt
+            state = "Bericht leer, Felder " + (",".join(safe_field(k) for k in sorted(log_attrs)[:10]) or "keine")
+        print(f"Meldung {safe_field(sid)} {safe_field(attrs.get('devicePlatform'))} {safe_field(attrs.get('createdDate'))} {state}",
               file=out)
     print(f"{len(submissions)} Absturzmeldungen abgeholt" if submissions else "keine Absturzmeldungen", file=out)
     return 0
