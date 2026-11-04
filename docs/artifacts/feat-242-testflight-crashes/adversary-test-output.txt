@@ -1,0 +1,105 @@
+test_asc_lib_allowed_unchanged (__main__.AscCrashesTests.test_asc_lib_allowed_unchanged) ... ok
+test_ci_lists_crash_test (__main__.AscCrashesTests.test_ci_lists_crash_test) ... ok
+test_client_error_aborts_with_code_and_title_only (__main__.AscCrashesTests.test_client_error_aborts_with_code_and_title_only) ... ok
+test_fence_allows_only_three_read_paths (__main__.AscCrashesTests.test_fence_allows_only_three_read_paths) ... ok
+test_fence_rejects_id_not_from_response (__main__.AscCrashesTests.test_fence_rejects_id_not_from_response) ... ok
+test_follows_links_next_over_pages (__main__.AscCrashesTests.test_follows_links_next_over_pages) ... ok
+test_links_next_foreign_host_and_loop_abort (__main__.AscCrashesTests.test_links_next_foreign_host_and_loop_abort) ... ok
+test_log_contains_only_id_platform_date (__main__.AscCrashesTests.test_log_contains_only_id_platform_date) ... ok
+test_missing_config_or_app_fails_cleanly (__main__.AscCrashesTests.test_missing_config_or_app_fails_cleanly) ... ok
+test_missing_crash_log_is_not_an_error (__main__.AscCrashesTests.test_missing_crash_log_is_not_an_error) ... ok
+test_no_submissions_exits_zero (__main__.AscCrashesTests.test_no_submissions_exits_zero) ... ok
+test_retries_on_5xx_429_and_network_error (__main__.AscCrashesTests.test_retries_on_5xx_429_and_network_error) ... ok
+test_safe_field_blocks_workflow_command_injection (__main__.AscCrashesTests.test_safe_field_blocks_workflow_command_injection) ... ok
+test_unsafe_submission_id_is_rejected (__main__.AscCrashesTests.test_unsafe_submission_id_is_rejected) ... ok
+test_writes_json_and_crash_files_mode_0600 (__main__.AscCrashesTests.test_writes_json_and_crash_files_mode_0600) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.259s
+
+OK
+test_api_error_message_includes_apple_code_and_title (__main__.AscScripts.test_api_error_message_includes_apple_code_and_title) ... ok
+test_api_error_without_json_keeps_old_message (__main__.AscScripts.test_api_error_without_json_keeps_old_message) ... ok
+test_api_rejects_before_send (__main__.AscScripts.test_api_rejects_before_send) ... ok
+test_api_rejects_foreign_queries_before_send (__main__.AscScripts.test_api_rejects_foreign_queries_before_send) ... ok
+test_api_turns_redirect_status_into_error (__main__.AscScripts.test_api_turns_redirect_status_into_error) ... ok
+test_default_sign_with_throwaway_key (__main__.AscScripts.test_default_sign_with_throwaway_key) ... ok
+test_der_to_raw_and_token (__main__.AscScripts.test_der_to_raw_and_token) ... ok
+test_dry_run_lists_info_before_version (__main__.AscScripts.test_dry_run_lists_info_before_version) ... ok
+test_dry_run_never_writes (__main__.AscScripts.test_dry_run_never_writes) ... ok
+test_error_suffix_invalid_input_is_empty (__main__.AscScripts.test_error_suffix_invalid_input_is_empty) ... ok
+test_error_suffix_max_three_errors (__main__.AscScripts.test_error_suffix_max_three_errors) ... ok
+test_error_suffix_never_contains_detail_id_source (__main__.AscScripts.test_error_suffix_never_contains_detail_id_source) ... ok
+test_error_suffix_reads_code_and_title (__main__.AscScripts.test_error_suffix_reads_code_and_title) ... ok
+test_error_suffix_strips_surrogates_and_format_chars (__main__.AscScripts.test_error_suffix_strips_surrogates_and_format_chars) ... ok
+test_error_suffix_truncates_and_strips_control_chars (__main__.AscScripts.test_error_suffix_truncates_and_strips_control_chars) ... ok
+test_error_with_secret_like_detail_never_leaks (__main__.AscScripts.test_error_with_secret_like_detail_never_leaks) ... ok
+test_idempotent (__main__.AscScripts.test_idempotent) ... ok
+test_info_localizations_written_before_version_localizations (__main__.AscScripts.test_info_localizations_written_before_version_localizations) ... ok
+test_live_and_draft_appinfo_picks_draft (__main__.AscScripts.test_live_and_draft_appinfo_picks_draft) ... ok
+test_no_secrets_in_output_or_errors (__main__.AscScripts.test_no_secrets_in_output_or_errors) ... ok
+test_only_own_app_and_host (__main__.AscScripts.test_only_own_app_and_host) ... ok
+test_parse_texts (__main__.AscScripts.test_parse_texts) ... ok
+test_patch_existing_post_missing (__main__.AscScripts.test_patch_existing_post_missing) ... ok
+test_second_run_after_version_failure_writes_only_rest (__main__.AscScripts.test_second_run_after_version_failure_writes_only_rest) ... ok
+test_source_bans (__main__.AscScripts.test_source_bans) ... ok
+test_state_checks_abort_before_writing (__main__.AscScripts.test_state_checks_abort_before_writing) ... ok
+test_urllib_send_never_follows_redirect (__main__.AscScripts.test_urllib_send_never_follows_redirect) ... ok
+test_urllib_send_returns_error_body_capped (__main__.AscScripts.test_urllib_send_returns_error_body_capped) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 1.550s
+
+OK
+test_404_on_other_path_stays_error (__main__.AscCheck.test_404_on_other_path_stays_error) ... ok
+test_age_rating_all_null_is_deviation (__main__.AscCheck.test_age_rating_all_null_is_deviation) ... ok
+test_age_rating_complete_is_ok (__main__.AscCheck.test_age_rating_complete_is_ok) ... ok
+test_age_rating_names_missing_field (__main__.AscCheck.test_age_rating_names_missing_field) ... ok
+test_all_exit_zero_only_if_all_api_sections_ok (__main__.AscCheck.test_all_exit_zero_only_if_all_api_sections_ok) ... ok
+test_app_manual_prices_404_is_not_configured (__main__.AscCheck.test_app_manual_prices_404_is_not_configured) ... ok
+test_app_price_schedule_complete_is_ok (__main__.AscCheck.test_app_price_schedule_complete_is_ok) ... ok
+test_app_price_schedule_without_manual_prices_is_deviation (__main__.AscCheck.test_app_price_schedule_without_manual_prices_is_deviation) ... ok
+test_app_price_schedule_wrong_base_territory (__main__.AscCheck.test_app_price_schedule_wrong_base_territory) ... ok
+test_availability_404_is_deviation (__main__.AscCheck.test_availability_404_is_deviation) ... ok
+test_deviation_names_field_expected_actual (__main__.AscCheck.test_deviation_names_field_expected_actual) ... ok
+test_error_with_secret_like_detail_never_leaks_in_check (__main__.AscCheck.test_error_with_secret_like_detail_never_leaks_in_check) ... ok
+test_fence_allows_only_app_price_schedule_paths (__main__.AscCheck.test_fence_allows_only_app_price_schedule_paths) ... ok
+test_fence_rejects_before_send (__main__.AscCheck.test_fence_rejects_before_send) ... ok
+test_fetch_privacy_ignores_error_body (__main__.AscCheck.test_fetch_privacy_ignores_error_body) ... ok
+test_iap_uses_v2_paths_and_fence_rejects_v1 (__main__.AscCheck.test_iap_uses_v2_paths_and_fence_rejects_v1) ... ok
+test_no_secrets_in_output_or_errors (__main__.AscCheck.test_no_secrets_in_output_or_errors) ... ok
+test_no_valid_price_is_deviation (__main__.AscCheck.test_no_valid_price_is_deviation) ... ok
+test_only_get_and_ids_from_answers (__main__.AscCheck.test_only_get_and_ids_from_answers) ... ok
+test_price_found_under_automatic_prices (__main__.AscCheck.test_price_found_under_automatic_prices) ... ok
+test_price_ignores_expired_and_future_entries (__main__.AscCheck.test_price_ignores_expired_and_future_entries) ... ok
+test_price_mapped_via_price_point_not_first (__main__.AscCheck.test_price_mapped_via_price_point_not_first) ... ok
+test_price_plan_id_taken_from_schedule_response (__main__.AscCheck.test_price_plan_id_taken_from_schedule_response) ... ok
+test_privacy_fetch_only_exact_url (__main__.AscCheck.test_privacy_fetch_only_exact_url) ... ok
+test_privacy_fetch_sends_user_agent_and_no_authorization (__main__.AscCheck.test_privacy_fetch_sends_user_agent_and_no_authorization) ... ok
+test_privacy_fetch_without_authorization_and_redirect (__main__.AscCheck.test_privacy_fetch_without_authorization_and_redirect) ... ok
+test_privacy_questionnaire_reports_manual (__main__.AscCheck.test_privacy_questionnaire_reports_manual) ... ok
+test_protocol_has_timestamp_and_commit (__main__.AscCheck.test_protocol_has_timestamp_and_commit) ... ok
+test_reader_get_error_includes_apple_code_and_title (__main__.AscCheck.test_reader_get_error_includes_apple_code_and_title) ... ok
+test_screenshots_count_per_set_and_locale_needs_set (__main__.AscCheck.test_screenshots_count_per_set_and_locale_needs_set) ... ok
+test_screenshots_mixed_sizes_in_one_set_deviate (__main__.AscCheck.test_screenshots_mixed_sizes_in_one_set_deviate) ... ok
+test_screenshots_two_valid_sets_per_locale_ok (__main__.AscCheck.test_screenshots_two_valid_sets_per_locale_ok) ... ok
+test_screenshots_valid_size_needs_complete_state (__main__.AscCheck.test_screenshots_valid_size_needs_complete_state) ... ok
+test_screenshots_zero_size_names_delivery_state (__main__.AscCheck.test_screenshots_zero_size_names_delivery_state) ... ok
+test_section_appinfo_ok_and_deviation (__main__.AscCheck.test_section_appinfo_ok_and_deviation) ... ok
+test_section_build_ok_and_deviation (__main__.AscCheck.test_section_build_ok_and_deviation) ... ok
+test_section_build_requires_export_compliance_false (__main__.AscCheck.test_section_build_requires_export_compliance_false) ... ok
+test_section_iap_ok_and_deviation (__main__.AscCheck.test_section_iap_ok_and_deviation) ... ok
+test_section_metadata_ok_and_deviation (__main__.AscCheck.test_section_metadata_ok_and_deviation) ... ok
+test_section_privacy_url_ok_and_deviation (__main__.AscCheck.test_section_privacy_url_ok_and_deviation) ... ok
+test_section_review_never_prints_contact_values (__main__.AscCheck.test_section_review_never_prints_contact_values) ... ok
+test_section_review_ok_and_deviation (__main__.AscCheck.test_section_review_ok_and_deviation) ... ok
+test_section_screenshots_checks_pixel_size_not_enum (__main__.AscCheck.test_section_screenshots_checks_pixel_size_not_enum) ... ok
+test_section_status_ok_and_deviation (__main__.AscCheck.test_section_status_ok_and_deviation) ... ok
+test_source_bans (__main__.AscCheck.test_source_bans) ... ok
+test_subscription_price_same_validity_rule (__main__.AscCheck.test_subscription_price_same_validity_rule) ... ok
+test_today_is_injectable (__main__.AscCheck.test_today_is_injectable) ... ok
+
+----------------------------------------------------------------------
+Ran 47 tests in 0.053s
+
+OK

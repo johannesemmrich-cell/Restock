@@ -41,7 +41,8 @@ jobs:
                    scripts/test_inmemory_containers_no_cloudkit.py \
                    scripts/test_asc_texts.py \
                    scripts/test_asc_scripts.py \
-                   scripts/test_asc_check.py; do
+                   scripts/test_asc_check.py \
+                   scripts/test_asc_crashes.py; do
             echo "== $t"; python3 -I "$t" || exit 1
           done
 
