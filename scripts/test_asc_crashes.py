@@ -128,6 +128,16 @@ class AscCrashesTests(unittest.TestCase):
         for f in self.target.iterdir():
             self.assertEqual(stat.S_IMODE(f.stat().st_mode), 0o600, f.name)
 
+    def test_log_states_crash_log_status_per_submission(self):  # AC-25 (Schnitt 3)
+        fake = FakeASC(pages=[[submission("S-1"), submission("S-2"), submission("S-3")]],
+                       logs={"S-1": "LOGTEXT-GEHEIM", "S-2": "", "S-3": 404})
+        _, out = run_script(fake, self.target)
+        lines = {l.split()[1]: l for l in out.splitlines() if l.startswith("Meldung ")}
+        self.assertIn("Bericht 14 Zeichen", lines["S-1"])
+        self.assertIn("Bericht leer", lines["S-2"])
+        self.assertIn("Bericht HTTP 404", lines["S-3"])
+        self.assertNotIn("LOGTEXT-GEHEIM", out)
+
     def test_missing_crash_log_is_not_an_error(self):  # AC-5
         fake = FakeASC(pages=[[submission("S-1"), submission("S-2"), submission("S-3")]], logs={"S-2": "", "S-3": 404})
         rc, _ = run_script(fake, self.target)
