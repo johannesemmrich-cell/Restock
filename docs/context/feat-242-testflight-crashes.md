@@ -109,3 +109,69 @@ Modell/Regel: reine Regel-/API-Aufgabe, kein Modell; keine ADR wird gekippt.
 ### Open Questions
 - [ ] Hat der Restock-Schlüssel die Rolle für `betaFeedbackCrashSubmissions`? (Probelauf in Schnitt 2; 403 wäre ein Thema für Henning)
 - [ ] Gibt es schon Meldungen? (sonst Entschlüsselungs-Probe mit Testdatei)
+
+---
+
+# Nachtrag Schnitt 2 (Workflow `feat-242-schnitt-2-workflow`, 2026-11-04)
+
+Schnitt 1 ist gemergt (PR #253, `45eb864` auf `main`): `scripts/asc_crashes.py`, `scripts/test_asc_crashes.py`, Eintrag in `ci.yml`.
+Schnitt 2 setzt AC-16 bis AC-22 der Spec `docs/specs/appstore/asc-crashes.md` um.
+
+## Vorlage und Bestand
+| Quelle | Befund |
+|---|---|
+| Loose Ends `.github/workflows/asc-crashes.yml` | 50 Zeilen, `ubuntu-latest`, nur `workflow_dispatch`, `permissions: contents: read`, Secrets nur in `env`, `umask 077`, `trap` löscht Schlüssel/Ordner/Tar, `gpg --batch --trust-model always --recipient-file`, Upload nur `crashes.tar.gpg` (7 Tage), Ausgabe `encrypted=true/false` steuert den Upload |
+| Loose Ends `.github/crash-recipient.asc` | 14 Zeilen, öffentlicher Block „Loose Ends Crash Intake“; der geheime Teil liegt im lokalen GnuPG-Bund (Kennung `E70D4EA560DB0DEE`, per `gpg --list-secret-keys` bestätigt) |
+| `.github/workflows/testflight.yml` Z. 47–51 | Schlüssel entpacken: Klartext-.p8 oder Base64, `chmod 600`; Secret `ASC_KEY_P8`; Actions `checkout@v4`, `upload-artifact@v4` |
+| `scripts/asc_crashes.py` | liest `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH` (nicht `ASC_KEY_FILE`), Argument Zielordner |
+| `.github/workflows/ci.yml` Z. 35–47 | feste Liste „Strukturtests (Python)“; `test_asc_crashes_workflow.py` kommt dazu |
+| `docs/testflight-setup.md` | letzter Abschnitt „Privater iCloud-Abgleich“ endet mit „### Fallen“; neuer Abschnitt „Absturzberichte abholen“ wird angehängt |
+| `docs/artifacts/feat-242-testflight-crashes/` | existiert (Schnitt-1-Belege); Belege für AC-20/21 kommen dazu |
+
+## Unterschiede zur Vorlage
+1. Secret `ASC_KEY_P8` statt `ASC_PRIVATE_KEY`, dazu der Base64-Fall; Variable `ASC_KEY_PATH` statt `ASC_KEY_FILE`.
+2. Kein `ASC_POLL_SECONDS`, keine Umgebung `testflight` (Repository-Secrets genügen zum Lesen).
+3. Actions-Versionen wie im Repo (`@v4`).
+4. AC-21 (Testdatei durch Verschlüsseln, Hochladen, Entschlüsseln) braucht einen einmaligen Beleglauf, der den Workflow nicht dauerhaft verändert.
+
+## Risiken
+- `workflow_dispatch` läuft erst, wenn die Datei auf dem Standardzweig `main` liegt: AC-20 und AC-21 sind daher erst nach dem Merge möglich. In der Spec ist das noch nicht festgehalten und wird in `/20-analyse` geklärt (zweiter kleiner Beleg-PR oder Lauf über einen Zweig, falls GitHub das für neue Workflow-Dateien zulässt).
+- Rolle des Schlüssels für `betaFeedbackCrashSubmissions` ungeprüft (403 wäre ein Thema für Henning, AC-22).
+- Das Repo ist öffentlich: Klartext nie in Log oder Artefakt, `trap` muss auch bei Fehlschlag greifen.
+- Die Bash-Guards dieser Umgebung blockieren Befehle mit Schlüsselstichwörtern und zusammengesetzte Aufrufe.
+
+## Analysis Schnitt 2 (2026-11-04)
+
+### Type
+Feature (zweiter Schnitt von #242; setzt AC-16 bis AC-22 um).
+
+### Affected Files (with changes)
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `.github/workflows/asc-crashes.yml` | CREATE | `workflow_dispatch` (Eingabe `selftest`, Standard false), Schlüssel entpacken (Klartext/Base64, `ASC_KEY_P8`), `umask 077`, `trap`, Skript, `tar`, `gpg --recipient-file`, Upload nur `crashes.tar.gpg` (7 Tage) |
+| `.github/crash-recipient.asc` | CREATE | öffentlicher Schlüssel aus dem lokalen GnuPG-Bund (nur Export des öffentlichen Teils) |
+| `scripts/test_asc_crashes_workflow.py` | CREATE | liest nur Repo-Dateien, AC-16 bis AC-19 |
+| `.github/workflows/ci.yml` | MODIFY | Testdatei in die feste Liste „Strukturtests (Python)“ |
+| `docs/testflight-setup.md` | MODIFY | Abschnitt „Absturzberichte abholen“ |
+| `docs/specs/appstore/asc-crashes.md` | MODIFY | AC-20/21 als Nachweis nach dem Merge, `selftest` aufnehmen |
+
+### Scope Assessment
+- Files: 6, Estimated LoC: ca. +150, Risk Level: MEDIUM (öffentliches Repo, Klartext darf nie in Log/Artefakt; Rolle des Schlüssels ungeprüft)
+
+### Technical Approach
+Recherche (zuerst): Ein `workflow_dispatch`-Workflow läuft nur, wenn die Datei auf dem Standardzweig liegt; `gh workflow run --ref <zweig>` findet eine neue, nur auf einem Zweig liegende Datei meist nicht (GitHub-Community-Diskussionen 198084, 178194, 25756; Bericht dev.classmethod.jp). Ein Umweg über absichtlich kaputte Syntax ist inoffiziell und wird nicht benutzt.
+Folge: AC-20/AC-21 sind **erst nach dem Merge** möglich. Ablauf: (1) PR mit Workflow, Schlüssel, Strukturtest, Doku; CI grün; selbst mergen. (2) Auf `main`: `gh workflow run asc-crashes.yml` (AC-20) und `gh workflow run asc-crashes.yml -f selftest=true` (AC-21). (3) Belege (Lauf-ID, Zählung, Prüfsummen) in einem kleinen Doku-PR unter `docs/artifacts/feat-242-testflight-crashes/`. Die Spec sagt das bisher nicht und wird in `/30-write-spec` angepasst (AC-20/21 ausdrücklich nach dem Merge, nicht als Vorbedingung für Validate; Memory „CI-Beleg nie als Pre-Push-AC“).
+`selftest`: Eingabe im Workflow ersetzt den Abholschritt durch eine im Runner erzeugte Zufallsdatei (keine Testerdaten, kein Apple-Aufruf), danach derselbe Weg tar → gpg → Upload. Nach dem Herunterladen wird lokal entschlüsselt und die Prüfsumme verglichen. Der Eingang bleibt dauerhaft im Workflow (≈10 Zeilen) und ist damit auch später ein Gesundheitstest des Entschlüsselungswegs.
+
+### Alternativen
+1. Beleglauf über ein Wegwerf-Workflow nach dem Merge (zweiter PR, danach löschen) — kein dauerhafter Code, aber ein zusätzlicher PR-Zyklus und der Weg bleibt später nicht prüfbar. Verworfen.
+2. Entschlüsselung nur durch AC-20 belegen, falls echte Meldungen vorliegen — unsicher, vermutlich noch keine Meldungen. Verworfen.
+3. Klartext-Artefakt — verworfen (öffentliches Repo).
+Regelweg: reine Skript-/Workflow-Aufgabe, kein Modell; keine ADR wird gekippt.
+
+### Dependencies
+`scripts/asc_crashes.py` (Schnitt 1, gemergt), Actions `checkout@v4`/`upload-artifact@v4`, `gpg` auf `ubuntu-latest`, drei Repository-Secrets (gesetzt), lokaler geheimer Schlüssel „Loose Ends Crash Intake“ für das Entschlüsseln.
+
+### Open Questions
+- [ ] Rolle des Restock-Schlüssels für `betaFeedbackCrashSubmissions` (klärt AC-20 nach dem Merge; 403 = Thema für Henning)
+- [ ] Gibt es schon Meldungen (sonst belegt AC-20 „keine Absturzmeldungen“, AC-21 den Entschlüsselungsweg)
