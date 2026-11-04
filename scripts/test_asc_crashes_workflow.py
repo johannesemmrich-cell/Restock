@@ -92,6 +92,13 @@ class KeyAndDocs(unittest.TestCase):
         self.assertIn("gpg --decrypt", section)
 
 
+class JobEnv(unittest.TestCase):
+    def test_job_env_has_no_runner_context(self):  # Lauf 41855301578: Job-env kennt `runner` nicht
+        for job in yaml.safe_load(read(WF))["jobs"].values():
+            for k, v in (job.get("env") or {}).items():
+                self.assertNotIn("runner.", str(v), f"env {k}: Kontext runner ist im Job-env nicht erlaubt")
+
+
 class Ci(unittest.TestCase):
     def test_ci_lists_workflow_test(self):  # AC-24
         ci = read(CI)
