@@ -35,6 +35,8 @@ jobs:
       - name: Strukturtests (Python)
         run: |
           python3 -I scripts/build-price-catalog.py --check
+          # test_asc_crashes_workflow.py parst asc-crashes.yml und braucht PyYAML (fehlt auf dem Runner)
+          python3 -m pip install --quiet pyyaml || python3 -m pip install --quiet --break-system-packages pyyaml
           for t in scripts/test_price_catalog_build.py \
                    scripts/test_open_prices_medians.py \
                    scripts/test_ui_tests_discard_community_prices.py \
