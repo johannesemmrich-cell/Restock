@@ -201,6 +201,7 @@ final class PrivacyManifestTests: XCTestCase {
     func testParagraphsSplitOnBlankLines() {
         XCTAssertEqual(LegalTextBlocks.blocks(from: "A\n\nB"), [.paragraph("A"), .paragraph("B")])
         XCTAssertEqual(LegalTextBlocks.blocks(from: "\n\nA\n \n\t\n\nB\n\n"), [.paragraph("A"), .paragraph("B")])
+        XCTAssertEqual(LegalTextBlocks.blocks(from: "A\r\nB\r\n\r\nC\r\rD"), [.paragraph("A\nB"), .paragraph("C"), .paragraph("D")])  // CRLF/CR
     }
 
     // AC-2
@@ -220,6 +221,7 @@ final class PrivacyManifestTests: XCTestCase {
         XCTAssertEqual(LegalTextBlocks.blocks(from: "Einleitung:\n- A\n- B"),
                        [.paragraph("Einleitung:"), .bullet("A"), .bullet("B")])
         XCTAssertEqual(LegalTextBlocks.blocks(from: "-5 %"), [.paragraph("-5 %")])
+        XCTAssertEqual(LegalTextBlocks.blocks(from: "- A\n- \n-   \n- B"), [.bullet("A"), .bullet("B")])  // leere Punkte entfallen
     }
 
     // AC-5

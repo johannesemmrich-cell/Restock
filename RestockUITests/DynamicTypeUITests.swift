@@ -323,6 +323,15 @@ final class DynamicTypeUITests: XCTestCase {
                       "Hinweis fehlt (gespeicherte Rezepte im Simulator vorhanden?)")
         XCTAssertTrue(hint.label.contains("\u{2192}"), "Pfeil fehlt im Hinweis: \(hint.label)")
         XCTAssertFalse(hint.label.contains("u{2192}"), "Kaputter Pfeil im Hinweis: \(hint.label)")
+        // Für die Aufnahme ganz ins Fenster ziehen, damit der Pfeil im Bild ist (AC-16).
+        let window = app.windows.firstMatch.frame
+        var nudges = 0
+        while hint.frame.maxY > window.maxY - 20 && nudges < 6 {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
+                .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
+            nudges += 1
+        }
+        XCTAssertLessThanOrEqual(hint.frame.maxY, window.maxY, "Hinweis liegt nicht ganz im Fenster.")
         attach(app, "rezeptplan-hinweis-xxxl")
     }
 }

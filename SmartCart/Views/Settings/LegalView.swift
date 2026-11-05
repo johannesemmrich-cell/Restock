@@ -14,31 +14,117 @@ enum LegalDocument: String, CaseIterable {
     }
 }
 
+// MARK: - Zerlegung in Blöcke (Issue #214)
+
+/// Zerlegt die Rechtstexte in Absätze, Aufzählungspunkte und Trennlinien.
+/// Ein einzelnes `Text` zeigt die Block-Struktur von Markdown nicht an, deshalb
+/// wird jeder Block als eigenes Element dargestellt. Versteht nur das benutzte
+/// Subset: Leerzeilen, `---`, Zeilen mit „- “ und Fettdruck.
+enum LegalTextBlocks {
+    enum Block: Equatable {
+        case paragraph(String)
+        case bullet(String)
+        case divider
+    }
+
+    static func blocks(from markdown: String) -> [Block] {
+        var result: [Block] = []
+        let normalized = markdown.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(of: "\r", with: "\n")
+        for chunk in chunks(of: normalized) {
+            if chunk.count == 1, chunk[0].trimmingCharacters(in: .whitespaces) == "---" {
+                result.append(.divider)
+                continue
+            }
+            var paragraph: [String] = []
+            func flush() {
+                let text = paragraph.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+                if !text.isEmpty { result.append(.paragraph(text)) }
+                paragraph = []
+            }
+            for line in chunk {
+                if line.hasPrefix("- ") {
+                    flush()
+                    let text = String(line.dropFirst(2)).trimmingCharacters(in: .whitespaces)
+                    if !text.isEmpty { result.append(.bullet(text)) }
+                } else {
+                    paragraph.append(line)
+                }
+            }
+            flush()
+        }
+        return result
+    }
+
+    /// Fließtext mit Fettdruck; Zeilenumbrüche im Absatz bleiben erhalten.
+    static func attributed(_ text: String) -> AttributedString {
+        (try? AttributedString(markdown: text, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
+            ?? AttributedString(text)
+    }
+
+    /// Stücke zwischen Leerzeilen (Zeilen, die nur Leerraum enthalten); leere Stücke entfallen.
+    private static func chunks(of markdown: String) -> [[String]] {
+        var chunks: [[String]] = []
+        var current: [String] = []
+        for line in markdown.components(separatedBy: "\n") {
+            if line.trimmingCharacters(in: .whitespaces).isEmpty {
+                if !current.isEmpty { chunks.append(current) }
+                current = []
+            } else {
+                current.append(line)
+            }
+        }
+        if !current.isEmpty { chunks.append(current) }
+        return chunks
+    }
+}
+
 struct LegalView: View {
     let document: LegalDocument
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ScrollView {
-            Text(content)
-                .font(.system(size: 14))
-                .foregroundStyle(.primary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(20)
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(Array(Self.blocks(for: document).enumerated()), id: \.offset) { _, block in
+                    blockView(block)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(20)
         }
         .background(Color.canvas)
         .navigationTitle(document.rawValue)
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    // MARK: - Content
-
-    private var content: AttributedString {
-        (try? AttributedString(markdown: markdownContent, options: .init(interpretedSyntax: .full)))
-            ?? AttributedString(markdownContent)
+    @ViewBuilder
+    private func blockView(_ block: LegalTextBlocks.Block) -> some View {
+        switch block {
+        case .paragraph(let text):
+            blockText(text)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        case .bullet(let text):
+            // VoiceOver liest nur den Text des Punktes, ohne „•“.
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                blockText("•")
+                    .accessibilityHidden(true)
+                blockText(text)
+            }
+            .accessibilityElement(children: .combine)
+        case .divider:
+            Divider()
+        }
     }
 
-    private var markdownContent: String {
+    private func blockText(_ text: String) -> some View {
+        Text(LegalTextBlocks.attributed(text))
+            .font(.system(size: 14))
+            .foregroundStyle(.primary)
+    }
+
+    // MARK: - Content
+
+    static func text(for document: LegalDocument) -> String {
         switch document {
         case .privacy: return privacyPolicy
         case .terms:   return termsOfUse
@@ -46,9 +132,22 @@ struct LegalView: View {
         }
     }
 
+    // Je Dokument einmal zerlegt, nicht in jedem body-Durchlauf.
+    private static let privacyBlocks = LegalTextBlocks.blocks(from: privacyPolicy)
+    private static let termsBlocks = LegalTextBlocks.blocks(from: termsOfUse)
+    private static let imprintBlocks = LegalTextBlocks.blocks(from: imprint)
+
+    private static func blocks(for document: LegalDocument) -> [LegalTextBlocks.Block] {
+        switch document {
+        case .privacy: return privacyBlocks
+        case .terms:   return termsBlocks
+        case .imprint: return imprintBlocks
+        }
+    }
+
     // MARK: - Datenschutzerklärung
 
-    private let privacyPolicy = """
+    static let privacyPolicy = """
 **Datenschutzerklärung**
 Stand: Oktober 2026
 
@@ -135,7 +234,7 @@ support@emmrich-business.com
 
     // MARK: - Nutzungsbedingungen
 
-    private let termsOfUse = """
+    static let termsOfUse = """
 **Nutzungsbedingungen**
 Stand: Oktober 2026
 
@@ -218,7 +317,7 @@ support@emmrich-business.com
 
     // MARK: - Impressum
 
-    private let imprint = """
+    static let imprint = """
 **Impressum**
 Angaben gemäß § 5 TMG
 
