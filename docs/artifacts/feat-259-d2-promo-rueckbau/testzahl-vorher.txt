@@ -1,0 +1,16 @@
+Testzahl der Unit-Suite VOR dem Rückbau (Issue #259, Durchgang 2, AC-12)
+
+Commit: 37bc8badd5120e099993fcf9e155a7eab3872097 (Swift-Stand = origin/main 7ff7d19, darauf nur der RED-Strukturtest scripts/test_promo_removed.py)
+Zeitstempel (UTC): 2026-11-05T16:49:32Z (Lauf beendet ca. 16:48 UTC)
+Simulator: Restock-Validate-272 (6728F5AB-712F-46E0-A1D1-2047A9771C8E), iOS 27.2
+Befehl: xcodebuild test -scheme Restock -project Restock.xcodeproj -destination 'platform=iOS Simulator,id=6728F5AB-…' -derivedDataPath build/dd-259d2 -only-testing:RestockTests
+
+V = 862 Tests ("Executed 862 tests, with 2 failures"; 862 Test-Case-Zeilen, 0 übersprungen)
+davon PromoCodeServiceTests: 13 (alle grün)
+Fehlschläge: 2, beide bekannt und zeitabhängig (Zeitumstellung 25.10., nicht aus #259):
+  - ConsumptionPatternTests.testAveragesRegularPurchaseInterval (7.023 statt 7.0)
+  - ConsumptionPatternTests.testDueSoonWhenEstimatedDateIsAboutTwoDaysOut
+Erwartet nach dem Rückbau: 862 - 13 = 849
+
+Lokalisierungsschlüssel vorher (grep -c '" = "'): de 478, en 478 -> erwartet 471 je Sprache
+Vollständiges Protokoll: unit-vorher-output.txt

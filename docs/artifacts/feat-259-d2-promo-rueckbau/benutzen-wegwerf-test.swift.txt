@@ -1,0 +1,118 @@
+// MARK: - Wegwerf-Durchlauf #259 D2 AC-17 (nur in der Scratchpad-Kopie, nie im Repo)
+
+extension PurchaseUITests {
+    private func shoot(_ name: String, screen: Bool = false, app: XCUIApplication) {
+        let image = screen ? XCUIScreen.main.screenshot() : app.screenshot()
+        let shot = XCTAttachment(screenshot: image)
+        shot.name = name
+        shot.lifetime = .keepAlways
+        add(shot)
+    }
+
+    private func promoMatches(_ app: XCUIApplication) -> [String] {
+        let pred = NSPredicate(format: "label CONTAINS[c] %@ OR placeholderValue CONTAINS[c] %@ OR identifier CONTAINS[c] %@",
+                               "promo", "promo", "promo")
+        return app.descendants(matching: .any).matching(pred).allElementsBoundByIndex.map {
+            "\($0.elementType.rawValue)|\($0.identifier)|\($0.label)"
+        }
+    }
+
+    /// Blättert von oben bis unten, je Seite ein Bild und eine Promo-Prüfung; liefert alle gesehenen Labels.
+    private func pageThrough(_ app: XCUIApplication, prefix: String) -> Set<String> {
+        var seen = Set<String>()
+        var last = Data()
+        var same = 0
+        for page in 0..<14 {
+            let png = app.screenshot().pngRepresentation
+            if png == last {
+                same += 1
+                if same >= 2 { break }
+                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+                    .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)))
+                Thread.sleep(forTimeInterval: 1)
+                continue
+            }
+            same = 0
+            last = png
+            shoot("\(prefix)-seite-\(page)", app: app)
+            let promo = promoMatches(app)
+            print("AC17: \(prefix) Seite \(page) Promo-Treffer: \(promo)")
+            XCTAssertTrue(promo.isEmpty, "Promo-Element auf \(prefix) Seite \(page): \(promo)")
+            for e in app.descendants(matching: .any).allElementsBoundByIndex where !e.label.isEmpty {
+                seen.insert(e.label)
+            }
+            app.swipeUp()
+            Thread.sleep(forTimeInterval: 1)
+        }
+        print("AC17: \(prefix) Labels: \(seen.sorted())")
+        return seen
+    }
+
+    func testAC17EinstellungenOhnePro() {
+        let app = launch(scenario: "cancel")
+        tapWhenHittable(app.buttons["gearshape"], "Zahnrad")
+        XCTAssertTrue(app.navigationBars.firstMatch.waitForExistence(timeout: UITestWait.defaultTimeout))
+        Thread.sleep(forTimeInterval: 1)
+        let labels = pageThrough(app, prefix: "einstellungen")
+        XCTAssertTrue(labels.contains("Code einlösen"), "„Code einlösen“ nicht gesehen")
+        XCTAssertFalse(labels.contains("Entwickler"), "Entwickler-Abschnitt ohne Dev-Modus sichtbar")
+    }
+
+    func testAC17EinstellungenTipp() {
+        let app = launch(scenario: "cancel")
+        tapWhenHittable(app.buttons["gearshape"], "Zahnrad")
+        let row = app.descendants(matching: .any).matching(identifier: "settings.redeemCode").firstMatch
+        scrollIntoView(row, in: app)
+        XCTAssertTrue(row.waitUntilHittable().matched, "settings.redeemCode nicht antippbar")
+        shoot("einstellungen-vor-tipp", app: app)
+        row.tap()
+        Thread.sleep(forTimeInterval: 5)
+        print("AC17: nach Tipp Einstellungen — App-Zustand \(app.state.rawValue), Alerts \(app.alerts.count), Sheets \(app.sheets.count), Zeile sichtbar \(row.exists && row.isHittable)")
+        shoot("einstellungen-nach-tipp-bildschirm", screen: true, app: app)
+        XCTAssertEqual(app.state, .runningForeground)
+    }
+
+    func testAC17Paywall() {
+        let app = launch(scenario: "cancel")
+        openPaywall(app)
+        Thread.sleep(forTimeInterval: 1)
+        let labels = pageThrough(app, prefix: "paywall")
+        XCTAssertTrue(labels.contains("Code einlösen"), "„Code einlösen“ nicht gesehen")
+    }
+
+    func testAC17PaywallTipp() {
+        let app = launch(scenario: "cancel")
+        openPaywall(app)
+        let redeem = app.buttons["paywall.redeemCode"]
+        scrollIntoView(redeem, in: app)
+        XCTAssertTrue(redeem.waitUntilHittable().matched, "paywall.redeemCode nicht antippbar")
+        shoot("paywall-vor-tipp", app: app)
+        redeem.tap()
+        Thread.sleep(forTimeInterval: 5)
+        print("AC17: nach Tipp Paywall — App-Zustand \(app.state.rawValue), Alerts \(app.alerts.count), Sheets \(app.sheets.count), Knopf sichtbar \(redeem.exists && redeem.isHittable)")
+        shoot("paywall-nach-tipp-bildschirm", screen: true, app: app)
+        XCTAssertEqual(app.state, .runningForeground)
+    }
+
+    func testAC17EntwicklerAbschnitt() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-developerMode", "YES",
+                                "-purchaseScenarioForUITests", "cancel"]
+        UITestLaunch.start(app, expecting: app.buttons["gearshape"], description: "Zahnrad")
+        tapWhenHittable(app.buttons["gearshape"], "Zahnrad")
+        XCTAssertTrue(app.navigationBars.firstMatch.waitForExistence(timeout: UITestWait.defaultTimeout))
+        Thread.sleep(forTimeInterval: 1)
+        let labels = pageThrough(app, prefix: "entwickler")
+        XCTAssertTrue(labels.contains("Developer Mode deaktivieren"), "Entwickler-Abschnitt nicht erreicht")
+        XCTAssertFalse(labels.contains { $0.localizedCaseInsensitiveContains("promo") }, "Promo-Label gesehen")
+        let header = app.staticTexts["Entwickler"]
+        for _ in 0..<12 { app.swipeDown() }
+        var swipes = 0
+        while !(header.exists && header.isHittable) && swipes < 12 { app.swipeUp(); swipes += 1 }
+        Thread.sleep(forTimeInterval: 1)
+        shoot("entwickler-abschnitt-anfang", app: app)
+        app.swipeUp()
+        Thread.sleep(forTimeInterval: 1)
+        shoot("entwickler-abschnitt-ende", app: app)
+    }
+}
