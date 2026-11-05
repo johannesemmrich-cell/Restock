@@ -83,6 +83,10 @@ struct PaywallView: View {
                 }
             }
             .background(Color.canvas)
+            // Issue #259: Freischaltung ohne eigenen Kauf (Offer Code über den Update-Strom) schließt ebenso.
+            .onChange(of: premium.hasPremiumAccess) { _, unlocked in
+                if unlocked { dismiss() }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
@@ -362,7 +366,7 @@ struct PaywallView: View {
     }
 
     /// Issue #259: Offer Code im System-Fenster einlösen; freigeschaltet wird über den Update-Strom,
-    /// die Paywall schließt sich dann wie nach einem Kauf.
+    /// die Paywall schließt sich dann über `onChange(of: premium.hasPremiumAccess)`.
     private var redeemCodeButton: some View {
         Button {
             showOfferCodeRedemption = true
