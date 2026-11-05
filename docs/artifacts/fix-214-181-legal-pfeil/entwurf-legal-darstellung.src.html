@@ -1,0 +1,114 @@
+<title>Rechtstexte Darstellung</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: Arbeitsblatt, Reihe "Heute | Entwurf A hell | A dunkel | Alternative B"; Telefone in den echten App-Farben */
+:root { --bg:#f3f1ea; --fg:#23201a; --muted:#6b6658; --rule:rgba(35,32,26,.14); --mark:#666f38; --card:#fbf9f3;
+  --f-body:"Source Sans 3",-apple-system,system-ui,sans-serif; --f-head:"Fraunces",Georgia,serif; }
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#16150f;--fg:#ebe7da;--muted:#a39e8f;--rule:rgba(235,231,218,.14);--mark:#a7ae6b;--card:#1e1d16;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#16150f;--fg:#ebe7da;--muted:#a39e8f;--rule:rgba(235,231,218,.14);--mark:#a7ae6b;--card:#1e1d16;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:40px}
+h1{font-family:var(--f-head);font-weight:600;font-size:2rem;margin:0;text-wrap:balance}
+h2{font-family:var(--f-head);font-weight:600;font-size:1.3rem;margin:0 0 4px;text-wrap:balance}
+.lead{color:var(--muted);max-width:68ch;margin:6px 0 0}
+.tag{display:inline-block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--mark)}
+section{display:grid;gap:14px}
+.row{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
+figure{margin:0;display:grid;gap:8px;justify-items:center;min-width:0}
+figcaption{font-size:.85rem;color:var(--muted);text-align:center;max-width:260px}
+.shot{width:260px;max-width:100%;border-radius:30px;border:1px solid var(--rule)}
+ul.facts{margin:0;padding-left:1.1rem;max-width:75ch}
+.ph{--canvas:#f5f2e9;--surface:#fdfbf4;--ink:#201d16;--hair:rgba(32,29,22,.2);
+ width:260px;max-width:100%;background:var(--canvas);color:var(--ink);border-radius:30px;border:1px solid var(--rule);font-family:-apple-system,"SF Pro Text",system-ui,sans-serif;overflow:hidden}
+.ph.dark{--canvas:#141310;--surface:#1d1c16;--ink:#ebe7da;--hair:rgba(235,231,218,.2)}
+.ph .bar{padding:12px 16px 6px;text-align:center;font-weight:600;font-size:11px}
+.doc{padding:6px 14px 16px;font-size:9.5px;line-height:1.4;display:grid;gap:6px}
+.doc p{margin:0}.doc b{font-weight:700}
+.doc hr{border:0;border-top:1px solid var(--hair);margin:3px 0;width:100%}
+.doc .li{display:flex;gap:5px;align-items:baseline}
+.doc .card{background:var(--surface);border-radius:10px;padding:8px 10px;display:grid;gap:5px}
+.arrow{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px 16px;max-width:75ch}
+.arrow p{margin:0}.arrow p+p{margin-top:6px}
+.arrow s{color:#b3402d;text-decoration:none;font-weight:700}
+.arrow ins{color:var(--mark);text-decoration:none;font-weight:700}
+</style>
+<div class="wrap">
+<header>
+  <span class="tag">Entwurf vor der Spec · Tickets #214 und #181</span>
+  <h1>Rechtstexte lesbar, Pfeil im Rezeptplan</h1>
+  <p class="lead">Heute laufen Datenschutz, Nutzungsbedingungen und Impressum ohne Absätze zusammen. Der Entwurf stellt nur die Gliederung her, die im Text schon steht: Absätze, Trennlinien, Aufzählungspunkte, Adresse in Zeilen. Schrift, Farben und Texte bleiben.</p>
+</header>
+
+<section>
+  <h2>Datenschutzerklärung: Anfang</h2>
+  <div class="row">
+    <figure>
+      <img class="shot" src="__HEUTE__" alt="Heutige Datenschutzerklärung, Text ohne Absätze">
+      <figcaption><b>Heute.</b> Titel, „Stand“, Trennlinie („———“) und „1. Verantwortlicher“ stehen in einem Block.</figcaption>
+    </figure>
+    <figure>
+      <div class="ph"><div class="bar">Datenschutzerklärung</div><div class="doc">
+        <p><b>Datenschutzerklärung</b><br>Stand: Oktober 2026</p><hr>
+        <p><b>1. Verantwortlicher</b></p>
+        <p>Johannes Emmrich<br>Eichenaue 14, 48157 Münster<br>E-Mail: support@emmrich-business.com</p><hr>
+        <p><b>2. Welche Daten werden verarbeitet?</b></p>
+        <p><b>Lokale Datenspeicherung</b><br>Restock speichert alle Einkaufsdaten ausschließlich lokal auf deinem Gerät …</p>
+        <p><b>5. Deine Rechte (DSGVO)</b></p>
+        <p>Du hast das Recht auf:</p>
+        <div class="li"><span>•</span><span><b>Auskunft</b> über deine gespeicherten Daten</span></div>
+        <div class="li"><span>•</span><span><b>Berichtigung</b> unrichtiger Daten</span></div>
+      </div></div>
+      <figcaption><b>Entwurf A (Empfehlung), hell.</b> Absatzabstand, dünne Trennlinie, Punkte vor den Rechten. Adresse bleibt dreizeilig.</figcaption>
+    </figure>
+    <figure>
+      <div class="ph dark"><div class="bar">Datenschutzerklärung</div><div class="doc">
+        <p><b>Datenschutzerklärung</b><br>Stand: Oktober 2026</p><hr>
+        <p><b>1. Verantwortlicher</b></p>
+        <p>Johannes Emmrich<br>Eichenaue 14, 48157 Münster<br>E-Mail: support@emmrich-business.com</p><hr>
+        <p><b>2. Welche Daten werden verarbeitet?</b></p>
+        <p><b>Lokale Datenspeicherung</b><br>Restock speichert alle Einkaufsdaten ausschließlich lokal auf deinem Gerät …</p>
+        <p><b>5. Deine Rechte (DSGVO)</b></p>
+        <p>Du hast das Recht auf:</p>
+        <div class="li"><span>•</span><span><b>Auskunft</b> über deine gespeicherten Daten</span></div>
+        <div class="li"><span>•</span><span><b>Berichtigung</b> unrichtiger Daten</span></div>
+      </div></div>
+      <figcaption><b>Entwurf A, dunkel.</b> Gleiche Anordnung.</figcaption>
+    </figure>
+    <figure>
+      <div class="ph"><div class="bar">Datenschutzerklärung</div><div class="doc">
+        <p><b>Datenschutzerklärung</b><br>Stand: Oktober 2026</p>
+        <div class="card"><p><b>1. Verantwortlicher</b></p><p>Johannes Emmrich<br>Eichenaue 14, 48157 Münster<br>E-Mail: support@emmrich-business.com</p></div>
+        <div class="card"><p><b>2. Welche Daten werden verarbeitet?</b></p><p><b>Lokale Datenspeicherung</b><br>Restock speichert alle Einkaufsdaten ausschließlich lokal auf deinem Gerät …</p></div>
+        <div class="card"><p><b>5. Deine Rechte (DSGVO)</b></p><p>Du hast das Recht auf:</p>
+        <div class="li"><span>•</span><span><b>Auskunft</b> über deine gespeicherten Daten</span></div></div>
+      </div></div>
+      <figcaption><b>Alternative B, hell.</b> Je Abschnitt eine Karte statt Linien. Wirkt weicher, braucht aber eine Regel für „Abschnitt“ im Text und mehr Code. Nicht empfohlen.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2>Rezeptplan: leerer Hinweis</h2>
+  <div class="row">
+    <figure>
+      <img class="shot" src="__PFEIL__" alt="Rezeptplan mit Hinweis, der u{2192} zeigt">
+      <figcaption><b>Heute.</b> Screenshot aus dem Rezeptplan.</figcaption>
+    </figure>
+    <div class="arrow">
+      <p><b>Heute:</b> Noch keine Rezepte gespeichert. Gericht im Wochenplan nach rechts wischen <s>u{2192}</s> „Speichern“.</p>
+      <p><b>Danach:</b> Noch keine Rezepte gespeichert. Gericht im Wochenplan nach rechts wischen <ins>→</ins> „Speichern“.</p>
+      <p style="color:var(--muted);font-size:.9rem;margin-top:8px">Nur das Zeichen ändert sich, in Deutsch und Englisch. Eine Alternative gibt es nicht: Der Pfeil war schon so gemeint.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Was sich für dich ändert</h2>
+  <ul class="facts">
+    <li>Einstellungen → Rechtliches: alle drei Texte zeigen Absätze, Trennlinien statt „———“ und Aufzählungspunkte.</li>
+    <li>Die Wörter der Texte bleiben gleich, auch die Datenschutzseite im Netz bleibt wortgleich.</li>
+    <li>Bei großer Schrift laufen die Zeilen weiter um; nichts wird abgeschnitten.</li>
+  </ul>
+</section>
+</div>

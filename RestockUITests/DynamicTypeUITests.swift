@@ -233,4 +233,96 @@ final class DynamicTypeUITests: XCTestCase {
         XCTAssertTrue(more.waitForExistence(timeout: UITestWait.defaultTimeout), "···-Menü der Ladenliste fehlt.")
         assertInsideWindowHorizontally(app, more, description: "···-Menü der Ladenliste")
     }
+
+    // MARK: - Issues #214/#181: Rechtstexte und Rezeptplan-Hinweis in XXXL
+
+    private func attach(_ app: XCUIApplication, _ name: String) {
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
+    private func legalText(_ app: XCUIApplication, _ predicate: String, _ args: CVarArg...) -> XCUIElement {
+        app.staticTexts.matching(NSPredicate(format: predicate, argumentArray: args)).firstMatch
+    }
+
+    private func openLegalDocument(_ app: XCUIApplication, _ title: String) {
+        let row = app.buttons[title]
+        scrollUntilHittable(app, row, description: "Zeile „\(title)“")
+        row.tap()
+        XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "„\(title)“ öffnet sich nicht.")
+    }
+
+    private func closeLegalDocument(_ app: XCUIApplication) {
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+    }
+
+    func testLegalTextsRenderParagraphsAtLargestAccessibilitySize() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES"] + Self.launchArguments
+        UITestLaunch.start(app, expecting: app.buttons["gearshape"], description: "Zahnrad der Startseite")
+        waitUntilSettled(app)
+        openSettings(app)
+        let legalRow = app.buttons["Rechtliches"]
+        scrollUntilHittable(app, legalRow, description: "Zeile „Rechtliches“", maxSwipes: 30)
+        legalRow.tap()
+
+        // AC-11: Datenschutzerklärung
+        openLegalDocument(app, "Datenschutzerklärung")
+        let heading = app.staticTexts["1. Verantwortlicher"]
+        XCTAssertTrue(heading.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Überschrift „1. Verantwortlicher“ ist kein eigenes Textelement (alles ein Block?).")
+        XCTAssertFalse(legalText(app, "label CONTAINS %@ AND label CONTAINS %@", "Stand: Oktober 2026", "1. Verantwortlicher").exists,
+                       "Titel und Abschnitt 1 stehen im selben Textelement.")
+        for raw in ["———", "---"] {
+            XCTAssertFalse(legalText(app, "label CONTAINS %@", raw).exists, "Rohe Trennlinie „\(raw)“ sichtbar.")
+        }
+        let address = legalText(app, "label BEGINSWITH %@ AND label CONTAINS %@ AND NOT label CONTAINS %@",
+                                "Johannes Emmrich", "Eichenaue 14", "2. Welche Daten")
+        XCTAssertTrue(address.waitForExistence(timeout: UITestWait.defaultTimeout), "Adress-Absatz fehlt.")
+        assertInsideWindowHorizontally(app, heading, description: "Überschrift „1. Verantwortlicher“")
+        assertInsideWindowHorizontally(app, address, description: "Adress-Absatz")  // AC-14
+        attach(app, "datenschutz-xxxl")
+        closeLegalDocument(app)
+
+        // AC-12: Nutzungsbedingungen und Impressum
+        openLegalDocument(app, "Nutzungsbedingungen")
+        XCTAssertTrue(app.staticTexts["1. Geltungsbereich"].waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "„1. Geltungsbereich“ ist kein eigenes Textelement.")
+        XCTAssertFalse(legalText(app, "label CONTAINS %@", "———").exists, "Rohe Trennlinie in den Nutzungsbedingungen.")
+        attach(app, "nutzungsbedingungen-xxxl")
+        closeLegalDocument(app)
+
+        openLegalDocument(app, "Impressum")
+        XCTAssertTrue(app.staticTexts["Anbieter"].waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "„Anbieter“ ist kein eigenes Textelement.")
+        XCTAssertFalse(legalText(app, "label CONTAINS %@ AND label CONTAINS %@", "Anbieter", "Urheberrecht").exists,
+                       "Impressum ist ein einziger Block.")
+        XCTAssertFalse(legalText(app, "label CONTAINS %@", "———").exists, "Rohe Trennlinie im Impressum.")
+        attach(app, "impressum-xxxl")
+        closeLegalDocument(app)
+    }
+
+    func testRecipePlanHintShowsArrowAtLargestAccessibilitySize() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-hasCompletedOnboarding", "YES", "-developerMode", "NO",
+                                "-premiumForScreenshots", "-clearMenuPlanForUITests"] + Self.launchArguments
+        UITestLaunch.start(app, expecting: app.buttons["fork.knife"], description: "Rezeptplan-Knopf (Startseite)")
+        waitUntilSettled(app)
+        let plan = app.buttons["fork.knife"]
+        XCTAssertTrue(plan.waitUntilHittable().matched, "Rezeptplan-Knopf nicht antippbar.")
+        plan.tap()
+
+        let hint = legalText(app, "label BEGINSWITH %@", "Noch keine Rezepte gespeichert")
+        _ = hint.waitForExistence(timeout: 3)
+        var swipes = 0
+        while !hint.exists && swipes < 12 { app.swipeUp(); swipes += 1 }
+        XCTAssertTrue(hint.waitForExistence(timeout: UITestWait.defaultTimeout),
+                      "Hinweis fehlt (gespeicherte Rezepte im Simulator vorhanden?)")
+        XCTAssertTrue(hint.label.contains("\u{2192}"), "Pfeil fehlt im Hinweis: \(hint.label)")
+        XCTAssertFalse(hint.label.contains("u{2192}"), "Kaputter Pfeil im Hinweis: \(hint.label)")
+        attach(app, "rezeptplan-hinweis-xxxl")
+    }
 }

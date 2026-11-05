@@ -181,4 +181,131 @@ final class PrivacyManifestTests: XCTestCase {
         // Strings-Dateien müssen im App-Ziel registriert sein (Ressourcen-Phase).
         XCTAssertTrue(pbx.contains("InfoPlist.strings in Resources"), "InfoPlist.strings nicht in den Ressourcen")
     }
+
+    // MARK: - Issues #214/#181: Rechtstexte mit Absätzen, kein Swift-Escape in .strings
+
+    private func legalTexts() -> [(LegalDocument, String)] {
+        LegalDocument.allCases.map { ($0, LegalView.text(for: $0)) }
+    }
+
+    private func blockTexts(_ blocks: [LegalTextBlocks.Block]) -> [String] {
+        blocks.compactMap {
+            switch $0 {
+            case .paragraph(let t), .bullet(let t): return t
+            case .divider: return nil
+            }
+        }
+    }
+
+    // AC-1
+    func testParagraphsSplitOnBlankLines() {
+        XCTAssertEqual(LegalTextBlocks.blocks(from: "A\n\nB"), [.paragraph("A"), .paragraph("B")])
+        XCTAssertEqual(LegalTextBlocks.blocks(from: "\n\nA\n \n\t\n\nB\n\n"), [.paragraph("A"), .paragraph("B")])
+    }
+
+    // AC-2
+    func testLineBreakInsideParagraphIsKept() {
+        XCTAssertEqual(LegalTextBlocks.blocks(from: "Johannes Emmrich\nEichenaue 14\nE-Mail: x"),
+                       [.paragraph("Johannes Emmrich\nEichenaue 14\nE-Mail: x")])
+    }
+
+    // AC-3
+    func testDividerBecomesDividerBlock() {
+        XCTAssertEqual(LegalTextBlocks.blocks(from: "A\n\n---\n\nB"), [.paragraph("A"), .divider, .paragraph("B")])
+    }
+
+    // AC-4
+    func testBulletLinesBecomeBullets() {
+        XCTAssertEqual(LegalTextBlocks.blocks(from: "- **X** a\n- Y b"), [.bullet("**X** a"), .bullet("Y b")])
+        XCTAssertEqual(LegalTextBlocks.blocks(from: "Einleitung:\n- A\n- B"),
+                       [.paragraph("Einleitung:"), .bullet("A"), .bullet("B")])
+        XCTAssertEqual(LegalTextBlocks.blocks(from: "-5 %"), [.paragraph("-5 %")])
+    }
+
+    // AC-5
+    func testAllThreeDocumentsHaveNoRawMarkdownLeft() {
+        var bullets = 0
+        for (document, text) in legalTexts() {
+            let blocks = LegalTextBlocks.blocks(from: text)
+            let dividers = blocks.filter { $0 == .divider }.count
+            let sourceDividers = text.components(separatedBy: "\n")
+                .filter { $0.trimmingCharacters(in: .whitespaces) == "---" }.count
+            XCTAssertEqual(dividers, sourceDividers, "\(document): Trennlinien")
+            XCTAssertGreaterThan(dividers, 0, "\(document): keine Trennlinie")
+            for block in blocks {
+                switch block {
+                case .paragraph(let t):
+                    XCTAssertFalse(t.isEmpty, "\(document): leerer Absatz")
+                    XCTAssertFalse(t.contains("---"), "\(document): --- im Absatz")
+                    for line in t.components(separatedBy: "\n") {
+                        XCTAssertFalse(line.hasPrefix("- "), "\(document): Listenzeile im Absatz: \(line)")
+                    }
+                case .bullet(let t):
+                    XCTAssertFalse(t.isEmpty, "\(document): leerer Punkt")
+                    XCTAssertFalse(t.contains("---"), "\(document): --- im Punkt")
+                    if document != .imprint { bullets += 1 }
+                case .divider: break
+                }
+            }
+        }
+        XCTAssertEqual(bullets, 18, "Aufzählungspunkte in Datenschutz und Nutzungsbedingungen")
+    }
+
+    // AC-6
+    func testBlocksLoseNoCharacter() {
+        for (document, text) in legalTexts() {
+            let expected = text.components(separatedBy: "\n")
+                .filter { $0.trimmingCharacters(in: .whitespaces) != "---" }
+                .map { $0.hasPrefix("- ") ? String($0.dropFirst(2)) : $0 }
+                .joined()
+                .filter { !$0.isWhitespace }
+            let actual = blockTexts(LegalTextBlocks.blocks(from: text)).joined().filter { !$0.isWhitespace }
+            XCTAssertEqual(actual, expected, "\(document): Anzeigetext weicht vom Quelltext ab")
+        }
+    }
+
+    // AC-7
+    func testBoldSurvivesInlineParsing() {
+        let result = LegalTextBlocks.attributed("**Datenschutzerklärung**\nStand: Oktober 2026")
+        XCTAssertEqual(String(result.characters), "Datenschutzerklärung\nStand: Oktober 2026")
+        var boldText = "", plainText = ""
+        for run in result.runs {
+            let text = String(result[run.range].characters)
+            if run.inlinePresentationIntent?.contains(.stronglyEmphasized) == true { boldText += text } else { plainText += text }
+        }
+        XCTAssertEqual(boldText, "Datenschutzerklärung")
+        XCTAssertEqual(plainText, "\nStand: Oktober 2026")
+    }
+
+    // AC-9
+    private func swiftEscapeHits(in text: String) -> Bool { text.contains("\\u{") }
+
+    func testStringsFilesContainNoSwiftEscapes() throws {
+        XCTAssertTrue(swiftEscapeHits(in: "\"k\" = \"a \\u{2192} b\";"), "Gegenprobe: Prüffunktion findet nichts")
+        let root = repoFile("")
+        let files = try XCTUnwrap(FileManager.default.enumerator(at: root, includingPropertiesForKeys: nil))
+            .compactMap { $0 as? URL }
+            .filter { $0.pathExtension == "strings" }
+            .filter { !$0.path.contains("/.git/") && !$0.path.contains("/build/") }
+        XCTAssertGreaterThanOrEqual(files.count, 4)
+        for file in files {
+            let text = try String(contentsOf: file, encoding: .utf8)
+            XCTAssertFalse(swiftEscapeHits(in: text), "\(file.lastPathComponent) (\(file.deletingLastPathComponent().lastPathComponent)) enthält \\u{ ")
+        }
+    }
+
+    // AC-10
+    func testNoSavedRecipesHintContainsArrow() throws {
+        for language in ["de", "en"] {
+            let url = repoFile("SmartCart/Resources/\(language).lproj/Localizable.strings")
+            let plist = try XCTUnwrap(PropertyListSerialization.propertyList(
+                from: Data(contentsOf: url), format: nil) as? [String: String], "\(language) nicht lesbar")
+            let value = try XCTUnwrap(plist["menuplan.noSavedRecipes"])
+            XCTAssertTrue(value.contains("\u{2192}"), "\(language): Pfeil fehlt: \(value)")
+            XCTAssertFalse(value.contains("u{2192}"), "\(language): kaputter Pfeil: \(value)")
+            if language == "de" {
+                XCTAssertEqual(value, "Noch keine Rezepte gespeichert. Gericht im Wochenplan nach rechts wischen \u{2192} \"Speichern\".")
+            }
+        }
+    }
 }
