@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import CryptoKit
 import UIKit
+import StoreKit
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
@@ -25,9 +26,8 @@ struct SettingsView: View {
     @AppStorage("storeViewMode") private var storeViewModeRaw = StoreViewMode.cards.rawValue
 
     @EnvironmentObject private var premium: PremiumService
-    @ObservedObject private var promoCodeService = PromoCodeService.shared
-    @State private var promoCodeInput = ""
-    @State private var showPromoCodeRedeemedAlert = false
+    /// Issue #259: öffnet Apples Fenster zum Einlösen eines Offer Codes.
+    @State private var showOfferCodeRedemption = false
     @State private var showPaywall = false
     @State private var paywallFeature: String = "alle Pro-Features"
     @State private var showFeedback = false
@@ -205,30 +205,30 @@ struct SettingsView: View {
                         }
                         .buttonStyle(.pressable)
 
-                        // Promo-Code einlösen (aus Dresslyst übernommen) — nur sichtbar, solange
-                        // Pro nicht ohnehin freigeschaltet ist.
-                        HStack {
-                            TextField(String(localized: "settings.promoCode.placeholder"), text: $promoCodeInput)
-                                .textInputAutocapitalization(.characters)
-                                .autocorrectionDisabled()
-                                .font(.system(size: 15))
-                            if promoCodeService.isRedeeming {
-                                ProgressView().controlSize(.small)
-                            } else {
-                                Button(String(localized: "settings.promoCode.redeem")) {
-                                    redeemPromoCode()
-                                }
-                                .buttonStyle(.pressable)
-                                .font(.system(size: 15, weight: .semibold))
-                                .disabled(promoCodeInput.trimmingCharacters(in: .whitespaces).isEmpty)
+                        // Issue #259: Offer Code im System-Fenster einlösen. Die Freischaltung kommt
+                        // über Transaction.updates → PremiumService, daher keine eigene Oberfläche danach.
+                        Button {
+                            Haptics.impact(.light)
+                            showOfferCodeRedemption = true
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "ticket")
+                                    .font(.system(size: 18))
+                                    .foregroundStyle(Color.accent)
+                                    .frame(width: 28)
+                                Text(String(localized: "settings.redeemCode"))
+                                    .font(.system(size: 15, weight: .medium))
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.secondary)
                             }
+                            .padding(.vertical, 2)
                         }
-                        .padding(.vertical, 2)
-                        if let error = promoCodeService.redeemErrorMessage {
-                            Text(error)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                        }
+                        .buttonStyle(.pressable)
+                        .accessibilityIdentifier("settings.redeemCode")
+                        .offerCodeRedemption(isPresented: $showOfferCodeRedemption) { _ in }
                     }
 
                     Button {
@@ -240,11 +240,6 @@ struct SettingsView: View {
                     settingsHeader("Daten")
                 }
                 .listRowBackground(Color.surface)
-                .alert(String(localized: "settings.promoCode.redeemedTitle"), isPresented: $showPromoCodeRedeemedAlert) {
-                    Button(String(localized: "action.done"), role: .cancel) {}
-                } message: {
-                    Text(String(localized: "settings.promoCode.redeemedMessage"))
-                }
 
                 Section {
                     Button {
@@ -327,12 +322,6 @@ struct SettingsView: View {
                             ReplenishmentStatsView()
                         } label: {
                             Label("Nachkauf-Statistik", systemImage: "chart.bar.xaxis")
-                        }
-
-                        NavigationLink {
-                            PromoCodeAdminView()
-                        } label: {
-                            Label("Promo-Codes", systemImage: "ticket.fill")
                         }
 
                         NavigationLink {
@@ -482,21 +471,6 @@ struct SettingsView: View {
         guard allStores.filter({ $0.countryCode == countryCode }).isEmpty else { return }
         // Issue #156, B2: nur fehlende Presets, damit kein zweiter gleichnamiger Laden entsteht.
         try? StoreSeeding.insertMissingPresets(Store.presets(for: countryCode), into: context)
-    }
-
-    // MARK: - Promo-Code (aus Dresslyst übernommen)
-
-    private func redeemPromoCode() {
-        let code = promoCodeInput
-        Task {
-            if await promoCodeService.redeem(code) {
-                Haptics.success()
-                promoCodeInput = ""
-                showPromoCodeRedeemedAlert = true
-            } else {
-                Haptics.impact(.heavy)
-            }
-        }
     }
 
     /// Untertitel der Dev-Zeile „Doppelte Läden“ (Issue #156).

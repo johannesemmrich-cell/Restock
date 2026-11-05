@@ -1,0 +1,60 @@
+<title>Code einlösen Entwurf</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: drei Telefon-Ausschnitte nebeneinander (Heute, Entwurf A Einstellungen, Entwurf A Paywall), Erklärung darunter */
+:root{--bg:#F5F2E9;--surf:#FDFBF4;--ink:#201D16;--sec:#6F6A5B;--acc:#666F38;--line:#DAD5C4;--hint:#8A5A00;
+--f-body:system-ui,-apple-system,"Segoe UI",sans-serif;--f-head:Georgia,"Times New Roman",serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141310;--surf:#1D1C16;--ink:#EBE7DA;--sec:#A29B8A;--acc:#A7AE6B;--line:#34322A;--hint:#E0B25A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141310;--surf:#1D1C16;--ink:#EBE7DA;--sec:#A29B8A;--acc:#A7AE6B;--line:#34322A;--hint:#E0B25A;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:1000px;margin:0 auto}
+h1{font-family:var(--f-head);font-size:28px;margin:0 0 4px;text-wrap:balance}
+.lead{color:var(--sec);margin:0 0 24px;max-width:65ch}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.col{min-width:0}
+h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--sec);margin:0 0 8px}
+.phone{background:var(--bg);border:1px solid var(--line);border-radius:28px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.sec{background:var(--surf);border-radius:14px;padding:6px 14px}
+.hd{font-size:12px;color:var(--sec);padding:6px 2px 0;letter-spacing:.06em;text-transform:uppercase}
+.r{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+.r:last-child{border-bottom:0}
+.r b{font-weight:600;display:block}.r small{color:var(--sec);display:block;font-size:12px}
+.chev{color:var(--sec)}
+.field{flex:1;color:var(--sec)}
+.btn{color:var(--acc);font-weight:600}.btn.off{opacity:.4}
+.btn2{background:var(--acc);color:var(--surf);border-radius:14px;text-align:center;padding:12px;font-weight:600}
+.link{text-align:center;color:var(--sec);font-size:14px;padding:4px}
+.link.acc{color:var(--acc);font-weight:600}
+.cap{margin-top:10px;color:var(--sec);font-size:14px}
+.note{margin-top:28px;border-top:1px solid var(--line);padding-top:16px;max-width:70ch}
+.note p{margin:0 0 10px}
+.tag{color:var(--hint);font-weight:600}
+</style>
+<main>
+<h1>Code einlösen: Entwurf</h1>
+<p class="lead">Heute tippt man einen eigenen Promo-Code in ein Feld in den Einstellungen. Künftig öffnet ein Tipp das Einlöse-Fenster von Apple. Das Fenster selbst zeichnet iOS, wir liefern nur den Einstieg.</p>
+<div class="row">
+ <div class="col"><h2>Heute · Einstellungen</h2>
+  <div class="phone"><div class="hd">Daten</div><div class="sec">
+   <div class="r"><div><b>Restock Pro freischalten</b><small>Ausgaben-Analyse &amp; Rezeptplan</small></div><span class="chev">›</span></div>
+   <div class="r"><span class="field">Promo-Code</span><span class="btn off">Einlösen</span></div>
+   <div class="r"><span>Geteiltem Laden beitreten</span></div></div></div>
+  <div class="cap">Eigenes Textfeld, eigener Prüfweg über CloudKit.</div></div>
+ <div class="col"><h2>Entwurf A · Einstellungen (empfohlen)</h2>
+  <div class="phone"><div class="hd">Daten</div><div class="sec">
+   <div class="r"><div><b>Restock Pro freischalten</b><small>Ausgaben-Analyse &amp; Rezeptplan</small></div><span class="chev">›</span></div>
+   <div class="r"><div><b>Code einlösen</b><small>Einladungscode von Apple</small></div><span class="chev">›</span></div>
+   <div class="r"><span>Geteiltem Laden beitreten</span></div></div></div>
+  <div class="cap">Gleiche Stelle wie das Feld. Die Zeile verschwindet, sobald Pro freigeschaltet ist (wie heute).</div></div>
+ <div class="col"><h2>Entwurf A · Paywall</h2>
+  <div class="phone"><div class="btn2">Jetzt freischalten</div>
+   <div class="link">Käufe wiederherstellen</div>
+   <div class="link acc">Code einlösen</div>
+   <div class="link" style="font-size:12px">Abo-Text · Datenschutz · Nutzungsbedingungen</div></div>
+  <div class="cap">Ein zweiter Einstieg unter „Käufe wiederherstellen“. Wer einen Code bekommt, sucht ihn meist beim Kauf.</div></div>
+</div>
+<div class="note">
+ <p><span class="tag">Alternative B:</span> nur die Paywall bekommt den Einstieg, die Einstellungen verlieren die Promo-Zeile ganz. Weniger Fläche, aber Tester ohne sichtbare Paywall finden ihn nur über „Restock Pro freischalten“.</p>
+ <p><span class="tag">Wirkung:</span> Das Eingabefeld, die Fehlermeldung und die Erfolgsmeldung der Einstellungen entfallen. Erfolg zeigt iOS selbst, danach schaltet die App Pro frei, ohne dass der Tester etwas tippt.</p>
+</div>
+</main>
