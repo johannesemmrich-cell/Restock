@@ -1,0 +1,42 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme Restock -project Restock.xcodeproj -destination "platform=iOS Simulator,id=7634A9E3-6700-4476-9F1F-CC76689E0963" -derivedDataPath ../dd-ac17 -resultBundlePath ../ac17-run2.xcresult "-only-testing:RestockUITests/PurchaseUITests/testAC17EinstellungenOhnePro" "-only-testing:RestockUITests/PurchaseUITests/testAC17EinstellungenTipp" "-only-testing:RestockUITests/PurchaseUITests/testAC17Paywall" "-only-testing:RestockUITests/PurchaseUITests/testAC17PaywallTipp" "-only-testing:RestockUITests/PurchaseUITests/testAC17Entwick
+AC17: einstellungen Seite 0 Promo-Treffer: []
+AC17: einstellungen Seite 1 Promo-Treffer: []
+AC17: einstellungen Seite 2 Promo-Treffer: []
+AC17: einstellungen Seite 3 Promo-Treffer: []
+AC17: einstellungen Seite 4 Promo-Treffer: []
+AC17: einstellungen Seite 5 Promo-Treffer: []
+AC17: einstellungen Seite 6 Promo-Treffer: []
+AC17: einstellungen Seite 7 Promo-Treffer: []
+AC17: einstellungen Seite 8 Promo-Treffer: []
+AC17: einstellungen Seite 9 Promo-Treffer: []
+AC17: einstellungen Seite 10 Promo-Treffer: []
+AC17: einstellungen Seite 11 Promo-Treffer: []
+AC17: einstellungen Seite 12 Promo-Treffer: []
+AC17: einstellungen Seite 13 Promo-Treffer: []
+Test Case '-[RestockUITests.PurchaseUITests testAC17EinstellungenOhnePro]' passed (381.578 seconds).
+AC17: nach Tipp Einstellungen — App-Zustand 4, Alerts 0, Sheets 0, Zeile sichtbar true
+Test Case '-[RestockUITests.PurchaseUITests testAC17EinstellungenTipp]' passed (20.588 seconds).
+AC17: entwickler Seite 0 Promo-Treffer: []
+AC17: entwickler Seite 1 Promo-Treffer: []
+AC17: entwickler Seite 2 Promo-Treffer: []
+AC17: entwickler Seite 3 Promo-Treffer: []
+AC17: entwickler Seite 4 Promo-Treffer: []
+AC17: entwickler Seite 5 Promo-Treffer: []
+AC17: entwickler Seite 6 Promo-Treffer: []
+AC17: entwickler Seite 7 Promo-Treffer: []
+AC17: entwickler Seite 8 Promo-Treffer: []
+AC17: entwickler Seite 9 Promo-Treffer: []
+AC17: entwickler Seite 10 Promo-Treffer: []
+AC17: entwickler Seite 12 Promo-Treffer: []
+AC17: entwickler Seite 13 Promo-Treffer: []
+Test Case '-[RestockUITests.PurchaseUITests testAC17EntwicklerAbschnitt]' passed (295.752 seconds).
+AC17: paywall Seite 0 Promo-Treffer: []
+AC17: paywall Seite 1 Promo-Treffer: []
+Test Case '-[RestockUITests.PurchaseUITests testAC17Paywall]' passed (31.545 seconds).
+AC17: nach Tipp Paywall — App-Zustand 4, Alerts 0, Sheets 0, Knopf sichtbar true
+Test Case '-[RestockUITests.PurchaseUITests testAC17PaywallTipp]' passed (26.416 seconds).
+	 Executed 5 tests, with 0 failures (0 unexpected) in 755.879 (755.897) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 755.879 (755.903) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 755.879 (755.908) seconds
+** TEST SUCCEEDED **
