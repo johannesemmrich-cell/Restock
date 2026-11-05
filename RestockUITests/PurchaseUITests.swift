@@ -306,4 +306,77 @@ final class PurchaseUITests: XCTestCase {
             app.terminate()
         }
     }
+
+    // MARK: - Offer Codes einlösen (Issue #259, AC-1 bis AC-3)
+
+    /// Tippt den Einstieg und prüft nur, dass die App stabil bleibt; ob das System-Fenster im Simulator
+    /// erscheint, wird gemessen und ins Protokoll geschrieben (Spec AC-3), nicht gefordert.
+    private func assertStableAfterTap(_ app: XCUIApplication, anchor: XCUIElement, what: String) {
+        Thread.sleep(forTimeInterval: 2)
+        XCTAssertEqual(app.state, .runningForeground, "App nach Tipp auf \(what) nicht im Vordergrund (Absturz?)")
+        print("OfferCode: nach Tipp auf \(what) — Anker sichtbar: \(anchor.exists && anchor.isHittable), Alerts: \(app.alerts.count), Sheets: \(app.sheets.count)")
+    }
+
+    func testSettingsRedeemCodeRowExistsAndOpens() {
+        let app = launch(scenario: "cancel")
+        tapWhenHittable(app.buttons["gearshape"], "Zahnrad")
+        let row = app.descendants(matching: .any).matching(identifier: "settings.redeemCode").firstMatch
+        scrollIntoView(row, in: app)
+        XCTAssertTrue(row.waitForExistence(timeout: UITestWait.defaultTimeout), "Zeile settings.redeemCode fehlt in den Einstellungen")
+        let ready = row.waitUntilHittable()
+        XCTAssertTrue(ready.matched, "settings.redeemCode nicht antippbar, zuletzt: \(ready.last)")
+        let window = app.windows.firstMatch.frame
+        XCTAssertTrue(window.contains(row.frame), "settings.redeemCode liegt nicht im Fenster: \(row.frame) in \(window)")
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = "einstellungen-code-einloesen"
+        shot.lifetime = .keepAlways
+        add(shot)
+        row.tap()
+        assertStableAfterTap(app, anchor: row, what: "settings.redeemCode")
+        let after = XCTAttachment(screenshot: app.screenshot())
+        after.name = "einstellungen-nach-tipp"
+        after.lifetime = .keepAlways
+        add(after)
+    }
+
+    private func assertPaywallRedeemButton(extra: [String], shotName: String) {
+        let app = launch(scenario: "cancel", extra: extra)
+        openPaywall(app)
+        let redeem = app.buttons["paywall.redeemCode"]
+        let restore = restoreButton(app)
+        scrollIntoView(redeem, in: app)
+        XCTAssertTrue(redeem.waitForExistence(timeout: UITestWait.defaultTimeout), "Knopf paywall.redeemCode fehlt in der Paywall")
+        let ready = redeem.waitUntilHittable()
+        XCTAssertTrue(ready.matched, "paywall.redeemCode nicht antippbar, zuletzt: \(ready.last)")
+        let window = app.windows.firstMatch.frame
+        XCTAssertTrue(window.contains(redeem.frame), "paywall.redeemCode liegt nicht im Fenster: \(redeem.frame) in \(window)")
+        XCTAssertTrue(restore.exists, "„Käufe wiederherstellen“ fehlt")
+        XCTAssertGreaterThanOrEqual(redeem.frame.minY, restore.frame.maxY,
+                                    "paywall.redeemCode steht nicht unter „Käufe wiederherstellen“")
+        let privacy = app.descendants(matching: .any).matching(NSPredicate(
+            format: "label == %@ AND (elementType == %d OR elementType == %d)", "Datenschutz",
+            XCUIElement.ElementType.link.rawValue, XCUIElement.ElementType.button.rawValue)).firstMatch
+        scrollIntoView(privacy, in: app)
+        if privacy.exists, redeem.exists {
+            XCTAssertLessThanOrEqual(redeem.frame.maxY, privacy.frame.minY,
+                                     "paywall.redeemCode steht nicht über den Rechtslinks")
+        }
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = shotName
+        shot.lifetime = .keepAlways
+        add(shot)
+        scrollIntoView(redeem, in: app)
+        redeem.tap()
+        assertStableAfterTap(app, anchor: redeem, what: "paywall.redeemCode")
+    }
+
+    func testPaywallRedeemCodeButtonPositionAndOpens() {
+        assertPaywallRedeemButton(extra: [], shotName: "paywall-code-einloesen")
+    }
+
+    func testPaywallRedeemCodeButtonAtLargestTextSize() {
+        assertPaywallRedeemButton(
+            extra: ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"],
+            shotName: "paywall-code-einloesen-xxxl")
+    }
 }

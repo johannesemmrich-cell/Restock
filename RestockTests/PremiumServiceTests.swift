@@ -212,6 +212,40 @@ final class PremiumServiceTests: XCTestCase {
         XCTAssertTrue(service.purchasedProductIDs.isEmpty, "Widerrufene Kennung bleibt in purchasedProductIDs")
     }
 
+    // MARK: - Offer Code (Issue #259, AC-4)
+
+    /// Eine Einlösung im System-Fenster erzeugt eine normale Transaktion; ohne vorherigen Kauf kommt sie
+    /// nur über den Update-Strom an und muss freischalten.
+    func testOfferCodeEntitlementViaUpdateStreamUnlocksWithoutPurchase() async throws {
+        let store = ScriptedPurchaseStore()
+        let service = makeService(store)
+        service.startListening()
+        XCTAssertFalse(service.hasPremiumAccess, "Vorbedingung: ohne Kauf und ohne Dev-Modus kein Zugang")
+
+        store.entitlementList = [EntitlementRecord(productID: PremiumService.yearlyID, isRevoked: false)]
+        store.emitUpdate()
+
+        let deadline = Date().addingTimeInterval(20)
+        while !service.hasPremiumAccess && Date() < deadline {
+            await Task.yield()
+            try await Task.sleep(nanoseconds: 50_000_000)
+        }
+        XCTAssertTrue(service.hasPremiumAccess, "Offer-Code-Entitlement schaltet über den Update-Strom nicht frei (Frist 20 s)")
+        XCTAssertTrue(store.purchasedOfferIDs.isEmpty, "Vorbedingung verletzt: es gab einen purchase-Aufruf")
+    }
+
+    func testOfferCodeEntitlementUnknownProductDoesNotUnlock() async throws {
+        let store = ScriptedPurchaseStore()
+        let service = makeService(store)
+        service.startListening()
+
+        store.entitlementList = [EntitlementRecord(productID: "com.example.unbekannt", isRevoked: false)]
+        store.emitUpdate()
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+
+        XCTAssertFalse(service.hasPremiumAccess, "Unbekannte Produkt-ID schaltet frei")
+    }
+
     // MARK: - Auswahl der Naht (AC-13)
 
     func testUnknownScenarioFallsBackToStoreKit() {
