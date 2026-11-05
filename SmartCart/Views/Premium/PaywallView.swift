@@ -37,6 +37,8 @@ struct PaywallView: View {
     /// Wechselt bei jedem gesetzten Hinweis, auch bei gleichem Text (F004): daran hängt das Hinrollen.
     @State private var noticeEvent = 0
     private static let noticeScrollID = "paywallNotice"
+    /// Issue #259: öffnet Apples Fenster zum Einlösen eines Offer Codes.
+    @State private var showOfferCodeRedemption = false
 
     private enum PaywallNotice: Equatable {
         case info(String)
@@ -65,6 +67,9 @@ struct PaywallView: View {
                                 .padding(.top, 8)
                                 .id(Self.noticeScrollID)
                         }
+
+                        redeemCodeButton
+                            .padding(.top, 12)
 
                         legalText
                             .padding(.top, 20)
@@ -354,6 +359,21 @@ struct PaywallView: View {
         }
         .buttonStyle(.pressable)
         .disabled(isRestoring)
+    }
+
+    /// Issue #259: Offer Code im System-Fenster einlösen; freigeschaltet wird über den Update-Strom,
+    /// die Paywall schließt sich dann wie nach einem Kauf.
+    private var redeemCodeButton: some View {
+        Button {
+            showOfferCodeRedemption = true
+        } label: {
+            Text("Code einlösen")
+                .font(.system(size: 14))
+                .foregroundStyle(.secondary)
+        }
+        .buttonStyle(.pressable)
+        .accessibilityIdentifier("paywall.redeemCode")
+        .offerCodeRedemption(isPresented: $showOfferCodeRedemption) { _ in }
     }
 
     /// Abo-Angaben und Rechtslinks am Kaufpunkt (Review-Richtlinie 3.1.2, Issue #215, Entwurf A).

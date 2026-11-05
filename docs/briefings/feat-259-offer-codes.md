@@ -1,7 +1,7 @@
 ---
 spec_file: docs/specs/views/offer-codes-einloesen.md
-spec_sha256: 6b54fc1402d2921054cb207412d6562a14de73f825f2136eedbbc18111f54edf
-spec_frozen_sha256: c19c68b08c4bf65b0508fc9ae00d78db752446885c141890da542fc320314631
+spec_sha256: 72d37c5cdec2eb0da0058b8ce7e03cce1ab405afd30273610e5542e271399f26
+spec_frozen_sha256: d931e80973f5a79e20387ab28828207937c254b5170e6c16727a1d683e4d6ba4
 ---
 
 # PO-Briefing: feat-259-offer-codes
@@ -26,7 +26,7 @@ Tests zeigen, dass Einstiege sichtbar und stabil sind und ein Entitlement freisc
 
 - Durchgang 1 berührt sechs Dateien statt höchstens fünf; die Spec-Freigabe gilt als ausdrückliche Zustimmung.
 - Ohne Offer Codes in App Store Connect bleibt der Einstieg wirkungslos; Anlegen erfolgt separat auf Hennings Wort.
-- Bereits eingelöste Promo-Codes verlieren die Freischaltung; Issue-Text nicht selbst gelesen, nur Kontext-Dokument.
+- Bereits eingelöste Promo-Codes verlieren die Freischaltung; Issue-Text lag nur als Kontext-Dokument vor.
 
 ## Freigabe-Frage
 

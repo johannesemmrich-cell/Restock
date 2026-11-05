@@ -54,7 +54,7 @@ Die Scoping-Limits (4–5 Dateien, ±250 LoC) werden eingehalten, indem das Tick
 3. **Abschluss:** `onCompletion` zeigt keine eigene Oberfläche. Ein Fehler des Fensters (`.failure`) wird nicht gesondert behandelt (Apple zeigt seinen Fehler im Fenster selbst); `.success` heißt nur „Fenster ohne Fehler beendet“, nicht „Code gültig“. Die Freischaltung kommt ausschließlich über `Transaction.updates` → `PremiumService` (Stufe wie ein Kauf). Die Paywall schließt sich bei Freischaltung wie bisher selbst.
 4. **Kein neuer Zustand, kein neues Launch-Argument, keine neue Freischaltquelle.** Der Fake-Store braucht kein neues Szenario: Das System-Fenster lässt sich nicht fälschen, und der Offer-Code-Fall ist aus Sicht von `PremiumService` ein Update-Strom-Ereignis (siehe Tests).
 
-### Acceptance Criteria
+## Acceptance Criteria
 
 - AC-1: In den Einstellungen gibt es ohne Pro-Freischaltung (`-developerMode NO`) die Zeile mit `accessibilityIdentifier` `settings.redeemCode`; sie existiert, liegt vollständig im Fenster und ist antippbar (`waitUntilHittable()` liefert `matched`).
 - AC-2: In der Paywall gibt es nach Hochscrollen den Knopf mit `accessibilityIdentifier` `paywall.redeemCode`; er existiert, liegt vollständig im Fenster, ist antippbar, und steht unterhalb von „Käufe wiederherstellen“ und oberhalb der Rechtslinks (Rahmenvergleich `maxY`/`minY`); dasselbe bei Schrift `AccessibilityXXXL`.
@@ -106,7 +106,7 @@ Rund 11 Dateien (3 gelöscht, 8 geändert, Strings je Sprache einzeln), praktisc
 3. **Datenschutz:** Der Absatz entfällt in `LegalView.privacyPolicy` und auf `datenschutz.md` (de und en) wortgleich; die Seite des Dritten (`emmrich-business.com/datenschutz`) pflegt ein anderer, der Hinweis an ihn folgt nach dem Release (Memory „Datenschutzseite pflegt Dritter“), nicht Teil des Codes. Der Stand „Oktober 2026“ in `LegalView` bleibt, falls `PrivacyManifestTests` ihn festhält; sonst keine Datumsänderung.
 4. Es gibt keinen Übergang: Wer einen Promo-Code eingelöst hat, verliert die Freischaltung (siehe Offene Grenzen).
 
-### Acceptance Criteria
+## Acceptance Criteria
 
 - AC-10: `grep -rniE "promocode|promo-code|promo code" SmartCart RestockTests RestockUITests docs/appstore project.yml` liefert keine Treffer (CloudKit-Schemadatei und `docs/specs`/`BACKLOG.md`/`docs/artifacts` als Historie ausgenommen). Die Dateien `PromoCodeService.swift`, `PromoCodeAdminView.swift`, `PromoCodeServiceTests.swift` existieren nicht mehr.
 - AC-11: `grep -c PromoCode Restock.xcodeproj/project.pbxproj` liefert 0; das Projekt lässt sich öffnen und bauen (Debug Simulator und Release Simulator), keine verwaiste Referenz.
@@ -143,3 +143,4 @@ Keine neuen Tests; die Löschung von `PromoCodeServiceTests` ist Teil des Durchg
 ## Changelog
 
 - 2026-11-05: Erstfassung (Entwurf A, Promo-Pool ganz zurück, zwei Durchgänge).
+- 2026-11-05: Überschriften „Acceptance Criteria“ von H3 auf H2 angehoben (edit_gate erkennt nur H2); Inhalt unverändert.
