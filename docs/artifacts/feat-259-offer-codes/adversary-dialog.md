@@ -10,17 +10,10 @@ Geprüft: Durchgang 1 (AC-1 bis AC-9), Commit b23fe21 gegenüber RED 61a56a3, pl
 - [x] AC-4: Unit-Tests Offer-Code-Entitlement per Update-Strom (bekannte ID schaltet frei, unbekannte nicht)
 - [x] AC-5: Alle Promo-Reste aus `SettingsView.swift` entfernt
 - [x] AC-6: `settings.redeemCode` in de und en
-- [ ] AC-7: UI-Teil grün (23/23); Unit-Suite 860/862, die zwei Fehlschläge sind zeitabhängig und nicht von #259 (F002, Entscheidung des PO)
+- [x] AC-7: UI-Teil grün (23/23); Unit-Suite 860/862, die zwei Fehlschläge sind die in AC-7 (PO 2026-11-05) benannten zeitabhängigen Tests, Code gegenüber `origin/main` unverändert (F002)
 - [x] AC-8: Debug- und Release-Build kompilieren (Logs `build-debug.txt`, `build-release.txt`, je `BUILD SUCCEEDED`)
 - [x] AC-9: Benutzen-Befund vorhanden, Bilder geprüft; Zustand nach dem Tipp nicht belegt (ehrlich vermerkt)
-- [ ] AC-10: Rückbau Promo-Dateien — Durchgang 2, nicht Teil dieses Durchgangs
-- [ ] AC-11: pbxproj ohne PromoCode — Durchgang 2, nicht Teil dieses Durchgangs
-- [ ] AC-12: `hasValidPromoCode` entfernt — Durchgang 2, nicht Teil dieses Durchgangs
-- [ ] AC-13: Promo-Absatz in LegalView und Datenschutzseite — Durchgang 2, nicht Teil dieses Durchgangs
-- [ ] AC-14: `settings.promoCode.*`-Schlüssel entfernt — Durchgang 2, nicht Teil dieses Durchgangs
-- [ ] AC-15: Struktur-/Python-Tests — Durchgang 2, nicht Teil dieses Durchgangs
-- [ ] AC-16: Einstieg nach Rückbau unverändert — Durchgang 2, nicht Teil dieses Durchgangs
-- [ ] AC-17: Benutzen nach Rückbau — Durchgang 2, nicht Teil dieses Durchgangs
+AC-10 bis AC-17 gehören zu Durchgang 2 (Rückbau) und stehen in der Spec unter eigener Überschrift; sie sind nicht Teil dieses Durchgangs.
 
 ## Dialog
 
@@ -68,7 +61,7 @@ Finding:
   Category: spec_violation
   Code reference: SmartCart/Views/Settings/SettingsView.swift:211
   Description: AC-7 „gesamte Unit-Suite grün“ wörtlich nicht erfüllt: 2 zeitabhängige Fehlschläge in `ConsumptionPatternTests` (Zeitumstellung 25.10.), Code gegenüber `origin/main` unverändert.
-  Status: OPEN, Vorbelastung, Entscheidung beim PO
+  Status: ACCEPTED — PO hat am 2026-11-05 AC-7 um diese zwei Tests ergänzt (Spec, Briefing neu, automatisch freigegeben)
 
 Finding:
   ID: F003
@@ -141,4 +134,26 @@ kein Sprachprofil konfiguriert (`precondition_origins.default_lang`)
 ## Verdict
 
 VERDICT: AMBIGUOUS
-Begründung: AC-1 bis AC-6, AC-8 und AC-9 sind belegt, F001 und F003 sind behoben. AC-7 ist wörtlich nicht erfüllt, weil 2 zeitabhängige Unit-Tests in `ConsumptionPatternTests` rot sind (nicht von #259, F002). Das Schließen der Paywall nach echter Einlösung ist nicht automatisiert prüfbar (offene Grenze). AC-10 bis AC-17 gehören zu Durchgang 2.
+Begründung: AC-1 bis AC-6, AC-8 und AC-9 sind belegt, F001 und F003 sind behoben. AC-7 ist in der vom PO angepassten Fassung erfüllt (2 zeitabhängige Unit-Tests in `ConsumptionPatternTests` rot, nicht von #259, F002). Das Schließen der Paywall nach echter Einlösung ist nicht automatisiert prüfbar (offene Grenze). AC-10 bis AC-17 gehören zu Durchgang 2.
+
+## Geprüfte Dateien
+
+- sha256:6aec730b58ae392c5c4f5e1a1d3f1e39c9ef9c642b5a4cd81555a0e168f20aa0  SmartCart/Views/Premium/PaywallView.swift
+- sha256:7b6e1e4c03a4c80a948d38b3b2a2127f6e48877926ad363c29b20a64792e1c82  SmartCart/Views/Settings/SettingsView.swift
+
+## Prüfbasis
+
+- base: 610252f41e9475fc5c588910c86e55c73458c5b5
+- blob:f425ff5a60a21da4cd56c3e14baa276419432925  SmartCart/Views/Premium/PaywallView.swift
+- blob:0633636c332ff0e6f65f67419dffb59415b287c9  SmartCart/Views/Settings/SettingsView.swift
+
+## Geprüfte Dateien
+
+- sha256:6aec730b58ae392c5c4f5e1a1d3f1e39c9ef9c642b5a4cd81555a0e168f20aa0  SmartCart/Views/Premium/PaywallView.swift
+- sha256:7b6e1e4c03a4c80a948d38b3b2a2127f6e48877926ad363c29b20a64792e1c82  SmartCart/Views/Settings/SettingsView.swift
+
+## Prüfbasis
+
+- base: 610252f41e9475fc5c588910c86e55c73458c5b5
+- blob:f425ff5a60a21da4cd56c3e14baa276419432925  SmartCart/Views/Premium/PaywallView.swift
+- blob:0633636c332ff0e6f65f67419dffb59415b287c9  SmartCart/Views/Settings/SettingsView.swift

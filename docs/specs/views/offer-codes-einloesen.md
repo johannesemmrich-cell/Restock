@@ -62,7 +62,7 @@ Die Scoping-Limits (4–5 Dateien, ±250 LoC) werden eingehalten, indem das Tick
 - AC-4: Ein Unit-Test (`PremiumServiceTests`, `ScriptedPurchaseStore`, `autostart: false`) weist nach: Ohne vorherigen `purchase`/`restore`-Aufruf und ohne Dev-Modus schaltet ein über den Update-Strom eintreffendes Entitlement einer bekannten Produkt-ID (Offer-Code-Einlösung) `hasPremiumAccess` frei; eine unbekannte Produkt-ID schaltet nicht frei.
 - AC-5: Das Textfeld für Promo-Codes, der Alert „Code eingelöst“ und die Dev-Zeile „Promo-Codes“ sind aus `SettingsView.swift` entfernt: `grep -in promo SmartCart/Views/Settings/SettingsView.swift` liefert keine Treffer.
 - AC-6: Neuer Schlüssel `settings.redeemCode` steht in `de.lproj` und `en.lproj`; `LocalizationKeyParityTests` bleibt grün (gleiche Schlüssel und Platzhalter in beiden Sprachen).
-- AC-7: Bestehende Tests `PurchaseUITests` P1–P11 (Hinweis-Hinrollen, „vollständig im Fenster und antippbar“, Chip-Breite) und `PaywallUITests` (Rechtslinks) bleiben grün; die gesamte Unit-Suite ist grün (Testzahl und Fehlschläge prüfen, kein Null-Test-Lauf).
+- AC-7: Bestehende Tests `PurchaseUITests` P1–P11 (Hinweis-Hinrollen, „vollständig im Fenster und antippbar“, Chip-Breite) und `PaywallUITests` (Rechtslinks) bleiben grün; die gesamte Unit-Suite ist grün bis auf die zwei bekannten zeitabhängigen Tests `ConsumptionPatternTests.testAveragesRegularPurchaseInterval` und `ConsumptionPatternTests.testDueSoonWhenEstimatedDateIsAboutTwoDaysOut` (Zeitumstellung vom 25.10. im Fenster, bis etwa 15.11.; PO 2026-11-05; Nachweis: `HabitService.swift`, `PurchaseRecord.swift` und `ConsumptionPatternTests.swift` sind gegenüber `origin/main` unverändert); Testzahl und Fehlschläge prüfen, kein Null-Test-Lauf.
 - AC-8: Der Debug-Build für den Simulator und der Release-Build (`xcodebuild build -configuration Release`, wie CI-Job `release-build`) kompilieren ohne Fehler.
 - AC-9: Benutzen statt nur testen: Die App wurde im Simulator gestartet; Einstellungen und Paywall wurden geöffnet, die Zeile bzw. der Knopf angetippt; Claude prüft je eine Aufnahme (hell, Einstellungen und Paywall) per Bildansicht und vermerkt in `docs/artifacts/feat-259-offer-codes/benutzen-befund.md` je Bild „Einstieg sichtbar, vollständig, lesbar“ und was nach dem Tipp zu sehen war. Aufnahmen entstehen aus einem echten Lauf (XCTAttachment), nicht von Hand.
 
@@ -106,7 +106,7 @@ Rund 11 Dateien (3 gelöscht, 8 geändert, Strings je Sprache einzeln), praktisc
 3. **Datenschutz:** Der Absatz entfällt in `LegalView.privacyPolicy` und auf `datenschutz.md` (de und en) wortgleich; die Seite des Dritten (`emmrich-business.com/datenschutz`) pflegt ein anderer, der Hinweis an ihn folgt nach dem Release (Memory „Datenschutzseite pflegt Dritter“), nicht Teil des Codes. Der Stand „Oktober 2026“ in `LegalView` bleibt, falls `PrivacyManifestTests` ihn festhält; sonst keine Datumsänderung.
 4. Es gibt keinen Übergang: Wer einen Promo-Code eingelöst hat, verliert die Freischaltung (siehe Offene Grenzen).
 
-## Acceptance Criteria
+## Abnahmekriterien Durchgang 2 (nicht Teil von Durchgang 1; vor dessen Umsetzung zurück auf „Acceptance Criteria“ stellen)
 
 - AC-10: `grep -rniE "promocode|promo-code|promo code" SmartCart RestockTests RestockUITests docs/appstore project.yml` liefert keine Treffer (CloudKit-Schemadatei und `docs/specs`/`BACKLOG.md`/`docs/artifacts` als Historie ausgenommen). Die Dateien `PromoCodeService.swift`, `PromoCodeAdminView.swift`, `PromoCodeServiceTests.swift` existieren nicht mehr.
 - AC-11: `grep -c PromoCode Restock.xcodeproj/project.pbxproj` liefert 0; das Projekt lässt sich öffnen und bauen (Debug Simulator und Release Simulator), keine verwaiste Referenz.
@@ -144,3 +144,4 @@ Keine neuen Tests; die Löschung von `PromoCodeServiceTests` ist Teil des Durchg
 
 - 2026-11-05: Erstfassung (Entwurf A, Promo-Pool ganz zurück, zwei Durchgänge).
 - 2026-11-05: Überschriften „Acceptance Criteria“ von H3 auf H2 angehoben (edit_gate erkennt nur H2); Inhalt unverändert.
+- 2026-11-05: AC-7 um die zwei bekannten zeitabhängigen Unit-Tests ergänzt (PO-Entscheidung); Kriterien von Durchgang 2 unter eigener Überschrift, damit das QA-Gate von Durchgang 1 sie nicht mitzählt.

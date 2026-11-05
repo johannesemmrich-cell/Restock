@@ -1,7 +1,7 @@
 ---
 spec_file: docs/specs/views/offer-codes-einloesen.md
-spec_sha256: 72d37c5cdec2eb0da0058b8ce7e03cce1ab405afd30273610e5542e271399f26
-spec_frozen_sha256: d931e80973f5a79e20387ab28828207937c254b5170e6c16727a1d683e4d6ba4
+spec_sha256: cafcc70bff503832b9de40c9ab69d77d4c3f9587dfecb5a960ee6c3160a004cb
+spec_frozen_sha256: a4ed3f27fc8610a493f62fd78b83856db371f536d194d307a977e27870ab8c12
 ---
 
 # PO-Briefing: feat-259-offer-codes
@@ -12,21 +12,21 @@ spec_frozen_sha256: d931e80973f5a79e20387ab28828207937c254b5170e6c16727a1d683e4d
 
 ## Was gebaut wird
 
-Journalisten und Tester lösen Apple-Codes in Einstellungen und Paywall ein und erhalten Restock Pro; der eigene Promo-Code-Pool entfällt.
+Nutzer können in Einstellungen und Paywall einen Apple-Offer-Code einlösen und Restock Pro kostenlos freischalten; der alte Promo-Pool entfällt.
 
 ## Definition of Done
 
-In Einstellungen und Paywall steht „Code einlösen“ und öffnet Apples Fenster; nirgends in der App gibt es noch Promo-Code-Eingabe oder -Texte.
+Einstellungen und Paywall zeigen „Code einlösen“, ein Tipp öffnet das Apple-Fenster, und der alte Promo-Code-Pool ist vollständig verschwunden.
 
 ## Wie geprüft wird
 
-Tests zeigen, dass Einstiege sichtbar und stabil sind und ein Entitlement freischaltet; echte Einlösung gegen Apple wird nicht geprüft.
+Tests prüfen Einstiege und Freischaltung über den Ersatz-Store; ob ein echter Code beim App Store einlösbar ist, wird nicht geprüft.
 
 ## Kritische Anmerkungen
 
-- Durchgang 1 berührt sechs Dateien statt höchstens fünf; die Spec-Freigabe gilt als ausdrückliche Zustimmung.
-- Ohne Offer Codes in App Store Connect bleibt der Einstieg wirkungslos; Anlegen erfolgt separat auf Hennings Wort.
-- Bereits eingelöste Promo-Codes verlieren die Freischaltung; Issue-Text lag nur als Kontext-Dokument vor.
+- AC-7 gelockert: zwei zeitabhängige Unit-Tests (Zeitumstellung) dürfen rot sein; Code laut Spec unverändert gegenüber main.
+- Ohne Angebote in App Store Connect bleibt der Einstieg wirkungslos; Anlegen steht nicht im Ticket.
+- Bereits eingelöste Promo-Codes verlieren beim Rückbau die Freischaltung.
 
 ## Freigabe-Frage
 
