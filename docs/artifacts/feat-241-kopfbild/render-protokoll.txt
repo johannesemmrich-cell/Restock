@@ -1,0 +1,25 @@
+Kopfbild-Renderprotokoll (Issue #241)
+Zeit (UTC): 2026-11-06T06:18:02Z
+Commit: 718fad6
+Chrome: Google Chrome 156.0.8078.81 
+Vorlage: scripts/header-image/kopfbild.html
+Sicherheitsbereich: mittlere 84 % Breite, mittlere 76 % Höhe (Spec AC-5)
+
+== kopfbild-de-5244x2950.png
+  Chrome-Screenshot: 5244x2950, Farbtyp/tRNS: 2 nein
+  Pixelprüfung: size=5244x2950 alpha_in=false corner=F5F2E9 outside_non_bg=0 outside_total=5591548
+  Ergebnis: 5244x2950 2 nein (Maße, PNG-Farbtyp, tRNS)
+  DOM-Messung: Bildfläche 5244x2950 (Fenster 5244x2863), Sicherheitsbereich x 420..4824, y 354..2596, 18 Elemente, außerhalb: 0, Symbol geladen: True
+  Inhaltsrahmen gesamt: x 472..4772, y 407..2309 (Abstand zum Bereich: links 52, rechts 52, oben 53, unten 287 px)
+  Sichtbarer Text: Die Liste, die weiß, wo etwas hingehört. | Restock lernt deinen Weg durch den Markt und rechnet mit Preisen aus deinen Kassenbons. | Lidl· 5 | Bananen · 1 kg | ca. 1,80 € | Brot | ca. 2,50 € | Milch | ca. 1,20 € | Nudeln | ca. 1,50 €
+  ok
+== kopfbild-de-3840x1646.png
+  Chrome-Screenshot: 3840x1646, Farbtyp/tRNS: 2 nein
+  Pixelprüfung: size=3840x1646 alpha_in=false corner=F5F2E9 outside_non_bg=0 outside_total=2281688
+  Ergebnis: 3840x1646 2 nein (Maße, PNG-Farbtyp, tRNS)
+  DOM-Messung: Bildfläche 3840x1646 (Fenster 3840x1559), Sicherheitsbereich x 307..3533, y 198..1448, 18 Elemente, außerhalb: 0, Symbol geladen: True
+  Inhaltsrahmen gesamt: x 720..3120, y 227..1288 (Abstand zum Bereich: links 413, rechts 413, oben 30, unten 160 px)
+  Sichtbarer Text: Die Liste, die weiß, wo etwas hingehört. | Restock lernt deinen Weg durch den Markt und rechnet mit Preisen aus deinen Kassenbons. | Lidl· 5 | Bananen · 1 kg | ca. 1,80 € | Brot | ca. 2,50 € | Milch | ca. 1,20 € | Nudeln | ca. 1,50 €
+  ok
+Zuschnitt-Vorschau: docs/artifacts/feat-241-kopfbild/zuschnitt-vorschau.png (2400x1640 2 nein)
+Fertig: alle Prüfungen bestanden.
