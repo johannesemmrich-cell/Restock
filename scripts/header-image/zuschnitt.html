@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!-- Zuschnitt-Vorschau (Issue #241, AC-6): legt den Seitenkopf 21:9 und die Suchkarte 3:2 auf die gerenderte
+     16:9-Fassung (abgedunkelt = schneidet Apple ab, gestrichelt = Sicherheitsbereich). Gerendert von
+     scripts/make-header-image.sh nach docs/artifacts/feat-241-kopfbild/zuschnitt-vorschau.png. -->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:2400px;height:1640px;background:#F5F2E9;font-family:-apple-system,"Helvetica Neue",Arial,sans-serif;color:#252719}
+body{padding:40px 48px;display:grid;grid-template-columns:1fr 1fr;gap:28px 40px;align-content:start}
+h1{grid-column:1/-1;margin:0;font-size:34px}
+figure{margin:0}
+figcaption{font-size:24px;margin-bottom:10px}
+.stage{position:relative;width:1132px;aspect-ratio:16/9;border:2px solid #252719;overflow:hidden}
+.stage img{position:absolute;inset:0;width:100%;height:100%}
+.m{position:absolute;background:rgba(20,19,16,.66)}
+.kopf .t{left:0;right:0;top:0;height:11.89%}.kopf .b{left:0;right:0;bottom:0;height:11.89%}
+.karte .l{top:0;bottom:0;left:0;width:7.81%}.karte .r{top:0;bottom:0;right:0;width:7.81%}
+.safe{position:absolute;left:8%;right:8%;top:12%;bottom:12%;border:3px dashed #C0392B}
+</style>
+</head>
+<body>
+<h1>Kopfbild: Zuschnitte auf der 16:9-Fassung (abgedunkelt = von Apple abgeschnitten, rot gestrichelt = Sicherheitsbereich)</h1>
+<figure><figcaption>Deutsch · Seitenkopf 21:9 (oben/unten je 11,9 % weg)</figcaption>
+  <div class="stage kopf"><img src="../../docs/artifacts/feat-241-kopfbild/kopfbild-de-5244x2950.png" alt=""><i class="m t"></i><i class="m b"></i><i class="safe"></i></div></figure>
+<figure><figcaption>Deutsch · Suchkarte 3:2 (links/rechts je 7,8 % weg)</figcaption>
+  <div class="stage karte"><img src="../../docs/artifacts/feat-241-kopfbild/kopfbild-de-5244x2950.png" alt=""><i class="m l"></i><i class="m r"></i><i class="safe"></i></div></figure>
+<figure><figcaption>English · Seitenkopf 21:9</figcaption>
+  <div class="stage kopf"><img src="../../docs/artifacts/feat-241-kopfbild/kopfbild-en-5244x2950.png" alt=""><i class="m t"></i><i class="m b"></i><i class="safe"></i></div></figure>
+<figure><figcaption>English · Suchkarte 3:2</figcaption>
+  <div class="stage karte"><img src="../../docs/artifacts/feat-241-kopfbild/kopfbild-en-5244x2950.png" alt=""><i class="m l"></i><i class="m r"></i><i class="safe"></i></div></figure>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!--
+  App-Store-Kopfbild (Issue #241, Spec docs/specs/appstore/kopfbild.md), Entwurf A Hell.
+  Aufruf: kopfbild.html?lang=de|en&w=<Breite>&h=<Höhe>[&measure=1]
+  Gerendert von scripts/make-header-image.sh (Chrome headless). Aller Inhalt liegt in der Inhaltsfläche
+  #safe: in 16:9 genau der gemeinsame Sicherheitsbereich (mittlere 84 % Breite, 76 % Höhe), in 21:9 dieselbe
+  Fläche, an die Höhe angepasst und mittig. Alle Maße hängen nur von der Breite dieser Fläche ab, deshalb
+  sehen beide Größen gleich aus. Mit measure=1 schreibt die Seite die Elementrahmen als JSON in #measure.
+-->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Restock Kopfbild</title>
+<style>
+:root{
+  /* Marken-Farbsätze, Hellwerte (Strukturtest vergleicht mit den Colorsets) */
+  --canvas:#F5F2E9;   /* RCCanvas */
+  --surface:#FDFBF4;  /* RCSurface */
+  --acc:#666F38;      /* RCAccent */
+  --ink:#252719; --sub:#7A796A; --hair:#E3DFCF; /* wie freigegebene Vorschau */
+  --W:5244px; --H:2950px;           /* von den URL-Parametern w/h überschrieben */
+  --safe-aspect:1.964912;           /* (0,84 · 16) / (0,76 · 9) */
+  --sys:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:var(--W);height:var(--H);overflow:hidden;background:var(--canvas)}
+body{position:relative;font-family:var(--sys);color:var(--ink)}
+#safe{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(calc(var(--W) * 0.84), calc(var(--H) * 0.76 * var(--safe-aspect)));
+  aspect-ratio:var(--safe-aspect);container-type:size}
+/* --s = 1 % der Bühnenbreite der Vorschau (dort 84 % = Breite von #safe) */
+#safe{--s:calc(100cqw / 84)}
+.icon{position:absolute;left:calc(1 * var(--s));top:calc(8 * 0.5625 * var(--s));
+  width:calc(7.2 * var(--s));height:calc(7.2 * var(--s));border-radius:calc(1.7 * var(--s));display:block}
+.text{position:absolute;left:calc(1 * var(--s));top:calc(22 * 0.5625 * var(--s));width:calc(46 * var(--s))}
+h1{margin:0;font-size:calc(5.4 * var(--s));line-height:1.04;letter-spacing:-.025em;font-weight:700;text-wrap:balance}
+h1 em{font-style:normal;color:var(--acc)}
+.sub{margin-top:calc(2.6 * var(--s));width:calc(42 * var(--s));font-size:calc(2.1 * var(--s));line-height:1.3;color:var(--sub)}
+.card{position:absolute;left:calc(48 * var(--s));top:calc(5 * 0.5625 * var(--s));width:calc(32 * var(--s));
+  background:var(--surface);border:calc(.15 * var(--s)) solid var(--hair);border-radius:calc(2.4 * var(--s));
+  padding:calc(1.8 * var(--s)) calc(2 * var(--s));box-shadow:0 calc(1.2 * var(--s)) calc(3 * var(--s)) rgba(0,0,0,.12)}
+.pill{background:var(--ink);color:var(--canvas);border-radius:calc(1.6 * var(--s));font-size:calc(2 * var(--s));
+  font-weight:700;text-align:center;padding:calc(1.2 * var(--s)) 0;margin-bottom:calc(1.2 * var(--s))}
+.pill span{color:var(--acc);margin-left:calc(.6 * var(--s))}
+.row{display:flex;align-items:center;gap:calc(1.4 * var(--s));padding:calc(1.05 * var(--s)) 0;
+  border-top:calc(.15 * var(--s)) solid var(--hair);font-size:calc(2 * var(--s))}
+.row.first{border-top:0}
+.box{width:calc(2.3 * var(--s));height:calc(2.3 * var(--s));border-radius:calc(.7 * var(--s));
+  border:calc(.2 * var(--s)) solid var(--sub);flex:none}
+.row .n{flex:1}
+.row .p{color:var(--acc);font-size:calc(1.7 * var(--s));font-weight:600}
+#measure{display:none}
+</style>
+</head>
+<body>
+<div id="safe">
+  <img class="icon" alt="" src="../../SmartCart/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png">
+  <div class="text"><h1 id="headline"></h1><div class="sub" id="sub"></div></div>
+  <div class="card">
+    <div class="pill">Lidl<span>· 5</span></div>
+    <div id="rows"></div>
+  </div>
+</div>
+<pre id="measure"></pre>
+
+<!-- Texte je Sprache, jeder Pflichttext genau einmal. accent = Anfang des hervorgehobenen Satzteils. -->
+<script type="application/json" id="texts">
+{
+  "de": {
+    "headline": "Die Liste, die weiß, wo etwas hingehört.",
+    "accent": "weiß",
+    "sub": "Restock lernt deinen Weg durch den Markt und rechnet mit Preisen aus deinen Kassenbons.",
+    "rows": [["Bananen · 1 kg", "ca. 1,80 €"], ["Brot", "ca. 2,50 €"], ["Milch", "ca. 1,20 €"], ["Nudeln", "ca. 1,50 €"]]
+  },
+  "en": {
+    "headline": "The list that knows where things belong.",
+    "accent": "knows",
+    "sub": "Restock learns your way through the store and works out costs from your receipts.",
+    "rows": [["Bananas · 1 kg", "approx. €1.80"], ["Bread", "approx. €2.50"], ["Milk", "approx. €1.20"], ["Pasta", "approx. €1.50"]]
+  }
+}
+</script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search || location.hash.slice(1));
+  var lang = q.get("lang") === "en" ? "en" : "de";
+  var w = parseInt(q.get("w"), 10), h = parseInt(q.get("h"), 10);
+  var root = document.documentElement;
+  if (w > 0 && h > 0) { root.style.setProperty("--W", w + "px"); root.style.setProperty("--H", h + "px"); }
+  root.lang = lang;
+  var t = JSON.parse(document.getElementById("texts").textContent)[lang];
+
+  var hl = document.getElementById("headline"), cut = t.headline.indexOf(t.accent);
+  hl.appendChild(document.createTextNode(t.headline.slice(0, cut)));
+  var em = document.createElement("em"); em.textContent = t.headline.slice(cut); hl.appendChild(em);
+  document.getElementById("sub").textContent = t.sub;
+
+  var rows = document.getElementById("rows");
+  t.rows.forEach(function (r, i) {
+    var row = document.createElement("div"); row.className = "row" + (i === 0 ? " first" : "");
+    var box = document.createElement("i"); box.className = "box";
+    var n = document.createElement("span"); n.className = "n"; n.textContent = r[0];
+    var p = document.createElement("span"); p.className = "p"; p.textContent = r[1];
+    row.appendChild(box); row.appendChild(n); row.appendChild(p); rows.appendChild(row);
+  });
+
+  if (q.get("measure") !== "1") return;
+  /* Rahmen jedes sichtbaren Elements; die Karte zusätzlich mit Schatten (Versatz + Unschärfe). */
+  function measure() {
+    /* Maßgeblich ist die Bildfläche (html, Größe aus w/h), nicht das Fenster: --dump-dom rechnet die
+       Fensterleiste von --window-size ab, der Screenshot nicht. Das Layout hängt nur von w/h ab. */
+    var page = root.getBoundingClientRect(), vw = page.width, vh = page.height;
+    var safe = { left: vw * 0.08, right: vw * 0.92, top: vh * 0.12, bottom: vh * 0.88 };
+    var s = document.getElementById("safe").getBoundingClientRect().width / 84;
+    var items = [];
+    document.querySelectorAll("#safe .icon, #safe h1, #safe .sub, #safe .card, #safe .pill, #safe .row, #safe .n, #safe .p")
+      .forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        items.push({ el: el.className || el.tagName, text: (el.textContent || "").slice(0, 40),
+                     left: r.left, top: r.top, right: r.right, bottom: r.bottom });
+      });
+    var c = document.querySelector("#safe .card").getBoundingClientRect();
+    items.push({ el: "card+shadow", text: "", left: c.left - 3 * s, top: c.top - 3 * s + 1.2 * s,
+                 right: c.right + 3 * s, bottom: c.bottom + 3 * s + 1.2 * s });
+    var bad = items.filter(function (i) {
+      return i.left < safe.left || i.right > safe.right || i.top < safe.top || i.bottom > safe.bottom;
+    });
+    var icon = document.querySelector("#safe .icon");
+    document.getElementById("measure").textContent = JSON.stringify({
+      lang: lang, viewport: [vw, vh], window: [window.innerWidth, window.innerHeight], safe: safe, items: items, outside: bad,
+      iconLoaded: icon.complete && icon.naturalWidth > 0,
+      textLines: document.body.innerText
+    });
+  }
+  if (document.readyState === "complete") measure(); else window.addEventListener("load", measure);
+})();
+</script>
+</body>
+</html>
