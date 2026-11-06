@@ -1,0 +1,87 @@
+test_colors_match_light_values_of_colorsets (__main__.HeaderImageTests.test_colors_match_light_values_of_colorsets) ... ERROR
+test_four_pngs_have_exact_size_and_no_alpha (__main__.HeaderImageTests.test_four_pngs_have_exact_size_and_no_alpha) ... FAIL
+test_render_protocol_exists (__main__.HeaderImageTests.test_render_protocol_exists) ... FAIL
+test_script_names_both_target_sizes_and_languages (__main__.HeaderImageTests.test_script_names_both_target_sizes_and_languages) ... ERROR
+test_template_and_script_exist (__main__.HeaderImageTests.test_template_and_script_exist) ... FAIL
+test_texts_appear_exactly_once_per_language (__main__.HeaderImageTests.test_texts_appear_exactly_once_per_language) ... ERROR
+
+======================================================================
+ERROR: test_colors_match_light_values_of_colorsets (__main__.HeaderImageTests.test_colors_match_light_values_of_colorsets)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_header_image.py", line 59, in test_colors_match_light_values_of_colorsets
+    html = template().upper()
+           ~~~~~~~~^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_header_image.py", line 22, in template
+    return TEMPLATE.read_text(encoding="utf-8")
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/lib/python3.15/pathlib/__init__.py", line 986, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/lib/python3.15/pathlib/__init__.py", line 970, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/header-image/kopfbild.html'
+
+======================================================================
+ERROR: test_script_names_both_target_sizes_and_languages (__main__.HeaderImageTests.test_script_names_both_target_sizes_and_languages)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_header_image.py", line 45, in test_script_names_both_target_sizes_and_languages
+    text = SCRIPT.read_text(encoding="utf-8")
+  File "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/lib/python3.15/pathlib/__init__.py", line 986, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/lib/python3.15/pathlib/__init__.py", line 970, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/make-header-image.sh'
+
+======================================================================
+ERROR: test_texts_appear_exactly_once_per_language (__main__.HeaderImageTests.test_texts_appear_exactly_once_per_language)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_header_image.py", line 53, in test_texts_appear_exactly_once_per_language
+    html = template()
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_header_image.py", line 22, in template
+    return TEMPLATE.read_text(encoding="utf-8")
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/lib/python3.15/pathlib/__init__.py", line 986, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/lib/python3.15/pathlib/__init__.py", line 970, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/header-image/kopfbild.html'
+
+======================================================================
+FAIL: test_four_pngs_have_exact_size_and_no_alpha (__main__.HeaderImageTests.test_four_pngs_have_exact_size_and_no_alpha)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_header_image.py", line 67, in test_four_pngs_have_exact_size_and_no_alpha
+    self.assertTrue(path.is_file(), f"{path.name} fehlt")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : kopfbild-de-5244x2950.png fehlt
+
+======================================================================
+FAIL: test_render_protocol_exists (__main__.HeaderImageTests.test_render_protocol_exists)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_header_image.py", line 74, in test_render_protocol_exists
+    self.assertTrue((OUT / "render-protokoll.txt").is_file(), "render-protokoll.txt fehlt")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : render-protokoll.txt fehlt
+
+======================================================================
+FAIL: test_template_and_script_exist (__main__.HeaderImageTests.test_template_and_script_exist)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/moonlit-whistling-sundae/scripts/test_header_image.py", line 41, in test_template_and_script_exist
+    self.assertTrue(TEMPLATE.is_file(), "Vorlage scripts/header-image/kopfbild.html fehlt")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : Vorlage scripts/header-image/kopfbild.html fehlt
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.003s
+
+FAILED (failures=3, errors=3)

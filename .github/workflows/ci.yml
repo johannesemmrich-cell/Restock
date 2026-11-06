@@ -45,7 +45,8 @@ jobs:
                    scripts/test_asc_scripts.py \
                    scripts/test_asc_check.py \
                    scripts/test_asc_crashes.py \
-                   scripts/test_asc_crashes_workflow.py; do
+                   scripts/test_asc_crashes_workflow.py \
+                   scripts/test_header_image.py; do
             echo "== $t"; python3 -I "$t" || exit 1
           done
 
