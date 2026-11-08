@@ -42,3 +42,10 @@ Platzierung `PRODUCT_PAGE_HEADER_ASSET` bzw. `APP_STORE_SEARCH_RESULTS_ASSET` an
   ob ein 16:9-Bild beide Platzierungen bedienen kann.
 - Rückfallweg unverändert: Upload im Browser (App Store Connect), wie bei den Screenshots.
 - In jedem Fall gilt AC-9: hochgeladen wird erst nach getipptem Wort des PO („Upload jetzt“), eingereicht wird nichts.
+
+## Upload erfolgt (2026-11-08, Wort des PO „Upload jetzt“)
+
+- `scripts/asc_header_upload.py` (eigener Zaun, `asc_lib.ALLOWED` unverändert, Trockenlauf Standard, `--apply` schreibt) legte je Sprache zwei Bilder in der App-Asset-Bibliothek an und hängte sie als `PRODUCT_PAGE_HEADER_ASSET` (3840×1646) und `APP_STORE_SEARCH_RESULTS_ASSET` (5244×2950), Gruppe `DEFAULT_PROFILE`, an Version 1.0.1 (de-DE, en-US). Eingereicht wurde nichts.
+- Apple lehnt Platzierungen ab, solange die Version in Prüfung ist (409 `STATE_ERROR.INVALID_STATE`, 2026-11-06, Version 1.0 `IN_REVIEW`), und ließ 1.0.1 erst nach Freigabe von 1.0 zu (409 `ENTITY_ERROR.RELATIONSHIP.INVALID`, 2026-11-06).
+- Der erste Versuch ließ ein unplatziertes Bild `kopfbild-de-3840x1646.png` in der Bibliothek zurück (ohne Wirkung); die neuen Bilder tragen deshalb den Zusatz `-v101` (Apple lehnt doppelte Namen ab).
+- Zustände nach dem Lauf: Bilder `PREPARE_FOR_SUBMISSION`/`COMPLETE`/`UPLOAD_COMPLETE`; Apple prüft die Bilder erst mit der Einreichung von 1.0.1.
