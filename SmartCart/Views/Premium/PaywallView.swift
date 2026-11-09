@@ -87,6 +87,8 @@ struct PaywallView: View {
             .onChange(of: premium.hasPremiumAccess) { _, unlocked in
                 if unlocked { dismiss() }
             }
+            // Issue #265: Produkte, die beim App-Start nicht geladen wurden, beim Öffnen erneut abrufen.
+            .task { await premium.reloadProductsIfNeeded() }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ChipToolbarItem(placement: .cancellationAction) {
@@ -451,6 +453,8 @@ struct PaywallView: View {
 
     private func purchase() async {
         notice = nil
+        // Issue #265: ein Nachladeversuch je Tipp, bevor der Fehlertext erscheint.
+        await premium.reloadProductsIfNeeded()
         guard premium.offer(for: selectedPlanID) != nil else {
             // Fehlendes Produkt heißt: StoreKit hat es nicht geladen (kein Netz, Produkt in App Store
             // Connect noch nicht live) — in DEBUG wie Release sagen statt still zu schließen.

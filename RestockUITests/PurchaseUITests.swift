@@ -182,6 +182,10 @@ final class PurchaseUITests: XCTestCase {
         openPaywall(app)
         tapBuy(app)
         waitForPaywallClosed(app)
+        let after = XCTAttachment(screenshot: app.screenshot())
+        after.name = "nach-kauf"
+        after.lifetime = .keepAlways
+        add(after)
         XCTAssertFalse(notice(Notice.productMissing, in: app).exists,
                        "Fehlertext „\(Notice.productMissing)“ trotz nachladbarer Produkte")
         assertRecipePlanOpens(app)

@@ -8,6 +8,8 @@ import Foundation
 actor FakePurchaseStore: PurchaseStore {
     enum Scenario: String, CaseIterable, Sendable {
         case success, cancel, pending, fail, productMissing, restoreNone, restoreFound, restoreFail, restoreCancel
+        /// Issue #265: erster Abruf leer, ab dem zweiten die drei Angebote; Kauf wie `success`.
+        case productsLoadLate
     }
 
     enum FakePurchaseError: LocalizedError, Equatable {
@@ -23,6 +25,7 @@ actor FakePurchaseStore: PurchaseStore {
 
     nonisolated let scenario: Scenario
     private var ownedIDs: Set<String> = []
+    private var loadCalls = 0
 
     init(scenario: Scenario) {
         self.scenario = scenario
@@ -36,6 +39,8 @@ actor FakePurchaseStore: PurchaseStore {
 
     func loadOffers(ids: Set<String>) async throws -> [PurchaseOffer] {
         guard scenario != .productMissing else { return [] }
+        loadCalls += 1
+        if scenario == .productsLoadLate, loadCalls == 1 { return [] }
         let all = [
             PurchaseOffer(id: PremiumService.monthlyID, displayPrice: "1,99 €", price: Decimal(string: "1.99")),
             PurchaseOffer(id: PremiumService.yearlyID, displayPrice: "8,99 €", price: Decimal(string: "8.99")),
@@ -46,7 +51,7 @@ actor FakePurchaseStore: PurchaseStore {
 
     func purchase(offerID: String) async throws -> PurchaseOutcome {
         switch scenario {
-        case .success:
+        case .success, .productsLoadLate:
             ownedIDs.insert(offerID)
             return .purchased
         case .pending:

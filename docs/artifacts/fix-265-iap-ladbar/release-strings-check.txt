@@ -1,0 +1,4 @@
+AC-8 Release-Nachweis (2026-11-09)
+Build: xcodebuild -configuration Release, generic/platform=iOS Simulator, CODE_SIGNING_ALLOWED=NO -> BUILD SUCCEEDED
+Binary: build/dd-265rel/Build/Products/Release-iphonesimulator/Restock.app/Restock
+Suche per `strings` nach FakePurchaseStore, productsLoadLate, purchaseScenarioForUITests: 0 Treffer.

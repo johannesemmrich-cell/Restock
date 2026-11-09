@@ -198,6 +198,18 @@ final class PremiumService: ObservableObject {
         products = (try? await store.loadOffers(ids: Self.knownIDs)) ?? []
     }
 
+    /// Schutz gegen Doppelstart von `reloadProductsIfNeeded()` (Issue #265).
+    private var isLoadingProducts = false
+
+    /// Issue #265: lädt nur, wenn `products` leer ist und kein Ladevorgang läuft; wirft nie.
+    /// Ein Fehler lässt die Liste leer, ein späterer Aufruf versucht es erneut.
+    func reloadProductsIfNeeded() async {
+        guard products.isEmpty, !isLoadingProducts else { return }
+        isLoadingProducts = true
+        defer { isLoadingProducts = false }
+        await loadProducts()
+    }
+
     @discardableResult
     func purchase(offerID: String) async throws -> PurchaseOutcome {
         isPurchasing = true
