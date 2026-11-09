@@ -176,6 +176,17 @@ final class PurchaseUITests: XCTestCase {
         assertPaywallOpen(app)
     }
 
+    /// Issue #265, AC-5: erster Produktabruf leer, danach gefüllt — der Kauf muss trotzdem durchlaufen.
+    func testProductsLoadLateStillPurchasable() {
+        let app = launch(scenario: "productsLoadLate", extra: ["-clearMenuPlanForUITests"])
+        openPaywall(app)
+        tapBuy(app)
+        waitForPaywallClosed(app)
+        XCTAssertFalse(notice(Notice.productMissing, in: app).exists,
+                       "Fehlertext „\(Notice.productMissing)“ trotz nachladbarer Produkte")
+        assertRecipePlanOpens(app)
+    }
+
     func testMissingProductShowsLoadErrorInsteadOfClosing() {
         let app = launch(scenario: "productMissing")
         openPaywall(app)
