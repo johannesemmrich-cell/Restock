@@ -396,7 +396,7 @@ class AscCheck(unittest.TestCase):
         code, out = run(fake, "--all")
         self.assertNotEqual(code, 0)
         self.assertNotRegex(out, r": '(app|ver|info)'")
-        self.assertEqual(out.count("Version 1.0 (IOS): 0 Treffer"), 7, out)
+        self.assertEqual(out.count("Version 1.0 (IOS): 0 Treffer"), 8, out)
 
     def test_fence_rejects_before_send(self):  # AC-20a
         send = mock.Mock(return_value=(200, json.dumps({"data": [res("apps", APP)]}).encode()))
@@ -841,6 +841,19 @@ class AscCheckVersion(unittest.TestCase):
                         "--section", "appinfo")
         self.assertIn("E-1=unbekannt", out)
 
+    def test_blank_state_counts_as_unknown(self):  # AC-5, AC-13, AC-16 (Gegenprüfung F002)
+        code, out = run(MultiASC(infos=[res("appInfos", "B-1", state="   "), res("appInfos", "B-2", state="LIVE")]),
+                        "--section", "appinfo")
+        self.assertIn("B-1=unbekannt", out)
+        code, out = run(MultiASC(v101_state="  "), "--section", "status", "--version", "1.0.1")
+        self.assertNotEqual(code, 0)
+        self.assertIn("Abweichung", out)
+        fake = FakeASC()
+        fake.iaps[0]["attributes"]["state"] = " \t"
+        code, out = run(fake, "--section", "submission")
+        self.assertNotEqual(code, 0)
+        self.assertIn("Abweichung", out)
+
     def test_info_is_resolved_only_by_sections_that_need_it(self):  # AC-20
         for section in ("status", "build", "iap", "submission", "review", "screenshots", "privacy-url"):
             fake = MultiASC()
@@ -852,7 +865,7 @@ class AscCheckVersion(unittest.TestCase):
         fake = MultiASC()
         code, out = run(fake, "--section", "build", "--version", "1.0.1", "--build", "41")
         self.assertEqual(code, 0, out)
-        self.assertTrue(any("versionString=1.0.1&filter[platform]=IOS" in u for u in fake.urls))
+        self.assertTrue(any("filter[versionString]=1.0.1&filter[platform]=IOS" in u for u in fake.urls))
         self.assertIn("/v1/appStoreVersions/VER-2/build", fake.paths)
         self.assertEqual(run(MultiASC(), "--version", "1.0.1", "--section", "status")[0], 0)
 

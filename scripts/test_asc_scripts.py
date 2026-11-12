@@ -286,7 +286,7 @@ class AscScripts(unittest.TestCase):
                      ("PATCH", "/v1/appInfoLocalizations/abc?x=1"), ("POST", "/v1/appInfoLocalizations?x=1"),
                      ("POST", "/v1/appInfoLocalizations?"), ("GET", f"/v1/apps/{APP}/appInfos?x=//evil"),
                      ("GET", f"/v1/apps/{APP}/appInfos?"),
-                     ("GET", f"/v1/apps/{APP}/appStoreVersions?filter[versionString]=2.0&filter[platform]=IOS"),
+                     ("GET", f"/v1/apps/{APP}/appStoreVersions?filter[versionString]=1.0.1.2&filter[platform]=IOS"),
                      ("GET", "/v1/apps?filter[bundleId]=com.johannesemmrich.Restock\r\nX-Evil: 1")):
             with self.assertRaises(Exception, msg=f"{m} {p!r}"):
                 asc_lib.api(m, p, token="T", send=send)
