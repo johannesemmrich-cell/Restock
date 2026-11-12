@@ -286,7 +286,7 @@ class AscScripts(unittest.TestCase):
                      ("PATCH", "/v1/appInfoLocalizations/abc?x=1"), ("POST", "/v1/appInfoLocalizations?x=1"),
                      ("POST", "/v1/appInfoLocalizations?"), ("GET", f"/v1/apps/{APP}/appInfos?x=//evil"),
                      ("GET", f"/v1/apps/{APP}/appInfos?"),
-                     ("GET", f"/v1/apps/{APP}/appStoreVersions?filter[versionString]=2.0&filter[platform]=IOS"),
+                     ("GET", f"/v1/apps/{APP}/appStoreVersions?filter[versionString]=1.0.1.2&filter[platform]=IOS"),
                      ("GET", "/v1/apps?filter[bundleId]=com.johannesemmrich.Restock\r\nX-Evil: 1")):
             with self.assertRaises(Exception, msg=f"{m} {p!r}"):
                 asc_lib.api(m, p, token="T", send=send)
@@ -434,6 +434,32 @@ class AscScripts(unittest.TestCase):
         for secret in ("GEHEIMTOKEN", "AuthKey", "Bearer"):
             self.assertNotIn(secret, str(e.exception))
         self.assertIn("FORBIDDEN: Nein", str(e.exception))
+
+    def test_check_path_version_pattern_get_only(self):  # AC-10 (Issue #267)
+        base = f"/v1/apps/{APP}/appStoreVersions"
+        asc_lib.check_path("GET", f"{base}?filter[versionString]=1.0.1&filter[platform]=IOS")
+        asc_lib.check_path("GET", f"{base}?{asc_lib.VERSION_QUERY}")
+        self.assertEqual(asc_lib.version_query("1.0.1"), "filter[versionString]=1.0.1&filter[platform]=IOS")
+        for q in ("filter[versionString]=1.0.1&x", "filter[versionString]=1.0.1&filter[platform]=IOS&x=1",
+                  "filter[versionString]=1.0;rm&filter[platform]=IOS", "filter[versionString]=&filter[platform]=IOS",
+                  "filter[versionString]=1.0.1&filter[platform]=MAC_OS"):
+            with self.assertRaises(ValueError, msg=q):
+                asc_lib.check_path("GET", f"{base}?{q}")
+        for bad in ("abc", "1", "1.0.1.2", "1.0;rm", ""):
+            with self.assertRaises(ValueError, msg=bad):
+                asc_lib.version_query(bad)
+        for m in ("POST", "PATCH"):
+            with self.assertRaises(ValueError, msg=m):
+                asc_lib.check_path(m, base)
+            with self.assertRaises(ValueError, msg=m):
+                asc_lib.check_path(m, f"{base}?filter[versionString]=1.0.1&filter[platform]=IOS")
+
+    def test_publish_still_queries_only_version_1_0(self):  # AC-11 (Issue #267)
+        fake = FakeASC()
+        self.assertEqual(run(fake, "--apply")[0], 0)
+        queries = [unquote(urlsplit(c[1]).query) for c in fake.calls if urlsplit(c[1]).path.endswith("/appStoreVersions")]
+        self.assertEqual(queries, ["filter[versionString]=1.0&filter[platform]=IOS"])
+        self.assertEqual(asc_lib.VERSION_QUERY, "filter[versionString]=1.0&filter[platform]=IOS")
 
 
 if __name__ == "__main__":

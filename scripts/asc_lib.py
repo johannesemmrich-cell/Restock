@@ -8,7 +8,9 @@ HOST = "https://api.appstoreconnect.apple.com"
 BUNDLE = "com.johannesemmrich.Restock"
 _ID = r"[A-Za-z0-9_-]+"
 _LOCS = r"/v1/(?:appStoreVersionLocalizations|appInfoLocalizations)"
-VERSION_QUERY = "filter[versionString]=1.0&filter[platform]=IOS"
+VERSION_QUERY = "filter[versionString]=1.0&filter[platform]=IOS"  # asc_publish bleibt an Version 1.0 gebunden
+# Lesende Versionsabfrage für asc_check (Issue #267): nur x.y oder x.y.z aus ASCII-Ziffern, nur IOS
+VERSION_QUERY_RE = r"filter\[versionString\]=[0-9]+(?:\.[0-9]+){1,2}&filter\[platform\]=IOS"
 ALLOWED = {  # Methode -> erlaubte Pfadmuster (Teil vor "?"), AC-10a
     "GET": [rf"/v1/apps/{_ID}/(?:appStoreVersions|appInfos)",
             rf"/v1/appStoreVersions/{_ID}/appStoreVersionLocalizations",
@@ -104,6 +106,14 @@ def apple_error_suffix(raw):
     return " — " + "; ".join(parts) if parts else ""
 
 
+def version_query(v):
+    """Versionsabfrage nach VERSION_QUERY_RE; alles andere ist ein ValueError (Issue #267, AC-10)."""
+    query = f"filter[versionString]={v}&filter[platform]=IOS"
+    if not isinstance(v, str) or not re.fullmatch(VERSION_QUERY_RE, query):
+        raise ValueError(f"Ungültige Version: {v!r}")
+    return query
+
+
 def check_path(method, path):
     if method not in ALLOWED:
         raise ValueError(f"Methode nicht erlaubt: {method}")
@@ -113,7 +123,8 @@ def check_path(method, path):
     ok = any(re.fullmatch(p, base) for p in ALLOWED[method]) and not sep
     if method == "GET" and sep:  # Abfragen nur exakt wie in der Erlaubnisliste
         ok = (base == "/v1/apps" and query == f"filter[bundleId]={BUNDLE}") or (
-            re.fullmatch(rf"/v1/apps/{_ID}/appStoreVersions", base) is not None and query == VERSION_QUERY)
+            re.fullmatch(rf"/v1/apps/{_ID}/appStoreVersions", base) is not None
+            and re.fullmatch(VERSION_QUERY_RE, query) is not None)
     if not ok:
         raise ValueError(f"Pfad nicht erlaubt: {method} {base}")
 

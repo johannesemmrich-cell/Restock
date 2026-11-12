@@ -396,7 +396,7 @@ class AscCheck(unittest.TestCase):
         code, out = run(fake, "--all")
         self.assertNotEqual(code, 0)
         self.assertNotRegex(out, r": '(app|ver|info)'")
-        self.assertEqual(out.count("Version 1.0 (IOS): 0 Treffer"), 7, out)
+        self.assertEqual(out.count("Version 1.0 (IOS): 0 Treffer"), 8, out)
 
     def test_fence_rejects_before_send(self):  # AC-20a
         send = mock.Mock(return_value=(200, json.dumps({"data": [res("apps", APP)]}).encode()))
@@ -750,6 +750,252 @@ class AscCheck(unittest.TestCase):
         self.assertIn("FORBIDDEN: Nein", out)
         self.assertNotIn("Bearer", out)
         self.assertNotIn(ENV["ASC_KEY_PATH"], out)
+
+
+class MultiASC(FakeASC):
+    """Konto mit Version 1.0 und 1.0.1 (Issue #267): Versionsabfrage nach versionString gefiltert, mehrere appInfos."""
+
+    def __init__(self, infos=None, v101_state="REJECTED", build="41"):
+        super().__init__()
+        self.v101 = res("appStoreVersions", "VER-2", versionString="1.0.1", platform="IOS", appVersionState=v101_state)
+        self.infos = infos if infos is not None else [res("appInfos", "INFO-1", state="READY_FOR_SALE"),
+                                                      res("appInfos", "INFO-2", state="REJECTED")]
+        self.build2 = res("builds", "BUILD-41", version=build, processingState="VALID", usesNonExemptEncryption=False)
+
+    def routes(self):
+        r = super().routes()
+        r[f"/v1/apps/{APP}/appInfos"] = self.infos
+        r.update({f"/v1/appInfos/{i['id']}/appInfoLocalizations": self.ilocs for i in self.infos})
+        r.update({"/v1/appStoreVersions/VER-2/build": self.build2, "/v1/appStoreVersions/VER-2/appStoreReviewDetail": self.review,
+                  "/v1/appStoreVersions/VER-2/appStoreVersionLocalizations": self.vlocs})
+        return r
+
+    def __call__(self, method, url, headers, data):
+        parts = urlsplit(url)
+        if method == "GET" and parts.path == f"/v1/apps/{APP}/appStoreVersions":
+            self.calls.append((method, url, headers))
+            want = re.search(r"versionString\]=([^&]*)", unquote(parts.query))[1]
+            found = [v for v in (self.version, self.v101) if v["attributes"]["versionString"] == want]
+            return 200, json.dumps({"data": found}).encode()
+        return super().__call__(method, url, headers, data)
+
+    urls = property(lambda self: [unquote(c[1]) for c in self.calls])
+
+
+def ok_lines(out):
+    return [l for l in out.splitlines() if l.startswith("ok ")]
+
+
+class AscCheckVersion(unittest.TestCase):
+    """Issue #267: beliebige Version, eindeutige appInfo-Wahl, Abschnitt submission (AC-1 bis AC-20 der Spec asc-check-version)."""
+
+    def setUp(self):
+        self.assertIsNotNone(asc_check, "scripts/asc_check.py fehlt")
+
+    def test_two_infos_without_draft_aborts_with_all_states(self):  # AC-1
+        for section in ("metadata", "appinfo"):
+            code, out = run(MultiASC(), "--section", section)
+            self.assertNotEqual(code, 0)
+            for needle in ("kein eindeutiger Entwurf", "INFO-1=READY_FOR_SALE", "INFO-2=REJECTED"):
+                self.assertIn(needle, out)
+            self.assertEqual(ok_lines(out), [])
+
+    def test_single_info_is_taken_in_any_state(self):  # AC-2
+        code, out = run(MultiASC(infos=[res("appInfos", "INFO-1", state="READY_FOR_SALE")]), "--section", "metadata")
+        self.assertEqual(code, 0, out)
+
+    def test_draft_info_wins_over_live(self):  # AC-3
+        fake = MultiASC(infos=[res("appInfos", "INFO-1", state="READY_FOR_SALE"),
+                               res("appInfos", "INFO-2", state="PREPARE_FOR_SUBMISSION")])
+        code, out = run(fake, "--section", "metadata")
+        self.assertEqual(code, 0, out)
+        self.assertIn("/v1/appInfos/INFO-2/appInfoLocalizations", fake.paths)
+        self.assertNotIn("/v1/appInfos/INFO-1/appInfoLocalizations", fake.paths)
+
+    def test_two_drafts_or_three_infos_abort(self):  # AC-4
+        draft = lambda i: res("appInfos", f"D-{i}", state="PREPARE_FOR_SUBMISSION")
+        code, out = run(MultiASC(infos=[draft(1), draft(2)]), "--section", "appinfo")
+        self.assertNotEqual(code, 0)
+        self.assertIn("D-1=PREPARE_FOR_SUBMISSION, D-2=PREPARE_FOR_SUBMISSION", out)
+        three = [res("appInfos", f"T-{i}", state=s) for i, s in enumerate(("LIVE", "REJECTED", "WAITING"))]
+        code, out = run(MultiASC(infos=three), "--section", "metadata")
+        self.assertNotEqual(code, 0)
+        for needle in ("3 Treffer", "T-0=LIVE", "T-1=REJECTED", "T-2=WAITING"):
+            self.assertIn(needle, out)
+
+    def test_info_state_unknown_and_sanitized_in_message(self):  # AC-5
+        infos = [res("appInfos", "I-1"), res("appInfos", "I-2", state="", appStoreState="LIVE"), res("appInfos", "I-3", state=7),
+                 res("appInfos", "I-4", state="BAD\x07STATE" + "x" * 100)]
+        code, out = run(MultiASC(infos=infos), "--section", "metadata")
+        self.assertNotEqual(code, 0)
+        for needle in ("I-1=unbekannt", "I-2=LIVE", "I-3=unbekannt", "I-4=BADSTATE" + "x" * 72):
+            self.assertIn(needle, out)
+        self.assertNotIn("x" * 73, out)
+        self.assertNotIn("\x07", out)
+
+    def test_zero_infos_and_empty_after_sanitizing(self):  # AC-5
+        code, out = run(MultiASC(infos=[]), "--section", "appinfo")
+        self.assertNotEqual(code, 0)
+        self.assertIn("appInfo: 0 Treffer, kein eindeutiger Entwurf; Zustände: keine", out)
+        code, out = run(MultiASC(infos=[res("appInfos", "E-1", state="\x07​"), res("appInfos", "E-2", state="LIVE")]),
+                        "--section", "appinfo")
+        self.assertIn("E-1=unbekannt", out)
+
+    def test_blank_state_counts_as_unknown(self):  # AC-5, AC-13, AC-16 (Gegenprüfung F002)
+        code, out = run(MultiASC(infos=[res("appInfos", "B-1", state="   "), res("appInfos", "B-2", state="LIVE")]),
+                        "--section", "appinfo")
+        self.assertIn("B-1=unbekannt", out)
+        code, out = run(MultiASC(v101_state="  "), "--section", "status", "--version", "1.0.1")
+        self.assertNotEqual(code, 0)
+        self.assertIn("Abweichung", out)
+        fake = FakeASC()
+        fake.iaps[0]["attributes"]["state"] = " \t"
+        code, out = run(fake, "--section", "submission")
+        self.assertNotEqual(code, 0)
+        self.assertIn("Abweichung", out)
+
+    def test_info_is_resolved_only_by_sections_that_need_it(self):  # AC-20
+        for section in ("status", "build", "iap", "submission", "review", "screenshots", "privacy-url"):
+            fake = MultiASC()
+            code, out = run(fake, "--section", section)
+            self.assertEqual(code, 0, f"{section}: {out}")
+            self.assertNotIn(f"/v1/apps/{APP}/appInfos", fake.paths, section)
+
+    def test_version_argument_selects_that_version(self):  # AC-6
+        fake = MultiASC()
+        code, out = run(fake, "--section", "build", "--version", "1.0.1", "--build", "41")
+        self.assertEqual(code, 0, out)
+        self.assertTrue(any("filter[versionString]=1.0.1&filter[platform]=IOS" in u for u in fake.urls))
+        self.assertIn("/v1/appStoreVersions/VER-2/build", fake.paths)
+        self.assertEqual(run(MultiASC(), "--version", "1.0.1", "--section", "status")[0], 0)
+
+    def test_default_without_version_is_unchanged(self):  # AC-7
+        fake = MultiASC()
+        code, out = run(fake, "--section", "status")
+        self.assertEqual(code, 0, out)
+        self.assertIn("ok   status: appVersionState", out)
+        self.assertTrue(any("filter[versionString]=1.0&filter[platform]=IOS" in u for u in fake.urls))
+        self.assertEqual(run(FakeASC(), "--section", "build")[0], 0)
+
+    def test_invalid_version_or_build_exits_2_without_network(self):  # AC-8
+        bad = [("--version", v) for v in ("abc", "1", "1.0.1.2", "1.0;rm", "", "1.0.1 ", "١.٠")]
+        bad += [("--build", b) for b in ("abc", "-1", "4.1", "", "٤١")]
+        for opt in bad:
+            for head in (("--section", "status"), ("--all",)):
+                fake = MultiASC()
+                code, out = run(fake, *head, *opt)
+                self.assertEqual((code, fake.calls), (2, []), f"{head} {opt}")
+                self.assertIn("Aufruf", out)
+
+    def test_fence_version_pattern_and_rejections(self):  # AC-9
+        ids, ok = {"X"}, "/v1/apps/X/appStoreVersions?filter[versionString]=1.0.1&filter[platform]=IOS"
+        asc_check.check_read("GET", ok, ids)
+        for q in ("filter[versionString]=1.0.1&x", "filter[versionString]=1.0.1&filter[platform]=IOS&x=1",
+                  "filter[versionString]=1.0;rm&filter[platform]=IOS", "filter[versionString]=&filter[platform]=IOS",
+                  "filter[versionString]=1.0.1&filter[platform]=MAC_OS", ""):
+            path = "/v1/apps/X/appStoreVersions" + ("?" + q if q else "")
+            with self.assertRaises(ValueError, msg=path):
+                asc_check.check_read("GET", path, ids)
+        for m in ("POST", "PATCH", "PUT", "DELETE"):
+            with self.assertRaises(ValueError, msg=m):
+                asc_check.check_read(m, ok, ids)
+
+    def test_status_other_version_prints_state_without_verdict(self):  # AC-12
+        code, out = run(MultiASC(), "--section", "status", "--version", "1.0.1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("Zustand: REJECTED", out)
+        self.assertNotIn("Abweichung", out)
+        self.assertEqual(ok_lines(out), [])
+        fake = MultiASC()
+        fake.version["attributes"]["appVersionState"] = "READY_FOR_SALE"
+        code, out = run(fake, "--section", "status")
+        self.assertNotEqual(code, 0)
+        self.assertIn("Abweichung", out)
+
+    def test_status_unknown_state_is_deviation(self):  # AC-13
+        for state, version in ((None, "1.0.1"), ("", "1.0.1"), (5, "1.0.1"), (None, "1.0")):
+            fake = MultiASC(v101_state=state)
+            fake.version["attributes"]["appVersionState"] = state
+            code, out = run(fake, "--section", "status", "--version", version)
+            self.assertNotEqual(code, 0, f"{state!r} {version}")
+            self.assertIn("Abweichung", out)
+            self.assertEqual(ok_lines(out), [])
+
+    def test_build_target_via_option(self):  # AC-14
+        for number, want_ok in (("41", True), ("40", False), ("x", False)):
+            code, out = run(MultiASC(build=number), "--section", "build", "--version", "1.0.1", "--build", "41")
+            self.assertEqual(code == 0, want_ok, f"{number}: {out}")
+        self.assertIn("Soll 41, Ist 40", run(MultiASC(build="40"), "--section", "build", "--version", "1.0.1", "--build", "41")[1])
+        for number, want_ok in (("36", False), ("37", True), ("41", True), ("x", False)):
+            fake = FakeASC()
+            fake.build["attributes"]["version"] = number
+            self.assertEqual(run(fake, "--section", "build")[0] == 0, want_ok, number)
+        fake = FakeASC()
+        fake.build["attributes"]["version"] = "x"
+        self.assertNotEqual(run(fake, "--section", "build", "--build", "41")[0], 0)
+
+    def test_submission_section_prints_manual_lines(self):  # AC-15
+        code, out = run(MultiASC(), "--section", "submission", "--version", "1.0.1")
+        self.assertEqual(code, 0, out)
+        for needle in ("Zustand: REJECTED", "lifetime", "monthly", "yearly", "READY_TO_SUBMIT",
+                       "manuell belegen: Zuordnung der Käufe zur Version (per API nicht lesbar)",
+                       "manuell belegen: Vereinbarung für bezahlte Apps (per API nicht lesbar)"):
+            self.assertIn(needle, out)
+        self.assertNotIn("Abweichung", out)
+        self.assertFalse([l for l in ok_lines(out) if "manuell" in l])
+        code, out = run(FakeASC(), "--section", "submission")
+        self.assertIn("Zustand: PREPARE_FOR_SUBMISSION", out)
+        fake = FakeASC()
+        fake.version["attributes"]["appVersionState"] = None
+        code, out = run(fake, "--section", "submission")
+        self.assertIn("Zustand: unbekannt", out)
+        self.assertEqual(code, 0, out)
+
+    def test_submission_section_flags_unknown_or_missing_products(self):  # AC-16
+        fake = FakeASC()
+        fake.iaps[0]["attributes"]["state"] = None
+        code, out = run(fake, "--section", "submission")
+        self.assertNotEqual(code, 0)
+        self.assertIn("Abweichung", out)
+        fake = FakeASC()
+        fake.subs[0]["attributes"].pop("state")
+        fake.subs[0]["attributes"]["appStoreState"] = "READY_TO_SUBMIT"
+        self.assertEqual(run(fake, "--section", "submission")[0], 0)
+        fake = FakeASC()
+        fake.subs.pop()
+        code, out = run(fake, "--section", "submission")
+        self.assertNotEqual(code, 0)
+        self.assertIn("yearly", out)
+        fake = FakeASC()
+        fake.subs[1]["attributes"]["state"] = "MISSING_METADATA"
+        code, out = run(fake, "--section", "submission")
+        self.assertEqual(code, 0, out)
+        self.assertIn("MISSING_METADATA ×1, READY_TO_SUBMIT ×2", out)
+
+    def test_submission_uses_only_existing_read_paths(self):  # AC-17
+        fake = MultiASC()
+        run(fake, "--section", "submission", "--version", "1.0.1")
+        self.assertTrue(fake.calls)
+        self.assertEqual({c[0] for c in fake.calls}, {"GET"})
+        self.assertEqual(len(asc_check.FENCE), 18)
+        self.assertFalse([p for p, _ in asc_check.FENCE if re.search(r"[Ss]ubmission", p)])
+
+    def test_all_includes_submission_and_aborts_cleanly(self):  # AC-18
+        code, out = run(MultiASC(), "--all", "--version", "9.9", page=FakePage(status=404))
+        self.assertEqual(code, 1)
+        heads = [l for l in out.splitlines() if l.startswith("== ")]
+        self.assertEqual(heads[-1], "== submission")
+        self.assertIn("Version 9.9 (IOS): 0 Treffer statt genau 1", out)
+        self.assertEqual(ok_lines(out), [])
+        self.assertEqual(asc_check.SECTIONS[-1], "submission")
+
+    def test_new_messages_do_not_leak_secrets(self):  # AC-19
+        fake = MultiASC()
+        _, out = run(fake, "--all", "--version", "1.0.1")
+        _, out2 = run(MultiASC(), "--section", "metadata")
+        for secret in (fake.tokens[0], ENV["ASC_KEY_PATH"], "Bearer"):
+            self.assertNotIn(secret, out + out2)
+        self.assertIn("kein eindeutiger Entwurf", out2)
 
 
 if __name__ == "__main__":

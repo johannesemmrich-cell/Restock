@@ -1,0 +1,172 @@
+...............................................FFF.EFF.E.FFFFFFFFF.....E........................
+======================================================================
+ERROR: test_fence_version_pattern_and_rejections (test_asc_check.AscCheckVersion.test_fence_version_pattern_and_rejections)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 879, in test_fence_version_pattern_and_rejections
+    asc_check.check_read("GET", ok, ids)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/asc_check.py", line 70, in check_read
+    raise ValueError(f"Pfad nicht erlaubt: GET {base}")
+ValueError: Pfad nicht erlaubt: GET /v1/apps/X/appStoreVersions
+
+======================================================================
+ERROR: test_new_messages_do_not_leak_secrets (test_asc_check.AscCheckVersion.test_new_messages_do_not_leak_secrets)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 983, in test_new_messages_do_not_leak_secrets
+    for secret in (fake.tokens[0], ENV["ASC_KEY_PATH"], "Bearer"):
+                   ~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_check_path_version_pattern_get_only (test_asc_scripts.AscScripts.test_check_path_version_pattern_get_only)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_scripts.py", line 440, in test_check_path_version_pattern_get_only
+    asc_lib.check_path("GET", f"{base}?filter[versionString]=1.0.1&filter[platform]=IOS")
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/asc_lib.py", line 118, in check_path
+    raise ValueError(f"Pfad nicht erlaubt: {method} {base}")
+ValueError: Pfad nicht erlaubt: GET /v1/apps/APP-7f3/appStoreVersions
+
+======================================================================
+FAIL: test_all_includes_submission_and_aborts_cleanly (test_asc_check.AscCheckVersion.test_all_includes_submission_and_aborts_cleanly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 972, in test_all_includes_submission_and_aborts_cleanly
+    self.assertEqual(code, 1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^
+AssertionError: 2 != 1
+
+======================================================================
+FAIL: test_build_target_via_option (test_asc_check.AscCheckVersion.test_build_target_via_option)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 914, in test_build_target_via_option
+    self.assertEqual(code == 0, want_ok, f"{number}: {out}")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False != True : 41: Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status> oder --all
+
+
+======================================================================
+FAIL: test_default_without_version_is_unchanged (test_asc_check.AscCheckVersion.test_default_without_version_is_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 862, in test_default_without_version_is_unchanged
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== status
+Fehler status: appInfo: 2 Treffer statt genau 1
+
+
+======================================================================
+FAIL: test_info_is_resolved_only_by_sections_that_need_it (test_asc_check.AscCheckVersion.test_info_is_resolved_only_by_sections_that_need_it)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 848, in test_info_is_resolved_only_by_sections_that_need_it
+    self.assertEqual(code, 0, f"{section}: {out}")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : status: asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== status
+Fehler status: appInfo: 2 Treffer statt genau 1
+
+
+======================================================================
+FAIL: test_info_state_unknown_and_sanitized_in_message (test_asc_check.AscCheckVersion.test_info_state_unknown_and_sanitized_in_message)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 832, in test_info_state_unknown_and_sanitized_in_message
+    self.assertIn(needle, out)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: 'I-1=unbekannt' not found in 'asc_check 2026-10-25T12:00:00Z Commit abc1234def\n== metadata\nFehler metadata: appInfo: 4 Treffer statt genau 1\n'
+
+======================================================================
+FAIL: test_status_other_version_prints_state_without_verdict (test_asc_check.AscCheckVersion.test_status_other_version_prints_state_without_verdict)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 892, in test_status_other_version_prints_state_without_verdict
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status> oder --all
+
+
+======================================================================
+FAIL: test_status_unknown_state_is_deviation (test_asc_check.AscCheckVersion.test_status_unknown_state_is_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 908, in test_status_unknown_state_is_deviation
+    self.assertIn("Abweichung", out)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+AssertionError: 'Abweichung' not found in 'Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status> oder --all\n'
+
+======================================================================
+FAIL: test_submission_section_flags_unknown_or_missing_products (test_asc_check.AscCheckVersion.test_submission_section_flags_unknown_or_missing_products)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 946, in test_submission_section_flags_unknown_or_missing_products
+    self.assertIn("Abweichung", out)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+AssertionError: 'Abweichung' not found in 'Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status> oder --all\n'
+
+======================================================================
+FAIL: test_submission_section_prints_manual_lines (test_asc_check.AscCheckVersion.test_submission_section_prints_manual_lines)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 926, in test_submission_section_prints_manual_lines
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status> oder --all
+
+
+======================================================================
+FAIL: test_submission_uses_only_existing_read_paths (test_asc_check.AscCheckVersion.test_submission_uses_only_existing_read_paths)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 965, in test_submission_uses_only_existing_read_paths
+    self.assertTrue(fake.calls)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_two_drafts_or_three_infos_abort (test_asc_check.AscCheckVersion.test_two_drafts_or_three_infos_abort)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 819, in test_two_drafts_or_three_infos_abort
+    self.assertIn("D-1=PREPARE_FOR_SUBMISSION, D-2=PREPARE_FOR_SUBMISSION", out)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'D-1=PREPARE_FOR_SUBMISSION, D-2=PREPARE_FOR_SUBMISSION' not found in 'asc_check 2026-10-25T12:00:00Z Commit abc1234def\n== appinfo\nFehler appinfo: appInfo: 2 Treffer statt genau 1\n'
+
+======================================================================
+FAIL: test_two_infos_without_draft_aborts_with_all_states (test_asc_check.AscCheckVersion.test_two_infos_without_draft_aborts_with_all_states)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 800, in test_two_infos_without_draft_aborts_with_all_states
+    self.assertIn(needle, out)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: 'kein eindeutiger Entwurf' not found in 'asc_check 2026-10-25T12:00:00Z Commit abc1234def\n== metadata\nFehler metadata: appInfo: 2 Treffer statt genau 1\n'
+
+======================================================================
+FAIL: test_version_argument_selects_that_version (test_asc_check.AscCheckVersion.test_version_argument_selects_that_version)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 854, in test_version_argument_selects_that_version
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status> oder --all
+
+
+======================================================================
+FAIL: test_zero_infos_and_empty_after_sanitizing (test_asc_check.AscCheckVersion.test_zero_infos_and_empty_after_sanitizing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 839, in test_zero_infos_and_empty_after_sanitizing
+    self.assertIn("appInfo: 0 Treffer, kein eindeutiger Entwurf; Zustände: keine", out)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'appInfo: 0 Treffer, kein eindeutiger Entwurf; Zustände: keine' not found in 'asc_check 2026-10-25T12:00:00Z Commit abc1234def\n== appinfo\nFehler appinfo: appInfo: 0 Treffer statt genau 1\n'
+
+----------------------------------------------------------------------
+Ran 96 tests in 1.127s
+
+FAILED (failures=14, errors=3)

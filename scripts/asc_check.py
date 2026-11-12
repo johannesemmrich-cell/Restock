@@ -2,16 +2,19 @@
 """Liest den Entwurf von Version 1.0 aus App Store Connect und vergleicht ihn mit dem Repo (Issue #175, B2b).
 Nur GET über einen eigenen Lesezaun; der Schreibweg von asc_lib wird nicht benutzt. Die Datenschutzseite wird
 ohne Token abgerufen. Ausgabe je Prüfpunkt „ok“ oder „Abweichung: Feld, Soll, Ist“; Kontaktwerte nur als gesetzt/leer.
-Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status> oder --all.
+Aufruf: --section <metadata|privacy-url|appinfo|iap|screenshots|build|review|status|submission> oder --all.
 B3a: Kaufpfade nach API 4.5.1; Preise zählen nur gültig zum Stichtag und über ihren Preispunkt in `included`.
 B3b: Datenschutzseite mit eigenem User-Agent, Altersfreigabe nur mit beantworteten Pflichtfeldern, App-Preisplan
 (Basisland DEU, Betrag 0), 404 nur an manualPrices des App-Preisplans und an appAvailabilityV2 als Abweichung
-„nicht eingerichtet“."""
-import datetime, html, json, os, re, subprocess, sys
+„nicht eingerichtet“.
+#267: --version <x.y[.z]> (Standard 1.0) und --build <n>; appInfo nur für metadata/appinfo und nur eindeutig gewählt;
+Abschnitt submission zeigt Zustände von Version und Käufen, Unbekanntes ist nie „ok“."""
+import datetime, html, json, os, re, subprocess, sys, unicodedata
 from collections import Counter
 from decimal import Decimal
 from pathlib import Path
-from asc_lib import BUNDLE, HOST, VERSION_QUERY, apple_error_suffix, make_token, openssl_sign, parse_texts, urllib_send
+from asc_lib import (BUNDLE, HOST, VERSION_QUERY_RE, _STRIP, apple_error_suffix, make_token, openssl_sign, parse_texts,
+                     urllib_send, version_query)
 
 R = Path(__file__).resolve().parent.parent
 PRIVACY_URL = "https://emmrich-business.com/datenschutz"
@@ -39,9 +42,10 @@ AGE_FIELDS = ("advertising", "alcoholTobaccoOrDrugUseOrReferences", "contests", 
               "sexualContentOrNudity", "socialMedia", "socialMediaAgeRestricted", "horrorOrFearThemes",
               "matureOrSuggestiveThemes", "unrestrictedWebAccess", "userGeneratedContent", "violenceCartoonOrFantasy",
               "violenceRealisticProlongedGraphicOrSadistic", "violenceRealistic")
-SECTIONS = ("metadata", "privacy-url", "appinfo", "iap", "screenshots", "build", "review", "status")
+SECTIONS = ("metadata", "privacy-url", "appinfo", "iap", "screenshots", "build", "review", "status", "submission")
 _ID = r"([A-Za-z0-9_-]+)"
-FENCE = [(r"/v1/apps", f"filter[bundleId]={BUNDLE}"), (rf"/v1/apps/{_ID}/appStoreVersions", VERSION_QUERY),
+# Abfrage je Eintrag: None = keine, Text = exakt, kompiliertes Muster = fullmatch (Versionsabfrage, #267)
+FENCE = [(r"/v1/apps", f"filter[bundleId]={BUNDLE}"), (rf"/v1/apps/{_ID}/appStoreVersions", re.compile(VERSION_QUERY_RE)),
          (rf"/v1/apps/{_ID}/(?:appInfos|appPriceSchedule|appAvailabilityV2|inAppPurchasesV2|subscriptionGroups)", None),
          (rf"/v1/appStoreVersions/{_ID}/(?:appStoreVersionLocalizations|build|appStoreReviewDetail)", None),
          (rf"/v1/appInfos/{_ID}/(?:appInfoLocalizations|ageRatingDeclaration|primaryCategory|secondaryCategory)", None),
@@ -63,11 +67,17 @@ def check_read(method, path, ids):
     base, sep, query = path.partition("?")
     for pattern, allowed_query in FENCE:
         m = re.fullmatch(pattern, base)
-        if m and (query == allowed_query if sep else allowed_query is None):
+        if m and (query_ok(query, allowed_query) if sep else allowed_query is None):
             if all(g in ids for g in m.groups()):
                 return
             raise ValueError(f"ID nicht aus einer Antwort: GET {base}")
     raise ValueError(f"Pfad nicht erlaubt: GET {base}")
+
+
+def query_ok(query, allowed):
+    if isinstance(allowed, re.Pattern):
+        return allowed.fullmatch(query) is not None
+    return allowed is not None and query == allowed
 
 
 class HttpError(RuntimeError):
@@ -121,6 +131,9 @@ class Report:
             self.bad += 1
             print(f"Abweichung {sec}: {field}: Soll {flat(want)}, Ist {flat(got)}", file=self.out)
 
+    def info(self, sec, text):  # reine Information, weder „ok“ noch Abweichung (#267)
+        print(f"info {sec}: {text}", file=self.out)
+
     def eq(self, sec, field, want, got):
         self.check(sec, field, want == got, want, got)
 
@@ -135,17 +148,47 @@ def one(items, what):
     return items[0]
 
 
+def clean(value):
+    """Zustandswert aus Apples Antwort ohne Steuer-/Formatzeichen und Randleerzeichen, höchstens 80 Zeichen; kein String = ""."""
+    if not isinstance(value, str):
+        return ""
+    return "".join(c for c in value if unicodedata.category(c) not in _STRIP).strip()[:80]
+
+
+def state_of(attrs):
+    """Zustand von appInfo oder Kauf: state, sonst appStoreState, sonst „unbekannt“ (#267)."""
+    return clean(attrs.get("state")) or clean(attrs.get("appStoreState")) or "unbekannt"
+
+
 def context(rd, ctx):
-    """App, Version 1.0 (IOS) und appInfo einmal je Lauf lesen."""
-    if not ctx:  # erst nach dem Lesen aller Teile setzen, sonst KeyError in Folgeabschnitten
+    """App und gewählte Version (IOS) einmal je Lauf lesen; ctx trägt vorab version und build aus main."""
+    if "app" not in ctx:  # erst nach dem Lesen aller Teile setzen, sonst KeyError in Folgeabschnitten
+        want = ctx.get("version", "1.0")
         app = one(rd.data(f"/v1/apps?filter[bundleId]={BUNDLE}"), f"App {BUNDLE}")
-        versions = rd.data(f"/v1/apps/{app['id']}/appStoreVersions?{VERSION_QUERY}")
-        ver = one([v for v in versions or [] if v["attributes"].get("versionString") == "1.0"
-                   and v["attributes"].get("platform") == "IOS"], "Version 1.0 (IOS)")
-        infos = rd.data(f"/v1/apps/{app['id']}/appInfos")
-        info = one([i for i in infos or [] if i["attributes"].get("state") == DRAFT] or infos, "appInfo")
-        ctx.update(app=app, ver=ver, info=info)
-    return ctx["app"]["id"], ctx["ver"]["id"], ctx["info"]["id"]
+        versions = rd.data(f"/v1/apps/{app['id']}/appStoreVersions?{version_query(want)}")
+        ver = one([v for v in versions or [] if v["attributes"].get("versionString") == want
+                   and v["attributes"].get("platform") == "IOS"], f"Version {want} (IOS)")
+        ctx.update(app=app, ver=ver)
+    return ctx["app"]["id"], ctx["ver"]["id"]
+
+
+def info_id(rd, ctx):
+    """appInfo nur für metadata/appinfo: genau eines, sonst genau ein Entwurf, sonst Abbruch mit allen Zuständen (#267)."""
+    if "info" not in ctx:
+        app, _ = context(rd, ctx)
+        infos = rd.data(f"/v1/apps/{app}/appInfos")
+        infos = infos if isinstance(infos, list) else []
+        drafts = [i for i in infos if state_of(i.get("attributes") or {}) == DRAFT]
+        pick = infos if len(infos) == 1 else drafts if len(drafts) == 1 else None
+        if not pick:  # nie raten
+            states = ", ".join(f"{i['id']}={state_of(i.get('attributes') or {})}" for i in infos) or "keine"
+            raise RuntimeError(f"appInfo: {len(infos)} Treffer, kein eindeutiger Entwurf; Zustände: {states}")
+        ctx["info"] = pick[0]
+    return ctx["info"]["id"]
+
+
+def version_state(ctx):
+    return clean(ctx["ver"]["attributes"].get("appVersionState")) or "unbekannt"
 
 
 def by_locale(items):
@@ -153,7 +196,8 @@ def by_locale(items):
 
 
 def sec_metadata(rd, ctx, rep, page_send):
-    _, ver, info = context(rd, ctx)
+    info = info_id(rd, ctx)
+    _, ver = context(rd, ctx)
     texts = {loc: parse_texts(R / "docs" / "appstore" / name) for loc, name in LOCALES.items()}
     for path, fields in ((f"/v1/appStoreVersions/{ver}/appStoreVersionLocalizations", VERSION_FIELDS),
                          (f"/v1/appInfos/{info}/appInfoLocalizations", INFO_FIELDS)):
@@ -190,7 +234,8 @@ def sec_privacy(rd, ctx, rep, page_send):
 
 
 def sec_appinfo(rd, ctx, rep, page_send):
-    app, _, info = context(rd, ctx)
+    info = info_id(rd, ctx)
+    app, _ = context(rd, ctx)
     rep.present("appinfo", "contentRightsDeclaration", ctx["app"]["attributes"].get("contentRightsDeclaration"))
     cats = {}
     for rel in ("primaryCategory", "secondaryCategory"):
@@ -318,13 +363,13 @@ def check_product(rd, rep, name, kind, item):
 
 
 def sec_iap(rd, ctx, rep, page_send):
-    app, _, _ = context(rd, ctx)
+    app, _ = context(rd, ctx)
     for name, (kind, item) in products(rd, app, rep).items():
         check_product(rd, rep, name, kind, item)
 
 
 def sec_screenshots(rd, ctx, rep, page_send):
-    _, ver, _ = context(rd, ctx)
+    _, ver = context(rd, ctx)
     locs = by_locale(rd.data(f"/v1/appStoreVersions/{ver}/appStoreVersionLocalizations"))
     for loc in LOCALES:
         if loc not in locs:
@@ -365,21 +410,24 @@ def check_shot_set(rd, rep, loc, st):
 
 
 def sec_build(rd, ctx, rep, page_send):
-    _, ver, _ = context(rd, ctx)
+    _, ver = context(rd, ctx)
     build = rd.data(f"/v1/appStoreVersions/{ver}/build")
     rep.check("build", "build zugeordnet", bool(build), "zugeordnet", "keiner")
     if not build:
         return
     a = build["attributes"]
-    number = str(a.get("version"))
-    rep.check("build", "version", number.isdigit() and int(number) >= 37, "≥ 37", number)
+    number, target = str(a.get("version")), ctx.get("build")
+    if target:  # --build n: Gleichheit (#267)
+        rep.check("build", "version", number == target, target, number)
+    else:
+        rep.check("build", "version", number.isdigit() and int(number) >= 37, "≥ 37", number)
     rep.eq("build", "processingState", "VALID", a.get("processingState"))
     rep.check("build", "usesNonExemptEncryption", a.get("usesNonExemptEncryption") is False, False,
               a.get("usesNonExemptEncryption"))
 
 
 def sec_review(rd, ctx, rep, page_send):
-    _, ver, _ = context(rd, ctx)
+    _, ver = context(rd, ctx)
     detail = rd.data(f"/v1/appStoreVersions/{ver}/appStoreReviewDetail")
     rep.present("review", "appStoreReviewDetail", detail)
     if not detail:
@@ -391,12 +439,35 @@ def sec_review(rd, ctx, rep, page_send):
 
 
 def sec_status(rd, ctx, rep, page_send):
+    """Version 1.0: Soll Entwurf wie bisher; jede andere Version nur als Information; unbekannt ist Abweichung (#267)."""
     context(rd, ctx)
-    rep.eq("status", "appVersionState", DRAFT, ctx["ver"]["attributes"].get("appVersionState"))
+    state = version_state(ctx)
+    if state == "unbekannt":
+        rep.check("status", "appVersionState", False, "Zustand vorhanden", "unbekannt")
+    elif ctx.get("version", "1.0") == "1.0":
+        rep.eq("status", "appVersionState", DRAFT, ctx["ver"]["attributes"].get("appVersionState"))
+    else:
+        rep.info("status", f"Zustand: {state}")
+
+
+def sec_submission(rd, ctx, rep, page_send):
+    """Zustände von Version und Käufen auf einen Blick; nur unbekannter Kaufzustand und fehlende Produkte sind Abweichungen."""
+    app, _ = context(rd, ctx)
+    rep.info("submission", f"Zustand: {version_state(ctx)}")  # Urteil steht allein in sec_status
+    states = []
+    for name, (kind, item) in products(rd, app, rep).items():
+        states.append(state_of(item.get("attributes") or {}))
+        if states[-1] == "unbekannt":
+            rep.check("submission", f"{name} ({kind}) state", False, "Zustand vorhanden", "unbekannt")
+        else:
+            rep.info("submission", f"{name} ({kind}) state: {states[-1]}")
+    rep.info("submission", f"Käufe nach Zustand: {tally(states)}")
+    for what in ("Zuordnung der Käufe zur Version", "Vereinbarung für bezahlte Apps"):
+        print(f"offen submission: manuell belegen: {what} (per API nicht lesbar)", file=rep.out)
 
 
 RUN = dict(zip(SECTIONS, (sec_metadata, sec_privacy, sec_appinfo, sec_iap, sec_screenshots, sec_build, sec_review,
-                          sec_status)))
+                          sec_status, sec_submission)))
 
 
 def git_commit():
@@ -407,18 +478,37 @@ def git_commit():
     return done.stdout.strip() if done.returncode == 0 else None
 
 
+def parse_args(argv):
+    """(Abschnitte, ctx mit version/build) oder None; Optionen in beliebiger Reihenfolge, je höchstens einmal (#267)."""
+    chosen, opts, rest = None, {}, list(argv)
+    while rest:
+        flag = rest.pop(0)
+        if flag == "--all" and chosen is None:
+            chosen = SECTIONS
+        elif flag == "--section" and chosen is None and rest and rest[0] in SECTIONS:
+            chosen = (rest.pop(0),)
+        elif flag in ("--version", "--build") and flag not in opts and rest:
+            opts[flag] = rest.pop(0)
+        else:
+            return None
+    version, build = opts.get("--version", "1.0"), opts.get("--build")
+    if chosen is None or not re.fullmatch(r"[0-9]+(?:\.[0-9]+){1,2}", version) or (
+            build is not None and not re.fullmatch(r"[0-9]+", build)):
+        return None
+    return chosen, {"version": version, "build": build}
+
+
 def main(argv, env=None, send=urllib_send, sign=openssl_sign, out=sys.stdout, page_send=urllib_send, commit=None, now=None,
          today=None):
-    if argv == ["--all"]:
-        chosen = SECTIONS
-    elif len(argv) == 2 and argv[0] == "--section" and argv[1] in SECTIONS:
-        chosen = (argv[1],)
-    else:
-        print(f"Aufruf: --section <{'|'.join(SECTIONS)}> oder --all", file=sys.stderr)
+    parsed = parse_args(argv)
+    if parsed is None:
+        print(f"Aufruf: --section <{'|'.join(SECTIONS)}> oder --all, optional --version <x.y[.z]> --build <n>",
+              file=sys.stderr)
         return 2
+    chosen, ctx = parsed
     stamp = (now or datetime.datetime.now(datetime.timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
     print(f"asc_check {stamp} Commit {(commit or git_commit)() or 'unbekannt'}", file=out)
-    rep, ctx, failed = Report(out), {}, 0
+    rep, failed = Report(out), 0
     try:
         rd = Reader(make_token(os.environ if env is None else env, sign=sign), send=send, today=today)
     except Exception as e:  # Meldungen aus asc_lib nennen nie Schlüsselpfad oder Token
