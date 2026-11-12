@@ -1,0 +1,41 @@
+test_all_includes_submission_and_aborts_cleanly (scripts.test_asc_check.AscCheckVersion.test_all_includes_submission_and_aborts_cleanly) ... ok
+test_blank_state_counts_as_unknown (scripts.test_asc_check.AscCheckVersion.test_blank_state_counts_as_unknown) ... ok
+test_build_target_via_option (scripts.test_asc_check.AscCheckVersion.test_build_target_via_option) ... ok
+test_default_without_version_is_unchanged (scripts.test_asc_check.AscCheckVersion.test_default_without_version_is_unchanged) ... ok
+test_draft_info_wins_over_live (scripts.test_asc_check.AscCheckVersion.test_draft_info_wins_over_live) ... ok
+test_draft_info_wins_over_rejected_info_on_rejected_version (scripts.test_asc_check.AscCheckVersion.test_draft_info_wins_over_rejected_info_on_rejected_version) ... ok
+test_fence_version_pattern_and_rejections (scripts.test_asc_check.AscCheckVersion.test_fence_version_pattern_and_rejections) ... ok
+test_info_is_resolved_only_by_sections_that_need_it (scripts.test_asc_check.AscCheckVersion.test_info_is_resolved_only_by_sections_that_need_it) ... ok
+test_info_state_unknown_and_sanitized_in_message (scripts.test_asc_check.AscCheckVersion.test_info_state_unknown_and_sanitized_in_message) ... ok
+test_invalid_version_or_build_exits_2_without_network (scripts.test_asc_check.AscCheckVersion.test_invalid_version_or_build_exits_2_without_network) ... ok
+test_new_messages_do_not_leak_secrets (scripts.test_asc_check.AscCheckVersion.test_new_messages_do_not_leak_secrets) ... ok
+test_rejected_version_picks_the_rejected_info (scripts.test_asc_check.AscCheckVersion.test_rejected_version_picks_the_rejected_info) ... FAIL
+test_rejected_version_two_rejected_infos_abort (scripts.test_asc_check.AscCheckVersion.test_rejected_version_two_rejected_infos_abort) ... ok
+test_rejected_version_without_rejected_info_aborts (scripts.test_asc_check.AscCheckVersion.test_rejected_version_without_rejected_info_aborts) ... ok
+test_single_info_is_taken_in_any_state (scripts.test_asc_check.AscCheckVersion.test_single_info_is_taken_in_any_state) ... ok
+test_status_other_version_prints_state_without_verdict (scripts.test_asc_check.AscCheckVersion.test_status_other_version_prints_state_without_verdict) ... ok
+test_status_unknown_state_is_deviation (scripts.test_asc_check.AscCheckVersion.test_status_unknown_state_is_deviation) ... ok
+test_submission_section_flags_unknown_or_missing_products (scripts.test_asc_check.AscCheckVersion.test_submission_section_flags_unknown_or_missing_products) ... ok
+test_submission_section_prints_manual_lines (scripts.test_asc_check.AscCheckVersion.test_submission_section_prints_manual_lines) ... ok
+test_submission_uses_only_existing_read_paths (scripts.test_asc_check.AscCheckVersion.test_submission_uses_only_existing_read_paths) ... ok
+test_two_drafts_or_three_infos_abort (scripts.test_asc_check.AscCheckVersion.test_two_drafts_or_three_infos_abort) ... ok
+test_two_infos_without_draft_aborts_with_all_states (scripts.test_asc_check.AscCheckVersion.test_two_infos_without_draft_aborts_with_all_states) ... ok
+test_version_argument_selects_that_version (scripts.test_asc_check.AscCheckVersion.test_version_argument_selects_that_version) ... ok
+test_zero_infos_and_empty_after_sanitizing (scripts.test_asc_check.AscCheckVersion.test_zero_infos_and_empty_after_sanitizing) ... ok
+
+======================================================================
+FAIL: test_rejected_version_picks_the_rejected_info (scripts.test_asc_check.AscCheckVersion.test_rejected_version_picks_the_rejected_info)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hem/Developer/Restock/.claude/worktrees/zany-crunching-moore/scripts/test_asc_check.py", line 807, in test_rejected_version_picks_the_rejected_info
+    self.assertEqual(code, 0, out)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : asc_check 2026-10-25T12:00:00Z Commit abc1234def
+== metadata
+Fehler metadata: appInfo: 2 Treffer, kein eindeutiger Entwurf; Zustände: INFO-1=READY_FOR_SALE, INFO-2=REJECTED
+
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.015s
+
+FAILED (failures=1)
