@@ -766,6 +766,10 @@ class MultiASC(FakeASC):
         r = super().routes()
         r[f"/v1/apps/{APP}/appInfos"] = self.infos
         r.update({f"/v1/appInfos/{i['id']}/appInfoLocalizations": self.ilocs for i in self.infos})
+        for i in self.infos:
+            r.update({f"/v1/appInfos/{i['id']}/primaryCategory": self.primary,
+                      f"/v1/appInfos/{i['id']}/secondaryCategory": self.secondary,
+                      f"/v1/appInfos/{i['id']}/ageRatingDeclaration": self.age})
         r.update({"/v1/appStoreVersions/VER-2/build": self.build2, "/v1/appStoreVersions/VER-2/appStoreReviewDetail": self.review,
                   "/v1/appStoreVersions/VER-2/appStoreVersionLocalizations": self.vlocs})
         return r
@@ -805,8 +809,9 @@ class AscCheckVersion(unittest.TestCase):
             fake = MultiASC()
             code, out = run(fake, "--section", section, "--version", "1.0.1")
             self.assertEqual(code, 0, out)
-            self.assertIn("/v1/appInfos/INFO-2/appInfoLocalizations", fake.paths)
-            self.assertNotIn("/v1/appInfos/INFO-1/appInfoLocalizations", fake.paths)
+            rel = "appInfoLocalizations" if section == "metadata" else "primaryCategory"
+            self.assertIn(f"/v1/appInfos/INFO-2/{rel}", fake.paths)
+            self.assertNotIn(f"/v1/appInfos/INFO-1/{rel}", fake.paths)
 
     def test_rejected_version_two_rejected_infos_abort(self):  # AC-2 (#269)
         infos = [res("appInfos", "R-1", state="REJECTED"), res("appInfos", "R-2", state="REJECTED")]

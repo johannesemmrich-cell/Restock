@@ -107,3 +107,6 @@ deterministisch vergleichbar.
 - Zuordnung der Käufe zur Version und Vereinbarung für bezahlte Apps sind per API nicht (sicher) lesbar und bleiben „manuell belegen“.
 - Das Muster erlaubt jede Versionsnummer der Form x.y oder x.y.z; der Zaun lässt damit auch in `asc_publish` den lesenden Zugriff auf andere Versionen zu (nur GET, Schreiben bleibt an Version 1.0 gebunden).
 - Anhängen der Käufe und Einreichen bleiben außenwirksam und sind nicht Teil dieser Änderung.
+
+## Changelog
+- 2026-11-12 (#269): AC-1 und Punkt „appInfo-Wahl in `info_id()`“ fortgeschrieben in `docs/specs/fast/fix-269-asc-check-appinfo-rejected.md` (Regel c: bei abgelehnter Version genau ein abgelehntes appInfo).
