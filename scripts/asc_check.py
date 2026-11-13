@@ -173,13 +173,16 @@ def context(rd, ctx):
 
 
 def info_id(rd, ctx):
-    """appInfo nur für metadata/appinfo: genau eines, sonst genau ein Entwurf, sonst Abbruch mit allen Zuständen (#267)."""
+    """appInfo nur für metadata/appinfo (#267, #269): (a) genau eines, sonst (b) genau ein Entwurf,
+    sonst (c) bei abgelehnter Version genau ein abgelehntes appInfo, sonst Abbruch mit allen Zuständen."""
     if "info" not in ctx:
         app, _ = context(rd, ctx)
         infos = rd.data(f"/v1/apps/{app}/appInfos")
         infos = infos if isinstance(infos, list) else []
         drafts = [i for i in infos if state_of(i.get("attributes") or {}) == DRAFT]
-        pick = infos if len(infos) == 1 else drafts if len(drafts) == 1 else None
+        rejected = [i for i in infos if state_of(i.get("attributes") or {}) == "REJECTED"]
+        pick = (infos if len(infos) == 1 else drafts if len(drafts) == 1
+                else rejected if version_state(ctx) == "REJECTED" and len(rejected) == 1 else None)
         if not pick:  # nie raten
             states = ", ".join(f"{i['id']}={state_of(i.get('attributes') or {})}" for i in infos) or "keine"
             raise RuntimeError(f"appInfo: {len(infos)} Treffer, kein eindeutiger Entwurf; Zustände: {states}")
