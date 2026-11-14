@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Kategorie wählen oder anlegen (Issue #85, Entwurf Variante C „Suchen oder anlegen“).
 ///
-/// Oben stehen die eigenen Kategorien des Ladens („Bei Lidl“), darunter alle festen. Findet die
+/// Oben stehen die eigenen Kategorien des Ladens („Bei Lidl“), darunter die festen, ohne Suche nur die des Ladens (#271). Findet die
 /// Suche keine passende Kategorie, bietet die erste Zeile an, sie in diesem Laden anzulegen. Ohne
 /// Laden (Artikel noch keinem Laden zugeordnet) gibt es nur die festen Kategorien.
 struct CategoryPickerView: View {
@@ -37,13 +37,40 @@ struct CategoryPickerView: View {
     /// Feste Kategorien alphabetisch nach Anzeigename; eine gewählte Alt-Kategorie, die weder fest
     /// noch eigene ist, steht mit drin, damit die Auswahl nie ins Leere zeigt.
     private var builtInCategories: [String] {
-        var categories = AssignmentService.categoryOrder
+        var categories = Self.pickerBuiltIns(
+            all: AssignmentService.categoryOrder,
+            storeCategories: store?.categories ?? [],
+            groceryMarkers: Category.grocery,
+            foodFamily: Self.foodCategories,
+            query: query
+        )
         if !selection.isEmpty, !categories.contains(selection), store?.isCustomCategory(selection) != true {
             categories.append(selection)
         }
         return categories
             .filter { StoreCategories.matches($0, query: query) || StoreCategories.matches(AssignmentService.displayCategory($0), query: query) }
             .sorted { AssignmentService.displayCategory($0).localizedStandardCompare(AssignmentService.displayCategory($1)) == .orderedAscending }
+    }
+
+    /// Lebensmittel-Kategorien aus `categoryOrder` bis einschließlich „Lebensmittel“ (Issue #271):
+    /// ein Laden mit Lebensmittel-Regal bietet sie alle an, auch „Gewürze & Backen“.
+    static let foodCategories: [String] = {
+        let order = AssignmentService.categoryOrder
+        guard let end = order.firstIndex(of: "Lebensmittel") else { return Category.grocery }
+        return Array(order[...end])
+    }()
+
+    /// Feste Kategorien für einen Laden ohne Gänge (Issue #271). Ohne Suche nur die beim Anlegen
+    /// gewählten Kategorien des Ladens; führt er ein Lebensmittel-Regal (`groceryMarkers`), gehört
+    /// die ganze `foodFamily` dazu. Mit Suche, ohne passende Ladenkategorien oder ohne Laden alle.
+    /// Reihenfolge wie `all`, sortiert wird danach nach Anzeigename.
+    static func pickerBuiltIns(all: [String], storeCategories: [String], groceryMarkers: [String],
+                               foodFamily: [String], query: String) -> [String] {
+        guard query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return all }
+        var allowed = Set(storeCategories)
+        if !allowed.isDisjoint(with: groceryMarkers) { allowed.formUnion(foodFamily) }
+        let filtered = all.filter { allowed.contains($0) }
+        return filtered.isEmpty ? all : filtered
     }
 
     /// Name, der angelegt würde — nur wenn die Suche keine vorhandene Kategorie genau trifft.

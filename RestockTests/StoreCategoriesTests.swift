@@ -228,4 +228,44 @@ final class StoreCategoriesTests: XCTestCase {
         let broken = await service.decodeAssignments("kaputt")
         XCTAssertEqual(broken, [:])
     }
+
+    // MARK: Auswahl ohne Gänge (Issue #271)
+
+    private let pickerAll = ["Obst & Gemüse", "Gewürze & Backen", "Lebensmittel", "Körperpflege", "Werkzeug", "Baumaterial"]
+    private let pickerFood = ["Obst & Gemüse", "Gewürze & Backen", "Lebensmittel"]
+
+    private func picker(_ storeCategories: [String], query: String = "") -> [String] {
+        CategoryPickerView.pickerBuiltIns(all: pickerAll, storeCategories: storeCategories,
+                                          groceryMarkers: ["Obst & Gemüse", "Lebensmittel"],
+                                          foodFamily: pickerFood, query: query)
+    }
+
+    func testSupermarketShowsOnlyFoodFamily() {
+        XCTAssertEqual(picker(["Obst & Gemüse"]), pickerFood)
+    }
+
+    func testDrugstoreShowsOnlyItsOwnCategories() {
+        XCTAssertEqual(picker(["Körperpflege"]), ["Körperpflege"])
+    }
+
+    func testMixedStoreKeepsFoodAndOwnNonFood() {
+        XCTAssertEqual(picker(["Lebensmittel", "Werkzeug"]), pickerFood + ["Werkzeug"])
+    }
+
+    func testStoreWithoutCategoriesShowsAll() {
+        XCTAssertEqual(picker([]), pickerAll)
+        XCTAssertEqual(picker(["Haushalt"]), pickerAll, "Unbekannte Altwerte wie „Haushalt“ zählen nicht")
+    }
+
+    func testSearchOffersAllCategories() {
+        XCTAssertEqual(picker(["Obst & Gemüse"], query: "bau"), pickerAll)
+        XCTAssertEqual(picker(["Obst & Gemüse"], query: "  "), pickerFood)
+    }
+
+    func testRealFoodFamilyEndsWithLebensmittel() {
+        XCTAssertEqual(CategoryPickerView.foodCategories.last, "Lebensmittel")
+        XCTAssertTrue(CategoryPickerView.foodCategories.contains("Gewürze & Backen"))
+        XCTAssertTrue(Set(Category.grocery).isSubset(of: CategoryPickerView.foodCategories))
+        XCTAssertFalse(CategoryPickerView.foodCategories.contains("Baumaterial"))
+    }
 }
