@@ -201,5 +201,46 @@ class Flow(unittest.TestCase):
         self.assertIn("scripts/test_asc_offer_codes.py", ci)
 
 
+ROOT = Path(__file__).resolve().parent.parent
+WF = ROOT / ".github/workflows/asc-offer-codes.yml"
+
+
+class Workflow(unittest.TestCase):
+    def setUp(self):
+        import yaml
+        self.text = WF.read_text(encoding="utf-8")
+        self.wf = yaml.safe_load(self.text)
+        self.job = self.wf["jobs"]["offer-codes"]
+        self.runs = "\n".join(s.get("run", "") for s in self.job["steps"])
+
+    def test_workflow_dispatch_only_plan_default_secrets_in_env(self):
+        on = self.wf.get("on", self.wf.get(True))
+        self.assertEqual(set(on), {"workflow_dispatch"})
+        self.assertEqual(on["workflow_dispatch"]["inputs"]["mode"]["default"], "plan")
+        self.assertEqual(self.wf["permissions"], {"contents": "read"})
+        self.assertEqual({k for k, v in self.job["env"].items() if "secrets." in v}, {"ASC_KEY_ID", "ASC_ISSUER_ID", "ASC_KEY_P8"})
+        self.assertNotIn("${{", self.runs)  # keine Ausdrücke im Skripttext (Secrets, Eingaben)
+
+    def test_create_gate_runs_first_and_needs_main_and_confirm(self):
+        gate = self.job["steps"][0]
+        self.assertEqual(gate["if"], "${{ inputs.mode == 'create' }}")
+        self.assertIn('"$GITHUB_REF" != "refs/heads/main"', gate["run"])
+        self.assertIn('"$CONFIRM" != "anlegen"', gate["run"])
+
+    def test_only_encrypted_codes_are_uploaded_and_cleanup_trapped(self):
+        uploads = [s for s in self.job["steps"] if s.get("uses", "").startswith("actions/upload-artifact")]
+        self.assertEqual([u["with"]["path"] for u in uploads], ["offer-codes.csv.gpg"])
+        self.assertEqual(uploads[0]["with"]["retention-days"], 7)
+        self.assertIn("--recipient-file .github/crash-recipient.asc --encrypt", self.runs)
+        self.assertIn("trap 'rm -rf \"$KEY\" \"$OUT\"' EXIT", self.runs)
+        self.assertIn("umask 077", self.runs)
+        self.assertNotRegex(self.runs, r"\b(cat|head|tail|less)\b[^\n]*codes\.csv")
+
+    def test_docs_explain_fetching_codes(self):
+        docs = (ROOT / "docs/testflight-setup.md").read_text(encoding="utf-8")
+        self.assertIn("## Offer Codes abholen", docs)
+        self.assertIn("-n offer-codes", docs)
+
+
 if __name__ == "__main__":
     unittest.main()

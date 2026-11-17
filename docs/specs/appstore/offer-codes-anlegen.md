@@ -18,7 +18,7 @@ Skript `scripts/asc_offer_codes.py plan|create <ordner>` mit eigenem Zaun (GET/P
 
 `plan` liest nur und schreibt Plan, Ist-Stand und fehlende Vorbedingungen ins Log. `create` bricht vor jedem Schreiben ab, wenn eine Vorbedingung fehlt (veröffentlichte Version, Kauf `APPROVED`, mindestens ein Land, Ablaufdatum in höchstens 181 Tagen, Angebot nicht doppelt). Es legt nur an, was fehlt; ein erneuter Lauf verwendet Angebot und Ausgabe weiter. Schreibaufrufe werden nie blind wiederholt, Lesezugriffe bei 5xx/429/Netzfehler bis zu fünfmal. Die Codes holt es mit Wartezeit (bis 20 × 30 s) und legt sie nur als `codes.csv` (0600, Ordner 0700) ab; das Log nennt nur die Zeilenzahl.
 
-Schnitt 2 (eigener PR): manueller Ablauf `.github/workflows/asc-offer-codes.yml` (Eingabe `mode`, Standard `plan`; `create` nur von `main` und nur mit Bestätigungsfeld), Verschlüsselung der CSV mit `gpg` für `.github/crash-recipient.asc` (geheimer Schlüssel nur auf Hennings Mac), Artefakt nur als Chiffrat.
+Ablauf (im selben PR, Grenze von ±250 LoC bewusst überschritten, weil die Sitzung nur einen Zweig hat und der Ablauf ohne das Skript nicht lauffähig ist): manueller Ablauf `.github/workflows/asc-offer-codes.yml` (Eingabe `mode`, Standard `plan`; `create` nur von `main` und nur mit Bestätigungsfeld), Verschlüsselung der CSV mit `gpg` für `.github/crash-recipient.asc` (geheimer Schlüssel nur auf Hennings Mac), Artefakt nur als Chiffrat.
 
 ## Acceptance Criteria
 - [ ] AC-1: Der Zaun lässt nur die gelisteten Methoden, Pfade und exakten Abfragen zu; DELETE, Abo-Angebote, fremde Abfragen und `//`-Pfade werfen `ValueError`. Test: `test_fence_allows_only_listed_paths_and_exact_queries`.
@@ -32,6 +32,11 @@ Schnitt 2 (eigener PR): manueller Ablauf `.github/workflows/asc-offer-codes.yml`
 - [ ] AC-9: Sind die Codes noch nicht bereit (404 oder leer), wartet das Skript und versucht es erneut; bleiben sie aus, endet es mit Exit 1 und dem Hinweis, den Lauf zu wiederholen. Tests: `test_waits_until_codes_are_ready`, `test_codes_never_ready_fails_cleanly`.
 - [ ] AC-10: Ein Fehler beim Schreiben wird nicht wiederholt; die Meldung nennt Status und Apples `code`/`title`, nie `detail`. Lesefehler 5xx werden fünfmal versucht. Tests: `test_post_error_is_not_retried_and_hides_detail`, `test_get_5xx_is_retried`.
 - [ ] AC-11: Eine Antwort mit weiteren Seiten bricht ab statt still abzuschneiden. Test: `test_further_pages_are_an_error`.
+- [ ] AC-13: Der Ablauf hat nur `workflow_dispatch` mit `mode` (Standard `plan`), `permissions: contents: read`, die drei Secrets nur im `env`-Block und keine `${{ }}`-Ausdrücke im Skripttext. Test: `test_workflow_dispatch_only_plan_default_secrets_in_env`.
+- [ ] AC-14: Der erste Schritt bricht `create` ab, wenn nicht von `main` oder ohne `confirm=anlegen`. Test: `test_create_gate_runs_first_and_needs_main_and_confirm`.
+- [ ] AC-15: Hochgeladen wird nur `offer-codes.csv.gpg` (7 Tage), verschlüsselt für `.github/crash-recipient.asc`; `umask 077` und ein `trap` löschen Schlüssel und Klartext; kein Befehl gibt `codes.csv` aus. Test: `test_only_encrypted_codes_are_uploaded_and_cleanup_trapped`.
+- [ ] AC-16: `docs/testflight-setup.md` hat den Abschnitt „Offer Codes abholen“. Test: `test_docs_explain_fetching_codes`.
+- [ ] AC-17 (Nachweis nach dem Zusammenführen): Trockenlauf auf `main` grün, Plan und Ist-Stand an den PO; `create` erst nach seiner Freigabe.
 - [ ] AC-12: Der Test steht in der Liste „Strukturtests (Python)“ in `ci.yml`. Test: `test_ci_lists_offer_code_test`.
 
 ## Offene Grenzen

@@ -1,0 +1,69 @@
+name: Offer Codes anlegen  # Issue #273, Spec docs/specs/appstore/offer-codes-anlegen.md, Abholen: docs/testflight-setup.md
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "plan = nur lesen (Standard); create = bei Apple anlegen (nur mit Bestätigung)"
+        type: choice
+        options: [plan, create]
+        default: plan
+      confirm:
+        description: "Nur für create: genau 'anlegen' eintragen"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: asc-offer-codes
+  cancel-in-progress: false
+
+jobs:
+  offer-codes:
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      MODE: ${{ inputs.mode }}
+      CONFIRM: ${{ inputs.confirm }}
+    steps:
+      - name: Schreiben nur von main und nur mit Bestätigung
+        if: ${{ inputs.mode == 'create' }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then echo "create nur von main"; exit 1; fi
+          if [ "$CONFIRM" != "anlegen" ]; then echo "create braucht confirm=anlegen"; exit 1; fi
+
+      - uses: actions/checkout@v4
+
+      - name: GnuPG bereitstellen
+        if: ${{ inputs.mode == 'create' }}
+        run: command -v gpg || brew install gnupg
+
+      # Lauf, Verschlüsseln und Aufräumen in einem Schritt, damit der trap Schlüssel und Klartext sicher löscht.
+      # Im Log stehen nie Codes, nur der Plan und die Zeilenzahl.
+      - name: Offer Codes planen oder anlegen
+        run: |
+          umask 077
+          OUT="$RUNNER_TEMP/offer-codes"
+          KEY="$RUNNER_TEMP/AuthKey.p8"
+          trap 'rm -rf "$KEY" "$OUT"' EXIT
+          # Der Schlüssel darf als eingefügter Text der .p8 oder als Base64 davon im Secret stehen (wie testflight.yml).
+          if grep -q 'BEGIN PRIVATE KEY' <<< "$ASC_KEY_P8"; then printf '%s\n' "$ASC_KEY_P8"; else base64 -d <<< "$ASC_KEY_P8"; fi > "$KEY"
+          chmod 600 "$KEY"
+          ASC_KEY_PATH="$KEY" python3 -I scripts/asc_offer_codes.py "$MODE" "$OUT"
+          if [ -f "$OUT/codes.csv" ]; then
+            gpg --batch --trust-model always --recipient-file .github/crash-recipient.asc --encrypt \
+              --output offer-codes.csv.gpg "$OUT/codes.csv"
+          fi
+
+      - name: Chiffrat hochladen
+        if: ${{ hashFiles('offer-codes.csv.gpg') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: offer-codes
+          path: offer-codes.csv.gpg
+          retention-days: 7
