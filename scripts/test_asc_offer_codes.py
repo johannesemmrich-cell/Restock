@@ -59,6 +59,8 @@ class FakeASC:
             self.batch = True
             return 201, json.dumps({"data": {"id": "B1"}}).encode()
         if base == "/v1/inAppPurchaseOfferCodeOneTimeUseCodes/B1/values":
+            if headers.get("Accept") != "text/csv":  # wie Apple: ohne CSV-Accept HTTP 406
+                return 406, b'{"errors":[{"code":"NOT_ACCEPTABLE","title":"Not Acceptable"}]}'
             v = self.values.pop(0) if len(self.values) > 1 else self.values[0]
             return (404, b"") if v is None else (200, v)
         return 500, b""

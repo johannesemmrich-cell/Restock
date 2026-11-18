@@ -62,6 +62,8 @@ class Client:
         check(method, path, self.ids)
         shown = f"{method} {path.partition('?')[0]}"
         headers = {"Authorization": f"Bearer {self.token}"}
+        if raw:  # die Codes liefert Apple nur als CSV, sonst HTTP 406 (Lauf 44258432535)
+            headers["Accept"] = "text/csv"
         data = None
         if body is not None:
             headers["Content-Type"] = "application/json"
