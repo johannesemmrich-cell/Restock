@@ -39,6 +39,10 @@ Ablauf (im selben PR, Grenze von ±250 LoC bewusst überschritten, weil die Sitz
 - [ ] AC-17 (Nachweis nach dem Zusammenführen): Trockenlauf auf `main` grün, Plan und Ist-Stand an den PO; `create` erst nach seiner Freigabe.
 - [ ] AC-12: Der Test steht in der Liste „Strukturtests (Python)“ in `ci.yml`. Test: `test_ci_lists_offer_code_test`.
 
+## Verlauf
+- 2026-11-18 Trockenlauf (Lauf 44218004744): alle Vorbedingungen erfüllt, 175 Länder. PO-Freigabe des Plans am selben Tag.
+- 2026-11-18 `create` (Lauf 44258432535): Angebot angelegt, Rücklesen „gratis in 175 Ländern“, Ausgabe mit 500 Codes angelegt; Abholen der Codes scheiterte mit HTTP 406 (`NOT_ACCEPTABLE`), weil `/values` nur `Accept: text/csv` annimmt. Behoben, der Schein-ASC antwortet seitdem ebenso mit 406 ohne CSV-Accept.
+
 ## Offene Grenzen
 - Nur gegen Schein-Antworten getestet. Ob Apple „gratis“ als Preis ohne `pricePoint` annimmt, ist nicht belegt; der Trockenlauf meldet, ob es in DEU einen Preispunkt 0 gibt, und die Rückleseprüfung (AC-8) verhindert Codes für ein nicht kostenloses Angebot. Lehnt Apple ab, entsteht nichts.
 - Ob der Einmalkauf derzeit `APPROVED` ist, zeigt erst der Trockenlauf (Stand 2026-10-30: `READY_TO_SUBMIT`; Version 1.0.1 wurde wegen nicht ladbarer Käufe abgelehnt, #265).
