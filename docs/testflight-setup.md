@@ -109,3 +109,14 @@ Handlauf `.github/workflows/asc-crashes.yml` (Issue #242, Spec `docs/specs/appst
 **Datenschutz:** Das Repo ist öffentlich. Lauf-Logs und Artefakte kann jeder mit GitHub-Konto lesen, das Chiffrat bleibt 7 Tage herunterladbar (ohne geheimen Schlüssel unlesbar). Der entschlüsselte Inhalt enthält Testerdaten (E-Mail, Kommentar, Gerät, Zeitzone): nie ins Repo, ins Log oder in den Chat schreiben, nur auswerten und danach löschen.
 
 **Rolle:** Antwortet Apple mit 403 oder einem anderen Rollenfehler, ist der Lauf rot und das Protokoll nennt nur Status, Pfad und Apples `code`/`title`. Die Rolle des API-Schlüssels in App Store Connect ist dann ein Thema für Henning.
+
+## Offer Codes abholen
+
+Handlauf `.github/workflows/asc-offer-codes.yml` (Issue #273, Spec `docs/specs/appstore/offer-codes-anlegen.md`), dieselben Secrets wie der Upload. Er legt das Angebot „Restock Pro gratis Presse und Tester 2026-11“ für den Einmalkauf und 500 Einmalcodes an (`scripts/asc_offer_codes.py`).
+
+1. Trockenlauf (Standard, liest nur): `gh workflow run asc-offer-codes.yml`. Das Protokoll zeigt Plan, Ist-Stand und fehlende Vorbedingungen.
+2. Anlegen, nur nach Freigabe des Plans durch Henning und nur von `main`: `gh workflow run asc-offer-codes.yml -f mode=create -f confirm=anlegen`. Ein erneuter Lauf legt nichts doppelt an und holt die Codes erneut.
+3. Herunterladen: `gh run download <id> -n offer-codes` (Chiffrat `offer-codes.csv.gpg`, 7 Tage).
+4. Entschlüsseln auf Hennings Mac im Scratchpad: `gpg --decrypt offer-codes.csv.gpg > codes.csv` (derselbe Schlüssel wie bei den Absturzberichten).
+
+**Datenschutz:** Jeder Code schaltet Restock Pro dauerhaft frei. Codes nie ins Repo, ins Log, in Issues oder in den Chat schreiben; nur einzeln an Empfänger geben. Einlösbar sind sie bis zu eine Stunde nach dem Anlegen und bis zum Ablaufdatum.
