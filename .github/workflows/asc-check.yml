@@ -1,0 +1,51 @@
+name: App-Store-Stand lesen  # Issue #276: asc_check.py ohne Mac, nur GET
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version, z. B. 1.0.1"
+        type: string
+        default: "1.0.1"
+      build:
+        description: "Optionale Build-Nummer zum Abgleich, z. B. 41"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: asc-check
+  cancel-in-progress: false
+
+jobs:
+  asc-check:
+    runs-on: macos-26
+    timeout-minutes: 15
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      VERSION: ${{ inputs.version }}
+      BUILD: ${{ inputs.build }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Nur lesende Abschnitte zum Einreichstand; asc_check prüft Version und Build selbst (parse_args).
+      # -E -s statt -I: asc_check importiert asc_lib aus seinem Ordner, -I nähme den Ordner aus sys.path.
+      # Der Abschnitt review nennt Kontaktdaten nur als gesetzt/leer, nie den Wert.
+      - name: Stand von Version, Build, Review-Angaben und Käufen lesen
+        run: |
+          umask 077
+          KEY="$RUNNER_TEMP/AuthKey.p8"
+          trap 'rm -f "$KEY"' EXIT
+          if grep -q 'BEGIN PRIVATE KEY' <<< "$ASC_KEY_P8"; then printf '%s\n' "$ASC_KEY_P8"; else base64 -d <<< "$ASC_KEY_P8"; fi > "$KEY"
+          chmod 600 "$KEY"
+          ARGS=(--version "$VERSION")
+          if [ -n "$BUILD" ]; then ARGS+=(--build "$BUILD"); fi
+          RC=0
+          for S in status build review submission; do
+            ASC_KEY_PATH="$KEY" python3 -E -s scripts/asc_check.py --section "$S" "${ARGS[@]}" || RC=1
+          done
+          exit $RC
